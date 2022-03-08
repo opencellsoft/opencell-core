@@ -85,7 +85,7 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
         ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
 
-        Date usageDate = getUsageDate((String) record.get("usage_date"), configuration.getDateAggregationOption());
+        Date usageDate = getUsageDate(record.get("usage_date"), configuration.getDateAggregationOption());
         invoiceLine.setValueDate(usageDate);
         if (invoiceLine.getValueDate() == null) {
             invoiceLine.setValueDate(new Date());
@@ -141,8 +141,12 @@ public class InvoiceLinesFactory {
      * @param dateAggregationOption a date aggregation option.
      * @return a date
      */
-    private Date getUsageDate(String usageDateString, AggregationConfiguration.DateAggregationOption dateAggregationOption) {
+    private Date getUsageDate(Object usageDate, AggregationConfiguration.DateAggregationOption dateAggregationOption) {
+    	if(usageDate instanceof Date) {
+    		return (Date)usageDate;
+    	}
         try {
+        	String usageDateString = (String) usageDate;
             if (usageDateString != null) {
                 if (usageDateString.length() == 7) {
                     if (AggregationConfiguration.DateAggregationOption.MONTH_OF_USAGE_DATE.equals(dateAggregationOption)) {
@@ -156,7 +160,7 @@ public class InvoiceLinesFactory {
                 return DateUtils.parseDate(usageDateString);
             }
         } catch (Exception e) {
-            log.error("cannot parse this {} to date", usageDateString);
+            log.error("cannot parse '{}' as date", usageDate);
         }
         return null;
     }
