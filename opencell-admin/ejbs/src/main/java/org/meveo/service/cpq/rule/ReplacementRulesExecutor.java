@@ -1,10 +1,9 @@
 package org.meveo.service.cpq.rule;
 
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class ReplacementRulesExecutor {
                 .filter(rule -> !rule.isDisabled())
                 .filter(selectedAttributes::match)
                 .forEach(
-                        rule -> executeItems(rule.getCommercialRuleItems(), rule.getTargetAttribute(), selectedAttributes, sourceAttributes)
+                        rule -> executeItems(rule, selectedAttributes, sourceAttributes)
                 );
     }
 
@@ -42,18 +41,48 @@ public class ReplacementRulesExecutor {
         return selectedProductAttributes.orElse(new SelectedAttributes(null, null, new LinkedHashMap<>())).getSelectedAttributesMap();
     }
 
-    private void executeItems(List<CommercialRuleItem> ruleItems, Attribute targetAttribute, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
-        ruleItems.stream()
-                .forEach(item -> executeLines(targetAttribute, selectedAttributes, selectedSourceAttributes, item));
+    private void executeItems(CommercialRuleHeader commercialRuleHeader, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
+        commercialRuleHeader.getCommercialRuleItems().stream()
+                .forEach(item -> executeLines(commercialRuleHeader, selectedAttributes, selectedSourceAttributes, item));
     }
 
-    private void executeLines(Attribute targetAttribute, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes, CommercialRuleItem item) {
-        item.getCommercialRuleLines()
-                .stream()
-                .forEach(commercialRuleLine -> {
+    private void executeLines(CommercialRuleHeader commercialRuleHeader, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes, CommercialRuleItem item) {
 
-                    CommercialRuleLineCommand commercialRuleLineCommand = new CommercialRuleLineCommandFactory(targetAttribute, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope);
-                    commercialRuleLineCommand.execute(commercialRuleLine);
-                });
+        if (item.getCommercialRuleLines().size() == 1) {
+            executeLine(commercialRuleHeader, item.getCommercialRuleLines().get(0), selectedAttributes, selectedSourceAttributes);
+        } else {
+            executeLines(commercialRuleHeader, item, selectedAttributes, selectedSourceAttributes);
+
+        }
+    }
+
+    private void executeLines(CommercialRuleHeader commercialRuleHeader, CommercialRuleItem item, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
+        boolean canReplace = false;
+
+        switch (item.getOperator()) {
+            case AND:
+                canReplace = item.getCommercialRuleLines()
+                        .stream()
+                        .allMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
+                break;
+            case OR:
+                canReplace = item.getCommercialRuleLines()
+                        .stream()
+                        .anyMatch(commercialRuleLine -> new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope).execute(commercialRuleLine));
+
+
+        }
+        if (canReplace) {
+            selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
+        }
+    }
+
+    private void executeLine(CommercialRuleHeader commercialRuleHeader, CommercialRuleLine commercialRuleLine, SelectedAttributes selectedAttributes, List<SelectedAttributes> selectedSourceAttributes) {
+        CommercialRuleLineCommand command = new CommercialRuleLineCommandFactory(commercialRuleHeader, selectedAttributes, selectedSourceAttributes).create(commercialRuleLine.getOperator(), isQuoteScope);
+        boolean match = command.execute(commercialRuleLine);
+        if (match && commercialRuleHeader.getTargetAttributeValue() == null)
+            command.replace(commercialRuleLine);
+        else if (match)
+            selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
     }
 }

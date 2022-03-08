@@ -1,6 +1,15 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
+import org.meveo.model.cpq.tags.Tag;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,19 +22,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.GroupedAttributes;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.enums.RuleOperatorEnum;
-import org.meveo.model.cpq.tags.Tag;
+import java.util.Objects;
 
 /**
  *  @author Tarik FAKHOURI.

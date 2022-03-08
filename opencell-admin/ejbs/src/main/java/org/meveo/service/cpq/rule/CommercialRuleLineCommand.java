@@ -4,5 +4,7 @@ import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 public interface CommercialRuleLineCommand {
 
-    void execute(CommercialRuleLine line);
+    boolean execute(CommercialRuleLine commercialRuleLine);
+
+    void replace(CommercialRuleLine commercialRuleLine);
 }

@@ -1,7 +1,7 @@
 package org.meveo.service.cpq.rule;
 
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,12 +11,12 @@ public class CommercialRuleLineCommandFactory {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private Attribute targetAttribute;
+    private CommercialRuleHeader commercialRuleHeader;
     private SelectedAttributes selectedAttributes;
     private List<SelectedAttributes> sourceSelectedAttributes;
 
-    public CommercialRuleLineCommandFactory(Attribute targetAttribute, SelectedAttributes selectedAttributes, List<SelectedAttributes> sourceSelectedAttributes) {
-        this.targetAttribute = targetAttribute;
+    public CommercialRuleLineCommandFactory(CommercialRuleHeader commercialRuleHeader, SelectedAttributes selectedAttributes, List<SelectedAttributes> sourceSelectedAttributes) {
+        this.commercialRuleHeader = commercialRuleHeader;
         this.selectedAttributes = selectedAttributes;
         this.sourceSelectedAttributes = sourceSelectedAttributes;
     }
@@ -24,11 +24,13 @@ public class CommercialRuleLineCommandFactory {
     public CommercialRuleLineCommand create(RuleOperatorEnum ruleOperator, boolean isQuoteScope){
         switch (ruleOperator){
             case EXISTS:
-                return new ExistLineCommand(targetAttribute, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
+                return new ExistLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
+            case EQUAL:
+                return new EqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
 
             default: {
                 log.warn("Only Exist operator can be applied on commercial rules of type replacement");
-                return new ExistLineCommand(targetAttribute, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
+                return new ExistLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
             }
         }
     }

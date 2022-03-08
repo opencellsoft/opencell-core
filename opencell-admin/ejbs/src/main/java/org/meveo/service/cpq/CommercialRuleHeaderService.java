@@ -1,24 +1,5 @@
 package org.meveo.service.cpq;
 
-import static java.util.Collections.singletonList;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Query;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.meveo.admin.exception.BusinessException;
@@ -42,6 +23,24 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.Query;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonList;
 
 /**
  * @author Tarik FAKHOURI.
@@ -345,6 +344,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .stream()
                 .filter(commercialRuleHeader -> !commercialRuleHeader.isDisabled())
                 .filter(commercialRuleHeader -> RuleTypeEnum.REPLACEMENT.equals(commercialRuleHeader.getRuleType()))
+                .filter(commercialRuleHeader -> commercialRuleHeader.getScopeType() == ScopeTypeEnum.QUOTE)
                 .collect(Collectors.toList());
         productRules.stream()
                 .forEach(

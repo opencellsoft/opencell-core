@@ -1,12 +1,5 @@
 package org.meveo.api.cpq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -27,6 +20,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
@@ -41,6 +35,12 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -261,7 +261,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 	 
 	private void populateCommercialRuleLine(CommercialRuleLineDTO dto,CommercialRuleLine commercialRuleLine) {
 
-		commercialRuleLine.setOperator(dto.getOperator());
+		commercialRuleLine.setOperator(dto.getOperator() != null ? dto.getOperator() : RuleOperatorEnum.EXISTS);
 		commercialRuleLine.setSourceAttributeValue(dto.getAttributeValue());
 		commercialRuleLine.setSourceGroupedAttributeValue(dto.getGroupedAttributeValue());
 
