@@ -115,7 +115,7 @@ public class InvoiceLinesFactory {
             Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, record.get("subscription_id"));
             invoiceLine.setSubscription(subscription);
             if(record.get("commercial_order_id") != null) {
-            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, record.get("subscription_id")));
+            	invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, record.get("commercial_order_id")));
             }
         }
         invoiceLine.setValidity(validity);
