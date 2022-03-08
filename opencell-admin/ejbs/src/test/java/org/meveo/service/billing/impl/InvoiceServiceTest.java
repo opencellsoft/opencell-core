@@ -172,7 +172,7 @@ public class InvoiceServiceTest {
             }
         });
 
-        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(),any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
+        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(), any(),any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
             List<InvoiceLine> invoiceLines = new ArrayList<>();
             IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
             InvoiceLine invoiceLine = getInvoiceLine(entity);
