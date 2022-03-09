@@ -3,7 +3,7 @@ package org.meveo.model.settings;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "open_order_setting")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_setting_seq"), })
-public class OpenOrderSetting extends BaseEntity {
+public class OpenOrderSetting extends BusinessEntity {
    @Type(type = "numeric_boolean")
     @Column(name = "use_open_orders")
     private boolean useOpenOrders = false;
