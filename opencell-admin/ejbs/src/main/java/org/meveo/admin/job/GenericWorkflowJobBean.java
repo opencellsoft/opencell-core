@@ -37,7 +37,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GenericWorkflow;
-import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -163,31 +162,8 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
         boolean execWithLoop = paramBeanFactory.getInstance().getPropertyAsBoolean("wf.execution_with_loop", false);
 
         if (execWithLoop) {
-            executeWithLoop(jobExecutionResult, be, workflowInstance, genericWf);
+            genericWorkflowService.executeWorkflowWithLoop(be, workflowInstance, genericWf);
         } else
             genericWorkflowService.executeWorkflow(be, workflowInstance, genericWf);
-    }
-
-    private void executeWithLoop(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
-        try {
-            String oldStatusCode = null;
-            while (true) {
-                int endIndex = genericWorkflow.getTransitions().size();
-                if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(oldStatusCode)) {
-                    workflowInstance = genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
-                    WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
-                    String currentStatusCode = currentWFStatus != null ? currentWFStatus.getCode() : null;
-                    if (currentStatusCode != null && !currentStatusCode.equals(oldStatusCode)) {
-                        oldStatusCode = currentStatusCode;
-                    } else
-                        break;
-                } else
-                    break;
-            }
-            result.registerSucces();
-        } catch (Exception e) {
-            log.error("Failed to unit generic workflow for {}", workflowInstance, e);
-            result.registerError(workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());
-        }
     }
 }
