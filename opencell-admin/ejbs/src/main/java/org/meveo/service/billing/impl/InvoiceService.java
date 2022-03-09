@@ -5128,9 +5128,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     minInvoiceLine.setAccountingArticle(accountingArticleService.retrieveIfNotManaged(minInvoiceLine.getAccountingArticle()));
                     invoiceLinesService.create(minInvoiceLine);
                 }
-                if(billingRun != null) {
-                    billingRun.setStatus(BillingRunStatusEnum.MINIMUM_ADDED);
-                }
                 hasMin = true;
                 commit();
             }
@@ -5226,9 +5223,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun, billingRun);
-                    if(billingRun != null) {
-                        billingRun.setStatus(BillingRunStatusEnum.DISCOUNT_ADDED);
-                    }
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5318,9 +5312,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
-            if(billingRun != null) {
-                billingRun.setStatus(BillingRunStatusEnum.THRESHOLD_CHECKED);
-            }
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         return invoiceList;
@@ -5483,10 +5474,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceLinesService.update(invoiceLine);
             }
         }
-        if(billingRun != null) {
-            billingRun.setStatus(BillingRunStatusEnum.TAX_COMPUTED);
-        }
-
         if (moreInvoiceLinesExpected) {
             return;
         }
