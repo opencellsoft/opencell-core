@@ -12002,4 +12002,49 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>use_self_sequence is null</where>
         </update>
     </changeSet>
+
+    <changeSet id="#INTRD-5341_20220307" author="aelmalki">
+        <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
+        <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
+
+        <dropPrimaryKey constraintName="pk_cpq_invoice_line" tableName="billing_invoice_line"/>
+        <addPrimaryKey columnNames="id" constraintName="pk_billing_invoice_line" tableName="billing_invoice_line" />
+
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_accounting_article_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_offer_service_template_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_product_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_service_template_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_discount_plan_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_tax_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_commercial_order_id"/>
+
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_invoice_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_accounting_article_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_offer_service_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_serv_templates" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_product_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_service_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_discount_plan_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_tax_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_commercial_order_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+    </changeSet>
 </databaseChangeLog>
