@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="446"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -252,6 +252,9 @@
 	<field name="total_tax" class="java.lang.String">
 		<fieldDescription><![CDATA[amount/taxes/@total]]></fieldDescription>
 	</field>
+	<field name="adjustedInvoiceNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[@adjustedInvoiceNumber]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupHeader>
 			<band height="366">
@@ -294,7 +297,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[N°facture]]></text>
+					<text><![CDATA[N°Avoir]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="15" y="10" width="78" height="25" uuid="e44ac6b6-be1d-400b-9103-ec96dadf6459"/>
@@ -385,7 +388,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["FACTURE N° " +$F{invoiceNumber} + "  Du  "+$F{invoiceDate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["AVOIR N° " +$F{invoiceNumber} + "  Du  "+$F{invoiceDate}]]></textFieldExpression>
 				</textField>
 				<rectangle radius="10">
 					<reportElement mode="Transparent" x="13" y="75" width="322" height="54" forecolor="#999999" uuid="df8504b5-f8df-42ee-bbd8-9b665ff4a271"/>
@@ -465,7 +468,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Prestations fournies entre le "+$F{periodStartDate2}+" et "+$F{periodEndDate2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Facture d'avoir à valoir sur facture N° " +$F{adjustedInvoiceNumber}+ " pour la prestation du "+$F{periodStartDate2}+" au "+$F{periodEndDate2}]]></textFieldExpression>
 				</textField>
 				<rectangle radius="10">
 					<reportElement mode="Transparent" x="12" y="251" width="565" height="112" forecolor="#999999" uuid="44b6d0ca-07c3-4f80-8740-b4137a7ebefe"/>
@@ -555,12 +558,11 @@
 					<textFieldExpression><![CDATA[(new java.text.DecimalFormat("#,##0.00")).format(Double.valueOf($F{amountWithTax}))+" €"]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="24" y="120" width="165" height="30" uuid="3f7eb87c-2a98-465e-847c-3589f4b5e0d0"/>
+					<reportElement x="24" y="120" width="280" height="30" uuid="3f7eb87c-2a98-465e-847c-3589f4b5e0d0"/>
 					<textElement verticalAlignment="Middle" markup="html">
 						<font size="11" isBold="false" isItalic="true" isUnderline="false"/>
 					</textElement>
-					<text><![CDATA[Sous réserve de paiement<br>
-Paiement par prélèvement SEPA]]></text>
+					<text><![CDATA[Ce montant sera remboursé sur votre compte]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="138" y="87" width="109" height="21" uuid="be1fe946-915f-43fd-86c1-4546eb49252d"/>
