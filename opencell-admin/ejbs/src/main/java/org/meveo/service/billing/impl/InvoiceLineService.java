@@ -181,12 +181,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	
 
         if(entity.getDiscountPlan() != null) {
-        	addDiscountPlanInvoice( entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller);
+        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller, entity);
         }
     }
     
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null, null, invoice.getInvoiceDate());
+    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
+    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null, null, invoice.getInvoiceDate(), invoiceLine);
     	if(isDiscountApplicable) {
     		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null, null, accountingArticle);
 //            BigDecimal hundred = new BigDecimal(100);
@@ -219,7 +219,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 	super.create(discountInvoice);
                 }
             }
-            entity.setDiscountAmount(invoiceLineDiscountAmount);
+            entity.setDiscountAmount(invoiceLineDiscountAmount.compareTo(BigDecimal.ZERO) > 0
+                    ? invoiceLineDiscountAmount : (invoiceLineDiscountAmount.multiply(entity.getQuantity())).abs());
     	}
     
     	
@@ -669,7 +670,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	             seller = sellerService.refreshOrRetrieve(seller);
 	             setApplicableTax(accountingArticle, date, seller, billingAccount, invoiceLine);
 	         }
-        	addDiscountPlanInvoice( invoiceLine.getDiscountPlan(), invoiceLine, invoiceLine.getBillingAccount(), invoice, accountingArticle, seller);
+        	addDiscountPlanInvoice(invoiceLine.getDiscountPlan(), invoiceLine, invoiceLine.getBillingAccount(), invoice, accountingArticle, seller, invoiceLine);
 		}
 		
 		update(invoiceLine);
