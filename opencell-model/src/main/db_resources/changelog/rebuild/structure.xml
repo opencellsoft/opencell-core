@@ -16012,6 +16012,9 @@
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
     <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql"/>
+    <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
     <!-- DONT REMOVE THIS CHANGESET -->
