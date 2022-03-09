@@ -34,10 +34,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -50,7 +50,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.PriceDTO;
@@ -93,12 +92,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -160,29 +154,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -436,6 +407,9 @@ public class CpqQuoteApi extends BaseApi {
                 quoteProduct.setQuantity(quoteProductDTO.getQuantity());
                 quoteProduct.setQuoteOffer(quoteOffer);
                 quoteProduct.setDiscountPlan(discountPlan);
+                if(quoteProduct.getDiscountPlan() == null){
+                    resolveProductDPIfExist(quoteOffer, quoteProduct);
+                }
                 quoteProduct.setQuote(quoteOffer.getQuoteVersion() != null ? quoteOffer.getQuoteVersion().getQuote() : null);
                 quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
                 
@@ -872,7 +846,9 @@ public class CpqQuoteApi extends BaseApi {
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
             quoteOfferDto.setCode(quoteOffer.getCode());
             quoteOfferDto.setDescription(quoteOffer.getDescription());
-            
+            if(quoteOffer.getDiscountPlan() == null){
+                resolveOfferDPFromBAIfExist(quoteOffer);
+            }
         	if(quoteOfferDto.getDeliveryDate()!=null && quoteOfferDto.getDeliveryDate().before(new Date())) {
         		throw new MeveoApiException("Delivery date should be in the future");	
         	}
@@ -924,8 +900,12 @@ public class CpqQuoteApi extends BaseApi {
         if(!StringUtils.isBlank(quoteOfferDTO.getUserAccountCode())) {
         	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDTO.getUserAccountCode()));
         }
-        if (!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode()))
+        if (!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode())){
             quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
+        }
+        if(quoteOffer.getDiscountPlan() == null){
+            resolveOfferDPFromBAIfExist(quoteOffer);
+        }
         if (!Strings.isEmpty(quoteOfferDTO.getQuoteLotCode()))
             quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDTO.getQuoteLotCode()));
         
@@ -943,6 +923,19 @@ public class CpqQuoteApi extends BaseApi {
         }catch(BusinessException exp){
             throw new BusinessApiException(exp.getMessage());
         }
+    }
+
+    private void resolveOfferDPFromBAIfExist(QuoteOffer quoteOffer) {
+        quoteOffer.getQuoteVersion().getQuote().getBillableAccount().getDiscountPlanInstances().stream()
+                .map(dpi -> dpi.getDiscountPlan())
+                .forEach(dp -> {
+                    if(DiscountPlanTypeEnum.OFFER.equals(dp.getDiscountPlanType())){
+                        quoteOffer.getOfferTemplate().getAllowedDiscountPlans().stream()
+                                .filter(odp -> odp.getId().equals(dp.getId()))
+                                .findFirst()
+                                .ifPresent(matchedDP -> quoteOffer.setDiscountPlan(matchedDP));
+                    }
+                });
     }
 
     private void processQuoteProduct(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
@@ -1050,6 +1043,9 @@ public class CpqQuoteApi extends BaseApi {
         q.setQuoteOffer(quoteOffer);
         q.setQuoteVersion(quoteOffer.getQuoteVersion());
         q.setDiscountPlan(discountPlan);
+        if(q.getDiscountPlan() == null){
+            resolveProductDPIfExist(quoteOffer, q);
+        }
         if(isNew) {
         	populateCustomFields(quoteProductDTO.getCustomFields(), q, true);
             quoteProductService.create(q);
@@ -1057,6 +1053,16 @@ public class CpqQuoteApi extends BaseApi {
         	populateCustomFields(quoteProductDTO.getCustomFields(), q, false);
         processQuoteProduct(quoteProductDTO, q);
         return q;
+    }
+
+    private void resolveProductDPIfExist(QuoteOffer quoteOffer, QuoteProduct qProduct) {
+        quoteOffer.getQuoteVersion().getQuote().getBillableAccount().getDiscountPlanInstances().stream()
+                .map(dpi -> dpi.getDiscountPlan())
+                .filter(dp -> DiscountPlanTypeEnum.PRODUCT.equals(dp.getDiscountPlanType()))
+                .forEach(dp -> qProduct.getProductVersion().getProduct().getDiscountList().stream()
+                        .filter(pdp -> pdp != null && pdp.getId().equals(dp.getId()))
+                        .findFirst()
+                        .ifPresent(matchedDP -> qProduct.setDiscountPlan(matchedDP)));
     }
 
     private void processQuoteProduct(QuoteProductDTO quoteProductDTO, QuoteProduct q) {
