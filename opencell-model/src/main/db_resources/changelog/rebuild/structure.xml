@@ -3544,7 +3544,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="currency_id" type="bigint" />
             <column name="symbol" type="varchar(255)" />
-            <column name="decimal_places" type="int" />
+            <column name="decimal_places" type="int" defaultValueNumeric="2" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-198">

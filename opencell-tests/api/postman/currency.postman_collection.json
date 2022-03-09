@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5602d406-9b3a-4ec7-97a0-2134058b162e",
+		"_postman_id": "fd502ce1-684f-4f90-a617-445620356382",
 		"name": "currency",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -126,6 +126,58 @@
 					"path": [
 						"currency",
 						"addFunctionalCurrency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Currency",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\":\"DAM\",\n    \"description\":\"Dirham marrocan \",\n    \"decimalPlaces\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Currency",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"DAM\",\n    \"description\": \"Dirham marrocan \",\n    \"decimalPlaces\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
 					]
 				}
 			},
