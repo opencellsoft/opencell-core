@@ -42,19 +42,19 @@ public class OrderAmendement extends BusinessCFEntity {
     @JoinColumn(name = "user_account_id")
     private UserAccount consumer;
 
-	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderAmendementToSuspend", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToSuspend = new ArrayList<OrderProduct>();
 	
-	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderAmendementToReactivate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToReactivate = new ArrayList<OrderProduct>();
 	
-	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderAmendementToTerminate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToTerminate = new ArrayList<OrderProduct>();
 	
-	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderAmendementToActivate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToActivate = new ArrayList<OrderProduct>();
 	
-	@OneToMany(mappedBy = "orderAmendement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderAmendementToRestart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToRestart = new ArrayList<OrderProduct>();
 
 	public OrderAmendement(@NotNull Subscription subscription, UserAccount userAccount,

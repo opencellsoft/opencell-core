@@ -12021,5 +12021,42 @@ order by date_trunc('month', i.invoice_date) DESC
         
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_amendement" constraintName="fk_order_amendement_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_suspend_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_suspend_id" baseTableName="cpq_order_product" constraintName="fk_prd_suspend_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/> 
+                                 
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_reactivate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_reactivate_id" baseTableName="cpq_order_product" constraintName="fk_prd_reactivate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+                                 
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_terminate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_terminate_id" baseTableName="cpq_order_product" constraintName="fk_prd_terminate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+                                 
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_activate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_activate_id" baseTableName="cpq_order_product" constraintName="fk_prd_activate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>                              
+                                 
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_restart_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_restart_id" baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+                                 
+                                 
     </changeSet>
 </databaseChangeLog>
