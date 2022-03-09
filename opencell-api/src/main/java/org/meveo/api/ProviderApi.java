@@ -671,6 +671,9 @@ public class ProviderApi extends BaseApi {
             	}
                 invoiceConfiguration.setDefaultDiscountAccountingArticle(discountArticle);
             }
+            if (invoiceConfigurationDto.getDisplayUserAccountHierarchy() != null) {
+                invoiceConfiguration.setDisplayUserAccountHierarchy(invoiceConfigurationDto.getDisplayUserAccountHierarchy());
+            }
         }
         return provider;
     }

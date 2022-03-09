@@ -4,6 +4,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
@@ -180,12 +181,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	
 
         if(entity.getDiscountPlan() != null) {
-        	addDiscountPlanInvoice( entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller);
+        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller, entity);
         }
     }
     
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null, null, invoice.getInvoiceDate());
+    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
+    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null, null, invoice.getInvoiceDate(), invoiceLine);
     	if(isDiscountApplicable) {
     		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null, null, accountingArticle);
 //            BigDecimal hundred = new BigDecimal(100);
@@ -218,7 +219,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 	super.create(discountInvoice);
                 }
             }
-            entity.setDiscountAmount(invoiceLineDiscountAmount);
+            entity.setDiscountAmount(invoiceLineDiscountAmount.compareTo(BigDecimal.ZERO) > 0
+                    ? invoiceLineDiscountAmount : (invoiceLineDiscountAmount.multiply(entity.getQuantity())).abs());
     	}
     
     	
@@ -668,7 +670,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	             seller = sellerService.refreshOrRetrieve(seller);
 	             setApplicableTax(accountingArticle, date, seller, billingAccount, invoiceLine);
 	         }
-        	addDiscountPlanInvoice( invoiceLine.getDiscountPlan(), invoiceLine, invoiceLine.getBillingAccount(), invoice, accountingArticle, seller);
+        	addDiscountPlanInvoice(invoiceLine.getDiscountPlan(), invoiceLine, invoiceLine.getBillingAccount(), invoice, accountingArticle, seller, invoiceLine);
 		}
 		
 		update(invoiceLine);
@@ -866,15 +868,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void deleteByDiscountedPlan(InvoiceLine invoiceLineId) {
-		
-		if(invoiceLineId == null || invoiceLineId.getId() == null) return;
-		
-		 QueryBuilder queryBuilder = new QueryBuilder("from InvoiceLine il ", "il");
-		 queryBuilder.addCriterionEntity("il.discountedInvoiceLine", invoiceLineId);
-		 Query query = queryBuilder.getQuery(getEntityManager());
-		 var ids = ((List<InvoiceLine>)query.getResultList()).stream().map(InvoiceLine::getId).collect(Collectors.toSet());
-		 remove(ids);
-	}
-
+    private void deleteByDiscountedPlan(InvoiceLine invoiceLine) {
+        if (invoiceLine == null || invoiceLine.getId() == null) {
+            return;
+        }
+        QueryBuilder queryBuilder = new QueryBuilder("from InvoiceLine il ", "il");
+        queryBuilder.addCriterionEntity("il.discountedInvoiceLine", invoiceLine);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        List<InvoiceLine> invoiceLines = query.getResultList();
+        if(invoiceLines != null && !invoiceLines.isEmpty()) {
+            var ids = invoiceLines.stream()
+                    .map(InvoiceLine::getId)
+                    .collect(toSet());
+            remove(ids);
+        }
+    }
 }
