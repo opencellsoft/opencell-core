@@ -1568,7 +1568,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
                         + " rt.chargeInstance.id as charge_instance_id "
-                        + " FROM RatedTransaction rt inner join rt.subscription s WHERE " + entityCondition
+                        + " FROM RatedTransaction rt left join rt.subscription s WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) "
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy

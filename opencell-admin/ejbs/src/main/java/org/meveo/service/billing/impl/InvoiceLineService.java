@@ -28,6 +28,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
@@ -161,54 +162,40 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	super.create(entity);
     }
 
-    public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
+    public List<InvoiceLine> listInvoiceLinesToInvoice(BillingRun billingRun, IBillableEntity entityToInvoice, Date firstTransactionDate,
                                                        Date lastTransactionDate, Filter filter,Map<String, Object> filterParams, int pageSize) throws BusinessException {
         if (filter != null) {
             return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, filterParams);
+		} else {
+			TypedQuery<InvoiceLine> namedQuery = null;
+			String byBr = billingRun != null ? "AndBR" : "";
+			if (entityToInvoice instanceof Subscription) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceBySubscription" + byBr, InvoiceLine.class)
+						.setParameter("subscriptionId", entityToInvoice.getId());
+			} else if (entityToInvoice instanceof BillingAccount) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByBillingAccount" + byBr, InvoiceLine.class)
+						.setParameter("billingAccountId", entityToInvoice.getId());
+			} else if (entityToInvoice instanceof Order) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByOrderNumber" + byBr, InvoiceLine.class)
+						.setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
+			} else if (entityToInvoice instanceof CommercialOrder) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder" + byBr, InvoiceLine.class)
+						.setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId());
+			} else if (entityToInvoice instanceof CpqQuote) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByQuote" + byBr, InvoiceLine.class)
+						.setParameter("quoteId", entityToInvoice.getId());
+			} else {
+				return emptyList();
+			}
 
-        } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceBySubscription", InvoiceLine.class)
-                    .setParameter("subscriptionId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByBillingAccount", InvoiceLine.class)
-                    .setParameter("billingAccountId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-
-        } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByOrderNumber", InvoiceLine.class)
-                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }else if (entityToInvoice instanceof CommercialOrder) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder", InvoiceLine.class)
-                    .setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }else if (entityToInvoice instanceof CpqQuote) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByQuote", InvoiceLine.class)
-                    .setParameter("quoteId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }
-        return emptyList();
+			if (billingRun != null) {
+				namedQuery.setParameter("billingRunId", billingRun.getId());
+			} else {
+				namedQuery.setParameter("firstTransactionDate", firstTransactionDate)
+						.setParameter("lastTransactionDate", lastTransactionDate);
+			}
+			return namedQuery.setHint("org.hibernate.readOnly", true).setMaxResults(pageSize).getResultList();
+		}
     }
 
     public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
