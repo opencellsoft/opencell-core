@@ -9736,7 +9736,7 @@ public class OrderAdvancement extends ModuleScript {
 	  	</createIndex>
 	</changeSet>
 
-    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
+    <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" failOnError="false">
         <addColumn tableName="crm_customer">
             <column name="anonymization_date" type="datetime" />
         </addColumn>
