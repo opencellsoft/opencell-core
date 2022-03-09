@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -27,6 +24,22 @@ public interface OpenOrderSettingResource {
                             description = "Bad Request")
             })
     Response create(@Parameter(description = "Open Order settings", required = true) OpenOrderSettingInput input);
+
+    @PUT
+    @Path("/{id}")
+    @Operation(summary = "Update Open Order settings",
+            tags = {"Put"},
+            description = "Update Open Order settings",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Open Order settings was successfully updated"),
+					@ApiResponse(responseCode = "400",
+							description = "Bad Request"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Following Open Order settings does not exist : {OpenOrderSetting ids}")
+            })
+    Response update(@Parameter(description = "contain the code of Open Order settings te be updated by its id", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Open Order settings", required = true) OpenOrderSettingInput input);
 
 
 }

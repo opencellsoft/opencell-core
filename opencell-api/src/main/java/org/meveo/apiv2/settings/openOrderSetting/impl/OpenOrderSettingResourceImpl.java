@@ -1,5 +1,6 @@
 package org.meveo.apiv2.settings.openOrderSetting.impl;
 
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
 import org.meveo.apiv2.settings.openOrderSetting.OpenOrderSettingResource;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -25,6 +26,18 @@ public class OpenOrderSettingResourceImpl implements OpenOrderSettingResource {
         openOrderSettingService.create(openOrderSetting);
         return Response.ok().entity(buildResponse(openOrderSettingMapper.toResource(openOrderSetting))).build();
 
+    }
+
+    @Override
+    public Response update(Long id, OpenOrderSettingInput input) {
+
+        OpenOrderSetting entity = openOrderSettingService.findById(id);
+        if (entity == null) {
+            throw new EntityDoesNotExistsException("Open order setting with id " + id + " does not exist.");
+        }
+        OpenOrderSetting entityToUpdate = openOrderSettingMapper.toEntity(entity, input);
+        openOrderSettingService.update(entityToUpdate);
+        return Response.ok().entity(buildResponse(openOrderSettingMapper.toResource(entityToUpdate))).build();
     }
 
 

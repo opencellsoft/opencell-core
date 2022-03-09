@@ -17,6 +17,13 @@ public class OpenOrderSettingService extends BusinessService<OpenOrderSetting> {
     }
 
 
+    @Override
+    public OpenOrderSetting update(OpenOrderSetting entity) throws BusinessException {
+
+        checkParameters(entity);
+        return super.update(entity);
+    }
+
     public void checkParameters(OpenOrderSetting entity) {
         if (entity.getApplyMaximumValidityValue() != null && entity.getApplyMaximumValidityValue() < 1)
             throw new InvalidParameterException("Apply Maximum Validity Value must be greater than 0");
