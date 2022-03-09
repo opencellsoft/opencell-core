@@ -736,9 +736,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     }
 
-    public String getReferenceCode() {
-        return id + "/" + billingCycle.getCode();
-    }
+	public String getReferenceCode() {
+		final String bcCode = billingCycle == null ? "" : "/" + billingCycle.getCode();
+		return id + bcCode;
+	}
 
     public void setReferenceCode(Object value) {
         String id = null;
