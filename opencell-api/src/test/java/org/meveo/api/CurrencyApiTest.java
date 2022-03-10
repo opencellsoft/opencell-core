@@ -9,8 +9,10 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +32,9 @@ public class CurrencyApiTest {
 
     @Mock
     private CurrencyService currencyService;
+
+    @Mock
+    private TradingCurrencyService tradingCurrencyService;
 
     @Mock
     private Provider provider;
@@ -80,6 +85,35 @@ public class CurrencyApiTest {
 
              verify(providerService).update(any());
             assertEquals(ActionStatusEnum.SUCCESS, actionStatus.getStatus());
+
+
+    }
+
+
+    @Test
+    public void createCurrency() {
+         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(null);
+            CurrencyDto currencyDto = new CurrencyDto();
+            currencyDto.setCode("MAD");
+            currencyDto.setSymbol(null);
+            currencyApi.create(currencyDto);
+
+            verify(tradingCurrencyService).create(any());
+
+
+    }
+
+    @Test
+    public void updateCurrency() {
+         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
+         when(currencyService.findByCode(any())).thenReturn(new Currency());
+            CurrencyDto currencyDto = new CurrencyDto();
+            currencyDto.setCode("MAD");
+            currencyDto.setSymbol(null);
+            currencyApi.update(currencyDto);
+
+            verify(tradingCurrencyService).update(any());
+            verify(currencyService).update(any());
 
 
     }
