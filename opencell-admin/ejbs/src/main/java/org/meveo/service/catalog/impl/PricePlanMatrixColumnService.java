@@ -114,8 +114,8 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String line = scanner.nextLine();
 		String[] firstLine = line.split(";");
 		for (int i = 0; i < firstLine.length; i++) {
-			String column = firstLine[i].split("\\(")[0];
-			boolean isRange = firstLine[i].split("\\(").length > 1 && firstLine[i].split("\\(")[1].toLowerCase().contains("range");
+			String column = firstLine[i].split("\\[")[0];
+			boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
 			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("priceWithoutTax"))) {
 				List<PricePlanMatrixColumn> pricePlanMatrixColumnList = findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
 				if (pricePlanMatrixColumnList.isEmpty()) {
@@ -247,7 +247,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String value = Optional.ofNullable(nextLine[columnIndex]).orElse(null);
 		if (isRange) {
 			String dateLeftPart = value.split("\\|")[0];
-			String dateRightPart = value.split("\\|")[1];
+			String dateRightPart = value.split("\\|").length>1?value.split("\\|")[1]:null;
 			Date fromDateValue = validateAndReturnDate(dateLeftPart);
 			Date toDateValue = validateAndReturnDate(dateRightPart);
 			pricePlanMatrixValueDto.setFromDateValue(fromDateValue);

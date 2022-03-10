@@ -1,20 +1,35 @@
 package org.meveo.apiv2.export;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
+import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.util.ApplicationProvider;
 
 import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -22,6 +37,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static org.meveo.api.MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
+import static org.reflections.Reflections.log;
 
 public class ImportExportResourceImpl implements ImportExportResource {
     @Inject
@@ -30,11 +47,22 @@ public class ImportExportResourceImpl implements ImportExportResource {
     @Inject
     private MeveoInstanceService meveoInstanceService;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    private LinkedHashMap<String, Future<ExportImportStatistics>> executionResults = new LinkedHashMap<>();
+
+
     @Override
     public Response exportData(ExportConfig exportConfig) {
         Map<String, Object> parameters = buildParams(exportConfig);
         ExportTemplate template = resolveTemplate(exportConfig);
-        if(exportConfig.getFileName()==null){
+        if (exportConfig.getFileName() == null) {
             throw new BadRequestException("file name parameter is mandatory");
         }
         template.setName(exportConfig.getFileName());
@@ -44,16 +72,108 @@ public class ImportExportResourceImpl implements ImportExportResource {
         return buildResponse(executionId, exportImportFuture, (Boolean) parameters.getOrDefault("xml", false));
     }
 
+    @Override
+    public ImportExportResponseDto importData(MultipartFormDataInput input) {
+
+            // Check user has utilities/remoteImport permission
+            checkPermissionsForImportingData();
+            cleanupOldImportResults();
+            InputPart inputPart = extractFileInputPart(input);
+            String fileName = getFileName(inputPart.getHeaders());
+            if (fileName == null) {
+                throw new MissingParameterException("Missing a file name");
+            }
+
+            // Convert the uploaded file from inputstream to a file
+            File tempFile = extractImportFile(inputPart, fileName);
+
+            String executionId = generateExecutionId(fileName);
+
+            log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
+            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
+
+            executionResults.put(executionId, exportImportFuture);
+            return new ImportExportResponseDto(executionId);
+
+
+
+
+    }
+
+    private void checkPermissionsForImportingData() {
+        if (!currentUser.hasRole("remoteImport")) {
+            throw new RemoteAuthenticationException("User does not have utilities/remoteImport permission");
+        }
+    }
+
+    private InputPart extractFileInputPart(MultipartFormDataInput input) {
+        List<InputPart> inputParts = input.getFormDataMap().get("uploadedFile");
+        if (inputParts == null) {
+            throw new MissingParameterException("Missing a file. File is expected as part name 'uploadedFile'");
+        }
+        return inputParts.get(0);
+
+    }
+
+    private File extractImportFile(InputPart inputPart, String fileName) {
+
+        File tempFile = null;
+            try {
+                InputStream inputStream = inputPart.getBody(InputStream.class, null);
+                tempFile = File.createTempFile(FilenameUtils.getBaseName(fileName).replaceAll(" ", "_"), "." + FilenameUtils.getExtension(fileName));
+                FileUtils.copyInputStreamToFile(inputStream, tempFile);
+                return tempFile;
+            } catch (IOException e) {
+                log.error("Failed to save uploaded {} file to temp file {}", fileName, tempFile, e);
+                throw new RuntimeException(e);
+            }
+    }
+
+    private String generateExecutionId(String fileName){
+        return (new Date()).getTime() + "_" + fileName;
+    }
+
+    /**
+     * Obtain a filename from a header. Header sample: { Content-Type=[image/png], Content-Disposition=[form-data; name="file"; filename="filename.extension"] }
+     **/
+    private String getFileName(MultivaluedMap<String, String> header) {
+
+        String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
+
+        for (String filename : contentDisposition) {
+            if ((filename.trim().startsWith("filename"))) {
+
+                String[] name = filename.split("=");
+
+                String finalFileName = name[1].trim().replaceAll("\"", "");
+                return finalFileName;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Remove expired import results - keep for 1 hour only
+     */
+    private void cleanupOldImportResults() {
+
+        long hourAgo = (new Date()).getTime() - 3600000;
+        executionResults = executionResults.keySet().stream()
+                .filter(key -> Long.parseLong(key.substring(0, key.indexOf('_'))) > hourAgo)
+                .collect(Collectors.toMap(key -> key, key -> executionResults.get(key), (x, y) -> y, LinkedHashMap::new));
+    }
+
+
     private Map<String, Object> buildParams(ExportConfig exportConfig) {
         Map<String, Object> parameters = new HashMap<>();
-        if(ExportConfig.ExportType.XML.equals(exportConfig.getExportType())){
+        if (ExportConfig.ExportType.XML.equals(exportConfig.getExportType())) {
             parameters.put("xml", true);
         }
         if (ExportConfig.ExportType.REMOTE_INSTANCE.equals(exportConfig.getExportType())) {
             parameters.put("remoteInstance", retrieveInstance(exportConfig.getInstanceCode()));
         }
         List<String> entityCodes = exportConfig.getEntityCodes();
-        if(entityCodes !=null && !entityCodes.isEmpty()){
+        if (entityCodes != null && !entityCodes.isEmpty()) {
             parameters.put("code_in", entityCodes);
         }
         return parameters;
@@ -61,16 +181,16 @@ public class ImportExportResourceImpl implements ImportExportResource {
 
     private ExportTemplate resolveTemplate(ExportConfig exportConfig) {
         var template = new ExportTemplate();
-        if(exportConfig.getExportTemplateName() != null){
+        if (exportConfig.getExportTemplateName() != null) {
             template = entityExportImportService.getExportImportTemplate(exportConfig.getExportTemplateName());
-            if(template == null){
-                throw new InvalidParameterException("template with name "+ exportConfig.getExportTemplateName()+" does not exist.");
+            if (template == null) {
+                throw new InvalidParameterException("template with name " + exportConfig.getExportTemplateName() + " does not exist.");
             }
-        }else if(exportConfig.getEntityClass() != null){
+        } else if (exportConfig.getEntityClass() != null) {
             try {
                 template.setEntityToExport((Class<? extends IEntity>) Class.forName(exportConfig.getEntityClass()));
             } catch (ClassNotFoundException e) {
-                throw new InvalidParameterException("class with name "+ exportConfig.getEntityClass()+" does not exist, please use a ful package name");
+                throw new InvalidParameterException("class with name " + exportConfig.getEntityClass() + " does not exist, please use a ful package name");
             }
         } else {
             throw new BadRequestException("you should either provide entity class name to export or export template name as parameter");
@@ -79,9 +199,9 @@ public class ImportExportResourceImpl implements ImportExportResource {
     }
 
     private Response buildResponse(String executionId, Future<ExportImportStatistics> exportImportStatistics, boolean isXml) {
-        if(isXml){
+        if (isXml) {
             try {
-                while (!exportImportStatistics.isDone()){
+                while (!exportImportStatistics.isDone()) {
                     Thread.sleep(300);
                 }
                 ExportResponse exportResponse = exportImportStatisticsToDto(executionId, exportImportStatistics.get());

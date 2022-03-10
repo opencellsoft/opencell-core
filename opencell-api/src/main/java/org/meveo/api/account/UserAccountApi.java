@@ -142,8 +142,10 @@ public class UserAccountApi extends AccountEntityApi {
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
-    				userAccount.setParentUserAccount(parentUserAccount);    				
+    			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
+    			userAccount.setParentUserAccount(parentUserAccount);    				
     			attachSubUserAccounts(postData,parentUserAccount,billingAccount);
+    			
     		} else {
     		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
     		}
@@ -151,6 +153,10 @@ public class UserAccountApi extends AccountEntityApi {
         
 		userAccountParent(postData, userAccount);
 		
+
+        if (postData.getIsCompany() != null) {
+            userAccount.setIsCompany(postData.getIsCompany());
+        }
         userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
@@ -184,6 +190,31 @@ public class UserAccountApi extends AccountEntityApi {
 		userAccount.setUserAccounts(subUserAccounts);
 	}
 
+    private void checkUserAccountParentChildList(List<String> subUserAccountCodes, String userAccountParentCode) {
+		for (String subUserAccountCode : subUserAccountCodes) {
+			if (!subUserAccountCode.equals(userAccountParentCode)) {
+				UserAccount subUserAccount = userAccountService.findByCode(subUserAccountCode);
+				if(subUserAccount != null) {
+					userAccountParentParent(subUserAccount, userAccountParentCode);
+				}else {
+					 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountCode);
+				}
+			}else {
+				 throw new BusinessApiException("The parent user account "+userAccountParentCode+" can not be in thje liste of children user accounts");
+			}
+		}
+	}
+
+    private void userAccountParentParent(UserAccount userAccount, String userAccountParentCode) {
+		for (UserAccount subUserAccount : userAccount.getUserAccounts()) {
+			if (!subUserAccount.getCode().equals(userAccountParentCode)) {
+				userAccountParentParent(subUserAccount, userAccountParentCode);
+			}else {
+				 throw new BusinessApiException("Can not update parent user account of "+userAccount.getCode()+" to "+userAccountParentCode+". "+userAccountParentCode+" is already a child of "+userAccount.getCode());
+			}
+		}
+	}
+
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
     }
@@ -210,6 +241,7 @@ public class UserAccountApi extends AccountEntityApi {
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
             UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
             if (parentUserAccount != null) {
+    			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
                 userAccount.setParentUserAccount(parentUserAccount);
                 List<UserAccount> subUserAccounts = new ArrayList<>();
         		for (String subUserAccountcode : postData.getUserAccountCodes()) {

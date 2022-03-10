@@ -417,6 +417,10 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "cdr_deduplicationkey_el", length = 500)
     @Size(max = 500)
     private String cdrDeduplicationKeyEL;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "functional_currency_flag")
+    private boolean functionalCurrencyFlag = false;
     
 
     public String getCode() {
@@ -862,4 +866,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 	public void setCdrDeduplicationKeyEL(String cdrDeduplicationKeyEL) {
 		this.cdrDeduplicationKeyEL = cdrDeduplicationKeyEL;
 	}
+
+    public boolean isMulticurrencyFlag() {
+        return multicurrencyFlag;
+    }
+
+    public boolean isFunctionalCurrencyFlag() {
+        return functionalCurrencyFlag;
+    }
+
+    public void setFunctionalCurrencyFlag(boolean functionalCurrencyFlag) {
+        this.functionalCurrencyFlag = functionalCurrencyFlag;
+    }
 }

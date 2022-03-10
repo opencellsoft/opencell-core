@@ -3582,7 +3582,7 @@ public class ValidateBRScript extends Script {
 <!--            <column name="inh_as_def_value" value="0"/>-->
 <!--            <column name="cf_protectable" value="0"/>-->
 <!--        </insert>-->
-<!--    </changeSet>-->
+<!--    </changeSet>
 
     <changeSet id="#5890-2021-02-05_43" author="ZBARIKI">
         <update tableName="crm_custom_field_tmpl">
@@ -3613,7 +3613,7 @@ public class ValidateBRScript extends Script {
             <column name="listvalues" value="DATE"/>
             <column name="listvalues_key" value="DATE"/>
         </insert>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="#5951_20210209_data" author="AbdelmounaimAkadid">
         <insert tableName="billing_tax_class">
@@ -6850,7 +6850,7 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 			<column name="description" value="dunning action" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
 		<insert tableName="billing_trading_language">
 			<column name="id" valueNumeric="-1" />
@@ -8101,7 +8101,7 @@ Opencell team.
 			<column name="uuid" value="TriggerCollectionPlanLevelsJob_Job" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-3507_20220218" author="HatimOUDAD">
 		<insert tableName="meveo_job_instance">
 			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -9314,8 +9314,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
            </column>
            <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 	</update>
-   </changeSet>	
-   
+   </changeSet>
+
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-36" />
@@ -9447,7 +9447,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="accounting_code_id" value="-36"/>
             <where>code='ART_SECURITY_DEPOSIT'</where>
         </update>
-    </changeSet>	
+    </changeSet>
     <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
     	<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id = (SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')</sql>
 	    <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' and code ='AggregationOptions'</sql>
@@ -9505,4 +9505,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
         </insert>
     </changeSet>
+	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza">
+		<update tableName="cpq_attribute">
+			<column name="el_value">${sub.getSubscriptionDate()}</column>
+			<where>id=-8</where>
+		</update>
+	</changeSet>
+	<changeSet id="INTRD-4680-01032022" author="TarikRabeh">
+		<update tableName="billing_user_account">
+			<column name="is_consumer">1</column>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>

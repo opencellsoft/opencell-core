@@ -35,6 +35,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -61,6 +62,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  *
  */
 @Entity
+@ObservableEntity
 @Table(name = "cpq_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
@@ -74,6 +76,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByOrderNumber", query = "FROM InvoiceLine il where il.status='OPEN' AND il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate order by il.billingAccount.id "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscription", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccount", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate"),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByOrderNumberAndBR", query = "FROM InvoiceLine il where il.status='OPEN' AND il.orderNumber=:orderNumber AND il.billingRun.id=:billingRunId order by il.billingAccount.id "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscriptionAndBR", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndBR", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN'  AND il.billingRun.id=:billingRunId "),
 		@NamedQuery(name = "InvoiceLine.updateWithInvoice", query = "UPDATE InvoiceLine il set il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED, il.auditable.updated = :now , il.billingRun=:billingRun, il.invoice=:invoice, il.invoiceAggregateF=:invoiceAgregateF where il.id in :ids"),
 		@NamedQuery(name = "InvoiceLine.updateWithInvoiceInfo", query = "UPDATE InvoiceLine il set il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED, il.billingRun=:billingRun, il.auditable.updated = :now, il.invoice=:invoice, il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, il.amountTax=:amountTax, il.tax=:tax, il.taxRate=:taxPercent, il.invoiceAggregateF=:invoiceAgregateF where il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByOrderNumber", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
@@ -95,18 +100,20 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null, il.accountingArticle=null where il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED and il.invoice.id IN (:invoiceIds)"),
 		@NamedQuery(name = "InvoiceLine.cancelByInvoiceIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now, il.billingRun= null, il.invoice=null, il.invoiceAggregateF=null WHERE il.invoice.id IN (:invoicesIds)"),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrderAndBR", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.BillingAccountByILIds", query = "SELECT il.billingAccount FROM InvoiceLine il WHERE il.id in (:ids)"),
 		@NamedQuery(name = "InvoiceLine.listByInvoice", query = "SELECT il FROM InvoiceLine il where il.invoice=:invoice and il.status='BILLED' order by il.valueDate"),
 		@NamedQuery(name = "InvoiceLine.listByInvoiceNotFree", query = "SELECT il FROM InvoiceLine il where il.invoice=:invoice and il.amountWithoutTax<>0 and il.status='BILLED' order by il.valueDate"),
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByQuote", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.quote.id=:quoteId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuoteAndBR", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote"),
         @NamedQuery(name = "InvoiceLine.deleteInvoiceAggrByInvoiceAgregate", query = "UPDATE InvoiceLine il set il.invoiceAggregateF=null where il.invoiceAggregateF in (Select ia.id from InvoiceAgregate ia where ia.invoice.id =:invoiceId)"),
 		@NamedQuery(name = "InvoiceLine.deleteInvoiceAggrByInvoice", query = "UPDATE InvoiceLine il set il.invoiceAggregateF=null where il.invoice.id=:invoiceId"),
 		@NamedQuery(name = "InvoiceLine.listByBillingRun", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRun", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.listByBillingRunNotValidatedInvoices", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId and il.invoice.status <> 'VALIDATED'"),
-		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)")
+		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))")
 		})
 public class InvoiceLine extends AuditableEntity {
 
@@ -266,6 +273,11 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id")
 	private OrderOffer orderOffer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_invoice_line")
+	private InvoiceLine discountedInvoiceLine;
+	
 
 	public InvoiceLine() {
 	}
@@ -636,6 +648,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+
+	public InvoiceLine getDiscountedInvoiceLine() {
+		return discountedInvoiceLine;
+	}
+
+	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
+		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
 	
 	
