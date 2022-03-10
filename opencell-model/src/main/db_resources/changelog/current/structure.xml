@@ -12003,7 +12003,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </update>
     </changeSet>
     
-    <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD">
+    <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" failOnError="false">
         <createSequence sequenceName="cpq_order_amendement_seq" startValue="1" />
         <createTable tableName="cpq_order_amendement">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
