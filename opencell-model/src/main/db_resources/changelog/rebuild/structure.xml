@@ -11582,7 +11582,7 @@
 		</createTable>
         </changeSet>
         
-        <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD">
+        <changeSet id="#INTRD-4590-20220308-rebuild-str-tbl" author="HatimOUDAD">
         <createTable tableName="cpq_order_amendement">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_order_amendement_pkey" />
@@ -17207,6 +17207,7 @@
     <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
+    <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
