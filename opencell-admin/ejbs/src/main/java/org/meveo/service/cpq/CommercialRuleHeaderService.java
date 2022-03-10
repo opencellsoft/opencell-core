@@ -198,7 +198,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         MutableBoolean continueProcess=new MutableBoolean(false);
         boolean isLastLine=false;
         CommercialRuleLine line=null;
+        boolean isSelectedAttribute=true;
         for (CommercialRuleHeader commercialRule : commercialRules) {
+        	if(!isSelectedAttribute) {
+        		return false;
+        	}
             boolean isPreRequisite = RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType());
             items = commercialRule.getCommercialRuleItems();
             for (CommercialRuleItem item : items) { 
@@ -211,20 +215,21 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                             && !line.getSourceOfferTemplate().getCode().equals(offerCode))
                             || (line.getSourceOfferTemplate() != null
                             && line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct() == null && line.getSourceAttribute()==null)) {
-                        if (continueProcess.isTrue() ||commercialRules.iterator().hasNext()) {
+                        if (continueProcess.isTrue()) {
                             continue;
                         } else {
-                               return false;
+                        	isSelectedAttribute=true;
+                        	break;
                         }
 
                     }
                     if(line.getSourceProduct() == null && line.getSourceOfferTemplate()!=null) {
-                    	boolean isSelectedAttribute=isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode,isLastLine);
+                    	 isSelectedAttribute=isSelectedAttribute(selectedOfferAttributes,line,continueProcess, isPreRequisite,offerCode,isLastLine);
                     	if (continueProcess.isTrue()) {
                     		continue;
-                    	} else {
-                    		return isSelectedAttribute;
-                    	}
+                    	}else {
+                       	 break;
+                        }
                     }
                     if (line.getSourceProduct() != null) {
                         String sourceProductCode = line.getSourceProduct().getCode();
@@ -245,11 +250,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                         	
                         }
                         if (line.getSourceAttribute() != null && productContext!=null){ 
-                        		boolean isSelectedAttribute= isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode,isLastLine) ; 
+                        		 isSelectedAttribute= isSelectedAttribute(productContext.getSelectedAttributes(),line,continueProcess, isPreRequisite,offerCode,isLastLine) ; 
                         		 if (continueProcess.isTrue()) {
                                      continue;
-                                 } else {
-                                     return isSelectedAttribute;
+                                 }else {
+                                	 break;
                                  }
                         }   
                         
@@ -276,12 +281,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             }
 
         }
-        return true;
+        return isSelectedAttribute;
     }
     
     
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
-    	boolean isSelected=true;
+    	boolean isSelected=!isPreRequisite;
     	if(line.getSourceAttribute()==null) {
     		return true;
     	}
@@ -318,13 +323,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					break;
     				default:
     					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
-    							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
+    							|| !isPreRequisite && (convertedValue.equals(line.getSourceAttributeValue()))) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, convertedValue.equals(line.getSourceAttributeValue())));
-    							return false;
-    						}else if (isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())){
-    							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
-    							return true;
-    						}
+    						return false;
+    					}else if (isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())){
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    						return true;
+    					}
     					
 
     				}
