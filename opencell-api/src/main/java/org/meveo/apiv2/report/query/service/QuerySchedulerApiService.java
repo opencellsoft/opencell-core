@@ -60,7 +60,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
         	ReportQuery reportQuery = entity.getReportQuery();
         	String code = reportQuery.getCode() + "_Job";
 			JobInstance jobInstance = jobInstanceService.findByCode(code);
-			boolean disabled = entity.getIsQueryScheduler();
+			boolean isDisabledJob = !entity.getIsQueryScheduler();
 			if (jobInstance != null) {
 				entity = jobInstance.getQueryScheduler() != null ? querySchedulerService.findById(jobInstance.getQueryScheduler().getId()) : entity;
 			}else {
@@ -73,7 +73,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
             jobInstance.setJobTemplate("ReportQueryJob");
             jobInstance.setCfValue("reportQuery", reportQuery);
             jobInstance.setQueryScheduler(entity);
-			jobInstance.setDisabled(!disabled);
+			jobInstance.setDisabled(isDisabledJob);
 			if(jobInstance.getId() == null) {
 				querySchedulerService.create(entity);
 				entity.setJobInstance(jobInstance);
