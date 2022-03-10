@@ -15,22 +15,20 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.jobs;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+package org.meveo.commons;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.meveo.commons.JobCategoryEnumDeserializer;
-import org.meveo.commons.utils.JobCategoryTypeAdapter;
-import org.meveo.commons.utils.MeveoEnum;
+import java.io.IOException;
 
-@XmlJavaTypeAdapter(JobCategoryTypeAdapter.class)
-@JsonDeserialize(using = JobCategoryEnumDeserializer.class)
-@MeveoEnum(identifier = JobCategoryEnum.class)
-public interface JobCategoryEnum<E extends Enum<E>> {
-    String getLabel();
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 
-    Integer getId();
+public class JobCategoryEnumDeserializer extends JsonDeserializer<MeveoJobCategoryEnum> {
 
-    String getName();
+    @Override
+    public MeveoJobCategoryEnum deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        return MeveoJobCategoryEnum.valueOf(jsonParser.getValueAsString());
+    }
 }
