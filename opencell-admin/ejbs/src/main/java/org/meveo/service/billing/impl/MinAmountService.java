@@ -625,7 +625,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
                 .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .getSingleResult();
     }
 
     /**
@@ -643,7 +643,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
                 .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .getSingleResult();
     }
 
     /**

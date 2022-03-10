@@ -145,7 +145,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @AttributeOverrides(value = { 
     		@AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
-            @AttributeOverride(name = "disabled", column = @Column(name = "disable"))})
+            @AttributeOverride(name = "disabled", column = @Column(name = "disabled"))})
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
     /**

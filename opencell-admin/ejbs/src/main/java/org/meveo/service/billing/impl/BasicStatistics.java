@@ -9,11 +9,13 @@ public class BasicStatistics {
 
     private BigDecimal sumAmountWithoutTax;
     private BigDecimal sumAmountWithTax;
+    private BigDecimal sumAmountTax;
     private Integer count;
 
     public BasicStatistics() {
         this.sumAmountWithoutTax = ZERO;
         this.sumAmountWithTax = ZERO;
+        this.sumAmountTax = ZERO;
         this.count = valueOf(0);
     }
 
@@ -25,6 +27,10 @@ public class BasicStatistics {
     public BigDecimal getSumAmountWithTax() {
         return sumAmountWithTax;
     }
+    
+    public BigDecimal getSumAmountTax() {
+        return sumAmountTax;
+    }
 
     public BigDecimal addToAmountWithoutTax(BigDecimal amount) {
         sumAmountWithoutTax = this.sumAmountWithoutTax.add(amount);
@@ -34,6 +40,11 @@ public class BasicStatistics {
     public BigDecimal addToAmountWithTax(BigDecimal amount) {
         this.sumAmountWithTax = this.sumAmountWithTax.add(amount);
         return sumAmountWithTax;
+    }
+    
+    public BigDecimal addToAmountTax(BigDecimal amount) {
+        this.sumAmountTax = this.sumAmountTax.add(amount);
+        return sumAmountTax;
     }
 
     public Integer getCount() {
@@ -51,5 +62,6 @@ public class BasicStatistics {
 		this.count+=statistics.getCount();
 		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
 	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
+	     this.sumAmountTax=this.sumAmountTax.add(statistics.getSumAmountTax());
 	}
 }
