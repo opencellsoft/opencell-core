@@ -42,6 +42,8 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 				.setParameter("priceLevelEnum", priceLevel)
 				.executeUpdate();
 	}
+	 @JpaAmpNewTx
+	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeByQuoteOfferAndPriceLevel(QuoteOffer quoteOffer, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteOfferAndPriceLevel")
 				.setParameter("quoteOfferId", quoteOffer.getId())
