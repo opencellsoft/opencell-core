@@ -17180,6 +17180,7 @@
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql"/>
     <changeSet id="#INTRD-5276_2022-02-24_ORACLE" author="MohammedSTITANE" dbms="oracle"/>
     <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql"/>
+    <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid" />
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
     <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI" />
