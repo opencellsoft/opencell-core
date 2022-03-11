@@ -1160,9 +1160,8 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
-        clearExistingQuotations(quoteVersion);
+        quoteVersionService.clearExistingQuotations(quoteVersion);
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
 
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
         //get quote discountPlanitem of type percentage
@@ -1173,7 +1172,8 @@ public class CpqQuoteApi extends BaseApi {
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer,applicablePercentageDiscountItems));
         }
-
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+        
         Map<BigDecimal, List<QuotePrice>> pricesPerTaux = accountingArticlePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 
@@ -1428,16 +1428,7 @@ public class CpqQuoteApi extends BaseApi {
         return null;
     }
 
-    private void clearExistingQuotations(QuoteVersion quoteVersion) {
-        if (quoteVersion.getQuoteArticleLines() != null) {
-            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
-                    .stream()
-                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
-                    .collect(Collectors.toList());
-            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
-            quoteVersionService.update(quoteVersion);
-        }
-    }
+  
 
     @SuppressWarnings("unused")
     public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, boolean isVirtual) throws BusinessException {
@@ -1743,10 +1734,7 @@ public class CpqQuoteApi extends BaseApi {
          BigDecimal unitDiscountAmount = BigDecimal.ZERO;
          QuoteArticleLine quoteArticleLine = null;
          TaxInfo taxInfo = null;
-    	boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,null, quoteVersion,quoteOffer,quoteproduct,quoteVersion.getQuote().getQuoteDate());
-    	log.debug("applyFixedDiscount discountPlan code={},isDiscountApplicable={}",discountPlan.getCode(),isDiscountApplicable);
-
-        if (isDiscountApplicable) {
+    	
         	  Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, applicationDate);
 
@@ -1802,7 +1790,7 @@ public class CpqQuoteApi extends BaseApi {
                   }
               
 
-        	  }
+        	  
         }
 
     }

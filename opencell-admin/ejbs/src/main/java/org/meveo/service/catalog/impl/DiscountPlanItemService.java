@@ -249,6 +249,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteVersion,quoteOffer,quoteProduct,applicationDate);
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},isDiscountApplicable={}",discountPlan.getCode(),isDiscountApplicable);
+
         if (isDiscountApplicable) {
         	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
               Long lowPriority=null;
@@ -261,7 +263,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
                   }
               }
         }
-               
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
+       
         return applicableDiscountPlanItems;
     }
     

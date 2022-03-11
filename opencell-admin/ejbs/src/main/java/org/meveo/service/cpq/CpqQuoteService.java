@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -32,6 +33,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
@@ -52,6 +54,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Media;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
@@ -495,13 +498,6 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 			return true;
 		}
 
-	/**
-	 * Get a full path to an invoice's PDF file.
-	 *
-	 *
-	 * @param invoice Invoice
-	 * @param createDirs Should missing directories be created
-	 * @return Absolute path to a PDF file
-	 */
+	
 
 }

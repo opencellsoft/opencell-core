@@ -4,9 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuotePrice;
@@ -33,13 +36,16 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 		return query.getResultList();
 	}
 
+	 @JpaAmpNewTx
+	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteVersionAndPriceLevel")
 				.setParameter("quoteVersion", quoteVersion)
 				.setParameter("priceLevelEnum", priceLevel)
 				.executeUpdate();
 	}
-	
+	 @JpaAmpNewTx
+	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeByQuoteOfferAndPriceLevel(QuoteOffer quoteOffer, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteOfferAndPriceLevel")
 				.setParameter("quoteOfferId", quoteOffer.getId())
