@@ -31,16 +31,41 @@ public class UserAuthTimeProducer implements Serializable {
 
     private static final long serialVersionUID = 5510518807024231791L;
 
-    private int authTime = 0;
+    /**
+     * Timestamp when user has authenticated or token was issued
+     */
+    protected int authenticatedAt;
 
-    public int getAuthTime() {
-        return authTime;
+    /**
+     * Authentication/session token hash/id
+     */
+    protected String authenticationTokenId;
+
+    /**
+     * @return Timestamp when user has authenticated or token was issued
+     */
+    public int getAuthenticatedAt() {
+        return authenticatedAt;
     }
 
-    public void setAuthTime(int authTime) {
-        if (this.authTime != authTime) {
-            this.authTime = authTime;
-        }
+    /**
+     * @param authenticatedAt Timestamp when user has authenticated or token was issued
+     */
+    public void setAuthenticatedAt(int authenticatedAt) {
+        this.authenticatedAt = authenticatedAt;
     }
 
+    /**
+     * @return Authentication/session token hash/id
+     */
+    public String getAuthenticationTokenId() {
+        return authenticationTokenId;
+    }
+
+    /**
+     * @param authenticationTokenId Authentication/session token hash/id
+     */
+    public void setAuthenticationTokenId(String authenticationTokenId) {
+        this.authenticationTokenId = authenticationTokenId;
+    }
 }

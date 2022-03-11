@@ -18,8 +18,10 @@
 
 package org.meveo.security.keycloak;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.SessionContext;
@@ -27,6 +29,7 @@ import javax.ejb.SessionContext;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.AccessToken.Access;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +69,12 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * @param roleToPermissionMapping Role to permission mapping
      */
     @SuppressWarnings("rawtypes")
-    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, String forcedProvider, Set<String> additionalRoles,
-            Map<String, Set<String>> roleToPermissionMapping) {
+    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, String forcedProvider, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
 
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            
             AccessToken accessToken = keycloakSecurityContext.getToken();
 
             // log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", accessToken.getSubject(),
@@ -80,11 +83,12 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             // accessToken.getResourceAccess(RESOURCE_PROVIDER) != null ? accessToken.getResourceAccess(RESOURCE_PROVIDER).getRoles()
             // : null,
             // accessToken.getOtherClaims());
-
+            
             this.subject = accessToken.getSubject();
             this.userName = accessToken.getPreferredUsername();
             this.fullName = accessToken.getName();
-            this.authTime = accessToken.getAuthTime();
+            this.authenticatedAt = accessToken.getIssuedAt();
+            this.authenticationTokenId = accessToken.getSessionState();
             this.email = accessToken.getEmail();
 
             if (accessToken.getOtherClaims() != null) {
@@ -121,13 +125,13 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         }
 
         // Resolve roles to permissions. At the end this.roles will contain both role and permission names.
-        Set<String> rolesToResolve = new HashSet<>(this.roles);
         if (additionalRoles != null) {
-            rolesToResolve.addAll(additionalRoles);
             this.roles.addAll(additionalRoles);
         }
 
-        if(roleToPermissionMapping != null) {
+        Set<String> rolesToResolve = new HashSet<>(this.roles);
+
+        if (roleToPermissionMapping != null) {
             for (String roleName : rolesToResolve) {
                 if (roleToPermissionMapping.containsKey(roleName)) {
                     this.roles.addAll(roleToPermissionMapping.get(roleName));
@@ -158,6 +162,13 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         return super.hasRole(role);
     }
 
+    /**
+     * Extract username from autentication token - applies to Keycloak implementation only, or default to a forced username
+     * 
+     * @param securityContext Security context
+     * @param forcedUserName Forced username if not available from authentication token
+     * @return Username
+     */
     @SuppressWarnings("rawtypes")
     protected static String extractUsername(SessionContext securityContext, String forcedUserName) {
 
@@ -171,6 +182,12 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         }
     }
 
+    /**
+     * Extract provider code from autentication token. Applies to Keycloak implementation only.
+     * 
+     * @param securityContext Security context
+     * @return Provider code if set
+     */
     @SuppressWarnings("rawtypes")
     protected static String extractProviderCode(SessionContext securityContext) {
 
@@ -181,6 +198,40 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
                 return (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
             }
 
+        }
+        return null;
+    }
+
+    /**
+     * Get roles by application. Applies to Keycloak implementation only.
+     * 
+     * @param securityContext Security context
+     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm".
+     */
+    protected static Map<String, Set<String>> getRolesByApplication(SessionContext securityContext) {
+
+        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
+
+            Map<String, Set<String>> rolesByApplication = new HashMap<String, Set<String>>();
+            @SuppressWarnings("rawtypes")
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            AccessToken accessToken = keycloakSecurityContext.getToken();
+
+            // Realm roles
+            Set<String> realmRoles = null;
+            if (accessToken.getRealmAccess() != null) {
+                realmRoles = accessToken.getRealmAccess().getRoles();
+                rolesByApplication.put("realm", realmRoles);
+            }
+
+            // Client roles
+            for (Entry<String, Access> client : accessToken.getResourceAccess().entrySet()) {
+                rolesByApplication.put(client.getKey(), client.getValue().getRoles());
+
+            }
+
+            return rolesByApplication;
         }
         return null;
     }
