@@ -3,13 +3,8 @@ package org.meveo.model.ordering;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.payments.CustomerAccount;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -20,18 +15,41 @@ import java.util.List;
 
 public class Threshold extends BusinessEntity {
 
+    @Column(name = "sequence")
     @NotNull
     private Integer sequence;
+
+    @Column(name = "percentage")
     @NotNull
     private Integer percentage;
 
-    @OneToMany
-    private List<Seller> sellers;
+    @ElementCollection(targetClass = ThresholdRecipientsEnum.class)
+    @CollectionTable(name = "open_order_threshold_recipients", joinColumns = @JoinColumn(name = "threshold_id"))
+    @Column(name = "recipient")
+    @Enumerated(EnumType.STRING)
+    private List<ThresholdRecipientsEnum> recipients;
 
-    @OneToMany
-    private List<CustomerAccount> customers;
+    public Integer getSequence() {
+        return sequence;
+    }
 
-    @OneToMany
-    private List<UserAccount> users;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
+    public List<ThresholdRecipientsEnum> getRecipients() {
+        return recipients;
+    }
+
+    public void setRecipients(List<ThresholdRecipientsEnum> recipients) {
+        this.recipients = recipients;
+    }
 }
