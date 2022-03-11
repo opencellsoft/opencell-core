@@ -1196,7 +1196,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         CpqQuote quote=quoteVersion.getQuote();
         applyFixedDiscount(quoteVersion.getDiscountPlan(), quoteTotalAmount, quote.getSeller(),
-        		quote.getBillableAccount(), null, null,null, quoteVersion);
+        		quote.getBillableAccount(), null, null,null, quoteVersion,quote.getQuoteDate());
 
         //Get the updated quote version and construct the DTO
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
@@ -1371,13 +1371,13 @@ public class CpqQuoteApi extends BaseApi {
         quoteProductTotalAmount.forEach((id, amount) -> {
         	QuoteProduct quoteProduct=quoteProductService.findById(id);
         	 applyFixedDiscount(quoteProduct.getDiscountPlan(), amount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
-             		(quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount()), quoteOffer, quoteProduct, null,quoteOffer.getQuoteVersion());
+             		(quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount()), quoteOffer, quoteProduct, null,quoteOffer.getQuoteVersion(),quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
 
 		});
 
         BigDecimal offerTotalAmount = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
         applyFixedDiscount(quoteOffer.getDiscountPlan(), offerTotalAmount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
-        		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion());
+        		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion(),quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
 
         //accountingPrices.addAll(accountingPricesDiscount);
         return accountingPrices;
@@ -1734,7 +1734,7 @@ public class CpqQuoteApi extends BaseApi {
     }
 
 
-    private void applyFixedDiscount( DiscountPlan discountPlan,BigDecimal amountToApplyDiscountOn, Seller seller, BillingAccount billingAccount, QuoteOffer quoteOffer,QuoteProduct quoteproduct,AccountingArticle accountingArticle,QuoteVersion quoteVersion) {
+    private void applyFixedDiscount( DiscountPlan discountPlan,BigDecimal amountToApplyDiscountOn, Seller seller, BillingAccount billingAccount, QuoteOffer quoteOffer,QuoteProduct quoteproduct,AccountingArticle accountingArticle,QuoteVersion quoteVersion,Date applicationDate) {
     	log.debug("applyFixedDiscount discountPlan code={},amountToApplyDiscountOn={}",discountPlan!=null?discountPlan.getCode():null,amountToApplyDiscountOn);
     	if(discountPlan==null|| amountToApplyDiscountOn==null || amountToApplyDiscountOn.compareTo(BigDecimal.ZERO)<=0) {
     		return;
@@ -1748,7 +1748,7 @@ public class CpqQuoteApi extends BaseApi {
 
         if (isDiscountApplicable) {
         	  Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, applicationDate);
 
         	 for (DiscountPlanItem discountPlanItem : discountItems) {
         		 log.debug("applyFixedDiscount discountPlan code={},discountPlanItem type={}",discountPlan.getCode(),discountPlanItem.getDiscountPlanItemType());
