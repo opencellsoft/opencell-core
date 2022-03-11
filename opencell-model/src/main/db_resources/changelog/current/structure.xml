@@ -12205,4 +12205,32 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+
+    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI">
+        <createSequence sequenceName="open_order_Threshold_seq" startValue="1" />
+        <createTable tableName="open_order_Threshold">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+            <column name="sequence" type="int" />
+            <column name="percentage" type="int" />
+        </createTable>
+
+        <createTable tableName="open_order_threshold_recipients">
+            <column name="threshold_id" type="int" />
+            <column name="recipient" type="varchar(100)" />
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
