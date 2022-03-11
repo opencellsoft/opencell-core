@@ -47,6 +47,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.service.base.BusinessService;
@@ -108,13 +109,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
      * @return true/false
      * @throws BusinessException business exception.
      */
-    public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,WalletOperation walletOperation, Invoice invoice,QuoteOffer offer,QuoteProduct product, DiscountPlan dp) throws BusinessException {
+    public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,WalletOperation walletOperation,QuoteVersion quoteVersion, Invoice invoice,QuoteOffer offer,QuoteProduct product, DiscountPlan dp) throws BusinessException {
         Boolean result = true;
 
         if (StringUtils.isBlank(expression)) {
             return result;
         }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, walletOperation,  invoice, offer, product);
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, quoteVersion,walletOperation,  invoice, offer, product);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -140,7 +141,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		return ids;
 	}
 	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo,QuoteOffer quoteOffer, QuoteProduct quoteProduct,Date applicationDate) {
+	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,Date applicationDate) {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
@@ -165,7 +166,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		applicationDate=applicationDate!=null?applicationDate:new Date();
 		
 		if (discountPlan.isActive() && discountPlan.isEffective(applicationDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,null, quoteOffer, quoteProduct, discountPlan)) {
+			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,quoteVersion,null, quoteOffer, quoteProduct, discountPlan)) {
 				return true;
 			}
 		}

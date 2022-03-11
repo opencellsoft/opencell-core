@@ -245,16 +245,16 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return discountAmount;
 
     }
-    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteOffer quoteOffer, QuoteProduct quoteProduct,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteOffer,quoteProduct,applicationDate);
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteVersion,quoteOffer,quoteProduct,applicationDate);
         if (isDiscountApplicable) {
         	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
               Long lowPriority=null;
               for (DiscountPlanItem discountPlanItem : discountPlanItems) {
               	
-                  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) && discountPlanItem.isActive() && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation, null, quoteOffer, quoteProduct, discountPlan)) {
+                  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) && discountPlanItem.isActive() && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,quoteVersion, null, quoteOffer, quoteProduct, discountPlan)) {
                   	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
                   	if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
                   	applicableDiscountPlanItems.add(discountPlanItem);
