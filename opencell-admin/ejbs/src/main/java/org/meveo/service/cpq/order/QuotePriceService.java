@@ -36,16 +36,12 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 		return query.getResultList();
 	}
 
-	 @JpaAmpNewTx
-	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteVersionAndPriceLevel")
 				.setParameter("quoteVersion", quoteVersion)
 				.setParameter("priceLevelEnum", priceLevel)
 				.executeUpdate();
 	}
-	 @JpaAmpNewTx
-	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void removeByQuoteOfferAndPriceLevel(QuoteOffer quoteOffer, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteOfferAndPriceLevel")
 				.setParameter("quoteOfferId", quoteOffer.getId())
