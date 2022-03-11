@@ -3544,6 +3544,9 @@
             <column name="currency_id" type="bigint" />
             <column name="symbol" type="varchar(255)" />
             <column name="decimal_places" type="int" defaultValueNumeric="2" />
+            <column name="current_rate" type="numeric(23, 12)" />
+            <column name="current_rate_from_date" type="datetime" />
+            <column name="current_rate_updater" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-198">
@@ -17156,9 +17159,10 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
     <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
-    </changeSet>
+    </changeSet>adm_inbound_resp_headers
 </databaseChangeLog>
