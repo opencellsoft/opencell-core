@@ -200,7 +200,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public Optional<AccountingArticle> findByCode(String code) {
-        AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(code, fetchFields);
         if (accountingArticle == null)
             throw new BadRequestException("No Account Article class found with code: " + code);
         return Optional.ofNullable(accountingArticle);

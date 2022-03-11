@@ -247,7 +247,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String value = Optional.ofNullable(nextLine[columnIndex]).orElse(null);
 		if (isRange) {
 			String dateLeftPart = value.split("\\|")[0];
-			String dateRightPart = value.split("\\|")[1];
+			String dateRightPart = value.split("\\|").length>1?value.split("\\|")[1]:null;
 			Date fromDateValue = validateAndReturnDate(dateLeftPart);
 			Date toDateValue = validateAndReturnDate(dateRightPart);
 			pricePlanMatrixValueDto.setFromDateValue(fromDateValue);

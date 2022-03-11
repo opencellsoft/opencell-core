@@ -40,6 +40,7 @@ import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -56,6 +57,9 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     @Inject
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
+
+    @Inject
+    private BusinessEntityService businessEntityService;
 
     static Set<Class<?>> workflowedClasses = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
 
@@ -229,4 +233,27 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         }
     }
 
+    public void executeWorkflowWithLoop(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+        log.debug("Executing generic workflow :{} on instance {}", genericWorkflow.getCode(), workflowInstance);
+        try {
+            String oldStatus = "";
+            while (true) {
+                WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+                String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : "";
+                log.trace("Actual status: {} for entity : {}", currentStatus, iwfEntity.getCode());
+                if (oldStatus.equals(currentStatus)) {
+                    break;
+                }
+                workflowInstance = executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
+                oldStatus = currentStatus;
+                //refresh entity  if it was updated by previous transition
+                businessEntityService.setEntityClass((Class<BusinessEntity>) ReflectionUtils.getCleanClass(iwfEntity.getClass()));
+                iwfEntity = businessEntityService.refreshOrRetrieve(iwfEntity);
+
+            }
+        } catch (Exception e) {
+            log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
+            throw new BusinessException(e);
+        }
+    }
 }

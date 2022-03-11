@@ -175,7 +175,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
-    private Set<AccountingArticle> targetAccountingArticle = new HashSet<AccountingArticle>();
+    private Set<AccountingArticle> targetAccountingArticle = new HashSet<>();
 
 
 	@ManyToOne(fetch = FetchType.LAZY)

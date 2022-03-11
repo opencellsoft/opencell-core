@@ -282,7 +282,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         OfferTemplate offerTemplate = invoiceLine.getOfferTemplate();
         BigDecimal amountWithoutTax = invoiceLine.getAmountWithoutTax();
         BigDecimal discountAmount = BigDecimal.ZERO;
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(), offerTemplate, product, invoiceLine.getValueDate());
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(), offerTemplate, product, invoiceLine.getValueDate(), null);
         if (isDiscountApplicable) {
             List<DiscountPlanItem> discountItems = getApplicableDiscountPlanItems(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(), offerTemplate, product, accountintArticle);
             for (DiscountPlanItem discountPlanItem : discountItems) {
