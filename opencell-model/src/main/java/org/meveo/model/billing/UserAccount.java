@@ -282,11 +282,11 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return BillingAccount.class;
     }
 
-	public Boolean isConsumer() {
+	public Boolean getIsConsumer() {
 		return isConsumer;
 	}
 
-	public void setConsumer(Boolean isConsumer) {
+	public void setIsConsumer(Boolean isConsumer) {
 		this.isConsumer = isConsumer;
 	}
     
