@@ -1246,24 +1246,38 @@ public class CpqQuoteApi extends BaseApi {
         quotePrice.setPriceLevelEnum(level);
         quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
         quotePrice.setQuoteOffer(quoteOffer);
-    	Optional<QuotePrice> price =  pricesPerType.get(key).stream().reduce((a, b) -> {
+        Optional<QuotePrice> price = pricesPerType.get(key).stream().reduce((a, b) -> {
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             if(quotePrice.getAmountWithoutTaxWithoutDiscount().compareTo(BigDecimal.ZERO)==0 && a.getDiscountedQuotePrice()==null) {
-           	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
-           }  
-       	 if(b.getDiscountedQuotePrice()==null)
-            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
+            	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
+            }
+           
+            
+        	 if(b.getDiscountedQuotePrice()==null)
+             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax()));
+        		 
+        	 
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
             if(a.getRecurrenceDuration()!=null) {
             	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
             }
-            return price;
-    		
-    }
+            if(a.getRecurrencePeriodicity()!=null) {
+            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
+            }
+            log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
+
+            return quotePrice;
+        });
+        if(!PriceLevelEnum.OFFER.equals(level) && price.isPresent()) {
+            quotePriceService.create(price.get());
+        }
+        return price;
+		
+}
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer,List<DiscountPlanItem> applicablePercentageDiscountItems) {
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
@@ -1434,15 +1448,6 @@ public class CpqQuoteApi extends BaseApi {
             quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
             quoteVersionService.update(quoteVersion);
         }
-    }
-
-
-                   quoteArticleLineService.remove(quoteArticleLines);
-                 }
-            }
-
-
-
     }
 
     @SuppressWarnings("unused")

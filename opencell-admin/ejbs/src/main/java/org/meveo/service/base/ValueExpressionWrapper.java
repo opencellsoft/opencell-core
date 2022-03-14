@@ -39,7 +39,7 @@ import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.admin.Seller;
@@ -636,6 +636,8 @@ public class ValueExpressionWrapper {
         AttributeValue attributeValue=null;
         CommercialOrder order=null;
         List<Access> accessPoints = null;
+        WalletOperation walletOperation=null;
+        EDR edr=null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {

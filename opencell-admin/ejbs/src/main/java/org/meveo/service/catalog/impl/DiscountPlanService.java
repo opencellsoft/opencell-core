@@ -27,40 +27,21 @@ import java.util.Map;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.IDiscountable;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.cpq.enums.PriceTypeEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.quote.QuoteArticleLine;
-import org.meveo.model.quote.QuotePrice;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
