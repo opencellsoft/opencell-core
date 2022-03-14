@@ -12022,7 +12022,6 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="description" type="varchar(255)"/>
             <column name="subscription_id" type="bigint"/>
             <column name="user_account_id" type="bigint" />
-            <column name="cf_values" type="${type.json}"></column>
         </createTable>
         
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_order_amendement"

@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 
@@ -26,7 +26,7 @@ import org.meveo.model.billing.UserAccount;
 @Table(name = "cpq_order_amendement", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_amendement_seq")})
-public class OrderAmendement extends BusinessCFEntity {
+public class OrderAmendement extends AuditableCFEntity {
 
 	/**
 	 * 
