@@ -12003,6 +12003,14 @@ order by date_trunc('month', i.invoice_date) DESC
         </update>
     </changeSet>
 
+    <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid">
+    	 <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+
+
     <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI">
         <createSequence sequenceName="open_order_setting_seq" startValue="1" />
         <createTable tableName="open_order_setting">
