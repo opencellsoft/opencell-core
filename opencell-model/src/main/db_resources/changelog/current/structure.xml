@@ -12075,6 +12075,14 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>version is null</where>
         </update>
     </changeSet>
+
+    <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI">
+        <addColumn tableName="billing_trading_currency">
+            <column name="current_rate" type="numeric(23, 12)" />
+            <column name="current_rate_from_date" type="datetime" />
+            <column name="current_rate_updater" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
     
 
 </databaseChangeLog>

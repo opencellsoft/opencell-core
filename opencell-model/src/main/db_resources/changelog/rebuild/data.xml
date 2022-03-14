@@ -101,7 +101,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${quote.getValidationDate()}"></column>
+        	<column name="el_value" value="${sub.getSubscriptionDate()}"></column>
         	<column name="uuid" value="subscription date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-8"></column>
@@ -9787,7 +9787,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
         </insert>
     </changeSet>
-    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza"/>
+	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
