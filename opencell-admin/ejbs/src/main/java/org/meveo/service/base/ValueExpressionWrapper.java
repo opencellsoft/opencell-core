@@ -38,7 +38,8 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
+import org.hibernate.proxy.HibernateProxy;
+import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.admin.Seller;
@@ -700,6 +701,14 @@ public class ValueExpressionWrapper {
             	order = (CommercialOrder) parameter;
             }
             
+            if (parameter instanceof WalletOperation) {
+            	walletOperation=(WalletOperation)parameter;
+            	chargeInstance = walletOperation.getChargeInstance();
+            	if ((walletOperation.getChargeInstance() instanceof HibernateProxy)) {
+                    chargeInstance = (ChargeInstance) ((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();
+                }
+            }
+            
             if (parameter instanceof List) {
                 List list = (List) parameter;
                 if (list != null && !list.isEmpty()) {
@@ -721,17 +730,38 @@ public class ValueExpressionWrapper {
         }
         
         if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && serviceInstance != null ) {
-            quote =chargeInstance!=null && serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+            quote =serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+            contextMap.put(VAR_CPQ_QUOTE, quote);
+        }
+        if (el.contains(VAR_EDR) && !contextMap.containsKey(VAR_EDR) && walletOperation != null) {
+            edr = walletOperation.getEdr();
+            contextMap.put(VAR_EDR, edr);
+        }
+        if (el.contains(VAR_SUBSCRIPTION) && !contextMap.containsKey(VAR_SUBSCRIPTION) && walletOperation != null) {
+            subscription = walletOperation.getSubscription();
+            contextMap.put(VAR_SUBSCRIPTION, subscription);
+        }
+        if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && chargeInstance != null) {
+            quote =chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
             contextMap.put(VAR_CPQ_QUOTE, quote);
         }
         
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && chargeInstance != null) {
-            quoteVersion =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
+            quoteVersion = chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
             if(quoteVersion!=null) {
             	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
             }
         }
+        
+        if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && serviceInstance != null) {
+            quoteVersion =serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuoteVersion():null;
+            contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
+            if(quoteVersion!=null) {
+            	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
+            }
+        }
+        
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && order != null) {
             quoteVersion =order.getQuoteVersion();
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
