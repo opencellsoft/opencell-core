@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "open_order_Threshold")
+@Table(name = "open_order_threshold")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "open_order_Threshold_seq"),})
+        @Parameter(name = "sequence_name", value = "open_order_threshold_seq"),})
 
 public class Threshold extends BusinessEntity {
 

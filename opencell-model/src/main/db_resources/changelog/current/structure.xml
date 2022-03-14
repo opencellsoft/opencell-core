@@ -12040,8 +12040,9 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
     <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI">
-        <createSequence sequenceName="open_order_Threshold_seq" startValue="1" />
-        <createTable tableName="open_order_Threshold">
+        <createSequence sequenceName="open_order_threshold_seq" startValue="1" />
+        <createSequence sequenceName="open_order_template_seq" startValue="1" />
+        <createTable tableName="open_order_threshold">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey" />
 			</column>
