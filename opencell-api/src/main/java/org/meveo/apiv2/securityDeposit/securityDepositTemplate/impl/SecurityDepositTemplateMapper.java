@@ -37,6 +37,7 @@ public class SecurityDepositTemplateMapper extends ResourceMapper<org.meveo.apiv
         {
             Currency currency = new Currency();
             currency.setId(resource.getCurrency().getId());
+            currency.setCurrencyCode(resource.getCurrency().getCode());
             securityDepositTemplate.setCurrency(currency);
         }
 
