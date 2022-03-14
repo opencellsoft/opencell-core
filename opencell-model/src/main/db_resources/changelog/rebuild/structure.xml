@@ -11603,6 +11603,11 @@
             <column name="description" type="varchar(255)"/>
             <column name="subscription_id" type="bigint"/>
             <column name="user_account_id" type="bigint" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
         </changeSet>
 
