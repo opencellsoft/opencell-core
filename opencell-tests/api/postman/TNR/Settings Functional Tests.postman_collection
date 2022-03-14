@@ -6300,7 +6300,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}_1\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
