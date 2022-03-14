@@ -3,8 +3,9 @@ package org.meveo.admin.job;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
+import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
+import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
+import static org.meveo.model.billing.BillingRunStatusEnum.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,13 +25,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.*;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -101,12 +96,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                             result.setReport("Exceptional Billing filters returning no invoice line to process");
                         }
                     }
-                    billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                    	assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
-                    }else{
-                    	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.DRAFT_INVOICES, null);
+                    boolean updateBillingRun = executeBillingRun(billingRun, jobInstance, result);
+                    if(updateBillingRun) {
+                        billingRunService.update(billingRun);
                     }
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
@@ -142,6 +134,32 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 .map(InvoiceLine::getId)
                 .collect(toList()));
         return billingRun.getExceptionalILIds().size();
+    }
+
+    private boolean executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
+        boolean billingRunUpdated = false;
+        if(billingRun.getStatus() == INVOICE_LINES_CREATED
+                && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
+            billingRunUpdated = true;
+            billingRun.setStatus(PREVALIDATED);
+        }
+        if(billingRun.getStatus() == PREVALIDATED) {
+            billingRun.setStatus(INVOICES_CREATED);
+            billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
+            billingRun.setStatus(POSTINVOICED);
+        }
+        if(billingRun.getStatus() == POSTINVOICED && billingRun.getProcessType() == FULL_AUTOMATIC) {
+            billingRun.setStatus(POSTVALIDATED);
+        }
+        if(!billingRunService.isBillingRunValid(billingRun)) {
+            billingRun.setStatus(REJECTED);
+        }
+        if(billingRun.getStatus() == POSTVALIDATED) {
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+            billingRun.setStatus(VALIDATED);
+        }
+        return billingRunUpdated;
     }
 
     /**
