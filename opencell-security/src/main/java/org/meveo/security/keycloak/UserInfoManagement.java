@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -69,8 +70,11 @@ public class UserInfoManagement {
                 if (updateLastLogin) {
                     log.debug("User username {} updated with a new login date", currentUser.getUserName());
 
-                    int nrUpdated = em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", value)
-                            .setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
+                    int nrUpdated = 1;
+                    if("false".equals(ParamBean.getInstance().getProperty("user.ignoreUpdateLastLogin", "true"))) {
+	                    em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", value)
+	                            .setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
+                    }
 
                     if (nrUpdated > 0) {
                         userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
