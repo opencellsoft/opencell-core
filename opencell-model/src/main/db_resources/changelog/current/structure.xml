@@ -12030,4 +12030,12 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
     </changeSet>
+
+    <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid">
+    	 <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
