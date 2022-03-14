@@ -11921,7 +11921,7 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-5343_2022-02_25" author="hichamELHALOUI">
         <addColumn tableName="billing_trading_currency">
             <column name="symbol" type="varchar(255)" />
-            <column name="decimal_places" type="int" />
+            <column name="decimal_places" type="int" defaultValueNumeric="2" />
         </addColumn>
     </changeSet>
 
@@ -12030,4 +12030,12 @@ order by date_trunc('month', i.invoice_date) DESC
 
         </createTable>
     </changeSet>
+
+    <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid">
+    	 <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
