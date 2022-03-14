@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.engine.jdbc.CharacterStream;
 import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
@@ -66,7 +67,8 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         }
         
         if (ENCRYPT_CF) {
-            return encryptCfs(value);
+            CustomFieldValues cfValues = SerializationUtils.clone(value);
+            return encryptCfs(cfValues);
         }
 
         return value.asJson();
