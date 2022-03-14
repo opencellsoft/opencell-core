@@ -12071,6 +12071,13 @@ order by date_trunc('month', i.invoice_date) DESC
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
                                  
+        <addColumn tableName="cpq_order_offer">
+            <column name="order_amendement_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_id" baseTableName="cpq_order_offer" constraintName="fk_offer_order_amd_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+                                 
                                  
     </changeSet>
 

@@ -10167,6 +10167,7 @@
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint"/>
             <column name ="order_line_type" type="varchar(10)" />
+            <column name="order_amendement_id" type="${cast.long}"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -15796,6 +15797,9 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/> 
      <addForeignKeyConstraint baseColumnNames="order_amendement_restart_id" baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+     <addForeignKeyConstraint baseColumnNames="order_amendement_id" baseTableName="cpq_order_offer" constraintName="fk_offer_order_amd_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
      </changeSet>
