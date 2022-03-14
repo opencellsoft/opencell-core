@@ -177,7 +177,7 @@ public class CommercialOrderApi extends BaseApi {
 
 		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
 			UserAccount userAccount = loadEntityByCode(userAccountService, orderDto.getUserAccountCode(), UserAccount.class);
-			if(!userAccount.isConsumer()) {
+			if(!userAccount.getIsConsumer()) {
 	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Order for this user account is not allowed.");
 			}
 			order.setUserAccount(userAccount);
@@ -241,7 +241,7 @@ public class CommercialOrderApi extends BaseApi {
 		if (order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		UserAccount userAccount = loadEntityByCode(userAccountService, userAccountCode, UserAccount.class);
-		if(!userAccount.isConsumer()) {
+		if(!userAccount.getIsConsumer()) {
             throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Order for this user account is not allowed.");
 		}
 		order.setUserAccount(userAccount);
@@ -330,7 +330,7 @@ public class CommercialOrderApi extends BaseApi {
 			final UserAccount userAccount = userAccountService.findByCode(orderDto.getUserAccountCode());
 			if(userAccount == null)
 				throw new EntityDoesNotExistsException(UserAccount.class, orderDto.getUserAccountCode());
-			if(!userAccount.isConsumer()) {
+			if(!userAccount.getIsConsumer()) {
 	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Order for this user account is not allowed.");
 			}
 			order.setUserAccount(userAccount);
