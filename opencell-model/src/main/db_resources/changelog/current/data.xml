@@ -9564,4 +9564,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
+	<changeSet id="INTRD-5691-20220315" author="ZBariki">
+		<insert tableName="crm_provider_pay_methods">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="payment_method" value="CHECK" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
