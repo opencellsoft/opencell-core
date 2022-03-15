@@ -69,6 +69,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     @Override
     public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
+    	if(postData.getDiscountPlanType() == null)
+			missingParameters.add("discountPlanType");
+    	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
         }
@@ -133,7 +136,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        handleMissingParametersAndValidate(postData);
+    	if(postData.getDiscountPlanType() == null)
+			missingParameters.add("discountPlanType");
+    	
+    	handleMissingParameters();
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
         if (discountPlan == null) {
