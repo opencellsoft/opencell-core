@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -541,7 +542,8 @@ public class CpqQuoteApi extends BaseApi {
             String fileName = cpqQuoteService.generateFileName(quoteVersion);
             quoteVersion.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
+            Path xmlPath = Paths.get(xmlFilename);
+            Files.write(xmlPath, xmlContent, xmlPath.toFile().exists() ? StandardOpenOption.TRUNCATE_EXISTING : StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
