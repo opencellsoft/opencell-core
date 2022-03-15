@@ -14,11 +14,11 @@ import javax.persistence.*;
 public class OpenOrderSetting extends BusinessEntity {
    @Type(type = "numeric_boolean")
     @Column(name = "use_open_orders")
-    private boolean useOpenOrders = false;
+    private Boolean useOpenOrders = false;
 
    @Type(type = "numeric_boolean")
     @Column(name = "apply_maximum_validity")
-    private boolean applyMaximumValidity = false;
+    private Boolean applyMaximumValidity = false;
 
     @Column(name = "apply_maximum_validity_value")
     private Integer applyMaximumValidityValue;
@@ -29,29 +29,29 @@ public class OpenOrderSetting extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "define_maximum_validity")
-    private boolean defineMaximumValidity = false;
+    private Boolean defineMaximumValidity = false;
 
      @Column(name = "define_maximum_validity_value")
     private Integer defineMaximumValidityValue;
 
      @Type(type = "numeric_boolean")
     @Column(name = "use_managment_validation_for_oo_quotation")
-    private boolean useManagmentValidationForOOQuotation = false;
+    private Boolean useManagmentValidationForOOQuotation = false;
 
 
- public boolean isUseOpenOrders() {
+ public Boolean getUseOpenOrders() {
   return useOpenOrders;
  }
 
- public void setUseOpenOrders(boolean useOpenOrders) {
+ public void setUseOpenOrders(Boolean useOpenOrders) {
   this.useOpenOrders = useOpenOrders;
  }
 
- public boolean isApplyMaximumValidity() {
+ public Boolean getApplyMaximumValidity() {
   return applyMaximumValidity;
  }
 
- public void setApplyMaximumValidity(boolean applyMaximumValidity) {
+ public void setApplyMaximumValidity(Boolean applyMaximumValidity) {
   this.applyMaximumValidity = applyMaximumValidity;
  }
 
@@ -71,11 +71,11 @@ public class OpenOrderSetting extends BusinessEntity {
   this.applyMaximumValidityUnit = applyMaximumValidityUnit;
  }
 
- public boolean isDefineMaximumValidity() {
+ public Boolean getDefineMaximumValidity() {
   return defineMaximumValidity;
  }
 
- public void setDefineMaximumValidity(boolean defineMaximumValidity) {
+ public void setDefineMaximumValidity(Boolean defineMaximumValidity) {
   this.defineMaximumValidity = defineMaximumValidity;
  }
 
@@ -87,11 +87,11 @@ public class OpenOrderSetting extends BusinessEntity {
   this.defineMaximumValidityValue = defineMaximumValidityValue;
  }
 
- public boolean isUseManagmentValidationForOOQuotation() {
+ public Boolean getUseManagmentValidationForOOQuotation() {
   return useManagmentValidationForOOQuotation;
  }
 
- public void setUseManagmentValidationForOOQuotation(boolean useManagmentValidationForOOQuotation) {
+ public void setUseManagmentValidationForOOQuotation(Boolean useManagmentValidationForOOQuotation) {
   this.useManagmentValidationForOOQuotation = useManagmentValidationForOOQuotation;
  }
 }
