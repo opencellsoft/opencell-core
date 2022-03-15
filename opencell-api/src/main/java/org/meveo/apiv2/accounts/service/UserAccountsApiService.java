@@ -69,6 +69,7 @@ public class UserAccountsApiService {
 			
 			userAccounts.removeAll(userAccountsToRemove);
 		}
+        userAccounts.remove(userAccount);
         
 		for (UserAccount ua : userAccounts) {
 			UserAccountDto userAccountDto = new UserAccountDto();
