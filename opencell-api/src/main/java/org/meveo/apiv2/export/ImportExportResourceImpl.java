@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -90,15 +91,38 @@ public class ImportExportResourceImpl implements ImportExportResource {
             String executionId = generateExecutionId(fileName);
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
+          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
 
-            executionResults.put(executionId, exportImportFuture);
-            return new ImportExportResponseDto(executionId);
+           // executionResults.put(executionId, exportImport);
+            return importStatisticsToDto(executionId, exportImport);
 
 
 
 
     }
+
+    public ImportExportResponseDto importStatisticsToDto(String executionId, ExportImportStatistics statistics) {
+        ImportExportResponseDto dto = new ImportExportResponseDto(executionId);
+
+        if (statistics.getException() != null) {
+            dto.setExceptionMessage(statistics.getException().getClass().getSimpleName() + ": " + statistics.getException().getMessage());
+        }
+        dto.setFailureMessageKey(statistics.getErrorMessageKey());
+
+        if (!statistics.getFieldsNotImported().isEmpty()) {
+            dto.setFieldsNotImported(new HashMap<>());
+            for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
+                dto.getFieldsNotImported().put(entry.getKey(), new FieldsNotImportedStringCollectionDto(entry.getValue()));
+            }
+        }
+        dto.setSummary(new HashMap<>());
+        for (Map.Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
+            dto.getSummary().put(summaryInfo.getKey().getName(), summaryInfo.getValue());
+        }
+
+        return dto;
+    }
+
 
     private void checkPermissionsForImportingData() {
         if (!currentUser.hasRole("remoteImport")) {
