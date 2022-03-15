@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -492,14 +493,5 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 			return true;
 		}
-
-	/**
-	 * Get a full path to an invoice's PDF file.
-	 *
-	 *
-	 * @param invoice Invoice
-	 * @param createDirs Should missing directories be created
-	 * @return Absolute path to a PDF file
-	 */
 
 }
