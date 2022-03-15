@@ -143,7 +143,11 @@ public class UserAccountApi extends AccountEntityApi {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
     			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
-    			userAccount.setParentUserAccount(parentUserAccount);    				
+				if (parentUserAccount.getBillingAccount() == billingAccount) {
+					userAccount.setParentUserAccount(parentUserAccount);
+				}else {
+					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
+				}    			
     			attachSubUserAccounts(postData,parentUserAccount,billingAccount);
     			
     		} else {
@@ -231,6 +235,11 @@ public class UserAccountApi extends AccountEntityApi {
 
         handleMissingParametersAndValidate(postData);
 
+        BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
+        }
+
         UserAccount userAccount = userAccountService.findByCode(postData.getCode());
         if (userAccount == null) {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getCode());
@@ -242,12 +251,20 @@ public class UserAccountApi extends AccountEntityApi {
             UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
             if (parentUserAccount != null) {
     			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
-                userAccount.setParentUserAccount(parentUserAccount);
+				if (parentUserAccount.getBillingAccount() == billingAccount) {
+					userAccount.setParentUserAccount(parentUserAccount);
+				}else {
+					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
+				}    			
                 List<UserAccount> subUserAccounts = new ArrayList<>();
         		for (String subUserAccountcode : postData.getUserAccountCodes()) {
         			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
         			if (subUserAccount != null) {
-        				subUserAccounts.add(subUserAccount);
+        				if (subUserAccount.getBillingAccount() == billingAccount) {
+        					subUserAccounts.add(subUserAccount);
+        				}else {
+        					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
+        				}        				
         			}else {
         				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
         			}
