@@ -316,6 +316,9 @@
         <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
         <createSequence sequenceName="open_order_setting_seq" startValue="1" />
         <createSequence sequenceName="cpq_order_amendement_seq" startValue="1" />
+        <createSequence sequenceName="open_order_threshold_seq" startValue="1"/>
+        <createSequence sequenceName="open_order_template_seq" startValue="1"/>
+
     </changeSet>
 
 
@@ -11640,6 +11643,86 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="#INTRD-5310-20220310-tbl" author="HichamELHALOUI">
+        <createTable tableName="open_order_threshold">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="sequence" type="int"/>
+            <column name="percentage" type="int"/>
+            <column name="open_order_template_id" type="bigint"/>
+        </createTable>
+
+        <createTable tableName="open_order_threshold_recipients">
+            <column name="threshold_id" type="bigint"/>
+            <column name="recipient" type="varchar(100)"/>
+        </createTable>
+
+        <createTable tableName="open_order_template">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_template_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="open_order_type" type="varchar(50)"/>
+        </createTable>
+        <createTable tableName="open_order_template_tags">
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="open_order_template_products">
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="open_order_template_articles">
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="article_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="threshold_id, recipient" constraintName="open_order_threshold_recipients_pkey"
+                       tableName="open_order_threshold_recipients"/>
+        <addPrimaryKey columnNames="open_order_template_id,tag_id"
+                       constraintName="open_order_template_tags_pkey"
+                             tableName="open_order_template_tags"/>
+         <addPrimaryKey columnNames="open_order_template_id,product_id"
+                             constraintName="open_order_template_products_pkey"
+                             tableName="open_order_template_products"/>
+         <addPrimaryKey columnNames="open_order_template_id,article_id"
+                             constraintName="open_order_template_articles_pkey"
+                             tableName="open_order_template_articles"/>
+    </changeSet>
+
 
     <!-- end tables -->
 
@@ -15832,6 +15915,47 @@
                                  referencedTableName="cpq_order_amendement"/>
      </changeSet>
 
+    <changeSet id="#INTRD-5310-20220310-fk" author="HichamELHALOUI">
+                <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_threshold_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_tags_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_products_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
+                                 constraintName="open_order_template_products_product_id_fk"
+                                 referencedTableName="cpq_product"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_articles_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
+                                 constraintName="open_order_template_articles_article_id_fk"
+                                 referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+
+
+    </changeSet>
+
 
     <!-- end fk -->
 
@@ -17253,6 +17377,7 @@
     <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
 
     <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
