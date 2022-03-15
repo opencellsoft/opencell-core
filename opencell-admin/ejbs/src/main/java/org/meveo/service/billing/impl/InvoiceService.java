@@ -162,11 +162,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
-import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
@@ -3571,17 +3567,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-//        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
-//            List<InvoiceLine> invoiceLines = invoice.getInvoiceLines();
-//            subscriptionApplicableDiscountPlanItems.addAll(invoiceLines.stream()
-//                    .filter(invoiceLine -> invoiceLine.getDiscountPlan() != null)
-//                    .map(InvoiceLine::getDiscountPlan)
-//                    .map(DiscountPlan::getDiscountPlanItems)
-//                    .flatMap(Collection::stream)
-//                    .collect(Collectors.toList()));
-//        }
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,invoice.getInvoiceDate())) {
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,null,null,invoice.getInvoiceDate(), null)) {
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date());
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
 
@@ -3723,11 +3710,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
         final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
 
-        if(discountAggregates != null && !discountAggregates.isEmpty()) {
-            BigDecimal amountDiscount = discountAggregates.get(0).getAmountWithoutTax();
-            if(amountDiscount != null && !amountDiscount.equals(BigDecimal.ZERO)) {
-                invoice.setDiscountAmount(amountDiscount.abs());
-                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
+        if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+            BigDecimal amountDiscount = invoice.getInvoiceLines()
+                    .stream()
+                    .map(InvoiceLine::getDiscountAmount)
+                    .reduce(BigDecimal::add)
+                    .orElse(BigDecimal.ZERO);
+            if(!amountDiscount.equals(BigDecimal.ZERO)) {
+                invoice.setDiscountAmount(amountDiscount);
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+            }
+            if(amountDiscount.equals(BigDecimal.ZERO) && invoice.getDiscountPlan() != null
+                    && invoice.getDiscountPlan().getDiscountPlanType() == DiscountPlanTypeEnum.INVOICE && discountAggregates != null) {
+                amountDiscount = discountAggregates.stream()
+                        .map(SubCategoryInvoiceAgregate::getAmountWithoutTax)
+                        .map(BigDecimal::abs)
+                        .reduce(BigDecimal::add)
+                        .orElse(BigDecimal.ZERO);
+                invoice.setDiscountAmount(amountDiscount);
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
             }
         }
     }
@@ -5394,6 +5395,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean taxWasRecalculated = false;
         for (InvoiceLine invoiceLine : invoiceLines) {
 
+            addFixedDiscount(invoiceLine);
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
@@ -5459,26 +5461,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
-            if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null) {
-                BigDecimal hundred = new BigDecimal(100);
-                BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
-                for (DiscountPlanItem discountPlanItem : invoiceLine.getDiscountPlan().getDiscountPlanItems()) {
-                    if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
-                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
-                    } else {
-                        invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(
-                                (discountPlanItem.getDiscountValue().divide(hundred)).multiply(invoiceLine.getAmountWithoutTax()));
-                    }
-                }
-                invoiceLine.setDiscountAmount(invoiceLineDiscountAmount);
-                invoiceLinesService.update(invoiceLine);
-            }
         }
         if (moreInvoiceLinesExpected) {
             return;
         }
 
         addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
+    }
+
+    private void addFixedDiscount(InvoiceLine invoiceLine) {
+        if(invoiceLine.getDiscountPlan() != null
+                && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null
+                && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()
+                && !invoiceLine.getDiscountAmount().equals(BigDecimal.ZERO)) {
+            invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(invoiceLine.getDiscountAmount()));
+            invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
+        }
     }
 
     protected class InvoiceLinesToInvoice {

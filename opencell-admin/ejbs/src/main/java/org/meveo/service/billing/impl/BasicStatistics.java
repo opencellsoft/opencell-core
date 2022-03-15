@@ -62,5 +62,6 @@ public class BasicStatistics {
 		this.count+=statistics.getCount();
 		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
 	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
+	     this.sumAmountTax=this.sumAmountTax.add(statistics.getSumAmountTax());
 	}
 }
