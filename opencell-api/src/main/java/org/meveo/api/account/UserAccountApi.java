@@ -200,7 +200,7 @@ public class UserAccountApi extends AccountEntityApi {
 					 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountCode);
 				}
 			}else {
-				 throw new BusinessApiException("The parent user account "+userAccountParentCode+" can not be in thje liste of children user accounts");
+				 throw new BusinessApiException("The parent user account "+userAccountParentCode+" can not be in the list of children user accounts");
 			}
 		}
 	}
@@ -256,7 +256,10 @@ public class UserAccountApi extends AccountEntityApi {
             } else {
                 throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
             }
+        }else {
+            userAccount.setParentUserAccount(null);
         }
+        		
         userAccountParent(postData, userAccount);
         userAccount = userAccountService.update(userAccount);
 

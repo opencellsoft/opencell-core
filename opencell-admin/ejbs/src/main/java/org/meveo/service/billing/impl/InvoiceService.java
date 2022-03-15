@@ -3567,8 +3567,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,invoice.getInvoiceDate(), null)) {
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,null,null,invoice.getInvoiceDate(), null)) {
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date());
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
 

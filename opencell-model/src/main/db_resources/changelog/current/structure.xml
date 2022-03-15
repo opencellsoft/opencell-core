@@ -12003,6 +12003,84 @@ order by date_trunc('month', i.invoice_date) DESC
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" failOnError="false">
+        <createSequence sequenceName="cpq_order_amendement_seq" startValue="1" />
+        <createTable tableName="cpq_order_amendement">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_order_amendement_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="cpq_order_amendement_pkey_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="subscription_id" type="bigint"/>
+            <column name="user_account_id" type="bigint" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_order_amendement"
+			constraintName="fk_billing_subscription_order_amendement" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_amendement" constraintName="fk_order_amendement_user_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_suspend_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_suspend_id" baseTableName="cpq_order_product" constraintName="fk_prd_suspend_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_reactivate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_reactivate_id" baseTableName="cpq_order_product" constraintName="fk_prd_reactivate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_terminate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_terminate_id" baseTableName="cpq_order_product" constraintName="fk_prd_terminate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_activate_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_activate_id" baseTableName="cpq_order_product" constraintName="fk_prd_activate_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+        <addColumn tableName="cpq_order_product">
+            <column name="order_amendement_restart_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_restart_id" baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+        <addColumn tableName="cpq_order_offer">
+            <column name="order_amendement_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="order_amendement_id" baseTableName="cpq_order_offer" constraintName="fk_offer_order_amd_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_order_amendement"/>
+
+
+    </changeSet>
+
     <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI">
         <createSequence sequenceName="open_order_setting_seq" startValue="1" />
         <createTable tableName="open_order_setting">
@@ -12037,5 +12115,14 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>version is null</where>
         </update>
     </changeSet>
+
+    <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI">
+        <addColumn tableName="billing_trading_currency">
+            <column name="current_rate" type="numeric(23, 12)" />
+            <column name="current_rate_from_date" type="datetime" />
+            <column name="current_rate_updater" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
