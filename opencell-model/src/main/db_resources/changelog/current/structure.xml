@@ -12002,7 +12002,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>use_self_sequence is null</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" failOnError="false">
         <createSequence sequenceName="cpq_order_amendement_seq" startValue="1" />
         <createTable tableName="cpq_order_amendement">
@@ -12028,57 +12028,85 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
         </createTable>
-        
+
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_order_amendement"
 			constraintName="fk_billing_subscription_order_amendement" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
-        
+
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_amendement" constraintName="fk_order_amendement_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-                                 
+
         <addColumn tableName="cpq_order_product">
             <column name="order_amendement_suspend_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_suspend_id" baseTableName="cpq_order_product" constraintName="fk_prd_suspend_order_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
-                                 referencedTableName="cpq_order_amendement"/> 
-                                 
+                                 referencedTableName="cpq_order_amendement"/>
+
         <addColumn tableName="cpq_order_product">
             <column name="order_amendement_reactivate_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_reactivate_id" baseTableName="cpq_order_product" constraintName="fk_prd_reactivate_order_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
-                                 
+
         <addColumn tableName="cpq_order_product">
             <column name="order_amendement_terminate_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_terminate_id" baseTableName="cpq_order_product" constraintName="fk_prd_terminate_order_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
-                                 
+
         <addColumn tableName="cpq_order_product">
             <column name="order_amendement_activate_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_activate_id" baseTableName="cpq_order_product" constraintName="fk_prd_activate_order_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
-                                 referencedTableName="cpq_order_amendement"/>                              
-                                 
+                                 referencedTableName="cpq_order_amendement"/>
+
         <addColumn tableName="cpq_order_product">
             <column name="order_amendement_restart_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_restart_id" baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
-                                 
+
         <addColumn tableName="cpq_order_offer">
             <column name="order_amendement_id" type="${cast.long}"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="order_amendement_id" baseTableName="cpq_order_offer" constraintName="fk_offer_order_amd_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_order_amendement"/>
-                                 
-                                 
+
+
+    </changeSet>
+
+    <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI">
+        <createSequence sequenceName="open_order_setting_seq" startValue="1" />
+        <createTable tableName="open_order_setting">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+            <column name="use_open_orders" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="apply_maximum_validity" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="apply_maximum_validity_value" type="int" />
+            <column name="apply_maximum_validity_unit" type="varchar(6)" />
+            <column name="define_maximum_validity" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="define_maximum_validity_value" type="int" />
+            <column name="use_managment_validation_for_oo_quotation" type="${type.boolean}" defaultValueNumeric="0" />
+
+        </createTable>
     </changeSet>
 
     <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid">
@@ -12095,6 +12123,6 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="current_rate_updater" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
 
 </databaseChangeLog>

@@ -506,6 +506,9 @@ public class WalletApi extends BaseApi {
         }
 
         walletOperation.setSeller(chargeInstance.getSeller());
+        walletOperation.setUserAccount(userAccount);
+        walletOperation.setBillingAccount(userAccount.getBillingAccount());
+        walletOperation.setCreated(new Date());
         walletOperation.setCurrency(currency);
         walletOperation.setWallet(walletInstance);
         walletOperation.setChargeInstance(chargeInstance);
