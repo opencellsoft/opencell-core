@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
@@ -23,6 +24,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.cpq.order.OrderAmendementDTO;
 import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -37,6 +39,7 @@ import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -48,6 +51,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
+import org.meveo.model.cpq.commercial.OrderAmendement;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
@@ -647,7 +651,27 @@ public class CommercialOrderApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
         orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
-        orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
+        
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
+        	if (StringUtils.isBlank(orderOfferDto.getOrderAmendementDTO())) {
+        		throw new BusinessApiException("Order amendement data is missing");
+			}
+        	for(OrderOffer order : commercialOrder.getOffers()) {
+        		if(order.getOrderAmendement().getSubscription().getCode().equals(orderOfferDto.getOrderAmendementDTO().getSubscriptionCode())) {
+        			throw new BusinessApiException("Amendement order line already existe on subscription "+orderOfferDto.getOrderAmendementDTO().getSubscriptionCode()+", the order line code is: "+order.getCode());
+        		}
+        	}
+        	OrderAmendement orderAmendement = new OrderAmendement();
+        	dtoToEntity(orderAmendement, orderOfferDto.getOrderAmendementDTO());
+        	orderOffer.setOrderAmendement(null);
+        	
+        			
+        	
+        	
+        	
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.CREATE) {
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
+        }
         
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
@@ -656,6 +680,28 @@ public class CommercialOrderApi extends BaseApi {
 		return orderOfferDto;
 	}
 	
+	private void dtoToEntity(OrderAmendement entity, OrderAmendementDTO dto) {
+		
+		if (!StringUtils.isBlank(dto.getSubscriptionCode())) {
+			Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
+			if(subscription == null)
+				throw new EntityDoesNotExistsException(Subscription.class, dto.getSubscriptionCode());
+			entity.setSubscription(subscription);
+		}
+		if(!StringUtils.isBlank(dto.getConsumer())) {
+			UserAccount userAccount = userAccountService.findByCode(dto.getConsumer());
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, dto.getConsumer());
+			}
+			entity.setUserAccount(userAccount);
+		}
+		
+		dto.getProductsToActivate();
+		entity.setProductsToActivate(null);
+		
+		
+	}
+
 	public OrderOfferDto updateOrderOffer(OrderOfferDto orderOfferDto) throws MeveoApiException, BusinessException { 
     	if (orderOfferDto.getOrderOfferId()==null) {
     		missingParameters.add("orderOfferId");

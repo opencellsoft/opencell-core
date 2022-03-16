@@ -57,6 +57,11 @@ public class OrderAmendement extends AuditableCFEntity {
 	@OneToMany(mappedBy = "orderAmendementToRestart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> productsToRestart = new ArrayList<OrderProduct>();
 
+
+	public OrderAmendement() {
+		
+	}
+
 	public OrderAmendement(@NotNull Subscription subscription, UserAccount userAccount,
 			List<OrderProduct> productsToSuspend, List<OrderProduct> productsToReactivate,
 			List<OrderProduct> productsToTerminate, List<OrderProduct> productsToActivate,

@@ -47,6 +47,10 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** Order line type */
     @Schema(description = "The order line type")
     private OfferLineTypeEnum orderLineType;
+    
+    /** The order amendement */
+    @Schema(description = "The order amendement")
+    private OrderAmendementDTO orderAmendementDTO;
 
     public OrderOfferDto() {
 	}
@@ -221,5 +225,13 @@ public class OrderOfferDto extends BaseEntityDto {
     public OfferLineTypeEnum getOrderLineType() {
         return orderLineType;
     }
+    
+    public OrderAmendementDTO getOrderAmendementDTO() {
+		return orderAmendementDTO;
+	}
+
+	public void setOrderAmendementDTO(OrderAmendementDTO orderAmendementDTO) {
+		this.orderAmendementDTO = orderAmendementDTO;
+	}
  
 }
