@@ -1,14 +1,6 @@
 package org.meveo.api.cpq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -20,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
@@ -35,27 +28,18 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.StatusUpdated;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.*;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -450,7 +434,122 @@ public class CommercialOrderApi extends BaseApi {
 		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
-		return new CommercialOrderDto(commercialOrderService.duplicate(order));
+
+		CommercialOrderDto duplicatedCommercialOrderDto = duplicateFrom(order);
+		CommercialOrderDto commercialOrderDto = create(duplicatedCommercialOrderDto);
+		CommercialOrder duplicatedOrder = commercialOrderService.findById(commercialOrderDto.getId());
+
+		order.getOrderLots().stream()
+				.map(orderLot -> {
+					OrderLot duplicateOrderLot = new OrderLot();
+					duplicateOrderLot.setCode(UUID.randomUUID().toString());
+					duplicateOrderLot.setOrder(duplicatedOrder);
+					duplicateOrderLot.setName(orderLot.getName());
+					duplicateOrderLot.setQuoteLot(orderLot.getQuoteLot());
+					orderLotService.create(duplicateOrderLot);
+					return duplicateOrderLot;
+				})
+				.collect(Collectors.toSet());
+
+		duplicateOrderOffers(order, duplicatedOrder);
+		return commercialOrderDto;
+	}
+
+	private void duplicateOrderOffers(CommercialOrder order, CommercialOrder duplicatedOrder) {
+		duplicatedOrder.setOffers(new ArrayList<>());
+		order.getOffers().stream()
+				.forEach( orderOffer -> {
+					OrderOffer offer = new OrderOffer();
+					offer.setOrder(duplicatedOrder);
+					offer.setOfferTemplate(orderOffer.getOfferTemplate());
+					offer.setDiscountPlan(orderOffer.getDiscountPlan());
+					offer.setDeliveryDate(orderOffer.getDeliveryDate());
+					offer.setUserAccount(orderOffer.getUserAccount());
+					offer.setOrderLineType(OfferLineTypeEnum.CREATE);
+					orderOfferService.create(offer);
+					offer.setProducts(orderOffer.getProducts().stream()
+							.map(orderProduct -> duplicateProduct(orderProduct, offer))
+							.collect(Collectors.toList()));
+					duplicatedOrder.getOffers().add(offer);
+				});
+	}
+
+	private CommercialOrderDto duplicateFrom(CommercialOrder order) {
+		final CommercialOrderDto duplicatedCommercialOrderDto = new CommercialOrderDto();
+		duplicatedCommercialOrderDto.setStatus("DRAFT");
+		duplicatedCommercialOrderDto.setCode(order.getCode()+"-copy");
+		if(order.getBillingAccount() != null){
+			duplicatedCommercialOrderDto.setBillingAccountCode(order.getBillingAccount().getCode());
+		}
+		if(order.getOrderType() != null){
+			duplicatedCommercialOrderDto.setOrderTypeCode(order.getOrderType().getCode());
+		}
+		if(order.getSeller() != null){
+			duplicatedCommercialOrderDto.setSellerCode(order.getSeller().getCode());
+		}
+		if(order.getDiscountPlan() != null){
+			duplicatedCommercialOrderDto.setDiscountPlanCode(order.getDiscountPlan().getCode());
+		}
+		duplicatedCommercialOrderDto.setLabel(order.getLabel());
+		duplicatedCommercialOrderDto.setDescription(order.getDescription());
+		duplicatedCommercialOrderDto.setStatus(order.getStatus());
+		if(order.getUserAccount() != null){
+			duplicatedCommercialOrderDto.setUserAccountCode(order.getUserAccount().getCode());
+		}
+		duplicatedCommercialOrderDto.setOrderDate(order.getOrderDate());
+		if(order.getContract() != null){
+			duplicatedCommercialOrderDto.setContractCode(order.getContract().getCode());
+		}
+		if(order.getInvoicingPlan() != null){
+			duplicatedCommercialOrderDto.setInvoicingPlanCode(order.getInvoicingPlan().getCode());
+		}
+		duplicatedCommercialOrderDto.setProgressDate(new Date());
+		duplicatedCommercialOrderDto.setOrderDate(new Date());
+		duplicatedCommercialOrderDto.setDeliveryDate(order.getDeliveryDate());
+		duplicatedCommercialOrderDto.setOrderProgress(0);
+		if(order.getAccess() != null){
+			AccessDto accessDto = new AccessDto();
+			accessDto.setCode(order.getAccess().getAccessUserId());
+			accessDto.setSubscription(order.getAccess().getSubscription().getCode());
+			duplicatedCommercialOrderDto.setAccessDto(accessDto);
+		}
+		duplicatedCommercialOrderDto.setCustomerServiceBegin(order.getCustomerServiceBegin());
+		duplicatedCommercialOrderDto.setCustomerServiceDuration(order.getCustomerServiceDuration());
+		duplicatedCommercialOrderDto.setExternalReference(order.getExternalReference());
+		if(order.getOrderParent() != null){
+			duplicatedCommercialOrderDto.setOrderParentCode(order.getOrderParent().getCode());
+		}
+		return duplicatedCommercialOrderDto;
+	}
+
+	private OrderProduct duplicateProduct(OrderProduct orderProduct, OrderOffer offer) {
+		OrderProduct newProduct = new OrderProduct();
+		newProduct.setOrder(orderProduct.getOrder());
+		newProduct.setOrderServiceCommercial(orderProduct.getOrderServiceCommercial());
+		newProduct.setProductVersion(orderProduct.getProductVersion());
+		newProduct.setQuantity(orderProduct.getQuantity());
+		newProduct.setDiscountPlan(orderProduct.getDiscountPlan());
+		newProduct.setOrderOffer(offer);
+		newProduct.setQuoteProduct(orderProduct.getQuoteProduct());
+		newProduct.setDeliveryDate(orderProduct.getDeliveryDate());
+		newProduct.setOrderAttributes(orderProduct.getOrderAttributes().stream()
+				.map(orderAttribute -> {
+					OrderAttribute attributeCopy = new OrderAttribute();
+					attributeCopy.setAuditable(new Auditable(currentUser));
+					attributeCopy.setCommercialOrder(orderProduct.getOrder());
+					attributeCopy.setOrderProduct(newProduct);
+					attributeCopy.setOrderOffer(offer);
+					attributeCopy.setAttribute(orderAttribute.getAttribute());
+					attributeCopy.setBooleanValue(orderAttribute.getBooleanValue());
+					attributeCopy.setStringValue(orderAttribute.getStringValue());
+					attributeCopy.setDoubleValue(orderAttribute.getDoubleValue());
+					attributeCopy.setDateValue(orderAttribute.getDateValue());
+					orderAttributeService.create(attributeCopy);
+					return attributeCopy;
+				})
+				.collect(Collectors.toList()));
+		orderProductService.create(newProduct);
+		return newProduct;
 	}
 	
 
