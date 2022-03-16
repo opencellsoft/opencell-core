@@ -330,7 +330,11 @@ public class UserAccountApi extends AccountEntityApi {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
         userAccount.setIsCompany(postData.getIsCompany());
-
+        
+        if (postData.getIsConsumer() != null) {
+            userAccount.setIsConsumer(postData.getIsConsumer());
+        }
+        
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), userAccount, isNew, checkCustomFields);
