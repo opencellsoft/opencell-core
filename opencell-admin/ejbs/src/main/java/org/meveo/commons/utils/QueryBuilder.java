@@ -102,7 +102,7 @@ public class QueryBuilder {
     public String format(String rootAlias, InnerJoin innerJoin, boolean doFetch) {
 
         String shouldFetch = doFetch ? "fetch " : "";
-        String sql = "inner join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+        String sql = "left join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
                 .map(next -> {
@@ -1070,6 +1070,8 @@ public class QueryBuilder {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public QueryBuilder addFieldInAListOfValues(String field, Object value, boolean isNot, boolean isFieldValueOptional) {
 
+        field = createExplicitInnerJoins(field);
+        
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
