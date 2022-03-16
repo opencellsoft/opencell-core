@@ -1825,7 +1825,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer = quoteproduct.getQuoteOffer();
             attributesValues = new ArrayList(quoteproduct.getQuoteAttributes());
         }
-        Seller seller=quoteproduct.getQuoteOffer().getQuoteVersion().getQuote().getSeller()!=null?quoteproduct.getQuote().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
+        Seller seller=quoteproduct.getQuoteOffer().getQuoteVersion().getQuote().getSeller()!=null?quoteproduct.getQuoteOffer().getQuoteVersion().getQuote().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
         BigDecimal amountWithoutTax = quotePrice.getUnitPriceWithoutTax();
         BigDecimal unitDiscountAmount = BigDecimal.ZERO;
         QuoteArticleLine quoteArticleLine = null;
