@@ -5473,7 +5473,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceLine.getDiscountPlan() != null
                 && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null
                 && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()
-                && !invoiceLine.getDiscountAmount().equals(BigDecimal.ZERO)) {
+                && invoiceLinesService.getDiscountLines(invoiceLine.getId()).isEmpty()) {
             invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(invoiceLine.getDiscountAmount()));
             invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
         }
