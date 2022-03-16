@@ -162,11 +162,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
-import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
@@ -3571,8 +3567,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,invoice.getInvoiceDate(), null)) {
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,null,null,invoice.getInvoiceDate(), null)) {
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date());
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
 
@@ -3721,6 +3717,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
+                invoice.setDiscountAmount(amountDiscount);
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+            }
+            if(amountDiscount.equals(BigDecimal.ZERO) && invoice.getDiscountPlan() != null
+                    && invoice.getDiscountPlan().getDiscountPlanType() == DiscountPlanTypeEnum.INVOICE && discountAggregates != null) {
+                amountDiscount = discountAggregates.stream()
+                        .map(SubCategoryInvoiceAgregate::getAmountWithoutTax)
+                        .map(BigDecimal::abs)
+                        .reduce(BigDecimal::add)
+                        .orElse(BigDecimal.ZERO);
                 invoice.setDiscountAmount(amountDiscount);
                 invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
             }
@@ -5467,7 +5473,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceLine.getDiscountPlan() != null
                 && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null
                 && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()
-                && !invoiceLine.getDiscountAmount().equals(BigDecimal.ZERO)) {
+                && invoiceLinesService.getDiscountLines(invoiceLine.getId()).isEmpty()) {
             invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(invoiceLine.getDiscountAmount()));
             invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
         }
