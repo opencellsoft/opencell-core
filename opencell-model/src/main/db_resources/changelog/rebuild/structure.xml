@@ -6180,7 +6180,7 @@
             <column name="entity_class" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+            <column name="disabled" type="boolean" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -7793,7 +7793,7 @@
 			<column name="entity_class" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" >
+            <column name="disabled" type="boolean" defaultValueNumeric="0" >
                 <constraints nullable="false" />
             </column>
 		</createTable>
