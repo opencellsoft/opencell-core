@@ -698,9 +698,32 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 */
 	public void remove(Invoice invoice, Long lineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
-		deleteByDiscountedPlan(invoiceLine);
+        reduceDiscountAmounts(invoice, invoiceLine);
+        deleteByDiscountedPlan(invoiceLine);
         remove(invoiceLine);
 	}
+
+    private void reduceDiscountAmounts(Invoice invoice, InvoiceLine invoiceLine) {
+        if (invoiceLine.getDiscountPlan() != null
+                && invoiceLine.getDiscountAmount() != null
+                && !invoiceLine.getDiscountAmount().equals(BigDecimal.ZERO)) {
+            invoice.setDiscountAmount(invoice.getDiscountAmount().subtract(invoiceLine.getDiscountAmount()));
+        }
+        if (invoice.getAmountWithoutTaxBeforeDiscount() != null
+                && invoice.getAmountWithoutTaxBeforeDiscount().compareTo(BigDecimal.ZERO) > 0
+                && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
+            invoice.setAmountWithoutTaxBeforeDiscount(
+                    invoice.getAmountWithoutTaxBeforeDiscount().subtract(invoiceLine.getAmountWithoutTax()));
+        }
+        if (invoiceLine.getDiscountedInvoiceLine() != null
+                && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0) {
+            InvoiceLine discountedInvoiceLine = invoiceLine.getDiscountedInvoiceLine();
+            discountedInvoiceLine.setDiscountAmount(
+                    discountedInvoiceLine.getDiscountAmount().add(invoiceLine.getAmountWithoutTax()));
+            update(discountedInvoiceLine);
+            invoice.setDiscountAmount(invoice.getDiscountAmount().subtract(discountedInvoiceLine.getDiscountAmount()));
+        }
+    }
 
     public List<Object[]> getTotalPositiveILAmountsByBR(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("InvoiceLine.sumPositiveILByBillingRun")
