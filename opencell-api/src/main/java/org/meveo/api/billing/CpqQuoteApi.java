@@ -1274,7 +1274,7 @@ public class CpqQuoteApi extends BaseApi {
         //get quote discountPlanitem of type percentage
         if(quoteVersion.getDiscountPlan()!=null) {
         	
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate()));
+        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate(), null));
         }
 
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1391,7 +1391,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         BillingAccount billingAccount=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
         if(quoteOffer.getDiscountPlan()!=null) {
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null, quoteOffer.getQuoteVersion(),quoteOffer, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
+        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null, quoteOffer.getQuoteVersion(),quoteOffer, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate(), null));
         }
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
@@ -1452,7 +1452,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
             if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
-            	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, quotePrice.getQuoteArticleLine().getQuoteProduct(), DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
+            	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, quotePrice.getQuoteArticleLine().getQuoteProduct(), DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate(), null));
             }
             accountingPrices.addAll(applyPercentageDiscount(wo, quotePrice, applicablePercentageDiscountItems, billingAccount, quotePrice.getQuoteVersion()));
         }
@@ -1834,7 +1834,7 @@ public class CpqQuoteApi extends BaseApi {
 
         if (isDiscountApplicable) {
         	  Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-         List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, applicationDate);
+         List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, applicationDate, null);
         	 for (DiscountPlanItem discountPlanItem : discountItems) {
         		 log.debug("applyFixedDiscount discountPlan code={},discountPlanItem type={}",discountPlan.getCode(),discountPlanItem.getDiscountPlanItemType());
         		  AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
