@@ -32,8 +32,11 @@ import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.*;
@@ -440,6 +443,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerAccountsDto listByCustomer(String customerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerCode)) {
@@ -462,6 +466,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customerAccounts.customerAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = CustomerAccount.class) })
     public CustomerAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
         CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
         result.setPaging( pagingAndFiltering );

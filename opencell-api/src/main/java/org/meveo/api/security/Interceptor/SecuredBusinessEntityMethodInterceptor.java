@@ -197,10 +197,10 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 .setParameter("currentUserRoles", currentUser.getRoles())
                 .getResultList();
         allSecuredEntities.addAll(rolesWithSecuredEntities.stream()
-        													.map(Role::getSecuredEntities)
-    														.flatMap(List::stream)
-    														.filter(securedEntity -> !securedEntity.isDisabled())
-    														.collect(Collectors.toList()));
+                                                            .map(Role::getSecuredEntities)
+                                                            .flatMap(List::stream)
+                                                            .filter(securedEntity -> !securedEntity.isDisabled())
+                                                            .collect(Collectors.toList()));
 
 
         // group secured entites by types into Map
