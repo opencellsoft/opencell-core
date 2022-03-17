@@ -980,27 +980,27 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(OrderLot.class,orderProductDto.getOrderLotCode());
 		}
 		}
-		ProductVersion productVersion =null;
-		if(!StringUtils.isBlank(orderProductDto.getProductCode())&&!StringUtils.isBlank(orderProductDto.getProductVersion()) ) {
-		 productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
-		if(productVersion == null) {
-			throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
-		}
-		} 
-		
-		DiscountPlan discountPlan=null;
-		if(!StringUtils.isBlank(orderProductDto.getDiscountPlanCode())) {
-		 discountPlan = discountPlanService.findByCode(orderProductDto.getDiscountPlanCode());	
-		if (discountPlan == null)
-			throw new EntityDoesNotExistsException(DiscountPlan.class, orderProductDto.getDiscountPlanCode());	
-		}
-		
 		if(orderProduct==null) {
 			orderProduct=new OrderProduct();
 		}
+		if(!StringUtils.isBlank(orderProductDto.getProductCode()) && !StringUtils.isBlank(orderProductDto.getProductVersion())) {
+			ProductVersion productVersion =null;
+			productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+			if(productVersion == null) {
+				throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+			}
+			orderProduct.setProductVersion(productVersion);
+		}
+
+		DiscountPlan discountPlan=null;
+		if(!StringUtils.isBlank(orderProductDto.getDiscountPlanCode())) {
+		 discountPlan = discountPlanService.findByCode(orderProductDto.getDiscountPlanCode());
+		if (discountPlan == null)
+			throw new EntityDoesNotExistsException(DiscountPlan.class, orderProductDto.getDiscountPlanCode());
+		}
+
 		orderProduct.setOrder(commercialOrder);
 		orderProduct.setOrderServiceCommercial(orderLot);
-		orderProduct.setProductVersion(productVersion);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
