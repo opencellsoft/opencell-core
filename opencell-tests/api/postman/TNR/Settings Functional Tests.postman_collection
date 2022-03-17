@@ -2338,7 +2338,7 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate|Currency|TST|INVALID_PARAMETER",
+							"name": "SKIP|CreateOrUpdate|Currency|TST|INVALID_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
@@ -2878,7 +2878,10 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");"
+											"//pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");\r",
+											"pm.variables.set(\"code\",409);\r",
+											"pm.variables.set(\"errorCode\",\"ENTITY_ALREADY_EXISTS_EXCEPTION\");\r",
+											"pm.variables.set(\"message\",\"Language with code=TST already exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2900,7 +2903,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"INV\"\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/languageIso/createOrUpdate",
@@ -6300,7 +6303,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\",\r\n    \"accountingCode\": \"165000000\",\r\n  \"taxCategoryEl\": \"\",\r\n  \"languageDescriptions\": [\r\n    {\r\n      \"languageCode\": \"FRA\"\r\n    }\r\n  ]\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -14261,7 +14264,7 @@
 					]
 				},
 				{
-					"name": "Discount Plan",
+					"name": "SKIP|Discount Plan",
 					"item": [
 						{
 							"name": "CreateOrUpdate|DiscountPlan|DP|SUCCESS",
@@ -15334,7 +15337,7 @@
 					"response": []
 				},
 				{
-					"name": "Subscribe and Activate|Subscription|SUB2|SUCCESS",
+					"name": "SKIP|Subscribe and Activate|Subscription|SUB2|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
@@ -17178,7 +17181,7 @@
 							"response": []
 						},
 						{
-							"name": "Create|WalletOperation|WLT|SUCCESS|Generic",
+							"name": "SKIP|Create|WalletOperation|WLT|SUCCESS|Generic",
 							"event": [
 								{
 									"listen": "test",
@@ -17232,7 +17235,7 @@
 							"response": []
 						},
 						{
-							"name": "Read|WalletOperation|WLT|SUCCESS|Generic",
+							"name": "SKIP|Read|WalletOperation|WLT|SUCCESS|Generic",
 							"event": [
 								{
 									"listen": "test",
@@ -19091,7 +19094,7 @@
 			]
 		},
 		{
-			"name": "Clean Up",
+			"name": "SKIP|Clean Up",
 			"item": [
 				{
 					"name": "Configuration",
