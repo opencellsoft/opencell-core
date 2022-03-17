@@ -18,11 +18,15 @@
 
 package org.meveo.api.rest.payment.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.QueryParam;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -41,7 +45,6 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstanceItemDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
@@ -54,17 +57,15 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.*;
+import org.meveo.api.payment.DDRequestBuilderApi;
+import org.meveo.api.payment.PaymentApi;
+import org.meveo.api.payment.PaymentGatewayApi;
+import org.meveo.api.payment.PaymentGatewayRumSequenceApi;
+import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
-
-import java.util.List;
 
 /**
  * The implementation for PaymentRs.
