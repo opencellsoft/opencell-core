@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobInstance;
@@ -38,6 +38,7 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
     @CurrentUser
     protected MeveoUser currentUser;
 
+	@Transactional
     @Override
     public QueryScheduler create(QueryScheduler entity) {
         try {
@@ -49,27 +50,32 @@ public class QuerySchedulerApiService implements ApiService<QueryScheduler> {
         	}
         	
         	ReportQuery reportQuery = entity.getReportQuery();
-			String code = reportQuery.getCode() + "_Job";
-			Optional<JobInstance> instance = Optional.ofNullable(jobInstanceService.findByCode(code));
-			if (instance.isPresent()) {
-				throw new ValidationException("The Job with {" + code + "} already exists, it means that this report query is already scheduled");
+        	String code = reportQuery.getCode() + "_Job";
+			JobInstance jobInstance = jobInstanceService.findByCode(code);
+			boolean isDisabledJob = !entity.getIsQueryScheduler();
+			if (jobInstance != null) {
+				entity = jobInstance.getQueryScheduler() != null ? querySchedulerService.findById(jobInstance.getQueryScheduler().getId()) : entity;
+			}else {
+				jobInstance = new JobInstance();
 			}
 
-			querySchedulerService.create(entity);
-
-			JobInstance jobInstance = new JobInstance();
 			jobInstance.setCode(code);
             jobInstance.setDescription("Job for report query='" + reportQuery.getCode() + "'");
             jobInstance.setJobCategoryEnum(MeveoJobCategoryEnum.REPORTING_QUERY);
             jobInstance.setJobTemplate("ReportQueryJob");
-            jobInstance.setQueryScheduler(entity);
             jobInstance.setCfValue("reportQuery", reportQuery);
-			jobInstance.setDisabled(!entity.getIsQueryScheduler());
-            jobInstanceService.create(jobInstance);
-
-            // Update the QueryScheduler
-            entity.setJobInstance(jobInstance);
-            querySchedulerService.update(entity);
+            jobInstance.setQueryScheduler(entity);
+			jobInstance.setDisabled(isDisabledJob);
+			if(jobInstance.getId() == null) {
+				querySchedulerService.create(entity);
+				jobInstanceService.create(jobInstance);
+				// Update the QueryScheduler
+				entity.setJobInstance(jobInstance);
+	            querySchedulerService.update(entity);
+			}
+			jobInstanceService.update(jobInstance);
+			entity.getUsersToNotify().size();
+			entity.getEmailsToNotify().size();
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage());
