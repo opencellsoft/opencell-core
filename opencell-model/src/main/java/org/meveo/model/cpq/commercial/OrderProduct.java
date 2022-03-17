@@ -122,7 +122,8 @@ public class OrderProduct extends AuditableCFEntity {
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
 		this.productVersion = other.productVersion;
-		this.orderAttributes = other.orderAttributes;
+		this.orderAttributes.clear();
+		this.orderAttributes.addAll(other.orderAttributes);
         this.discountPlan=other.getDiscountPlan();
         this.quoteProduct=other.getQuoteProduct();
         this.deliveryDate=other.deliveryDate;

@@ -139,6 +139,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(securityDepositToUpdate == null) {
             throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
         }
+        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
+            throw new EntityDoesNotExistsException("The Credit is not possible if the status of the security deposit is at 'Cancel'");
+        } 
         securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
         PaymentDto paymentDto = createPaymentDto(securityDepositInput);     
         Long idPayment = null;

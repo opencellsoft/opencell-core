@@ -10,13 +10,13 @@ public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput
     @Override protected OpenOrderSettingInput toResource(OpenOrderSetting entity) {
         return ImmutableOpenOrderSettingInput.builder()
                 .id(entity.getId())
-                .useOpenOrders(entity.isUseOpenOrders())
-                .applyMaximumValidity(entity.isApplyMaximumValidity())
+                .useOpenOrders(entity.getUseOpenOrders())
+                .applyMaximumValidity(entity.getApplyMaximumValidity())
                 .applyMaximumValidityValue(entity.getApplyMaximumValidityValue())
                 .applyMaximumValidityUnit(entity.getApplyMaximumValidityUnit())
-                .defineMaximumValidity(entity.isDefineMaximumValidity())
+                .defineMaximumValidity(entity.getDefineMaximumValidity())
                 .defineMaximumValidityValue(entity.getDefineMaximumValidityValue())
-                .useManagmentValidationForOOQuotation(entity.isUseManagmentValidationForOOQuotation())
+                .useManagmentValidationForOOQuotation(entity.getUseManagmentValidationForOOQuotation())
                 .build();
     }
 

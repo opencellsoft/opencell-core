@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "036a4055-d2eb-4b6d-aa25-efd6c9bba768",
+		"name": "settings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Open Order Setting",
+			"item": [
+				{
+					"name": "Create Open Order Setting",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"useOpenOrders\": true,\n      \"applyMaximumValidity\": true,\n      \"applyMaximumValidityValue\": 1,\n      \"applyMaximumValidityUnit\": \"Months\",\n      \"defineMaximumValidity\": true,\n      \"defineMaximumValidityValue\": 1,\n      \"useManagmentValidationForOOQuotation\": true\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/setting/openOrderSettings",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"setting",
+								"openOrderSettings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Open Order Setting",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"useOpenOrders\": true,\n      \"applyMaximumValidity\": true,\n      \"applyMaximumValidityValue\": -1,\n      \"applyMaximumValidityUnit\": \"Months\",\n      \"defineMaximumValidity\": true,\n      \"defineMaximumValidityValue\": 2,\n      \"useManagmentValidationForOOQuotation\": true\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/setting/openOrderSettings/1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"setting",
+								"openOrderSettings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
