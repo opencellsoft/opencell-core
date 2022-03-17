@@ -12010,9 +12010,4 @@ order by date_trunc('month', i.invoice_date) DESC
         </update>
     </changeSet>
     
-    
-     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
-        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
-        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
-     </changeSet>
 </databaseChangeLog>
