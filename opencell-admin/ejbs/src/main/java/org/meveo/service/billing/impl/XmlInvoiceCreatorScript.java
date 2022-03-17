@@ -314,7 +314,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
         	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	
         	for(UserAccount userAccount:userAccounts) {
         		if(userAccount.getParentUserAccount() == null) {
                     Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
@@ -2429,20 +2428,14 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
         	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	
         	for(UserAccount userAccount:userAccounts) {
         		if(userAccount.getParentUserAccount() == null) {
-
-
                     Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                             false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
                         continue;
                     }
-
                     createUserAccountChildSectionIL(doc, invoice, invoiceLines, userAccount, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
-                    
-                    
                     userAccountsTag.appendChild(userAccountTag);        		
         		}
         	}
