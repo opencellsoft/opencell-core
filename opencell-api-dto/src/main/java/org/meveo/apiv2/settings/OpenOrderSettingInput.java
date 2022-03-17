@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.settings.MaximumValidityUnitEnum;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 @Value.Immutable
@@ -16,22 +17,28 @@ public interface OpenOrderSettingInput extends Resource {
     @NotNull
     Boolean getUseOpenOrders();
 
-    @NotNull
+
+    @Nullable
     Boolean getApplyMaximumValidity();
 
-    @NotNull
+
+    @Nullable
     Integer getApplyMaximumValidityValue();
 
-    @NotNull
+
+    @Nullable
     MaximumValidityUnitEnum getApplyMaximumValidityUnit();
 
-    @NotNull
+
+    @Nullable
     Boolean getDefineMaximumValidity();
 
-    @NotNull
+
+    @Nullable
     Integer getDefineMaximumValidityValue();
 
-    @NotNull
+
+    @Nullable
     Boolean getUseManagmentValidationForOOQuotation();
 
 }
