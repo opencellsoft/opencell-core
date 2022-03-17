@@ -36,6 +36,7 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -50,17 +51,10 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.*;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.document.DocumentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The CRUD Api for PaymentMethod.
@@ -100,8 +94,7 @@ public class PaymentMethodApi extends BaseApi {
      * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("deprecation")
-	public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
         validate(paymentMethodDto, true);
 
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
@@ -343,7 +336,7 @@ public class PaymentMethodApi extends BaseApi {
         BankCoordinatesDto bankCoordinates = paymentMethodDto.getBankCoordinates();
         
         if (paymentMethodDto.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
-        	boolean fullInfos = false;
+        	// boolean fullInfos = false;
             // Start compatibility with pre-4.6 versions
             if (paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
                 throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
@@ -368,9 +361,9 @@ public class PaymentMethodApi extends BaseApi {
                 if (StringUtils.isBlank(bankCoordinates.getIban())) {
                     throw new InvalidDTOException("Missing IBAN.");
                 }
-                if(paymentMethodDto.getMandateIdentification()!=null && ! StringUtils.isBlank(paymentMethodDto.getMandateIdentification())&& paymentMethodDto.getMandateDate() != null) {
+                /*if(paymentMethodDto.getMandateIdentification() != null && !StringUtils.isBlank(paymentMethodDto.getMandateIdentification()) && paymentMethodDto.getMandateDate() != null) {
                 	fullInfos = true;
-                }
+                }*/
             } else {
                 if (StringUtils.isBlank(paymentMethodDto.getMandateIdentification())) {
                     throw new InvalidDTOException("Missing mandate identification.");
@@ -381,7 +374,7 @@ public class PaymentMethodApi extends BaseApi {
             }
             // End of compatibility with pre-4.6 versions
             
-            paymentMethodDto.setPreferred(fullInfos);
+            // paymentMethodDto.setPreferred(fullInfos);
         }
 
     }
