@@ -17,11 +17,7 @@ import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.payment.PaymentApi;
-import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositSuccessResponse;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
+import org.meveo.apiv2.securityDeposit.*;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -157,6 +153,14 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
             SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, payment);        
         auditLogService.trackOperation("CREDIT", new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
+    }
+
+
+    @Override
+    public Response payInvoices(Long id, SecurityDepositPaymentInput securityDepositPaymentInput) {
+
+        securityDepositService.pay(id, securityDepositPaymentInput);
+        return Response.ok().build();
     }
 
     private PaymentDto createPaymentDto(SecurityDepositCreditInput securityDepositInput) {
