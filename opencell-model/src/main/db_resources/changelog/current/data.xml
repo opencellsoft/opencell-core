@@ -9585,5 +9585,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
+    
+    <changeSet id="INTRD-4285-20220317" author="AmineBENAICHA">
+		<!-- Grant role "query_manager" to role "administrateur" -->
+		<insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-121" />
+        </insert>
+        
+        <!-- Grant role "query_manager" to role "superAdministrateur" -->
+		<insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-2" />
+            <column name="permission_id" valueNumeric="-121" />
+        </insert>
+	</changeSet>
 
 </databaseChangeLog>
