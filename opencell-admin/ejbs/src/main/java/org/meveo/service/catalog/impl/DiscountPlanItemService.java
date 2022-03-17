@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -58,6 +60,9 @@ import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -246,18 +251,24 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return discountAmount;
 
     }
-    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, OfferTemplate offer, Product product, AccountingArticle accountingArticle)
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
-                List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
-                Long lowPriority=null;
-                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                	
-                    if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) && discountPlanItem.isActive() && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)) && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount,null,offer, product, null))) {
-                    	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
-                    	applicableDiscountPlanItems.add(discountPlanItem);
-                    }
-                } 
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteVersion,quoteOffer,quoteProduct,applicationDate,null);
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},isDiscountApplicable={}",discountPlan.getCode(),isDiscountApplicable);
+        if (isDiscountApplicable) {
+        	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+              Long lowPriority=null;
+              for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+              	
+                  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) && discountPlanItem.isActive() && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,quoteVersion, null, quoteOffer, quoteProduct, discountPlan)) {
+                  	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
+                  	if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
+                  	applicableDiscountPlanItems.add(discountPlanItem);
+                  }
+              }
+        }
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
     }
     
@@ -282,9 +293,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         OfferTemplate offerTemplate = invoiceLine.getOfferTemplate();
         BigDecimal amountWithoutTax = invoiceLine.getAmountWithoutTax();
         BigDecimal discountAmount = BigDecimal.ZERO;
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(), offerTemplate, product, invoiceLine.getValueDate(), null);
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(),null, null,null,null,invoiceLine.getValueDate(),invoiceLine); 
         if (isDiscountApplicable) {
-            List<DiscountPlanItem> discountItems = getApplicableDiscountPlanItems(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(), offerTemplate, product, accountintArticle);
+         List<DiscountPlanItem> discountItems = getApplicableDiscountPlanItems(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(),null, null,null, null,null, new Date());
             for (DiscountPlanItem discountPlanItem : discountItems) {
                 AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
                 @SuppressWarnings("unchecked")

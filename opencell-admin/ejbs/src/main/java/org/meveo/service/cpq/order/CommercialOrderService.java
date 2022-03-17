@@ -274,9 +274,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
 		serviceInstance.setProductVersion(product.getCurrentVersion());
 		if (deliveryDate != null) {
-			if(deliveryDate.before(new Date())) {
-				throw new MeveoApiException("Delivery date should be in the future");
-			}
 			serviceInstance.setDeliveryDate(deliveryDate);
 		} else {
 			serviceInstance.setDeliveryDate(getServiceDeliveryDate(subscription.getOrder(), subscription.getOrderOffer(), orderProduct));

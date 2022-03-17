@@ -99,6 +99,10 @@ public class OrderOffer extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "order_line_type", length = 10)
     private OfferLineTypeEnum orderLineType = OfferLineTypeEnum.CREATE;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_amendement_id")
+	private OrderAmendement orderAmendement;
 	
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
@@ -209,4 +213,13 @@ public class OrderOffer extends BusinessCFEntity {
     public void setOrderLineType(OfferLineTypeEnum orderLineType) {
         this.orderLineType = orderLineType;
     }
+
+	public OrderAmendement getOrderAmendement() {
+		return orderAmendement;
+	}
+
+	public void setOrderAmendement(OrderAmendement orderAmendement) {
+		this.orderAmendement = orderAmendement;
+	}
+    
 }

@@ -18,7 +18,10 @@
 
 package org.meveo.service.catalog.impl;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -27,18 +30,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.catalog.DiscountPlanStatusEnum;
-import org.meveo.model.catalog.DiscountPlanTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -88,36 +91,18 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
      * @return true/false
      * @throws BusinessException business exception.
      */
-    public boolean matchDiscountPlanExpression(String expression, IDiscountable entity, Invoice invoice,OfferTemplate offer,Product product, DiscountPlan dp) throws BusinessException {
-        Boolean result = true;
+	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,WalletOperation walletOperation,QuoteVersion quoteVersion, Invoice invoice,QuoteOffer offer,QuoteProduct product, DiscountPlan dp) throws BusinessException {
+	        Boolean result = true;
 
         if (StringUtils.isBlank(expression)) {
             return result;
         }
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, quoteVersion,walletOperation,  invoice, offer, product);
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
         if (expression.indexOf("entity") >= 0) {
             userMap.put("entity", entity);
         }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE_SHORT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_INVOICE_SHORT, invoice);
-        }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
-        }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_DISCOUNT_PLAN) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_DISCOUNT_PLAN, dp);
-        }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
-        }
-        if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_PRODUCT, product);
-        }
-        if (expression.indexOf("su") >= 0) {
-            userMap.put("su", invoice.getSubscription());
-        }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -143,14 +128,16 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		return ids;
 	}
 	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,
-											OfferTemplate offer, Product product, Date quoteDate, InvoiceLine invoiceLine) {
+	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,Date applicationDate,InvoiceLine invoiceLine)
+	{
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE)
 				|| discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
 		if(discountPlan.getDiscountPlanType() == null)
 			return false;
+		OfferTemplate offer=quoteOffer!=null?quoteOffer.getOfferTemplate():wo!=null?wo.getOfferTemplate():null;
+		Product product=quoteProduct!=null?quoteProduct.getProductVersion().getProduct():(wo!=null && wo.getServiceInstance().getProductVersion()!=null?wo.getServiceInstance().getProductVersion().getProduct():null);
 		switch (discountPlan.getDiscountPlanType()) {
 			case OFFER:
 				if (offer != null && !offer.getAllowedDiscountPlans().contains(discountPlan)) {
@@ -170,9 +157,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			default:
 				break;
 		}	
-		
-		if (discountPlan.isActive() && discountPlan.isEffective(quoteDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,null, offer, product, discountPlan)) {
+		applicationDate=applicationDate!=null?applicationDate:new Date();
+		if (discountPlan.isActive() && discountPlan.isEffective(applicationDate)) {
+			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,quoteVersion,null, quoteOffer, quoteProduct, discountPlan)) {
 				return true;
 			}
 		}
