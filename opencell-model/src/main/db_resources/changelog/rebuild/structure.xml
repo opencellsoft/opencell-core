@@ -17371,6 +17371,11 @@
     <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid" />
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
+    <changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" />
+    <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
+    <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
