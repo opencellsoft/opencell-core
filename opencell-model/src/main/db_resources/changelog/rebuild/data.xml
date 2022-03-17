@@ -9792,15 +9792,15 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 
 	<changeSet id="INTRD-4285-20220317" author="AmineBENAICHA">
 		<!-- Grant role "query_manager" to role "administrateur" -->
-		<insert tableName="adm_role_permission">
+		<insert tableName="adm_role_role">
             <column name="role_id" valueNumeric="-1" />
-            <column name="permission_id" valueNumeric="-121" />
+            <column name="child_role_id" valueNumeric="-121" />
         </insert>
         
         <!-- Grant role "query_manager" to role "superAdministrateur" -->
-		<insert tableName="adm_role_permission">
+		<insert tableName="adm_role_role">
             <column name="role_id" valueNumeric="-2" />
-            <column name="permission_id" valueNumeric="-121" />
+            <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
 	
