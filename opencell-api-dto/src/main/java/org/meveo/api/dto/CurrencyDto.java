@@ -19,6 +19,7 @@
 package org.meveo.api.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,8 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
-
-import java.util.List;
 
 /**
  * The Class CurrencyDto.
@@ -59,18 +58,18 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
-    
+
     @Deprecated
     private BigDecimal prCurrencyToThis;
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
 
-     /** trading currency symbol. */
-     private String symbol;
+    /** trading currency symbol. */
+    private String symbol;
 
-      /** trading currency symbol. */
-     private int decimalPlaces;
+    /** trading currency symbol. */
+    private Integer decimalPlaces;
 
     /**
      * Instantiates a new currency dto.
@@ -86,7 +85,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      */
     public CurrencyDto(TradingCurrency tradingCurrency) {
         super(tradingCurrency);
-        id= tradingCurrency.getId();
+        id = tradingCurrency.getId();
         code = tradingCurrency.getCurrencyCode();
         description = tradingCurrency.getPrDescription();
         disabled = tradingCurrency.isDisabled();
@@ -100,7 +99,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      * @param currency the currency
      */
     public CurrencyDto(Currency currency) {
-        id= currency.getId();
+        id = currency.getId();
         code = currency.getCurrencyCode();
         description = currency.getDescriptionEn();
         languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(currency.getDescriptionI18n());
@@ -151,7 +150,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     public Boolean isDisabled() {
         return disabled;
     }
-    
+
     /**
      * @return the prCurrencyToThis
      */
@@ -187,11 +186,11 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
         this.symbol = symbol;
     }
 
-    public int getDecimalPlaces() {
+    public Integer getDecimalPlaces() {
         return decimalPlaces;
     }
 
-    public void setDecimalPlaces(int decimalPlaces) {
+    public void setDecimalPlaces(Integer decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
     }
 
