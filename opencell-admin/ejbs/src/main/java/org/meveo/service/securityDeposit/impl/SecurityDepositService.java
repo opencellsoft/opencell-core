@@ -16,10 +16,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 
+import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -292,4 +292,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 		}
 		return securityDepositsToRefund;
 	}
+
+    public void pay(Long id, SecurityDepositPaymentInput securityDepositPaymentInput) {
+        SecurityDeposit securityDeposit = securityDepositService.findById(id);
+
+    }
+
+    private void checkSecurityDepositPaymentParameters(SecurityDeposit securityDeposit, SecurityDepositPaymentInput securityDepositPaymentInput)
+    {
+
+        if(securityDeposit == null) {
+            throw new EntityDoesNotExistsException("security deposit  does not exist.");
+        }
+    }
 }
