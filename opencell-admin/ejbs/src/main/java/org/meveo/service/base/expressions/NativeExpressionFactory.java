@@ -60,14 +60,16 @@ public class NativeExpressionFactory {
             case "toOptionalRangeInclusive":
                 queryBuilder.addValueIsLessThanField(extractFieldWithAlias(exp.getFieldName()), value, true, true);
                 break;
-            case "list":
+            case PersistenceService.SEARCH_LIST:
                 queryBuilder.addListFilters(exp.getFieldName(), value);
                 break;
+            case "listInList":
+                queryBuilder.addListInList(exp.getFieldName(), value);
             case "inList":
-                addListFilter(value, exp.getFieldName(), false);
+                addInListFilter(value, exp.getFieldName(), false);
                 break;
             case "not-inList":
-                addListFilter(value, exp.getFieldName(), true);
+                addInListFilter(value, exp.getFieldName(), true);
                 break;
             case "minmaxRange":
                 queryBuilder.addValueInBetweenTwoFields(extractFieldWithAlias(exp.getFieldName()), extractFieldWithAlias(exp.getFieldName2()), value, false, false);
@@ -113,7 +115,7 @@ public class NativeExpressionFactory {
         }
     }
 
-    protected void addListFilter(Object value, String fieldName, boolean notIn) {
+    protected void addInListFilter(Object value, String fieldName, boolean notIn) {
         queryBuilder.addFieldInAListOfValues(extractFieldWithAlias(fieldName), value, notIn, false);
     }
 

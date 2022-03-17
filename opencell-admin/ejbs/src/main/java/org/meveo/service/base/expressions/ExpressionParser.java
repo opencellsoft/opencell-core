@@ -38,6 +38,10 @@ public class ExpressionParser {
     }
 
     public String[] getAllFields() {
-        return Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+        if (fieldInfo.length > 1) {
+            return Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+        } else {
+            return fieldInfo;
+        }
     }
 }
