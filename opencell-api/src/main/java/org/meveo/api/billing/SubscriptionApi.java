@@ -2848,6 +2848,7 @@ public class SubscriptionApi extends BaseApi {
             subscription.setStatus(SubscriptionStatusEnum.CREATED);
         }
         subscriptionService.create(subscription);
+        subscriptionService.getEntityManager().flush();
         userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {
