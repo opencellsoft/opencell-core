@@ -31,8 +31,11 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -40,6 +43,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.*;
@@ -255,6 +259,8 @@ public class UserAccountApi extends AccountEntityApi {
         }
     }
 
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public UserAccountsDto listByBillingAccount(String billingAccountCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(billingAccountCode)) {
@@ -277,7 +283,9 @@ public class UserAccountApi extends AccountEntityApi {
 
         return result;
     }
-
+    
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
     public UserAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
         UserAccountsResponseDto result = new UserAccountsResponseDto();
         result.setPaging( pagingAndFiltering );
