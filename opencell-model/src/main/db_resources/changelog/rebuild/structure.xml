@@ -10115,6 +10115,7 @@
             </column>
               <column name="quote_offer_id" type="bigint"/>
               <column name="order_offer_id" type="bigint"/>
+              <column name="discounted_invoice_line" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14872,6 +14873,10 @@ $$ LANGUAGE plpgsql;
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+    <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
+    	<addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
+    		initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+    </changeSet> 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -15886,6 +15891,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <changeSet id="#INTRD-5529_20220304" author="TarikFA." />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

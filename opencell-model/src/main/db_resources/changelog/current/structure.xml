@@ -9355,4 +9355,12 @@ public class OrderAdvancement extends ModuleScript {
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-5529_20220304" author="TarikFA.">
+	    <addColumn tableName="cpq_invoice_line">
+	    	<column name="discounted_invoice_line" type="bigint"/>
+	    </addColumn>
+	    <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	    						initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+    </changeSet>
 </databaseChangeLog>
