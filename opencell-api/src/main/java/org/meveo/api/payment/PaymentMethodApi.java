@@ -336,7 +336,6 @@ public class PaymentMethodApi extends BaseApi {
         BankCoordinatesDto bankCoordinates = paymentMethodDto.getBankCoordinates();
         
         if (paymentMethodDto.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
-        	// boolean fullInfos = false;
             // Start compatibility with pre-4.6 versions
             if (paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
                 throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
@@ -361,9 +360,6 @@ public class PaymentMethodApi extends BaseApi {
                 if (StringUtils.isBlank(bankCoordinates.getIban())) {
                     throw new InvalidDTOException("Missing IBAN.");
                 }
-                /*if(paymentMethodDto.getMandateIdentification() != null && !StringUtils.isBlank(paymentMethodDto.getMandateIdentification()) && paymentMethodDto.getMandateDate() != null) {
-                	fullInfos = true;
-                }*/
             } else {
                 if (StringUtils.isBlank(paymentMethodDto.getMandateIdentification())) {
                     throw new InvalidDTOException("Missing mandate identification.");
@@ -373,10 +369,7 @@ public class PaymentMethodApi extends BaseApi {
                 }
             }
             // End of compatibility with pre-4.6 versions
-            
-            // paymentMethodDto.setPreferred(fullInfos);
         }
-
     }
 
     /**
