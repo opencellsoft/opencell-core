@@ -85,37 +85,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			entity.setCode(UUID.randomUUID().toString());
 		super.create(entity);
 	}
-
-	public CommercialOrder duplicate(CommercialOrder entity) {
-		final CommercialOrder duplicate = new CommercialOrder();
-		duplicate.setStatus(CommercialOrderEnum.DRAFT.toString());
-		duplicate.setStatusDate(Calendar.getInstance().getTime());
-		duplicate.setOrderType(entity.getOrderType());
-		duplicate.setBillingAccount(entity.getBillingAccount());
-		duplicate.setUserAccount(entity.getUserAccount());
-		duplicate.setSeller(entity.getSeller());
-		duplicate.setDescription(entity.getDescription());
-		duplicate.setOrderInvoiceType(entity.getOrderInvoiceType());
-		duplicate.setOrderDate(new Date());
-		duplicate.setProgressDate(new Date());
-		if(entity.getDeliveryDate() != null && entity.getDeliveryDate().compareTo(new Date()) >= 0) {
-			duplicate.setDeliveryDate(entity.getDeliveryDate());
-		}
-		create(duplicate);
-		duplicate.setOrderLots(new ArrayList<OrderLot>());
-		var orderLots = new ArrayList<OrderLot>(entity.getOrderLots());
-		for (OrderLot orderLot : orderLots) {
-			OrderLot duplicateOrderLot = new OrderLot();
-			duplicateOrderLot.setCode(UUID.randomUUID().toString());
-			duplicateOrderLot.setOrder(duplicate);
-			duplicateOrderLot.setName(orderLot.getName());
-			duplicateOrderLot.setQuoteLot(orderLot.getQuoteLot());
-			orderLotService.create(duplicateOrderLot);
-			duplicate.getOrderLots().add(duplicateOrderLot);
-			
-		}
-		return duplicate;
-	}
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
 		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");
