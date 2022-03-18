@@ -159,7 +159,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     @Override
     public Response payInvoices(Long id, SecurityDepositPaymentInput securityDepositPaymentInput) {
 
-        securityDepositService.pay(id, securityDepositPaymentInput);
+        securityDepositService.payInvoices(id, securityDepositPaymentInput);
         return Response.ok().build();
     }
 
