@@ -9798,6 +9798,11 @@ public class OrderAdvancement extends ModuleScript {
         <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
     </changeSet>
 
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
+     </changeSet>
+
     <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
         <createView viewName="all_sequences_view" replaceIfExists="true">
             <![CDATA[

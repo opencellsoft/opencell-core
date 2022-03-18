@@ -56,6 +56,17 @@ public class ExpressionParserTest {
         assertThat(expressionParser.getAllFields()).contains("field1", "field2", "field3");
     }
 
+    
+    @Test
+    public void and_prefix_is_removed() {
+        ExpressionParser expressionParser = getExpression("AND1 condition field1 field2 field3");
+        assertThat(expressionParser.getCondition()).isEqualTo("condition");
+        assertThat(expressionParser.getFieldName()).isEqualTo("field1");
+        assertThat(expressionParser.getFieldName2()).isEqualTo("field2");
+        assertThat(expressionParser.getAllFields().length).isEqualTo(3);
+        assertThat(expressionParser.getAllFields()).contains("field1", "field2", "field3");
+    }
+    
     private ExpressionParser getExpression(String expressionLine) {
         return new ExpressionParser(expressionLine.split(" "));
     }
