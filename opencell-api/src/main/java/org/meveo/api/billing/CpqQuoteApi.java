@@ -1377,10 +1377,11 @@ public class CpqQuoteApi extends BaseApi {
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription, true);
         QuoteArticleLine quoteArticleLine = null;
-        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
+        Map<String, QuoteArticleLine> quoteArticleLines =
+                quoteArticleLineService.findByQuoteVersion(quoteOffer.getQuoteVersion());
+        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<>();
         List<QuotePrice> accountingPrices = new ArrayList<>();
-        
+
         for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
             if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
                 quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
@@ -1418,7 +1419,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
             	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
-            	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
+                quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
@@ -1540,6 +1541,7 @@ public class CpqQuoteApi extends BaseApi {
                     .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
                     .collect(Collectors.toList());
             quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
+            articleToRemove.forEach(article -> article.setQuoteVersion(null));
             quoteVersionService.update(quoteVersion);
         }
     }
