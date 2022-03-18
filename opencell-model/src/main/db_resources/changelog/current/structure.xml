@@ -11792,7 +11792,33 @@ order by date_trunc('month', i.invoice_date) DESC
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
 	</changeSet>
-
+	<changeSet id="#INTRD-5636-20220318" author="hhanine">
+		<createSequence sequenceName="exchange_rate_seq" startValue="1" />
+		<createTable tableName="exchange_rate">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+			    <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="created" type="datetime">
+			    <constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			
+			<column name="trading_currency_id" type="bigint" />            
+			<column name="exchange_rate" type="numeric(23, 6)" />            
+			<column name="from_date" type="datetime" />
+			<column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>		
+		<addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+	            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+	</changeSet>
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid">
 		<addColumn tableName="security_deposit">
 			<column name="refund_reason" type="varchar(255)"/>
