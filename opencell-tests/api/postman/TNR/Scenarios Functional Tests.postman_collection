@@ -1384,21 +1384,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -1460,21 +1445,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -1604,21 +1574,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -6955,21 +6910,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -8096,21 +8036,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -23500,21 +23425,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -38173,21 +38083,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -40283,6 +40178,128 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "SKIP|Create Job Instance",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"WF_JOB\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"UTILS\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\",\r\n    \"active\": true,\r\n      \"customFields\": {\r\n      \"customField\": [\r\n        {\r\n          \"code\": \"gwfJob_generic_wf\",\r\n          \"description\": \"Generic workflow\",\r\n          \"fieldType\": \"ENTITY\",\r\n          \"entityReferenceValue\": {\r\n            \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\",\r\n            \"classnameCode\": null,\r\n            \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\"\r\n          },\r\n          \"guiPosition\": \"tab:Configuration:0;field:2\"\r\n        }\r\n      ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"jobSpeed\": \"NORMAL\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"jobInstance",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SKIP|Create Job Instance 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"WF_JOB1\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"UTILS\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\",\r\n    \"active\": true,\r\n      \"customFields\": {\r\n      \"customField\": [\r\n        {\r\n          \"code\": \"gwfJob_generic_wf\",\r\n          \"description\": \"Generic workflow\",\r\n          \"fieldType\": \"ENTITY\",\r\n          \"entityReferenceValue\": {\r\n            \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\",\r\n            \"classnameCode\": null,\r\n            \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\"\r\n          },\r\n          \"guiPosition\": \"tab:Configuration:0;field:2\"\r\n        }\r\n      ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"jobSpeed\": \"NORMAL\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"jobInstance",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -40361,7 +40378,7 @@
 							"response": []
 						},
 						{
-							"name": "Execute WF - NatitType",
+							"name": "SKIP|Execute WF - NatitType",
 							"event": [
 								{
 									"listen": "test",
@@ -40437,7 +40454,7 @@
 							"response": []
 						},
 						{
-							"name": "Execute WF - scriptType",
+							"name": "SKIP|Execute WF - scriptType",
 							"event": [
 								{
 									"listen": "test",
@@ -45287,7 +45304,7 @@
 							"response": []
 						},
 						{
-							"name": "Run - JAVA",
+							"name": "SKIP|Run - JAVA",
 							"event": [
 								{
 									"listen": "test",
@@ -47607,7 +47624,7 @@
 					]
 				},
 				{
-					"name": "Order",
+					"name": "SKIP|Order",
 					"item": [
 						{
 							"name": "Create old order",
