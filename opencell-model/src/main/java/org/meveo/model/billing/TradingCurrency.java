@@ -18,7 +18,9 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -91,6 +93,17 @@ public class TradingCurrency extends EnableEntity {
     @Column(name = "current_rate_updater")
     private String currentRateUpdater;
 
+    @OneToMany(mappedBy = "tradingCurrency", fetch = FetchType.LAZY)
+    private List<ExchangeRate> exchangeRates= new ArrayList<>();    
+
+    public List<ExchangeRate> getExchangeRates() {
+        return exchangeRates;
+    }
+
+    public void setExchangeRates(List<ExchangeRate> exchangeRates) {
+        this.exchangeRates = exchangeRates;
+    }
+    
     public BigDecimal getPrCurrencyToThis() {
         return prCurrencyToThis;
     }
