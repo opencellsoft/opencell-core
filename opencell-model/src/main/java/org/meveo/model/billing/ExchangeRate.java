@@ -31,8 +31,8 @@ public class ExchangeRate extends EnableEntity {
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
-    @Column(name = "exchage_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal exchageRate;
+    @Column(name = "exchange_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal exchangeRate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "from_date")
@@ -50,12 +50,12 @@ public class ExchangeRate extends EnableEntity {
         this.tradingCurrency = tradingCurrency;
     }
 
-    public BigDecimal getExchageRate() {
-        return exchageRate;
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
     }
 
-    public void setExchageRate(BigDecimal exchageRate) {
-        this.exchageRate = exchageRate;
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 
     public Date getFromDate() {

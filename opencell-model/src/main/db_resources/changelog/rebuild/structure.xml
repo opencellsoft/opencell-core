@@ -3577,7 +3577,7 @@
             <column name="updater" type="varchar(100)" />
             
             <column name="trading_currency_id" type="bigint" />            
-            <column name="exchage_rate" type="numeric(23, 6)" />            
+            <column name="exchange_rate" type="numeric(23, 6)" />            
             <column name="from_date" type="datetime" />
             <column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
 			    <constraints nullable="false" />
