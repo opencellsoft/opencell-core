@@ -801,7 +801,7 @@ public class CustomTableService extends NativePersistenceService {
         }
         List<Map<String, Object>> convertedValues = new LinkedList<>();
 
-        String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
+        String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, DateUtils.DATE_TIME_PATTERN_2, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
 
         for (Map<String, Object> value : values) {
             convertedValues.add(convertValue(value, cftsMap, discardNull, datePatterns));
