@@ -16093,7 +16093,32 @@
 	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
       </changeSet>
-      
+    <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            <![CDATA[
+                select nextVal(quote_ident(sequencename))::text as seq_val, sequencename as seq_code
+                FROM pg_catalog.pg_sequences
+            ]]>
+        </createView>
+    </changeSet>
+    <changeSet id="#INTRD-5777_2022-03-17_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <sql endDelimiter="/">
+            CREATE OR REPLACE FUNCTION get_next_val (seq_name IN VARCHAR2) RETURN VARCHAR AS
+                v_seq_id number(38);
+                sql_stmt VARCHAR(2000);
+            BEGIN
+                sql_stmt := 'select ' || seq_name || '.nextval from dual';
+                execute immediate sql_stmt into v_seq_id ;
+                DBMS_OUTPUT.PUT_LINE(seq_name || ' => ' || v_seq_id);
+                RETURN to_char(v_seq_id);
+            END;
+            /
+        </sql>
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
+        </createView>
+    </changeSet>
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
