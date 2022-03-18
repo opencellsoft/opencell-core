@@ -17,8 +17,6 @@
  */
 package org.meveo.service.base;
 
-import static java.util.stream.Collectors.joining;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -78,6 +76,8 @@ import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -179,9 +179,7 @@ public class NativePersistenceService extends BaseService {
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
         tableName = addCurrentSchema(tableName);
-        Long id = create(tableName, values, true, true);
-
-        return id;
+        return create(tableName, values, true, true);
     }
 
     /**
@@ -349,6 +347,9 @@ public class NativePersistenceService extends BaseService {
                 } else if (id instanceof BigInteger) {
                     id = ((BigInteger) id).longValue();
                 }
+                values.put(FIELD_ID, id);
+            } else {
+                id = getNextValueFromSequence(tableName);
                 values.put(FIELD_ID, id);
             }
 
@@ -1188,5 +1189,22 @@ public class NativePersistenceService extends BaseService {
             }
         }
         return tableName;
+    }
+
+    /**
+     * get next value from sequence using all_sequences_view
+     *
+     * @param customTableName the table name
+     * @return a long
+     */
+    private Long getNextValueFromSequence(String customTableName) {
+        try {
+            customTableName = addCurrentSchema(customTableName);
+            final String sqlString = "select seq_val from all_sequences_view where lower(SEQ_CODE) like lower(:code) || '%'";
+            Object nextVal = getEntityManager().createNativeQuery(sqlString).setParameter("code", customTableName).getSingleResult();
+            return Long.parseLong((String) nextVal);
+        } catch (Exception e) {
+            throw new BusinessException("cannot get next value from sequence of table : " + customTableName, e);
+        }
     }
 }
