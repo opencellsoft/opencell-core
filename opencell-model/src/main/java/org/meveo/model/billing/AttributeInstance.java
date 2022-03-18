@@ -1,25 +1,21 @@
 package org.meveo.model.billing;
 
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.security.MeveoUser;
-
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.util.Date;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 @Cacheable
@@ -32,7 +28,8 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
     @ManyToOne
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
-    @OneToOne
+    
+    @ManyToOne
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
