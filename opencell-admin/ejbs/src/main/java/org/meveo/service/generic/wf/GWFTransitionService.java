@@ -231,6 +231,8 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         }
     }
 
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void syncExecution(BusinessEntity entity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow,
             GWFTransition transition, GWFTransitionAction action, Map<Object, Object> context) {
 

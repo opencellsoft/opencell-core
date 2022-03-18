@@ -18,29 +18,10 @@
 
 package org.meveo.admin.job;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.ejb.EJB;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -59,6 +40,25 @@ import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
+
+import javax.ejb.EJB;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Job implementation to process CDR files converting CDRs to EDR records
@@ -164,10 +164,10 @@ public class MediationJobBean extends BaseJobBean {
         try {
 
             rejectFile = new File(rejectDir + File.separator + rejectedfileName);
-            rejectFileWriter = new PrintWriter(rejectFile);
+            rejectFileWriter = StorageFactory.getPrintWriter(rejectFile);
 
             File outputFile = new File(outputDir + File.separator + processedfileName);
-            outputFileWriter = new PrintWriter(outputFile);
+            outputFileWriter = StorageFactory.getPrintWriter(outputFile);
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 

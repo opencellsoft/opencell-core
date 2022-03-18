@@ -845,6 +845,114 @@ public class EntityExportImportService implements Serializable {
         return new AsyncResult<ExportImportStatistics>(importStatsTotal);
     }
 
+
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public ExportImportStatistics importEntitiesSynchronously(File fileToImport, String filename, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
+
+        forceToProvider = appProvider;
+        log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
+        ExportImportStatistics importStatsTotal = new ExportImportStatistics();
+        HierarchicalStreamReader reader = null;
+        try {
+
+            @SuppressWarnings("resource")
+            InputStream inputStream = new FileInputStream(fileToImport);
+
+            // Handle zip file
+            ZipInputStream zis = null;
+            if (filename.toLowerCase().endsWith(".zip")) {
+                zis = new ZipInputStream(inputStream);
+                zis.getNextEntry();
+            }
+
+            reader = new XppReader(new InputStreamReader(zis != null ? zis : inputStream));
+
+            // Determine if it is a new or old format
+            String rootNode = reader.getNodeName();
+
+            String version = null;
+            // If it is a new format
+            if (!rootNode.equals("meveoExport")) {
+                throw new Exception("Unknown import file format");
+            }
+            version = reader.getAttribute("version");
+
+            // Conversion is required when version from a file and the current model changset version does not match
+            boolean conversionRequired = !this.currentExportModelVersionChangeset.equals(version);
+
+            log.debug("Importing a file from a {} version. Current version is {}. Conversion is required {}", version, this.currentExportModelVersionChangeset, conversionRequired);
+
+            // Convert the file and initiate import again
+            if (conversionRequired) {
+                File convertedFile = actualizeVersionOfExportFile(fileToImport, filename, version);
+                String name = null;
+                if (convertedFile != null) {
+                    name = convertedFile.getName();
+                }
+
+                reader.close();
+                inputStream.close();
+                return importEntitiesSynchronously(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
+            }
+
+            if (forceToProvider != null) {
+                forceToProvider = getEntityManagerForImport().createQuery("select p from Provider p where p.code=:code", Provider.class)
+                    .setParameter("code", forceToProvider.getCode()).getSingleResult();
+            }
+
+            XStream xstream = new XStream();
+            xstream.alias("exportInfo", ExportInfo.class);
+            xstream.alias("exportTemplate", ExportTemplate.class);
+            xstream.useAttributeFor(ExportTemplate.class, "name");
+            xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+            xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+            ExportTemplate importTemplate = null;
+            while (reader.hasMoreChildren()) {
+                reader.moveDown();
+                String nodeName = reader.getNodeName();
+                if (nodeName.equals("exportTemplate")) {
+                    importTemplate = (ExportTemplate) xstream.unmarshal(reader);
+
+                } else if (nodeName.equals("data")) {
+                    try {
+                        ExportImportStatistics importStats = entityExportImportService.importEntities(importTemplate, reader, preserveId, ignoreNotFoundFK, forceToProvider);
+                        importStatsTotal.mergeStatistics(importStats);
+                    } catch (Exception e) {
+                        importStatsTotal.setException(e);
+                        break;
+                    }
+                }
+                reader.moveUp();
+            }
+
+            reader.close();
+            reader = null;
+            refreshCaches();
+
+            log.info("Finished importing file {} ", filename);
+
+        } catch (Exception e) {
+            log.error("Failed to import a file {} ", filename, e);
+            importStatsTotal.setException(e);
+
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception e) {
+                log.error("Failed to close an import file reader", e);
+            }
+        }
+
+        if(importStatsTotal.getException() != null)
+        {
+            throw new BusinessException("Une erreur s’est produite lors de l’import. Merci de vérifier votre fichier et d’essayer à nouveau");
+        }
+
+        return importStatsTotal;
+    }
+
     /**
      * Import entities
      * 

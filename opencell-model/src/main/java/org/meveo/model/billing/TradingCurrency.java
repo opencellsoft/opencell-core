@@ -18,18 +18,11 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -66,7 +59,6 @@ public class TradingCurrency extends EnableEntity {
     /**
      * Description. Deprecated in 5.3 for not use.
      */
-    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
@@ -84,6 +76,34 @@ public class TradingCurrency extends EnableEntity {
     @Transient
     String currencyCode;
 
+    @Column(name = "symbol", length = 255)
+    @Size(max = 255)
+    private String symbol;
+
+    @Column(name = "decimal_places")
+    private Integer decimalPlaces;
+
+    @Column(name = "current_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal currentRate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "current_rate_from_date")
+    private Date currentRateFromDate;
+
+    @Column(name = "current_rate_updater")
+    private String currentRateUpdater;
+
+    @OneToMany(mappedBy = "tradingCurrency", fetch = FetchType.LAZY)
+    private List<ExchangeRate> exchangeRates= new ArrayList<>();    
+
+    public List<ExchangeRate> getExchangeRates() {
+        return exchangeRates;
+    }
+
+    public void setExchangeRates(List<ExchangeRate> exchangeRates) {
+        this.exchangeRates = exchangeRates;
+    }
+    
     public BigDecimal getPrCurrencyToThis() {
         return prCurrencyToThis;
     }
@@ -114,6 +134,46 @@ public class TradingCurrency extends EnableEntity {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Integer getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(Integer decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
+    }
+
+    public BigDecimal getCurrentRate() {
+        return currentRate;
+    }
+
+    public void setCurrentRate(BigDecimal currentRate) {
+        this.currentRate = currentRate;
+    }
+
+    public Date getCurrentRateFromDate() {
+        return currentRateFromDate;
+    }
+
+    public void setCurrentRateFromDate(Date currentRateFromDate) {
+        this.currentRateFromDate = currentRateFromDate;
+    }
+
+    public String getCurrentRateUpdater() {
+        return currentRateUpdater;
+    }
+
+    public void setCurrentRateUpdater(String currentRateUpdater) {
+        this.currentRateUpdater = currentRateUpdater;
     }
 
     @Override

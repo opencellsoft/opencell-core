@@ -3,6 +3,7 @@ package org.meveo.service.securityDeposit.impl;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
@@ -27,7 +28,7 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     private AuditLogService auditLogService;
 
     @Override public void create(SecurityDepositTemplate entity) throws BusinessException {
-        entity.setCurrency(currencyService.findById(entity.getCurrency().getId()));
+        entity.setCurrency(findCurrencyByIdOrCode(entity));
         checkParameters(entity);
         super.create(entity);
         auditLogService.trackOperation("UPDATE", new Date(), entity, entity.getCode());
@@ -36,11 +37,22 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
     @Override
     public SecurityDepositTemplate update(SecurityDepositTemplate entity) throws BusinessException {
 
-        entity.setCurrency(currencyService.findById(entity.getCurrency().getId()));
+        entity.setCurrency(findCurrencyByIdOrCode(entity));
         checkParameters(entity);
         SecurityDepositTemplate updatedSecurityDepositTemplate =  super.update(entity);
         auditLogService.trackOperation("UPDATE", new Date(), updatedSecurityDepositTemplate, updatedSecurityDepositTemplate.getCode());
         return updatedSecurityDepositTemplate;
+    }
+
+    private Currency findCurrencyByIdOrCode(SecurityDepositTemplate entity){
+
+        if(entity.getCurrency() != null && entity.getCurrency().getId() != null) {
+            return currencyService.findById(entity.getCurrency().getId());
+        } else  if(entity.getCurrency() != null && entity.getCurrency().getCurrencyCode() != null) {
+            return currencyService.findByCode(entity.getCurrency().getCurrencyCode());
+        }
+
+        return null;
     }
 
     public void updateStatus(Set<Long> ids, String status)

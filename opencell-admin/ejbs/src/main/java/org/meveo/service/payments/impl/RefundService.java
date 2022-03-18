@@ -78,6 +78,12 @@ public class RefundService extends PersistenceService<Refund> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         
+        createEntityRefund(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay, refund, occTemplate);
+        return refund.getId();
+    }
+
+    private void createEntityRefund(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType,
+            List<Long> aoIdsToPay, Refund refund, OCCTemplate occTemplate) {
         refund.setPaymentMethod(paymentMethodType);
         refund.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         refund.setUnMatchingAmount(refund.getAmount());
@@ -112,7 +118,6 @@ public class RefundService extends PersistenceService<Refund> {
         refund.setAmountWithoutTax(sumWithoutTax);
         refund.setOrderNumber(orderNums);
         create(refund);
-        return refund.getId();
     }
 
     /**
@@ -127,9 +132,18 @@ public class RefundService extends PersistenceService<Refund> {
      */
     public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType, List<Long> aoIdsToPay)
             throws BusinessException {
+        String occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.card", "REF_CRD");
+        if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.dd", "REF_DDT");
+        }
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
+        }
         Refund refund = new Refund();
-        createSDRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay, refund);
+        createEntityRefund(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay, refund, occTemplate);
         return refund.getId();
+
     }
 
 }

@@ -4,66 +4,64 @@ import static java.lang.Integer.valueOf;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BasicStatistics {
 
-    private Map<Long, List<Long>> iLIdsRtIdsCorrespondence;
-    private BigDecimal amountWithoutTax;
-    private BigDecimal amountWithTax;
-    private BigDecimal amountTax;
-    private Integer billableEntitiesCount;
+    private BigDecimal sumAmountWithoutTax;
+    private BigDecimal sumAmountWithTax;
+    private BigDecimal sumAmountTax;
+    private Integer count;
 
     public BasicStatistics() {
-        this.iLIdsRtIdsCorrespondence = new HashMap<>();
-        this.amountWithoutTax = ZERO;
-        this.amountWithTax = ZERO;
-        this.amountTax = ZERO;
-        this.billableEntitiesCount = valueOf(0);
+        this.sumAmountWithoutTax = ZERO;
+        this.sumAmountWithTax = ZERO;
+        this.sumAmountTax = ZERO;
+        this.count = valueOf(0);
     }
 
-    public Map<Long, List<Long>> getiLIdsRtIdsCorrespondence() {
-        return iLIdsRtIdsCorrespondence;
+
+    public BigDecimal getSumAmountWithoutTax() {
+        return sumAmountWithoutTax;
     }
 
-    public void setILIdsRtIdsCorrespondence(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
-        this.iLIdsRtIdsCorrespondence = iLIdsRtIdsCorrespondence;
+    public BigDecimal getSumAmountWithTax() {
+        return sumAmountWithTax;
     }
-
-    public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
-    }
-
-    public BigDecimal getAmountWithTax() {
-        return amountWithTax;
-    }
-
-    public BigDecimal getAmountTax() {
-        return amountTax;
+    
+    public BigDecimal getSumAmountTax() {
+        return sumAmountTax;
     }
 
     public BigDecimal addToAmountWithoutTax(BigDecimal amount) {
-        amountWithoutTax = this.amountWithoutTax.add(amount);
-        return amountWithoutTax;
-    }
-
-    public BigDecimal addToAmountTax(BigDecimal amount) {
-        this.amountTax = this.amountTax.add(amount);
-        return amountTax;
+        sumAmountWithoutTax = this.sumAmountWithoutTax.add(amount);
+        return sumAmountWithoutTax;
     }
 
     public BigDecimal addToAmountWithTax(BigDecimal amount) {
-        this.amountWithTax = this.amountWithTax.add(amount);
-        return amountWithTax;
+        this.sumAmountWithTax = this.sumAmountWithTax.add(amount);
+        return sumAmountWithTax;
+    }
+    
+    public BigDecimal addToAmountTax(BigDecimal amount) {
+        this.sumAmountTax = this.sumAmountTax.add(amount);
+        return sumAmountTax;
     }
 
-    public Integer getBillableEntitiesCount() {
-        return billableEntitiesCount;
+    public Integer getCount() {
+        return count;
     }
 
-    public void setBillableEntitiesCount(Integer billableEntitiesCount) {
-        this.billableEntitiesCount = billableEntitiesCount;
+    public void setCount(Integer count) {
+        this.count = count;
     }
+
+	/**
+	 * @param statistics
+	 */
+	public void append(BasicStatistics statistics) {
+		this.count+=statistics.getCount();
+		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
+	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
+	     this.sumAmountTax=this.sumAmountTax.add(statistics.getSumAmountTax());
+	}
 }

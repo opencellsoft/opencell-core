@@ -72,8 +72,10 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
-            @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+		@NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT SUM(dpi.discountValue) FROM DiscountPlanItem dpi WHERE dpi.discountPlan.id = :discountPlanId AND dpi.discountPlanItemType='FIXED'")
+})
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;
@@ -175,7 +177,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
-    private Set<AccountingArticle> targetAccountingArticle = new HashSet<AccountingArticle>();
+    private Set<AccountingArticle> targetAccountingArticle = new HashSet<>();
 
 
 	@ManyToOne(fetch = FetchType.LAZY)

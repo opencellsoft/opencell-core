@@ -113,8 +113,8 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
                 && !SecurityDepositStatusEnum.HOLD.equals(securityDepositToUpdate.getStatus())){
             throw new EntityDoesNotExistsException("The refund is possible ONLY if the status of the security deposit is at 'Locked' or 'Unlocked' or 'HOLD'");
         }    
-        
-        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED);
+
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getRefundReason(), SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     
@@ -124,8 +124,12 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(securityDepositToUpdate == null) {
             throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
         }
-
-        securityDepositService.cancel(securityDepositToUpdate, securityDepositInput);
+        
+        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
+            throw new EntityDoesNotExistsException("The Cancel is not possible if the status of the security deposit is at 'Cancel'");
+        } 
+        
+        securityDepositService.refund(securityDepositToUpdate, securityDepositInput.getCancelReason(), SecurityDepositOperationEnum.CANCEL_SECURITY_DEPOSIT, SecurityDepositStatusEnum.CANCELED, "CANCEL");
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
     
@@ -135,6 +139,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         if(securityDepositToUpdate == null) {
             throw new EntityDoesNotExistsException("security deposit with id " + id + " does not exist.");
         }
+        if(SecurityDepositStatusEnum.CANCELED.equals(securityDepositToUpdate.getStatus())){
+            throw new EntityDoesNotExistsException("The Credit is not possible if the status of the security deposit is at 'Cancel'");
+        } 
         securityDepositService.credit(securityDepositToUpdate, securityDepositInput);
         PaymentDto paymentDto = createPaymentDto(securityDepositInput);     
         Long idPayment = null;

@@ -169,6 +169,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customerAccount.setCode(customGenericEntityCodeService.getGenericEntityCode(customerAccount));
         }
+        if (postData.getIsCompany() != null) {
+            customerAccount.setIsCompany(postData.getIsCompany());
+        }
 
 //        if (postData.getPaymentMethods() != null) {
 //            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {

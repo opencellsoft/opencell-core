@@ -126,7 +126,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
-        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0 where inv.id = :invoiceId")
+        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -620,6 +620,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     @Transient
     private List<InvoiceLine> draftInvoiceLines = new ArrayList<>();
+
+    /**
+     * Amount without tax before discount
+     */
+    @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTaxBeforeDiscount;
 
 
     public Invoice() {
@@ -1596,6 +1602,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setCpqQuote(CpqQuote cpqQuote) {
 		this.cpqQuote = cpqQuote;
 	}
-    
-    
+
+
+    public BigDecimal getAmountWithoutTaxBeforeDiscount() {
+        return amountWithoutTaxBeforeDiscount;
+    }
+
+    public void setAmountWithoutTaxBeforeDiscount(BigDecimal amountWithoutTaxBeforeDiscount) {
+        this.amountWithoutTaxBeforeDiscount = amountWithoutTaxBeforeDiscount;
+    }
 }

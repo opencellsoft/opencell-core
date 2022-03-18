@@ -149,7 +149,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         if (securityDepositInput.getValidityDate() != null && ((isSameDay(securityDepositInput.getValidityDate(), new Date()))
                 || securityDepositInput.getValidityDate().before(new Date()))) {
-            throw new BadRequestException("User cannot select the day date or a date in the past");
+            throw new BadRequestException("Validity must be in the future");
         }
         if (securityDepositInput.getValidityPeriod() != null && securityDepositInput.getValidityPeriod() <= 0) {
             throw new BadRequestException("0 and negative values not allowed");

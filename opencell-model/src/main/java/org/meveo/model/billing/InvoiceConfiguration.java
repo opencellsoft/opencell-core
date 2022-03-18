@@ -169,7 +169,22 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Column(name = "display_wallet_operations")
     private boolean displayWalletOperations = false;
 
-    public boolean isDisplayWalletOperations() {
+    /**
+     * Should user account hierarchy be displayed in the XML invoice
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display_user_account_hierarchy")
+    private boolean displayUserAccountHierarchy = false;    
+
+    public boolean isDisplayUserAccountHierarchy() {
+		return displayUserAccountHierarchy;
+	}
+
+	public void setDisplayUserAccountHierarchy(boolean displayUserAccountHierarchy) {
+		this.displayUserAccountHierarchy = displayUserAccountHierarchy;
+	}
+
+	public boolean isDisplayWalletOperations() {
         return displayWalletOperations;
     }
 

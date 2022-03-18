@@ -36,9 +36,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
@@ -52,6 +55,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
 import javax.ws.rs.BadRequestException;
@@ -172,6 +177,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
     
+    public static final int SHORT_MAX_VALUE = 32767;
     /**
      * Is custom field accumulation being used
      */
@@ -1616,5 +1622,36 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public boolean areEventsEnabled(NotificationEventTypeEnum eventType) {
         List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, ReflectionUtils.createObject(entityClass.getName()));
         return notifications != null && !notifications.isEmpty();
+    }
+
+
+
+    /**
+     * Execute a HQL select query
+     *
+     * @param hqlQuery HQL query to execute
+     * @param params Parameters to pass
+     * @return A map of values retrieved
+     */
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params) {
+        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return query.getResultStream().map(mapTuplesAsMap()).collect(Collectors.toList());
+    }
+
+    private Function<Tuple, Map<String, Object>> mapTuplesAsMap() {
+        return data -> {
+            Map<String, Object> map = new HashMap<>();
+            for (TupleElement<?> tuple : data.getElements()) {
+                map.put(tuple.getAlias(), data.get(tuple.getAlias()));
+            }
+            return map;
+        };
     }
 }
