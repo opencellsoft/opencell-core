@@ -184,7 +184,7 @@ public class GDPRJobBean extends BaseJobBean {
 
                         statement.execute("update " + schemaPrefix + "billing_rated_transaction set service_instance_id=null, subscription_id=null, charge_instance_id=null where subscription_id in (select id from "
                                 + schemaPrefix + "mview_gdpr_subscriptions)");
-                        statement.execute("update " + schemaPrefix + "cpq_invoice_line set subscription_id=null where subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
+                        statement.execute("update " + schemaPrefix + "billing_invoice_line set subscription_id=null where subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
                         statement.execute("update " + schemaPrefix + "billing_invoice set subscription_id=null where subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
                         statement.execute("update " + schemaPrefix + "ord_order_item set subscription_id=null where subscription_id in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
                         statement.execute("update " + schemaPrefix + "billing_subscription set next_version=null where next_version in (select id from " + schemaPrefix + "mview_gdpr_subscriptions)");
@@ -385,7 +385,7 @@ public class GDPRJobBean extends BaseJobBean {
                                 + "mview_gdpr_invoices gi on ao.invoice_id=gi.id where transaction_type='I')");
                         statement.execute("delete from " + schemaPrefix + "ar_account_operation where transaction_type='I' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 
-                        statement.execute("delete from " + schemaPrefix + "cpq_invoice_line where invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
+                        statement.execute("delete from " + schemaPrefix + "billing_invoice_line where invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 
                         statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where type='F' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
                         statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
