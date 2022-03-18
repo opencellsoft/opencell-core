@@ -11808,14 +11808,14 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="updated" type="datetime" />
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
-			
-			<column name="trading_currency_id" type="bigint" />            
-			<column name="exchange_rate" type="numeric(23, 6)" />            
+
+			<column name="trading_currency_id" type="bigint" />
+			<column name="exchange_rate" type="numeric(23, 6)" />
 			<column name="from_date" type="datetime" />
 			<column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
 			<constraints nullable="false" />
 			</column>
-		</createTable>		
+		</createTable>
 		<addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 	            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
 	</changeSet>
@@ -12295,6 +12295,10 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="product_version_id"
                                  constraintName="billing_invoice_line__product_version__fk"
                                  referencedTableName="cpq_product_version" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza">
+        <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id" />
     </changeSet>
 
 </databaseChangeLog>
