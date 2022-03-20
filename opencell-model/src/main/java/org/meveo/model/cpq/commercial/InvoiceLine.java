@@ -62,9 +62,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @ObservableEntity
-@Table(name = "cpq_invoice_line")
+@Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
+        @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
 @NamedQueries({
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndIDs", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND id in (:listOfIds) "),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice.id =:invoiceId"),

@@ -1,5 +1,6 @@
 package org.meveo.service.settings.impl;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -25,10 +26,18 @@ public class OpenOrderSettingService extends BusinessService<OpenOrderSetting> {
     }
 
     public void checkParameters(OpenOrderSetting entity) {
+
+        if (BooleanUtils.isTrue(entity.getApplyMaximumValidity()) && entity.getApplyMaximumValidityValue() == null)
+            throw new InvalidParameterException("Apply Maximum Validity  must hold a value");
+
+        if (BooleanUtils.isTrue(entity.getDefineMaximumValidity())  && entity.getDefineMaximumValidityValue() == null)
+            throw new InvalidParameterException("Define Maximum Validity must hold a value");
+
         if (entity.getApplyMaximumValidityValue() != null && entity.getApplyMaximumValidityValue() < 1)
-            throw new InvalidParameterException("Apply Maximum Validity Value must be greater than 0");
+            throw new InvalidParameterException("Apply Maximum Validity  must be a value greater than 0");
+
         if (entity.getDefineMaximumValidityValue() != null && entity.getDefineMaximumValidityValue().longValue() < 1)
-            throw new InvalidParameterException("Define Maximum Validity Value must be greater than 0");
+            throw new InvalidParameterException("Define Maximum Validity must be a value greater than 0");
     }
 
 
