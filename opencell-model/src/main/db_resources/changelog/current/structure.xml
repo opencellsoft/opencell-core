@@ -12335,7 +12335,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="order_amendement_id"></column>
         </dropColumn>
     	
-    	<dropForeignKeyConstraint baseTableName="cpq_order_offer" constraintName="fk_prd_restart_order_id"/>
+    	<dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"/>
     	<dropColumn tableName="cpq_order_product">
             <column name="order_amendement_restart_id"></column>
         </dropColumn>
