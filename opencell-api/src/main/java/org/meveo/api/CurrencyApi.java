@@ -233,10 +233,17 @@ public class CurrencyApi extends BaseApi {
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         }
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
         if (enable) {
             tradingCurrencyService.enable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.enable(oneExchangeRate);
+            }
         } else {
             tradingCurrencyService.disable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.disable(oneExchangeRate);
+            }
         }
     }
 
@@ -254,6 +261,16 @@ public class CurrencyApi extends BaseApi {
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        if(tradingCurrency == null)
+        {
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
+            tradingCurrency.setPrDescription(currency.getDescription());
+            tradingCurrency.setSymbol(currency.getCurrencyCode());
+            tradingCurrency.setDecimalPlaces(2);
+            tradingCurrencyService.create(tradingCurrency);
+        }
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
     }
