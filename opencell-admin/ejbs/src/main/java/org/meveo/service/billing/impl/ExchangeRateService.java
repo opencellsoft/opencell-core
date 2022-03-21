@@ -15,35 +15,14 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.service.admin.impl;
+package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
-import javax.persistence.NoResultException;
 
-import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.ExchangeRate;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@Named
-public class TradingCurrencyService extends PersistenceService<TradingCurrency> {
+public class ExchangeRateService extends PersistenceService<ExchangeRate> {
 
-    /**
-     * Find TradingCurrency by its trading currency code.
-     * 
-     * @param tradingCurrencyCode Trading currency code
-     * @return Trading currency found or null.
-     * 
-     */
-    public TradingCurrency findByTradingCurrencyCode(String tradingCurrencyCode) {
-
-        try {
-            return getEntityManager().createNamedQuery("TradingCurrency.getByCode", TradingCurrency.class).setParameter("tradingCurrencyCode", tradingCurrencyCode)
-                .getSingleResult();
-
-        } catch (NoResultException e) {
-            log.warn("Trading currency not found : currency={}", tradingCurrencyCode);
-            return null;
-        }
-    }
 }
