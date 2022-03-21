@@ -20,9 +20,7 @@ import org.meveo.service.payments.impl.*;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
@@ -54,8 +52,6 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private RefundService refundService;
 
-    @Inject
-    private SecurityDepositService securityDepositService;
 
     @Inject
     private AccountOperationService accountOperationService;
@@ -64,10 +60,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     private MatchingCodeService matchingCodeService;
 
     @Inject
-    private SecurityDepositTransaction securityDepositTransaction;
-
+    private PaymentHistoryService paymentHistoryService;
 
     protected List<String> missingParameters = new ArrayList<>();
+
 
 
     public BigDecimal sumAmountPerCustomer(CustomerAccount customerAccount) {
@@ -246,7 +242,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     public List<SecurityDeposit> checkPeriod(List<Long> securityDeposits) {
         List<SecurityDeposit> securityDepositsToRefund = new ArrayList<SecurityDeposit>();
         for (Long securityDepositId : securityDeposits) {
-            SecurityDeposit securityDeposit = securityDepositService.findById(securityDepositId);
+            SecurityDeposit securityDeposit = findById(securityDepositId);
 
             if (securityDeposit.getValidityDate() != null) {
                 securityDepositsToRefund.add(securityDeposit);
@@ -282,6 +278,15 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositSubscription(securityDeposit, accountOperation);
         checkSecurityDepositServiceInstance(securityDeposit, accountOperation);
         matchSecurityDepositPayments(securityDeposit);
+        paymentHistoryService.addHistory(securityDeposit.getCustomerAccount(),
+            		null,
+    				null,
+                securityDepositPaymentInput.getAmount().multiply(new BigDecimal(100)).longValue(),
+    				PaymentStatusEnum.ACCEPTED, null, null,
+                "paid by security deposit", null, null,
+    				null,null,
+                Collections.EMPTY_LIST);
+
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
         createSecurityDepositTransaction(securityDeposit,
                 securityDepositPaymentInput.getAmount(),
@@ -298,7 +303,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         securityDeposit.setStatus(SecurityDepositStatusEnum.UNLOCKED);
         securityDeposit.setAmount(securityDeposit.getAmount().subtract(amount));
-        securityDepositService.update(securityDeposit);
+        update(securityDeposit);
     }
 
     private void matchSecurityDepositPayments(SecurityDeposit securityDeposit) {
@@ -355,7 +360,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     SecurityDeposit getSecurityDepositOrFail(Long id) {
-        SecurityDeposit securityDeposit = securityDepositService.findById(id);
+        SecurityDeposit securityDeposit = findById(id);
         if (securityDeposit == null) {
             throw new EntityDoesNotExistsException("security deposit does not exist.");
         }
