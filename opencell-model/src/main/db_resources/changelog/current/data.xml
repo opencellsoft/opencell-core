@@ -9538,5 +9538,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
-
+	<changeSet id="#INTRD-5841-21032022" author="TarikRabeh">
+    	<sql>update billing_billing_account bba 
+    		set trading_currency_id = (select aca.trading_currency_id from ar_customer_account aca where aca.id = ba.customer_account_id ) 
+    		where bba.trading_currency_id is null</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -2466,6 +2466,9 @@
             <column name="trading_language_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
             <column name="invoicing_threshold" type="numeric(23, 12)" />
             <column name="mailing_type" type="varchar(255)" />
             <column name="cced_emails" type="varchar(2000)" />
@@ -16362,7 +16365,11 @@
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
     </changeSet>
-
+    <changeSet author="TarikRabeh" id="#INTRD-5841-21032022-fk">
+        <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="billing_billing_account" constraintName="fk_trading_currency_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+    </changeSet>
+    
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -17433,6 +17440,7 @@
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
 
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-5841-21032022" author="TarikRabeh" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
