@@ -949,4 +949,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
          }
 
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<Subscription> listByBillingAccount(BillingAccount billingAccount) {
+    	 QueryBuilder qb = new QueryBuilder(Subscription.class, "s", Arrays.asList("userAccount", "userAccount.billingAccount"));
+         qb.addCriterionEntity("s.userAccount.billingAccount.code", billingAccount.getCode());
+         try {
+             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+         } catch (NoResultException e) {
+             return null;
+         }
+    }
 }
