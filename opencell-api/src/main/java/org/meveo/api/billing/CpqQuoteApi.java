@@ -1274,7 +1274,7 @@ public class CpqQuoteApi extends BaseApi {
         //get quote discountPlanitem of type percentage
         if(quoteVersion.getDiscountPlan()!=null) {
         	
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate()));
+        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null,null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate()));
         }
 
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1392,7 +1392,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         BillingAccount billingAccount=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
         if(quoteOffer.getDiscountPlan()!=null) {
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null, quoteOffer.getQuoteVersion(),quoteOffer, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
+        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null, quoteOffer.getQuoteVersion(),quoteOffer, null,null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
         }
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
@@ -1453,7 +1453,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
             if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
-            	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, quotePrice.getQuoteArticleLine().getQuoteProduct(), DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
+            	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, quotePrice.getQuoteArticleLine().getQuoteProduct(), quotePrice.getQuoteArticleLine().getAccountingArticle(),DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
             }
             accountingPrices.addAll(applyPercentageDiscount(wo, quotePrice, applicablePercentageDiscountItems, billingAccount, quotePrice.getQuoteVersion()));
         }
@@ -1838,7 +1838,7 @@ public class CpqQuoteApi extends BaseApi {
 
         if (isDiscountApplicable) {
         	  Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-         List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null, DiscountPlanItemTypeEnum.FIXED, applicationDate);
+         List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, null,quoteVersion, quoteOffer, null,accountingArticle, DiscountPlanItemTypeEnum.FIXED, applicationDate);
         	 for (DiscountPlanItem discountPlanItem : discountItems) {
         		 log.debug("applyFixedDiscount discountPlan code={},discountPlanItem type={}",discountPlan.getCode(),discountPlanItem.getDiscountPlanItemType());
         		  AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
@@ -1914,14 +1914,15 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer = quoteproduct.getQuoteOffer();  
             attributesValues = new ArrayList(quoteproduct.getQuoteAttributes()); 
         }
-        Seller seller=quoteproduct.getQuote().getSeller()!=null?quoteproduct.getQuote().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
+        Seller seller=quoteproduct.getQuoteOffer().getQuoteVersion().getQuote().getSeller()!=null?quoteproduct.getQuoteOffer().getQuoteVersion().getQuote().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
         BigDecimal amountWithoutTax = quotePrice.getUnitPriceWithoutTax();
         BigDecimal unitDiscountAmount = BigDecimal.ZERO; 
         QuoteArticleLine quoteArticleLine = null;
         TaxInfo taxInfo = null; 
             Map<String, QuoteArticleLine> quoteArticleLines = quoteArticleLineService.findByQuoteVersion(quoteVersion); // quote article line by quote version
             for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-            	  if (discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.PERCENTAGE) {
+            	  if (discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.PERCENTAGE 	  
+            			  && discountPlanItemService.isDiscountPlanItemApplicable(billingAccount, discountPlanItem, wo, quoteVersion, quoteOffer, quoteproduct, quotePrice.getQuoteArticleLine().getAccountingArticle())) {
             		  AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
                       if(discountAccountingArticle == null)
                       	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");

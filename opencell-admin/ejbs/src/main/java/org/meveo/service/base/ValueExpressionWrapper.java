@@ -70,10 +70,12 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -286,6 +288,9 @@ public class ValueExpressionWrapper {
 	
 	private static final String VAR_COMMERCIAL_ORDER = "order";
 
+    private static final String VAR_QUOTE_OFFER = "quoteOffer";
+	
+	private static final String VAR_QUOTE_PRODUCT = "quoteProduct";
     /**
      * Variables in EL expression
      * 
@@ -335,6 +340,8 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(OrderAttribute.class.getName(), new String[] { VAR_ORDER_ATRIBUTE });
         elVariablesByClass.put(AttributeInstance.class.getName(), new String[] { VAR_ATRIBUTE_INSTANCE });
         elVariablesByClass.put(CommercialOrder.class.getName(), new String[] { VAR_COMMERCIAL_ORDER });
+        elVariablesByClass.put(QuoteOffer.class.getName(), new String[] { VAR_QUOTE_OFFER });
+        elVariablesByClass.put(QuoteProduct.class.getName(), new String[] { VAR_QUOTE_PRODUCT });
     }
 
     /**
@@ -631,6 +638,7 @@ public class ValueExpressionWrapper {
         Invoice invoice = null;
         CpqQuote quote = null;
         QuoteVersion quoteVersion = null;
+        QuoteOffer quoteOffer = null;
         QuoteAttribute quoteAttribute=null;
         OrderAttribute orderAttribute=null;
         AttributeInstance attributeInstance=null;
@@ -686,6 +694,10 @@ public class ValueExpressionWrapper {
             
             if (parameter instanceof QuoteVersion) {
                 quoteVersion = (QuoteVersion) parameter;
+            }
+            
+            if (parameter instanceof QuoteOffer) {
+                quoteOffer = (QuoteOffer) parameter;
             }
             
             if (parameter instanceof QuoteAttribute) {
@@ -777,6 +789,10 @@ public class ValueExpressionWrapper {
             }
         }
         
+        if (el.contains(VAR_QUOTE_PRODUCT) && !contextMap.containsKey(VAR_QUOTE_PRODUCT) && serviceInstance != null) {
+            contextMap.put(VAR_QUOTE_PRODUCT, serviceInstance.getQuoteProduct());
+        }
+        
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && order != null) {
             quoteVersion =order.getQuoteVersion();
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
@@ -784,7 +800,6 @@ public class ValueExpressionWrapper {
             	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
             }
         }
-        
         if (el.contains(VAR_SERVICE_TEMPLATE) && !contextMap.containsKey(VAR_SERVICE_TEMPLATE)) {
             if (serviceInstance != null) {
                 contextMap.put(VAR_SERVICE_TEMPLATE, serviceInstance.getServiceTemplate());
