@@ -9939,9 +9939,7 @@
             <column name="customer_service_duration" type="int" />
             <column name="external_reference" type="varchar(50)" />
             <column name="order_parent_id" type="bigint" />
-            <column name="order_type_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
+            <column name="order_type_id" type="bigint" />
             <column name="invoicing_plan_id" type="bigint" />
             <column name="invoice_type_id" type="bigint">
                 <constraints nullable="false"/>
@@ -17181,7 +17179,7 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
     <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid" />
-    
+    <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
