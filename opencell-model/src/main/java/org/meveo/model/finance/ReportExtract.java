@@ -271,7 +271,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     }
 
     public Long getMaximumLine() {
-        return maximumLine;
+        return maximumLine == null ? 0L : maximumLine;
     }
 
     public void setMaximumLine(Long maximumLine) {
