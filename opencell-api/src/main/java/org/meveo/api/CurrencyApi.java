@@ -221,7 +221,6 @@ public class CurrencyApi extends BaseApi {
         handleMissingParameters();
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code);
-        tradingCurrency = tradingCurrencyService.retrieveIfNotManaged(tradingCurrency);       
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         }
