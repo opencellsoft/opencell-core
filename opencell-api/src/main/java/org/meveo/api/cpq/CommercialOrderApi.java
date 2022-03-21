@@ -137,8 +137,10 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setSeller(seller);
 		
-		
-		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
+		if(!Strings.isEmpty(orderDto.getOrderTypeCode())) {
+			final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
+			order.setOrderType(orderType);
+		}
 		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
 			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
         }
@@ -285,8 +287,6 @@ public class CommercialOrderApi extends BaseApi {
 		
 		if(!Strings.isEmpty(orderDto.getOrderTypeCode())) {
 			final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
-			if(orderType == null)
-				throw new EntityDoesNotExistsException(OrderType.class, orderDto.getOrderTypeCode());
 			order.setOrderType(orderType);
 		}
 		order.setLabel(orderDto.getLabel());
@@ -610,8 +610,6 @@ public class CommercialOrderApi extends BaseApi {
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getBillingAccountCode()))
 			missingParameters.add("billingAccountCode");
-		if(Strings.isEmpty(order.getOrderTypeCode()))
-			missingParameters.add("orderTypeCode");
 		
 		handleMissingParameters();
 	}

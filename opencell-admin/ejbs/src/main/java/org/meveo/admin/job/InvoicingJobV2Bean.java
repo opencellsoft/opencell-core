@@ -100,10 +100,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                             result.setReport("Exceptional Billing filters returning no invoice line to process");
                         }
                     }
-                    boolean updateBillingRun = executeBillingRun(billingRun, jobInstance, result);
-                    if(updateBillingRun) {
-                        billingRunService.update(billingRun);
-                    }
+                    executeBillingRun(billingRun, jobInstance, result);
                     initAmounts();
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
@@ -141,11 +138,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         return billingRun.getExceptionalILIds().size();
     }
 
-    private boolean executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
-        boolean billingRunUpdated = false;
+    private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
-            billingRunUpdated = true;
             billingRun.setStatus(PREVALIDATED);
         }
         if(billingRun.getStatus() == PREVALIDATED) {
@@ -167,7 +162,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
             billingRun.setStatus(VALIDATED);
         }
-        return billingRunUpdated;
+        billingRunService.update(billingRun);
     }
 
     /**
