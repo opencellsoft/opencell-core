@@ -93,6 +93,26 @@ public class OrderProduct extends AuditableCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "delivery_date")
     private Date deliveryDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_amendement_suspend_id",referencedColumnName = "id") 
+	private OrderAmendement orderAmendementToSuspend;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_amendement_reactivate_id",referencedColumnName = "id") 
+	private OrderAmendement orderAmendementToReactivate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_amendement_terminate_id",referencedColumnName = "id") 
+	private OrderAmendement orderAmendementToTerminate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_amendement_activate_id",referencedColumnName = "id") 
+	private OrderAmendement orderAmendementToActivate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_amendement_restart_id",referencedColumnName = "id") 
+	private OrderAmendement orderAmendementToRestart;
 	
 	
 	public void update(OrderProduct other) {
@@ -102,11 +122,19 @@ public class OrderProduct extends AuditableCFEntity {
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
 		this.productVersion = other.productVersion;
-		this.orderAttributes = other.orderAttributes;
+		this.orderAttributes.clear();
+		this.orderAttributes.addAll(other.orderAttributes);
         this.discountPlan=other.getDiscountPlan();
         this.quoteProduct=other.getQuoteProduct();
         this.deliveryDate=other.deliveryDate;
+        this.orderAmendementToActivate=other.orderAmendementToActivate;
+        this.orderAmendementToReactivate=other.orderAmendementToReactivate;
+        this.orderAmendementToRestart=other.orderAmendementToRestart;
+        this.orderAmendementToSuspend=other.orderAmendementToSuspend;
+        this.orderAmendementToTerminate=other.getOrderAmendementToTerminate();
     }
+	
+	
 	
 	
 	@Override
@@ -251,6 +279,56 @@ public class OrderProduct extends AuditableCFEntity {
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+
+	public OrderAmendement getOrderAmendementToSuspend() {
+		return orderAmendementToSuspend;
+	}
+
+
+	public void setOrderAmendementToSuspend(OrderAmendement orderAmendementToSuspend) {
+		this.orderAmendementToSuspend = orderAmendementToSuspend;
+	}
+
+
+	public OrderAmendement getOrderAmendementToReactivate() {
+		return orderAmendementToReactivate;
+	}
+
+
+	public void setOrderAmendementToReactivate(OrderAmendement orderAmendementToReactivate) {
+		this.orderAmendementToReactivate = orderAmendementToReactivate;
+	}
+
+
+	public OrderAmendement getOrderAmendementToTerminate() {
+		return orderAmendementToTerminate;
+	}
+
+
+	public void setOrderAmendementToTerminate(OrderAmendement orderAmendementToTerminate) {
+		this.orderAmendementToTerminate = orderAmendementToTerminate;
+	}
+
+
+	public OrderAmendement getOrderAmendementToActivate() {
+		return orderAmendementToActivate;
+	}
+
+
+	public void setOrderAmendementToActivate(OrderAmendement orderAmendementToActivate) {
+		this.orderAmendementToActivate = orderAmendementToActivate;
+	}
+
+
+	public OrderAmendement getOrderAmendementToRestart() {
+		return orderAmendementToRestart;
+	}
+
+
+	public void setOrderAmendementToRestart(OrderAmendement orderAmendementToRestart) {
+		this.orderAmendementToRestart = orderAmendementToRestart;
 	} 
 		
 }

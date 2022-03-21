@@ -18,6 +18,11 @@
 
 package org.meveo.api;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,16 +36,14 @@ import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -58,11 +61,13 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private ProviderService providerService;
 
+    @Inject
+    private ExchangeRateService exchangeRateService;
+    
     public CurrenciesDto list() {
         CurrenciesDto result = new CurrenciesDto();
 
-        List<TradingCurrency> currencies =
-                tradingCurrencyService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        List<TradingCurrency> currencies = tradingCurrencyService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (currencies != null) {
             for (TradingCurrency country : currencies) {
                 result.getCurrency().add(new CurrencyDto(country));
@@ -111,7 +116,7 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
         tradingCurrencyService.create(tradingCurrency);
-        return new CurrencyDto(currency);
+        return new CurrencyDto(tradingCurrency);
     }
 
     public CurrencyDto find(String code) throws MissingParameterException, EntityDoesNotExistsException {
@@ -167,15 +172,14 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
-        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
-        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
+        tradingCurrency.setSymbol(postData.getSymbol() == null ? postData.getCode() : postData.getSymbol());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
     }
 
     public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())
-                && tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
+        if (StringUtils.isBlank(postData.getCode()) && tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
             update(postData);
         } else {
             create(postData);
@@ -220,21 +224,26 @@ public class CurrencyApi extends BaseApi {
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         }
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
         if (enable) {
             tradingCurrencyService.enable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.enable(oneExchangeRate);
+            }
         } else {
             tradingCurrencyService.disable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.disable(oneExchangeRate);
+            }
         }
     }
 
     public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
-        if(postData.getCode()== null)
-        {
+        if (postData.getCode() == null) {
             throw new MissingParameterException("code of the currency is mandatory");
         }
         Currency currency = currencyService.findByCode(postData.getCode());
-        if(currency == null)
-        {
+        if (currency == null) {
             throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "currency not found"));
         }
 
@@ -243,7 +252,6 @@ public class CurrencyApi extends BaseApi {
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
-
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
     }

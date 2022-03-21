@@ -1,7 +1,6 @@
 package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
@@ -63,9 +62,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @ObservableEntity
-@Table(name = "cpq_invoice_line")
+@Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
+        @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
 @NamedQueries({
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndIDs", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND id in (:listOfIds) "),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice.id =:invoiceId"),
@@ -113,7 +112,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listByBillingRun", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRun", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.listByBillingRunNotValidatedInvoices", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId and il.invoice.status <> 'VALIDATED'"),
-		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))")
+		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
+		@NamedQuery(name = "InvoiceLine.listDiscountLines", query = "SELECT il.id from InvoiceLine il WHERE il.discountedInvoiceLine.id = :invoiceLineId ")
 		})
 public class InvoiceLine extends AuditableEntity {
 

@@ -251,8 +251,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return discountAmount;
 
     }
-  
-    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
+
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,WalletOperation walletOperation,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate, AccountingArticle accountingArticle)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,walletOperation,quoteVersion,quoteOffer,quoteProduct,applicationDate,null);
@@ -262,15 +262,18 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
               Long lowPriority=null;
               for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-              	
                   if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) 
                 		  && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, null)) {
+                  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
+                          && discountPlanItem.isActive() && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle))
+                          && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,quoteVersion, null, quoteOffer, quoteProduct, discountPlan))) {
                   	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
                   	if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
                   	applicableDiscountPlanItems.add(discountPlanItem);
                   }
                   
               }
+        }
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
        
@@ -316,7 +319,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         BigDecimal discountAmount = BigDecimal.ZERO;
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(),null, null,null,null,invoiceLine.getValueDate(),invoiceLine); 
         if (isDiscountApplicable) {
-         List<DiscountPlanItem> discountItems = getApplicableDiscountPlanItems(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(),null, null,null,null, null,null, new Date());
+         List<DiscountPlanItem> discountItems = getApplicableDiscountPlanItems(invoiceLine.getBillingAccount(), invoiceLine.getDiscountPlan(),null, null,null, null,null, new Date(), accountintArticle);
             for (DiscountPlanItem discountPlanItem : discountItems) {
                 AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
                 @SuppressWarnings("unchecked")
@@ -339,5 +342,11 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
             throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
         }
         return accountingArticle;
+    }
+
+    public BigDecimal getFixedDiscountSumByDP(long discountPlanId) {
+        return (BigDecimal) getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP")
+                .setParameter("discountPlanId", discountPlanId)
+                .getSingleResult();
     }
 }

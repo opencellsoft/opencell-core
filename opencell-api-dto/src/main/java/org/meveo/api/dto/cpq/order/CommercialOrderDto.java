@@ -98,7 +98,9 @@ public class CommercialOrderDto extends BaseEntityDto {
 			this.quoteCode = order.getQuote().getCode();
 		if(order.getContract() != null)
 			this.contractCode = order.getContract().getCode();
-		this.orderTypeCode = order.getOrderType().getCode();
+		if(order.getOrderType() != null){
+			this.orderTypeCode = order.getOrderType().getCode();
+		}
 		if(order.getInvoicingPlan() != null)
 			this.invoicingPlanCode = order.getInvoicingPlan().getCode();
 		this.status = order.getStatus();

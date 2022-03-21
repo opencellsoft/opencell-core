@@ -2438,7 +2438,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptions.size() == 0) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         } else if (subscriptions.size() == 1) {
-            subscriptionService.activateInstantiatedService(subscriptions.get(1));
+            subscriptionService.activateInstantiatedService(subscriptions.get(0));
         } else {
             // so in this case, practically subscriptions list contains
             // the current last one sub valid on subscriptionValidityDate,
@@ -2722,7 +2722,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
         
-        if(!userAccount.isConsumer()) {
+        if(!userAccount.getIsConsumer()) {
             throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Offer subscription is not allowed.");
         }
 
@@ -2848,6 +2848,7 @@ public class SubscriptionApi extends BaseApi {
             subscription.setStatus(SubscriptionStatusEnum.CREATED);
         }
         subscriptionService.create(subscription);
+        subscriptionService.getEntityManager().flush();
         userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {
