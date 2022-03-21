@@ -313,6 +313,7 @@
         <createSequence sequenceName="security_deposit_templat_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_seq" startValue="1" />
         <createSequence sequenceName="security_deposit_transaction_seq" startValue="1" />
+        <createSequence sequenceName="exchange_rate_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
         <createSequence sequenceName="open_order_setting_seq" startValue="1" />
         <createSequence sequenceName="cpq_order_amendement_seq" startValue="1" />
@@ -3552,6 +3553,30 @@
             <column name="current_rate" type="numeric(23, 12)" />
             <column name="current_rate_from_date" type="datetime" />
             <column name="current_rate_updater" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="hhanine" id="rebuild-str-tbl-INTRD-5636-20220318">
+        <createTable tableName="exchange_rate">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="trading_currency_id" type="bigint" />
+            <column name="exchange_rate" type="numeric(23, 6)" />
+            <column name="from_date" type="datetime" />
+            <column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-198">
@@ -15954,7 +15979,10 @@
 
 
     </changeSet>
-
+	<changeSet id="#INTRD-5636-20220318-fk" author="hhannine">
+        <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+    </changeSet>
 
     <!-- end fk -->
 
@@ -17353,6 +17381,7 @@
 	<changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-4705-cpq_20220127" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
 	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham" />
     <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI" />
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA" />
@@ -17377,7 +17406,8 @@
     <changeSet id="#INTRD-5419-20220308" author="HichamELHALOUI" />
     <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
-    
+
+    <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
