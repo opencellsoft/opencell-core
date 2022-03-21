@@ -185,6 +185,9 @@
 								</h:outputText>
 								<h:outputText id="#{entity[field.dbFieldname]}_out" value="#{entity[field.dbFieldname]}" styleClass="field-value"
 									rendered="#{field.fieldType eq CustomFieldTypeEnum.STRING or field.fieldType eq CustomFieldTypeEnum.LIST or field.fieldType eq CustomFieldTypeEnum.LONG}" />
+								<h:outputText id="#{entity[field.dbFieldname]}_out_big_text" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+											  rendered="#{field.fieldType eq CustomFieldTypeEnum.TEXT_AREA}" >
+								</h:outputText>
 
 								<h:outputText id="#{entity[field.dbFieldname]}_out_double" value="#{entity[field.dbFieldname]}" styleClass="field-value"
 									rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
