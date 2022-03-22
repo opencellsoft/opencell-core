@@ -32,13 +32,9 @@ public class GenericApiPersistenceDelegate {
      * @return list of entities wrapped in {@link SearchResult} object
      */
     public SearchResult list(Class entityClass, PaginationConfiguration searchConfig) {
+        List entityList = getPersistenceService(entityClass).list(searchConfig);
+        long count = this.count(entityClass, searchConfig);
 
-        long count =this.count(entityClass, searchConfig);
-        
-        List entityList = null;
-        if (count > 0) {
-            entityList = getPersistenceService(entityClass).list(searchConfig);
-        }
         SearchResult searchResult = new SearchResult(entityList, count);
         return searchResult;
     }
