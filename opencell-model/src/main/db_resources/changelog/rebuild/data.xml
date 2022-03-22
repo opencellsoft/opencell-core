@@ -9724,8 +9724,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
 			<column name="version" valueNumeric="0"/>
 			<column name="created" valueDate="${db.current.time}"/>
-			<column name="code" value="FILE_ACCOUNTING_SCHEMES"/>
-			<column name="description" value="File accounting schemes"/>
+			<column name="code" value="ACCOUNTING_SCHEMES"/>
+			<column name="description" value="Accounting schemes"/>
 		</insert>
 		<insert tableName="generic_sequence">
 			<column name="id" valueSequenceNext="generic_sequence_seq" />

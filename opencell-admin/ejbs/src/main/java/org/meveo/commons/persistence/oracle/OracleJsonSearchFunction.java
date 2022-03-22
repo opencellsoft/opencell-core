@@ -41,14 +41,16 @@ public class OracleJsonSearchFunction implements SQLFunction {
         if (args.size() > 2) {
             customFieldValueProperty = (String) args.get(2);
         }
-        String fragment = entityColumnName + "." + customFieldName + "[0]." + customFieldValueProperty + "";
+//        // use JSON_VALUE Ex. SELECT JSON_VALUE('{"ANIMALS":"1","DOG":"D1","CAT":"C1"}', '$.CAT') AS value FROM dual => C1
+//        // Ex. SELECT JSON_VALUE('{"ANIMALS":[{"DOG":"D1","CAT": "C1"}]}', '$.ANIMALS[0].DOG') AS value FROM dual; ==> D1
+        String fragment = " JSON_VALUE ( "+ entityColumnName + ", '$." + customFieldName + "[0]." + customFieldValueProperty +"' )";
 
         if (args.size() > 3) {
             String castType = (String) args.get(3);
-            fragment = "cast(" + fragment + " as " + castType+")";
+            fragment = "cast(" + fragment + " as " + castType + ")";
 
         } else if (getCastType() != null) {
-            fragment = "cast(" + fragment + " as " + getCastType()+")" ;
+            fragment = "cast(" + fragment + " as " + getCastType() + ")";
         }
 
         return fragment;

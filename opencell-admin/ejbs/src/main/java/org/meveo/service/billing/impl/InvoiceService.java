@@ -3568,7 +3568,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,null,null,invoice.getInvoiceDate(), null)) {
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date());
+        	//List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,null,new Date());
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date(), null);
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
 
@@ -5472,10 +5473,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private void addFixedDiscount(InvoiceLine invoiceLine) {
         if(invoiceLine.getDiscountPlan() != null
                 && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null
-                && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()
-                && invoiceLinesService.getDiscountLines(invoiceLine.getId()).isEmpty()) {
-            invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(invoiceLine.getDiscountAmount()));
-            invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
+                && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
+            BigDecimal fixedDiscount = discountPlanItemService.getFixedDiscountSumByDP(invoiceLine.getDiscountPlan().getId());
+            if(fixedDiscount != null && fixedDiscount.compareTo(BigDecimal.ZERO) > 0) {
+                invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(fixedDiscount));
+                invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
+            }
         }
     }
 

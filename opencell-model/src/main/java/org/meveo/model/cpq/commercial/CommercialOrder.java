@@ -126,8 +126,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	private Contract contract;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_type_id", nullable = false)
-	@NotNull
+	@JoinColumn(name = "order_type_id")
 	private OrderType orderType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

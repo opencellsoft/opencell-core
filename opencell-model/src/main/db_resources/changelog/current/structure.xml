@@ -11792,7 +11792,33 @@ order by date_trunc('month', i.invoice_date) DESC
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
 	</changeSet>
+	<changeSet id="#INTRD-5636-20220318" author="hhanine">
+		<createSequence sequenceName="exchange_rate_seq" startValue="1" />
+		<createTable tableName="exchange_rate">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+			    <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="created" type="datetime">
+			    <constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
 
+			<column name="trading_currency_id" type="bigint" />
+			<column name="exchange_rate" type="numeric(23, 6)" />
+			<column name="from_date" type="datetime" />
+			<column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+	            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+	</changeSet>
 	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid">
 		<addColumn tableName="security_deposit">
 			<column name="refund_reason" type="varchar(255)"/>
@@ -12271,4 +12297,43 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedTableName="cpq_product_version" referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza">
+        <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id" />
+    </changeSet>
+
+
+    <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            <![CDATA[
+                select nextVal(quote_ident(sequencename))::text as seq_val, sequencename as seq_code
+                FROM pg_catalog.pg_sequences
+            ]]>
+        </createView>
+    </changeSet>
+    <changeSet id="#INTRD-5777_2022-03-17_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <sql endDelimiter="/">
+            CREATE OR REPLACE FUNCTION get_next_val (seq_name IN VARCHAR2) RETURN VARCHAR AS
+                v_seq_id number(38);
+                sql_stmt VARCHAR(2000);
+            BEGIN
+                sql_stmt := 'select ' || seq_name || '.nextval from dual';
+                execute immediate sql_stmt into v_seq_id ;
+                DBMS_OUTPUT.PUT_LINE(seq_name || ' => ' || v_seq_id);
+                RETURN to_char(v_seq_id);
+            END;
+            /
+        </sql>
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
+        </createView>
+    </changeSet>
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addColumn tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                     constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                     initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                     referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
 </databaseChangeLog>
