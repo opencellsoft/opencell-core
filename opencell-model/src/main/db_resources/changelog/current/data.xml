@@ -9538,7 +9538,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
-
 	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
 		<update tableName="meveo_script_instance_cat">
 			<column name="code" value="ACCOUNTING_SCHEMES"></column>
