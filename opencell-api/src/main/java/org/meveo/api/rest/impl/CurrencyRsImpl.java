@@ -22,6 +22,7 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -158,7 +159,12 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Override
     public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
-
         return currencyApi.addFunctionalCurrency(postData);
+    }
+    
+
+    @Override
+    public ActionStatus addExchangeRate(ExchangeRateDto postData) {
+        return currencyApi.addExchangeRate(postData);
     }
 }

@@ -12327,10 +12327,17 @@ order by date_trunc('month', i.invoice_date) DESC
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
     </changeSet>
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addColumn tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                     constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                     initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                     referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
     <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
         <addColumn tableName="billing_billing_account">
             <column name="trading_currency_id" type="bigint" />
         </addColumn>
-    </changeSet>    
-    
-</databaseChangeLog>
+    </changeSet></databaseChangeLog>
