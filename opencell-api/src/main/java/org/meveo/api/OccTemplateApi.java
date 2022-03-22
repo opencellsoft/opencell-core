@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -95,6 +96,13 @@ public class OccTemplateApi extends BaseApi {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
         }
+        if(postData.getContratAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContratAccountingCode());
+            if(contractAccountingCode == null) {
+                throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setContraAccountingCode(contractAccountingCode);
+        }
         occTemplateService.create(occTemplate);
     }
 
@@ -136,6 +144,13 @@ public class OccTemplateApi extends BaseApi {
         } else {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
+        }
+        if(postData.getContratAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContratAccountingCode());
+            if(contractAccountingCode == null) {
+                throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setContraAccountingCode(contractAccountingCode);
         }
         occTemplateService.update(occTemplate);
     }
