@@ -195,7 +195,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null,null,null, null, invoice.getInvoiceDate(), invoiceLine);
     	if(isDiscountApplicable) {
     		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null,null, null,null,null,new Date(), accountingArticle);
-            BigDecimal totalDiscountAmount = BigDecimal.ZERO;
+            BigDecimal totalDiscountAmount = BigDecimal.ZERO; 
             for (DiscountPlanItem discountPlanItem : discountItems) {
                 BigDecimal DiscountLineAmount = BigDecimal.ZERO;
             	InvoiceLine discountInvoice = new InvoiceLine(entity, invoice);
