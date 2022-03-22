@@ -12340,4 +12340,5 @@ order by date_trunc('month', i.invoice_date) DESC
         <addColumn tableName="billing_billing_account">
             <column name="trading_currency_id" type="bigint" />
         </addColumn>
-    </changeSet></databaseChangeLog>
+    </changeSet>
+</databaseChangeLog>
