@@ -79,6 +79,13 @@ public class OCCTemplate extends BusinessEntity {
     @JoinColumn(name = "accounting_scheme_id")
     private AccountingScheme accountingScheme;
 
+    /**
+     * contra accounting code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contra_accounting_code_id")
+    private AccountingCode contraAccountingCode;
+
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
     }
@@ -146,5 +153,13 @@ public class OCCTemplate extends BusinessEntity {
 
     public void setAccountingScheme(AccountingScheme accountingScheme) {
         this.accountingScheme = accountingScheme;
+    }
+
+    public AccountingCode getContraAccountingCode() {
+        return contraAccountingCode;
+    }
+
+    public void setContraAccountingCode(AccountingCode contraAccountingCode) {
+        this.contraAccountingCode = contraAccountingCode;
     }
 }
