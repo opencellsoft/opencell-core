@@ -2,7 +2,9 @@ package org.meveo.service.securityDeposit.impl;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
@@ -21,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
@@ -277,15 +280,8 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), accountOperation);
         checkSecurityDepositSubscription(securityDeposit, accountOperation);
         checkSecurityDepositServiceInstance(securityDeposit, accountOperation);
-        matchSecurityDepositPayments(securityDeposit);
-        paymentHistoryService.addHistory(securityDeposit.getCustomerAccount(),
-            		null,
-    				null,
-                securityDepositPaymentInput.getAmount().multiply(new BigDecimal(100)).longValue(),
-    				PaymentStatusEnum.ACCEPTED, null, null,
-                "paid by security deposit", null, null,
-    				null,null,
-                Collections.EMPTY_LIST);
+        matchSecurityDepositPayments(securityDeposit, accountOperation);
+        logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
         createSecurityDepositTransaction(securityDeposit,
@@ -298,6 +294,17 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     }
 
+    private void logPaymentHistory(SecurityDepositPaymentInput securityDepositPaymentInput, SecurityDeposit securityDeposit) {
+        paymentHistoryService.addHistory(securityDeposit.getCustomerAccount(),
+            		null,
+    				null,
+                securityDepositPaymentInput.getAmount().multiply(new BigDecimal(100)).longValue(),
+    				PaymentStatusEnum.ACCEPTED, null, null,
+                "paid by security deposit", null, null,
+    				null,null,
+                Collections.EMPTY_LIST);
+    }
+
     private void DebitSecurityDeposit(SecurityDeposit securityDeposit, BigDecimal amount) {
 
 
@@ -306,11 +313,22 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDeposit);
     }
 
-    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit) {
+    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation)  {
 
-        // TODO : check this part again
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
-       // matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A)
+
+        List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
+                .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
+                .map(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getId())
+                        .collect(Collectors.toList());
+        aosIdsToMatch.add(accountOperation.getId());
+
+        try {
+            matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);
+        } catch (UnbalanceAmountException | NoAllOperationUnmatchedException e) {
+            throw new BusinessException(e);
+        }
+
 
 //        match the invoice (AO of the payload) with all Credit accountOperation (Payment) of the current SD.
 //    (Only open and partially matched Payment).
