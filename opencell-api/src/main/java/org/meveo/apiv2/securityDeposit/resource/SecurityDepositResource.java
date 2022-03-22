@@ -9,10 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.meveo.apiv2.securityDeposit.SecurityDepositCancelInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
-import org.meveo.apiv2.securityDeposit.SecurityDepositRefundInput;
+import org.meveo.apiv2.securityDeposit.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -96,5 +93,22 @@ public interface SecurityDepositResource {
             })
     Response credit(@Parameter(description = "contain the code of Security deposit te be credited by its id", required = true) @PathParam("id") Long id,
             @Parameter(description = "Security Deposit input", required = true) SecurityDepositCreditInput securityDepositInput);
+
+
+    @POST
+    @Path("/{id}/payInvoices")
+    @Operation(summary = "Pay invoice manually with Security Deposit",
+            tags = { "SecurityDeposit", "Post", "Credit" },
+            description = "Pay invoice manually with Security Deposit",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Invoice was successfully paid"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Bad Request"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Following security deposit does not exist : {securityDeposit ids}")
+            })
+    Response payInvoices(@Parameter(description = "contain the code of Security deposit te be the invoice with it", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Security Deposit input", required = true) SecurityDepositPaymentInput securityDepositPaymentInput);
 
 }
