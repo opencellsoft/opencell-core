@@ -36,11 +36,13 @@ import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
 
 /**
@@ -59,6 +61,9 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private ProviderService providerService;
 
+    @Inject
+    private ExchangeRateService exchangeRateService;
+    
     public CurrenciesDto list() {
         CurrenciesDto result = new CurrenciesDto();
 
@@ -219,10 +224,17 @@ public class CurrencyApi extends BaseApi {
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         }
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
         if (enable) {
             tradingCurrencyService.enable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.enable(oneExchangeRate);
+            }
         } else {
             tradingCurrencyService.disable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.disable(oneExchangeRate);
+            }
         }
     }
 
@@ -240,6 +252,16 @@ public class CurrencyApi extends BaseApi {
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        if(tradingCurrency == null)
+        {
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
+            tradingCurrency.setPrDescription(currency.getDescription());
+            tradingCurrency.setSymbol(currency.getCurrencyCode());
+            tradingCurrency.setDecimalPlaces(2);
+            tradingCurrencyService.create(tradingCurrency);
+        }
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
     }
