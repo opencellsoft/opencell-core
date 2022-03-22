@@ -2328,6 +2328,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
+            <column name="contra_accounting_code_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -15984,6 +15985,13 @@
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
 
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16337,7 +16345,32 @@
 	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="billing_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_line" />
       </changeSet>
-      
+    <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            <![CDATA[
+                select nextVal(quote_ident(sequencename))::text as seq_val, sequencename as seq_code
+                FROM pg_catalog.pg_sequences
+            ]]>
+        </createView>
+    </changeSet>
+    <changeSet id="#INTRD-5777_2022-03-17_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <sql endDelimiter="/">
+            CREATE OR REPLACE FUNCTION get_next_val (seq_name IN VARCHAR2) RETURN VARCHAR AS
+                v_seq_id number(38);
+                sql_stmt VARCHAR(2000);
+            BEGIN
+                sql_stmt := 'select ' || seq_name || '.nextval from dual';
+                execute immediate sql_stmt into v_seq_id ;
+                DBMS_OUTPUT.PUT_LINE(seq_name || ' => ' || v_seq_id);
+                RETURN to_char(v_seq_id);
+            END;
+            /
+        </sql>
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
+        </createView>
+    </changeSet>
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -17408,6 +17441,7 @@
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
 
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
