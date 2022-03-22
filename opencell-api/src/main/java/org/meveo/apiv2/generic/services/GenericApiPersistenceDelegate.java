@@ -2,6 +2,7 @@ package org.meveo.apiv2.generic.services;
 
 import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -39,6 +40,8 @@ public class GenericApiPersistenceDelegate {
         List entityList = null;
         if (count > 0) {
             entityList = getPersistenceService(entityClass, searchConfig).list(searchConfig);
+        } else {
+            entityList = new ArrayList<>();
         }
         SearchResult searchResult = new SearchResult(entityList, count);
         return searchResult;
