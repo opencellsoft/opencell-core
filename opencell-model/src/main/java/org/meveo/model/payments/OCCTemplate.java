@@ -57,7 +57,7 @@ public class OCCTemplate extends BusinessEntity {
      * @deprecated As of version 5.0. All accountingCode now use {@link #accountingCode}
      */
     @Deprecated(since = "5.0")
-    @Column(name = "account_code_client_side", length = 255)
+    @Column(name = "account_code_client_side")
     @Size(max = 255)
     private String accountCodeClientSide;
 

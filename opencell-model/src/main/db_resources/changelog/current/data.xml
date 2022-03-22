@@ -9552,7 +9552,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
-
 	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
 		<update tableName="meveo_script_instance_cat">
 			<column name="code" value="ACCOUNTING_SCHEMES"></column>
