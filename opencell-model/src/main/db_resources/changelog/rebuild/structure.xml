@@ -2328,6 +2328,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
+            <column name="contra_accounting_code_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -15984,6 +15985,13 @@
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
 
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17433,6 +17441,7 @@
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
 
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

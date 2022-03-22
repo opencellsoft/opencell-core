@@ -18,8 +18,11 @@
 
 package org.meveo.commons.persistence.oracle;
 
+import java.util.List;
+
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.DateType;
 import org.hibernate.type.Type;
 
@@ -35,11 +38,16 @@ public class DateOracleJsonSearchFunction extends OracleJsonSearchFunction {
 
     @Override
     public String getCastType() {
-        return "timestamp";
+        return "varchar(50)";
     }
 
     @Override
     public String getValuePropertyName() {
         return "date";
+    }
+
+    @Override
+    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+        return super.render(firstArgumentType, args, factory);
     }
 }

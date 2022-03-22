@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -271,6 +272,45 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setDecimalPlaces(2);
             tradingCurrencyService.create(tradingCurrency);
         }
+
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
+    }
+
+    public ActionStatus addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
+        if (postData.getTradingCurrency() == null) {
+            throw new MissingParameterException("TradingCurrency is mandatory");
+        }
+        ExchangeRate exchangeRate = new ExchangeRate();
+        TradingCurrency tradingCurrency = tradingCurrencyService.findById(postData.getTradingCurrency().getId());
+        
+        if (tradingCurrency == null) {
+            throw new ValidationException("Please select a valid trading currency");
+        } 
+        if (postData.getFromDate() == null) {
+            throw new ValidationException("Please select a valid date");
+        } 
+        if (postData.getFromDate().before(new Date())) {
+            throw new ValidationException("Cannot set a rate in a paste date");
+        }
+        
+        if (postData.getFromDate().equals(new Date())) {
+            exchangeRate.setCurrentRate(true);
+            List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
+            for (ExchangeRate elementExchangeRate : listExchangeRate) {
+                elementExchangeRate.setCurrentRate(false);
+            }
+            tradingCurrency.setExchangeRates(listExchangeRate);
+            tradingCurrency.setCurrentRate(postData.getExchangeRate());
+            tradingCurrency.setCurrentRateFromDate(new Date());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+        }else {
+            exchangeRate.setCurrentRate(false);
+        }
+        exchangeRate.setTradingCurrency(tradingCurrency);
+        exchangeRate.setExchangeRate(postData.getExchangeRate());
+        exchangeRate.setFromDate(postData.getFromDate());
+              
+        exchangeRateService.update(exchangeRate);
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
     }

@@ -159,10 +159,14 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Override
     public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
-
         return currencyApi.addFunctionalCurrency(postData);
     }
-    
+
+    @Override
+    public ActionStatus addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
+        return currencyApi.addExchangeRate(postData);
+    }
+
     @Override
     public ActionStatus updateExchangeRate(Long id, ExchangeRateDto postData) {
 
