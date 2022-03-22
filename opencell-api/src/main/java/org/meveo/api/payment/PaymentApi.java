@@ -65,6 +65,7 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
@@ -149,6 +150,9 @@ public class PaymentApi extends BaseApi {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
+        }
+        if (occTemplate.getOccCategory() == OperationCategoryEnum.CREDIT) {
+            throw new BusinessException("The OccCategory must not be of credit type");
         }
 
         Payment payment = new Payment();
