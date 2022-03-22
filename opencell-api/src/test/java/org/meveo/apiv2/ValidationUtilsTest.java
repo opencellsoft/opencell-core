@@ -105,7 +105,7 @@ public class ValidationUtilsTest {
             ValidationUtils.checkRecords(null, "Customer");
         } catch (Exception ex) {
             assertThat(ex).isInstanceOf(EntityDoesNotExistsException.class);
-            assertThat(ex.getMessage()).isEqualTo("Unable to find records fo type Customer");
+            assertThat(ex.getMessage()).isEqualTo("Unable to find records of type Customer");
         }
     }
 
@@ -115,6 +115,5 @@ public class ValidationUtilsTest {
         Customer record = new Customer();
         Customer customer = ValidationUtils.checkRecord(record, "Customer", 13L);
         assertThat(customer).isEqualTo(record);
-    }
-    
+    }    
 }
