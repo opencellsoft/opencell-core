@@ -16377,6 +16377,73 @@
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="billing_billing_account" constraintName="fk_trading_currency_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
+
+    <changeSet id="#INTRD-5881_20220322" author="aelmalki">
+        <createTable tableName="accounting_accounting_entry">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_accounting_entry_seq" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <!-- Dependencies -->
+            <column name="accounting_operation_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="accounting_code_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tax_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+            <!-- Simple fields -->
+            <column name="direction" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="analytic_code_1" type="varchar(255)" />
+            <column name="analytic_code_2" type="varchar(255)" />
+            <column name="analytic_code_3" type="varchar(255)" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="accounting_operation_id" baseTableName="accounting_accounting_entry"
+                                 constraintName="fk_accounting_entry_account_operation" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accounting_entry"
+                                 constraintName="fk_accounting_entry_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accounting_entry"
+                                 constraintName="fk_accounting_entry_seller" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="accounting_accounting_entry"
+                                 constraintName="fk_accounting_entry_customer_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_accounting_entry"
+                                 constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+
+        <createSequence sequenceName="accounting_accounting_entry_seq"/>
+
+    </changeSet>
     
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>

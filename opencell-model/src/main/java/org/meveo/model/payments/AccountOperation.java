@@ -23,7 +23,9 @@ import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -160,6 +162,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     /**
      * List of associated accounting writing
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
     private List<AccountingEntry> accountingEntries = new ArrayList<>();
@@ -428,6 +431,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "accounting_export_file")
     private String accountingExportFile;
 
+    /**
+     * Associated accountingScheme.AccountingEntry
+     */
+    @OneToMany(mappedBy = "accountOperation", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<org.meveo.model.accountingScheme.AccountingEntry> accountingSchemeEntries = new HashSet<>();
+
     public Date getDueDate() {
         return dueDate;
     }
@@ -683,10 +692,18 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
+     * @return AccountingEntries
+     */
     public List<AccountingEntry> getAccountingEntries() {
 		return accountingEntries;
 	}
 
+    /**
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
+     * @param accountingEntries AccountingEntries
+     */
 	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
 		this.accountingEntries = accountingEntries;
 	}
@@ -988,5 +1005,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setPaymentDeferralCount(Integer paymentDeferralCount) {
         this.paymentDeferralCount = paymentDeferralCount;
+    }
+
+    public Set<org.meveo.model.accountingScheme.AccountingEntry> getAccountingSchemeEntries() {
+        return accountingSchemeEntries;
+    }
+
+    public void setAccountingSchemeEntries(Set<org.meveo.model.accountingScheme.AccountingEntry> accountingSchemeEntries) {
+        this.accountingSchemeEntries = accountingSchemeEntries;
     }
 }
