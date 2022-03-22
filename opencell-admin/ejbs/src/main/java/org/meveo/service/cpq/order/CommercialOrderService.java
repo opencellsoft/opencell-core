@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -45,6 +47,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -70,6 +73,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	private SubscriptionService subscriptionService;
     @Inject
     private DiscountPlanService discountPlanService;
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -185,12 +190,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
 			}
-			
 			for (OrderProduct product : offer.getProducts()){
-				if(product.getDiscountPlan()!=null) {
-					discountPlans.add(product.getDiscountPlan());
-				}
-				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
+				processProductWithDiscount(subscription, product);
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
@@ -213,7 +214,24 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
+	
+	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
+		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes());
+
+		if(orderProduct.getDiscountPlan() != null) {
+			DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+			var discountPlan = orderProduct.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setServiceInstance(serviceInstance);
+			discountPlanInstanceService.create(dpi, discountPlan);
+		}
+	}
+
+	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -265,6 +283,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
+		
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
@@ -286,6 +305,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
 			subscription.addServiceInstance(serviceInstance);
+			
+			return serviceInstance;
 	}
 
 	@Override

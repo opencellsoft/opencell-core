@@ -7489,6 +7489,7 @@
             </column>
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-381">
@@ -14877,6 +14878,12 @@ $$ LANGUAGE plpgsql;
     	<addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
     		initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
     </changeSet> 
+    
+    <changeSet id="#INTRD-5859_20220321_build" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet> 
+    
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -15892,6 +15899,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
     <changeSet id="#INTRD-5529_20220304" author="TarikFA." />
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA." />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
