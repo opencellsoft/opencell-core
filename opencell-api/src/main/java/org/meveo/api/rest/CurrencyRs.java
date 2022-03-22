@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 
@@ -228,7 +229,7 @@ public interface CurrencyRs extends IBaseRs {
     ActionStatus disable(@PathParam("code") String code);
 
 
-	/**
+    /**
      * add functional currency to the main provider
      *
      * @param postData Currency dto
@@ -236,18 +237,41 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/addFunctionalCurrency")
-	@Operation(
-			summary=" API to add functional currency to the main provider  ",
-			description=" API to add functional currency to the main provider ",
-			operationId="ADD_FUNCTIONAL_CURRENCY",
-			responses= {
-				@ApiResponse(description=" Request processing status ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-				)}
-	)
+    @Operation(
+            summary=" API to add functional currency to the main provider  ",
+            description=" API to add functional currency to the main provider ",
+            operationId="ADD_FUNCTIONAL_CURRENCY",
+            responses= {
+                @ApiResponse(description=" Request processing status ",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
     ActionStatus addFunctionalCurrency(CurrencyDto postData);
+    
+    /**
+     * Add an exchange rate
+     *
+     * @param postData ExchangeRate dto
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addExchangeRate")
+    @Operation(
+            summary=" API to add Exchange Rate ",
+            description=" API to add Exchange Rate ",
+            operationId="ADD_EXCHANGE_RATE",
+            responses= {
+                @ApiResponse(description=" Request processing status ",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
+    ActionStatus addExchangeRate(ExchangeRateDto postData);
 }
