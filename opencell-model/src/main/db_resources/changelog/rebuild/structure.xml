@@ -15985,7 +15985,7 @@
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
 
-    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+    <changeSet id="#INTRD-4702-20220321-fk" author="ZBariki">
         <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
                                  constraintName="fk_contra_accounting_code_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
