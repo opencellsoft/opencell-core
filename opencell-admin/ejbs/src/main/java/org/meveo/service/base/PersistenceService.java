@@ -148,9 +148,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     public static final String SEARCH_WILDCARD_OR = "wildcardOr";
     /**
-     * Entity list search parameter name - parameter's value contains sql statement
+     * Entity list search parameter name - parameter's value contains sql statement. Word "SQL" can be succeeded by a anything else (e.g. number) allowing to support more than one SQL clause.
      */
     public static final String SEARCH_SQL = "SQL";
+    /**
+     * Entity list search parameter name - parameter's value contains a set of elements that are joined by OR clause between them
+     */
+    public static final String SEARCH_OR = "OR";
+    /**
+     * Entity list search parameter name - a prefix allowing to have multiple criteria for the same field. Word will be removed and any other condition evaluated as usual. Word "AND" can be succeeded by a anything else
+     * (e.g. number) allowing to support more than one clause for the same field.
+     */
+    public static final String SEARCH_AND = "AND";
     /**
      * Entity list search parameter criteria - just like wildcardOr but Ignoring case
      */
@@ -169,7 +178,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static final String CF_VALUES_FIELD = "cfValues";
     
     public static final int SHORT_MAX_VALUE = 32767;
-    
     /**
      * Is custom field accumulation being used
      */

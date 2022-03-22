@@ -3,6 +3,7 @@ package org.meveo.service.securityDeposit.impl;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -19,6 +20,8 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
 
     @Inject
     private CurrencyService currencyService;
+    @Inject
+    private FinanceSettingsService financeSettingsService;
 
     @Inject
     private AuditLogService auditLogService;
@@ -67,13 +70,16 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
 
     public void checkParameters(SecurityDepositTemplate securityDepositTemplate)
     {
+        FinanceSettings financeSettings = financeSettingsService.findLastOne();
         if(securityDepositTemplate.getCurrency() == null)
             throw new EntityDoesNotExistsException("currency does not exist.");
-
-        if(!securityDepositTemplate.isAllowValidityDate() && !securityDepositTemplate.isAllowValidityPeriod())
+        if(financeSettings.isAutoRefund() && !securityDepositTemplate.isAllowValidityDate() && !securityDepositTemplate.isAllowValidityPeriod())
             throw new InvalidParameterException("At least allowValidityDate or allowValidityPeriod need to be checked");
-        if(securityDepositTemplate.getMaxAmount().compareTo(securityDepositTemplate.getMinAmount()) < 0 )
+        if(securityDepositTemplate.getMaxAmount()!=null && securityDepositTemplate.getMinAmount()!=null && securityDepositTemplate.getMaxAmount().compareTo(securityDepositTemplate.getMinAmount()) < 0 )
             throw new InvalidParameterException("The min amount cannot exceed the max amount");
+        if(financeSettings.getMaxAmountPerSecurityDeposit() != null && securityDepositTemplate.getMaxAmount() != null
+        && financeSettings.getMaxAmountPerSecurityDeposit().compareTo(securityDepositTemplate.getMaxAmount()) < 0 )
+            throw new InvalidParameterException("max amount cannot exceed thr max amount per SD configured at FinanceSettings");
 
     }
 }

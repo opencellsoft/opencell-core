@@ -746,5 +746,5 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         
         update(accountOperation);
         log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
-    }   
+    }      
 }

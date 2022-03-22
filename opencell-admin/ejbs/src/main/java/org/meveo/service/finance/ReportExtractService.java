@@ -18,31 +18,12 @@
 
 package org.meveo.service.finance;
 
-import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.ScrollableResults;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -60,6 +41,26 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 
 /**
  * Service for managing ReportExtract entity.
@@ -296,7 +297,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results, long maxLinePerFile, String decimalSeparator) throws BusinessException {
-        FileWriter fileWriter = null;
+        Writer fileWriter = null;
         StringBuilder line = new StringBuilder();
         Object value = null;
         int rowNumber = 0;
@@ -312,8 +313,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             filename = new StringBuilder(path[0]).append("_").append(format("%04d", fileSufix)).append(".").append(path[1]).toString();
             globalFileName = filename;
             File file = new File(sbDir + File.separator + filename);
-            file.createNewFile();
-            fileWriter = new FileWriter(file);
+            StorageFactory.createNewFile(file);
+            fileWriter = StorageFactory.getWriter(file);
             fileNames.add(filename);
 
             // get the header
@@ -420,7 +421,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
         List<Map<String, Object>> records = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+        try (BufferedReader br = new BufferedReader(Objects.requireNonNull(StorageFactory.getReader(path)))) {
             String line;
             String[] header = br.readLine().split(separator);
             while ((line = br.readLine()) != null) {
@@ -447,11 +448,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             dir.mkdirs();
         }
         File file = new File(sbDir + File.separator + filename);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        StorageFactory.createNewFile(file);
     }
 
 }

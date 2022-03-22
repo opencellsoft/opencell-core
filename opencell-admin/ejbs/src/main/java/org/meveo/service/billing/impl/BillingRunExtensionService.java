@@ -18,8 +18,6 @@
 
 package org.meveo.service.billing.impl;
 
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +90,8 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     public BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics, int count, BillingRunStatusEnum status) {
     	billingRun = refreshOrRetrieve(billingRun);
         billingRun.setBillableBillingAcountNumber(count);
-        billingRun.setPrAmountTax(basicStatistics.getSumAmountWithTax());
+        billingRun.setPrAmountTax(basicStatistics.getSumAmountTax());
+        billingRun.setPrAmountWithTax(basicStatistics.getSumAmountWithTax());
         billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
         billingRun.setProcessDate(new Date());
         billingRun.setStatus(status);

@@ -176,7 +176,7 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 
 	 /** The Constant Mandate SIGNATURE_DATE. */
 	public static final String CONTEXT_SIGNATURE_DATE = "SIGNATURE_DATE";
-	
+
 	/** The Constant PAYMENT_GATEWAY. */
     public static final String PAYMENT_GATEWAY = "PAYMENT_GATEWAY";
 

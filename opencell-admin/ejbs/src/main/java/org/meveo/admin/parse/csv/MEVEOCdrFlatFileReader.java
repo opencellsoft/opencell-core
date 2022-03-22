@@ -18,30 +18,33 @@
 
 package org.meveo.admin.parse.csv;
 
-import org.meveo.commons.parsers.FileParserBeanio;
-import org.meveo.commons.parsers.RecordContext;
-import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.rating.CDR;
-import org.meveo.service.medina.impl.CDRParsingException;
-import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
-import org.meveo.service.medina.impl.ICdrCsvReader;
-import org.meveo.service.medina.impl.ICdrParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.util.Map;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
+import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.InvalidELException;
+import org.meveo.commons.parsers.FileParserBeanio;
+import org.meveo.commons.parsers.RecordContext;
+import org.meveo.commons.utils.FileUtils;
+import org.meveo.model.rating.CDR;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.medina.impl.CDRParsingException;
+import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
+import org.meveo.service.medina.impl.ICdrCsvReader;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default CDR file Reader
@@ -103,17 +106,17 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     }
 
     @Override
-    public CDR getNextRecord(ICdrParser cdrParser) throws IOException {
+    public CDR getNextRecord(ICdrParser cdrParser, String originRecordEL) throws IOException {
         RecordContext recordContext = getNextRecord();
         if (recordContext == null) {
             return null;
         }
 
-        return getRecord(cdrParser, recordContext);
+        return getRecord(cdrParser, recordContext, originRecordEL);
     }
 
     @Override
-    public CDR getRecord(ICdrParser cdrParser, Object cdrData) {
+    public CDR getRecord(ICdrParser cdrParser, Object cdrData, String originRecordEL) {
         RecordContext recordContext = (RecordContext) cdrData;
         CDR cdr = null;
         try {
@@ -131,8 +134,8 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
 
         } finally {
 
-            // TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
             if (recordContext.getRecord() != null) {
+// TODO Currently source field is not used when reprocessing a CDR - a line field is used instead
 //            try {
 //                String source = RecordContext.serializeRecord(recordContext.getRecord());
 //                cdr.setSource(source);
@@ -144,7 +147,16 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
             String line = recordContext.getLineContent();
             cdr.setLine(line);
             cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(getOriginRecord(line));
+
+            if (Strings.isNotBlank(originRecordEL)) {
+                try {
+                    cdr.setOriginRecord(ValueExpressionWrapper.evaluateExpression(originRecordEL, Map.of("cdr", cdr), String.class));
+                } catch (InvalidELException e) {
+                    cdr.setRejectReasonException(e);
+                }
+            } else {
+                cdr.setOriginRecord(getOriginRecord(line));
+            }
         }
 
         return cdr;
@@ -159,22 +171,17 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
      */
     private String getOriginRecord(String cdr) {
 
-        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
-
-            if (messageDigest != null) {
-                synchronized (messageDigest) {
-                    messageDigest.reset();
-                    messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                    final byte[] resultByte = messageDigest.digest();
-                    StringBuffer sb = new StringBuffer();
-                    for (int i = 0; i < resultByte.length; ++i) {
-                        sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                    }
-                    return sb.toString();
+        if (messageDigest != null) {
+            synchronized (messageDigest) {
+                messageDigest.reset();
+                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
+                final byte[] resultByte = messageDigest.digest();
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < resultByte.length; ++i) {
+                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
                 }
+                return sb.toString();
             }
-        } else {
-            return username + "_" + new Date().getTime();
         }
 
         return null;

@@ -61,7 +61,6 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
        return getPaymentGateway(customerAccount, paymentMethod, cardType,customerAccount.getCustomer().getSeller());
     }
     
-    
     /**
      * Gets the payment gateway.
      *
@@ -131,8 +130,8 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
-                log.info("get pg , current :" + pg.getCode());
-                if(!StringUtils.isBlank(selectedGatewayCode)) {
+            	log.info("get pg , current :" + pg.getCode());
+            	if(!StringUtils.isBlank(selectedGatewayCode)) {
             		if(pg.getCode().equals(selectedGatewayCode)) {
             			if (!StringUtils.isBlank(pg.getApplicationEL())) {
             				if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {

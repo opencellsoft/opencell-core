@@ -73,7 +73,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     @Inject
     private AccountOperationListBean accountOperationListBean;
 
-    
+
     private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
     /**

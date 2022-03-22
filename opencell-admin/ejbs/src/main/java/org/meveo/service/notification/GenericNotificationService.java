@@ -75,7 +75,7 @@ public class GenericNotificationService extends BusinessService<Notification> {
                 if (notifications.isEmpty()) {
                     notificationCacheContainerProvider.markNoNotifications(eventType, entityOrEvent);
                 } else {
-                    notifications.forEach((notification) -> notificationCacheContainerProvider.addNotificationToCache(notification));
+                    notificationCacheContainerProvider.addNotificationsToCache(notifications);
                 }
             }
 

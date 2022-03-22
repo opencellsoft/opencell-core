@@ -18,6 +18,16 @@
 
 package org.meveo.api.account;
 
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -29,30 +39,39 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.EntityNotAllowedException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.*;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -101,7 +120,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
                               BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
-
+	
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
         }
@@ -119,6 +138,21 @@ public class UserAccountApi extends AccountEntityApi {
         UserAccount userAccount = new UserAccount();
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
+        
+        if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
+    		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
+    		if (parentUserAccount != null) {
+    			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
+    			userAccount.setParentUserAccount(parentUserAccount);    				
+    			attachSubUserAccounts(postData,parentUserAccount,billingAccount);
+    			
+    		} else {
+    		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
+    		}
+        }
+        
+		userAccountParent(postData, userAccount);
+		
 
         if (postData.getIsCompany() != null) {
             userAccount.setIsCompany(postData.getIsCompany());
@@ -127,6 +161,59 @@ public class UserAccountApi extends AccountEntityApi {
 
         return userAccount;
     }
+    private void attachSubUserAccounts(UserAccountDto postData, UserAccount userAccount, BillingAccount billingAccount) {
+		List<UserAccount> subUserAccounts = new ArrayList<>();
+		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+			if (subUserAccount != null) {
+				if (subUserAccount.getBillingAccount() == billingAccount) {
+					subUserAccounts.add(subUserAccount);
+				}else {
+					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
+				}
+			}else {
+				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+			}
+		}
+		userAccount.setUserAccounts(subUserAccounts);
+	}
+	private void userAccountParent(UserAccountDto postData, UserAccount userAccount) {
+		List<UserAccount> subUserAccounts = new ArrayList<>();
+		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+			if (subUserAccount != null) {
+				subUserAccounts.add(subUserAccount);
+			}else {
+				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+			}
+		}
+		userAccount.setUserAccounts(subUserAccounts);
+	}
+
+    private void checkUserAccountParentChildList(List<String> subUserAccountCodes, String userAccountParentCode) {
+		for (String subUserAccountCode : subUserAccountCodes) {
+			if (!subUserAccountCode.equals(userAccountParentCode)) {
+				UserAccount subUserAccount = userAccountService.findByCode(subUserAccountCode);
+				if(subUserAccount != null) {
+					userAccountParentParent(subUserAccount, userAccountParentCode);
+				}else {
+					 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountCode);
+				}
+			}else {
+				 throw new BusinessApiException("The parent user account "+userAccountParentCode+" can not be in thje liste of children user accounts");
+			}
+		}
+	}
+
+    private void userAccountParentParent(UserAccount userAccount, String userAccountParentCode) {
+		for (UserAccount subUserAccount : userAccount.getUserAccounts()) {
+			if (!subUserAccount.getCode().equals(userAccountParentCode)) {
+				userAccountParentParent(subUserAccount, userAccountParentCode);
+			}else {
+				 throw new BusinessApiException("Can not update parent user account of "+userAccount.getCode()+" to "+userAccountParentCode+". "+userAccountParentCode+" is already a child of "+userAccount.getCode());
+			}
+		}
+	}
 
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
@@ -150,7 +237,27 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, null);
-
+        
+        if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
+            UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
+            if (parentUserAccount != null) {
+    			checkUserAccountParentChildList(postData.getUserAccountCodes(), postData.getParentUserAccountCode());
+                userAccount.setParentUserAccount(parentUserAccount);
+                List<UserAccount> subUserAccounts = new ArrayList<>();
+        		for (String subUserAccountcode : postData.getUserAccountCodes()) {
+        			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
+        			if (subUserAccount != null) {
+        				subUserAccounts.add(subUserAccount);
+        			}else {
+        				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
+        			}
+        		}
+        		userAccount.setUserAccounts(subUserAccounts);
+            } else {
+                throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
+            }
+        }
+        userAccountParent(postData, userAccount);
         userAccount = userAccountService.update(userAccount);
 
         return userAccount;
@@ -184,6 +291,9 @@ public class UserAccountApi extends AccountEntityApi {
                 if (countNonInvoicedRT > 0) {
                     throw new BusinessApiException("Can not change the parent account. User account have non invoiced RT");
                 }
+            }
+            for(UserAccount subUserAccount: userAccount.getUserAccounts()){
+         	   subUserAccount.setBillingAccount(billingAccount);
             }
             userAccount.setBillingAccount(billingAccount);
         }

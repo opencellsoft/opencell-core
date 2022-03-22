@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -83,8 +82,7 @@ public class EdrService extends PersistenceService<EDR> {
 
     private static final int PURGE_MAX_RESULTS = 30000;
 
-    @PostConstruct
-    private void init() {
+    static {
         ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
         String deduplicateType = paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name());
@@ -184,15 +182,13 @@ public class EdrService extends PersistenceService<EDR> {
         if (!deduplicateEdrs) {
             return false;
         }
-        Boolean isDuplicate = null;
+        
+        boolean isDuplicate = false;
         if (useInMemoryDeduplication) {
-            isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
-            if (isDuplicate == null && !inMemoryDeduplicationPrepopulated) {
+            isDuplicate = cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
+            if (!isDuplicate && !inMemoryDeduplicationPrepopulated) {
                 isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
-                // cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord, isDuplicate); // no need to set as it will be added to cache once EDR
-                // is processed
-            } else if (isDuplicate == null) {
-                isDuplicate = false;
+                cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
             }
         } else {
             isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
@@ -516,7 +512,7 @@ public class EdrService extends PersistenceService<EDR> {
      * 
      * @return True if EDR deduplication is turned on
      */
-    public boolean isDuplicateCheckOn() {
+    public static boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
     }
 

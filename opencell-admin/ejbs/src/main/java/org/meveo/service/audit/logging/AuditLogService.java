@@ -56,7 +56,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate))
                 .append(" - ").append(actor).append(" - ")
-                .append(" apply ").append(operationType)
+                .append(" applied ").append(operationType)
                 .append(" to ").append(simpleName).append(" with ").append(origine)
                 .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
         

@@ -38,6 +38,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -69,10 +70,12 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -285,6 +288,9 @@ public class ValueExpressionWrapper {
 	
 	private static final String VAR_COMMERCIAL_ORDER = "order";
 
+    private static final String VAR_QUOTE_OFFER = "quoteOffer";
+	
+	private static final String VAR_QUOTE_PRODUCT = "quoteProduct";
     /**
      * Variables in EL expression
      * 
@@ -334,6 +340,8 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(OrderAttribute.class.getName(), new String[] { VAR_ORDER_ATRIBUTE });
         elVariablesByClass.put(AttributeInstance.class.getName(), new String[] { VAR_ATRIBUTE_INSTANCE });
         elVariablesByClass.put(CommercialOrder.class.getName(), new String[] { VAR_COMMERCIAL_ORDER });
+        elVariablesByClass.put(QuoteOffer.class.getName(), new String[] { VAR_QUOTE_OFFER });
+        elVariablesByClass.put(QuoteProduct.class.getName(), new String[] { VAR_QUOTE_PRODUCT });
     }
 
     /**
@@ -630,6 +638,7 @@ public class ValueExpressionWrapper {
         Invoice invoice = null;
         CpqQuote quote = null;
         QuoteVersion quoteVersion = null;
+        QuoteOffer quoteOffer = null;
         QuoteAttribute quoteAttribute=null;
         OrderAttribute orderAttribute=null;
         AttributeInstance attributeInstance=null;
@@ -687,6 +696,10 @@ public class ValueExpressionWrapper {
                 quoteVersion = (QuoteVersion) parameter;
             }
             
+            if (parameter instanceof QuoteOffer) {
+                quoteOffer = (QuoteOffer) parameter;
+            }
+            
             if (parameter instanceof QuoteAttribute) {
             	quoteAttribute = (QuoteAttribute) parameter;
             }
@@ -702,6 +715,14 @@ public class ValueExpressionWrapper {
             
             if (parameter instanceof CommercialOrder) {
             	order = (CommercialOrder) parameter;
+            }
+            
+            if (parameter instanceof WalletOperation) {
+            	walletOperation=(WalletOperation)parameter;
+            	chargeInstance = walletOperation.getChargeInstance();
+            	if ((walletOperation.getChargeInstance() instanceof HibernateProxy)) {
+                    chargeInstance = (ChargeInstance) ((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();
+                }
             }
             
             if (parameter instanceof List) {
@@ -734,7 +755,7 @@ public class ValueExpressionWrapper {
         }
         if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && serviceInstance != null ) {
 
-            quote =chargeInstance!=null && serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+            quote =serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
 
             contextMap.put(VAR_CPQ_QUOTE, quote);
 
@@ -748,17 +769,30 @@ public class ValueExpressionWrapper {
             contextMap.put(VAR_SUBSCRIPTION, subscription);
         }
         if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && chargeInstance != null) {
-            quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
+            quote =chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
             contextMap.put(VAR_CPQ_QUOTE, quote);
         }
         
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && chargeInstance != null) {
-            quoteVersion =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
+            quoteVersion = chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
             if(quoteVersion!=null) {
             	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
             }
         }
+        
+        if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && serviceInstance != null) {
+            quoteVersion =serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuoteVersion():null;
+            contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
+            if(quoteVersion!=null) {
+            	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
+            }
+        }
+        
+        if (el.contains(VAR_QUOTE_PRODUCT) && !contextMap.containsKey(VAR_QUOTE_PRODUCT) && serviceInstance != null) {
+            contextMap.put(VAR_QUOTE_PRODUCT, serviceInstance.getQuoteProduct());
+        }
+        
         if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && order != null) {
             quoteVersion =order.getQuoteVersion();
             contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
@@ -766,7 +800,6 @@ public class ValueExpressionWrapper {
             	contextMap.put(VAR_CPQ_QUOTE, quoteVersion.getQuote());
             }
         }
-        
         if (el.contains(VAR_SERVICE_TEMPLATE) && !contextMap.containsKey(VAR_SERVICE_TEMPLATE)) {
             if (serviceInstance != null) {
                 contextMap.put(VAR_SERVICE_TEMPLATE, serviceInstance.getServiceTemplate());

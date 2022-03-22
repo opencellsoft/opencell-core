@@ -21,6 +21,7 @@ import org.meveo.model.admin.User;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
+import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 

@@ -488,7 +488,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return (Long) qb.getQuery(getEntityManager()).getSingleResult();
     }
     
-    
     /**
      * Find by invoice id.
      *

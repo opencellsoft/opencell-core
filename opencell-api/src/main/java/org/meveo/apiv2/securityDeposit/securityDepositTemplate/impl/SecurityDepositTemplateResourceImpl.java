@@ -21,6 +21,8 @@ public class SecurityDepositTemplateResourceImpl implements SecurityDepositTempl
 
     @Inject
     SecurityDepositTemplateService securityDepositTemplateService;
+
+
     private SecurityDepositTemplateMapper securityDepositTemplateMapper = new SecurityDepositTemplateMapper();
 
     @Override

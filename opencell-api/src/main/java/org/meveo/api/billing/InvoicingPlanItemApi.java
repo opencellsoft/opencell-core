@@ -20,19 +20,17 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.resteasy.util.IsAssignableFrom;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.response.billing.InvoicingPlanItemDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.InvoicingPlan;

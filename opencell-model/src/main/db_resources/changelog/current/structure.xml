@@ -174,8 +174,7 @@
         	update ${db.schema.adapted}billing_wallet_operation set offer_code = null where offer_code = 'NO_OFFER';
         </sql>
 
-      </changeSet>
-
+      </changeSet>      
       <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
 
         <sql>
@@ -4879,7 +4878,7 @@ END $$;]]>
             </column>
             <column name="cpq_quote_product_id" type="bigint" />
             <column name="string_value" type="varchar(255)" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
             <column name="date_value" type="datetime" />
         </createTable>
 
@@ -5440,7 +5439,7 @@ END $$;]]>
 
             <column name="string_value" type="varchar(255)" />
             <column name="date_value" type="datetime" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
 
         </createTable>
 
@@ -5975,15 +5974,15 @@ END $$;]]>
             <column name="ppml_id" type="bigint" />
 
             <column name="long_value" type ="int8"/>
-            <column name="double_value" type ="float8"/>
+            <column name="double_value" type ="${type.float}"/>
             <column name="string_value" type="varchar(255)"/>
 
             <column name="date_value" type="datetime"/>
             <column name="from_date_value" type="datetime"/>
             <column name="to_date_value" type="datetime"/>
 
-            <column name="from_double_value" type ="float8"/>
-            <column name="to_double_value" type ="float8"/>
+            <column name="from_double_value" type ="${type.float}"/>
+            <column name="to_double_value" type ="${type.float}"/>
 
         </createTable>
 
@@ -6142,7 +6141,7 @@ END $$;]]>
             </column>
 
             <column name="string_value" type="varchar(255)" />
-            <column name="double_value" type="float8" />
+            <column name="double_value" type="${type.float}" />
             <column name="date_value" type="datetime" />
         </createTable>
 
@@ -9750,9 +9749,6 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint constraintName="fk_dunning_collection_management_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management" referencedColumnNames="id" />
 
-        <addForeignKeyConstraint constraintName="fk_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
-                                 baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
-
         <addForeignKeyConstraint constraintName="fk_dunning_collection_plan_statuses_dunning_settings" referencedTableName="dunning_settings"
                                  baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses" referencedColumnNames="id" />
 
@@ -9866,7 +9862,7 @@ public class OrderAdvancement extends ModuleScript {
                 <constraints nullable="false" />
             </column>
             <column name="interest_for_delay_sequence" type="int4" />
-            <column name="min_balance_trigger" type="float8" defaultValue="0" >
+            <column name="min_balance_trigger" type="${type.float}" defaultValue="0" >
                 <constraints nullable="false" />
             </column>
             <column name="include_due_invoices_in_threshold" type="${type.boolean}" defaultValueNumeric="1" />
@@ -11226,13 +11222,13 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addColumn tableName="ar_dunning_action">
 			<column name="dunning_agent_id" type="bigint"/>
 		</addColumn>
-		<addForeignKeyConstraint constraintName="fk_dunning_agent"
+		<addForeignKeyConstraint constraintName="fk_dunning_action_agent"
 			baseColumnNames="dunning_agent_id" baseTableName="ar_dunning_action"
             referencedColumnNames="id" referencedTableName="dunning_agent"
 			deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION"/>
     </changeSet>
-
+    
     <changeSet id="#2333_20211021" author="anasseh">
         <addColumn tableName="ar_payment_token">
             <column name="token_3ds_id" type="varchar(250)"/>
@@ -11245,7 +11241,7 @@ order by date_trunc('month', i.invoice_date) DESC
    		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
-
+    
     <changeSet id="INTRD-2868_20211105" author="TarikFA.">
     	<addColumn tableName="crm_provider">
     		<column name="cdr_deduplicationkey_el" type="varchar(500)" />
@@ -11253,7 +11249,7 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 	<changeSet id="#INTRD-2764-20211104" author="HatimOUDAD">
-
+        
         <createSequence sequenceName="dunning_collection_plan_seq" startValue="1" />
         <createTable tableName="dunning_collection_plan">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -11266,7 +11262,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-
+            
             <column name="collection_plan_number" type="varchar(255)" />
             <column name="related_policy_id" type="bigint" />
             <column name="initial_collection_plan_id" type="bigint" />
@@ -11274,59 +11270,59 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="related_invoice_id" type="bigint" />
             <column name="pause_reason_id" type="bigint" />
             <column name="stop_reason_id" type="bigint" />
-
+            
             <column name="current_dunning_level_sequence" type="int4" />
-
-
-
+            
+            
+            
             <column name="start_date" type="datetime" />
             <column name="days_open" type="int4" />
              <column name="close_date" type="datetime" />
-
+            
             <column name="status_id" type="bigint" />
             <column name="paused_until_date" type="datetime" />
             <column name="balance" type="numeric(23, 12)"/>
             <column name="retry_payment_on_resume_date" type="${type.boolean}" defaultValueNumeric="0"/>
-
+            
             <column name="next_action" type="varchar(255)" />
             <column name="next_action_date" type="datetime" />
             <column name="last_action" type="varchar(255)" />
             <column name="last_action_date" type="datetime" />
             <column name="total_dunning_levels" type="int4" />
             <column name="pause_duration" type="int4" />
-
-
+            
+            
         </createTable>
-
-
+        
+        
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_billing_account"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-
+        						 
 		<addForeignKeyConstraint baseColumnNames="pause_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_pause_reason"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
-
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" /> 
+        						        
         <addForeignKeyConstraint baseColumnNames="stop_reason_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_stop_reason"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" />
-
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_stop_reasons" /> 
+        						 
         <addForeignKeyConstraint baseColumnNames="related_policy_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_related_policy"
         						 deferrable="false" initiallyDeferred="false"
-        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" />
-
+        						 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy" /> 
+        
         <addForeignKeyConstraint baseColumnNames="status_id" baseTableName="dunning_collection_plan" constraintName="fk_dunning_collection_plan_status"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan_statuses" />
-
+                                 
         <addForeignKeyConstraint baseColumnNames="initial_collection_plan_id" baseTableName="dunning_collection_plan" constraintName="fk_initial_collection_plan"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
-
+                                 
         <addForeignKeyConstraint baseColumnNames="related_invoice_id" baseTableName="dunning_collection_plan" constraintName="fk_collection_plan_related_invoice"
                                  deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
-
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />                        
+        
     </changeSet>
     <changeSet id="INTRD-30_2021114" author="ZBariki">
         <dropForeignKeyConstraint baseTableName="dunning_min_balance_trigger_currency"
@@ -11367,19 +11363,19 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="payment_plan" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-
+    
       <changeSet id="INTRD-2959_11082021" author="Mbarek-Ay">
      <addColumn tableName="cpq_quote">
             <column name="user_account_id" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_user_account_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-
+                                 
       <addColumn tableName="quote_offer">
       <column name="user_account_id" type="bigint" />
       </addColumn>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_user_account_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" /> 
     </changeSet>
 
     <changeSet author="MohammedELAZZOUZI"  id="#INTRD-1889">
@@ -11407,8 +11403,8 @@ order by date_trunc('month', i.invoice_date) DESC
         <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_paym_plan_policy_pay_meth" tableName="crm_provider_payment_plan_policy_pay_methods" />
 	   	<addColumn tableName="ar_credit_category">
 			<column name="provider_id" type="BIGINT" />
-	    </addColumn>
-	    <addColumn tableName="crm_provider">
+	    </addColumn>	    
+	    <addColumn tableName="crm_provider">	    
 	   		<column name="dunning_default_pause_reason_id" type="BIGINT" />
 			<column name="min_allowed_receivable_amount" type="numeric(23, 12)" />
 			<column name="max_allowed_receivable_amount" type="numeric(23, 12)" />
@@ -11420,22 +11416,22 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="installment_amount_rounding" type="int4" defaultValueNumeric="2" />
 			<column name="split_evenly" type="${type.boolean}" defaultValueNumeric="1">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="allow_custom_installment_plan" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="add_interest_rate" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="add_installment_fee" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="default_block_payments" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="require_internal_approval" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
-			</column>
+			</column>	
 			<column name="default_interest_rate" type="int4" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
@@ -11444,7 +11440,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="clearing_priority" type="varchar(255)" />
 	    </addColumn>
 		<addForeignKeyConstraint baseColumnNames="dunning_default_pause_reason_id" baseTableName="crm_provider" constraintName="fk_dunning_default_pause_reason_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_pause_reasons" />	
 	    <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_credit_category" constraintName="fk_acc_id_payment_token" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 	</changeSet>
@@ -11452,7 +11448,7 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-2963_20211109" author="AbdelkaderBouazza">
         <dropTable tableName="invoice_dunning_statuses" cascadeConstraints="true"/>
     </changeSet>
-
+    
     <changeSet id="#INTRD-2961_20211109" author="AmineBENAICHA">
 		<renameColumn tableName="dunning_collection_plan_statuses"
 			newColumnName="description" oldColumnName="context"
@@ -11492,7 +11488,7 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_policy_level" />
 
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_level_instance"
-        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+        	constraintName="fk_dunning_level_instance_collection_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
 
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_status_id" baseTableName="dunning_level_instance"
@@ -11527,11 +11523,11 @@ order by date_trunc('month', i.invoice_date) DESC
 		</createTable>
 
 		<addUniqueConstraint columnNames="code" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
-
+            
         <addForeignKeyConstraint baseColumnNames="dunning_collection_plan_id" baseTableName="dunning_action_instance"
-        	constraintName="fk_dunning_collection_plan" deferrable="false" initiallyDeferred="false"
+        	constraintName="fk_dunning_action_instance_collection_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
-
+            
         <addForeignKeyConstraint baseColumnNames="dunning_level_instance_id" baseTableName="dunning_action_instance"
         	constraintName="fk_dunning_level_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_level_instance" />
@@ -11542,13 +11538,13 @@ order by date_trunc('month', i.invoice_date) DESC
         	constraintName="fk_dunning_action_instance_agent" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_agent" />
 	</changeSet>
-
+	
 	<changeSet id="#INTRD-3250_20211123" author="HatimOUDAD">
 	    <addColumn tableName="dunning_action_instance">
 	        <column name="dunning_action_id" type="bigint" />
 	    </addColumn>
 	</changeSet>
-
+	
 	<changeSet id="#INTRD-3307_20211125" author="AmineBENAICHA">
 	    <addColumn tableName="dunning_level_instance">
 	        <column name="dunning_level_id" type="bigint" />
@@ -11562,7 +11558,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <modifyDataType columnName="start_date" newDataType="date" tableName="sub_accounting_period"/>
         <modifyDataType columnName="end_date" newDataType="date" tableName="sub_accounting_period"/>
     </changeSet>
-
+	
 	 <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
      <addColumn tableName="billing_invoice">
             <column name="cpq_quote_id" type="bigint" />
@@ -11595,7 +11591,7 @@ order by date_trunc('month', i.invoice_date) DESC
 	        <column name ="quote_line_type" type="varchar(10)" />
 	    </addColumn>
 	</changeSet>
-
+    
     <changeSet id="INTRD-3781_20211217" author="hichamElHaloui">
         <createSequence sequenceName="security_deposit_settings_seq" startValue="1" />
         <createTable tableName="security_deposit_settings">
@@ -11730,21 +11726,60 @@ order by date_trunc('month', i.invoice_date) DESC
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
 
     </changeSet>
-
+    
     <changeSet id="#INTRD-4072_20211229" author="AmineBENAICHA">
     	<renameTable newTableName="finance_settings" oldTableName="security_deposit_settings"/>
     	<renameSequence newSequenceName="finance_settings_seq" oldSequenceName="security_deposit_settings_seq" />
 
-    	<dropPrimaryKey constraintName="security_deposit_settings_pkey"
+    	<dropPrimaryKey constraintName="security_deposit_settings_pkey"  
             schemaName="public"
             tableName="finance_settings"/>
         <addPrimaryKey columnNames="id" constraintName="finance_settings_pkey" tableName="finance_settings" />
     </changeSet>
-
+    
     <changeSet id="#INTRD-4178_20220106" author="AmineBENAICHA">
     	<dropUniqueConstraint constraintName="uk_dunning_action_instance_code" tableName="dunning_action_instance"/>
     	<addUniqueConstraint columnNames="code, dunning_level_instance_id" constraintName="uk_dunning_action_instance_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_action_instance" />
     </changeSet>
+
+    <changeSet id="#INTRD-4457_20220117" author="hichamElHaloui">
+        <dropForeignKeyConstraint baseTableName="security_deposit" constraintName="fk_cpq_product_security_deposit"/>
+        <dropColumn tableName="security_deposit">
+            <column name="product_instance"></column>
+            <column name="product_id"></column>
+        </dropColumn>
+        <addColumn tableName="security_deposit">
+            <column name="invoice_receipt_number" type="varchar(255)" />
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+
+         <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="security_deposit"
+			constraintName="fk_billing_service_instance_security_deposit" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+
+    </changeSet>
+
+     <changeSet id="#INTRD-4454_20220117" author="hichamElHaloui">
+         <dropColumn tableName="finance_settings">
+            <column name="allow_renew"  />
+            <column name="allow_transfer"  />
+        </dropColumn>
+     </changeSet>
+
+    <changeSet id="#INTRD-4410_20220117" author="IlyassTalal">
+    	<addColumn tableName="billing_user_account">
+            <column name="parent_useraccount_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_user_account_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-4677_20220125" author="hatimOUDAD">
+        <addColumn tableName="billing_user_account">
+            <column name="is_consumer" type="${type.boolean}" defaultValueNumeric="1">
+            </column>
+        </addColumn>
+     </changeSet>
 
     <changeSet id="#INTRD-4705_20220127" author="AbdelmounaimAkadid">
 	  	<createIndex indexName="billing_wallet_operation_charge_instance_idx" tableName="billing_wallet_operation">
@@ -11758,20 +11793,135 @@ order by date_trunc('month', i.invoice_date) DESC
 	  	</createIndex>
 	</changeSet>
 
+	<changeSet id="#INTRD-4654_20220203" author="AbdelmounaimAkadid">
+		<addColumn tableName="security_deposit">
+			<column name="refund_reason" type="varchar(255)"/>
+			<column name="cancel_reason" type="varchar(255)"/>
+		</addColumn>
+		<createSequence sequenceName="security_deposit_transaction_seq" startValue="1" />
+		
+		<createTable tableName="security_deposit_transaction">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="security_deposit_transaction_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+		
+			<column name="security_deposit_id" type="bigint" />
+			<column name="account_operation_id" type="bigint" />
+			<column name="security_deposit_operation" type="varchar(255)" />	            
+			<column name="amount" type="numeric(23, 12)" />
+			<column name="transactionDate" type="date" />
+			<column name="transaction_category" type="varchar(255)" />
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="security_deposit_id" baseTableName="security_deposit_transaction"
+			constraintName="fk_security_deposit_security_deposit_transaction" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="security_deposit" />
+			
+		<addForeignKeyConstraint baseColumnNames="account_operation_id" baseTableName="security_deposit_transaction"
+			constraintName="fk_ar_account_operation_security_deposit_transaction" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+	
+	</changeSet>
+	
+	<changeSet id="#INTRD-4654_20220203_2" author="HanineHicham">
+	    <dropColumn tableName="security_deposit_transaction">
+            <column name="transactionDate"></column>
+        </dropColumn>
+        <addColumn tableName="security_deposit_transaction">
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+			<column name="transaction_date" type="date" />
+		</addColumn>
+	</changeSet>
+
+     <changeSet id="#INTRD-4777_20220208" author="hichamELHALOUI">
+		<addUniqueConstraint columnNames="template_name" constraintName="uk_security_deposit_template_name" deferrable="false" disabled="false" initiallyDeferred="false" tableName="security_deposit_templat" />
+	</changeSet>
     <changeSet id="#4065_2022" author="Mounir_BOUKAYOUA">
         <addColumn tableName="crm_customer">
             <column name="anonymization_date" type="datetime" />
         </addColumn>
     </changeSet>
+    <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE">
+        <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
+        <createTable tableName="ar_accounting_scheme">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_scheme_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="long_description" type="varchar(2000)"/>
+            <column name="script_instance_id" type="${cast.long}"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_accounting_scheme" constraintName="fk_acc_scheme_script_inst_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="meveo_script_instance"/>
 
-    <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE">
-        <!--  comment is reserved word in oracle database-->
-        <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
-        <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+        <addColumn tableName="ar_occ_template">
+            <column name="accounting_scheme_id" type="${cast.long}"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="accounting_scheme_id" baseTableName="ar_occ_template" constraintName="fk_occ_tmplt_accnt_scheme_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="ar_accounting_scheme"/>
     </changeSet>
+    
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+        <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
+        <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
+     </changeSet>
+    <changeSet id="#INTRD-5200_2022-02-08" author="MohammedSTITANE">
+	    <!--  comment is reserved word in oracle database-->
+	    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="billing_invoice"/>
+	    <renameColumn  oldColumnName="comment" newColumnName="comment_text" tableName="ar_account_operation"/>
+	</changeSet>
+	<changeSet id="#INTRD-5274_2022-02-22" author="HichamHANINE">
+	    <dropForeignKeyConstraint baseTableName="billing_accounting_article" constraintName="fk_billing_accounting_article_invoice_type"/>
+		<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_accounting_article"
+            constraintName="fk_billing_accounting_article_invoice_type" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+	</changeSet>
+
     <changeSet id="#INTRD-5286_2022-02_23" author="ZBariki">
         <addColumn tableName="billing_invoice">
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI">
+        <addColumn tableName="crm_provider">
+            <column name="functional_currency_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-5343_2022-02_25" author="hichamELHALOUI">
+        <addColumn tableName="billing_trading_currency">
+            <column name="symbol" type="varchar(255)" />
+            <column name="decimal_places" type="int" defaultValueNumeric="2" />
         </addColumn>
     </changeSet>
 
@@ -11781,6 +11931,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <where>version is null</where>
         </update>
     </changeSet>
+
 
 
     <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
@@ -11811,6 +11962,21 @@ order by date_trunc('month', i.invoice_date) DESC
 	     <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
       </changeSet>
+      
+      <changeSet id="#INTRD-5529_20220304" author="TarikFA.">
+      	<addColumn tableName="cpq_invoice_line">
+	     	<column name="discounted_invoice_line" type="bigint"/>
+      	</addColumn>
+	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+      </changeSet>
+      
+
+    <changeSet id="#INTRD-5458_20220304" author="TarikRabeh">
+    	<addColumn tableName="billing_invoice_configuration">
+    		<column name="display_user_account_hierarchy" type="${type.boolean}" defaultValueNumeric="0"/>
+    	</addColumn>
+    </changeSet>
 
 
     <changeSet id="#INTRD-5276_2022-02-24_PG" author="MohammedSTITANE" dbms="postgresql">
@@ -11828,5 +11994,49 @@ order by date_trunc('month', i.invoice_date) DESC
             where long_description is not null ;
         </sql>
         <dropColumn columnName="long_description" tableName="billing_rated_transaction" />
+    </changeSet>
+
+    <changeSet id="#INTRD-5533_2022_03_07" author="ZBariki">
+        <update tableName="billing_invoice_type">
+            <column name="use_self_sequence" value="0"/>
+            <where>use_self_sequence is null</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid">
+    	 <update tableName="billing_tax_mapping">
+            <column name="version" value="0"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
+    <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza">
+        <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id" />
+    </changeSet>
+
+
+    <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            <![CDATA[
+                select nextVal(quote_ident(sequencename))::text as seq_val, sequencename as seq_code
+                FROM pg_catalog.pg_sequences
+            ]]>
+        </createView>
+    </changeSet>
+    <changeSet id="#INTRD-5777_2022-03-17_ORACLE" author="MohammedSTITANE" dbms="oracle">
+        <sql endDelimiter="/">
+            CREATE OR REPLACE FUNCTION get_next_val (seq_name IN VARCHAR2) RETURN VARCHAR AS
+                v_seq_id number(38);
+                sql_stmt VARCHAR(2000);
+            BEGIN
+                sql_stmt := 'select ' || seq_name || '.nextval from dual';
+                execute immediate sql_stmt into v_seq_id ;
+                DBMS_OUTPUT.PUT_LINE(seq_name || ' => ' || v_seq_id);
+                RETURN to_char(v_seq_id);
+            END;
+            /
+        </sql>
+        <createView viewName="all_sequences_view" replaceIfExists="true">
+            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
+        </createView>
     </changeSet>
 </databaseChangeLog>

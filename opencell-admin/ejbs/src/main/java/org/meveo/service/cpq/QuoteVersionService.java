@@ -2,16 +2,22 @@ package org.meveo.service.cpq;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.Quote;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
@@ -203,4 +209,17 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		duplicate.setVersion(NEW_VERSION);
 		return  duplicate;
 	}
+	
+	 @JpaAmpNewTx
+	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void clearExistingQuotations(QuoteVersion quoteVersion) {
+        if (quoteVersion.getQuoteArticleLines() != null) {
+            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
+                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
+            update(quoteVersion);
+        }
+    }
 }

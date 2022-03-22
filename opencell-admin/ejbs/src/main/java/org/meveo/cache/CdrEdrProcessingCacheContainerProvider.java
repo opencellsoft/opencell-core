@@ -144,9 +144,11 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * 
      * @param originBatch Origin batch
      * @param originRecord Origin record
+     * @return Is EDR is cached - True if EDR was already in cache before
      */
-    public void setEdrDuplicationStatus(String originBatch, String originRecord) {
-        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), originBatch + '_' + originRecord), true);
+    public boolean setEdrDuplicationStatus(String originBatch, String originRecord) {
+        Boolean previousValue = edrCache.put(new CacheKeyStr(currentUser.getProviderCode(), originBatch + '_' + originRecord), true);
+        return previousValue != null;
     }
 
     /**

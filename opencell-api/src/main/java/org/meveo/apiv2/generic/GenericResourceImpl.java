@@ -61,7 +61,7 @@ public class GenericResourceImpl implements GenericResource {
         	return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), id, null))
                     .links(buildPaginatedResourceLink(entityName)).build();
         } else {    
-        	return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), excludedFields)
+	        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), excludedFields)
 	                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
 	                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
         }

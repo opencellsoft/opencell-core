@@ -121,6 +121,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     }
                     dunningPolicyLevels.add(policyLevel);
                 }
+                
                 validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
                 dunningPolicy.setTotalDunningLevels(totalDunningLevels);
                 validateLevels(dunningPolicyLevels, endOfLevelDayOverDue);

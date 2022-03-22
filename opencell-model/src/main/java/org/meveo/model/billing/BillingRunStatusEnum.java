@@ -32,10 +32,12 @@ public enum BillingRunStatusEnum {
     //NEW STATUS USED ON V2 ONLY:
     INVOICE_LINES_CREATED(21,"BillingRunStatusEnum.invoiceLinesCreated"),//Pre-invoicing report is based on invoice lines
     INVOICES_CREATED(22,"BillingRunStatusEnum.invoicesCreated"),//Invoices have been created (but are incomplete)
+    
     MINIMUM_ADDED(23,"BillingRunStatusEnum.minimumAdded"),//Invoice lines for invoicing minimum have been added
     THRESHOLD_CHECKED(24,"BillingRunStatusEnum.thresholdChecked"),//Aggregates for invoice discounts have been added
     DISCOUNT_ADDED(25,"BillingRunStatusEnum.discountAdded"),//Invoicing threshold have been checked
     TAX_COMPUTED(26,"BillingRunStatusEnum.taxComputed"),//Tax aggregates have been added
+    
     DRAFT_INVOICES(27,"BillingRunStatusEnum.draftInvoices");//Draft invoices have been created. Postinvoicing report is available
     private Integer id;
     private String label;

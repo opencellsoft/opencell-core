@@ -110,6 +110,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 			paymentHistory.getListAoPaid().add(ao);
 			}
 		}
+		}
 		super.create(paymentHistory);
 	}
     

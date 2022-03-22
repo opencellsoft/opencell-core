@@ -733,10 +733,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate,
             boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags, List<String> requestedTagTypes) {
 
-        if (loadTags && requestedTagTypes != null && !requestedTagTypes.isEmpty()) {
-            List<Tag> tags = offerTemplateService.getOfferTagsByType(requestedTagTypes);
-            offerTemplate.setTags(tags);
-        }
         GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false, true, true);
 
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
@@ -922,6 +918,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         GetListCpqOfferResponseDto result = new GetListCpqOfferResponseDto();
         List<String> baTagCodes = new ArrayList<String>();
 
+        HashSet<String> requestedTagsByType=new HashSet<String>();
+    	if(customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty()) {
+    		requestedTagsByType = new HashSet<>(tagService.findByRequestedTagType(customerContextDto.getRequestedTagTypes()));
+    	}
         BillingAccount ba = billingAccountService.findByCode(billingAccountCode);
 
         if (ba != null) {
@@ -934,47 +934,52 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         List<String> sellerTags = customerContextDto.getSellerTags();
         List<String> customerTags = customerContextDto.getCustomerTags();
-        HashSet<String> resultTags = new HashSet<String>();
+        HashSet<String> requestedTags = new HashSet<String>();
         if (baTagCodes != null) {
-            resultTags.addAll(baTagCodes);
+            requestedTags.addAll(baTagCodes);
         }
         if (customerTags != null) {
-            resultTags.addAll(customerTags);
+            requestedTags.addAll(customerTags);
         }
         if (sellerTags != null) {
-            resultTags.addAll(sellerTags);
+            requestedTags.addAll(sellerTags);
         }
 
-        log.info("OfferTemplateApi.list resultBaTag={}", resultTags);
-        String tags = null;
-        if (!resultTags.isEmpty()) {
-            tags = resultTags.stream().collect(Collectors.joining(","));
-        }
-        PagingAndFiltering pagingAndFiltering = customerContextDto.getPagingAndFiltering();
-        if (pagingAndFiltering == null) {
-            pagingAndFiltering = new PagingAndFiltering();
-        }
-        List<OfferTemplate> offersWithoutTags = new ArrayList<>();
-        if (tags != null) {
-            pagingAndFiltering.addFilter("inList tags", tags);
-            offersWithoutTags = offerTemplateService.list().stream().filter(offer -> offer.getTags().isEmpty()).collect(Collectors.toList());
-        }
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
-        List<OfferTemplate> offers = offerTemplateService.list(paginationConfig);
-        if (offersWithoutTags != null && !offersWithoutTags.isEmpty()) {
-            offers.addAll(offersWithoutTags);
-        }
-        result.setPaging(pagingAndFiltering);
-        if (!offers.isEmpty()) {
-            result.getPaging().setTotalNumberOfRecords(offers.size());
-            for (OfferTemplate offerTemplate : offers) {
-                boolean loadTags = customerContextDto.getRequestedTagTypes() != null && !customerContextDto.getRequestedTagTypes().isEmpty();
-                GetOfferTemplateResponseDto offertemplateDTO = fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, false, false, false, true,
-                        false, loadTags, customerContextDto.getRequestedTagTypes());
-                result.addOffer(new CpqOfferDto(offertemplateDTO));
-            }
-        }
-        return result;
+        if(!requestedTagsByType.isEmpty() && requestedTags.isEmpty()) {
+			requestedTags=requestedTagsByType;
+		}else if(!requestedTagsByType.isEmpty() ){
+			requestedTags.retainAll(requestedTagsByType);
+		}
+		
+		log.info("OfferTemplateApi.list resultBaTag={}",requestedTags);  
+		String tags=null;
+		if (!requestedTags.isEmpty()) {
+			tags=requestedTags.stream().collect(Collectors.joining(","));
+		} 
+		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
+		if(pagingAndFiltering==null) {
+			pagingAndFiltering=new PagingAndFiltering();
+		}
+		List<OfferTemplate> offersWithoutTags =new ArrayList<>();
+		if(tags!=null) {
+		pagingAndFiltering.addFilter("inList tags", tags);
+		offersWithoutTags=offerTemplateService.list().stream().filter(offer -> offer.getTags().isEmpty()).collect(Collectors.toList());
+		}
+		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
+		List<OfferTemplate> offers=offerTemplateService.list(paginationConfig);
+		if(offersWithoutTags!=null && !offersWithoutTags.isEmpty()) {
+			offers.addAll(offersWithoutTags);
+		}
+		result.setPaging(pagingAndFiltering);
+		if(!offers.isEmpty()) {
+		result.getPaging().setTotalNumberOfRecords(offers.size());
+		for (OfferTemplate offerTemplate : offers) {
+			boolean loadTags=customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty();
+			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
+			result.addOffer(new CpqOfferDto(offertemplateDTO));
+		}
+		}
+		return result;
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
@@ -1122,7 +1127,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             missingParameters.add("offerCode");
         if (productDto == null)
             missingParameters.add("productDto");
-        if (productDto.getProducts().isEmpty())
+    	if(productDto.getProducts().isEmpty())
             missingParameters.add("products");
         handleMissingParameters();
 
@@ -1131,7 +1136,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         tmpOfferTemplateDto.getOfferProducts().addAll(productDto.getProducts());
         List<String> productCodes = productDto.getProducts().stream().map(offerProductDto -> offerProductDto.getProduct().getCode()).collect(Collectors.toList());
         offerTemplate.getOfferComponents().removeIf(offerComponent -> offerComponent.getProduct() != null && productCodes.contains(offerComponent.getProduct().getCode()));
-        processOfferProductDtos(tmpOfferTemplateDto, offerTemplate, false);
+        processOfferProductDtos(tmpOfferTemplateDto, offerTemplate, false); 
         offerTemplateService.update(offerTemplate);
         return find(offerCode, productDto.getValidFrom(), productDto.getValidTo());
     }
@@ -1177,6 +1182,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
         }
     }
+
     /**
      * Increment a sequence in offer products in the same offer template.
      *

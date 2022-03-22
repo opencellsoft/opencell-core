@@ -52,11 +52,11 @@ public class JsonGenericMapper extends ObjectMapper{
             simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
             addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
             this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
-        }
+        }   
     	if((fields == null || fields.isEmpty())  && excludedFields != null && !excludedFields.isEmpty()){
-    		addMixIn(entityClass, EntityFieldsFilterMixIn.class);
+            addMixIn(entityClass, EntityFieldsFilterMixIn.class);
             simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.serializeAllExcept(excludedFields));
-    	}	
+        }	
         setFilterProvider(this.simpleFilterProvider);
         try {
             return writeValueAsString(dtoToSerialize);

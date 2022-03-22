@@ -2,6 +2,8 @@ package org.meveo.service.base.expressions;
 
 import java.util.Arrays;
 
+import org.meveo.service.base.PersistenceService;
+
 public class ExpressionParser {
 
     private String condition;
@@ -10,6 +12,12 @@ public class ExpressionParser {
     private String[] fieldInfo;
 
     public ExpressionParser(String[] fieldInfo) {
+
+        // "AND" is just a prefix to allow multiple conditions on the same field
+        if (fieldInfo[0].startsWith(PersistenceService.SEARCH_AND)) {
+            fieldInfo = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+        }
+
         this.fieldInfo = fieldInfo;
         this.condition = "eq";
         this.fieldName = fieldInfo[0];

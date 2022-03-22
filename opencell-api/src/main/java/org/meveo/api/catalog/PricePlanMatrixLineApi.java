@@ -48,11 +48,13 @@ public class PricePlanMatrixLineApi extends BaseApi {
     
     public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
     	
-    		for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
-            	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
-            }
-           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
-          return new GetPricePlanVersionResponseDto(ppmVersion);
+    	checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+
+		for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+	    	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
+	    }
+		PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+		return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
     
@@ -87,8 +89,8 @@ public class PricePlanMatrixLineApi extends BaseApi {
 			var values = list.get(i).getPricePlanMatrixValues(); 
 			for (int k = i + 1; k < list.size(); k++) {
 				var valTobeCompared = list.get(k).getPricePlanMatrixValues();
-				if(!values.isEmpty() && !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {}))
-						&& list.get(i).getPriceWithoutTax().equals(list.get(k).getPriceWithoutTax()))
+				if(!values.isEmpty() 
+						&& !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
 					throw new MeveoApiException("A line having similar values already exists!.");
 			}
 		}

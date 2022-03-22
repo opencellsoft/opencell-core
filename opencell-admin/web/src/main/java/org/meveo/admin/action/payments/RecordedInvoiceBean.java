@@ -36,6 +36,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.LazyDataModel;
 
 
+
 /**
  * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting

@@ -17,13 +17,16 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -54,6 +57,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     @Inject
     private ProductService productService;
 
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+    
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         return null;
@@ -101,10 +107,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
             throw new BadRequestException("instantiation is not allowed in general settings");
         }
-
-        linkRealEntities(securityDepositInput);
-
         BigDecimal securityDepositAmount = securityDepositInput.getAmount();
+        if (securityDepositAmount == null) {
+            throw new EntityDoesNotExistsException("The Amount == null.");
+        }
+        linkRealEntities(securityDepositInput);        
 
         // Check Maximum amount per Security deposit
         BigDecimal maxAmountPerSecurityDeposit = financeSettings.getMaxAmountPerSecurityDeposit();
@@ -119,7 +126,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             if (sumAmountPerCustomer != null) {
                 BigDecimal totalAmount = securityDepositAmount.add(sumAmountPerCustomer);
                 if (totalAmount.compareTo(maxAmountPerCustomer) > 0) {
-                    throw new BadRequestException("The amount is greater than the maximum per customer : " + maxAmountPerCustomer);
+                    throw new BadRequestException("Security deposit amount is greater than the maximum per customer");
                 }
             }
         }
@@ -132,16 +139,17 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositName = template.getTemplateName();
         }
         securityDepositInput.setCode(securityDepositName + "-" + count);
+        securityDepositInput.setStatus(SecurityDepositStatusEnum.NEW);
 
         // Check validity dates
-        if (template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
+        if (financeSettings.isAutoRefund() && template.isAllowValidityDate() && template.isAllowValidityPeriod()) {
             if (securityDepositInput.getValidityDate() == null && securityDepositInput.getValidityPeriod() == null) {
                 throw new BadRequestException("At least one of the two options (SD.validityDate or SD.validityPeriod) should be filled");
             }
         }
-        if (securityDepositInput.getValidityDate() != null && (isSameDay(securityDepositInput.getValidityDate(), new Date()))
-                || securityDepositInput.getValidityDate().before(new Date())) {
-            throw new BadRequestException("User cannot select the day date or a date in the past");
+        if (securityDepositInput.getValidityDate() != null && ((isSameDay(securityDepositInput.getValidityDate(), new Date()))
+                || securityDepositInput.getValidityDate().before(new Date()))) {
+            throw new BadRequestException("Validity must be in the future");
         }
         if (securityDepositInput.getValidityPeriod() != null && securityDepositInput.getValidityPeriod() <= 0) {
             throw new BadRequestException("0 and negative values not allowed");
@@ -158,6 +166,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             throw new BadRequestException("The amount should be lesser or equal to maximum amount (of SD template) : " + template.getMaxAmount());
         }
 
+        // Check The if subscription not null the serviceInstance cannot be null 
+        if(securityDepositInput.getSubscription() != null && securityDepositInput.getServiceInstance() == null) {
+            throw new BadRequestException("The service instance is mandatory if subscription is set");
+        }
+
         securityDepositService.create(securityDepositInput);
 
         // Increment template.NumberOfInstantiation after each instantiation
@@ -168,7 +181,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         return of(securityDepositInput);
     }
 
-    private void linkRealEntities(SecurityDeposit securityDepositInput) {
+    public void linkRealEntities(SecurityDeposit securityDepositInput) {
         if (securityDepositInput.getTemplate() != null) {
             SecurityDepositTemplate securityDepositTemplate = securityDepositTemplateService.tryToFindByCodeOrId(securityDepositInput.getTemplate());
             securityDepositInput.setTemplate(securityDepositTemplate);
@@ -190,9 +203,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
             securityDepositInput.setSubscription(subscription);
         }
 
-        if (securityDepositInput.getProduct() != null) {
-            Product product = productService.tryToFindByCodeOrId(securityDepositInput.getProduct());
-            securityDepositInput.setProduct(product);
+        if (securityDepositInput.getServiceInstance() != null) {
+            ServiceInstance serviceInstance = serviceInstanceService.tryToFindByCodeOrId(securityDepositInput.getServiceInstance());
+            securityDepositInput.setServiceInstance(serviceInstance);
         }
     }
 

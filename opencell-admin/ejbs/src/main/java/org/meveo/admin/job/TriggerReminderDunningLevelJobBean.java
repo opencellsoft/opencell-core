@@ -155,9 +155,9 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
             params.put("customerAccountAddressZipCode",
-                    customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
+                   customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
             params.put("customerAccountAddressCity",
-                    customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+                   customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
             params.put("customerAccountDescription", customerAccount.getDescription());
 
             params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());

@@ -114,8 +114,8 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String line = scanner.nextLine();
 		String[] firstLine = line.split(";");
 		for (int i = 0; i < firstLine.length; i++) {
-			String column = firstLine[i].split("\\(")[0];
-			boolean isRange = firstLine[i].split("\\(").length > 1 && firstLine[i].split("\\(")[1].toLowerCase().contains("range");
+			String column = firstLine[i].split("\\[")[0];
+			boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
 			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("priceWithoutTax"))) {
 				List<PricePlanMatrixColumn> pricePlanMatrixColumnList = findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
 				if (pricePlanMatrixColumnList.isEmpty()) {
@@ -172,7 +172,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						break;
 					case "Double":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setDoubleValue((nextLine[columnIndex] == null || nextLine[columnIndex].isEmpty())? null : Double.parseDouble(nextLine[columnIndex]));
+						pricePlanMatrixValueDto.setDoubleValue((nextLine[columnIndex] == null || nextLine[columnIndex].isEmpty())? null : Double.parseDouble(convertToDecimalFormat(nextLine[columnIndex])));
 						pricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "Boolean":
@@ -186,8 +186,8 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						break;
 					case "Range_Numeric":
 						pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
-						pricePlanMatrixValueDto.setFromDoubleValue((nextLine[columnIndex] == null || nextLine[columnIndex].split("\\|")[0].isEmpty()) ? null : Double.parseDouble(nextLine[columnIndex].split("\\|")[0]));
-						pricePlanMatrixValueDto.setToDoubleValue(nextLine[columnIndex] != null && nextLine[columnIndex].split("\\|").length>1 ? Double.parseDouble(nextLine[columnIndex].split("\\|")[1]) : null);
+						pricePlanMatrixValueDto.setFromDoubleValue((nextLine[columnIndex] == null || nextLine[columnIndex].split("\\|")[0].isEmpty()) ? null : Double.parseDouble(convertToDecimalFormat(nextLine[columnIndex].split("\\|")[0])));
+						pricePlanMatrixValueDto.setToDoubleValue(nextLine[columnIndex] != null && nextLine[columnIndex].split("\\|").length>1 ? Double.parseDouble(convertToDecimalFormat(nextLine[columnIndex].split("\\|")[1])) : null);
 						pricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						break;
 					case "List":
@@ -212,7 +212,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						pricePlanMatrixLineDto.setDescription(nextLine[columnIndex]);
 					}
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PriceWithoutTax")) {
-						String val = nextLine[columnIndex];
+						String val = convertToDecimalFormat(nextLine[columnIndex]);
 						try {
 							pricePlanMatrixLineDto.setPriceWithoutTax(new BigDecimal(val));
 						} catch (Exception e) {
@@ -247,7 +247,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		String value = Optional.ofNullable(nextLine[columnIndex]).orElse(null);
 		if (isRange) {
 			String dateLeftPart = value.split("\\|")[0];
-			String dateRightPart = value.split("\\|")[1];
+			String dateRightPart = value.split("\\|").length>1?value.split("\\|")[1]:null;
 			Date fromDateValue = validateAndReturnDate(dateLeftPart);
 			Date toDateValue = validateAndReturnDate(dateRightPart);
 			pricePlanMatrixValueDto.setFromDateValue(fromDateValue);
@@ -266,5 +266,22 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 				throw new ValidationException("Wrong date " + value + " ==> The allowed date range is 1900 as min and 2100 as max");
 		}
 		return dateValue;
+	}
+	
+	private String convertToDecimalFormat(String str) {
+        str = str.replace(" ", "");
+        int commaPos = str.indexOf(',');
+        int dotPos = str.indexOf('.');
+        if (commaPos > 0 && dotPos > 0) {
+            if (commaPos < dotPos) {
+                str = str.replace(",", "");
+            } else {
+                str = str.replace(".", "");
+                str = str.replace(",", ".");
+            }
+        } else {
+            str = str.replace(",", ".");
+        }
+		return str;
 	}
 }

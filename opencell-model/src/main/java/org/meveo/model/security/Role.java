@@ -122,7 +122,7 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
     @CollectionTable(name = "adm_role_secured_entity", joinColumns = { @JoinColumn(name = "role_id") })
     @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
-            @AttributeOverride(name = "disabled", column = @Column(name = "disable") ) })
+            @AttributeOverride(name = "disabled", column = @Column(name = "disabled") ) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
     public String getName() {
