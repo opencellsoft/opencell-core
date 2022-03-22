@@ -9538,5 +9538,4 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
-
 </databaseChangeLog>
