@@ -25,7 +25,7 @@ public class Address {
         this.zipCode = address.getZipCode();
         this.city = address.getCity();
         this.country = address.getCountry()!=null? address.getCountry().getCountryCode():null;
-        this.countryName = address.getCountry().getDescription();
+        this.countryName = address.getCountry()!=null?address.getCountry().getDescription():null;
         this.state = address.getState();
     }
     
