@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "0374240a-39df-49a8-a354-6fd01d74530c",
+		"name": "DoubleRun-530-V10",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Run RT_Job",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201,202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Amount Check\", function () {\r",
+							"pm.expect(pm.response.json().data[0].amountWithoutTax).to.equal(1.000000000000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"limit\": 1,\r\n    \"sortBy\":\"id\",\r\n    \"sortOrder\": \"DESCENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://bpi.d2.opencell.work/opencell/api/rest/v2/generic/all/invoice",
+					"protocol": "https",
+					"host": [
+						"bpi",
+						"d2",
+						"opencell",
+						"work"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"generic",
+						"all",
+						"invoice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check invoice.amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201,202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Amount Check\", function () {\r",
+							"pm.expect(pm.response.json().data[0].amountWithoutTax).to.equal(0.000000000000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"setTimeout(function(){}, 15000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"limit\": 1,\r\n    \"sortBy\":\"id\",\r\n    \"sortOrder\": \"DESCENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/invoice",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"invoice"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
