@@ -11,6 +11,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,6 +28,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.quote.QuoteProduct;
@@ -94,25 +97,20 @@ public class OrderProduct extends AuditableCFEntity {
     @Column(name = "delivery_date")
     private Date deliveryDate;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_amendement_suspend_id",referencedColumnName = "id") 
-	private OrderAmendement orderAmendementToSuspend;
+    /**production action type */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "production_action_type", length = 10)
+   	private ProductActionTypeEnum productActionType;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_amendement_reactivate_id",referencedColumnName = "id") 
-	private OrderAmendement orderAmendementToReactivate;
+    /** termination timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "termination_date")
+    private Date terminationDate;
     
+    /** Termination reason. */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_amendement_terminate_id",referencedColumnName = "id") 
-	private OrderAmendement orderAmendementToTerminate;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_amendement_activate_id",referencedColumnName = "id") 
-	private OrderAmendement orderAmendementToActivate;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_amendement_restart_id",referencedColumnName = "id") 
-	private OrderAmendement orderAmendementToRestart;
+    @JoinColumn(name = "sub_termin_reason_id")
+    private SubscriptionTerminationReason terminationReason;
 	
 	
 	public void update(OrderProduct other) {
@@ -127,11 +125,9 @@ public class OrderProduct extends AuditableCFEntity {
         this.discountPlan=other.getDiscountPlan();
         this.quoteProduct=other.getQuoteProduct();
         this.deliveryDate=other.deliveryDate;
-        this.orderAmendementToActivate=other.orderAmendementToActivate;
-        this.orderAmendementToReactivate=other.orderAmendementToReactivate;
-        this.orderAmendementToRestart=other.orderAmendementToRestart;
-        this.orderAmendementToSuspend=other.orderAmendementToSuspend;
-        this.orderAmendementToTerminate=other.getOrderAmendementToTerminate();
+        this.productActionType=other.productActionType;
+        this.terminationDate=other.terminationDate;
+        this.terminationReason=other.terminationReason;
     }
 	
 	
@@ -281,54 +277,30 @@ public class OrderProduct extends AuditableCFEntity {
 		this.deliveryDate = deliveryDate;
 	}
 
-
-	public OrderAmendement getOrderAmendementToSuspend() {
-		return orderAmendementToSuspend;
+	public ProductActionTypeEnum getProductActionType() {
+		return productActionType;
 	}
 
-
-	public void setOrderAmendementToSuspend(OrderAmendement orderAmendementToSuspend) {
-		this.orderAmendementToSuspend = orderAmendementToSuspend;
+	public void setProductActionType(ProductActionTypeEnum productActionType) {
+		this.productActionType = productActionType;
 	}
 
-
-	public OrderAmendement getOrderAmendementToReactivate() {
-		return orderAmendementToReactivate;
+	public Date getTerminationDate() {
+		return terminationDate;
 	}
 
-
-	public void setOrderAmendementToReactivate(OrderAmendement orderAmendementToReactivate) {
-		this.orderAmendementToReactivate = orderAmendementToReactivate;
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
 	}
 
-
-	public OrderAmendement getOrderAmendementToTerminate() {
-		return orderAmendementToTerminate;
+	public SubscriptionTerminationReason getTerminationReason() {
+		return terminationReason;
 	}
 
-
-	public void setOrderAmendementToTerminate(OrderAmendement orderAmendementToTerminate) {
-		this.orderAmendementToTerminate = orderAmendementToTerminate;
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+		this.terminationReason = terminationReason;
 	}
-
-
-	public OrderAmendement getOrderAmendementToActivate() {
-		return orderAmendementToActivate;
-	}
-
-
-	public void setOrderAmendementToActivate(OrderAmendement orderAmendementToActivate) {
-		this.orderAmendementToActivate = orderAmendementToActivate;
-	}
-
-
-	public OrderAmendement getOrderAmendementToRestart() {
-		return orderAmendementToRestart;
-	}
-
-
-	public void setOrderAmendementToRestart(OrderAmendement orderAmendementToRestart) {
-		this.orderAmendementToRestart = orderAmendementToRestart;
-	} 
+	
+	
 		
 }

@@ -30,6 +30,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -100,9 +101,13 @@ public class OrderOffer extends BusinessCFEntity {
     @Column(name = "order_line_type", length = 10)
     private OfferLineTypeEnum orderLineType = OfferLineTypeEnum.CREATE;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_amendement_id")
-	private OrderAmendement orderAmendement;
+    /**
+     * Subscription
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+    
 	
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
@@ -214,12 +219,12 @@ public class OrderOffer extends BusinessCFEntity {
         this.orderLineType = orderLineType;
     }
 
-	public OrderAmendement getOrderAmendement() {
-		return orderAmendement;
+	public Subscription getSubscription() {
+		return subscription;
 	}
 
-	public void setOrderAmendement(OrderAmendement orderAmendement) {
-		this.orderAmendement = orderAmendement;
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
     
 }
