@@ -2408,4 +2408,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-5760_20220323" author="Mounir_BOUKAYOUA" failOnError="false">
+        <addColumn tableName="adm_gdpr_configuration">
+            <column name="deactivate_db_triggers" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
