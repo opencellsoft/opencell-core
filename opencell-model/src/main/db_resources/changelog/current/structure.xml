@@ -12301,7 +12301,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id" />
     </changeSet>
 
-
     <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
         <createView viewName="all_sequences_view" replaceIfExists="true">
             <![CDATA[
@@ -12327,6 +12326,63 @@ order by date_trunc('month', i.invoice_date) DESC
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
     </changeSet>
+
+    
+    
+    <changeSet id="#INTRD-5804-20220321" author="HatimOUDAD">
+    	
+    	<dropForeignKeyConstraint baseTableName="cpq_order_offer" constraintName="fk_offer_order_amd_id"/>
+    	<dropColumn tableName="cpq_order_offer">
+            <column name="order_amendement_id"></column>
+        </dropColumn>
+    	
+    	<dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_restart_order_id"/>
+    	<dropColumn tableName="cpq_order_product">
+            <column name="order_amendement_restart_id"></column>
+        </dropColumn>
+        
+        <dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_activate_order_id"/>
+    	<dropColumn tableName="cpq_order_product">
+            <column name="order_amendement_activate_id"></column>
+        </dropColumn>
+        
+        <dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_terminate_order_id"/>
+    	<dropColumn tableName="cpq_order_product">
+            <column name="order_amendement_terminate_id"></column>
+        </dropColumn>
+        
+        <dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_reactivate_order_id"/>
+    	<dropColumn tableName="cpq_order_product">
+            <column name="order_amendement_reactivate_id"></column>
+        </dropColumn>
+        
+        <dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_prd_suspend_order_id"/>
+    	<dropColumn tableName="cpq_order_product">
+            <column name="order_amendement_suspend_id"></column>
+        </dropColumn>
+        
+        <dropForeignKeyConstraint baseTableName="cpq_order_amendement" constraintName="fk_order_amendement_user_account_id"/>
+    	<dropForeignKeyConstraint baseTableName="cpq_order_amendement" constraintName="fk_billing_subscription_order_amendement"/>
+    	<dropTable tableName="cpq_order_amendement"/>
+    	
+    	<addColumn tableName="cpq_order_product">
+            <column name="production_action_type" type="varchar(10)" />
+            <column name="termination_date" type="datetime" />
+            <column name="sub_termin_reason_id" type="bigint" />
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbd" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+        
+        <addColumn tableName="cpq_order_offer">
+            <column name="subscription_id" type="bigint" />
+        </addColumn>    
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_order_offer" constraintName="fk_dwdlb9d5mlvdddm3yowwa9uembd" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />	
+    	
+    </changeSet>
+	
+    
     <changeSet id="#INTRD-4702-20220321" author="ZBariki">
         <addColumn tableName="ar_occ_template">
             <column name="contra_accounting_code_id" type="bigint" />
@@ -12341,4 +12397,5 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="trading_currency_id" type="bigint" />
         </addColumn>
     </changeSet>
+
 </databaseChangeLog>
