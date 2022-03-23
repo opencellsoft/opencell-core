@@ -38,7 +38,7 @@ public class AttributeService extends BusinessService<Attribute>{
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T evaluateElExpressionAttribute(String expression, Product product, OfferTemplate offer, CpqQuote quote, Class<T> resultType) throws InvalidELException {
+    public <T> T evaluateElExpressionAttribute(String expression, Product product, OfferTemplate offer, CpqQuote quote, Class<T> resultType) throws BusinessException {
         Map<Object, Object> params = new HashMap<>();
         if (Strings.isBlank(expression)) {
             return null;
@@ -55,7 +55,7 @@ public class AttributeService extends BusinessService<Attribute>{
         if (resultType == null) {
             resultType = (Class<T>) String.class;
         }
-        T res = params.isEmpty() ? null : evaluateExpression(expression, params, resultType);
+        T res =  evaluateExpression(expression, params, resultType);
         return res;
     }
 
