@@ -270,8 +270,8 @@ public class ProductApi extends BaseApi {
 				discountList.addAll(discountListUsingCodes);
 			}
 
+    		product.getDiscountList().clear();
 	    	if(!discountList.isEmpty()){
-	    		product.getDiscountList().clear();
 	    		product.getDiscountList().addAll(discountList);
 			}
 
