@@ -1,5 +1,7 @@
 package org.meveo.apiv2.billing.resource;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
@@ -8,8 +10,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/billing/invoicing")
-@Produces({"application/json"})
-@Consumes({"application/json"})
+@Produces({APPLICATION_JSON})
+@Consumes({APPLICATION_JSON})
 public interface InvoicingResource {
 
     @POST
