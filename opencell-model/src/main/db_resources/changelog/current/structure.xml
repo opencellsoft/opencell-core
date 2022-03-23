@@ -12342,7 +12342,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
-    <changeSet id="#INTRD-4708_20220322" author="aelmalki">
+    <changeSet id="#INTRD-5881_20220322" author="aelmalki">
         <createTable tableName="accounting_accounting_entry">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">

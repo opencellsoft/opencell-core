@@ -31,8 +31,8 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "accounting_accounting_entry")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_accounting_writing_seq"),})
-public class AccountingEntry extends AuditableEntity {
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_accounting_entry_seq"),})
+public class AccountingSchemeEntry extends AuditableEntity {
 
     /**
      * Account operation for which the accounting entry is created
