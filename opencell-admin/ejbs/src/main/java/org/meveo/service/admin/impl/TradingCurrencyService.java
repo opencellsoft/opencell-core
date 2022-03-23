@@ -21,7 +21,6 @@ import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.PersistenceService;
 
