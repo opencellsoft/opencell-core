@@ -12155,7 +12155,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <createSequence sequenceName="open_order_template_seq" startValue="1"/>
         <createTable tableName="open_order_threshold">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
             </column>
             <column name="version" type="int4"/>
             <column name="created" type="datetime">
@@ -12180,7 +12180,7 @@ order by date_trunc('month', i.invoice_date) DESC
 
         <createTable tableName="open_order_template">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_template_pkey"/>
             </column>
             <column name="version" type="int4"/>
             <column name="created" type="datetime">
