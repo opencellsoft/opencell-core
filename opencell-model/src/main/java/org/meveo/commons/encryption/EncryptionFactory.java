@@ -264,7 +264,7 @@ public class EncryptionFactory {
     }
 
     private static String getFileKey() {
-        return ParamBean.getInstance().getProperty(OPENCELL_SHA_KEY_PROPERTY, null);
+        return ParamBean.getInstance().getProperty(OPENCELL_SHA_KEY_PROPERTY, "a file key string");
     }
 
 }
