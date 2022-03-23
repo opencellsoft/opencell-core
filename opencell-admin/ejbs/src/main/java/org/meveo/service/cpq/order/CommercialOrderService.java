@@ -1,7 +1,6 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +34,7 @@ import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -228,6 +228,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			dpi.setCfValues(discountPlan.getCfValues());
 			dpi.setServiceInstance(serviceInstance);
 			discountPlanInstanceService.create(dpi, discountPlan);
+			serviceInstance.getDiscountPlanInstances().add(dpi);
+			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
 		}
 	}
 

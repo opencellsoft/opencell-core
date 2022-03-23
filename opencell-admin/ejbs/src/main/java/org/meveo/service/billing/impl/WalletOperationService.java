@@ -62,9 +62,11 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 /**
  * Service class for WalletOperation entity
@@ -127,6 +129,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
 
     /**
      * Apply a one shot charge
@@ -143,7 +150,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
-    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
+    public RatingResult applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
             String orderNumberOverride, ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
@@ -163,10 +170,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
         if (isVirtual) {
-            return walletOperation;
+            return ratingResult;
         }
 
         chargeWalletOperation(walletOperation);
+        
+        applyDiscount(ratingResult, walletOperation);
 
         OneShotChargeTemplate oneShotChargeTemplate = null;
 
@@ -194,7 +203,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }
         }
         applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
-        return walletOperation;
+        return ratingResult;
     }
 
     /**
@@ -318,7 +327,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException General business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public List<WalletOperation> applyReccuringChargeInNewTx(Long chargeInstanceId, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
+    public RatingResult applyReccuringChargeInNewTx(Long chargeInstanceId, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
             throws BusinessException, RatingException {
         return applyReccuringCharge(recurringChargeInstanceService.findById(chargeInstanceId), chargeMode, forSchedule, chargeToDate, orderNumberToOverride, isVirtual);
     }
@@ -358,7 +367,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException General business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
+    public RatingResult applyReccuringCharge(RecurringChargeInstance chargeInstance, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
             throws BusinessException, RatingException {
 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
@@ -381,7 +390,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             if (chargeInstance.getChargedToDate() == null) {
                 // Trying to reimburse something that was not charged yet
                 log.error("Trying to reimburse a charge {} that was not charged yet. Will skip.", chargeInstance.getId());
-                return new ArrayList<>();
+                return null;
             }
 
             applyChargeFromDate = chargeInstance.getChargeToDateOnTermination();
@@ -409,7 +418,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             if (chargeInstance.getChargedToDate() == null) {
                 // Trying to reimburse something that was not charged yet
                 log.error("Trying to reimburse a charge {} that was not charged yet. Will skip.", chargeInstance.getId());
-                return new ArrayList<>();
+                return null;
             }
 
             applyChargeFromDate = chargeInstance.getChargedToDate();
@@ -462,7 +471,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     // If the counter is equal to 0, then the charge is not applied (but next activation date is updated).
                     if (counterPeriod != null && BigDecimal.ZERO.equals(counterPeriod.getValue())) {
                         chargeInstance.advanceChargeDates(applyChargeFromDate, applyChargeToDate, isApplyInAdvance ? applyChargeToDate : applyChargeFromDate);
-                        return new ArrayList<>();
+                        return new RatingResult();
 
                     } else if (counterPeriod == null) {
                         counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
@@ -512,6 +521,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         // -- Divide a period to charge into periods (or partial periods) and create WOs
 
         List<WalletOperation> walletOperations = new ArrayList<>();
+        RatingResult ratingResult = null;
         Date currentPeriodFromDate = applyChargeFromDate;
         int periodIndex = 0;
 
@@ -600,7 +610,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                             operationDate = chargeInstance.getTerminationDate();
                         }
 
-                        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, operationDate, inputQuantity, null,
+                        ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, operationDate, inputQuantity, null,
                             orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
                             prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
 
@@ -653,7 +663,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             throw e;
         }
-
         // The counter will be decremented by charge quantity
         if (!isVirtual && firstChargeCounterPeriod != null)
 
@@ -661,8 +670,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(firstChargeCounterPeriod, chargeInstance.getQuantity(), false);
             counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, firstChargeCounterPeriod);
         }
-
-        return walletOperations;
+        if(ratingResult != null) {
+        	ratingResult.setWalletOperations(walletOperations);
+        	for (WalletOperation wo : walletOperations) {
+				applyDiscount(ratingResult, wo);
+			}
+        }
+        
+        return ratingResult;
     }
 
     /**
@@ -1496,5 +1511,20 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }
         }
         return false;
+    }
+    
+    public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation) {
+    	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+        if(chargeInstance.getServiceInstance() != null) {
+     	   for(DiscountPlanInstance discountPlanInstance: chargeInstance.getServiceInstance().getAllDiscountPlanInstances()) {
+     		   discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE);
+     		  ratingResult.getEligibleFixedDiscountItems().addAll(
+     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(),  discountPlanInstance.getDiscountPlan(), 
+     				   																												walletOperation, null, null, null, walletOperation.getAccountingArticle(),
+     				   																													DiscountPlanItemTypeEnum.FIXED, null)
+     				   												);
+     	   }
+     	  discountPlanService.calculateDiscountplanItems(ratingResult.getEligibleFixedDiscountItems(), walletOperation);
+        }
     }
 }

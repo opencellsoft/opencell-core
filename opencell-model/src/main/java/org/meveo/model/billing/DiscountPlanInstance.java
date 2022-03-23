@@ -301,7 +301,9 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     public void assignEntityToDiscountPlanInstances(IDiscountable entity) {
         if (entity instanceof BillingAccount) {
             this.setBillingAccount((BillingAccount) entity);
-        } else {
+        }else if (entity instanceof ServiceInstance) {
+        	this.setServiceInstance((ServiceInstance) entity);
+        }else {
             this.setSubscription((Subscription) entity);
         }
     }

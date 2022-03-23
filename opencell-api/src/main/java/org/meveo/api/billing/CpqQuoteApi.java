@@ -115,6 +115,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
@@ -1500,10 +1501,10 @@ public class CpqQuoteApi extends BaseApi {
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
                         if (!overrodeArticle.contains(recurringArticle)) {
                             Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
-                            List<WalletOperation> walletOps = recurringChargeInstanceService
+                            RatingResult ratingResult = recurringChargeInstanceService
                                     .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
-                            if (walletOps != null && !walletOps.isEmpty()) {
-                                for (WalletOperation wo : walletOps) {
+                            if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
+                                for (WalletOperation wo : ratingResult.getWalletOperations()) {
                                     wo.setAccountingArticle(recurringArticle);
                                     walletOperations.add(wo);
                                 }

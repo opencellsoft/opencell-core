@@ -18,12 +18,18 @@
 
 package org.meveo.service.catalog.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -31,35 +37,25 @@ import org.meveo.model.IDiscountable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.cpq.enums.PriceTypeEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.quote.QuoteArticleLine;
-import org.meveo.model.quote.QuotePrice;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -67,6 +63,19 @@ import java.util.List;
 @Stateless
 public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
+
+    @Inject
+    private AccountingArticleService accountingArticleService;
+    
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @Inject
+    private TaxMappingService taxMappingService;
+    
 	@Override
 	public void create(DiscountPlan entity) throws BusinessException {
 		// check date
@@ -172,5 +181,70 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		}
 		return false;
 	}
+
+
+	/**
+	 * apply discount type of product
+	 * @param chargeInstance
+	 */
+    public void applyDiscount(WalletOperation walletOperation, BillingAccount billingAccount, DiscountPlan discountPlan, DiscountPlanItemTypeEnum discountPlanItemTypeEnum ) {
+    	if(walletOperation == null)
+    		throw new MissingParameterException("Wallet operation is null");
+    	
+    	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+    	var accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+    	if(billingAccount == null || discountPlan == null )
+    		throw new MissingParameterException("following parameters are required : billing account , discount plan");
+    	
+    	var discountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, walletOperation, null, null, null, accountingArticle, discountPlanItemTypeEnum, null);
+    	calculateDiscountplanItems(discountPlanItems, walletOperation);
+    	
+    }
+    
+    public void calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, WalletOperation walletOperation) {
+    	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
+			 WalletOperation discountWalletOperation = null;
+			 AccountingArticle discountAccountingArticle = null;
+			 BigDecimal taxPercent = null;
+			 BigDecimal walletOperationDiscountAmount = null;
+			 BigDecimal[] amounts = null;
+
+
+			 for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+
+	             walletOperation.setDiscountPlan(discountPlanItem.getDiscountPlan());
+				 discountWalletOperation = new WalletOperation(walletOperation);
+				 discountAccountingArticle = discountPlanItem.getAccountingArticle();
+				
+                taxPercent = walletOperation.getTaxPercent();
+                if(discountAccountingArticle != null) {
+                	Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+                	TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, walletOperation.getBillingAccount(), null, walletOperation.getOperationDate(), false, false);
+                        taxPercent = taxInfo.tax.getPercent();
+                }
+                
+                
+                walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(walletOperation.getUnitAmountWithoutTax(), discountPlanItem,null, Collections.emptyList());
+                
+                amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, walletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                var quantity = walletOperation.getQuantity();
+                
+                discountWalletOperation.setAccountingArticle(discountAccountingArticle);
+                discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
+                discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
+                discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+                discountWalletOperation.setAmountWithoutTax(amounts[0]);
+                discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
+                discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
+                discountWalletOperation.setTaxPercent(taxPercent);
+                discountWalletOperation.setRawAmountWithoutTax(walletOperationDiscountAmount);
+                discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
+                discountWalletOperation.setUnitAmountWithTax(amounts[1]);
+                discountWalletOperation.setUnitAmountTax(amounts[2]);
+                discountWalletOperation.setPriceplan(walletOperation.getPriceplan());
+                walletOperationService.create(discountWalletOperation);
+			}
+    	}
+    }
 	   
 }

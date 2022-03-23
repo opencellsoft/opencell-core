@@ -61,7 +61,6 @@ import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.quote.QuoteVersion;
@@ -72,6 +71,7 @@ import org.meveo.model.rating.RatingResult;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.util.ApplicationProvider;
@@ -530,10 +530,12 @@ public class UsageRatingService implements Serializable {
                     }
                 }
             }
-
+            
             if (ratedEDRResult.isFullyRated()) {
                 edr.changeStatus(EDRStatusEnum.RATED);
-
+                for(WalletOperation wo:walletOperations) {
+                    walletOperationService.applyDiscount(ratedEDRResult, wo);
+                }
             } else if (!foundPricePlan) {
                 throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + (edr.getId() != null ? edr.getId() : edr));
 
@@ -549,9 +551,12 @@ public class UsageRatingService implements Serializable {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
             throw e;
         }
+        
         return walletOperations;
     }
 
+    @Inject
+    private DiscountPlanService discountPlanService;
     /**
      * Rate Triggered EDR.
      *

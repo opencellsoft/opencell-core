@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +51,8 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceCharge;
@@ -61,10 +64,13 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
@@ -450,6 +456,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
+        List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
 
         log.debug("Will activate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
@@ -485,15 +492,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 
+    	RatingResult ratingResult = null;
         // apply subscription charges
         if (applySubscriptionCharges && !serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (SubscriptionChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
                 try {
-                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
-
+                	ratingResult =  oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    if(ratingResult != null)
+                    	eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
@@ -518,8 +527,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstance = recurringChargeInstanceService.update(recurringChargeInstance);
 
             try {
-                recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
+            	ratingResult = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
                     serviceInstance.getRateUntilDate() == null, false, null);
+                if(ratingResult != null)
+                	eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
 
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -551,8 +562,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (paymentScheduleTemplate != null && paymentScheduleTemplateService.matchExpression(paymentScheduleTemplate.getFilterEl(), serviceInstance)) {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
         }
+        if(ratingResult != null) {
+        	for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
+            	discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, walletOperation);
+			}
+        }
     }
 
+    @Inject
+    private DiscountPlanService discountPlanService;
     /**
      * Terminate service with a date in the past
      * 
