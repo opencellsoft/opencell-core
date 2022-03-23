@@ -1070,6 +1070,8 @@ public class QueryBuilder {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public QueryBuilder addFieldInAListOfValues(String field, Object value, boolean isNot, boolean isFieldValueOptional) {
 
+        field = createExplicitInnerJoins(field);
+        
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {

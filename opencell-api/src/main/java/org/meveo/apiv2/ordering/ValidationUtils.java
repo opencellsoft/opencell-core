@@ -50,7 +50,7 @@ public class ValidationUtils {
     }
     
     public static <T> List<T> checkRecords(List<T> records, String className) {
-        check(records, Objects::isNull, () -> new EntityDoesNotExistsException(String.format("Unable to find records fo type %s", className)));
+        check(records, Objects::isNull, () -> new EntityDoesNotExistsException(String.format("Unable to find records of type %s", className)));
         return records;
     }
     
