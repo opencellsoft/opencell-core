@@ -207,8 +207,12 @@ public abstract class BaseApi {
         if (dto instanceof BusinessEntityDto) {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
-            if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
-                throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
+            try {
+                if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
+                    throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
+                }
+            } finally {
+                missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
             }
         }
         handleMissingParameters();
@@ -690,7 +694,11 @@ public abstract class BaseApi {
             }
             sb.delete(sb.length() - 1, sb.length());
 
-            throw new InvalidParameterException(sb.toString());
+            try {
+                throw new InvalidParameterException(sb.toString());
+            } finally {
+                missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
+            }
         }
     }
 

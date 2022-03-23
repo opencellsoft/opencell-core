@@ -15,39 +15,14 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.service.billing.impl;
 
-package org.meveo.commons.persistence.oracle;
+import javax.ejb.Stateless;
 
-import java.util.List;
+import org.meveo.model.billing.ExchangeRate;
+import org.meveo.service.base.PersistenceService;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.DoubleType;
-import org.hibernate.type.Type;
+@Stateless
+public class ExchangeRateService extends PersistenceService<ExchangeRate> {
 
-/**
- * A search function for a Custom field of type Double
- */
-public class DoubleOracleJsonSearchFunction extends OracleJsonSearchFunction {
-
-    @Override
-    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return DoubleType.INSTANCE;
-    }
-
-    @Override
-    public String getCastType() {
-        return "number(23,12)";
-    }
-
-    @Override
-    public String getValuePropertyName() {
-        return "double";
-    }
-
-    @Override
-    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
-        return super.render(firstArgumentType, args, factory);
-    }
 }

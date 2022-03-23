@@ -18,16 +18,22 @@
 
 package org.meveo.api;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrenciesDto;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.billing.ExchangeRateDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -36,11 +42,14 @@ import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
 
 /**
@@ -58,6 +67,12 @@ public class CurrencyApi extends BaseApi {
 
     @Inject
     private ProviderService providerService;
+
+    @Inject
+    private ExchangeRateService exchangeRateService;
+
+    @Inject
+    protected ResourceBundle resourceMessages;
 
     public CurrenciesDto list() {
         CurrenciesDto result = new CurrenciesDto();
@@ -164,10 +179,8 @@ public class CurrencyApi extends BaseApi {
         currency = currencyService.update(currency);
 
         tradingCurrency.setCurrency(currency);
-        tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
-        tradingCurrency.setSymbol(postData.getSymbol() == null ? postData.getCode() : postData.getSymbol());
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
@@ -219,10 +232,17 @@ public class CurrencyApi extends BaseApi {
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
         }
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
         if (enable) {
             tradingCurrencyService.enable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.enable(oneExchangeRate);
+            }
         } else {
             tradingCurrencyService.disable(tradingCurrency);
+            for (ExchangeRate oneExchangeRate : listExchangeRate) {
+                exchangeRateService.disable(oneExchangeRate);
+            }
         }
     }
 
@@ -240,7 +260,107 @@ public class CurrencyApi extends BaseApi {
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        if(tradingCurrency == null)
+        {
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
+            tradingCurrency.setPrDescription(currency.getDescription());
+            tradingCurrency.setSymbol(currency.getCurrencyCode());
+            tradingCurrency.setDecimalPlaces(2);
+            tradingCurrencyService.create(tradingCurrency);
+        }
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
+    }
+
+    public ActionStatus addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
+        if (postData.getTradingCurrency() == null) {
+            throw new MissingParameterException("TradingCurrency is mandatory");
+        }
+        ExchangeRate exchangeRate = new ExchangeRate();
+        TradingCurrency tradingCurrency = tradingCurrencyService.findById(postData.getTradingCurrency().getId());
+        
+        if (tradingCurrency == null) {
+            throw new ValidationException("Please select a valid trading currency");
+        } 
+        if (postData.getFromDate() == null) {
+            throw new ValidationException("Please select a valid date");
+        } 
+        if (postData.getFromDate().before(new Date())) {
+            throw new ValidationException("Cannot set a rate in a paste date");
+        }
+        
+        if (postData.getFromDate().equals(new Date())) {
+            exchangeRate.setCurrentRate(true);
+            List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
+            for (ExchangeRate elementExchangeRate : listExchangeRate) {
+                elementExchangeRate.setCurrentRate(false);
+            }
+            tradingCurrency.setExchangeRates(listExchangeRate);
+            tradingCurrency.setCurrentRate(postData.getExchangeRate());
+            tradingCurrency.setCurrentRateFromDate(new Date());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+        }else {
+            exchangeRate.setCurrentRate(false);
+        }
+        exchangeRate.setTradingCurrency(tradingCurrency);
+        exchangeRate.setExchangeRate(postData.getExchangeRate());
+        exchangeRate.setFromDate(postData.getFromDate());
+              
+        exchangeRateService.update(exchangeRate);
+
+        return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
+    }
+
+    public void updateExchangeRate(Long id, ExchangeRateDto postData) {
+
+        ExchangeRate exchangeRate = exchangeRateService.findById(id);
+        if (exchangeRate == null) {
+            throw new EntityDoesNotExistsException(ExchangeRate.class, id);
+        }
+        
+        // We can modify only the future rates
+        if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
+        }
+
+        if (postData.getFromDate() == null) {
+            throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
+        }
+
+        // Check if a user choose a date that is already taken for the same TradingCurrency
+        TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
+        for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
+            if (!er.getId().equals(id) && er.getFromDate().compareTo(postData.getFromDate()) == 0) {
+                throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
+            }
+        }
+
+        // User cannot set a rate in a paste date
+        if (postData.getFromDate().before(DateUtils.setTimeToZero(new Date()))) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.past"));
+        }
+
+        // Check if fromDate = new Date()
+        if (postData.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
+            exchangeRate.setCurrentRate(true);
+            // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
+            for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
+                if (!er.getId().equals(id)) {
+                    er.setCurrentRate(false);
+                    exchangeRateService.update(er);
+                }
+            }
+
+            // Update tradingCurrency fields
+            tradingCurrency.setCurrentRate(postData.getExchangeRate());
+            tradingCurrency.setCurrentRateFromDate(postData.getFromDate());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+            tradingCurrencyService.update(tradingCurrency);
+        }
+        exchangeRate.setFromDate(postData.getFromDate());
+        exchangeRate.setExchangeRate(postData.getExchangeRate());
+        exchangeRateService.update(exchangeRate);
     }
 }

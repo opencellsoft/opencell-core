@@ -8,6 +8,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.AcountReceivable.DeferralPayments;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -38,7 +39,10 @@ public class AccountReceivableDeferralPaymentsResourceImpl implements AccountRec
         } else {
             accountOperation = accountOperationService.findById(deferralPayments.getAccountOperationId(), asList("customerAccount"));
             if (accountOperation == null) {
-                throw new EntityDoesNotExistsException("Account operation with id {id}, does not exist.");
+                throw new EntityDoesNotExistsException("Account operation with id " + deferralPayments.getAccountOperationId() + ", does not exist.");
+            }
+            if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+                throw new InvalidParameterException("The TransactionCategory must not be of credit type");
             }
         }
         if (deferralPayments.getPaymentDate() == null) {

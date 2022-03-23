@@ -3930,7 +3930,9 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
+											"    var jsonData = pm.response.json();\r",
+											"    pm.globals.set(\"taxId\",jsonData.tax.id);\r",
+											"    pm.globals.set(\"taxCode\",jsonData.tax.code);"
 										],
 										"type": "text/javascript"
 									}
@@ -5650,7 +5652,8 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
+											"    var jsonData = pm.response.json();\r",
+											"    pm.globals.set(\"sellerId\",jsonData.seller.id);"
 										],
 										"type": "text/javascript"
 									}
@@ -9245,6 +9248,17 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"    var jsonData = pm.response.json();\r",
+											"    pm.globals.set(\"BAId\",jsonData.billingAccount.id);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
 											""
 										],
 										"type": "text/javascript"
@@ -13258,10 +13272,10 @@
 									"script": {
 										"exec": [
 											"var data = pm.response.json();",
-											"//pm.test(request.name + \" - Check Data\", function () {",
-											"//    pm.expect(data.offerTemplate.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
-											"  //  pm.expect(data.offerTemplate.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
-											"//});",
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
+											"});",
 											"",
 											""
 										],
@@ -13467,7 +13481,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"newValidFrom\": \"2022-01-01\",\r\n    \"newValidTo\": \"2022-12-31\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n     \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate",
@@ -13511,7 +13525,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"TEST_ST\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} update\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"TEST_ST\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -13535,10 +13549,10 @@
 									"script": {
 										"exec": [
 											"var data = pm.response.json();",
-											"//pm.test(request.name + \" - Check Data \", function () {",
-											"   // pm.expect(data.offerTemplate.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
-											"  //  pm.expect(data.offerTemplate.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
-											"//});"
+											"pm.test(request.name + \" - Check Data \", function () {",
+											"    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -15337,7 +15351,7 @@
 					"response": []
 				},
 				{
-					"name": "SKIP|Subscribe and Activate|Subscription|SUB2|SUCCESS",
+					"name": "Subscribe and Activate|Subscription|SUB2|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
@@ -17019,6 +17033,122 @@
 					"name": "Wallet Operation",
 					"item": [
 						{
+							"name": "Create|OneShot|OS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"pm.variables.set(\"code\",200);\r",
+											"pm.variables.set(\"status\",\"SUCCESS\");\r",
+											"pm.variables.set(\"errorCode\",);\r",
+											"pm.variables.set(\"message\",'');\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"TEST_OS\",\r\n\t\"description\": \"TEST_OS\",\r\n\t\"invoiceSubCategory\": \"SUB_DATA\",\r\n\t\"disabled\": \"false\",\r\n\t\"amountEditable\": \"true\",\r\n\t\"languageDescriptions\": [\r\n\t\t{\r\n\t\t\t\"languageCode\": \"FRA\",\r\n\t\t\t\"description\": \"Forfait Test\"\r\n\t\t}\r\n\t],\r\n\t\"inputUnitDescription\": \"1\",\r\n\t\"ratingUnitDescription\": \"1\",\r\n\t\"unitMultiplicator\": \"1\",\r\n\t\"unitNbDecimal\": \"2\",\r\n\t\"oneShotChargeTemplateType\": \"SUBSCRIPTION\",\r\n\t\"immediateInvoicing\": \"false\",\r\n\t\"roundingModeDtoEnum\": \"NEAREST\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"oneShotChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Apply|OneShot|OS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"errorCode\",);\r",
+											"pm.variables.set(\"code\",200);\r",
+											"pm.variables.set(\"status\",\"SUCCESS\");\r",
+											"pm.variables.set(\"message\",\"\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"oneShotCharge\": \"TEST_OS\",\n    \"subscription\": \"TEST_SUB2\",\n    \"createWallet\": false,\n    \"operationDate\": \"2020-04-06\",\n    \"quantity\": \"1\",\n    \"description\": \"Apply-OneShotChargeInstance_Description\",\n    \"amountWithoutTax\": \"11\",\n    \"amountWithTax\": \"13\",\n    \"criteria1\": \"criteria1\",\n    \"criteria2\": \"criteria2\",\n    \"criteria3\": \"criteria3\"\n}\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"applyOneShotChargeInstance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Create|WalletOperation|WO|SUCCESS",
 							"event": [
 								{
@@ -17047,7 +17177,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"{{user_acc}}\",\r\n    \"chargeInstance\": \"RS_BASE_OS1\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_00\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n    }"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"{{user_acc}}\",\r\n    \"chargeInstance\": \"TEST_OS\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_00\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n    }"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/wallet/operation",
@@ -17181,7 +17311,7 @@
 							"response": []
 						},
 						{
-							"name": "SKIP|Create|WalletOperation|WLT|SUCCESS|Generic",
+							"name": "Create|WalletOperation|WLT|SUCCESS|Generic",
 							"event": [
 								{
 									"listen": "test",
@@ -17196,7 +17326,11 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											""
+											"\r",
+											"pm.variables.set(\"code\",200);\r",
+											"pm.variables.set(\"status\",);\r",
+											"pm.variables.set(\"errorCode\",);\r",
+											"pm.variables.set(\"message\",);"
 										],
 										"type": "text/javascript"
 									}
@@ -17218,7 +17352,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"CH_CLASSIC_REC_FLAT\",\r\n    \"description\": \"A description for WO Generic\",\r\n        \"billingAccount\":\"TEST_BA\",\r\n\r\n    \"chargeInstance\": {\r\n        \"id\": 48,\r\n        \"chargeType\": \"U\"\r\n    },\r\n    \"tax\": {\r\n        \"id\": 6\r\n    },\r\n    \"taxPercent\": 20.000000000000,\r\n    \"quantity\": 0.387096774194,\r\n    \"seller\": {\r\n        \"id\": 5\r\n    }\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"CH_CLASSIC_REC_FLAT\",\r\n    \"description\": \"A description for WO Generic\",\r\n    \"billingAccount\":{\r\n      \"id\" :{{BAId}}, \r\n      \"code\": \"{{billingAccountCode}}\"\r\n    },\r\n    \"chargeInstance\": {\r\n       \"chargeType\": \"S\"\r\n    },\r\n    \"tax\": {\r\n        \"id\" :{{taxId}},\r\n        \"code\": \"{{taxCode}}\"                                             \r\n    },\r\n    \"taxPercent\": 20.000000000000,\r\n    \"quantity\": 0.387096774194,\r\n    \"seller\": {\r\n    \"id\" :{{sellerId}},\r\n    \"code\": \"{{sellerCode}}\"\r\n    },\r\n    \"created\": \"2022-03-22\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/v2/generic/walletOperation",
@@ -17235,7 +17369,7 @@
 							"response": []
 						},
 						{
-							"name": "SKIP|Read|WalletOperation|WLT|SUCCESS|Generic",
+							"name": "Read|WalletOperation|WLT|SUCCESS|Generic",
 							"event": [
 								{
 									"listen": "test",
@@ -19110,6 +19244,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -19200,6 +19343,19 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"code\",200);\r",
+											"pm.variables.set(\"errorCode\",);\r",
+											"pm.variables.set(\"message\",\"\");\r",
+											"pm.variables.set(\"status\",\"SUCCESS\")\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -19284,6 +19440,16 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
 											""
 										],
 										"type": "text/javascript"
