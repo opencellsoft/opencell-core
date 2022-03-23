@@ -89,21 +89,13 @@ public class EncryptionService {
             long cfId = ((BigInteger) result[0]).longValue();
             String cfValue = (String) result[1];
 
-            int startIdx = cfValue.contains("\"" + EncryptionFactory.ENCRYPTION_CHECK_STRING) ?
-                    cfValue.indexOf("\"" + EncryptionFactory.ENCRYPTION_CHECK_STRING)
-                    : cfValue.indexOf("\"" + EncryptionFactory.PREFIX);
-
-            while (startIdx >= 0) {
-                int endIdx = startIdx + cfValue.substring(startIdx + 1).indexOf("\"");
-                String encryptedText = cfValue.substring(startIdx + 1, endIdx + 1);
-                String clearText = EncryptionFactory.decrypt(encryptedText);
+            if (cfValue.startsWith(EncryptionFactory.ENCRYPTION_CHECK_STRING)
+                    || cfValue.startsWith(EncryptionFactory.PREFIX)) {
+                String encryptedText = cfValue;
+                String clearText = EncryptionFactory.decrypt(cfValue);
 
                 cfValue = cfValue.replace(encryptedText,
                         Objects.requireNonNull(EncryptionFactory.encrypt(clearText)));
-
-                startIdx = cfValue.substring(startIdx + 1).contains("\"" + EncryptionFactory.ENCRYPTION_CHECK_STRING) ?
-                        cfValue.indexOf("\"" + EncryptionFactory.ENCRYPTION_CHECK_STRING, startIdx + 1)
-                        : cfValue.indexOf("\"" + EncryptionFactory.PREFIX, startIdx + 1);
             }
 
             String updateEncCFRequest = "UPDATE " + tableName + " SET cf_values='" + cfValue + "' WHERE id = " + cfId;
