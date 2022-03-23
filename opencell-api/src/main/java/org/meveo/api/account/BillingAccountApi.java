@@ -66,6 +66,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -107,6 +108,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private CustomerAccountService customerAccountService;
 
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
 
@@ -181,6 +185,9 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
+//        if (StringUtils.isBlank(postData.getCurrency())) {
+//            missingParameters.add("currency");
+//        }
         if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
@@ -400,6 +407,16 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
+        if (!StringUtils.isBlank(postData.getTradingCurrency())) {
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getTradingCurrency());
+            if (tradingCurrency == null) {
+                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
+            }
+            billingAccount.setTradingCurrency(tradingCurrency);
+        }else {
+            billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
+        }
+        
         if (Objects.nonNull(postData.getPaymentMethod())) {
             PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
