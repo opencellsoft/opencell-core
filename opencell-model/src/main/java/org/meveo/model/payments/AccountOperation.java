@@ -62,7 +62,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.accountingScheme.AccountingSchemeEntry;
+import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
@@ -436,7 +436,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Associated accountingScheme.AccountingEntry
      */
     @OneToMany(mappedBy = "accountOperation", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private Set<AccountingSchemeEntry> accountingSchemeEntries = new HashSet<>();
+    private Set<JournalEntry> accountingSchemeEntries = new HashSet<>();
 
     public Date getDueDate() {
         return dueDate;
@@ -1008,11 +1008,11 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.paymentDeferralCount = paymentDeferralCount;
     }
 
-    public Set<AccountingSchemeEntry> getAccountingSchemeEntries() {
+    public Set<JournalEntry> getAccountingSchemeEntries() {
         return accountingSchemeEntries;
     }
 
-    public void setAccountingSchemeEntries(Set<AccountingSchemeEntry> accountingSchemeEntries) {
+    public void setAccountingSchemeEntries(Set<JournalEntry> accountingSchemeEntries) {
         this.accountingSchemeEntries = accountingSchemeEntries;
     }
 }

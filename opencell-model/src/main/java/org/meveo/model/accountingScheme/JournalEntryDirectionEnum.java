@@ -17,7 +17,7 @@
  */
 package org.meveo.model.accountingScheme;
 
-public enum AccountingEntryDirectionEnum {
+public enum JournalEntryDirectionEnum {
 
     CREDIT(1, "accountingEntryDirectionEnum.credit"),
     DEBIT(2, "accountingEntryDirectionEnum.debit");
@@ -25,7 +25,7 @@ public enum AccountingEntryDirectionEnum {
     private String label;
     private Integer id;
 
-    AccountingEntryDirectionEnum(Integer id, String label) {
+    JournalEntryDirectionEnum(Integer id, String label) {
         this.label = label;
         this.id = id;
     }
@@ -46,9 +46,9 @@ public enum AccountingEntryDirectionEnum {
         this.id = id;
     }
 
-    public static AccountingEntryDirectionEnum getValue(Integer id) {
+    public static JournalEntryDirectionEnum getValue(Integer id) {
         if (id != null) {
-            for (AccountingEntryDirectionEnum type : values()) {
+            for (JournalEntryDirectionEnum type : values()) {
                 if (id.equals(type.id)) {
                     return type;
                 }

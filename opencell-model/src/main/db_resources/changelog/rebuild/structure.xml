@@ -16379,10 +16379,10 @@
     </changeSet>
 
     <changeSet id="#INTRD-5881_20220322" author="aelmalki">
-        <createTable tableName="accounting_accounting_entry">
+        <createTable tableName="accounting_journal_entry">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_accounting_entry_seq" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_journal_entry" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -16421,27 +16421,27 @@
             <column name="analytic_code_3" type="varchar(255)" />
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="accounting_operation_id" baseTableName="accounting_accounting_entry"
+        <addForeignKeyConstraint baseColumnNames="accounting_operation_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_account_operation" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
 
-        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accounting_entry"
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_accounting_code" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
 
-        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accounting_entry"
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_seller" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
 
-        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="accounting_accounting_entry"
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_customer_account" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
 
-        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_accounting_entry"
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
 
-        <createSequence sequenceName="accounting_accounting_entry_seq"/>
+        <createSequence sequenceName="accounting_journal_entry_seq"/>
 
     </changeSet>
 

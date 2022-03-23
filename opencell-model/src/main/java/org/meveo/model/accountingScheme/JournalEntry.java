@@ -29,10 +29,10 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "accounting_accounting_entry")
+@Table(name = "accounting_journal_entry")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_accounting_entry_seq"),})
-public class AccountingSchemeEntry extends AuditableEntity {
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_journal_entry_seq")})
+public class JournalEntry extends AuditableEntity {
 
     /**
      * Account operation for which the accounting entry is created
@@ -67,7 +67,7 @@ public class AccountingSchemeEntry extends AuditableEntity {
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "direction", nullable = false)
-	private AccountingEntryDirectionEnum direction;
+	private JournalEntryDirectionEnum direction;
 
 	/**
 	 * Account operation’s amount
@@ -132,11 +132,11 @@ public class AccountingSchemeEntry extends AuditableEntity {
         this.customerAccount = customerAccount;
     }
 
-    public AccountingEntryDirectionEnum getDirection() {
+    public JournalEntryDirectionEnum getDirection() {
         return direction;
     }
 
-    public void setDirection(AccountingEntryDirectionEnum direction) {
+    public void setDirection(JournalEntryDirectionEnum direction) {
         this.direction = direction;
     }
 
