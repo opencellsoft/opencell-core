@@ -44,6 +44,10 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** The userAccount code. */
 	private String userAccountCode;
 	
+	/** The subscription code. */
+	@Schema(description = "The subscription code") 
+    private String subscritptionCode;
+	
 	/** Order line type */
     @Schema(description = "The order line type")
     private OfferLineTypeEnum orderLineType;
@@ -60,6 +64,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
         this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
+        this.subscritptionCode = orderOffer.getSubscription().getCode();
 	}
  
 
@@ -70,6 +75,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
         this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
+        this.subscritptionCode = orderOffer.getSubscription()!=null?orderOffer.getSubscription().getCode():null;
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -221,5 +227,19 @@ public class OrderOfferDto extends BaseEntityDto {
     public OfferLineTypeEnum getOrderLineType() {
         return orderLineType;
     }
+
+
+
+	public String getSubscritptionCode() {
+		return subscritptionCode;
+	}
+
+
+
+	public void setSubscritptionCode(String subscritptionCode) {
+		this.subscritptionCode = subscritptionCode;
+	}
+    
+    
  
 }
