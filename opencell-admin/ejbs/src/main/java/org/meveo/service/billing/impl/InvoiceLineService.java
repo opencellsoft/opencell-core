@@ -826,14 +826,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param billingRun
 	 * @param be billableEntity
 	 * @param basicStatistics
+	 * @param pageSize 
+	 * @return 
 	 * @return
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
+	public int createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics, Integer pageSize, Integer  pageIndex) {
+	    List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+		        (billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), pageSize, pageIndex);
+		BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTsWithAggregation, aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
+	    return groupedRTsWithAggregation.size();
 	}
 
     public void deleteByBillingRun(long billingRunId) {

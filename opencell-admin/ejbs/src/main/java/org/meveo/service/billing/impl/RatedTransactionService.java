@@ -1535,7 +1535,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 */
 	public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
 			BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
-		
+			return getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, lastTransactionDate, invoiceDate, filter, null, null);
+		}
+		/**
+		 * @param aggregationConfiguration
+		 * @param be
+		 * @param lastTransactionDate
+		 * @param invoiceDate
+		 * @param filter
+		 * @param pageSize 
+		 * @param pageIndex 
+		 * @return
+		 */
+		public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
+				BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter, Integer pageSize, Integer pageIndex) {
+
 		if (filter != null) {
 			//TODO #MEL use of filter must be reviewed
 			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
@@ -1579,7 +1593,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
                         + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, "
                         + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2";
-        return getSelectQueryAsMap(query, params);
+        return getSelectQueryAsMap(query, params, pageSize, pageIndex );
 	}
 
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {

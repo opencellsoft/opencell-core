@@ -97,7 +97,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 						}
                         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
                         BasicStatistics basicStatistics = new BasicStatistics();
-                        BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
+                        Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", null);
+                        BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics,maxInvoiceLinesPerTransaction);
                         iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(),true);
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntities.size(), INVOICE_LINES_CREATED);
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
@@ -110,7 +111,31 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         }
     }
 
-    private void addExceptionalBillingRunData(BillingRun billingRun) {
+    /**
+	 * @param result
+	 * @param aggregationConfiguration
+	 * @param billingRun
+	 * @param billableEntity
+	 * @param basicStatistics
+	 * @param maxInvoiceLinesPerTransaction
+	 * @param i
+	 * @return
+	 */
+	private void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration,
+			BillingRun billingRun, IBillableEntity billableEntity, BasicStatistics basicStatistics,
+			Long maxInvoiceLinesPerTransaction) {
+		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
+			invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, null, null);
+		} else {
+			int index=0;
+			int count = maxInvoiceLinesPerTransaction.intValue();
+			while(count >= maxInvoiceLinesPerTransaction){
+				count = invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, maxInvoiceLinesPerTransaction.intValue(), index++);
+			}
+		}
+	}
+
+	private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
         billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
     }
