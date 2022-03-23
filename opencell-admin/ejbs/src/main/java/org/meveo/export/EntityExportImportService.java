@@ -945,10 +945,10 @@ public class EntityExportImportService implements Serializable {
             }
         }
 
-        if(importStatsTotal.getException() != null)
-        {
-            throw new BusinessException("Une erreur s’est produite lors de l’import. Merci de vérifier votre fichier et d’essayer à nouveau");
-        }
+//        if(importStatsTotal.getException() != null)
+//        {
+//            throw new BusinessException("Une erreur s’est produite lors de l’import. Merci de vérifier votre fichier et d’essayer à nouveau");
+//        }
 
         return importStatsTotal;
     }
