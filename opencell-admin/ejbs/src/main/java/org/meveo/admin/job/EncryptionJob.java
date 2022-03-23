@@ -21,10 +21,8 @@ public class EncryptionJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         encryptionJobBean.execute(result, jobInstance);
-
-        return result;
     }
 
     @Override
