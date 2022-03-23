@@ -189,9 +189,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
-//        if (StringUtils.isBlank(postData.getCurrency())) {
-//            missingParameters.add("currency");
-//        }
         if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
