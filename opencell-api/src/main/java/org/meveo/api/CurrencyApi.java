@@ -277,12 +277,12 @@ public class CurrencyApi extends BaseApi {
     
     public Long addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) throws MeveoApiException {
         if (postData.getTradingCurrency() == null) {
-            throw new MissingParameterException("TradingCurrency is mandatory");
-        }
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.tradingCurrency.mandatory"));
+        }        
         
         TradingCurrency tradingCurrency = tradingCurrencyService.findById(postData.getTradingCurrency().getId());        
         if (tradingCurrency == null) {
-            throw new MeveoApiException("Please select a valid trading currency");
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.valide.tradingCurrency"));
         }
         
         ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);              
