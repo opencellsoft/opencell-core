@@ -96,8 +96,8 @@ public class OccTemplateApi extends BaseApi {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
         }
-        if(postData.getContratAccountingCode() != null) {
-            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContratAccountingCode());
+        if(postData.getContractAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContractAccountingCode());
             if(contractAccountingCode == null) {
                 throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
             }
@@ -145,8 +145,8 @@ public class OccTemplateApi extends BaseApi {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
         }
-        if(postData.getContratAccountingCode() != null) {
-            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContratAccountingCode());
+        if(postData.getContractAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContractAccountingCode());
             if(contractAccountingCode == null) {
                 throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
             }
