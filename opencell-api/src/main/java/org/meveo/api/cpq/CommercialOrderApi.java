@@ -1,6 +1,15 @@
 package org.meveo.api.cpq;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -31,21 +40,34 @@ import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.*;
-import org.meveo.model.cpq.commercial.*;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
+import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
-import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -92,6 +114,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private ServiceSingleton serviceSingleton;
 	@Inject private ScriptInstanceService scriptInstanceService;
 	@Inject private OrderLotService orderLotService;
+	@Inject private TerminationReasonService terminationReasonService;
 	@Inject 
 	private OrderOfferService orderOfferService; 
 	@Inject 
@@ -744,7 +767,24 @@ public class CommercialOrderApi extends BaseApi {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
         orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
-        orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
+        	if (orderOfferDto.getSubscritptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), "AMEND");
+        	if(!orderOffers.isEmpty()) {
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        	}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
+        }else {
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
+        }
         
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
@@ -803,6 +843,22 @@ public class CommercialOrderApi extends BaseApi {
     	}
     	orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
         orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
+        
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
+        	if (orderOfferDto.getSubscritptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), "AMEND");
+        	if(!orderOffers.isEmpty()) {
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        	}
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
+        }
         
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
@@ -1002,6 +1058,16 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
+		orderProduct.setProductActionType(orderProductDto.getActionType());
+		
+		SubscriptionTerminationReason terminationReason = null;
+		if(!StringUtils.isBlank(orderProductDto.getTerminationReasonCode())) {
+			terminationReason = terminationReasonService.findByCode(orderProductDto.getTerminationReasonCode());
+			if (terminationReason == null)
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, orderProductDto.getTerminationReasonCode());	
+		}
+		orderProduct.setTerminationReason(terminationReason);
+		orderProduct.setTerminationDate(orderProductDto.getTerminationDate());
 		
     	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	

@@ -1,5 +1,7 @@
 package org.meveo.service.cpq.order;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -47,5 +49,18 @@ public class OrderOfferService extends PersistenceService<OrderOffer> {
 		if(orderOfferExist != null)
 			throw new EntityAlreadyExistsException("Quote offer already exist with code : " + entity.getCode() + " and Order code : " + entity.getOrder().getCode());
 		super.create(entity);
+	}
+	
+	public List<OrderOffer> findBySubscriptionAndStatus(String subscriptionCode, String status) {
+		if(Strings.isEmpty(subscriptionCode) || Strings.isEmpty(status))
+			throw new BusinessException("code and order code must not be empty");
+		Query query=getEntityManager().createNamedQuery("OrderOffer.findByStatusAndSubscription");
+		query.setParameter("subscriptionCode", subscriptionCode)
+			  .setParameter("status", status);
+		try {
+			return (List<OrderOffer>) query.getResultList();
+		}catch(NoResultException e ) {
+			return null;
+		}
 	}
 }
