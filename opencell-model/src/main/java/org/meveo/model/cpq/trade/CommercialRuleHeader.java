@@ -49,8 +49,8 @@ import org.meveo.model.cpq.tags.Tag;
 	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode")
+	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null"),
+	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null")
 })
 public class CommercialRuleHeader extends BusinessEntity {
 
