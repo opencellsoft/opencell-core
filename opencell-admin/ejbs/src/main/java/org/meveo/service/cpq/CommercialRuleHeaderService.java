@@ -31,6 +31,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.OperatorEnum;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.enums.ScopeTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -287,6 +288,37 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     
     
+    private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
+    	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
+    		switch(operator) {
+    		case EQUAL:
+    			if (convertedValue.equals(sourceAttributeValue))
+    				return true;
+    			break;
+    		case NOT_EQUAL:
+    			if (!convertedValue.equals(sourceAttributeValue))
+    				return true;
+    			break;
+    		case LESS_THAN:
+    			if (Double.valueOf(convertedValue)<Double.valueOf(sourceAttributeValue))
+    				return true;
+    			break;
+    		case LESS_THAN_OR_EQUAL:
+    			if (Double.valueOf(convertedValue)<=Double.valueOf(sourceAttributeValue))
+    				return true;
+    			break;
+    		case GREATER_THAN:
+    			if (Double.valueOf(convertedValue)>Double.valueOf(sourceAttributeValue))
+    				return true;	
+    			break;
+
+    		case GREATER_THAN_OR_EQUAL:
+    			if (Double.valueOf(convertedValue)>=Double.valueOf(sourceAttributeValue))
+    				return true;	 
+    		}
+    	}
+    	return false;
+    }
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
     	boolean isSelected=!isPreRequisite;
     	if(line.getSourceAttribute()==null) {
@@ -297,7 +329,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			String attributeCode = entry.getKey();
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
-    			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+    			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
+    				boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -314,24 +347,24 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				case EXPRESSION_LANGUAGE:
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
-    					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
-    							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, result.equals(line.getSourceAttributeValue())));
+    					if(result!=null) {
+    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     							return false;
-    						}else if (isPreRequisite && result.equals(line.getSourceAttributeValue())){
+    						}else if (isPreRequisite && resultCompare){
     							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return true;
     						}
+    					}
     					break;
     				default:
-    					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
-    							|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, convertedValue.equals(line.getSourceAttributeValue())));
-    							return false;
-    						}else if (isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())){
-    							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
-    							return true;
-    						}
+    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
+    						return false;
+    					}else if (isPreRequisite && resultCompare){
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
+    						return true;
+    					}
     					
 
     				}
@@ -344,6 +377,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	}
     	return isSelected;
     }
+
 
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();

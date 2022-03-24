@@ -9538,6 +9538,20 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
+    
+    <changeSet id="INTRD-4285-20220317" author="AmineBENAICHA">
+		<!-- Grant role "query_manager" to role "administrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+        
+        <!-- Grant role "query_manager" to role "superAdministrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-2" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+	</changeSet>
 	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
 		<update tableName="meveo_script_instance_cat">
 			<column name="code" value="ACCOUNTING_SCHEMES"></column>
@@ -9545,5 +9559,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='FILE_ACCOUNTING_SCHEMES'</where>
 		</update>
 	</changeSet>
+	<changeSet id="#INTRD-5888_2022-03_23" author="hichamELHALOUI" >
+
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="$US"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=49</where>
+		</update>
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="€"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=5</where>
+		</update>
+    </changeSet>
 
 </databaseChangeLog>

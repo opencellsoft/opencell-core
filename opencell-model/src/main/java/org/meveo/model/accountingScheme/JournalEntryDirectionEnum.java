@@ -15,46 +15,46 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.model.accountingScheme;
 
-package org.meveo.apiv2.models;
+public enum JournalEntryDirectionEnum {
 
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
+    CREDIT(1, "accountingEntryDirectionEnum.credit"),
+    DEBIT(2, "accountingEntryDirectionEnum.debit");
 
-public interface PaginatedResource<T> {
-    Long getTotal();
-    Long getLimit();
-    Long getOffset();
-    Map<String, Object> getFilters();
-    List<T> getData();
+    private String label;
+    private Integer id;
 
-    @XmlTransient
-    default URI getNext()
-    {
-        if (getLinks() == null) return null;
-        for (Link link : getLinks())
-        {
-            if ("next".equals(link.getRel())) return link.getUri();
+    JournalEntryDirectionEnum(Integer id, String label) {
+        this.label = label;
+        this.id = id;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public static JournalEntryDirectionEnum getValue(Integer id) {
+        if (id != null) {
+            for (JournalEntryDirectionEnum type : values()) {
+                if (id.equals(type.id)) {
+                    return type;
+                }
+            }
         }
         return null;
     }
 
-    @XmlTransient
-    default URI getPrevious()
-    {
-        if (getLinks() == null) return null;
-        for (Link link : getLinks())
-        {
-            if ("previous".equals(link.getRel())) return link.getUri();
-        }
-        return null;
-    }
-    @Nullable
-    @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
-    List<Link> getLinks();
 }
