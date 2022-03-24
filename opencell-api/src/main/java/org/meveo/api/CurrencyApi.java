@@ -189,6 +189,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrency(currency);
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
+        tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);

@@ -88,7 +88,7 @@ public class CurrencyApiTest {
 
     @Test
     public void addFunctionalCurrency() {
-        when(providerService.findById(any())).thenReturn(new Provider());
+        when(providerService.getProviderNoCache()).thenReturn(new Provider());
         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
 
         CurrencyDto currencyDto = new CurrencyDto();
