@@ -26,13 +26,15 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
 @Stateless
-public class AccountingJournalEntryService extends PersistenceService<JournalEntry> {
+public class JournalEntryService extends PersistenceService<JournalEntry> {
 
+    @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
         // INTRD-4702
         // First JournalEntry
