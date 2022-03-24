@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -41,7 +40,6 @@ import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
@@ -55,6 +53,7 @@ import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 
 /**
@@ -88,7 +87,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     private static boolean useCETCache = true;
 
     /**
-     * Groups custom field templates applicable to the same entity type. Key format: &lt;custom field template appliesTo code&gt;. Value is a map of custom field templates identified by a template code
+     * Groups custom field templates applicable to the same entity type. Key format: &lt;custom field template appliesTo code&gt;. Value is a map of custom field templates
+     * identified by a template code
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-cache")
     private Cache<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
@@ -143,7 +143,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 lastAppliesTo = cacheKeyByAppliesTo;
 
             } else if (!lastAppliesTo.equals(cacheKeyByAppliesTo)) {
-                cftsByAppliesTo.putForExternalRead(lastAppliesTo, cftsSameAppliesTo);
+                cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
                 cftsSameAppliesTo = new TreeMap<String, CustomFieldTemplate>();
                 lastAppliesTo = cacheKeyByAppliesTo;
             }
@@ -157,7 +157,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 } else if (cft.getCalendar() instanceof CalendarInterval) {
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 } else if (cft.getCalendar() instanceof CalendarBanking) {
-                    ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                    ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 }
             }
             if (cft.getListValues() != null) {
@@ -170,7 +170,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         }
 
         if (cftsSameAppliesTo != null && !cftsSameAppliesTo.isEmpty()) {
-            cftsByAppliesTo.putForExternalRead(lastAppliesTo, cftsSameAppliesTo);
+            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
         }
 
         log.info("CFT cache populated with {} values of provider {}.", cfts.size(), currentProvider);
@@ -203,7 +203,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         for (CustomEntityTemplate cet : allCets) {
             customEntityTemplateService.detach(cet);
-            cetsByCode.putForExternalRead(new CacheKeyStr(currentProvider, cet.getCode()), cet);
+            cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentProvider, cet.getCode()), cet);
         }
 
         log.info("CET cache populated with {} values of provider {}.", allCets.size(), currentProvider);
@@ -262,7 +262,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Store mapping between CF code and value and group in cache by CFT appliesTo value.
+     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value.
      * 
      * @param cft Custom field template definition
      */
@@ -281,7 +281,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         if (cftsOld != null) {
             cfts.putAll(cftsOld);
         }
-        boolean isUpdate = cftsOld != null;
 
         // Load calendar for lazy loading
         if (cft.getCalendar() != null) {
@@ -296,7 +295,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarBanking) {
-                ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             }
         }
@@ -307,71 +306,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         cft = SerializationUtils.clone(cft);
 
         cfts.put(cft.getCode(), cft);
-        if (isUpdate) {
-            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
-        } else {
-            cftsByAppliesTo.putForExternalRead(cacheKeyByAppliesTo, cfts);
-        }
-    }
-
-    /**
-     * Store mapping between CF code and value and group in cache by CFT appliesTo value.
-     * 
-     * @param cfts A list of Custom field template definitions
-     */
-    public void addUpdateCustomFieldTemplates(Collection<CustomFieldTemplate> cfts) {
-
-        if (!useCFTCache) {
-            return;
-        }
-
-        Map<CacheKeyStr, Map<String, CustomFieldTemplate>> newcftsByAppliesTo = new HashMap<CacheKeyStr, Map<String, CustomFieldTemplate>>();
-
-        for (CustomFieldTemplate cft : cfts) {
-
-            CacheKeyStr cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
-
-            log.trace("Adding/updating custom field template {} for {} to CFT cache of Provider {}.", cft.getCode(), cacheKeyByAppliesTo, currentUser.getProviderCode());
-
-            if (!newcftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
-
-                Map<String, CustomFieldTemplate> cftsOld = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
-                if (cftsOld != null) {
-                    newcftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>(cftsOld));
-                } else {
-                    newcftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
-                }
-            }
-
-            // Load calendar for lazy loading
-            if (cft.getCalendar() != null) {
-                cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
-                if (cft.getCalendar() instanceof CalendarDaily) {
-                    ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
-                    ((CalendarDaily) cft.getCalendar()).nextCalendarDate(new Date());
-                } else if (cft.getCalendar() instanceof CalendarYearly) {
-                    ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
-                    ((CalendarYearly) cft.getCalendar()).nextCalendarDate(new Date());
-                } else if (cft.getCalendar() instanceof CalendarInterval) {
-                    ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
-                    ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
-                } else if (cft.getCalendar() instanceof CalendarBanking) {
-                    ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
-                    ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
-                }
-            }
-            if (cft.getListValues() != null) {
-                cft.getListValues().values().toArray(new String[] {});
-            }
-
-            cft = SerializationUtils.clone(cft);
-
-            newcftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
-        }
-
-        for (Entry<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsInfo : newcftsByAppliesTo.entrySet()) {
-            cftsByAppliesTo.putForExternalRead(cftsInfo.getKey(), cftsInfo.getValue());
-        }
+        cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
     }
 
     /**
@@ -415,7 +350,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         CacheKeyStr cacheKeyByAppliesTo = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
         if (!cftsByAppliesTo.getAdvancedCache().containsKey(cacheKeyByAppliesTo)) {
-            cftsByAppliesTo.putForExternalRead(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());
+            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());
         }
     }
 
@@ -423,9 +358,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * Store custom entity template to cache.
      * 
      * @param cet Custom entity template definition
-     * @param isUpdate Is this a cache entry update
      */
-    public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet, boolean isUpdate) {
+    public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet) {
 
         if (!useCETCache) {
             return;
@@ -433,12 +367,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Adding CET template {} to CET cache", cet.getCode());
 
-        if (isUpdate) {
-            cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
-        } else {
-            cetsByCode.putForExternalRead(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
-        }
-        
+        cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
+
         // Sort values by cet.name
         // Collections.sort(cetsByProvider);
 
@@ -483,9 +413,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @return A list of custom entity templates
      */
     public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
-        String providerCode = currentUser.getProviderCode();
-        return cetsByCode.entrySet().stream().filter(x -> ((providerCode == null && x.getKey().getProvider() == null) || (providerCode != null && providerCode.equals(x.getKey().getProvider())))).map(x -> x.getValue())
-            .collect(() -> Collectors.toList());
+
+        return cetsByCode.values();
     }
 
     /**
