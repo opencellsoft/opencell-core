@@ -12400,6 +12400,7 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
     <changeSet id="#INTRD-5881_20220322" author="aelmalki">
+        <createSequence sequenceName="accounting_journal_entry_seq"/>
         <createTable tableName="accounting_journal_entry">
             <!-- Generic fields -->
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -12426,9 +12427,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="tax_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="tax_id" type="bigint" />
 
             <!-- Simple fields -->
             <column name="direction" type="varchar(10)">
@@ -12461,9 +12460,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-
-        <createSequence sequenceName="accounting_journal_entry_seq"/>
-
     </changeSet>
 
 </databaseChangeLog>
