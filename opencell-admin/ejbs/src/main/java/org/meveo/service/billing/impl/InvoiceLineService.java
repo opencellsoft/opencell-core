@@ -219,6 +219,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
                     totalDiscountAmount = totalDiscountAmount.add(discountInvoice.getAmountWithoutTax().abs());
                     discountInvoice.setDiscountPlan(null);
+                    discountInvoice.setDiscountAmount(BigDecimal.ZERO);
                     discountInvoice.setDiscountedInvoiceLine(entity);
                     discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
                     discountInvoice.setTaxRate(taxPercent);
