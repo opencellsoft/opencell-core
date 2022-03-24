@@ -24,11 +24,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 public interface PaginatedResource<T> {
     Long getTotal();
     Long getLimit();
     Long getOffset();
+    Map<String, Object> getFilters();
     List<T> getData();
 
     @XmlTransient

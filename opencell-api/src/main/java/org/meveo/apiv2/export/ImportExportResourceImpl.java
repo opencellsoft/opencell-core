@@ -91,7 +91,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
             String executionId = generateExecutionId(fileName);
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
+          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), true, true, appProvider);
 
            // executionResults.put(executionId, exportImport);
             return importStatisticsToDto(executionId, exportImport);

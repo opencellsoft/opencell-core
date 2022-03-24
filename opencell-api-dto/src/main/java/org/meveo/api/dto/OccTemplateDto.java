@@ -71,7 +71,8 @@ public class OccTemplateDto extends BusinessEntityDto {
 
     /** contract accounting code */
     @Schema(description = "contract accounting code")
-    private String contratAccountingCode;
+    @XmlElement(name = "contraAccountingCode")
+    private String contractAccountingCode;
 
     /**
      * Instantiates a new occ template dto.
@@ -94,7 +95,7 @@ public class OccTemplateDto extends BusinessEntityDto {
             accountingScheme = new AccountingSchemeDto(occTemplate.getAccountingScheme());
         }
         if(occTemplate.getContraAccountingCode() != null) {
-            contratAccountingCode = occTemplate.getContraAccountingCode().getCode();
+            contractAccountingCode = occTemplate.getContraAccountingCode().getCode();
         }
     }
 
@@ -214,11 +215,11 @@ public class OccTemplateDto extends BusinessEntityDto {
         this.accountingScheme = accountingScheme;
     }
 
-    public String getContratAccountingCode() {
-        return contratAccountingCode;
+    public String getContractAccountingCode() {
+        return contractAccountingCode;
     }
 
-    public void setContratAccountingCode(String contratAccountingCode) {
-        this.contratAccountingCode = contratAccountingCode;
+    public void setContractAccountingCode(String contractAccountingCode) {
+        this.contractAccountingCode = contractAccountingCode;
     }
 }

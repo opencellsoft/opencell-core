@@ -78,5 +78,4 @@ public class InvoicingResourceImpl implements InvoicingResource {
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run status successfully canceled\"},\"id\":" + billingRun.getId() + "}")
                 .build();
     }
-
 }
