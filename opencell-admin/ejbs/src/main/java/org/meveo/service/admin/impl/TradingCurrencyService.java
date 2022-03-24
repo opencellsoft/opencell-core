@@ -24,26 +24,35 @@ import javax.persistence.NoResultException;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.PersistenceService;
 
+import java.util.Currency;
+
 @Stateless
 @Named
 public class TradingCurrencyService extends PersistenceService<TradingCurrency> {
 
     /**
      * Find TradingCurrency by its trading currency code.
-     * 
+     *
      * @param tradingCurrencyCode Trading currency code
      * @return Trading currency found or null.
-     * 
      */
     public TradingCurrency findByTradingCurrencyCode(String tradingCurrencyCode) {
 
         try {
             return getEntityManager().createNamedQuery("TradingCurrency.getByCode", TradingCurrency.class).setParameter("tradingCurrencyCode", tradingCurrencyCode)
-                .getSingleResult();
+                    .getSingleResult();
 
         } catch (NoResultException e) {
             log.warn("Trading currency not found : currency={}", tradingCurrencyCode);
             return null;
+        }
+    }
+
+    public static String getCurrencySymbol(String code) {
+        try {
+            return Currency.getInstance(code).getSymbol();
+        } catch (IllegalArgumentException e) {
+            return code;
         }
     }
 }

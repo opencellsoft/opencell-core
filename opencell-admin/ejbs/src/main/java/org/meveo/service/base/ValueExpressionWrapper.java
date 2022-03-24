@@ -39,6 +39,7 @@ import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -513,7 +514,7 @@ public class ValueExpressionWrapper {
      * @throws InvalidELException Failed to evaluate EL expression
      */
     @SuppressWarnings("unchecked")
-    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws InvalidELException {
+    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws BusinessException {
 
         Object result = null;
         if (StringUtils.isBlank(expression)) {
@@ -549,7 +550,8 @@ public class ValueExpressionWrapper {
             return (T) result;
 
         } catch (Exception e) {
-            throw new InvalidELException(expression, contextMap, e);
+            log.warn("EL {} throw error with variables {}", expression, contextMap, e);
+            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
     }
 

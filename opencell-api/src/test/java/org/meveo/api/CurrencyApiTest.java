@@ -26,6 +26,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.mockito.InjectMocks;
@@ -52,6 +53,9 @@ public class CurrencyApiTest {
 
     @Mock
     private ExchangeRateService exchangeRateService;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @Before
     public void setUp() {
@@ -85,6 +89,7 @@ public class CurrencyApiTest {
     @Test
     public void addFunctionalCurrency() {
         when(providerService.findById(any())).thenReturn(new Provider());
+        when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
 
         CurrencyDto currencyDto = new CurrencyDto();
         currencyDto.setCode("MAD");
@@ -109,6 +114,7 @@ public class CurrencyApiTest {
     public void updateCurrency() {
         when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
         when(currencyService.findByCode(any())).thenReturn(new Currency());
+        when(tradingCurrencyService.findByTradingCurrencyCode(any())).thenReturn(new TradingCurrency());
         CurrencyDto currencyDto = new CurrencyDto();
         currencyDto.setCode("MAD");
         currencyDto.setSymbol(null);
@@ -120,11 +126,17 @@ public class CurrencyApiTest {
 
     @Test
     public void updateExchangeRate() {
+        Currency currency = new Currency();
+        currency.setCurrencyCode("USD");
+        TradingCurrency tradingCurrency = new TradingCurrency();
+        tradingCurrency.setCurrency(currency);
         ExchangeRate exchangeRate = new ExchangeRate();
         exchangeRate.setFromDate(DateUtils.addMonthsToDate(new Date(), 1));
-        exchangeRate.setTradingCurrency(new TradingCurrency());
+        exchangeRate.setExchangeRate(BigDecimal.ONE);
+        exchangeRate.setTradingCurrency(tradingCurrency);
         when(exchangeRateService.findById(any())).thenReturn(exchangeRate);
         when(tradingCurrencyService.findById(any(), anyList())).thenReturn(new TradingCurrency());
+        when(auditLogService.getActor()).thenReturn("XXX");
         ExchangeRateDto postData = new ExchangeRateDto();
         postData.setExchangeRate(BigDecimal.valueOf(12.34));
         postData.setFromDate(new Date());

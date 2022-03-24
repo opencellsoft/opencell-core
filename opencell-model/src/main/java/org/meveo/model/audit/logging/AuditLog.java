@@ -81,6 +81,12 @@ public class AuditLog extends BaseEntity {
     @Type(type = "longText")
     @Column(name = "parameters")
     private String parameters;
+    
+    /**
+     * Source of action e.g. API or IMPORT
+     */
+    @Column(name = "source")
+    private String source;
 
     public Date getCreated() {
         return created;
@@ -130,4 +136,11 @@ public class AuditLog extends BaseEntity {
         this.entity = entity;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }
