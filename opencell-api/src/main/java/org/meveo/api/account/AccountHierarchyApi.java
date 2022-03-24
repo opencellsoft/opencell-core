@@ -398,6 +398,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
         billingAccountDto.setCountry(postData.getCountryCode());
         billingAccountDto.setLanguage(postData.getLanguageCode());
+        billingAccountDto.setTradingCurrency(postData.getCurrencyCode());
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         if (postData.getInvoicingThreshold() != null) {
@@ -655,6 +656,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
         billingAccountDto.setCountry(postData.getCountryCode());
         billingAccountDto.setLanguage(postData.getLanguageCode());
+        billingAccountDto.setTradingCurrency(postData.getCurrencyCode());
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
