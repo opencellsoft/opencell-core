@@ -255,7 +255,7 @@ public class CurrencyApi extends BaseApi {
             throw new NotFoundException(new ActionStatus(ActionStatusEnum.FAIL, "currency not found"));
         }
 
-        Provider provider = providerService.findById(appProvider.getId());
+        Provider provider = providerService.getProviderNoCache();
         provider.setCurrency(currency);
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
