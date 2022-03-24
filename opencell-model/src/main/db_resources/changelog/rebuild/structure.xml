@@ -7108,6 +7108,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="parameters" type="${type.text}" />
+            <column name="source" type="VARCHAR(200)" />
         </createTable>
     </changeSet>
 
@@ -17468,11 +17469,12 @@
     <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
     <changeSet id="#INTRD-5341_20220307" author="aelmalki" />
     <changeSet id="#INTRD-5804-20220321" author="HatimOUDAD"/>
-
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-4702-20220321" author="ZBariki"/>
     <changeSet id="#INTRD-5841-21032022" author="TarikRabeh" />
     <changeSet id="#INTRD-5881_20220322" author="aelmalki" />
+    <changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
