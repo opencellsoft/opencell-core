@@ -1521,7 +1521,7 @@ public class CpqQuoteApi extends BaseApi {
                     }
                 }
                 
-                // Add subscription charges
+                // rate  use charges, create one EDR with the first retrieved usage charge quantity
                 EDR edr =null;
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
                     if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
@@ -1571,7 +1571,7 @@ public class CpqQuoteApi extends BaseApi {
                                         }
                                     }
                                 }
-
+                                break;
 
                             } catch (RatingException e) {
                                 log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
