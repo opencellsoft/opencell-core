@@ -416,7 +416,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         }
 
                                         List<QuoteOffer> quoteOffers = isOfferScope(commercialRuleHeader.getScopeType()) ? singletonList(quoteProduct.getQuoteOffer()) : quoteVersion.getQuoteOffers();
-                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialRuleLines.get(0), commercialRuleHeader.getCode());
+                                        for (CommercialRuleLine commercialLine : commercialRuleLines) {
+                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialLine, commercialRuleHeader.getCode());
+                                        }
                                     }
 
                                 }
@@ -530,6 +532,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             case LIST_MULTIPLE_TEXT:
             case LIST_TEXT:
             case EXPRESSION_LANGUAGE:
+            case BOOLEAN:	
             case TEXT:
                 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
@@ -540,6 +543,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                     log.error("can not override quote value of type date, date parsing error: commercial rule: " + commercialRuleCode, e);
                 }
                 break;
+            default:
+            	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
+                 break;
         }
     }
     
@@ -548,38 +554,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         attributeToReplace.setDoubleValue(sourceOfferAttribute.get().getDoubleValue());
         attributeToReplace.setDateValue(sourceOfferAttribute.get().getDateValue());
         quoteAttributeService.update(attributeToReplace);
-    }
-
-    public Map<String, Object> replacementProcess(CommercialRuleHeader commercialRule, List<ProductContextDTO> selectedProducts) {
-        List<CommercialRuleItem> items = null;
-        List<CommercialRuleLine> lines = null;
-        CommercialRuleItem item = null;
-        CommercialRuleLine line = null;
-
-
-        items = commercialRule.getCommercialRuleItems();
-        if (!items.isEmpty()) {
-            if (items.size() > 1) {
-                log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one item");
-            }
-            item = items.get(0);
-            lines = item.getCommercialRuleLines();
-            if (!lines.isEmpty()) {
-                if (lines.size() > 1) {
-                    log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one source line");
-                }
-                line = lines.get(0);
-                OfferTemplate sourceOfferTemplate = line.getSourceOfferTemplate();
-                Product sourceProduct = line.getSourceProduct();
-                Attribute sourceAttribute = line.getSourceAttribute();
-                return replaceProductAttribute(selectedProducts, sourceAttribute, line.getSourceAttributeValue(), sourceProduct.getCode());
-
-            }
-        } else {
-            return replaceProductAttribute(selectedProducts, commercialRule.getTargetAttribute(), commercialRule.getTargetAttributeValue(), commercialRule.getTargetProduct().getCode());
-        }
-        return null;
-    }
+    } 
 
     private Map<String, Object> replaceProductAttribute(List<ProductContextDTO> selectedProducts, Attribute sourceAttribute, String sourceAttributeValue, String sourceCode) {
         Map<String, Object> overriddenAttributes = new HashMap<>();
