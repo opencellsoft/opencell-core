@@ -330,6 +330,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
     			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
+    				boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -347,22 +348,20 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
     					if(result!=null) {
-    					if ((isPreRequisite && !valueCompare(line.getOperator(), line.getSourceAttributeValue(), result))
-    							|| !isPreRequisite && valueCompare(line.getOperator(), line.getSourceAttributeValue(), result)) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, result.equals(line.getSourceAttributeValue())));
+    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     							return false;
-    						}else if (isPreRequisite && valueCompare(line.getOperator(), line.getSourceAttributeValue(), result)){
+    						}else if (isPreRequisite && resultCompare){
     							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return true;
     						}
     					}
     					break;
     				default:
-    					if ((isPreRequisite && !valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue))
-    							|| !isPreRequisite && valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue)) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, convertedValue.equals(line.getSourceAttributeValue())));
+    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     						return false;
-    					}else if (isPreRequisite && valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue)){
+    					}else if (isPreRequisite && resultCompare){
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     						return true;
     					}
@@ -378,6 +377,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	}
     	return isSelected;
     }
+
 
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
