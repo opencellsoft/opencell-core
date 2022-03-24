@@ -55,6 +55,8 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
 
+import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
+
 /**
  * @author Edward P. Legaspi
  * 
@@ -126,7 +128,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
-        tradingCurrency.setSymbol(postData.getSymbol() != null ? postData.getSymbol() : postData.getCode());
+        tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
         if (postData.isDisabled() != null) {
             tradingCurrency.setDisabled(postData.isDisabled());
@@ -272,7 +274,7 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency = new TradingCurrency();
             tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
             tradingCurrency.setPrDescription(currency.getDescription());
-            tradingCurrency.setSymbol(currency.getCurrencyCode());
+            tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
             tradingCurrency.setDecimalPlaces(2);
             tradingCurrencyService.create(tradingCurrency);
         }
