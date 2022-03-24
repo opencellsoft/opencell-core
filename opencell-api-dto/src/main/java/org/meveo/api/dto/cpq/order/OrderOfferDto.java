@@ -46,7 +46,7 @@ public class OrderOfferDto extends BaseEntityDto {
 	
 	/** The subscription code. */
 	@Schema(description = "The subscription code") 
-    private String subscritptionCode;
+    private String subscriptionCode;
 	
 	/** Order line type */
     @Schema(description = "The order line type")
@@ -64,7 +64,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
         this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
-        this.subscritptionCode = orderOffer.getSubscription().getCode();
+        this.subscriptionCode = orderOffer.getSubscription().getCode();
 	}
  
 
@@ -75,7 +75,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
         this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
-        this.subscritptionCode = orderOffer.getSubscription()!=null?orderOffer.getSubscription().getCode():null;
+        this.subscriptionCode = orderOffer.getSubscription()!=null?orderOffer.getSubscription().getCode():null;
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -231,13 +231,13 @@ public class OrderOfferDto extends BaseEntityDto {
 
 
 	public String getSubscritptionCode() {
-		return subscritptionCode;
+		return subscriptionCode;
 	}
 
 
 
 	public void setSubscritptionCode(String subscritptionCode) {
-		this.subscritptionCode = subscritptionCode;
+		this.subscriptionCode = subscritptionCode;
 	}
     
     

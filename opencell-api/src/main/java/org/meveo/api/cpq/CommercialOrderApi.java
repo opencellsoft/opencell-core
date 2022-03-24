@@ -771,7 +771,7 @@ public class CommercialOrderApi extends BaseApi {
         	if (orderOfferDto.getSubscritptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), "AMEND");
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
         		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
         	}
@@ -848,7 +848,7 @@ public class CommercialOrderApi extends BaseApi {
         	if (orderOfferDto.getSubscritptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), "AMEND");
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
         		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
         	}

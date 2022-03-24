@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.base.PersistenceService;
@@ -51,12 +52,10 @@ public class OrderOfferService extends PersistenceService<OrderOffer> {
 		super.create(entity);
 	}
 	
-	public List<OrderOffer> findBySubscriptionAndStatus(String subscriptionCode, String status) {
-		if(Strings.isEmpty(subscriptionCode) || Strings.isEmpty(status))
-			throw new BusinessException("code and order code must not be empty");
+	public List<OrderOffer> findBySubscriptionAndStatus(String subscriptionCode, OfferLineTypeEnum offerLineType) {
 		Query query=getEntityManager().createNamedQuery("OrderOffer.findByStatusAndSubscription");
 		query.setParameter("subscriptionCode", subscriptionCode)
-			  .setParameter("status", status);
+			  .setParameter("status", offerLineType);
 		try {
 			return (List<OrderOffer>) query.getResultList();
 		}catch(NoResultException e ) {
