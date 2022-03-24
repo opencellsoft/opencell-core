@@ -2314,7 +2314,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element article = doc.createElement("article");
         article.appendChild(this.createTextNode(doc, ""));
         article.setAttribute("code", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : "");
-        article.setAttribute("label", invoiceLine.getLabel());
+        article.setAttribute("label", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getDescription() : "");
         line.appendChild(article);
         if (invoiceLine.getUnitPrice() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
