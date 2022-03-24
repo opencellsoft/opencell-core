@@ -71,7 +71,13 @@ public class OrderValidationScript extends Script {
             subscription.setSubscriptionDate(order.getOrderDate());
             subscription.setEndAgreementDate(null);
             subscription.setRenewed(true);
-            subscription.setUserAccount(order.getUserAccount());
+            
+            if(offer.getUserAccount() == null) {
+                subscription.setUserAccount(order.getUserAccount());
+            }else {
+                subscription.setUserAccount(offer.getUserAccount());
+            }
+            
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);

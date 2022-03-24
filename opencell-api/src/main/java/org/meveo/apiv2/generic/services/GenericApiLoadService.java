@@ -75,10 +75,11 @@ public class GenericApiLoadService {
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
-                    .data(checkRecords(searchResult.getEntityList(), entityClass.getSimpleName()))
+                    .data(searchResult.getEntityList())
                     .limit(Long.valueOf(searchConfig.getNumberOfRows()))
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .total(searchResult.getCount())
+                    .filters(searchConfig.getFilters())
                     .build();
             return JsonGenericMapper.Builder.getBuilder()
                     .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())

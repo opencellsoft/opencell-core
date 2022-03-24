@@ -64,7 +64,7 @@ public class RefundResourceImpl implements RefundResource{
         	validateIban(sctRefund.getIBAN());
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());
             CustomerAccount customerAccount = customerAccountService.findByCode(sctRefund.getCustomerAccountCode(), Collections.singletonList("accountOperations"));
-            if(customerAccountService.customerAccountBalanceDue(customerAccount, null).compareTo(BigDecimal.ZERO)<1){
+            if(customerAccountService.customerAccountBalanceDue(customerAccount, null).compareTo(BigDecimal.ZERO)>1){
                 throw new BusinessApiException("refund is impossible : the customer balance is debit");
             }
             customerAccount
