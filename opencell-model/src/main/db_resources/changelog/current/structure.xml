@@ -12393,9 +12393,16 @@ order by date_trunc('month', i.invoice_date) DESC
                                      initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                      referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
+
     <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
         <addColumn tableName="billing_billing_account">
             <column name="trading_currency_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA">
+        <addColumn tableName="audit_log">
+            <column name="source" type="VARCHAR(200)" />
         </addColumn>
     </changeSet>
 
