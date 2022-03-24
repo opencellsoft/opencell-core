@@ -165,6 +165,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * List of associated accounting writing
      * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      */
+    @Deprecated
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
     private List<AccountingEntry> accountingEntries = new ArrayList<>();
 
@@ -697,6 +698,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      * @return AccountingEntries
      */
+    @Deprecated
     public List<AccountingEntry> getAccountingEntries() {
 		return accountingEntries;
 	}
@@ -705,6 +707,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      * @param accountingEntries AccountingEntries
      */
+    @Deprecated
 	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
 		this.accountingEntries = accountingEntries;
 	}
