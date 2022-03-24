@@ -308,7 +308,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             }
         }
 
-        // Was not able to apply any allowed entity as filtering criteria. A case when user is granyed access to user account, but a higher resource (e.g. seller) is being accessed
+        // Was not able to apply any allowed entity as filtering criteria. A case when user is granted access to user account, but a higher resource (e.g. seller) is being accessed
         if (newFilterCriteria.isEmpty()) {
             throw new AccessDeniedException("Access to entity list is not allowed.");
         }
