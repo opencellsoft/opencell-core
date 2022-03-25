@@ -71,7 +71,6 @@ import org.meveo.model.rating.RatingResult;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.util.ApplicationProvider;
@@ -533,9 +532,6 @@ public class UsageRatingService implements Serializable {
             
             if (ratedEDRResult.isFullyRated()) {
                 edr.changeStatus(EDRStatusEnum.RATED);
-                for(WalletOperation wo:walletOperations) {
-                    walletOperationService.applyDiscount(ratedEDRResult, wo);
-                }
             } else if (!foundPricePlan) {
                 throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + (edr.getId() != null ? edr.getId() : edr));
 
@@ -555,8 +551,6 @@ public class UsageRatingService implements Serializable {
         return walletOperations;
     }
 
-    @Inject
-    private DiscountPlanService discountPlanService;
     /**
      * Rate Triggered EDR.
      *

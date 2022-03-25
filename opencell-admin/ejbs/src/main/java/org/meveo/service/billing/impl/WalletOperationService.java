@@ -17,6 +17,29 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.emptyList;
+import static org.meveo.commons.utils.NumberUtils.round;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
@@ -33,9 +56,30 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -46,27 +90,14 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static org.meveo.commons.utils.NumberUtils.round;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 /**
  * Service class for WalletOperation entity
@@ -129,11 +160,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceService;
-    
-    @Inject
-    private DiscountPlanService discountPlanService;
-    @Inject
-    private DiscountPlanItemService discountPlanItemService;
 
     /**
      * Apply a one shot charge
@@ -175,7 +201,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         chargeWalletOperation(walletOperation);
         
-        applyDiscount(ratingResult, walletOperation);
 
         OneShotChargeTemplate oneShotChargeTemplate = null;
 
@@ -612,7 +637,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                         ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, operationDate, inputQuantity, null,
                             orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
-                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
+                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, isVirtual);
 
                         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
@@ -672,9 +697,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
         if(ratingResult != null) {
         	ratingResult.setWalletOperations(walletOperations);
-        	for (WalletOperation wo : walletOperations) {
-				applyDiscount(ratingResult, wo);
-			}
         }
         
         return ratingResult;
@@ -1513,18 +1535,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return false;
     }
     
-    public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation) {
-    	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-        if(chargeInstance.getServiceInstance() != null) {
-     	   for(DiscountPlanInstance discountPlanInstance: chargeInstance.getServiceInstance().getAllDiscountPlanInstances()) {
-     		   discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE);
-     		  ratingResult.getEligibleFixedDiscountItems().addAll(
-     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(),  discountPlanInstance.getDiscountPlan(), 
-     				   																												walletOperation, null, null, null, walletOperation.getAccountingArticle(),
-     				   																													DiscountPlanItemTypeEnum.FIXED, null)
-     				   												);
-     	   }
-     	  discountPlanService.calculateDiscountplanItems(ratingResult.getEligibleFixedDiscountItems(), walletOperation);
-        }
-    }
+//    @Override
+//    public void create(WalletOperation entity) throws BusinessException {
+//    	if(entity.getId() == null)
+//    		super.create(entity);
+//    	else super.update(entity);
+//    }
 }

@@ -537,11 +537,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     }
 
 
-    public WalletOperation(WalletOperation copy) {
-    	this(copy.chargeInstance, copy.inputQuantity, copy.quantity, copy.operationDate, copy.orderNumber, 
-    				null, null, null, null, copy.tax, copy.startDate, copy.endDate, copy.accountingCode, copy.invoicingDate);
-    	this.discountedWalletOperation = copy.getId();
-    }
     
     /**
      * Constructor

@@ -53,6 +53,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -70,6 +71,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -96,8 +98,11 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
@@ -177,6 +182,11 @@ public class RatingService extends PersistenceService<WalletOperation> {
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
 
     /**
      * @param level level enum
@@ -343,11 +353,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
-
+        
+        if(!isVirtual) {
+        	walletOperationService.create(walletOperation);
+        	applyDiscount(ratedEDRResult, walletOperation);
+        }
+        
         return ratedEDRResult;
 
     }
-
+    
     public static Integer getSortIndex(WalletOperation wo) {
         if (wo.getChargeInstance() == null) {
             return null;
@@ -1421,6 +1436,28 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         } catch (BusinessException e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
+        }
+    }
+    
+
+    public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation) {
+    	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+    	List<DiscountPlanInstance> discountPlanInstances = new ArrayList<DiscountPlanInstance>();
+    	if(chargeInstance.getServiceInstance() != null) {
+    		discountPlanInstances.addAll(chargeInstance.getServiceInstance().getAllDiscountPlanInstances());
+    	}
+    	if (walletOperation.getSubscription() != null) {
+    		discountPlanInstances.addAll(walletOperation.getSubscription().getAllDiscountPlanInstances());
+    	}
+        if(discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
+     	   for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
+     		   discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE);
+     		   ratingResult.getEligibleFixedDiscountItems().addAll(
+     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(),  discountPlanInstance.getDiscountPlan(), 
+     				   																												walletOperation, null, null, null, walletOperation.getAccountingArticle(),
+     				   																													DiscountPlanItemTypeEnum.FIXED, null)
+     				   												);
+     	   }
         }
     }
 

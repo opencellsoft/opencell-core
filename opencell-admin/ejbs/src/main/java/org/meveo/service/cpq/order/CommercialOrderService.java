@@ -227,6 +227,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			dpi.setDiscountPlanInstanceStatus(discountPlan);
 			dpi.setCfValues(discountPlan.getCfValues());
 			dpi.setServiceInstance(serviceInstance);
+			dpi.setSubscription(subscription);
 			discountPlanInstanceService.create(dpi, discountPlan);
 			serviceInstance.getDiscountPlanInstances().add(dpi);
 			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
