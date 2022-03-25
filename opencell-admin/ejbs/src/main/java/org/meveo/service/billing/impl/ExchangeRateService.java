@@ -36,7 +36,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         
         ExchangeRate exchangeRate = new ExchangeRate();
         List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();        
-        for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
+        for (ExchangeRate er : listExchangeRate) {
             if (er.getFromDate().compareTo(postData.getFromDate()) == 0) {
                 throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
             }
