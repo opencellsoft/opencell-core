@@ -13,6 +13,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -20,6 +21,9 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
     
     @Inject
     protected ResourceBundle resourceMessages;
+    
+    @Inject
+    protected TradingCurrencyService tradingCurrencyService;
     
     public ExchangeRate createCurrentRateWithPostData(ExchangeRateDto postData, TradingCurrency tradingCurrency) {
         if (postData.getFromDate() == null) {
@@ -59,6 +63,30 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         exchangeRate.setFromDate(postData.getFromDate());
         create(exchangeRate);
         return exchangeRate;
+    }    
+    
+    public List<Long> getAllTradingCurrencyWithCurrentRate() {
+        return getEntityManager()
+                .createNamedQuery("ExchangeRate.getAllTradingCurrencyWithCurrentRate", Long.class)
+                .setParameter("sysDate", DateUtils.setTimeToZero(new Date()))
+                .getResultList();
+    }
+    
+    public void updateCurrentRateForTradingCurrency(Long idExchangeRate) {
+        ExchangeRate exchangeRate = findById(idExchangeRate);        
+        TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();        
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
+        
+        for (ExchangeRate elementExchangeRate : listExchangeRate) {
+            elementExchangeRate.setCurrentRate(false);
+        }
+        exchangeRate.setCurrentRate(true);
+        tradingCurrency.setExchangeRates(listExchangeRate);
+        tradingCurrency.setCurrentRate(exchangeRate.getExchangeRate());
+        tradingCurrency.setCurrentRateFromDate(DateUtils.setTimeToZero(new Date()));
+        tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+        exchangeRate.setTradingCurrency(tradingCurrency);
+        update(exchangeRate);
     }
     
 }
