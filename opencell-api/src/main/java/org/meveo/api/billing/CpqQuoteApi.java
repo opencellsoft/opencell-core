@@ -1566,12 +1566,16 @@ public class CpqQuoteApi extends BaseApi {
 
                                     if (walletOperationsFromEdr != null) {
                                         for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                            walletOperation.setAccountingArticle(usageArticle);
-                                            walletOperations.addAll(walletOperationsFromEdr);
+                                        	if(walletOperation.getAccountingArticle()==null) {
+                                        		  usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+                                                  if (usageArticle==null) new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+                                           walletOperation.setAccountingArticle(usageArticle);
+                                        	}
+                                            walletOperations.add(walletOperation);
                                         }
                                     }
+                                    break;
                                 }
-                                break;
 
                             } catch (RatingException e) {
                                 log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
