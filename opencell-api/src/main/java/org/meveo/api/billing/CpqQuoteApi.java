@@ -1573,9 +1573,10 @@ public class CpqQuoteApi extends BaseApi {
                                             walletOperations.add(walletOperation);
                                         }
                                     }
+                                    break;
                                 }
 
-                                break;
+                               
                             } catch (RatingException e) {
                                 log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
                                 throw new BusinessApiException(e.getMessage());
