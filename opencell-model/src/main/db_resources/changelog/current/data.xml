@@ -8132,7 +8132,7 @@ Opencell team.
 			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-3678_20211214" author="AmineBENAICHA">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -9590,6 +9590,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-5831_20220325" author="aelmalki">
 		<sql>UPDATE ar_occ_template occ SET contra_accounting_code_id = (SELECT ac.id FROM billing_accounting_code ac WHERE ac.code=occ.account_code_client_side) WHERE occ.contra_accounting_code_id IS NULL</sql>
+	</changeSet>
+
+	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Default Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleAccountingSchemeScript extends DefaultAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
 	</changeSet>
 
 </databaseChangeLog>

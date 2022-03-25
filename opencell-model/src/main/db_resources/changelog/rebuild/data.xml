@@ -9778,7 +9778,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
 		</insert>
 	</changeSet>
-	 
+
     <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
         <insert tableName="crm_custom_field_tmpl_val">
             <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
@@ -9819,7 +9819,23 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 
 	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
-	
+
+	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Default Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleAccountingSchemeScript extends DefaultAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+	</changeSet>
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
