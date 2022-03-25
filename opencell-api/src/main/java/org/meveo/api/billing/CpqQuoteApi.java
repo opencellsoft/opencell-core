@@ -1848,8 +1848,8 @@ public class CpqQuoteApi extends BaseApi {
                       	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");
                       if(quoteproduct == null)
                       	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
-
-                      unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                      unitDiscountAmount=discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues);
+                      
                       if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                           String accountingArticleCode = discountAccountingArticle.getCode();
                           if (!quoteArticleLines.containsKey(accountingArticleCode)) {
