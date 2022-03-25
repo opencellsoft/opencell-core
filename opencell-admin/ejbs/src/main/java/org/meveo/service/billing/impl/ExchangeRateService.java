@@ -59,4 +59,11 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         update(exchangeRate);
     }
     
+    
+    public boolean fromDateExists(Date fromDate) {
+        return getEntityManager()
+                .createNamedQuery("ExchangeRate.countByFromDate", Long.class)
+                .setParameter("fromDate", fromDate)
+                .getSingleResult() > 0;
+    }
 }

@@ -300,6 +300,11 @@ public class CurrencyApi extends BaseApi {
             throw new ValidationException("Cannot set a rate in a paste date");
         }
         
+        // Check if a user choose a date that is already taken
+        if (exchangeRateService.fromDateExists(postData.getFromDate())) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
+        }
+        
         if (postData.getFromDate().equals(new Date())) {
             exchangeRate.setCurrentRate(true);
             List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
@@ -341,12 +346,9 @@ public class CurrencyApi extends BaseApi {
             throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
         }
 
-        // Check if a user choose a date that is already taken for the same TradingCurrency
-        TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
-        for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
-            if (!er.getId().equals(id) && er.getFromDate().compareTo(postData.getFromDate()) == 0) {
-                throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
-            }
+        // Check if a user choose a date that is already taken
+        if (exchangeRateService.fromDateExists(postData.getFromDate())) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
 
         // User cannot set a rate in a paste date
@@ -358,6 +360,7 @@ public class CurrencyApi extends BaseApi {
         if (postData.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
             exchangeRate.setCurrentRate(true);
             // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
+            TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
             for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
                 if (!er.getId().equals(id)) {
                     er.setCurrentRate(false);
