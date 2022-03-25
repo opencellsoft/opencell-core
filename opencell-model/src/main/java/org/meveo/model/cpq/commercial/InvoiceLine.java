@@ -1,7 +1,6 @@
 package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
@@ -46,6 +45,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -278,6 +278,13 @@ public class InvoiceLine extends AuditableEntity {
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
 	
+    /**
+     * User account associated to invoice line
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
+	
 
 	public InvoiceLine() {
 	}
@@ -332,6 +339,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.productVersion = copy.productVersion;
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
+		this.userAccount = copy.userAccount;
 		this.status = InvoiceLineStatusEnum.OPEN;
 	}
 
@@ -657,7 +665,19 @@ public class InvoiceLine extends AuditableEntity {
 	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
 		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
-	
-	
+
+	/**
+	 * @return the userAccount
+	 */
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	/**
+	 * @param userAccount the userAccount to set
+	 */
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
 	
 }

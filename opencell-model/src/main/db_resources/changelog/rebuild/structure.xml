@@ -10415,6 +10415,7 @@
             <column name="quote_offer_id" type="bigint"/>
             <column name="order_offer_id" type="bigint"/>
 	     	<column name="discounted_invoice_line" type="bigint"/>
+            <column name="user_account_id" type="bigint"></column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -17180,6 +17181,12 @@
     <changeSet id="#INTRD-4950-20220209" author="MohammedSTITANE" />
     <changeSet id="#FIX-delete-tax" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
+    
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
+   	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
