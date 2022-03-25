@@ -15,10 +15,8 @@ import java.util.Map;
 
 public class DefaultAccountingSchemeScript extends Script {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultAccountingSchemeScript.class);
-
-    JournalEntryService journalEntryService = (JournalEntryService) getServiceInterface(JournalEntryService.class.getSimpleName());
-    OCCTemplateService occTemplateService = (OCCTemplateService) getServiceInterface(OCCTemplateService.class.getSimpleName());
+    private JournalEntryService journalEntryService = (JournalEntryService) getServiceInterface(JournalEntryService.class.getSimpleName());
+    private OCCTemplateService occTemplateService = (OCCTemplateService) getServiceInterface(OCCTemplateService.class.getSimpleName());
 
     @Override
     public void execute(Map<String, Object> context) throws BusinessException {
