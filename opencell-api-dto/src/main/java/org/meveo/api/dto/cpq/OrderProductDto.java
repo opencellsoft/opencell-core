@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,13 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
  * DTO to create or update a order product
@@ -83,6 +81,15 @@ public class OrderProductDto extends BaseEntityDto{
 	
 	@Schema(description = "The delivery date")
     private Date deliveryDate;
+	
+	@Schema(description = "The termination date")
+    private Date terminationDate;
+	
+	@Schema(description = "The termination reason code")
+    private String terminationReasonCode;
+	
+	@Schema(description = "The action type")
+    private ProductActionTypeEnum actionType;
     
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
 
@@ -105,6 +112,9 @@ public class OrderProductDto extends BaseEntityDto{
 		quantity=orderProduct.getQuantity();
 		discountPlanCode=orderProduct.getDiscountPlan()!=null?orderProduct.getDiscountPlan().getCode():null;
 		deliveryDate=orderProduct.getDeliveryDate();
+		actionType=orderProduct.getProductActionType();
+		terminationReasonCode=orderProduct.getTerminationReason()!=null?orderProduct.getTerminationReason().getCode():null;
+		terminationDate=orderProduct.getTerminationDate();
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -297,4 +307,36 @@ public class OrderProductDto extends BaseEntityDto{
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
+
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+
+	public String getTerminationReasonCode() {
+		return terminationReasonCode;
+	}
+
+
+	public void setTerminationReasonCode(String terminationReasonCode) {
+		this.terminationReasonCode = terminationReasonCode;
+	}
+
+
+	public ProductActionTypeEnum getActionType() {
+		return actionType;
+	}
+
+
+	public void setActionType(ProductActionTypeEnum actionType) {
+		this.actionType = actionType;
+	}
+	
+	
 }

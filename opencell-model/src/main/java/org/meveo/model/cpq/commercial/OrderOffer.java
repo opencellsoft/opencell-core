@@ -47,7 +47,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
 @NamedQueries({
-		@NamedQuery(name = "OrderOffer.findByCodeAndOrderCode", query = "select oo from OrderOffer oo left join oo.order oorder  where oorder.code=:orderCode  and oo.code=:code")
+		@NamedQuery(name = "OrderOffer.findByCodeAndOrderCode", query = "select oo from OrderOffer oo left join oo.order oorder  where oorder.code=:orderCode  and oo.code=:code"),
+		@NamedQuery(name = "OrderOffer.findByStatusAndSubscription", query = "select oo from OrderOffer oo join oo.order oorder  where oo.subscription.code=:subscriptionCode and oo.orderLineType=:status")
 })
 public class OrderOffer extends BusinessCFEntity {
 
