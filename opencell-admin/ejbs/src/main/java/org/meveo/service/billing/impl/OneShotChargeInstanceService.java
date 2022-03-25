@@ -30,7 +30,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
@@ -53,6 +52,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -319,8 +319,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
-    public void oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride) throws BusinessException, RatingException {
-        oneShotChargeApplication(oneShotChargeInstance, chargeDate, quantity, orderNumberOverride, ChargeApplicationModeEnum.SUBSCRIPTION);
+    public RatingResult oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride) throws BusinessException, RatingException {
+        return oneShotChargeApplication(oneShotChargeInstance, chargeDate, quantity, orderNumberOverride, ChargeApplicationModeEnum.SUBSCRIPTION);
     }
 
     /**
@@ -334,21 +334,22 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
-    public void oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride, ChargeApplicationModeEnum chargeMode)
+    public RatingResult oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride, ChargeApplicationModeEnum chargeMode)
             throws BusinessException, RatingException {
 
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
-            return;
+            return null;
         }
 
         if(walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)){
-            return;
+            return null;
         }
 
-        walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
+        RatingResult ratingResult =  walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
 
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+        return ratingResult;
     }
 
     /**
@@ -362,7 +363,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException business exception.
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity) throws BusinessException, RatingException {
+    public RatingResult oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity) throws BusinessException, RatingException {
 
         log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(), subscription.getOffer().getCode(),
             oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
@@ -376,11 +377,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
            return null;
         }
 
-        WalletOperation wo = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber(),
+        RatingResult  ratinResult = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber(),
             ChargeApplicationModeEnum.SUBSCRIPTION);
 
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-        return wo;
+        return ratinResult;
     }
 
     @SuppressWarnings("unchecked")
@@ -454,9 +455,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
         BigDecimal inputQuantity = BigDecimal.ONE;
 
-        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false, firstActiveSubscription.getOrderNumber(),
+        RatingResult ratingResult = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false, firstActiveSubscription.getOrderNumber(),
             ChargeApplicationModeEnum.SUBSCRIPTION);
-        op.changeStatus(WalletOperationStatusEnum.TREATED);
+        ratingResult.getWalletOperation().changeStatus(WalletOperationStatusEnum.TREATED);
 
         walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null, ChargeApplicationModeEnum.SUBSCRIPTION);
 

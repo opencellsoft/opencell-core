@@ -26,6 +26,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
@@ -100,7 +101,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = "ServiceInstance.getMinimumAmountUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount") })
-public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity, IDiscountable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -334,6 +335,10 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     @Transient
     private List<UsageChargeInstance> usageChargeInstances;
+    
+
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<>();
 
     /**
      * Gets the end agreement date.
@@ -1254,5 +1259,27 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         this.subscriptionChargeInstances = getSubscriptionChargeInstances().stream()
                 .filter(ch -> ch.getId() != null)
                 .collect(Collectors.toList());
+    }
+
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstance) {
+		this.discountPlanInstances = discountPlanInstance;
+	}
+
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if (this.getDiscountPlanInstances() == null) {
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
+        this.getDiscountPlanInstances().add(discountPlanInstance);
     }
 }

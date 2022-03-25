@@ -54,6 +54,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -549,6 +550,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "invoice_line_id")
     private InvoiceLine invoiceLine;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
+
     public RatedTransaction() {
         super();
     }
@@ -743,13 +748,16 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
-            this.unityDescription = walletOperation.getChargeInstance().getChargeTemplate().getInputUnitDescription();
+        	if(walletOperation.getChargeInstance() != null)
+        		this.unityDescription = walletOperation.getChargeInstance().getChargeTemplate().getInputUnitDescription();
         }
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
         if (ratingUnitDescription == null) {
-            this.ratingUnitDescription = walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription();
+        	if(walletOperation.getChargeInstance() != null)
+        		this.ratingUnitDescription = walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription();
         }
         this.sortIndex = walletOperation.getSortIndex();
+        this.discountPlan = walletOperation.getDiscountPlan();
     }
 
     public WalletInstance getWallet() {
@@ -1444,4 +1452,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setInvoiceLine(InvoiceLine invoiceLine) {
         this.invoiceLine = invoiceLine;
     }
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 }

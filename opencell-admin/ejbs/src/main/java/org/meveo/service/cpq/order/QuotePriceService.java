@@ -4,17 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
-import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -56,5 +53,16 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 				.setParameter("accountingArticleCode", accountingArticleCode)
 				.setParameter("priceLevelEnum", PriceLevelEnum.PRODUCT)
 				.getResultList();
+	}
+	
+	public QuotePrice findByUuid(String uuid) {
+		if(uuid == null) return null;
+		try {
+			return getEntityManager().createQuery("from QuotePrice q where q.uuid=:uuid", QuotePrice.class)
+					.setParameter("uuid", uuid)
+					.getSingleResult();
+		}catch(NonUniqueResultException e) {
+			return null;
+		}
 	}
 }

@@ -98,6 +98,8 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setProductVersion(productVersionService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("order_lot_id"))
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("article_id"))
+        .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
         if(invoiceLine.getValueDate()==null) {
@@ -124,7 +126,7 @@ public class InvoiceLinesFactory {
         ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
-        if (chargeInstance != null) {
+        if (chargeInstance != null && invoiceLine.getAccountingArticle() == null) {
                 ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
                 Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ?
                         invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;

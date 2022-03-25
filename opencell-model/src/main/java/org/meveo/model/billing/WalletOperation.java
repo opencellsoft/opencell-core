@@ -521,6 +521,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
+    
+    @Column(name = "discounted_wallet_operation_id")
+    private Long discountedWalletOperation;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
 
     /**
      * Constructor
@@ -528,6 +536,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public WalletOperation() {
     }
 
+
+    
     /**
      * Constructor
      * 
@@ -728,7 +738,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.updated = new Date();
     }
 
-    public String getCode() {
+
+
+	public String getCode() {
         return code;
     }
 
@@ -1450,6 +1462,24 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public void setAccountingArticle(AccountingArticle accountingArticle) {
         this.accountingArticle = accountingArticle;
     }
+
+	public Long getDiscountedWalletOperation() {
+		return discountedWalletOperation;
+	}
+
+	public void setDiscountedWalletOperation(Long discountedWalletOperation) {
+		this.discountedWalletOperation = discountedWalletOperation;
+	}
+
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 
    
 }

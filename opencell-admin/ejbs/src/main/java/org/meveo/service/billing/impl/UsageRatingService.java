@@ -61,7 +61,6 @@ import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.quote.QuoteVersion;
@@ -530,10 +529,9 @@ public class UsageRatingService implements Serializable {
                     }
                 }
             }
-
+            
             if (ratedEDRResult.isFullyRated()) {
                 edr.changeStatus(EDRStatusEnum.RATED);
-
             } else if (!foundPricePlan) {
                 throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + (edr.getId() != null ? edr.getId() : edr));
 
@@ -549,6 +547,7 @@ public class UsageRatingService implements Serializable {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
             throw e;
         }
+        
         return walletOperations;
     }
 

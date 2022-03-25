@@ -1,31 +1,24 @@
 package org.meveo.service.script;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -46,6 +39,7 @@ public class OrderValidationScript extends Script {
     private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
     private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
     private ServiceSingleton serviceSingleton = (ServiceSingleton) getServiceInterface("ServiceSingleton");
+    private DiscountPlanInstanceService discountPlanInstanceService = (DiscountPlanInstanceService) getServiceInterface("DiscountPlanInstanceService");
 
     @Override
     public void execute(Map<String, Object> context) {
@@ -87,12 +81,9 @@ public class OrderValidationScript extends Script {
             if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
 			}
-			
+
 			for (OrderProduct product : offer.getProducts()){
-				if(product.getDiscountPlan()!=null) {
-					discountPlans.add(product.getDiscountPlan());
-				}
-				commercialOrderService.processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
+				commercialOrderService.processProductWithDiscount(subscription, product);
 			}
 			commercialOrderService.instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);

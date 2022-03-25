@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
@@ -182,9 +184,11 @@ public class RealtimeChargingService {
             ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
         Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
-        List<WalletOperation> ops;
+        List<WalletOperation> ops = new ArrayList<WalletOperation>();
         try {
-            ops = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, true, true, null);
+            RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, true, true, null);
+            if(ratingResult != null)
+            	ops.addAll(ratingResult.getWalletOperations());
 
         } catch (RatingException e) {
             log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());

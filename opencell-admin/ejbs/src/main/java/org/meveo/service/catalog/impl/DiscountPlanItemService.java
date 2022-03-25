@@ -168,7 +168,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	} 
         		
         }
-        if (computedDiscount == null || amount == null) {
+        if (computedDiscount == null && amount == null) {
             return BigDecimal.ZERO;
         }
 
@@ -203,11 +203,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     public BigDecimal getDiscountAmount(BigDecimal amountToApplyDiscountOn, DiscountPlanItem discountPlanItem, Product product, List<AttributeValue> attributeValues)
             throws BusinessException {
-
-
-        if (BigDecimal.ZERO.compareTo(amountToApplyDiscountOn) == 0) {
-            return null;
-        }
 
 
         BigDecimal discountValue = getDiscountAmountOrPercent(null, null, amountToApplyDiscountOn, discountPlanItem,product,Set.copyOf(attributeValues));
@@ -257,7 +252,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
               for (DiscountPlanItem discountPlanItem : discountPlanItems) {
               	
                   if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) 
-                		  && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, null)) {
+                		  && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, walletOperation, quoteVersion, quoteOffer, quoteProduct, accountingArticle)) {
                   	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
                   	if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
                   	applicableDiscountPlanItems.add(discountPlanItem);

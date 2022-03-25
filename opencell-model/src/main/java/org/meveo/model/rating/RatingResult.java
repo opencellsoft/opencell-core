@@ -17,9 +17,13 @@
  */
 package org.meveo.model.rating;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
  * Tracks rating progress
@@ -43,6 +47,10 @@ public class RatingResult {
      * Wallet operation as result of rating an EDR
      */
     private WalletOperation walletOperation;
+    
+    private Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
+    
+    private List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
 
     /**
      * @return A list of EDRs that were triggered as part of this EDR processing
@@ -85,4 +93,20 @@ public class RatingResult {
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;
     }
+
+	public Set<DiscountPlanItem> getEligibleFixedDiscountItems() {
+		return eligibleFixedDiscountItems;
+	}
+
+	public void setEligibleFixedDiscountItems(Set<DiscountPlanItem> eligibleFixedDiscountItems) {
+		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
+	}
+	
+	public List<WalletOperation> getWalletOperations() {
+		return walletOperations;
+	}
+
+	public void setWalletOperations(List<WalletOperation> walletOperations) {
+		this.walletOperations = walletOperations;
+	}
 }

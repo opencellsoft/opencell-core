@@ -48,6 +48,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -160,9 +161,9 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             try {
-                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                                RatingResult wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                                 if (wo != null) {
-                                    walletOperations.add(wo);
+                                    walletOperations.add(wo.getWalletOperation());
                                 }
 
                             } catch (RatingException e) {
@@ -179,9 +180,9 @@ public class QuoteService extends BusinessService<Quote> {
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
                                 try {
-                                    WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                	RatingResult wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
                                     if (wo != null) {
-                                        walletOperations.add(wo);
+                                        walletOperations.add(wo.getWalletOperation());
                                     }
 
                                 } catch (RatingException e) {
@@ -198,9 +199,9 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
-                                if (walletOps != null && !walletOps.isEmpty()) {
-                                    walletOperations.addAll(walletOps);
+                                RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
+                                if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
+                                    walletOperations.addAll(ratingResult.getWalletOperations());
                                 }
 
                             } catch (RatingException e) {

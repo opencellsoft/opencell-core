@@ -9355,4 +9355,42 @@ public class OrderAdvancement extends ModuleScript {
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-5529_20220304" author="TarikFA.">
+	    <addColumn tableName="cpq_invoice_line">
+	    	<column name="discounted_invoice_line" type="bigint"/>
+	    </addColumn>
+	    <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	    						initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA.">
+    	<addColumn tableName="billing_discount_plan_instance">
+    		<column name="service_instance_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-5872_20220322" author="TarikFA.">
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="discounted_wallet_operation_id" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_wallet_operation" constraintName="fk_discount_plan_id_wallet_operation" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+                                 
+		<addColumn tableName="billing_rated_transaction">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_rated_transaction" constraintName="fk_discount_plan_id_rated_transaction" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+                                 
+		<addColumn tableName="cpq_quote_price">
+			<column name="uuid" type="varchar(60)"/>
+		</addColumn>
+                                 
+    </changeSet>
 </databaseChangeLog>
