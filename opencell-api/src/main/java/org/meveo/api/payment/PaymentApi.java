@@ -151,9 +151,6 @@ public class PaymentApi extends BaseApi {
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
-        if (occTemplate.getOccCategory() == OperationCategoryEnum.CREDIT) {
-            throw new BusinessException("The OccCategory must not be of credit type");
-        }
 
         Payment payment = new Payment();
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
