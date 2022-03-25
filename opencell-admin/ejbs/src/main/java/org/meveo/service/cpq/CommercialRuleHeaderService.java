@@ -340,7 +340,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
     			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
-    				boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -358,16 +357,18 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
     					if(result!=null) {
-    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
+    					boolean resultCompareEl=valueCompare(line.getOperator(), line.getSourceAttributeValue(), result);
+    					if (isPreRequisite && !resultCompareEl || !isPreRequisite && resultCompareEl) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompareEl));
     							return false;
-    						}else if (isPreRequisite && resultCompare){
+    						}else if (isPreRequisite && resultCompareEl){
     							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return true;
     						}
     					}
     					break;
     				default:
+    					boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     						return false;
