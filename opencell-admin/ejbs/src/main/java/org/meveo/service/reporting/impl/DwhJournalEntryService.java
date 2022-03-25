@@ -30,10 +30,11 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Sales Transformation service implementation.
- * 
+ * @deprecated since 13
  */
+@Deprecated
 @Stateless
-public class JournalEntryService extends PersistenceService<DwhJournalEntry> {
+public class DwhJournalEntryService extends PersistenceService<DwhJournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
