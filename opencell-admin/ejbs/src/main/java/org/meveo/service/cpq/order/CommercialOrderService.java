@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +36,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -46,6 +48,7 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -195,7 +198,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
-			subscriptionService.activateInstantiatedService(subscription);
+			RatingResult ratingResult = subscriptionService.activateInstantiatedService(subscription);
+
+            discountPlanService.calculateDiscountplanItems(new ArrayList<>(ratingResult.getEligibleFixedDiscountItems()), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), false, null, DiscountPlanTypeEnum.OFFER, null);
 		}
 
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());

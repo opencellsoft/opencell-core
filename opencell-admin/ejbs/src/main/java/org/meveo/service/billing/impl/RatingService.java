@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -359,6 +360,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
         
         if(!isVirtual) {
         	walletOperationService.create(walletOperation);
+        }else {
+        	walletOperation.setUuid(UUID.randomUUID().toString());
         }
     	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         

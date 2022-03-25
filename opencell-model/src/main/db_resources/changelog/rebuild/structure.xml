@@ -9386,6 +9386,7 @@
              <column name="quote_offer_id" type="bigint" />
      		<column name="quantity" type="numeric(19,2)"/>
      		<column name="discounted_quote_price" type="bigint"/>
+			<column name="uuid" type="varchar(60)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">

@@ -18,7 +18,9 @@
 package org.meveo.model.rating;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -46,7 +48,7 @@ public class RatingResult {
      */
     private WalletOperation walletOperation;
     
-    private List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
+    private Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
     
     private List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
 
@@ -92,11 +94,11 @@ public class RatingResult {
         this.walletOperation = walletOperation;
     }
 
-	public List<DiscountPlanItem> getEligibleFixedDiscountItems() {
+	public Set<DiscountPlanItem> getEligibleFixedDiscountItems() {
 		return eligibleFixedDiscountItems;
 	}
 
-	public void setEligibleFixedDiscountItems(List<DiscountPlanItem> eligibleFixedDiscountItems) {
+	public void setEligibleFixedDiscountItems(Set<DiscountPlanItem> eligibleFixedDiscountItems) {
 		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
 	}
 	

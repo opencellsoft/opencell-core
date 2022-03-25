@@ -437,8 +437,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
      */
-    public void serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
-        serviceActivation(serviceInstance, true);
+    public RatingResult serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
+        return serviceActivation(serviceInstance, true);
     }
 
     /**
@@ -454,7 +454,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public RatingResult serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
         List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
 
@@ -564,9 +564,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         if(ratingResult != null) {
         	//TODO : v12 & dev change new Date() with delivered != null
+        	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
             discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
-            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, serviceInstance.getCode(), false, null, DiscountPlanTypeEnum.PRODUCT);
+            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, DiscountPlanTypeEnum.PRODUCT, null);
         }
+        return ratingResult;
     }
 
     @Inject

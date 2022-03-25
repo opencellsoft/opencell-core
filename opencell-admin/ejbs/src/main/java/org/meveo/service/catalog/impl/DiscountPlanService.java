@@ -206,13 +206,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	return calculateDiscountplanItems(discountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
     										walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
-    										walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, DiscountPlanTypeEnum.PRODUCT);
+    										walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, DiscountPlanTypeEnum.PRODUCT, walletOperation);
     	
     }
     
     public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
     										BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
-    										ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, DiscountPlanTypeEnum discountPlanTypeEnum) {
+    										ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, DiscountPlanTypeEnum discountPlanTypeEnum, WalletOperation walletOperation) {
     	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
     	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
 			 WalletOperation discountWalletOperation = null;
@@ -269,8 +269,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setDescription(discountDescription);
 	                discountWalletOperation.setChargeInstance(chargeInstance);
 	                discountWalletOperation.setInputQuantity(quantity);
-	                if(!isVirtual)
+	                if(!isVirtual) {
+	                	if(walletOperation != null && walletOperation.getId() != null)
+	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
 	                	walletOperationService.create(discountWalletOperation);
+	                }else if(walletOperation != null) {
+	                	discountWalletOperation.setUuid(walletOperation.getUuid());
+	                }
 	                //TODO: must have wallet operation for : link discountWallet to the current wallet, and
 	                discountWalletOperations.add(discountWalletOperation);
 			}

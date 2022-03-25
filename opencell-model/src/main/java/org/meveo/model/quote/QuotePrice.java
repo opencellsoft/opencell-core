@@ -130,6 +130,10 @@ public class QuotePrice extends AuditableEntity {
 	@JoinColumn(name = "discounted_quote_price")
 	private QuotePrice discountedQuotePrice;
 	
+
+	@Column(name = "uuid")
+	private String uuid;
+	
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
@@ -272,6 +276,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setDiscountedQuotePrice(QuotePrice discountedQuotePrice) {
 		this.discountedQuotePrice = discountedQuotePrice;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	
