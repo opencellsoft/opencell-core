@@ -57,7 +57,7 @@ import org.meveo.model.billing.AccountingCode;
 @Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = { "origin_id", "invoice_number", "accounting_code_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
-public class JournalEntry implements IEntity, IJPAVersionedEntity {
+public class DwhJournalEntry implements IEntity, IJPAVersionedEntity {
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 

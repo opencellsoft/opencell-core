@@ -9559,5 +9559,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='FILE_ACCOUNTING_SCHEMES'</where>
 		</update>
 	</changeSet>
+	<changeSet id="#INTRD-5888_2022-03_23" author="hichamELHALOUI" >
+
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="$US"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=49</where>
+		</update>
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="€"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=5</where>
+		</update>
+    </changeSet>
 
 </databaseChangeLog>
