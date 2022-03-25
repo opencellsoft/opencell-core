@@ -8118,6 +8118,21 @@ Opencell team.
 		</insert>
 	</changeSet>
 
+	<changeSet id="INTRD-5669_20220324" author="HichamHANINE">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="UTILS" />
+			<column name="job_template" value="AutoUpdateCurrentRateJob" />
+			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+		</insert>
+	</changeSet>
+	
 	<changeSet id="INTRD-3678_20211214" author="AmineBENAICHA">
 		<update tableName="meveo_script_instance">
 			<column name="script">
