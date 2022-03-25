@@ -9764,7 +9764,21 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-    
+	<changeSet id="INTRD-5669_20220324" author="HichamHANINE">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="UTILS" />
+			<column name="job_template" value="AutoUpdateCurrentRateJob" />
+			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+		</insert>
+	</changeSet>
+
     <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
         <insert tableName="crm_custom_field_tmpl_val">
             <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
@@ -9803,6 +9817,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
+
+	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
 
 	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
 		<insert tableName="meveo_script_instance">

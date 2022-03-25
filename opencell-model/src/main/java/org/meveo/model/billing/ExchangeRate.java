@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,6 +23,9 @@ import org.meveo.model.EnableEntity;
 @Table(name = "exchange_rate")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "exchange_rate_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "ExchangeRate.getAllTradingCurrencyWithCurrentRate", query = "SELECT s.id FROM ExchangeRate s WHERE s.fromDate =:sysDate and isCurrentRate=false")
+})
 public class ExchangeRate extends EnableEntity {
     private static final long serialVersionUID = 1L;
     public static final int NB_DECIMALS = 6;

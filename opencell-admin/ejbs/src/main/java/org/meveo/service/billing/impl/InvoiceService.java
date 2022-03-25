@@ -4791,6 +4791,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         setInitialCollectionDate(invoice, billingAccount.getBillingCycle(), null);
         invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setStatus(InvoiceStatusEnum.NEW);
+        invoice.setAmountWithoutTaxBeforeDiscount(BigDecimal.ZERO);
         return invoice;
     }
 
@@ -5468,6 +5469,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
+        if(invoice.getDiscountAmount().compareTo(BigDecimal.ZERO) == 0) {
+            invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
+        }
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
