@@ -9588,4 +9588,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
     </changeSet>
 
+	<changeSet id="#INTRD-5831_20220325" author="aelmalki">
+		<sql>UPDATE ar_occ_template occ SET contra_accounting_code_id = (SELECT ac.id FROM billing_accounting_code ac WHERE ac.code=occ.account_code_client_side) WHERE occ.contra_accounting_code_id IS NULL</sql>
+	</changeSet>
+
 </databaseChangeLog>

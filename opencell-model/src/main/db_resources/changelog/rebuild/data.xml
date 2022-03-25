@@ -9817,6 +9817,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
+
+	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
