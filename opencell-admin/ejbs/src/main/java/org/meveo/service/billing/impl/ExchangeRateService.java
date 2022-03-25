@@ -3,10 +3,8 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.exception.MeveoApiException;
