@@ -1447,6 +1447,7 @@ public class CpqQuoteApi extends BaseApi {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
         BillingAccount billingAccount = null;
+        AccountingArticle usageArticle =null;
         Set<AccountingArticle> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
                 .stream()
                 .filter(articleLine -> articleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
@@ -1526,8 +1527,6 @@ public class CpqQuoteApi extends BaseApi {
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
                     if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
                         UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                        AccountingArticle usageArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargetemplate, attributes)
-                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate()));
                         if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
                             edr = new EDR();
                             try {
@@ -1566,8 +1565,12 @@ public class CpqQuoteApi extends BaseApi {
 
                                     if (walletOperationsFromEdr != null) {
                                         for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                            walletOperation.setAccountingArticle(usageArticle);
-                                            walletOperations.addAll(walletOperationsFromEdr);
+                                        	if(walletOperation.getAccountingArticle()==null) {
+                                        		  usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+                                                  if (usageArticle==null) new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+                                           walletOperation.setAccountingArticle(usageArticle);
+                                        	}
+                                            walletOperations.add(walletOperation);
                                         }
                                     }
                                 }
