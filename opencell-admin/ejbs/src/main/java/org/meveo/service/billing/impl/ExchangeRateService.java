@@ -60,4 +60,5 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         create(exchangeRate);
         return exchangeRate;
     }
+    
 }
