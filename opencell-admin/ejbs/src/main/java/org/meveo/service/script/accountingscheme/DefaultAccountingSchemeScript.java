@@ -1,6 +1,5 @@
 package org.meveo.service.script.accountingscheme;
 
-import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.payments.AccountOperation;
@@ -16,11 +15,12 @@ import java.util.Map;
 
 public class DefaultAccountingSchemeScript extends Script {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(DefaultAccountingSchemeScript.class);
 
-    private JournalEntryService journalEntryService = (JournalEntryService) getServiceInterface(JournalEntryService.class.getSimpleName());
-    private OCCTemplateService occTemplateService = (OCCTemplateService) getServiceInterface(OCCTemplateService.class.getSimpleName());
+    JournalEntryService journalEntryService = (JournalEntryService) getServiceInterface(JournalEntryService.class.getSimpleName());
+    OCCTemplateService occTemplateService = (OCCTemplateService) getServiceInterface(OCCTemplateService.class.getSimpleName());
 
+    @Override
     public void execute(Map<String, Object> context) throws BusinessException {
         log.info("EXECUTE context {}", context);
 
@@ -34,7 +34,7 @@ public class DefaultAccountingSchemeScript extends Script {
         log.info("Process AccountOperation {}", ao);
 
         // Get OCCTemplate by AccountOperation code
-        OCCTemplate occT = (OCCTemplate) Hibernate.unproxy(occTemplateService.findByCode(ao.getCode()));
+        OCCTemplate occT = occTemplateService.findByCode(ao.getCode());
 
         if (occT == null) {
             log.warn("No OCCTemplate found for AccountingOperation [id={}]", ao.getId());
