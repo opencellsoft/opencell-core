@@ -973,7 +973,6 @@ public class ProductApi extends BaseApi {
                         }
                         attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
-                        //processReplacementRules(attributeCommercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                         attributeDto.setSelectable(isSelectable);
 						Optional<SelectedAttributes> selectedAttribute = productSourceSelectedAttributes.stream()
 								.filter(selectedAttributes -> selectedAttributes.match(offerProduct.getOfferTemplateCode(), offerProduct.getProduct().getCode()))
@@ -999,7 +998,6 @@ public class ProductApi extends BaseApi {
                         }
                         groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
-                        //processReplacementRules(groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(), null);
                         groupedAttributeDTO.setSelectable(isSelectable);
                     }
                     List<Long> sourceGroupedAttributeRules = commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
@@ -1019,8 +1017,7 @@ public class ProductApi extends BaseApi {
                 }
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                 boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), rule -> true);
-                //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
-				attributeDto.setSelectable(isSelectable);
+                attributeDto.setSelectable(isSelectable);
 				replacementRulesExecutor.executeReplacements(offerSourceSelectedAttributes, productSourceSelectedAttributes, commercialRules);
                 if(offerSourceSelectedAttributes.getSelectedAttributesMap() != null){
 					attributeDto.setAssignedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getCode()));
@@ -1034,23 +1031,6 @@ public class ProductApi extends BaseApi {
 
         result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
         return result;
-    }
-
-    private void processReplacementRules(List<CommercialRuleHeader> commercialRules, List<ProductContextDTO> selectedProducts, AttributeDTO attributeDto) {
-        List<Map<String, Object>> overriddenAttributes = commercialRules.stream()
-                .filter(r -> RuleTypeEnum.REPLACEMENT.equals(r.getRuleType()))
-                .map(
-                        rule -> commercialRuleHeaderService.replacementProcess(rule, selectedProducts)
-                )
-                .collect(Collectors.toList());
-        if(attributeDto != null) {
-            Optional<Map<String, Object>> overriddenAttribute = overriddenAttributes.stream()
-                    .filter(
-                            attributeValue -> attributeValue.get(attributeDto.getCode()) != null
-                    )
-                    .findAny();
-            overriddenAttribute.ifPresent(stringObjectMap -> attributeDto.setDefaultValue(stringObjectMap.get(attributeDto.getCode()) + ""));
-        }
     }
 
 }
