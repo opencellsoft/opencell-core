@@ -54,6 +54,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -94,6 +95,7 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -167,6 +169,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private MinAmountService minAmountService;
+	@Inject
+	private AccountingArticleService accountingArticleService;
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -1652,7 +1656,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
 		ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
 
-		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date());
+    	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date(), accountingArticle);
 		TaxClass taxClass = taxInfo.taxClass;
 
 		final BigDecimal taxPercent = taxInfo.tax.getPercent();
@@ -1666,6 +1671,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
 				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
 				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL,chargeInstance);
+		rt.setAccountingArticle(accountingArticle);
 		create(rt);
 		return rt;
 	}

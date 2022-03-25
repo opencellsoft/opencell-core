@@ -199,8 +199,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return ratingResult;
         }
 
-        chargeWalletOperation(walletOperation);
-        
+        chargeWalletOperation(walletOperation);        
 
         OneShotChargeTemplate oneShotChargeTemplate = null;
 
@@ -696,7 +695,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, firstChargeCounterPeriod);
         }
         if(ratingResult != null) {
-        	ratingResult.setWalletOperations(walletOperations);
+        	ratingResult.getWalletOperations().addAll(walletOperations);
         }
         
         return ratingResult;

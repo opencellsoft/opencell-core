@@ -50,6 +50,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -187,6 +188,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanItemService discountPlanItemService;
+    @Inject
+    private AccountingArticleService accountingArticleService;
 
     /**
      * @param level level enum
@@ -356,8 +359,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
         
         if(!isVirtual) {
         	walletOperationService.create(walletOperation);
-        	applyDiscount(ratedEDRResult, walletOperation);
         }
+    	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
 
@@ -544,11 +547,13 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
+    
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency)
             throws BusinessException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-
+    	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+    	bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -573,7 +578,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
             if (bareWalletOperation.getTax() == null) {
 
-                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate());
+                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate(), accountingArticle);
                 if(taxInfo==null) {
                 	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
                 }
@@ -1440,7 +1445,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
     
 
-    public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation) {
+    public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation, boolean isVirtual) {
     	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
     	List<DiscountPlanInstance> discountPlanInstances = new ArrayList<DiscountPlanInstance>();
     	if(chargeInstance.getServiceInstance() != null) {
@@ -1451,7 +1456,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     	}
         if(discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
      	   for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
-     		   discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE);
+     		  ratingResult.getWalletOperations().addAll(discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE, isVirtual));
      		   ratingResult.getEligibleFixedDiscountItems().addAll(
      				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(),  discountPlanInstance.getDiscountPlan(), 
      				   																												walletOperation, null, null, null, walletOperation.getAccountingArticle(),

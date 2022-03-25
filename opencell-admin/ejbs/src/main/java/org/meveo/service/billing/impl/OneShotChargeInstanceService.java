@@ -363,7 +363,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException business exception.
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity) throws BusinessException, RatingException {
+    public RatingResult oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity) throws BusinessException, RatingException {
 
         log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(), subscription.getOffer().getCode(),
             oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
@@ -381,7 +381,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             ChargeApplicationModeEnum.SUBSCRIPTION);
 
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-        return ratinResult.getWalletOperation();
+        return ratinResult;
     }
 
     @SuppressWarnings("unchecked")

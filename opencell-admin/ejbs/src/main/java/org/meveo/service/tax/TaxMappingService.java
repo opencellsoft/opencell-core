@@ -215,7 +215,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws BusinessException General business exception
      */
     
-    public TaxInfo determineTax(ChargeInstance chargeInstance, Date date) throws BusinessException {
+    public TaxInfo determineTax(ChargeInstance chargeInstance, Date date, AccountingArticle accountingArticle) throws BusinessException {
 
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
         if (taxClass == null) {
@@ -226,7 +226,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 taxClass = chargeInstance.getChargeTemplate().getTaxClass();
             }
             if(taxClass==null) {
-            	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
             	if(accountingArticle!=null) {
             		taxClass=accountingArticle.getTaxClass();
             	}else {

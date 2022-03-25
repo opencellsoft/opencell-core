@@ -100,10 +100,6 @@ public class RatingResult {
 		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
 	}
 	
-	public void addEligibleFixedDiscountItems(DiscountPlanItem discountPlanItem) {
-		this.getEligibleFixedDiscountItems().add(discountPlanItem);
-	}
-
 	public List<WalletOperation> getWalletOperations() {
 		return walletOperations;
 	}

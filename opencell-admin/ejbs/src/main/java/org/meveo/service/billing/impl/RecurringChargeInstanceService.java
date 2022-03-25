@@ -293,7 +293,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
 
         List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
-        RatingResult ratingResultReturn = null;
+        RatingResult  ratingResult = null;
         boolean chargeWasUpdated = false;
         boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(recurringChargeInstance) || isVirtual;
 
@@ -346,10 +346,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
-            	RatingResult  ratingResult = walletOperationService.applyReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual);
+            	ratingResult = walletOperationService.applyReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual);
             	if(ratingResult == null) continue;
                 List<WalletOperation> wos = ratingResult.getWalletOperations();
-                
                 walletOperations.addAll(wos);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
@@ -387,11 +386,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     revenueRecognitionScriptService.createRevenueSchedule(recurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), recurringChargeInstance);
                 }
             }
-            if(!walletOperations.isEmpty()) {
-            	ratingResultReturn = new RatingResult();
-            	ratingResultReturn.setWalletOperations(walletOperations);
+            if(ratingResult == null) {
+            	ratingResult = new RatingResult();
+            	ratingResult.getWalletOperations().addAll(walletOperations);
             }
-            return ratingResultReturn;
+            return ratingResult;
 
         } catch (Exception e) {
             rejectededChargeProducer.fire("RecurringCharge rejected " + recurringChargeInstance.getId());
