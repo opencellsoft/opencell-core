@@ -25,6 +25,7 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
@@ -34,6 +35,7 @@ import org.meveo.util.ApplicationProvider;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Edward P. Legaspi
@@ -163,8 +165,17 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
     @Override
-    public ActionStatus addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
-        return currencyApi.addExchangeRate(postData);
+    public Response addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            Long idEntity = currencyApi.addExchangeRate(postData);
+            result.setEntityId(idEntity);
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        } catch (Exception e) {
+            processException(e, result);
+        } 
+        return Response.ok(result).build();
     }
 
     @Override
