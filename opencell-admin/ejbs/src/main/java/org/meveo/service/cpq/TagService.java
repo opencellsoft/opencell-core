@@ -90,10 +90,10 @@ public class TagService extends BusinessService<Tag> {
  
 	
 	 @SuppressWarnings("unchecked")
-	    public List<Tag> findByRequestedTagType(List<String> requestedTagType) { 
-		 List<Tag> tags=new ArrayList<Tag>();
+	    public List<String> findByRequestedTagType(List<String> requestedTagType) { 
+		 List<String> tags=new ArrayList<String>();
 	    	try {
-	    		tags = (List<Tag>)getEntityManager().createNamedQuery("Tag.findByRequestedTagType").setParameter("requestedTagType", requestedTagType).getResultList();
+	    		tags = (List<String>)getEntityManager().createNamedQuery("Tag.findByRequestedTagType").setParameter("requestedTagType", requestedTagType).getResultList();
 	    	} catch (Exception e) {
 	    		e.printStackTrace();
 	    		log.error("findByCriteria error ", e.getMessage());

@@ -409,6 +409,8 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @JoinColumn(name = "order_offer_id",referencedColumnName = "id")
     private OrderOffer orderOffer;
     
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -1151,6 +1153,23 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
 	}
+
+	public List<AttributeInstance> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+	
+	public void addAttributeInstance(AttributeInstance attributeInstance) {
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		if(attributeInstance!=null) {
+			attributeInstances.add(attributeInstance);
+		}
+
+	}
+	
 	
 	
 	

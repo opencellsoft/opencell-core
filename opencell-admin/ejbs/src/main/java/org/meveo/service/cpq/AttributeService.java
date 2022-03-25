@@ -57,7 +57,7 @@ public class AttributeService extends BusinessService<Attribute>{
 		if(resultType == null) {
 			resultType = (Class<T>) String.class;
 		}
-		 T res = params.isEmpty() ? null : evaluateExpression(expression, params, resultType);
+		 T res = evaluateExpression(expression, params, resultType);
         try {
            return  res;
         } catch (Exception e) {

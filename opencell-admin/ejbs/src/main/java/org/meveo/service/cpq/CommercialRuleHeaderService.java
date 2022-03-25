@@ -1,32 +1,7 @@
 package org.meveo.service.cpq;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.ProductContextDTO;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.GroupedAttributes;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.enums.OperatorEnum;
-import org.meveo.model.cpq.enums.RuleTypeEnum;
-import org.meveo.model.cpq.enums.ScopeTypeEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.cpq.trade.CommercialRuleHeader;
-import org.meveo.model.cpq.trade.CommercialRuleItem;
-import org.meveo.model.cpq.trade.CommercialRuleLine;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
+import static java.util.Collections.singletonList;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Query;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -40,7 +15,35 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonList;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.enums.OperatorEnum;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
+import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.enums.ScopeTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleItem;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 
 /**
  * @author Tarik FAKHOURI.
@@ -284,7 +287,48 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return isSelectedAttribute;
     }
     
-    
+    private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
+    	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
+    		
+    		switch(operator) {
+    		case EQUAL:
+    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))==0) {
+    					 return true;
+    				 }
+    			}
+    			if (convertedValue.equals(sourceAttributeValue))
+    				return true;
+    			break;
+    		case NOT_EQUAL:
+    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+   				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
+   					 return true;
+   				 }
+   			    }
+    			if (!convertedValue.equals(sourceAttributeValue))
+    				return true;
+    			break;
+    		case LESS_THAN:
+    			if (Double.valueOf(convertedValue)<Double.valueOf(sourceAttributeValue))
+    				return true;
+    			break;
+    		case LESS_THAN_OR_EQUAL:
+    			if (Double.valueOf(convertedValue)<=Double.valueOf(sourceAttributeValue))
+    				return true;
+    			break;
+    		case GREATER_THAN:
+    			if (Double.valueOf(convertedValue)>Double.valueOf(sourceAttributeValue))
+    				return true;	
+    			break;
+
+    		case GREATER_THAN_OR_EQUAL:
+    			if (Double.valueOf(convertedValue)>=Double.valueOf(sourceAttributeValue))
+    				return true;	 
+    		}
+    	}
+    	return false;
+    }
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
     	boolean isSelected=!isPreRequisite;
     	if(line.getSourceAttribute()==null) {
@@ -295,7 +339,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			String attributeCode = entry.getKey();
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
-    			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+    			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -312,21 +356,23 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				case EXPRESSION_LANGUAGE:
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
-    					if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
-    							|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, result.equals(line.getSourceAttributeValue())));
+    					if(result!=null) {
+    					boolean resultCompareEl=valueCompare(line.getOperator(), line.getSourceAttributeValue(), result);
+    					if (isPreRequisite && !resultCompareEl || !isPreRequisite && resultCompareEl) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompareEl));
     							return false;
-    						}else if (isPreRequisite && result.equals(line.getSourceAttributeValue())){
+    						}else if (isPreRequisite && resultCompareEl){
     							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return true;
     						}
+    					}
     					break;
     				default:
-    					if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
-    							|| !isPreRequisite && (convertedValue.equals(line.getSourceAttributeValue()))) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, convertedValue.equals(line.getSourceAttributeValue())));
+    					boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
+    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     						return false;
-    					}else if (isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())){
+    					}else if (isPreRequisite && resultCompare){
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     						return true;
     					}
@@ -349,7 +395,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                 .stream()
                 .filter(commercialRuleHeader -> !commercialRuleHeader.isDisabled())
                 .filter(commercialRuleHeader -> RuleTypeEnum.REPLACEMENT.equals(commercialRuleHeader.getRuleType()))
-                .filter(commercialRuleHeader -> commercialRuleHeader.getScopeType() == ScopeTypeEnum.QUOTE)
                 .collect(Collectors.toList());
         productRules.stream()
                 .forEach(
@@ -372,13 +417,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         }
 
                                         List<QuoteOffer> quoteOffers = isOfferScope(commercialRuleHeader.getScopeType()) ? singletonList(quoteProduct.getQuoteOffer()) : quoteVersion.getQuoteOffers();
-                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialRuleLines.get(0), commercialRuleHeader.getCode());
-                                    } else if(commercialRuleHeader.getTargetAttributeValue() != null){
-                                        overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeader.getCode());
+                                        for (CommercialRuleLine commercialLine : commercialRuleLines) {
+                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialLine, commercialRuleHeader.getCode());
+                                        }
                                     }
 
-                                }else if(commercialRuleHeader.getTargetAttributeValue() != null){
-                                    overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeader.getCode());
                                 }
                             }
                         }
@@ -415,48 +458,62 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     private void processReplacement(List<QuoteOffer> quoteOffers, QuoteAttribute attributeToReplace, CommercialRuleLine commercialRuleLine, String commercialRuleHeaderCode) {
-        if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() == null) {
-            Optional<QuoteOffer> sourceOffer = quoteOffers.stream()
-                    .filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
-                    .findFirst();
-            if (sourceOffer.isPresent()) {
-                Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
-                        .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()))
-                        .findFirst();
-                if (sourceOfferAttribute.isPresent()) {
-                    updateQuoteAttribute(attributeToReplace, sourceOfferAttribute);
-                }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                    overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-                }
-            }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-            }
-        } else if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() != null){
-            Optional<QuoteOffer> sourceOffer = quoteOffers
-                    .stream()
-                    .filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
-                    .findFirst();
-            if(sourceOffer.isPresent()){
-                sourceOffer.get().getQuoteProduct()
-                        .stream()
-                        .filter(product -> product.getProductVersion().getProduct().getId().equals(commercialRuleLine.getSourceProduct().getId()))
-                        .forEach(
-                                product -> {
-                                    Optional<QuoteAttribute> sourceProductAttribute = product.getQuoteAttributes().stream()
-                                            .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()))
-                                            .findFirst();
-                                    if (sourceProductAttribute.isPresent()){
-                                        updateQuoteAttribute(attributeToReplace, sourceProductAttribute);
-                                    }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                                        overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-                                    }
-                                }
-                        );
-            } else if(commercialRuleLine.getSourceAttributeValue() != null){
-                overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-            }
+    	CommercialRuleHeader commercialRuleHeader = commercialRuleLine.getCommercialRuleItem().getCommercialRuleHeader();
+    	if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() == null) {
+    		Optional<QuoteOffer> sourceOffer = quoteOffers.stream()
+    				.filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
+    				.findFirst();
+    		if (sourceOffer.isPresent()) {
+    			Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
+    					.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) 
+    							&& valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
+    									String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    					.findFirst();
+    			if (sourceOfferAttribute.isPresent()) {
+    				if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    					overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    				}
+    				else {
+    					updateQuoteAttribute(attributeToReplace, sourceOfferAttribute);
+    				}
+    			}	
+    		}
+    	} else if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() != null){
+    		Optional<QuoteOffer> sourceOffer = quoteOffers
+    				.stream()
+    				.filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
+    				.findFirst();
+    		if(sourceOffer.isPresent()){
+    			Optional<QuoteProduct> quoteProduct=
+    					sourceOffer.get().getQuoteProduct()
+    					.stream()
+    					.filter(product -> product.getProductVersion().getProduct().getId().equals(commercialRuleLine.getSourceProduct().getId()))
+    					.findFirst();
+    			if(quoteProduct.isPresent()) {
+    				if(commercialRuleLine.getSourceAttribute()==null) {
+    					if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    						overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    					} 
+    				}else {
+    					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
+    							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) &&  
+    									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
+    											String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    							.findFirst();
+    					if (quoteAttributes.isPresent()) {
+    						if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    							overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    						}
+    						else {
+    							updateQuoteAttribute(attributeToReplace, quoteAttributes);
+    						}
+    					}   
+    				}
+    			}
 
-        }
+    		} 
+
+    	}
     }
 
     private void overrideBySourceAttributeValue(QuoteAttribute quoteAttributeToUpdate, String sourceAttributeValue, String commercialRuleCode) {
@@ -476,6 +533,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             case LIST_MULTIPLE_TEXT:
             case LIST_TEXT:
             case EXPRESSION_LANGUAGE:
+            case BOOLEAN:	
             case TEXT:
                 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
@@ -486,46 +544,18 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                     log.error("can not override quote value of type date, date parsing error: commercial rule: " + commercialRuleCode, e);
                 }
                 break;
+            default:
+            	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
+                 break;
         }
     }
-
+    
     private void updateQuoteAttribute(QuoteAttribute attributeToReplace, Optional<QuoteAttribute> sourceOfferAttribute) {
         attributeToReplace.setStringValue(sourceOfferAttribute.get().getStringValue());
         attributeToReplace.setDoubleValue(sourceOfferAttribute.get().getDoubleValue());
         attributeToReplace.setDateValue(sourceOfferAttribute.get().getDateValue());
         quoteAttributeService.update(attributeToReplace);
-    }
-
-    public Map<String, Object> replacementProcess(CommercialRuleHeader commercialRule, List<ProductContextDTO> selectedProducts) {
-        List<CommercialRuleItem> items = null;
-        List<CommercialRuleLine> lines = null;
-        CommercialRuleItem item = null;
-        CommercialRuleLine line = null;
-
-
-        items = commercialRule.getCommercialRuleItems();
-        if (!items.isEmpty()) {
-            if (items.size() > 1) {
-                log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one item");
-            }
-            item = items.get(0);
-            lines = item.getCommercialRuleLines();
-            if (!lines.isEmpty()) {
-                if (lines.size() > 1) {
-                    log.warn("the replacement commercial rule " + commercialRule.getCode() + " has more than one source line");
-                }
-                line = lines.get(0);
-                OfferTemplate sourceOfferTemplate = line.getSourceOfferTemplate();
-                Product sourceProduct = line.getSourceProduct();
-                Attribute sourceAttribute = line.getSourceAttribute();
-                return replaceProductAttribute(selectedProducts, sourceAttribute, line.getSourceAttributeValue(), sourceProduct.getCode());
-
-            }
-        } else {
-            return replaceProductAttribute(selectedProducts, commercialRule.getTargetAttribute(), commercialRule.getTargetAttributeValue(), commercialRule.getTargetProduct().getCode());
-        }
-        return null;
-    }
+    } 
 
     private Map<String, Object> replaceProductAttribute(List<ProductContextDTO> selectedProducts, Attribute sourceAttribute, String sourceAttributeValue, String sourceCode) {
         Map<String, Object> overriddenAttributes = new HashMap<>();

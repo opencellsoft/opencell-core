@@ -488,6 +488,7 @@ public class CpqQuoteApi extends BaseApi {
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
             quoteAttribute.setQuoteProduct(quoteProduct);
+            quoteAttribute.setQuoteOffer(quoteProduct.getQuoteOffer());
         }
         quoteAttribute.updateAudit(currentUser);
         if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
@@ -1175,9 +1176,11 @@ public class CpqQuoteApi extends BaseApi {
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
         //get quote discountPlanitem of type percentage
         if(quoteVersion.getDiscountPlan()!=null) {
-        	
         	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, null,DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate()));
         }
+        //calculate totalQuoteAttribute
+         calculateTotalAttributes (quoteVersion);
+        
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer,applicablePercentageDiscountItems));
         }
@@ -1463,6 +1466,7 @@ public class CpqQuoteApi extends BaseApi {
         List<WalletOperation> walletOperations = new ArrayList<>();
         Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
         BillingAccount billingAccount = null;
+        AccountingArticle usageArticle =null;
         Set<AccountingArticle> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
                 .stream()
                 .filter(articleLine -> articleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
@@ -1538,8 +1542,6 @@ public class CpqQuoteApi extends BaseApi {
                 for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
                     if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
                         UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                        AccountingArticle usageArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), chargetemplate, attributes)
-                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate()));
                         if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
                             edr = new EDR();
                             try {
@@ -1578,13 +1580,18 @@ public class CpqQuoteApi extends BaseApi {
 
                                     if (walletOperationsFromEdr != null) {
                                         for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                            walletOperation.setAccountingArticle(usageArticle);
-                                            walletOperations.addAll(walletOperationsFromEdr);
+                                        	if(walletOperation.getAccountingArticle()==null) {
+                                        		  usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+                                                  if (usageArticle==null) new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+                                           walletOperation.setAccountingArticle(usageArticle);
+                                        	}
+                                            walletOperations.add(walletOperation);
                                         }
                                     }
+                                    break;
                                 }
 
-
+                               
                             } catch (RatingException e) {
                                 log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
                                 throw new BusinessApiException(e.getMessage());
@@ -2006,6 +2013,26 @@ public class CpqQuoteApi extends BaseApi {
                     });
                 });
     }
+    
+ 
+    private void calculateTotalAttributes (QuoteVersion quoteVersion) {
+    	List<QuoteAttribute>totalQuoteAttributes=quoteAttributeService.findByQuoteVersionAndTotaltype(quoteVersion.getId());
+    	log.info("totalQuoteAttributes size{},"+totalQuoteAttributes.size());
+    	Double sumTotalAttribute=0.0;
+    	for(QuoteAttribute quoteAttribute: totalQuoteAttributes) {
+    		log.info("TotalQuoteAttribute Id={},doubleValue={}",quoteAttribute.getId(),quoteAttribute.getDoubleValue());
+    	for(Attribute attribute : quoteAttribute.getAttribute().getAssignedAttributes()) {
+    		log.info("assigned attribute code={}",attribute.getCode());
+    		Double totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
+    		log.info("Sum doubleValue={}",totalSum);
+    		sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
+    	}
+    	quoteAttribute.setDoubleValue(sumTotalAttribute);
+    	quoteAttributeService.update(quoteAttribute);
+    	}
+
+
+    	}
     
   
 }

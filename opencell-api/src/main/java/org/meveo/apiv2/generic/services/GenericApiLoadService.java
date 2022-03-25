@@ -1,20 +1,20 @@
 package org.meveo.apiv2.generic.services;
 
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.apiv2.GenericOpencellRestful;
-import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
-import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
-import org.meveo.model.IEntity;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
-import static org.meveo.apiv2.generic.ValidationUtils.checkRecords;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.apiv2.GenericOpencellRestful;
+import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
+import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
+import org.meveo.model.IEntity;
 
 @Stateless
 public class GenericApiLoadService {
@@ -27,10 +27,11 @@ public class GenericApiLoadService {
         SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
 
         ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
-                .data(checkRecords(searchResult.getEntityList(), entityClass.getSimpleName()))
+                    .data(searchResult.getEntityList())
                 .limit(Long.valueOf(searchConfig.getNumberOfRows()))
                 .offset(Long.valueOf(searchConfig.getFirstRow()))
                 .total(searchResult.getCount())
+                    .filters(searchConfig.getFilters())
                 .build();
         return JsonGenericMapper.Builder.getBuilder()
                 .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())

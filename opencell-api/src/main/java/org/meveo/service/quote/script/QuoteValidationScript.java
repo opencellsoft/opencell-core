@@ -180,6 +180,10 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
 		offer.setQuoteOffer(quoteOffer);
 		orderOfferService.create(offer);
+		LOGGER.info("quoteOffer.getQuoteAttributes() size{}",quoteOffer.getQuoteAttributes().size());
+		quoteOffer.getQuoteAttributes().forEach(quoteAttribute -> {
+			processOrderAttribute(quoteAttribute, order, offer,null);
+		});
 		return offer;
 	}
 	
@@ -196,7 +200,7 @@ public class QuoteValidationScript extends ModuleScript {
 		orderProductService.create(orderProduct);
 		
 		product.getQuoteAttributes().forEach(quoteAttribute -> {
-			processOrderAttribute(quoteAttribute, commercialOrder, orderLot, orderProduct);
+			processOrderAttribute(quoteAttribute, commercialOrder, orderOffer, orderProduct);
 		});
 		
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
@@ -208,12 +212,13 @@ public class QuoteValidationScript extends ModuleScript {
 		return orderProduct;
 	}
 	
-	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
+	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderOffer orderOffer, OrderProduct orderProduct) {
 		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
 		orderAttribute.setCommercialOrder(commercialOrder);
-		orderAttribute.setOrderLot(orderLot);
+		orderAttribute.setOrderOffer(orderOffer);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);
+		LOGGER.info("processordeer attribute code{}",quoteAttribute.getAttribute().getCode());
 		orderAttributeService.create(orderAttribute);
 	}
 	

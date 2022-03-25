@@ -37,6 +37,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -189,6 +190,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 			subscription.setOrder(order);
 			subscription.setOrderOffer(offer);
+			processSubscriptionAttributes(subscription,offer.getOfferTemplate(),offer.getOrderAttributes());
 			subscriptionService.create(subscription);
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
@@ -273,15 +275,26 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}else {
 				attributeInstance=instantiatedAttributes.get(attribute.getCode());
 			}
+			//set default value if value is null
 			if(!StringUtils.isBlank(attribute.getDefaultValue())){
 				switch (attribute.getAttributeType()) {
 				case BOOLEAN:
 					if(attributeInstance.getStringValue()==null)
 						attributeInstance.setStringValue(attribute.getDefaultValue());
-					break;
-				case NUMERIC:
+					break;	
+				case TOTAL :
+				case COUNT :
+				case NUMERIC :
+				case INTEGER:
 					if(attributeInstance.getDoubleValue()==null)
 						attributeInstance.setDoubleValue(Double.valueOf(attribute.getDefaultValue()));
+					break;
+				case LIST_MULTIPLE_TEXT:
+				case LIST_TEXT:
+				case EXPRESSION_LANGUAGE :
+				case TEXT:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
 					break;
 				default:
 					if(attributeInstance.getStringValue()==null)
@@ -318,6 +331,61 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			return serviceInstance;
 	}
 
+	public void processSubscriptionAttributes(Subscription subscription,OfferTemplate offer,List<OrderAttribute> orderAttributes) {
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		
+		for (OrderAttribute orderAttribute : orderAttributes) {
+			if(orderAttribute.getAttribute()!=null && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType()) ) {
+			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser); 
+			attributeInstance.setSubscription(subscription);
+			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+			}
+		}
+		//add missing attribute instances
+		AttributeInstance attributeInstance=null;
+		for(Attribute attribute:offer.getAttributes()) {
+			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+				attributeInstance = new AttributeInstance(currentUser);
+				attributeInstance.setAttribute(attribute);
+				attributeInstance.setSubscription(subscription);
+			
+			}else {
+				attributeInstance=instantiatedAttributes.get(attribute.getCode());
+			}
+			//set default value if value is null
+			if(!StringUtils.isBlank(attribute.getDefaultValue())){
+				switch (attribute.getAttributeType()) {
+				case BOOLEAN:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
+					break;	
+				case TOTAL :
+				case COUNT :
+				case NUMERIC :
+				case INTEGER:
+					if(attributeInstance.getDoubleValue()==null)
+						attributeInstance.setDoubleValue(Double.valueOf(attribute.getDefaultValue()));
+					break;
+				case LIST_MULTIPLE_TEXT:
+				case LIST_TEXT:
+				case EXPRESSION_LANGUAGE :
+				case TEXT:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
+					break;
+				default:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(attribute.getDefaultValue());
+					break;
+				}
+			}
+			subscription.addAttributeInstance(attributeInstance);
+			
+		}
+		 
+	}
+
+	
 	@Override
 	public CommercialOrder findById(Long id) {
 		CommercialOrder commercialOrder = super.findById(id);

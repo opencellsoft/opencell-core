@@ -740,11 +740,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public GetOfferTemplateResponseDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
             boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
-    	 if (loadTags && requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
-         	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
-         	offerTemplate.setTags(tags);
-         }
-    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true,true);
+    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,loadTags,true);
        
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
@@ -938,6 +934,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 		}
     	GetListCpqOfferResponseDto result = new GetListCpqOfferResponseDto(); 
     	List<String> baTagCodes=new ArrayList<String>();
+    	HashSet<String> requestedTagsByType=new HashSet<String>();
+    	if(customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty()) {
+    		requestedTagsByType = new HashSet<>(tagService.findByRequestedTagType(customerContextDto.getRequestedTagTypes()));
+    	}
     	
     	BillingAccount ba=billingAccountService.findByCode(billingAccountCode); 
 
@@ -950,22 +950,26 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     		}} 
     	List<String> sellerTags=customerContextDto.getSellerTags();
 		List<String> customerTags=customerContextDto.getCustomerTags();
-		HashSet<String> resultTags = new HashSet<String>();
+		HashSet<String> requestedTags = new HashSet<String>();
 		if(baTagCodes!=null) {
-			resultTags.addAll(baTagCodes);
+			requestedTags.addAll(baTagCodes);
 		}
 		if(customerTags!=null) {
-			resultTags.addAll(customerTags);
+			requestedTags.addAll(customerTags);
 		}
 		if(sellerTags!=null) {
-			resultTags.addAll(sellerTags);
+			requestedTags.addAll(sellerTags);
+		}
+		if(!requestedTagsByType.isEmpty() && requestedTags.isEmpty()) {
+			requestedTags=requestedTagsByType;
+		}else if(!requestedTagsByType.isEmpty() ){
+			requestedTags.retainAll(requestedTagsByType);
 		}
 		
-		
-		log.info("OfferTemplateApi.list resultBaTag={}",resultTags); 
+		log.info("OfferTemplateApi.list resultBaTag={}",requestedTags); 
 		String tags=null;
-		if (!resultTags.isEmpty()) {
-			tags=resultTags.stream().collect(Collectors.joining(","));
+		if (!requestedTags.isEmpty()) {
+			tags=requestedTags.stream().collect(Collectors.joining(","));
 		} 
 		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
 		if(pagingAndFiltering==null) {
