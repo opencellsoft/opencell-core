@@ -9594,7 +9594,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
 		<insert tableName="meveo_script_instance">
-			<column name="id" value="-46" />
+			<column name="id" valueNumeric="-46" />
 			<column name="version" valueNumeric="0" />
 			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
 			<column name="src_type" value="JAVA_CLASS" />
