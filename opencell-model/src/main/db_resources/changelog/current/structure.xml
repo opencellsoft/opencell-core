@@ -12411,7 +12411,7 @@ order by date_trunc('month', i.invoice_date) DESC
     		where bba.trading_currency_id is null
     	</sql>
     	<sql> 
-			ALTER TABLE public.billing_billing_account ALTER COLUMN trading_currency_id BIGINT NOT NULL
+			ALTER TABLE public.billing_billing_account ALTER COLUMN trading_currency_id SET NOT NULL
 		</sql>
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="billing_billing_account" constraintName="fk_trading_currency_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
