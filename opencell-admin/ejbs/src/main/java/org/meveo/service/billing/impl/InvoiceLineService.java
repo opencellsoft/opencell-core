@@ -711,6 +711,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoice.setDiscountAmount(invoice.getDiscountAmount().subtract(invoiceLine.getDiscountAmount()));
         }
         if (invoice.getAmountWithoutTaxBeforeDiscount() != null
+                && invoice.getAmountWithoutTaxBeforeDiscount().compareTo(invoice.getAmountWithoutTax()) != 0
                 && invoice.getAmountWithoutTaxBeforeDiscount().compareTo(BigDecimal.ZERO) > 0
                 && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
             invoice.setAmountWithoutTaxBeforeDiscount(
