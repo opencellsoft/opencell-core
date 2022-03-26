@@ -124,13 +124,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
      * @return true/false
      * @throws BusinessException business exception.
      */
-    public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,WalletOperation walletOperation,QuoteVersion quoteVersion, Invoice invoice,QuoteOffer offer,QuoteProduct product, DiscountPlan dp) throws BusinessException {
+    public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,BaseEntity...entities) throws BusinessException {
         Boolean result = true;
 
         if (StringUtils.isBlank(expression)) {
             return result;
         }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, quoteVersion,walletOperation,  invoice, offer, product);
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, entities);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -156,32 +156,17 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		return ids;
 	}
 	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,Date applicationDate) {
+	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,Date applicationDate,BaseEntity... entities) {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
 		if(discountPlan.getDiscountPlanType() == null)
 			return false;
-		OfferTemplate offer=quoteOffer!=null?quoteOffer.getOfferTemplate():wo!=null?wo.getOfferTemplate():null;
-		Product product=quoteProduct!=null?quoteProduct.getProductVersion().getProduct():(wo!=null && wo.getServiceInstance().getProductVersion()!=null?wo.getServiceInstance().getProductVersion().getProduct():null);
-		switch (discountPlan.getDiscountPlanType()) {
-		case OFFER:
-			if(offer!=null && !offer.getAllowedDiscountPlans().contains(discountPlan)) {
-				return false;
-			}
-			break;
-		case PRODUCT:
-			if(product!=null && !product.getDiscountList().contains(discountPlan)) {
-				return false;
-			}
-			break;
-		default:
-			break;
-		}	
+			
 		applicationDate=applicationDate!=null?applicationDate:new Date();
 		
 		if (discountPlan.isActive() && discountPlan.isEffective(applicationDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,quoteVersion,null, quoteOffer, quoteProduct, discountPlan)) {
+			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,entities)) {
 				return true;
 			}
 		}
@@ -202,7 +187,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	if(billingAccount == null || discountPlan == null )
     		throw new MissingParameterException("following parameters are required : billing account , discount plan");
     	
-    	var discountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, walletOperation, null, null, null, accountingArticle, discountPlanItemTypeEnum, null);
+    	var discountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,discountPlanItemTypeEnum, walletOperation.getOperationDate());
     	Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	return calculateDiscountplanItems(discountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
     										walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 

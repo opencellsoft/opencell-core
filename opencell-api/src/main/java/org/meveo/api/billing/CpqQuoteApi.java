@@ -27,6 +27,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1174,10 +1175,7 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
 
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
-        //get quote discountPlanitem of type percentage
-        if(quoteVersion.getDiscountPlan()!=null) {
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, null,DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate()));
-        }
+     
         //calculate totalQuoteAttribute
          calculateTotalAttributes (quoteVersion);
         
@@ -1297,12 +1295,6 @@ public class CpqQuoteApi extends BaseApi {
             }
 
         }
-        BillingAccount billingAccount=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
-        if(quoteOffer.getDiscountPlan()!=null) {
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, null,null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate()));
-        }
-     	
-        
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
         for (WalletOperation wo : walletOperations) {
@@ -1632,7 +1624,10 @@ public class CpqQuoteApi extends BaseApi {
            }
 
         }
-        return walletOperations;
+        List<WalletOperation> sortedWalletOperations = walletOperations.stream()
+        		  .sorted(Comparator.comparing(WalletOperation::getUnitAmountWithoutTax).reversed())
+        		  .collect(Collectors.toList());
+        return sortedWalletOperations;
     }
 
     private Subscription instantiateVirtualSubscription(QuoteOffer quoteOffer) {
@@ -1831,8 +1826,8 @@ public class CpqQuoteApi extends BaseApi {
                   if(discountAccountingArticle == null)
                   	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");
 
-                  unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountToApplyDiscountOn, discountPlanItem,product, Collections.emptyList()));
-                  log.debug("applyFixedDiscount discountPlan code={},unitDiscountAmount={}",discountPlan.getCode(),unitDiscountAmount);
+                  unitDiscountAmount=discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues);
+                   log.debug("applyFixedDiscount discountPlan code={},unitDiscountAmount={}",discountPlan.getCode(),unitDiscountAmount);
                   if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                       String accountingArticleCode = discountAccountingArticle.getCode();
                       if (!quoteArticleLines.containsKey(accountingArticleCode)) {

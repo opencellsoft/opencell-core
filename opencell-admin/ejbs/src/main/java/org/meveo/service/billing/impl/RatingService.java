@@ -1461,9 +1461,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      	   for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
      		  ratingResult.getWalletOperations().addAll(discountPlanService.applyDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), DiscountPlanItemTypeEnum.PERCENTAGE, isVirtual));
      		   ratingResult.getEligibleFixedDiscountItems().addAll(
-     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(),  discountPlanInstance.getDiscountPlan(), 
-     				   																												walletOperation, null, null, null, walletOperation.getAccountingArticle(),
-     				   																													DiscountPlanItemTypeEnum.FIXED, null)
+     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate())
      				   												);
      	   }
         }
