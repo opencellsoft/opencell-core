@@ -21,6 +21,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -63,6 +64,7 @@ public class QuotePrice extends AuditableEntity {
 		this.chargeTemplate = copy.chargeTemplate;
 		this.quantity = copy.quantity;
 		this.discountedQuotePrice = copy.discountedQuotePrice;
+		this.discountPlan=copy.discountPlan;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -133,6 +135,10 @@ public class QuotePrice extends AuditableEntity {
 
 	@Column(name = "uuid")
 	private String uuid;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
@@ -284,6 +290,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
 
 	

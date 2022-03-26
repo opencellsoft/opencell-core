@@ -1333,7 +1333,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setQuantity(wo.getQuantity());
-            if(wo.getDiscountedWalletOperation() != null) {
+            if(wo.getDiscountPlan() != null) {
             	QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
             	quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
             }else {
