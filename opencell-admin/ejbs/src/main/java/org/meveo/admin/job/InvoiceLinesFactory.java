@@ -8,23 +8,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.billing.impl.*;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.cpq.ProductVersionService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.OrderLotService;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -32,6 +15,32 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderLotService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InvoiceLinesFactory {
 
@@ -57,6 +66,11 @@ public class InvoiceLinesFactory {
             (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService =
             (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+    private InvoiceLineService invoiceLineService =
+            (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
+    
+
+	private static final Logger log = LoggerFactory.getLogger(InvoiceLinesFactory.class);
 
     /**
      *
@@ -100,6 +114,18 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("article_id"))
         .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
+        if(record.get("discounted_Ratedtransaction_id")!=null) {
+        	log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_Ratedtransaction_id"));
+        	RatedTransaction discountedRatedTransaction=ratedTransactionService.findById((Long)record.get("discounted_Ratedtransaction_id"));
+        	if(discountedRatedTransaction!=null) {
+        		log.debug("discountedRatedTransaction invoiceLine id={}",discountedRatedTransaction.getInvoiceLine()!=null?discountedRatedTransaction.getInvoiceLine().getId():null);
+        		invoiceLine.setDiscountedInvoiceLine(discountedRatedTransaction.getInvoiceLine());
+        	}
+        	
+        }
+        
+        ofNullable(record.get("discounted_Ratedtransaction_id"))
+        .ifPresent(id -> invoiceLine.setDiscountedInvoiceLine(invoiceLineService.findById(((BigInteger) id).longValue())));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
         if(invoiceLine.getValueDate()==null) {

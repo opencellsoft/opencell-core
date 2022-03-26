@@ -553,6 +553,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;
+    
+    
+    @Column(name = "discounted_Ratedtransaction_id")
+    private Long discountedRatedTransaction;
 
     public RatedTransaction() {
         super();
@@ -1460,4 +1464,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
+
+	public Long getDiscountedRatedTransaction() {
+		return discountedRatedTransaction;
+	}
+
+	public void setDiscountedRatedTransaction(Long discountedRatedTransaction) {
+		this.discountedRatedTransaction = discountedRatedTransaction;
+	}
+	
 }

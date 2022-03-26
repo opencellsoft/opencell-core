@@ -1232,7 +1232,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
-            quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
+            quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
             
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
@@ -1260,7 +1260,7 @@ public class CpqQuoteApi extends BaseApi {
             		 
             	 
 	            quotePrice.setTaxRate(a.getTaxRate());
-	            quotePrice.setChargeTemplate(a.getChargeTemplate());
+	            quotePrice.setCurrencyCode(a.getCurrencyCode());
 	            if(a.getRecurrenceDuration()!=null) {
 	            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
 	            }
@@ -1282,11 +1282,11 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer, true);
+        List<QuotePrice> accountingPrices = new ArrayList<>();
+        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,accountingPrices, true);
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
-        List<QuotePrice> accountingPrices = new ArrayList<>();
         for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
             if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
                 quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
@@ -1336,6 +1336,7 @@ public class CpqQuoteApi extends BaseApi {
             if(wo.getDiscountPlan() != null) {
             	QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
             	quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
+            	quotePrice.setDiscountPlan(wo.getDiscountPlan());
             }else {
               quotePrice.setUuid(wo.getUuid());
             }
@@ -1350,7 +1351,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
                 overrideAmounts(quotePrice, recurrenceDuration);
             } 
-            quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
+            quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
@@ -1453,7 +1454,7 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     @SuppressWarnings("unused")
-    public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, List<QuotePrice> accountingPrices, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
         Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
@@ -1621,6 +1622,7 @@ public class CpqQuoteApi extends BaseApi {
                discountQuotePrice.setQuoteOffer(quoteOffer);
                discountQuotePrice.setQuantity(wo.getQuantity());
                quotePriceService.create(discountQuotePrice);
+               accountingPrices.add(discountQuotePrice);
            }
 
         }

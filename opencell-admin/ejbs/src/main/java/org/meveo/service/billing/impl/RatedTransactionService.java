@@ -89,6 +89,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
@@ -243,6 +244,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
 
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+        if(walletOperation.getDiscountPlan() != null && walletOperation.getDiscountedWalletOperation()!=null) {
+        	RatedTransaction discountedRatedTransaction = findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
+        	if(discountedRatedTransaction!=null)
+        		ratedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        }
+        
         walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
 
         if (!isVirtual) {
