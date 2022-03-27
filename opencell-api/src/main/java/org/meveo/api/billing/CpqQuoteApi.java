@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,8 +76,6 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.IDiscountable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
@@ -96,7 +93,6 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -109,7 +105,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -437,6 +432,11 @@ public class CpqQuoteApi extends BaseApi {
                 quoteAttribute.setAttribute(attribute);
                 quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
                 quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+                if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+                	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+                		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+        			}
+                }
                 quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
                 quoteAttribute.updateAudit(currentUser);
                 quoteAttribute.setQuoteOffer(quoteOffer);
@@ -485,6 +485,12 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setAttribute(attribute);
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+        	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+        		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+			}
+        }
+        
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
