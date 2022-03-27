@@ -114,12 +114,15 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("article_id"))
         .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
-        log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
+        log.debug("discounted_Ratedtransaction_id={},{}",record.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(record.get("discounted_ratedtransaction_id")!=null) {
         		Long discountedILId=iLIdsRtIdsCorrespondence.get(((BigInteger) record.get("discounted_ratedtransaction_id")).longValue());
         		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
-        		InvoiceLine discountedIL=invoiceLineService.findById(discountedILId);
-        		invoiceLine.setDiscountedInvoiceLine(discountedIL);
+        		if(discountedILId!=null) {
+        			InvoiceLine discountedIL=invoiceLineService.findById(discountedILId);
+            		invoiceLine.setDiscountedInvoiceLine(discountedIL);
+        		}
+        		
         }
         
 
