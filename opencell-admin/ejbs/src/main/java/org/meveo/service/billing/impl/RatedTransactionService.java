@@ -256,9 +256,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         	log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
         	RatedTransaction discountedRatedTransaction = findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
         	
-        	if(discountedRatedTransaction!=null)
+        	if(discountedRatedTransaction!=null) {
         		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
         		ratedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        	}	
         }
         
         walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
