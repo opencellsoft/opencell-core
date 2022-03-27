@@ -232,6 +232,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<WalletOperation> getWalletOperations(List<Long> ids) {
         return walletOperationService.listByIds(ids);
     }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public RatedTransaction createRatedTransactionNewTx(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
+    	return createRatedTransaction(walletOperation, isVirtual);
+    }
 
     /**
      * Create Rated transaction from wallet operation.
@@ -241,12 +247,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return Rated transaction
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-
+    	
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
         if(walletOperation.getDiscountPlan() != null && walletOperation.getDiscountedWalletOperation()!=null) {
+        	log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
         	RatedTransaction discountedRatedTransaction = findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
+        	
         	if(discountedRatedTransaction!=null)
+        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
         		ratedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
         }
         

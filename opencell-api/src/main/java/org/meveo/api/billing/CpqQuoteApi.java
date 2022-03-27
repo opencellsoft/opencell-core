@@ -1288,8 +1288,9 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
+        List<QuotePrice> fixedDiscountPrices = new ArrayList<>();
+        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,fixedDiscountPrices, true);
         List<QuotePrice> accountingPrices = new ArrayList<>();
-        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,accountingPrices, true);
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
@@ -1399,7 +1400,7 @@ public class CpqQuoteApi extends BaseApi {
         applyFixedDiscount(quoteOffer.getDiscountPlan(), offerTotalAmount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
         		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion(),quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
 */
-        //accountingPrices.addAll(accountingPricesDiscount);
+        accountingPrices.addAll(fixedDiscountPrices);
         return accountingPrices;
     }
 
