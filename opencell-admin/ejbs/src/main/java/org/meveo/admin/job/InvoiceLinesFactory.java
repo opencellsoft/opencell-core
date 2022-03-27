@@ -116,7 +116,7 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
         System.out.println("discounted_Ratedtransaction_id="+record.get("discounted_ratedtransaction_id"));
         log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
-        if(record.get("discounted_Ratedtransaction_id")!=null) {
+        if(record.get("discounted_ratedtransaction_id")!=null) {
         	log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
         	System.out.println("discounted_Ratedtransaction_id2="+record.get("discounted_ratedtransaction_id"));
         	RatedTransaction discountedRatedTransaction=ratedTransactionService.findById((Long)record.get("discounted_ratedtransaction_id"));
