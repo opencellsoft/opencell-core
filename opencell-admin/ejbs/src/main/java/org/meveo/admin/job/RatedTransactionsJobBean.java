@@ -18,10 +18,12 @@
 
 package org.meveo.admin.job;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -94,8 +96,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         walletOperationService.removeZeroWalletOperation();
 
         List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+        
+        List<Long> sortedList = ids.stream()
+    			.sorted(Comparator.reverseOrder())
+    			.collect(Collectors.toList());
 
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return Optional.of(new SynchronizedIterator<Long>(sortedList));
     }
 
     /**
@@ -107,7 +113,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
 
         WalletOperation walletOperation = walletOperationService.findById(woId);
-        ratedTransactionService.createRatedTransaction(walletOperation, false);
+        ratedTransactionService.createRatedTransactionNewTx(walletOperation, false);
     }
 
     private boolean hasMore(JobInstance jobInstance) {
