@@ -189,10 +189,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         for (Map<String, Object> record : groupedRTs) {
             try {
-                InvoiceLine invoiceLine = linesFactory.create(record, aggregationConfiguration, result);
+                InvoiceLine invoiceLine = linesFactory.create(record, iLIdsRtIdsCorrespondence,aggregationConfiguration, result);
                 invoiceLinesService.create(invoiceLine);
                 invoiceLine = invoiceLinesService.retrieveIfNotManaged(invoiceLine);
-                iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), ((BigInteger) record.get("id")).longValue());
+                iLIdsRtIdsCorrespondence.put(((BigInteger) record.get("id")).longValue(),invoiceLine.getId() );
             } catch (BusinessException exception) {
                 result.addNbItemsProcessedWithError(1);
                 throw new BusinessException(exception);
@@ -212,8 +212,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         for (Map.Entry<Long, Long> entry : iLIdsRtIdsCorrespondence.entrySet()) {
             ratedTransactionService.getEntityManager()
                     .createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
-                    .setParameter("il", invoiceLinesService.findById(entry.getKey()))
-                    .setParameter("id", entry.getValue())
+                    .setParameter("id", invoiceLinesService.findById(entry.getKey()))
+                    .setParameter("il", entry.getValue())
                     .executeUpdate();
         }
     }

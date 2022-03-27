@@ -79,9 +79,9 @@ public class InvoiceLinesFactory {
      * @param result JobExecutionResultImpl
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record,
+    public InvoiceLine create(Map<String, Object> record,  Map<Long, Long> iLIdsRtIdsCorrespondence,
                               AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
-        InvoiceLine invoiceLine = initInvoiceLine(record, result);
+        InvoiceLine invoiceLine = initInvoiceLine(record, iLIdsRtIdsCorrespondence,result);
         if(configuration.getAggregationOption() == NO_AGGREGATION) {
             withNoAggregationOption(invoiceLine, record, configuration.isEnterprise());
         } else {
@@ -90,7 +90,7 @@ public class InvoiceLinesFactory {
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record,  Map<Long, Long> iLIdsRtIdsCorrespondence, JobExecutionResultImpl report) {
         InvoiceLine invoiceLine = new InvoiceLine();
         BigInteger rtID = (BigInteger) record.get("id");
         ofNullable(record.get("billing_account__id"))
@@ -116,13 +116,10 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
         log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
         if(record.get("discounted_ratedtransaction_id")!=null) {
-        	log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
-        	RatedTransaction discountedRatedTransaction=ratedTransactionService.findById(((BigInteger) record.get("discounted_ratedtransaction_id")).longValue());
-        	if(discountedRatedTransaction!=null) {
-        		log.debug("discountedRatedTransaction invoiceLine id={}",discountedRatedTransaction.getInvoiceLine()!=null?discountedRatedTransaction.getInvoiceLine().getId():null);
-        		invoiceLine.setDiscountedInvoiceLine(discountedRatedTransaction.getInvoiceLine());
-        	}
-        	
+        		Long discountedILId=iLIdsRtIdsCorrespondence.get(((BigInteger) record.get("discounted_ratedtransaction_id")).longValue());
+        		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
+        		InvoiceLine discountedIL=invoiceLineService.findById(discountedILId);
+        		invoiceLine.setDiscountedInvoiceLine(discountedIL);
         }
         
 
