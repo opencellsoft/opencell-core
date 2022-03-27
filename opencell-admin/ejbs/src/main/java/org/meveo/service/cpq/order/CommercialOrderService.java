@@ -225,7 +225,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	
 	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
 		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes());
-
+		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 		if(orderProduct.getDiscountPlan() != null) {
 			DiscountPlanInstance dpi = new DiscountPlanInstance();
 			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
