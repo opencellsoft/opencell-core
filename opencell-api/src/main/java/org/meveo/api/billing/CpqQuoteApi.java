@@ -2039,6 +2039,4 @@ public class CpqQuoteApi extends BaseApi {
 
 
     	}
-    
-  
 }

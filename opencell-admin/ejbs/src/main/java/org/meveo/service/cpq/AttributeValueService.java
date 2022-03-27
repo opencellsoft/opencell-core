@@ -9,6 +9,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -92,7 +93,39 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 			log.error("Error when trying to get AttributeValue : ", e);
 			throw new BusinessException(e.getMessage());
 		}
-
-    	return (AttributeValue)attributeInstance;
+    	AttributeValue attributeValue=(AttributeValue)attributeInstance;
+    	setDefaultAttributeValue(attributeValue);
+    	return attributeValue;
     	}
+    @SuppressWarnings("rawtypes")
+    private void setDefaultAttributeValue(AttributeValue attributeValue) {
+    	//set default value if value is null
+    	Attribute attribute=attributeValue.getAttribute();
+		if(!StringUtils.isBlank(attribute.getDefaultValue())){
+			switch (attribute.getAttributeType()) {
+			case BOOLEAN:
+				if(attributeValue.getStringValue()==null)
+					attributeValue.setStringValue(attribute.getDefaultValue());
+				break;	
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributeValue.getDoubleValue()==null)
+					attributeValue.setDoubleValue(Double.valueOf(attribute.getDefaultValue()));
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case EXPRESSION_LANGUAGE :
+			case TEXT:
+				if(attributeValue.getStringValue()==null && attributeValue.getDoubleValue()==null)
+					attributeValue.setStringValue(attribute.getDefaultValue());
+				break;
+			default:
+				if(attributeValue.getStringValue()==null)
+					attributeValue.setStringValue(attribute.getDefaultValue());
+				break;
+			}
+		}
+    }
 }
