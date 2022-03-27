@@ -114,20 +114,17 @@ public class InvoiceLinesFactory {
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("article_id"))
         .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
-        if(record.get("discounted_Ratedtransaction_id")!=null) {
-        	log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_Ratedtransaction_id"));
-        	System.out.println("discounted_Ratedtransaction_id="+record.get("discounted_Ratedtransaction_id"));
-        	RatedTransaction discountedRatedTransaction=ratedTransactionService.findById((Long)record.get("discounted_Ratedtransaction_id"));
+        log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
+        if(record.get("discounted_ratedtransaction_id")!=null) {
+        	log.debug("discounted_Ratedtransaction_id={}",record.get("discounted_ratedtransaction_id"));
+        	RatedTransaction discountedRatedTransaction=ratedTransactionService.findById(((BigInteger) record.get("discounted_ratedtransaction_id")).longValue());
         	if(discountedRatedTransaction!=null) {
         		log.debug("discountedRatedTransaction invoiceLine id={}",discountedRatedTransaction.getInvoiceLine()!=null?discountedRatedTransaction.getInvoiceLine().getId():null);
-        		System.out.println("discountedRatedTransaction invoiceLine id="+discountedRatedTransaction.getInvoiceLine()!=null?discountedRatedTransaction.getInvoiceLine().getId():null);
         		invoiceLine.setDiscountedInvoiceLine(discountedRatedTransaction.getInvoiceLine());
         	}
         	
         }
         
-        ofNullable(record.get("discounted_Ratedtransaction_id"))
-        .ifPresent(id -> invoiceLine.setDiscountedInvoiceLine(invoiceLineService.findById(((BigInteger) id).longValue())));
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));
         if(invoiceLine.getValueDate()==null) {
