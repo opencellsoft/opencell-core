@@ -178,7 +178,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	 * apply discount type of product
 	 * @param chargeInstance
 	 */
-    public List<WalletOperation> applyDiscount(WalletOperation walletOperation, BillingAccount billingAccount, DiscountPlan discountPlan, DiscountPlanItemTypeEnum discountPlanItemTypeEnum , boolean isVirtual) {
+    public List<WalletOperation> applyPercentageDiscount(WalletOperation walletOperation, BillingAccount billingAccount, DiscountPlan discountPlan , boolean isVirtual) {
     	if(walletOperation == null)
     		throw new MissingParameterException("Wallet operation is null");
     	
@@ -187,17 +187,17 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	if(billingAccount == null || discountPlan == null )
     		throw new MissingParameterException("following parameters are required : billing account , discount plan");
     	
-    	var discountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,discountPlanItemTypeEnum, walletOperation.getOperationDate());
+    	var discountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, walletOperation.getOperationDate());
     	Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	return calculateDiscountplanItems(discountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
     										walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
-    										walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, DiscountPlanTypeEnum.PRODUCT, walletOperation);
+    										walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER);
     	
     }
     
     public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
     										BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
-    										ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, DiscountPlanTypeEnum discountPlanTypeEnum, WalletOperation walletOperation) {
+    										ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
     	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
     	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
 			 WalletOperation discountWalletOperation = null;
@@ -207,8 +207,12 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			 BigDecimal[] amounts = null;
 
 			 List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
-			 if(discountPlanTypeEnum != null)
-				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnum.equals(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
+			 
+			 if(discountPlanTypeEnum != null) {
+				 final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
+				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
+			 }
+				
 			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
 					 
 					 discountWalletOperation = new WalletOperation();
