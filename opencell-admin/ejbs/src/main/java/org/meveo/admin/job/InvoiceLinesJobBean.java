@@ -212,8 +212,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         for (Map.Entry<Long, Long> entry : iLIdsRtIdsCorrespondence.entrySet()) {
             ratedTransactionService.getEntityManager()
                     .createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
-                    .setParameter("id", invoiceLinesService.findById(entry.getKey()))
-                    .setParameter("il", entry.getValue())
+                    .setParameter("id", entry.getKey())
+                    .setParameter("il", invoiceLinesService.findById(entry.getValue()))
                     .executeUpdate();
         }
     }
