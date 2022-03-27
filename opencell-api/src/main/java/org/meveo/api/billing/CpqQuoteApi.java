@@ -2023,11 +2023,13 @@ public class CpqQuoteApi extends BaseApi {
     	List<QuoteAttribute>totalQuoteAttributes=quoteAttributeService.findByQuoteVersionAndTotaltype(quoteVersion.getId());
     	log.info("totalQuoteAttributes size{},"+totalQuoteAttributes.size());
     	Double sumTotalAttribute=0.0;
+    	Double totalSum=0.0;
     	for(QuoteAttribute quoteAttribute: totalQuoteAttributes) {
+    		sumTotalAttribute=0.0;
     		log.info("TotalQuoteAttribute Id={},doubleValue={}",quoteAttribute.getId(),quoteAttribute.getDoubleValue());
     	for(Attribute attribute : quoteAttribute.getAttribute().getAssignedAttributes()) {
     		log.info("assigned attribute code={}",attribute.getCode());
-    		Double totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
+    	    totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
     		log.info("Sum doubleValue={}",totalSum);
     		sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
     	}
