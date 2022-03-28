@@ -18,6 +18,8 @@
 
 package org.meveo.api;
 
+import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -30,7 +32,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -56,8 +57,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
-
-import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
 
 /**
  * @author Edward P. Legaspi
@@ -374,7 +373,7 @@ public class CurrencyApi extends BaseApi {
             if (addAnd) {
                 parameters += " AND ";
             }
-            parameters += "From " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toRateAmount);
+            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toRateAmount);
         }
         auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
     }
