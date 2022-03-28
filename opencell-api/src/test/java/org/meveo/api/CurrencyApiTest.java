@@ -3,7 +3,6 @@ package org.meveo.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -135,7 +134,6 @@ public class CurrencyApiTest {
         exchangeRate.setExchangeRate(BigDecimal.ONE);
         exchangeRate.setTradingCurrency(tradingCurrency);
         when(exchangeRateService.findById(any())).thenReturn(exchangeRate);
-        when(tradingCurrencyService.findById(any(), anyList())).thenReturn(new TradingCurrency());
         when(auditLogService.getActor()).thenReturn("XXX");
         ExchangeRateDto postData = new ExchangeRateDto();
         postData.setExchangeRate(BigDecimal.valueOf(12.34));
