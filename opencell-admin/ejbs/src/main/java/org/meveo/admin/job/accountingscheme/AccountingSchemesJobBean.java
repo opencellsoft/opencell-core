@@ -20,12 +20,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @since 13
  */
 @Stateless
-public class AccountingSchemesJobBean extends IteratorBasedJobBean<AccountOperation> {
+public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private AccountOperationService accountOperationService;
@@ -40,7 +42,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<AccountOperat
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::executeScript, null, null);
     }
 
-    private Optional<Iterator<AccountOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
         Boolean onlyClosedPeriods = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "onlyClosedPeriods");
 
         List<AccountOperation> accountOperations = accountOperationService.findAoByStatus(onlyClosedPeriods, AccountOperationStatus.POSTED, AccountOperationStatus.EXPORT_FAILED);
@@ -50,10 +52,13 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<AccountOperat
             return Optional.of(new SynchronizedIterator<>(Collections.emptyList()));
         }
 
-        return Optional.of(new SynchronizedIterator<>(accountOperations));
+        return Optional.of(new SynchronizedIterator<>(accountOperations.stream()
+                .map(AccountOperation::getId).collect(Collectors.toList())));
     }
 
-    private void executeScript(List<AccountOperation> accountOperations, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+    private void executeScript(List<Long> idAOs, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+        List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
+
         Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
                 .forEach(accountOperation -> {
                     // Find OOC Template
@@ -62,13 +67,13 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<AccountOperat
                     if (occT == null) {
                         log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
                         return;
-                        // throw new BusinessException("No OCCTemplate found for AccountOperation id=" + accountOperation.getId());
                     }
 
                     if (occT.getAccountingScheme() == null) {
                         log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
                                 accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
                         accountOperationService.updateStatusInNewTransaction(Arrays.asList(accountOperation), AccountOperationStatus.EXPORT_FAILED);
+                        jobExecutionResult.setNbItemsProcessedWithError(jobExecutionResult.getNbItemsProcessedWithError() + 1);
                         throw new BusinessException("No scheme found for OCCTemplate id=" + occT.getId());
                     }
 
@@ -98,6 +103,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<AccountOperat
                     accountOperationService.update(accountOperation);
 
                 });
+
     }
 
 }
