@@ -1935,7 +1935,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     
     
     public static Object getAttributeValue(Long quoteVersionId,String offerCode,String productCode, String attributeCode) { 
-    	Optional<QuoteAttribute> quoteAttribute=null;
+    	Optional<QuoteAttribute> quoteAttribute=Optional.empty();
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
@@ -1957,7 +1957,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case INTEGER:
 				if(quoteAttribute.get().getDoubleValue()!=null) {
 				return quoteAttribute.get().getDoubleValue(); 
-				}
+				}break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
@@ -1965,11 +1965,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case TEXT:	
 				if(!StringUtils.isBlank(quoteAttribute.get().getStringValue())) {
 					return quoteAttribute.get().getStringValue();  
-				}							
+				}break;						
 			case DATE:
 				if(quoteAttribute.get().getDateValue()!=null) {
 					return quoteAttribute.get().getDateValue();  
-				}
+				}break;
 			default:
 				break;  
 			}
@@ -1978,12 +1978,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
-    	Optional<AttributeInstance> attributInstance=null;
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
 
-    	attributInstance=serviceInstance.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	Optional<AttributeInstance> attributInstance=serviceInstance.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
     	
     	if(attribute.getAttributeType()!=null && attributInstance.isPresent()) {
     		switch (attribute.getAttributeType()) {
@@ -1993,7 +1992,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case INTEGER:
 				if(attributInstance.get().getDoubleValue()!=null) {
 				return attributInstance.get().getDoubleValue(); 
-				}
+				}break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
@@ -2001,11 +2000,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case TEXT:	
 				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
 					return attributInstance.get().getStringValue();  
-				}							
+				}break;						
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
-				}
+				}break;
 			default:
 				break;  
 			}
@@ -2054,7 +2053,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
-				}
+				}break;
 			default:
 				break;  
 			}
@@ -2063,6 +2062,47 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     
+    public static Object getSubscriptionAttributeValue(Subscription subscription,String attributeCode) { 
+    	Attribute  attribute =getAttributeService().findByCode(attributeCode);
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException(Attribute.class, attributeCode); 
+    	
+    	Optional<AttributeInstance> attributInstance=subscription.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	if(attribute.getAttributeType()!=null && attributInstance.isPresent()) {
+    		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributInstance.get().getDoubleValue()!=null) {
+				return attributInstance.get().getDoubleValue(); 
+				}
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case TEXT:	
+				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
+					return attributInstance.get().getStringValue();  
+				}
+				break;
+			case EXPRESSION_LANGUAGE :
+				if(attributInstance.get().getDoubleValue()!=null) {
+					return attributInstance.get().getDoubleValue(); 
+				}else if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
+					return attributInstance.get().getStringValue();  
+				}
+				break;
+			case DATE:
+				if(attributInstance.get().getDateValue()!=null) {
+					return attributInstance.get().getDateValue();  
+				}break;
+			default:
+				break;  
+			}
+    		}
+    	
+    	return null;
+    }
     
     
     
