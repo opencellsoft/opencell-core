@@ -555,7 +555,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     private DiscountPlan discountPlan;
     
     
-    @Column(name = "discounted_Ratedtransaction_id")
+    @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
 
     public RatedTransaction() {
