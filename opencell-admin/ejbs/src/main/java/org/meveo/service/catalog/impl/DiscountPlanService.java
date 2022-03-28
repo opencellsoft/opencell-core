@@ -213,7 +213,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
 			 }
 			 
-			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={},dpi type={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size(),dpi.getDiscountPlan().getDiscountPlanType());
+			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size());
 				
 			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
 					 
