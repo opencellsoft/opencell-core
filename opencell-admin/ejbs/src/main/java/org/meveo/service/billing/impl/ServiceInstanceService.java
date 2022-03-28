@@ -566,7 +566,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         	//TODO : v12 & dev change new Date() with delivered != null
         	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
             discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
-            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, DiscountPlanTypeEnum.PRODUCT, null);
+            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, null, DiscountPlanTypeEnum.PRODUCT);
         }
         return ratingResult;
     }
