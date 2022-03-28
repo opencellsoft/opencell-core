@@ -9402,7 +9402,7 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
                 
        <addColumn tableName="billing_rated_transaction">
-    		<column name="discounted_Ratedtransaction_id" type="bigint" />
+    		<column name="discounted_ratedtransaction_id" type="bigint" />
     	</addColumn>                          
     </changeSet>
     

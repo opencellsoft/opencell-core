@@ -1313,7 +1313,7 @@ public class CpqQuoteApi extends BaseApi {
             	quoteProductAmount=quoteProductTotalAmount.get(quoteProductId);
             	quoteProductTotalAmount.put(quoteProductId,quoteProductAmount.add(wo.getAmountWithoutTax()));
             }
-            if (!quoteArticleLines.containsKey(accountingArticleCode)) {
+            if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
                 quoteArticleLine = new QuoteArticleLine();
                 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
                 quoteArticleLine.setQuantity(wo.getQuantity());
