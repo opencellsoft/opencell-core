@@ -40,7 +40,7 @@ public class JsonType extends AbstractSingleColumnStandardBasicType<Object> impl
      */
     private static String JSON_DB_TYPE = "opencell.json.db.type";
 
-    protected static boolean IS_CLOB = "clob".equalsIgnoreCase(System.getProperty(JSON_DB_TYPE));
+    public static boolean IS_CLOB = "clob".equalsIgnoreCase(System.getProperty(JSON_DB_TYPE));
 
     public JsonType() {
         super(IS_CLOB ? ClobTypeDescriptor.DEFAULT : JsonBinarySqlTypeDescriptor.INSTANCE, new JsonTypeDescriptor());
