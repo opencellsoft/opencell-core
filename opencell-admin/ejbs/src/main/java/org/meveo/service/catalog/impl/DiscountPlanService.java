@@ -212,6 +212,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				 final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
 				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
 			 }
+			 
+			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={},dpi type={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size(),dpi.getDiscountPlan().getDiscountPlanType());
 				
 			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
 					 
@@ -258,6 +260,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setDescription(discountDescription);
 	                discountWalletOperation.setChargeInstance(chargeInstance);
 	                discountWalletOperation.setInputQuantity(quantity);
+	                discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
 	                if(!isVirtual) {
 	                	if(walletOperation != null && walletOperation.getId() != null)
 	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
