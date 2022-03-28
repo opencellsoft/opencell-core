@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ExchangeRateDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
@@ -38,14 +39,13 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
         
-        ExchangeRate exchangeRate = new ExchangeRate();
-        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();        
-        for (ExchangeRate er : listExchangeRate) {
-            if (er.getFromDate().compareTo(postData.getFromDate()) == 0) {
-                throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
-            }
-        }       
+        // Check if a user choose a date that is already taken
+        if (fromDateExists(postData.getFromDate())) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
+        }
         
+        ExchangeRate exchangeRate = new ExchangeRate();
+        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
         if (postData.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
             exchangeRate.setCurrentRate(true);
             for (ExchangeRate elementExchangeRate : listExchangeRate) {
@@ -55,7 +55,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
             tradingCurrency.setCurrentRate(postData.getExchangeRate());
             tradingCurrency.setCurrentRateFromDate(DateUtils.setTimeToZero(new Date()));
             tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
-        }else {
+        } else {
             exchangeRate.setCurrentRate(false);
         }
         exchangeRate.setTradingCurrency(tradingCurrency);
@@ -89,4 +89,11 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         update(exchangeRate);
     }
     
+    
+    public boolean fromDateExists(Date fromDate) {
+        return getEntityManager()
+                .createNamedQuery("ExchangeRate.countByFromDate", Long.class)
+                .setParameter("fromDate", fromDate)
+                .getSingleResult() > 0;
+    }
 }

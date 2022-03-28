@@ -18,8 +18,12 @@
 
 package org.meveo.api;
 
+import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
+
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +32,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -54,8 +57,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.ExchangeRateService;
 import org.meveo.service.crm.impl.ProviderService;
-
-import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
 
 /**
  * @author Edward P. Legaspi
@@ -296,7 +297,6 @@ public class CurrencyApi extends BaseApi {
         ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);              
         return exchangeRate.getId();
     }
-
     public void updateExchangeRate(Long id, ExchangeRateDto postData) {
 
         ExchangeRate exchangeRate = exchangeRateService.findById(id);
@@ -307,6 +307,9 @@ public class CurrencyApi extends BaseApi {
         BigDecimal fromRate = exchangeRate.getExchangeRate();
         BigDecimal toRate = postData.getExchangeRate();
         
+        Date fromDate = exchangeRate.getFromDate();
+        Date toDate = postData.getFromDate();
+        
         // We can modify only the future rates
         if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
@@ -316,12 +319,9 @@ public class CurrencyApi extends BaseApi {
             throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
         }
 
-        // Check if a user choose a date that is already taken for the same TradingCurrency
-        TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
-        for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
-            if (!er.getId().equals(id) && er.getFromDate().compareTo(postData.getFromDate()) == 0) {
-                throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
-            }
+        // Check if a user choose a date that is already taken
+        if (exchangeRateService.fromDateExists(postData.getFromDate())) {
+            throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
 
         // User cannot set a rate in a paste date
@@ -333,6 +333,7 @@ public class CurrencyApi extends BaseApi {
         if (postData.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
             exchangeRate.setCurrentRate(true);
             // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
+            TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
             for (ExchangeRate er : tradingCurrency.getExchangeRates()) {
                 if (!er.getId().equals(id)) {
                     er.setCurrentRate(false);
@@ -349,15 +350,27 @@ public class CurrencyApi extends BaseApi {
         exchangeRate.setFromDate(postData.getFromDate());
         exchangeRate.setExchangeRate(postData.getExchangeRate());
         exchangeRateService.update(exchangeRate);
-        auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate);
+        auditLogUpdateExchangeRate(exchangeRate, fromDate, toDate, fromRate, toRate);
     }
     
-    private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate, BigDecimal fromRate, BigDecimal toRate) {
-        DecimalFormat formatter = new DecimalFormat("#0.##");
-        String parameters = "User " + auditLogService.getActor() + " has changed the Exchange rate for " + exchangeRate.getTradingCurrency().getCurrencyCode();
-        
-        if (!fromRate.equals(toRate)) {
-            parameters += " from " + formatter.format(fromRate) + " to " + formatter.format(toRate);
+    private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate, 
+            Date fromDate, Date toDate,
+            BigDecimal fromRateAmount, BigDecimal toRateAmount) {
+
+        DecimalFormat rateFormatter = new DecimalFormat("#0.##");
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        String parameters = "User " + auditLogService.getActor() + " has changed ";
+        boolean addAnd = false;
+        if (!fromRateAmount.equals(toRateAmount)) {
+            parameters += "for " + exchangeRate.getTradingCurrency().getCurrencyCode() + " from " + rateFormatter.format(fromRateAmount) + " to " + rateFormatter.format(toRateAmount);
+            addAnd = true;
+        }
+        if (!fromDate.equals(toDate)) {
+            if (addAnd) {
+                parameters += " AND ";
+            }
+            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toRateAmount);
         }
         auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
     }
