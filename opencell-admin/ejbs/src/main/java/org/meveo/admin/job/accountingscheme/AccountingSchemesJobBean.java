@@ -20,7 +20,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -57,53 +56,62 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private void executeScript(List<Long> idAOs, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
-        List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
+        try {
+            List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
 
-        Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
-                .forEach(accountOperation -> {
-                    // Find OOC Template
-                    OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
+            Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+                    .forEach(accountOperation -> {
+                        // Find OOC Template
+                        OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
 
-                    if (occT == null) {
-                        log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
-                        return;
-                    }
+                        if (occT == null) {
+                            log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
+                            return;
+                        }
 
-                    if (occT.getAccountingScheme() == null) {
-                        log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
-                                accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                        accountOperationService.updateStatusInNewTransaction(Arrays.asList(accountOperation), AccountOperationStatus.EXPORT_FAILED);
-                        jobExecutionResult.setNbItemsProcessedWithError(jobExecutionResult.getNbItemsProcessedWithError() + 1);
-                        throw new BusinessException("No scheme found for OCCTemplate id=" + occT.getId());
-                    }
+                        if (occT.getAccountingScheme() == null) {
+                            log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
+                                    accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
+                            accountOperationService.updateStatusInNewTransaction(Arrays.asList(accountOperation), AccountOperationStatus.EXPORT_FAILED);
+                            markAsError("No scheme found for OCCTemplate id=" + occT.getId(), jobExecutionResult);
+                        }
 
-                    ScriptInterface script = scriptInstanceService.getScriptInstance(occT.getAccountingScheme().getCode());
+                        ScriptInterface script = scriptInstanceService.getScriptInstance(occT.getAccountingScheme().getCode());
 
-                    if (script == null) {
-                        log.warn("No Script linked to AccountingScheme with code={}", occT.getAccountingScheme().getCode());
-                        return;
-                    }
+                        if (script == null) {
+                            log.warn("No Script linked to AccountingScheme with code={}", occT.getAccountingScheme().getCode());
+                            return;
+                        }
 
-                    Map<String, Object> methodContext = new HashMap<>();
-                    methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
-                    methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-                    methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                        Map<String, Object> methodContext = new HashMap<>();
+                        methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
+                        methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                        methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
-                    script.execute(methodContext);
+                        script.execute(methodContext);
 
-                    List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
-                    log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                            createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                    if (!createdEntries.isEmpty()) {
-                        accountOperation.setStatus(AccountOperationStatus.EXPORTED);
-                    } else {
-                        accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
-                    }
+                        List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
+                        log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
+                                createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
+                        if (!createdEntries.isEmpty()) {
+                            accountOperation.setStatus(AccountOperationStatus.EXPORTED);
+                        } else {
+                            accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
+                        }
 
-                    accountOperationService.update(accountOperation);
+                        accountOperationService.update(accountOperation);
 
-                });
+                    });
+        } finally {
+            jobExecutionResult.setNbItemsProcessedWithError(
+                    jobExecutionResult.getErrors() == null ? 0 : jobExecutionResult.getErrors().size());
+        }
 
+    }
+
+    private void markAsError(String error, JobExecutionResultImpl jobExecutionResult) {
+        jobExecutionResult.addErrorReport(error);
+        throw new BusinessException(error);
     }
 
 }

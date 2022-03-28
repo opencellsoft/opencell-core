@@ -9617,7 +9617,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="DefaultAccountingScheme" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
 			<column name="description" value="Default Accounting Scheme"/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript')"/>
 		</insert>
