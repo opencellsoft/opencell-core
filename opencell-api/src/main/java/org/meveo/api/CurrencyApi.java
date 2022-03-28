@@ -334,7 +334,7 @@ public class CurrencyApi extends BaseApi {
         BigDecimal fromRate = exchangeRate.getExchangeRate();
         BigDecimal toRate = postData.getExchangeRate();
         
-        Date fromDate = exchangeRate.getFromDate()
+        Date fromDate = exchangeRate.getFromDate();
         Date toDate = postData.getFromDate();
         
         // We can modify only the future rates
