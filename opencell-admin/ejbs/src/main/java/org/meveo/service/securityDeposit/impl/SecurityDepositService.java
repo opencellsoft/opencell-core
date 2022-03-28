@@ -353,8 +353,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         if (securityDeposit.getSubscription() != null) {
             accountOperation.getInvoices().stream()
-                    .map(invoice -> invoice.getSubscription())
-                    .filter(subscription -> !securityDeposit.getSubscription().equals(subscription))
+                    .filter(invoice -> !securityDeposit.getSubscription().equals(invoice.getSubscription()))
                     .findAny()
                     .ifPresent(invoice -> {
                         throw new InvalidParameterException("All invoices should have the same subscription");
