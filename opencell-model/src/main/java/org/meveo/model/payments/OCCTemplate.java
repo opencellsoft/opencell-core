@@ -88,6 +88,11 @@ public class OCCTemplate extends BusinessEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commission_accounting_code_id")
+    private AccountingCode commissionAccountingCode ;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contra_accounting_code2_id")
     private AccountingCode contraAccountingCode2;
 
@@ -166,6 +171,14 @@ public class OCCTemplate extends BusinessEntity {
 
     public void setContraAccountingCode(AccountingCode contraAccountingCode) {
         this.contraAccountingCode = contraAccountingCode;
+    }
+
+    public AccountingCode getCommissionAccountingCode() {
+        return commissionAccountingCode;
+    }
+
+    public void setCommissionAccountingCode(AccountingCode commissionAccountingCode) {
+        this.commissionAccountingCode = commissionAccountingCode;
     }
 
     public AccountingCode getContraAccountingCode2() {
