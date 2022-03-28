@@ -10386,6 +10386,18 @@
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
     </changeSet>
+    
+     <changeSet id="rebuild-str-tbl-503" author="Mbarek-Ay">
+        <createTable tableName="cpq_assigned_attributes">
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
@@ -14085,8 +14097,17 @@
      <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
      <addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
-      </changeSet>                      
+      </changeSet>  
+                               
+       <changeSet id="rebuild-str-fk-540-1641" author="Mbarek-Ay">
+       <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" /> 
+      </changeSet>                     
     
+      <changeSet id="rebuild-str-fk-540-1642" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
+      </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15913,6 +15934,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-5529_20220304" author="TarikFA." />
     <changeSet id="#INTRD-5859_20220321" author="TarikFA." />
     <changeSet id="#INTRD-5872_20220322" author="TarikFA." />
+    <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
