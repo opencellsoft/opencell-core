@@ -151,6 +151,8 @@ public class OccTemplateApi extends BaseApi {
                 throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
             }
             occTemplate.setContraAccountingCode(contractAccountingCode);
+        } else {
+            occTemplate.setContraAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
         }
         occTemplateService.update(occTemplate);
     }
