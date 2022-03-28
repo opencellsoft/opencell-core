@@ -9608,6 +9608,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-5960_20220328" author="HichamHANINE">
+    	<sql>Update  cpq_order_offer o set subscription_id = (select id from billing_subscription s where s.order_offer_id = o.id) where o.subscription_id is null</sql>
+    </changeSet>
+    
 	<changeSet id="#INTRD-5955_20220324" author="aelmalki">
 		<insert tableName="ar_accounting_scheme">
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
