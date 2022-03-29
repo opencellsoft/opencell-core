@@ -132,6 +132,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
+			if(o.getOrderLineType() == OfferLineTypeEnum.AMEND) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -211,10 +212,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscriptionService.activateInstantiatedService(subscription);
 				
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-				
 				for (OrderProduct product : offer.getProducts()){
-					if(product.getProductActionType() == ProductActionTypeEnum.CREATE) {
-						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
+						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+		                        InstanceStatusEnum.INACTIVE);
+						serviceInstanceService.serviceActivation(serviceInstanceToActivate);					
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
 						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
@@ -228,8 +230,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
 						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.ACTIVE);
-						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), serviceInstanceToTerminate.getOrderNumber());	
+		                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
 					}
 				}
 			}
