@@ -35,6 +35,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -300,7 +301,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
             addFunction("mv", "getSubscriptionProductAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductAttributeValue", Subscription.class, String.class, String.class));
-            addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class,String.class,Object.class, WalletOperation.class));
+            addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductElAttributeValue", ServiceInstance.class,String.class, WalletOperation.class));
             
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1981,9 +1982,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
-    	return getProductElAttributeValue(serviceInstance, attributeCode,Object.class,null);
+    	return getProductElAttributeValue(serviceInstance, attributeCode,null);
     }
-    public static <T> T  getProductElAttributeValue(ServiceInstance serviceInstance, String attributeCode,Class<T> resultClass,WalletOperation walletOperation) { 
+    public static Object getProductElAttributeValue(ServiceInstance serviceInstance, String attributeCode,WalletOperation walletOperation) { 
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
@@ -1997,27 +1998,34 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case NUMERIC :
 			case INTEGER:
 				if(attributInstance.get().getDoubleValue()!=null) {
-				return (T) attributInstance.get().getDoubleValue(); 
+				return attributInstance.get().getDoubleValue(); 
 				}break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
 			case TEXT:	
 				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
-					return (T) attributInstance.get().getStringValue();  
+					return attributInstance.get().getStringValue();  
 				}break;
 				
 			case EXPRESSION_LANGUAGE :
+				String value=null;
 				if(walletOperation!=null) {
-					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,walletOperation);
+					 value = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance,walletOperation);
 				}else {
-					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance);
+					 value  = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance);
 				}
+				if(NumberUtils.isCreatable(value.toString().trim())) {
+					return Double.valueOf(value.toString().trim());
+				}else {
+					return value
+				}
+				break;
 				 
 				
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
-					return (T) attributInstance.get().getDateValue();  
+					return attributInstance.get().getDateValue();  
 				}break;
 			default:
 				break;  
