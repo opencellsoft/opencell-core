@@ -5861,6 +5861,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getCfValues() != null) {
             toUpdate.setCfValues(input.getCfValues());
         }
+
+        if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            toUpdate.setDiscountAmount(BigDecimal.ZERO);
+        }
+
         return update(toUpdate);
     }
 

@@ -37,6 +37,7 @@ import javax.persistence.PersistenceUnit;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.persistence.JsonType;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 
@@ -65,6 +66,17 @@ public class EntityManagerProvider {
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
+    private static boolean DB_TYPE_ORACLE = JsonType.IS_CLOB;
+
+    /**
+     * Determine if DB is of oracle type. Value is derived when system setting "opencell.json.db.type"="clob"
+     * 
+     * @return True if DB is of oracle type
+     */
+    public static boolean isDBOracle() {
+        return DB_TYPE_ORACLE;
+    }
+    
     /**
      * Instantiates an Entity manager for use CDI injection. Will consider a tenant that currently connected user belongs to.
      * 
