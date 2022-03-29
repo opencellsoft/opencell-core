@@ -41,12 +41,14 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -1978,6 +1980,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
+    	return getProductAttributeValue(serviceInstance, attributeCode,null);
+    }
+    public static <T> T  getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode,Class<T> resultClass, BaseEntity... entities) { 
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
@@ -1991,19 +1996,23 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case NUMERIC :
 			case INTEGER:
 				if(attributInstance.get().getDoubleValue()!=null) {
-				return attributInstance.get().getDoubleValue(); 
+				return (T) attributInstance.get().getDoubleValue(); 
 				}break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
-			case EXPRESSION_LANGUAGE :
 			case TEXT:	
 				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
-					return attributInstance.get().getStringValue();  
-				}break;						
+					return (T) attributInstance.get().getStringValue();  
+				}break;
+				
+			case EXPRESSION_LANGUAGE :
+				
+				 return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,entities);
+				
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
-					return attributInstance.get().getDateValue();  
+					return (T) attributInstance.get().getDateValue();  
 				}break;
 			default:
 				break;  

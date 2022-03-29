@@ -241,9 +241,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
 	                discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
 	                discountWalletOperation.setTaxPercent(taxPercent);
-	                discountWalletOperation.setUnitAmountWithoutTax(quantity.multiply(amounts[0]));
-	                discountWalletOperation.setUnitAmountWithTax(quantity.multiply(amounts[1]));
-	                discountWalletOperation.setUnitAmountTax(quantity.multiply(amounts[2]));
+	                discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
+	                discountWalletOperation.setUnitAmountWithTax(amounts[1]);
+	                discountWalletOperation.setUnitAmountTax(amounts[2]);
 	                discountWalletOperation.setQuantity(quantity);
 	                discountWalletOperation.setTax(taxInfo.tax);
 	                discountWalletOperation.setCreated(new Date());
