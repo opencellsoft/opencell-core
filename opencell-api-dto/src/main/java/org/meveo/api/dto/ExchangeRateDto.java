@@ -16,7 +16,7 @@ public interface ExchangeRateDto extends Resource {
     @Nullable
     Boolean getCurrentRate();
     
-    @NotNull
+    @Nullable
     Date getFromDate();
 
     @NotNull
