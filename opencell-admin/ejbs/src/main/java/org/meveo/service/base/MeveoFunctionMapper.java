@@ -300,6 +300,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
             addFunction("mv", "getSubscriptionProductAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductAttributeValue", Subscription.class, String.class, String.class));
+            addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class,Object.class, BaseEntity[].class));
             
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -2007,8 +2008,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				}break;
 				
 			case EXPRESSION_LANGUAGE :
-				
-				 return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,entities);
+				if(entities!=null) {
+					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,entities);
+				}else {
+					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance);
+				}
+				 
 				
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
