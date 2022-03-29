@@ -1,5 +1,7 @@
 package org.meveo.service.cpq.order;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -8,6 +10,7 @@ import javax.persistence.Query;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.base.PersistenceService;
@@ -47,5 +50,16 @@ public class OrderOfferService extends PersistenceService<OrderOffer> {
 		if(orderOfferExist != null)
 			throw new EntityAlreadyExistsException("Quote offer already exist with code : " + entity.getCode() + " and Order code : " + entity.getOrder().getCode());
 		super.create(entity);
+	}
+	
+	public List<OrderOffer> findBySubscriptionAndStatus(String subscriptionCode, OfferLineTypeEnum offerLineType) {
+		Query query=getEntityManager().createNamedQuery("OrderOffer.findByStatusAndSubscription");
+		query.setParameter("subscriptionCode", subscriptionCode)
+			  .setParameter("status", offerLineType);
+		try {
+			return (List<OrderOffer>) query.getResultList();
+		}catch(NoResultException e ) {
+			return null;
+		}
 	}
 }

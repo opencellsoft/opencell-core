@@ -10095,7 +10095,7 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="INTRD-2511-2_20211029" author="Mohammed_ElAzzouzi">
 		<sql>update cpq_price_plan_version ppv set current_version = id where ppv.ppm_id in
 				(select d.ppm_id from (select count(*), current_version, ppm_id from cpq_price_plan_version
-				group by current_version, ppm_id having count(*)>1) as d)</sql>
+				group by current_version, ppm_id having count(*)>1) d)</sql>
 	    <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
 	</changeSet>
 
@@ -12476,6 +12476,17 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+
+    <changeSet id="#INTRD-5994-20220328" author="HichamELHALOUI">
+        <addColumn tableName="ar_occ_template">
+            <column name="commission_accounting_code_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="commission_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_commission_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+
     </changeSet>
 
 </databaseChangeLog>

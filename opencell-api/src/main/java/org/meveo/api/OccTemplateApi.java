@@ -103,6 +103,15 @@ public class OccTemplateApi extends BaseApi {
             }
             occTemplate.setContraAccountingCode(contractAccountingCode);
         }
+
+        if(postData.getCommissionAccountingCode() != null) {
+            AccountingCode commissionAccountingCode = accountingCodeService.findByCode(postData.getCommissionAccountingCode());
+            if(commissionAccountingCode == null) {
+                throw new NotFoundException("Commission accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setContraAccountingCode(commissionAccountingCode);
+        }
+
         occTemplateService.create(occTemplate);
     }
 
@@ -151,6 +160,18 @@ public class OccTemplateApi extends BaseApi {
                 throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
             }
             occTemplate.setContraAccountingCode(contractAccountingCode);
+        } else {
+            occTemplate.setContraAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
+        }
+
+        if(postData.getCommissionAccountingCode() != null) {
+            AccountingCode commissionAccountingCode = accountingCodeService.findByCode(postData.getCommissionAccountingCode());
+            if(commissionAccountingCode == null) {
+                throw new NotFoundException("Commission accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setCommissionAccountingCode(commissionAccountingCode);
+        } else {
+            occTemplate.setCommissionAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
         }
         occTemplateService.update(occTemplate);
     }

@@ -40,6 +40,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.ws.rs.core.Response;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
@@ -272,16 +273,18 @@ public interface CurrencyRs extends IBaseRs {
             summary=" API to add Exchange Rate ",
             description=" API to add Exchange Rate ",
             operationId="ADD_EXCHANGE_RATE",
-            responses= {
-                @ApiResponse(description=" Request processing status ",
-                        content=@Content(
-                                    schema=@Schema(
-                                            implementation= ActionStatus.class
-                                            )
-                                )
-                )}
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Success"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Failed action"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Entity does not exist")
+            }
     )
-    ActionStatus addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData);
+    Response addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData);
 
     @PUT
     @Path("/updateExchangeRate/{id}")

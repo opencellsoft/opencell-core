@@ -10,12 +10,14 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositPaymentInput;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.payments.*;
 import org.meveo.model.securityDeposit.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.payments.impl.*;
 
@@ -57,13 +59,16 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
 
     @Inject
-    private AccountOperationService accountOperationService;
+    private RecordedInvoiceService recordedInvoiceService;
 
     @Inject
     private MatchingCodeService matchingCodeService;
 
     @Inject
     private PaymentHistoryService paymentHistoryService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     protected List<String> missingParameters = new ArrayList<>();
 
@@ -276,11 +281,11 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void payInvoices(Long id, SecurityDepositPaymentInput securityDepositPaymentInput) {
         SecurityDeposit securityDeposit = getSecurityDepositOrFail(id);
-        AccountOperation accountOperation = getAccountOperationOrFail(securityDepositPaymentInput.getAccountOperation().getId());
-        checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), accountOperation);
-        checkSecurityDepositSubscription(securityDeposit, accountOperation);
-        checkSecurityDepositServiceInstance(securityDeposit, accountOperation);
-        matchSecurityDepositPayments(securityDeposit, accountOperation);
+        RecordedInvoice recordedInvoice = getRecordedInvoiceOrFail(securityDepositPaymentInput.getAccountOperation().getId());
+        checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
+        checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
+        checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
+        matchSecurityDepositPayments(securityDeposit, recordedInvoice);
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
@@ -288,7 +293,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
                 securityDepositPaymentInput.getAmount(),
                 SecurityDepositOperationEnum.PAY_BY_SECURITY_DEPOSIT,
                 OperationCategoryEnum.DEBIT,
-                accountOperation);
+                recordedInvoice);
 
         auditLogService.trackOperation("DEBIT", new Date(), securityDeposit, securityDeposit.getCode());
 
@@ -309,7 +314,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
 
         securityDeposit.setStatus(SecurityDepositStatusEnum.UNLOCKED);
-        securityDeposit.setAmount(securityDeposit.getAmount().subtract(amount));
+        securityDeposit.setCurrentBalance(securityDeposit.getCurrentBalance().subtract(amount));
         update(securityDeposit);
     }
 
@@ -335,11 +340,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 //        See PaymentAPI.matchPayment ( )
     }
 
-    private void checkSecurityDepositServiceInstance(SecurityDeposit securityDeposit, AccountOperation accountOperation) {
+    private void checkSecurityDepositServiceInstance(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getServiceInstance() != null) {
-            accountOperation.getInvoices().stream()
-                    .flatMap(invoice -> invoice.getSubscription().getServiceInstances().stream())
+            ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
+                    .stream()
+                    .flatMap(ratedTransaction -> ratedTransaction.getSubscription().getServiceInstances().stream())
                     .filter(serviceInstance -> !securityDeposit.getServiceInstance().equals(serviceInstance))
                     .findAny()
                     .ifPresent(invoice -> {
@@ -349,14 +355,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         }
     }
 
-    private void checkSecurityDepositSubscription(SecurityDeposit securityDeposit, AccountOperation accountOperation) {
+    private void checkSecurityDepositSubscription(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getSubscription() != null) {
-            accountOperation.getInvoices().stream()
-                    .map(invoice -> invoice.getSubscription())
-                    .filter(subscription -> !securityDeposit.getSubscription().equals(subscription))
+             ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
+            .stream()
+                    .filter(ratedTransaction -> !securityDeposit.getSubscription().equals(ratedTransaction.getSubscription()))
                     .findAny()
-                    .ifPresent(invoice -> {
+                    .ifPresent(ratedTransaction -> {
                         throw new InvalidParameterException("All invoices should have the same subscription");
                     });
 
@@ -385,12 +391,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         return securityDeposit;
     }
 
-    AccountOperation getAccountOperationOrFail(Long id) {
-        AccountOperation accountOperation = accountOperationService.findById(id);
-        if (accountOperation == null) {
+    RecordedInvoice getRecordedInvoiceOrFail(Long id) {
+        RecordedInvoice recordedInvoice = recordedInvoiceService.findById(id);
+        if (recordedInvoice == null) {
             throw new EntityDoesNotExistsException("account operation does not exist.");
         }
-        return accountOperation;
+        return recordedInvoice;
     }
 
 
