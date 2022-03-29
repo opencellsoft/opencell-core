@@ -302,6 +302,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
             addFunction("mv", "getSubscriptionProductAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductAttributeValue", Subscription.class, String.class, String.class));
             addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductElAttributeValue", ServiceInstance.class,String.class, WalletOperation.class));
+            addFunction("mv", "getSubscriptionProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductElAttributeValue", Subscription.class, String.class, String.class, WalletOperation.class));
+            
+            
             
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -2034,8 +2037,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     
+    public static Object getSubscriptionProductAttributeValue(Subscription subscription,String productCode,String attributeCode,WalletOperation walletOperation) { 
+    	return getSubscriptionProductElAttributeValue(subscription, productCode, attributeCode, walletOperation);
+    }
     
-    public static Object getSubscriptionProductAttributeValue(Subscription subscription,String productCode,String attributeCode) { 
+    
+    public static Object getSubscriptionProductElAttributeValue(Subscription subscription,String productCode,String attributeCode,WalletOperation walletOperation) { 
     	Optional<AttributeInstance> attributInstance=Optional.empty();
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
@@ -2065,12 +2072,17 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				}
 				break;
 			case EXPRESSION_LANGUAGE :
-				if(attributInstance.get().getDoubleValue()!=null) {
-					return attributInstance.get().getDoubleValue(); 
-				}else if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
-					return attributInstance.get().getStringValue();  
+				String value=null;
+				if(walletOperation!=null) {
+					 value = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance,walletOperation);
+				}else {
+					 value  = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance);
 				}
-				break;
+				if(NumberUtils.isCreatable(value.toString().trim())) {
+					return Double.valueOf(value.toString().trim());
+				}else {
+					return value;
+				}
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  

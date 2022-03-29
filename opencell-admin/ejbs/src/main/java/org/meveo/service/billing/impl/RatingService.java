@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -1450,7 +1451,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     public void applyDiscount(RatingResult ratingResult, WalletOperation walletOperation, boolean isVirtual) {
     	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-    	List<DiscountPlanInstance> discountPlanInstances = new ArrayList<DiscountPlanInstance>();
+    	HashSet<DiscountPlanInstance> discountPlanInstances = new HashSet<DiscountPlanInstance>();
     	if(chargeInstance.getServiceInstance() != null) {
     		discountPlanInstances.addAll(chargeInstance.getServiceInstance().getAllDiscountPlanInstances());
     	}
