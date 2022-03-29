@@ -2018,9 +2018,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(NumberUtils.isCreatable(value.toString().trim())) {
 					return Double.valueOf(value.toString().trim());
 				}else {
-					return value
+					return value;
 				}
-				break;
 				 
 				
 			case DATE:
