@@ -300,7 +300,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
             addFunction("mv", "getSubscriptionProductAttributeValue", MeveoFunctionMapper.class.getMethod("getSubscriptionProductAttributeValue", Subscription.class, String.class, String.class));
-            addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class,Object.class, BaseEntity[].class));
+            addFunction("mv", "getProductElAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class,String.class,Object.class, WalletOperation.class));
             
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1981,9 +1981,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
-    	return getProductElAttributeValue(serviceInstance, attributeCode,Object.class);
+    	return getProductElAttributeValue(serviceInstance, attributeCode,Object.class,null);
     }
-    public static <T> T  getProductElAttributeValue(ServiceInstance serviceInstance, String attributeCode,Class<T> resultClass, BaseEntity... entities) { 
+    public static <T> T  getProductElAttributeValue(ServiceInstance serviceInstance, String attributeCode,Class<T> resultClass,WalletOperation walletOperation) { 
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
@@ -2008,8 +2008,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				}break;
 				
 			case EXPRESSION_LANGUAGE :
-				if(entities!=null && entities.length>0) {
-					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,entities);
+				if(walletOperation!=null) {
+					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance,walletOperation);
 				}else {
 					return (T) ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), resultClass, serviceInstance);
 				}
