@@ -40,7 +40,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         }
         
         // Check if a user choose a date that is already taken
-        if (fromDateExists(postData.getFromDate())) {
+        if (findByfromDate(postData.getFromDate()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
         
@@ -90,10 +90,10 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
     }
     
     
-    public boolean fromDateExists(Date fromDate) {
+    public ExchangeRate findByfromDate(Date fromDate) {
         return getEntityManager()
-                .createNamedQuery("ExchangeRate.countByFromDate", Long.class)
+                .createNamedQuery("ExchangeRate.findByfromDate", entityClass)
                 .setParameter("fromDate", fromDate)
-                .getSingleResult() > 0;
+                .getSingleResult();
     }
 }
