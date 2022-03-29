@@ -148,10 +148,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
 			ratedTransactionService.calculateAccountingArticle(result, billableEntity, null, null);
 		} else {
-			int index=0;
 			int count = maxInvoiceLinesPerTransaction.intValue();
 			while(count >= maxInvoiceLinesPerTransaction){
-				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), index++);
+				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), 0);
 			}
 		}
 	}
@@ -172,10 +171,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
 			invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, null, null);
 		} else {
-			int index=0;
 			int count = maxInvoiceLinesPerTransaction.intValue();
 			while(count >= maxInvoiceLinesPerTransaction){
-				count = invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, maxInvoiceLinesPerTransaction.intValue(), index++);
+				count = invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, maxInvoiceLinesPerTransaction.intValue(), 0);
 			}
 		}
 	}
