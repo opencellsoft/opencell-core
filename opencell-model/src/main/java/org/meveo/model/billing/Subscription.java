@@ -432,6 +432,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_offer_id",referencedColumnName = "id")
     private OrderOffer orderOffer;
+    
+    
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -1171,6 +1175,23 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 		this.orderOffer = orderOffer;
 	}
 	
+	
+	
+	public List<AttributeInstance> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+
+	public void addAttributeInstance(AttributeInstance attributeInstance) {
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		if(attributeInstance!=null) {
+			attributeInstances.add(attributeInstance);
+		}
+
+	}
 	public Date getRenewalDate() {
 		if(getSubscriptionDate()==null) {
 			return null;
