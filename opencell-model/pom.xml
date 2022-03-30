@@ -322,6 +322,24 @@
             <version>1.70</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.msc</groupId>
+            <artifactId>jboss-msc</artifactId>
+            <version>1.4.13.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-server</artifactId>
+            <version>7.2.0.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron-credential-store</artifactId>
+            <version>1.19.0.Final</version>
+        </dependency>
+
     </dependencies>
 
     <profiles>
