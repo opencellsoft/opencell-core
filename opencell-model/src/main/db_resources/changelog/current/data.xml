@@ -9638,4 +9638,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-6075_20220330" author="aelmalki">
+		<update tableName="meveo_script_instance">
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+			<where> code IN ('org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript', 'org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')</where>
+		</update>
+	</changeSet>
+
+
 </databaseChangeLog>
