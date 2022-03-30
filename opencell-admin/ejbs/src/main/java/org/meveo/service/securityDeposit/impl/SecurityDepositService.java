@@ -343,8 +343,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     private void checkSecurityDepositServiceInstance(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getServiceInstance() != null) {
-            ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
-                    .stream()
+            List<RatedTransaction> ratedTransactions =  ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true);
+            if(ratedTransactions == null || ratedTransactions.isEmpty())
+            {
+               throw new InvalidParameterException("All invoices should have the same serviceInstance");
+            }
+
+           ratedTransactions.stream()
                     .flatMap(ratedTransaction -> ratedTransaction.getSubscription().getServiceInstances().stream())
                     .filter(serviceInstance -> !securityDeposit.getServiceInstance().equals(serviceInstance))
                     .findAny()
@@ -358,8 +363,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     private void checkSecurityDepositSubscription(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getSubscription() != null) {
-             ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
-            .stream()
+           List<RatedTransaction> ratedTransactions =  ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true);
+            if(ratedTransactions == null || ratedTransactions.isEmpty())
+            {
+               throw new InvalidParameterException("All invoices should have the same subscription");
+            }
+
+           ratedTransactions.stream()
+
                     .filter(ratedTransaction -> !securityDeposit.getSubscription().equals(ratedTransaction.getSubscription()))
                     .findAny()
                     .ifPresent(ratedTransaction -> {
