@@ -214,22 +214,21 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
-						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.INACTIVE);
-						serviceInstanceService.serviceActivation(serviceInstanceToActivate);					
-					}
-					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
-						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.SUSPENDED);
-						serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
-					}
+						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+		                        InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
+						if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
+							serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
+						}else {
+							serviceInstanceService.serviceActivation(serviceInstanceToActivate);
+						}
+					}				
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
-						ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+						ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
 		                        InstanceStatusEnum.ACTIVE);
 						serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
-						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(product.getId(), product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
 		                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
 						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
 					}
