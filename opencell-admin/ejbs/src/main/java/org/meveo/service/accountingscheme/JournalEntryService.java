@@ -17,36 +17,46 @@
  */
 package org.meveo.service.accountingscheme;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
+    private static final String PARAM_ID_INV = "ID_INV";
+
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
         // INTRD-4702
         // First JournalEntry
-        JournalEntry firstEntry = buildJournalEntry(
-                ao, occT.getAccountingCode(), occT.getOccCategory());
+        JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), ao.getSeller(), null);
 
         // Second JournalEntry
-        JournalEntry secondEntry = buildJournalEntry(
-                ao, occT.getContraAccountingCode(),
+        JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
-                        OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT);
+                        OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), ao.getSeller(), null);
 
         create(firstEntry);
         create(secondEntry);
@@ -55,19 +65,116 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     }
 
-    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code, OperationCategoryEnum categoryEnum) {
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<JournalEntry> createFromInvoice(RecordedInvoice recordedInvoice, OCCTemplate occT) {
+        List<JournalEntry> saved = new ArrayList<>();
+
+        // 1- produce a Customer account entry line
+        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice,
+                recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() != null ?
+                        recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() :
+                        occT.getAccountingCode(),
+                occT.getOccCategory(),
+                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                recordedInvoice.getSeller(), null);
+
+        saved.add(customerAccountEntry);
+
+        // 2- produce the revenue accounting entries
+        Query query = getEntityManager().createQuery(
+                        "SELECT sum(ivL.amountWithoutTax), ivl" +
+                                " FROM InvoiceLine ivL WHERE ivL.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY ivl," +
+                                " ivl.accountingArticle.accountingCode.code," +
+                                " ivl.accountingArticle.analyticCode1, ivl.accountingArticle.analyticCode2, ivl.accountingArticle.analyticCode3")
+                .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
+
+        List<Object[]> revenuResult = query.getResultList();
+
+        revenuResult.forEach(objects -> {
+            InvoiceLine invoiceLine = (InvoiceLine) objects[1];
+
+            JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
+                    occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                    objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                    recordedInvoice.getSeller(), null);
+            revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
+            revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
+            revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
+
+            saved.add(revenuEntry);
+
+        });
+
+        // 3- produce the taxes accounting entries
+        Query queryTax = getEntityManager().createQuery(
+                        "SELECT sum(taxAg.amountTax), taxAg" +
+                                " FROM TaxInvoiceAgregate taxAg WHERE taxAg.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY taxAg, taxAg.accountingCode.code, taxAg.tax.code")
+                .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
+
+        List<Object[]> taxResult = queryTax.getResultList();
+
+        taxResult.forEach(objects -> {
+            TaxInvoiceAgregate taxAgr = (TaxInvoiceAgregate) objects[1];
+
+            JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
+                    occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                    objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                    recordedInvoice.getSeller(), taxAgr.getTax());
+
+            saved.add(taxEntry);
+
+        });
+
+        // Persist all
+        saved.forEach(this::create);
+
+        return saved;
+    }
+
+    public void validateAOForInvoiceScheme(AccountOperation ao) {
+        if (ao == null) {
+            log.warn("No AccountOperation passed as CONTEXT_ENTITY");
+            throw new BusinessException("No AccountOperation passed as CONTEXT_ENTITY");
+        }
+
+        if (!(ao instanceof RecordedInvoice)) {
+            log.warn("AccountOperation with id={} is not RecordedInvoice type", ao.getId());
+            throw new BusinessException("AccountOperation with id=" + ao.getId() + " is not RecordedInvoice type");
+        }
+    }
+
+    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT) {
+        if (occT == null) {
+            log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
+            throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
+        }
+
+        if (occT.getAccountingCode() == null) {
+            log.warn("Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+        }
+
+        if (occT.getContraAccountingCode() == null) {
+            log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+        }
+
+    }
+
+    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
+                                           OperationCategoryEnum categoryEnum, BigDecimal amount,
+                                           Seller seller, Tax tax) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
-        firstEntry.setAmount(ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount());
+        firstEntry.setAmount(amount);
         firstEntry.setCustomerAccount(ao.getCustomerAccount());
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
-        firstEntry.setSeller(ao.getSeller());
-        // Those value should have value : see technical specification INTRD-4702
-        firstEntry.setTax(null);
-        firstEntry.setAnalyticCode1(null);
-        firstEntry.setAnalyticCode2(null);
-        firstEntry.setAnalyticCode3(null);
+        firstEntry.setSeller(seller);
+        firstEntry.setTax(tax);
 
         return firstEntry;
     }
