@@ -2539,7 +2539,175 @@
 		</insert>
 	</changeSet>
 	<changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
-	
+
+    	<changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-37" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511011000" />
+			<column name="description" value="CB à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-38" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511002000" />
+			<column name="description" value="Paypal à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-39" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511003000" />
+			<column name="description" value="Stripe à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511000610" />
+			<column name="description" value="TIP à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-41" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="531100000" />
+			<column name="description" value="Caisse en monnaie nationale"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-42" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511200000" />
+			<column name="description" value="check à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+
+        <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-54" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-42" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CHECK" />
+			<column name="description" value="Payment - check" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-55" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-37" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CB" />
+			<column name="description" value="Payment - card" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-56" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_DIRECT_DEBIT" />
+			<column name="description" value="Payment - direct debit (prélèvement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-57" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-38" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_PAYPAL" />
+			<column name="description" value="Payment Paypal" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-58" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-39" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_STRIPE" />
+			<column name="description" value="Payment Stripe" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-59" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-40" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_TIP_DEBIT" />
+			<column name="description" value="Payment - TIP" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-41" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CASH" />
+			<column name="description" value="Payment - cash" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-61" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_WIRE" />
+			<column name="description" value="WIRETRANSFER (virement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+
+
+        </changeSet>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
