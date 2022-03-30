@@ -61,18 +61,11 @@
 							}
 						},
 						"url": {
-							"raw": "https://keobiz.d2.opencell.work/opencell/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
-							"protocol": "https",
+							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
 							"host": [
-								"keobiz",
-								"d2",
-								"opencell",
-								"work"
+								"{{opencell.url}}"
 							],
 							"path": [
-								"opencell",
-								"api",
-								"rest",
 								"account",
 								"accountHierarchy",
 								"createOrUpdateCRMAccountHierarchy"
@@ -134,18 +127,11 @@
 							}
 						},
 						"url": {
-							"raw": "https://keobiz.d2.opencell.work/opencell/api/rest/billing/subscription/subscribeAndActivateServices",
-							"protocol": "https",
+							"raw": "{{opencell.url}}/billing/subscription/subscribeAndActivateServices",
 							"host": [
-								"keobiz",
-								"d2",
-								"opencell",
-								"work"
+								"{{opencell.url}}"
 							],
 							"path": [
-								"opencell",
-								"api",
-								"rest",
 								"billing",
 								"subscription",
 								"subscribeAndActivateServices"
@@ -207,18 +193,11 @@
 							}
 						},
 						"url": {
-							"raw": "https://keobiz.d2.opencell.work/opencell/api/rest/billing/subscription/subscribeAndActivateServices",
-							"protocol": "https",
+							"raw": "{{opencell.url}}/billing/subscription/subscribeAndActivateServices",
 							"host": [
-								"keobiz",
-								"d2",
-								"opencell",
-								"work"
+								"{{opencell.url}}"
 							],
 							"path": [
-								"opencell",
-								"api",
-								"rest",
 								"billing",
 								"subscription",
 								"subscribeAndActivateServices"
@@ -280,18 +259,11 @@
 							}
 						},
 						"url": {
-							"raw": "https://keobiz.d2.opencell.work/opencell/api/rest/job/execute",
-							"protocol": "https",
+							"raw": "{{opencell.url}}/job/execute",
 							"host": [
-								"keobiz",
-								"d2",
-								"opencell",
-								"work"
+								"{{opencell.url}}"
 							],
 							"path": [
-								"opencell",
-								"api",
-								"rest",
 								"job",
 								"execute"
 							]
@@ -328,7 +300,7 @@
 							"script": {
 								"exec": [
 									"pm.collectionVariables.set(\"subscription.code\", pm.variables.replaceIn('{{$guid}}'));\r",
-									"setTimeout(function(){}, 15000);"
+									"setTimeout(function(){}, 600000);"
 								],
 								"type": "text/javascript"
 							}
@@ -362,18 +334,11 @@
 							}
 						},
 						"url": {
-							"raw": "https://keobiz.d2.opencell.work/opencell/api/rest/v2/generic/all/invoice",
-							"protocol": "https",
+							"raw": "{{opencell.url}}/v2/generic/all/invoice",
 							"host": [
-								"keobiz",
-								"d2",
-								"opencell",
-								"work"
+								"{{opencell.url}}"
 							],
 							"path": [
-								"opencell",
-								"api",
-								"rest",
 								"v2",
 								"generic",
 								"all",
