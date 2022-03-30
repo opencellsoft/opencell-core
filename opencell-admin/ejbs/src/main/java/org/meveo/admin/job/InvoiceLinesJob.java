@@ -25,8 +25,7 @@ public class InvoiceLinesJob extends Job {
         invoiceLinesBean.execute(result, jobInstance);
         return result;
     }
-    
-    
+
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.INVOICING;

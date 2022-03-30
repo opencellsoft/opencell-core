@@ -3,6 +3,14 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -18,13 +26,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author anasseh
@@ -107,9 +108,10 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 				paymentHistory.setListAoPaid(new ArrayList<>());
 			}
 			paymentHistory.getListAoPaid().add(ao);
-			}
 		}
 		}
+		super.create(paymentHistory);
+	}
 
     public PaymentHistory findHistoryByPaymentId(String paymentId) {
         try {

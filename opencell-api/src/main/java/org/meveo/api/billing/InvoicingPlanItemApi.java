@@ -37,7 +37,6 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.service.billing.impl.InvoicingPlanItemService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
-import org.meveo.api.exception.InvalidParameterException;
 
 /**
  * CRUD API for {@link InvoicingPlanItem}.
