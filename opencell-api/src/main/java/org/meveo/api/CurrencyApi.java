@@ -321,7 +321,7 @@ public class CurrencyApi extends BaseApi {
         }
 
         // Check if a user choose a date that is already taken
-        ExchangeRate exchangeRateFromDate = exchangeRateService.findByfromDate(postData.getFromDate());
+        ExchangeRate exchangeRateFromDate = exchangeRateService.findByfromDate(postData.getFromDate(),exchangeRate.getTradingCurrency().getId());
         if (exchangeRateFromDate != null && !exchangeRateFromDate.getId().equals(exchangeRate.getId())) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
