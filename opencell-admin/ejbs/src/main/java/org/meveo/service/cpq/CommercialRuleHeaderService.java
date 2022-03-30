@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
@@ -290,12 +291,23 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
     	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
+    		
     		switch(operator) {
     		case EQUAL:
+    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))==0) {
+    					 return true;
+    				 }
+    			}
     			if (convertedValue.equals(sourceAttributeValue))
     				return true;
     			break;
     		case NOT_EQUAL:
+    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+   				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
+   					 return true;
+   				 }
+   			    }
     			if (!convertedValue.equals(sourceAttributeValue))
     				return true;
     			break;
@@ -330,7 +342,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			Object attributeValue = entry.getValue();
     			String convertedValue = String.valueOf(attributeValue);
     			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
-    				boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
@@ -348,16 +359,18 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
     					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
     					if(result!=null) {
-    					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
-    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
+    					boolean resultCompareEl=valueCompare(line.getOperator(), line.getSourceAttributeValue(), result);
+    					if (isPreRequisite && !resultCompareEl || !isPreRequisite && resultCompareEl) {
+    						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompareEl));
     							return false;
-    						}else if (isPreRequisite && resultCompare){
+    						}else if (isPreRequisite && resultCompareEl){
     							continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, true));
     							return true;
     						}
     					}
     					break;
     				default:
+    					boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
     					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     						return false;
