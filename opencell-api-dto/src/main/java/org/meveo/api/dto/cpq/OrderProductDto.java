@@ -108,7 +108,9 @@ public class OrderProductDto extends BaseEntityDto{
 		orderProductId=orderProduct.getId();
 		orderLotCode=orderProduct.getOrderServiceCommercial()!=null?orderProduct.getOrderServiceCommercial().getCode():null;
 		commercialOrderId=orderProduct.getOrder()!=null?orderProduct.getOrder().getId():null;
-		productCode= orderProduct.getProductVersion().getProduct().getCode();
+		if(orderProduct.getProductVersion() != null){
+			productCode= orderProduct.getProductVersion().getProduct().getCode();
+		}
 		quantity=orderProduct.getQuantity();
 		discountPlanCode=orderProduct.getDiscountPlan()!=null?orderProduct.getDiscountPlan().getCode():null;
 		deliveryDate=orderProduct.getDeliveryDate();
@@ -120,7 +122,7 @@ public class OrderProductDto extends BaseEntityDto{
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
 		super();
 		init(orderProduct);
-		if(loadAttributes) {
+		if(loadAttributes && orderProduct.getProductVersion() != null) {
 			orderAttributes=new ArrayList<OrderAttributeDto>();
 			for(OrderAttribute orderAttribute:orderProduct.getOrderAttributes()) {
 				OrderAttributeDto orderAttributeDto = new OrderAttributeDto(orderAttribute);

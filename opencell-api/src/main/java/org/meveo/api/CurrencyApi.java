@@ -321,7 +321,7 @@ public class CurrencyApi extends BaseApi {
         }
 
         // Check if a user choose a date that is already taken
-        ExchangeRate exchangeRateFromDate = exchangeRateService.findByfromDate(postData.getFromDate());
+        ExchangeRate exchangeRateFromDate = exchangeRateService.findByfromDate(postData.getFromDate(),exchangeRate.getTradingCurrency().getId());
         if (exchangeRateFromDate != null && !exchangeRateFromDate.getId().equals(exchangeRate.getId())) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
@@ -368,11 +368,11 @@ public class CurrencyApi extends BaseApi {
             parameters += "for " + exchangeRate.getTradingCurrency().getCurrencyCode() + " from " + rateFormatter.format(fromRateAmount) + " to " + rateFormatter.format(toRateAmount);
             addAnd = true;
         }
-        if (!fromDate.equals(toDate)) {
+        if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
             if (addAnd) {
                 parameters += " AND ";
             }
-            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toRateAmount);
+            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
         }
         auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
     }
