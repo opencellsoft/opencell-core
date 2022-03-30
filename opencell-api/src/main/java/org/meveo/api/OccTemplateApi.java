@@ -344,7 +344,7 @@ public class OccTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptCode);
         else {
             ScriptInstanceCategory category = PersistenceUtils.initializeAndUnproxy(scriptInstance.getScriptInstanceCategory());
-            if (category == null || !"FILE_ACCOUNTING_SCHEMES".equals(category.getCode())) {
+            if (category == null || !"ACCOUNTING_SCHEMES".equals(category.getCode())) {
                 throw new MissingParameterException("the script with code=" + scriptCode + " does not belong to category ‘File accounting schemes’");
             }
         }

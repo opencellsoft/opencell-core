@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ExchangeRateDto;
@@ -40,7 +41,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         }
         
         // Check if a user choose a date that is already taken
-        if (findByfromDate(postData.getFromDate()) != null) {
+        if (findByfromDate(postData.getFromDate(),postData.getTradingCurrency().getId()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
         
@@ -87,13 +88,18 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
         exchangeRate.setTradingCurrency(tradingCurrency);
         update(exchangeRate);
-    }
+    }    
     
-    
-    public ExchangeRate findByfromDate(Date fromDate) {
-        return getEntityManager()
-                .createNamedQuery("ExchangeRate.findByfromDate", entityClass)
-                .setParameter("fromDate", fromDate)
-                .getSingleResult();
+    public ExchangeRate findByfromDate(Date fromDate, Long tradingCurrencyId) {        
+        try {
+            return (ExchangeRate) getEntityManager()
+                    .createNamedQuery("ExchangeRate.findByfromDate", entityClass)
+                    .setParameter("fromDate", fromDate)
+                    .setParameter("tradingCurrencyId", tradingCurrencyId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No ExchangeRate entity found");
+            return null;
+        }
     }
 }

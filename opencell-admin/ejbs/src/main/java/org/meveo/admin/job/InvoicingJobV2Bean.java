@@ -215,7 +215,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             BiConsumer<Long, JobExecutionResultImpl> task = (invoiceId, jobResult) -> {
                 invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
-                invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
             iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
