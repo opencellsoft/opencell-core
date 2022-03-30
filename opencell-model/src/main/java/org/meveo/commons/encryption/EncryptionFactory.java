@@ -81,7 +81,7 @@ public class EncryptionFactory {
         try {
             messageDigest = MessageDigest.getInstance(digestAlgo);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("Error while initializing digest : " + e.getLocalizedMessage());
         }
 
         // initialize a cipher for migration
@@ -90,16 +90,16 @@ public class EncryptionFactory {
             cipher = Cipher.getInstance(OLD_AES_ENCRYPTION_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-            e.printStackTrace();
+            log.error("Error while initializing cipher : " + e.getLocalizedMessage());
         }
     }
 
     public static void listOfSecurityProviders() {
         //Security listing
         for (Provider provider : Security.getProviders()) {
-            System.out.println("Security provider : " + provider.getName());
+            log.info("Security provider : " + provider.getName());
             for (Provider.Service service : provider.getServices()) {
-                System.out.println("Algorithm : " + service.getAlgorithm());
+                log.info("Algorithm : " + service.getAlgorithm());
             }
         }
     }
@@ -107,7 +107,7 @@ public class EncryptionFactory {
     public static void listAlgoBountyCastle() {
         Provider provider = new BouncyCastleProvider();
         for (Provider.Service service : provider.getServices()) {
-            System.out.println("Algorithm: " + service.getAlgorithm());
+            log.info("Algorithm: " + service.getAlgorithm());
         }
     }
 
@@ -128,7 +128,7 @@ public class EncryptionFactory {
             md5.update(algoKey.getBytes(StandardCharsets.UTF_8));
             keyBytes = md5.digest();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("Error while generating hash : " + e.getLocalizedMessage());
         }
 
         return Hex.encodeHexString(keyBytes);
@@ -156,7 +156,7 @@ public class EncryptionFactory {
             return completePrefix + SEPARATOR
                     + Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
+            log.error("Error while encrypting : " + e.getLocalizedMessage());
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class EncryptionFactory {
                 }
             }
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | NoSuchPaddingException | NoSuchAlgorithmException e) {
-            log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+            log.error("Error while decrypting: " + e.getLocalizedMessage());
             return ON_ERROR_RETURN;
         }
 
@@ -219,7 +219,7 @@ public class EncryptionFactory {
             md5.update(keyStr.getBytes(StandardCharsets.UTF_8));
             keyBytes = md5.digest();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("Error while defining key : " + e.getLocalizedMessage());
         }
 
         return new SecretKeySpec(keyBytes, BUILD_KEY_ALGORITHM);
@@ -248,7 +248,7 @@ public class EncryptionFactory {
                 throw new Exception("External secret key cannot be null while encrypting / decrypting");
             }
         } catch (Exception e) {
-            log.error("Error while building Secret Key: " + e.getLocalizedMessage(), e);
+            log.error("Error while building Secret Key: " + e.getLocalizedMessage());
         }
         return null;
     }

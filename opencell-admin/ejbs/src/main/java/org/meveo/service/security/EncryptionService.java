@@ -1,7 +1,10 @@
 package org.meveo.service.security;
 
 import org.meveo.commons.encryption.EncryptionFactory;
+import org.meveo.commons.encryption.IEncryptable;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,6 +33,8 @@ public class EncryptionService {
 
     private static int nbItemsCorrectlyProcessed;
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     private AccountEntitySearchService accountEntityService;
 
@@ -52,17 +57,17 @@ public class EncryptionService {
     private void updateEncryptedValues(String processedTable){
         // update all encrypted values with new encryption algo or new key for all database
         if (processedTable.equals(PROCESSED_ALL_TABLES)) {
-            System.out.println("update encrypted all tables");
+            log.info("update encrypted all tables");
             updateEncryptedCFValuesOnAllTables();
             updateEncryptedDataOnAllTables();
-            System.out.println("------------finish update encrypted all tables-----------");
+            log.info("------------finish update encrypted all tables-----------");
         }
         // update all encrypted values with new encryption algo or new key for a particular table
         else {
-            System.out.println("update encrypted on particular table");
+            log.info("update encrypted on particular table");
             updateEncryptedCFValues(processedTable);
             updateEncryptedData(processedTable);
-            System.out.println("------------finish update encrypted on particular table-----------");
+            log.info("------------finish update encrypted on particular table-----------");
         }
     }
 
