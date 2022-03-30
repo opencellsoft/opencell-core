@@ -1,7 +1,8 @@
 package org.meveo.commons.encryption;
 
-import com.google.common.base.Joiner;
+import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
@@ -20,11 +21,8 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * EncryptionFactory
@@ -48,15 +46,15 @@ public class EncryptionFactory {
 
     private static MessageDigest messageDigest = null;
 
-    public static Map<String, String> mapPrefAndAlgoKey;
-
     public static final String PREFIX = "pref";
 
     private static final String SEPARATOR = "|";
 
-    public static final String MAP_PREFIX_ALGO_AND_KEY = "encrypt.mapPrefixAndAlgoKey";
+    public static final String ENCRYPTION_ALGO_PROP = "encrypt.algorithm";
 
-    private static final int LENGTH_HASH_MD5 = 24;
+    public static final String ENCRYPTION_KEY_PROP = "encrypt.secretKey";
+
+    private static final int LENGTH_HASH_MD5_EN_HEXA = 32;
 
 
 
@@ -84,18 +82,6 @@ public class EncryptionFactory {
             messageDigest = MessageDigest.getInstance(digestAlgo);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        }
-
-        // get and convert from string to mapPrefAndAlgoKey
-        mapPrefAndAlgoKey = new HashMap<>();
-        String strMapPrefAndAlgoKey = ParamBean.getInstance().getProperty(MAP_PREFIX_ALGO_AND_KEY, null);
-        if (strMapPrefAndAlgoKey != null) {
-            String[] pairs = strMapPrefAndAlgoKey.split(",");
-            for (String pair : pairs) {
-                String pref = pair.substring(0, PREFIX.length() + LENGTH_HASH_MD5);
-                String algoKey = pair.substring(PREFIX.length() + LENGTH_HASH_MD5 + 1);
-                mapPrefAndAlgoKey.put(pref, algoKey);
-            }
         }
 
         // initialize a cipher for migration
@@ -133,21 +119,6 @@ public class EncryptionFactory {
         return result;
     }
 
-    public static String getCompletePrefix(String algorithm, String secretKey){
-        String algoKey = algorithm + SEPARATOR + secretKey;
-        String completePrefix = PREFIX + getHashOfAlgoKey(algoKey);
-
-        if (! mapPrefAndAlgoKey.containsKey(completePrefix)) {
-            mapPrefAndAlgoKey.put(completePrefix, algoKey);
-            ParamBean.getInstance().setProperty(MAP_PREFIX_ALGO_AND_KEY,
-                    String.join(",", Joiner.on(",").withKeyValueSeparator("=").join(mapPrefAndAlgoKey)));
-
-            ParamBean.getInstance().saveProperties();
-        }
-
-        return completePrefix;
-    }
-
     public static String getHashOfAlgoKey(String algoKey){
         MessageDigest md5;
         byte[] keyBytes = new byte[0];
@@ -160,17 +131,27 @@ public class EncryptionFactory {
             e.printStackTrace();
         }
 
-        return Base64.getEncoder().encodeToString(keyBytes);
+        return Hex.encodeHexString(keyBytes);
     }
 
     public static String encrypt(String clearText){
         try {
-            String algorithm = ParamBean.getInstance().getProperty("encrypt.algorithm", null);
-            String secretKey = ParamBean.getInstance().getProperty("encrypt.secretKey", null);
-            String completePrefix = getCompletePrefix(algorithm, secretKey);
+            String algorithm = ParamBean.getInstance().getProperty(ENCRYPTION_ALGO_PROP, null);
+            String secretKey = ParamBean.getInstance().getProperty(ENCRYPTION_KEY_PROP, null);
+            String algoKey = algorithm + SEPARATOR + secretKey;
+            String hashAlgoKey = getHashOfAlgoKey(algoKey);
+
+            String completePrefix = PREFIX + hashAlgoKey;
 
             cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.ENCRYPT_MODE, defineKey(secretKey), ivParameterSpec);
+
+            // add algorithm and secret key if they do not exist in the keystore
+            // the format is as follows : encrypt.algorithm.hash1 is as alias, and algorithm or key is as password
+            if (! KeystoreManager.existCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix)) {
+                KeystoreManager.addCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix, algorithm);
+                KeystoreManager.addCredential(ENCRYPTION_KEY_PROP + "." + completePrefix, secretKey);
+            }
 
             return completePrefix + SEPARATOR
                     + Base64.getEncoder().encodeToString(cipher.doFinal(clearText.getBytes()));
@@ -193,15 +174,20 @@ public class EncryptionFactory {
                     return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
                 }
                 else if (encryptedText.startsWith(PREFIX)) {
-                    String completePrefix = encryptedText.substring(0, PREFIX.length() + LENGTH_HASH_MD5); // get complete prefix
-                    encryptedText = encryptedText.substring(PREFIX.length() + LENGTH_HASH_MD5 + 1);
+                    String completePrefix = encryptedText.substring(0, PREFIX.length() + LENGTH_HASH_MD5_EN_HEXA); // get complete prefix
+                    encryptedText = encryptedText.substring(PREFIX.length() + LENGTH_HASH_MD5_EN_HEXA + 1);
 
-                    String[] algoAndKey = new String[2];
-                    if (mapPrefAndAlgoKey.containsKey(completePrefix)) {
-                        algoAndKey = mapPrefAndAlgoKey.get(completePrefix).split("\\|");
+                    String algo = null;
+                    String key = null;
+                    if (KeystoreManager.existCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix)) {
+                        algo = KeystoreManager.retrieveCredential(ENCRYPTION_ALGO_PROP + "." + completePrefix);
+                        key = KeystoreManager.retrieveCredential(ENCRYPTION_KEY_PROP + "." + completePrefix);
                     }
-                    cipher = Cipher.getInstance(algoAndKey[0]);
-                    cipher.init(Cipher.DECRYPT_MODE, defineKey(algoAndKey[1]), ivParameterSpec);
+
+                    assert algo != null;
+                    cipher = Cipher.getInstance(algo);
+                    assert key != null;
+                    cipher.init(Cipher.DECRYPT_MODE, defineKey(key), ivParameterSpec);
 
                     return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
                 }
@@ -215,8 +201,12 @@ public class EncryptionFactory {
     }
 
     public static IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
-        new SecureRandom().nextBytes(iv);
+
+        byte[] iv = new byte[] { (byte) 0x14, (byte) 0x0b,
+                (byte) 0x41, (byte) 0xb2, (byte) 0x2a, (byte) 0x29, (byte) 0xbe,
+                (byte) 0xb4, (byte) 0x06, (byte) 0x1b, (byte) 0xda, (byte) 0x66,
+                (byte) 0xb6, (byte) 0x74, (byte) 0x7e, (byte) 0x14 };
+
         return new IvParameterSpec(iv);
     }
 
