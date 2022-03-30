@@ -9853,7 +9853,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511200000" />
-			<column name="description" value="check à encaisser"></column>
+			<column name="description" value="Chèques à encaisser"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
