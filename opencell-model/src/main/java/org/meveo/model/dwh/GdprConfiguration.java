@@ -124,6 +124,13 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
     @Column(name = "delete_ao_check_unpaid")
     private boolean deleteAoCheckUnpaidLife = false;
 
+    /**
+     * Should unpaid Account operations be deleted
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "deactivate_db_triggers")
+    private boolean deactivateDBTriggers = false;
+
     public int getInactiveSubscriptionLife() {
         return inactiveSubscriptionLife;
     }
@@ -234,6 +241,14 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
 
     public void setDeleteAoCheckUnpaidLife(boolean deleteAoCheckUnpaidLife) {
         this.deleteAoCheckUnpaidLife = deleteAoCheckUnpaidLife;
+    }
+
+    public boolean isDeactivateDBTriggers() {
+        return deactivateDBTriggers;
+    }
+
+    public void setDeactivateDBTriggers(boolean deactivateDBTriggers) {
+        this.deactivateDBTriggers = deactivateDBTriggers;
     }
 
     @Override
