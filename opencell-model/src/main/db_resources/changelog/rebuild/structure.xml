@@ -11745,7 +11745,9 @@
             <column name="updated" type="datetime"/>
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
-            <column name="quote_default_validity_delay" type="int"/>
+            <column name="quote_default_validity_delay" type="int">
+            	<constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

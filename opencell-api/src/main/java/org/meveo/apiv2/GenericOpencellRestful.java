@@ -78,6 +78,7 @@ import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
 import org.meveo.apiv2.securityDeposit.financeSettings.impl.FinanceSettingsResourceImpl;
 import org.meveo.apiv2.securityDeposit.impl.SecurityDepositResourceImpl;
 import org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl.SecurityDepositTemplateResourceImpl;
+import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -131,7 +132,7 @@ public class GenericOpencellRestful extends Application {
                 RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class, ImportExportResourceImpl.class,
                 DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class,
                         FinanceSettingsResourceImpl.class, SecurityDepositTemplateResourceImpl.class, SecurityDepositResourceImpl.class, UserAccountsResourceImpl.class,
-                        OpenOrderSettingResourceImpl.class)
+                        OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
