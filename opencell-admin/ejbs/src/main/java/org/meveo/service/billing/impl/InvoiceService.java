@@ -2870,6 +2870,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
