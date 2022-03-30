@@ -9638,4 +9638,31 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-5992_20220329" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Invoice accounting scheme script"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleInvoiceAccountingSchemeScript extends InvoiceAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="description" value="Invoice accounting scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
+		</insert>
+		<update tableName="ar_occ_template">
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')" />
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
