@@ -107,10 +107,12 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
@@ -645,11 +647,6 @@ public class EntityExportImportService implements Serializable {
                 xstream.omitField(ExportTemplate.class, "parameters");
                 xstream.omitField(ExportTemplate.class, "relatedEntities");
 
-                //status for the OfferTemplate should be by default IN_DESIGN
-                xstream.omitField(OfferTemplate.class, "lifeCycleStatus");
-				xstream.omitField(ProductOffering.class, "lifeCycleStatus");
-                //status for the OfferTemplate should be by default DRAFT
-				xstream.omitField(Product.class, "status");
 
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
@@ -691,6 +688,8 @@ public class EntityExportImportService implements Serializable {
             }
 
             for (IEntity entity : principalEntities) {
+
+                setStatusToDefault(entity);
                 xstream.marshal(entity, writer);
             }
             exportStats.updateSummary(exportTemplate.getEntityToExport(), principalEntities.size());
@@ -729,6 +728,23 @@ public class EntityExportImportService implements Serializable {
         }
 
         log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
+    }
+
+    private void setStatusToDefault(IEntity entity) {
+        if(entity instanceof Product)
+                {
+                    ((Product)entity).setStatus(ProductStatusEnum.DRAFT);
+                }
+
+                if(entity instanceof OfferTemplate)
+                {
+                    ((OfferTemplate)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
+                }
+
+                if(entity instanceof ProductOffering)
+                {
+                    ((ProductOffering)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
+                }
     }
 
     /**
