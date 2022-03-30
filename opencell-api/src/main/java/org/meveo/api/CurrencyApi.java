@@ -368,11 +368,11 @@ public class CurrencyApi extends BaseApi {
             parameters += "for " + exchangeRate.getTradingCurrency().getCurrencyCode() + " from " + rateFormatter.format(fromRateAmount) + " to " + rateFormatter.format(toRateAmount);
             addAnd = true;
         }
-        if (!fromDate.equals(toDate)) {
+        if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
             if (addAnd) {
                 parameters += " AND ";
             }
-            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toRateAmount);
+            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
         }
         auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
     }
