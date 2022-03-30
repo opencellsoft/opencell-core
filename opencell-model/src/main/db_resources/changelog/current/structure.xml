@@ -9426,4 +9426,18 @@ public class OrderAdvancement extends ModuleScript {
 
     </changeSet>
     
+    <changeSet id="#INTRD-6108_20220330" author="TarikFA.">
+    	<addColumn tableName="order_price">
+    		<column name="quantity" type="numeric(19,2)" />
+    		<column name="discounted_order_price" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseColumnNames="discounted_order_price" baseTableName="order_price" constraintName="fk_order_price_discounted_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="order_price" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="order_price" constraintName="fk_order_price_discount_plan" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+    </changeSet>
+    
 </databaseChangeLog>

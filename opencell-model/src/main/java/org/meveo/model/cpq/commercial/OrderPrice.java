@@ -21,7 +21,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.quote.QuotePrice;
 
 @Entity
 @Table(name = "order_price", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
@@ -95,6 +97,17 @@ public class OrderPrice extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id")
 	private OrderOffer orderOffer;
+	
+	@Column(name = "quantity")
+	private BigDecimal quantity = BigDecimal.ONE;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_order_price")
+	private OrderPrice discountedOrderPrice;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -222,6 +235,30 @@ public class OrderPrice extends BusinessEntity {
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public OrderPrice getDiscountedOrderPrice() {
+		return discountedOrderPrice;
+	}
+
+	public void setDiscountedOrderPrice(OrderPrice discountedOrderPrice) {
+		this.discountedOrderPrice = discountedOrderPrice;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
     
     

@@ -3,6 +3,7 @@ package org.meveo.service.quote.script;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -202,10 +203,11 @@ public class QuoteValidationScript extends ModuleScript {
 		product.getQuoteAttributes().forEach(quoteAttribute -> {
 			processOrderAttribute(quoteAttribute, commercialOrder, orderOffer, orderProduct);
 		});
-		
+
+		final Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer, quoteToOrder);
 		});
 		
 		
@@ -243,7 +245,7 @@ public class QuoteValidationScript extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
@@ -264,7 +266,15 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setChargeTemplate(price.getChargeTemplate());
 			orderPrice.setOrderOffer(orderOffer);
 			orderPrice.setPriceTypeEnum(price.getPriceTypeEnum());
+			orderPrice.setQuantity(price.getQuantity());
+			orderPrice.setDiscountPlan(price.getDiscountPlan());
+			
+			if(price.getDiscountedQuotePrice() != null && price.getDiscountPlan() != null) {
+				orderPrice.setDiscountedOrderPrice(quoteToOrder.get(price.getDiscountedQuotePrice().getId()));
+			}
+			
 			orderPriceService.create(orderPrice);
+			quoteToOrder.put(price.getId(), orderPrice);
 		});
 	}
 	
