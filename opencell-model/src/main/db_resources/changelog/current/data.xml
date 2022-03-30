@@ -3196,7 +3196,7 @@ public class ValidateBRScript extends Script {
 <!--            <column name="inh_as_def_value" value="0"/>-->
 <!--            <column name="cf_protectable" value="0"/>-->
 <!--        </insert>-->
-<!--    </changeSet>-->
+<!--    </changeSet>
 
     <changeSet id="#5890-2021-02-05_43" author="ZBARIKI">
         <update tableName="crm_custom_field_tmpl">
@@ -3227,7 +3227,7 @@ public class ValidateBRScript extends Script {
             <column name="listvalues" value="DATE"/>
             <column name="listvalues_key" value="DATE"/>
         </insert>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="#5951_20210209_data" author="AbdelmounaimAkadid">
         <insert tableName="billing_tax_class">
