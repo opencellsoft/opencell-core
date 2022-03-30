@@ -9886,6 +9886,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 		<update tableName="ar_occ_template">
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
 
