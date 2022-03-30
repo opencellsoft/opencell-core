@@ -35,6 +35,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -68,6 +69,8 @@ public class InvoiceLinesFactory {
             (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
     private InvoiceLineService invoiceLineService =
             (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
+    
+    private  DiscountPlanService discountPlanService = (DiscountPlanService) getServiceInterface(DiscountPlanService.class.getSimpleName());
     
 
 	private static final Logger log = LoggerFactory.getLogger(InvoiceLinesFactory.class);
@@ -124,6 +127,8 @@ public class InvoiceLinesFactory {
         		}
         		
         }
+        ofNullable(record.get("discount_plan_id"))
+        .ifPresent(discountPlanId ->invoiceLine.setDiscountPlan(discountPlanService.findById(((BigInteger) discountPlanId).longValue())));
         
 
         invoiceLine.setValueDate((Date) record.get("usage_date"));

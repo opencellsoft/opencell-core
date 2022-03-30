@@ -69,11 +69,13 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
@@ -107,6 +109,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private QuoteVersionService quoteVersionService; 
     
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
@@ -147,54 +152,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             	 entity.setTax(taxInfo.tax);
             }
     	super.create(entity);
-    	
-    	 if(entity.getDiscountPlan() != null) {
-         	addDiscountPlanInvoice( entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller);
-         }
     }
     
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice.getInvoiceDate() );
-    	if(isDiscountApplicable) {
-    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, null, invoice.getInvoiceDate());
-            BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
-            entity.setDiscountAmount(invoiceLineDiscountAmount);
-    	}
-    }
     
-    public BigDecimal addDiscountPlanInvoiceLine(List<DiscountPlanItem> discountItems,InvoiceLine invoiceLine, Invoice invoice, BillingAccount billingAccount, Seller seller) {
-        BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
-        for (DiscountPlanItem discountPlanItem : discountItems) {
-        	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
-        	discountInvoice.setStatus(invoiceLine.getStatus());
-            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
-                invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
-            } else {
-                //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
-                BigDecimal taxPercent = invoiceLine.getTaxRate();
-                if(invoiceLine.getAccountingArticle() != null) {
-                	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoice.getInvoiceDate(), false, false);
-                        taxPercent = taxInfo.tax.getPercent();
-                }
-                BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
-                if(discountAmount != null) {
-                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
-        	  	}
-                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                var quantity = invoiceLine.getQuantity();
-                discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
-                discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
-                discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
-                discountInvoice.setDiscountPlan(null);
-                discountInvoice.setDiscountedInvoiceLine(invoiceLine);
-                discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
-                discountInvoice.setTaxRate(taxPercent);
-                discountInvoice.setRawAmount(invoiceLineDiscountAmount);
-            	super.create(discountInvoice);
-            }
-        }
-        return invoiceLineDiscountAmount;
-    }
 
     public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
                                                        Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {

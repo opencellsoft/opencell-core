@@ -165,6 +165,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
@@ -180,6 +181,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
@@ -1101,7 +1103,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Create discount, category and tax aggregates if not all RTs were retrieved and processed in a single page
             if (!allRTsInOneRun) {
-                addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values());
+                addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values(), false);
             }
 
             // Link orders to invoice
@@ -3379,7 +3381,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return;
         }
 
-        addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
+        addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values(), false);
     }
     
     private void applyDiscountPlanItem(Invoice invoice) {
@@ -3404,7 +3406,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 	 if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
                          subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
                          invoice.getInvoiceLines().forEach(invoiceLine -> {
-                        	 invoiceLinesService.addDiscountPlanInvoiceLine(billingAccountApplicableDiscountPlanItems, invoiceLine, invoice, billingAccount, seller);
+                        	 discountPlanService.addDiscountPlanInvoiceLine(billingAccountApplicableDiscountPlanItems, invoiceLine, invoice, billingAccount, seller);
                          });
                         
                      }
@@ -3414,7 +3416,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
          
     }
     
-    private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates) throws BusinessException {
+    private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates, boolean isNewVerion) throws BusinessException {
 
         Subscription subscription = invoice.getSubscription();
         BillingAccount billingAccount = invoice.getBillingAccount();
@@ -3438,7 +3440,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
-        if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+        if (!isNewVerion && subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
@@ -3493,7 +3495,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountWithTax(scAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
+        if(!isNewVerion && invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
         	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());;
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
@@ -3517,23 +3519,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Map<Tax, BigDecimal> amountAsDiscountBase = new LinkedHashMap<>();
             scAggregate.getAmountsByTax().entrySet().stream().forEach(amountInfo -> amountAsDiscountBase.put(amountInfo.getKey(), amountInfo.getValue().getAmount(!isEnterprise)));
 
-            // Add discount aggregates defined on subscription level - ONLY when invoicing by subscription
-            for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
-                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding,
-                        invoiceRoundingMode, scAggregate, amountAsDiscountBase, cAggregate, discountPlanItem);
-                if (discountAggregate != null) {
-                    addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
-                    discountAggregates.add(discountAggregate);
-                }
-            }
-
-            for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
-                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
-                    cAggregate, discountPlanItem);
-                if (discountAggregate != null) {
-                    addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
-                    discountAggregates.add(discountAggregate);
-                }
+            if(!isNewVerion) {
+	            // Add discount aggregates defined on subscription level - ONLY when invoicing by subscription
+	            for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
+	                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding,
+	                        invoiceRoundingMode, scAggregate, amountAsDiscountBase, cAggregate, discountPlanItem);
+	                if (discountAggregate != null) {
+	                    addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
+	                    discountAggregates.add(discountAggregate);
+	                }
+	            }
+	
+	            for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
+	                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
+	                    cAggregate, discountPlanItem);
+	                if (discountAggregate != null) {
+	                    addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
+	                    discountAggregates.add(discountAggregate);
+	                }
+	            }
             }
 
             // Add tax aggregate or update its amounts
@@ -5127,6 +5131,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return Collections.emptyList();
     }
+    
+    @Inject private QuoteVersionService quoteVersionService;
 
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,
@@ -5135,6 +5141,32 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                                             BillingAccount billingAccount, PaymentMethod defaultPaymentMethod,
                                                             InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck,
                                                             boolean hasMin, Invoice existingInvoice) throws BusinessException {
+    	//apply perencetage discount for every invoiceLine
+    	var discountedInvoiceLines = invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, 1000);
+    	if(!discountedInvoiceLines.isEmpty()) {
+    		Seller seller = null;
+    		AccountingArticle accountingArticle = null;
+    		for (InvoiceLine invoiceLine : discountedInvoiceLines) {
+    			if(invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 1) {
+    				accountingArticle = invoiceLine.getAccountingArticle();
+    				seller= existingInvoice != null  && existingInvoice.getSeller()!=null ? existingInvoice.getSeller() : invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller() ;
+        	    	QuoteVersion quoteVersion = null;
+        	    	if(invoiceLine.getCommercialOrder() != null && invoiceLine.getCommercialOrder().getQuote() != null) {
+        	    		var validatedQuoteVersions = quoteVersionService.findByQuoteIdAndStatusActive(invoiceLine.getCommercialOrder().getQuote().getId());
+        	    		if(!validatedQuoteVersions.isEmpty() && validatedQuoteVersions.size() > 1) {
+        	    			throw new BusinessException("More than quote version are validated");
+        	    		}
+        	    		if(!validatedQuoteVersions.isEmpty())
+        	    			quoteVersion = validatedQuoteVersions.get(0);
+        	    	}
+        	    	if(quoteVersion.getDiscountPlan() != null)
+        	    		discountPlanService.applyPercentageDiscount(invoiceLine, quoteVersion.getDiscountPlan(), billingAccount, existingInvoice, accountingArticle, seller);
+             }
+			}
+    	}
+    	
+    	// end apply discount plan percentage 
+    	
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -5147,7 +5179,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 billingAccount = null;
                 defaultInvoiceType = null;
             }
-
             InvoiceLinesToInvoice iLsToInvoice = getInvoiceLinesGroups(entityToInvoice, billingAccount, billingRun,
                     defaultBillingCycle, defaultInvoiceType, filter, firstTransactionDate, lastTransactionDate,
                     isDraft, defaultPaymentMethod, existingInvoice);
@@ -5284,7 +5315,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         for (InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo : invoiceLineGroupToInvoiceMap.values()) {
             if (!allIlsInOneRun) {
-                addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values());
+                addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values(),true);
             }
             Set<String> orderNums = invoiceAggregateProcessingInfo.orderNumbers;
             if (entityToInvoice instanceof Order) {
@@ -5300,6 +5331,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice);
             postCreate(invoiceAggregateProcessingInfo.invoice);
+            //	TODO : apply fixed DP.
         }
         return invoiceList;
 
@@ -5370,7 +5402,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         boolean taxWasRecalculated = false;
         for (InvoiceLine invoiceLine : invoiceLines) {
-
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
@@ -5445,7 +5476,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return;
         }
 
-        addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
+        addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values(), false);
     }
 
     protected class InvoiceLinesToInvoice {

@@ -52,12 +52,10 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.tax.TaxMappingService;
@@ -81,6 +79,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
     @Inject
     private TaxMappingService taxMappingService;
+
+	@Inject
+	private InvoiceLineService invoiceLineService;
     
 	@Override
 	public void create(DiscountPlan entity) throws BusinessException {
@@ -273,6 +274,53 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	}
     	
     	return discountWalletOperations;
+    }
+    
+
+    public void applyPercentageDiscount(InvoiceLine entity, DiscountPlan discount, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
+    	
+    	var isDiscountApplicable = isDiscountPlanApplicable(billingAccount, discount,entity.getValueDate() );
+    	if(isDiscountApplicable) {
+    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, DiscountPlanItemTypeEnum.PERCENTAGE, entity.getValueDate());
+            BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
+            entity.setDiscountAmount(invoiceLineDiscountAmount);
+    	}
+    	
+    }
+	
+    public BigDecimal addDiscountPlanInvoiceLine(List<DiscountPlanItem> discountItems,InvoiceLine invoiceLine, Invoice invoice, BillingAccount billingAccount, Seller seller) {
+        BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
+        for (DiscountPlanItem discountPlanItem : discountItems) {
+        	invoiceLineDiscountAmount = BigDecimal.ZERO;
+        	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
+        	discountInvoice.setStatus(invoiceLine.getStatus());
+            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
+            } else {
+                //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
+                BigDecimal taxPercent = invoiceLine.getTaxRate();
+                if(invoiceLine.getAccountingArticle() != null) {
+                	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoiceLine.getValueDate(), false, false);
+                        taxPercent = taxInfo.tax.getPercent();
+                }
+                BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
+                if(discountAmount != null) {
+                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+        	  	}
+                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                var quantity = invoiceLine.getQuantity();
+                discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
+                discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+                discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
+                discountInvoice.setDiscountedInvoiceLine(invoiceLine);
+                discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
+                discountInvoice.setTaxRate(taxPercent);
+                discountInvoice.setRawAmount(invoiceLineDiscountAmount);
+                discountInvoice.setDiscountPlan(discountPlanItem.getDiscountPlan());
+               invoiceLineService.create(discountInvoice);
+            }
+        }
+        return invoiceLineDiscountAmount;
     }
 	   
 }

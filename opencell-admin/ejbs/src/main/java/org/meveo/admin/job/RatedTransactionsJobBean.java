@@ -97,11 +97,8 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
         List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         
-        List<Long> sortedList = ids.stream()
-    			.sorted(Comparator.reverseOrder())
-    			.collect(Collectors.toList());
 
-        return Optional.of(new SynchronizedIterator<Long>(sortedList));
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
     /**
