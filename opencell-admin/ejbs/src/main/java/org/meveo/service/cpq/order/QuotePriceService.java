@@ -29,6 +29,7 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 		QueryBuilder queryBuilder = new QueryBuilder(QuotePrice.class, "qp", Arrays.asList("quoteArticleLine", "quoteVersion"));
 		queryBuilder.addCriterion("qp.quoteArticleLine.id", "=", QuoteArticleLineId, false);
 		queryBuilder.addCriterion("qp.quoteVersion.id", "=", quoteVersionId, false);
+		queryBuilder.addOrderCriterionAsIs("qp.unitPriceWithoutTax", false);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
