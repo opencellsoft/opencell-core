@@ -357,6 +357,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttributeInstance> attributeInstances = new ArrayList<>();
+
+    
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
      */
@@ -1119,6 +1123,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 		}
 
 	}
+    
+    public void addAttributeInstance(AttributeInstance attributeInstance) {
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		if(attributeInstance!=null) {
+			attributeInstances.add(attributeInstance);
+		}
+
+	}
 
     public CommercialOrder getOrder() {
         return order;
@@ -1164,5 +1176,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
 	}
+
+	public List<AttributeInstance> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+	
 	
 }
