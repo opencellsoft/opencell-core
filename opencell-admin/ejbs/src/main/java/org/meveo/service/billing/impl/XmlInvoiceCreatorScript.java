@@ -17,13 +17,13 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -1840,7 +1840,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Date periodEndDateRT = ratedTransaction.getEndDate();
         line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
-        line.setAttribute("taxPercent", ratedTransaction.getTaxPercent().toPlainString());
+        line.setAttribute("taxPercent", ofNullable(ratedTransaction.getTaxPercent()).map(taxPercent -> taxPercent.toPlainString()).orElse(""));
         line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
         line.setAttribute("code", ratedTransaction.getCode());
         if (ratedTransaction.getParameter1() != null) {
@@ -1965,8 +1965,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
         for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if ((ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
-                    || (ratedTransaction.getInvoiceAgregateF().getId() == null && !ratedTransaction.getInvoiceSubCategory().getId().equals(invoiceSubCat.getId())
+            if ((ratedTransaction.getInvoiceAgregateF() != null && ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
+                    || (ratedTransaction.getInvoiceAgregateF() != null && ratedTransaction.getInvoiceAgregateF().getId() == null && !ratedTransaction.getInvoiceSubCategory().getId().equals(invoiceSubCat.getId())
                     && !((ratedTransaction.getWallet() == null && walletId == null) || (walletId != null && walletId.equals(ratedTransaction.getWallet().getId()))))) {
                 continue;
             }
