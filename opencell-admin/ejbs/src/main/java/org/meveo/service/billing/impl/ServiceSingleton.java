@@ -68,7 +68,6 @@ import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -126,9 +125,6 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
-
-    @Inject
-    private CommercialOrderService commercialOrderService;
 
     @Inject
     private SequenceService sequenceService;
