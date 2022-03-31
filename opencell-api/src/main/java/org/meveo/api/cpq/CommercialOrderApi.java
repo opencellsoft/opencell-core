@@ -835,7 +835,10 @@ public class CommercialOrderApi extends BaseApi {
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
 			}
-			orderOffer.setUserAccount(userAccount);
+	        if(!userAccount.getIsConsumer()) {
+	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Order for this user account is not allowed.");
+	        }
+	        orderOffer.setUserAccount(userAccount);
 		} 
     	
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
