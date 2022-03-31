@@ -288,8 +288,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
-    	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
-    		
+    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null) {
     		switch(operator) {
     		case EQUAL:
     			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
