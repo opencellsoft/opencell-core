@@ -81,6 +81,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         saved.add(customerAccountEntry);
 
+        log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
+
         // 2- produce the revenue accounting entries
         Query query = getEntityManager().createQuery(
                         "SELECT sum(ivL.amountWithoutTax), ivl" +
@@ -92,20 +94,28 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         List<Object[]> revenuResult = query.getResultList();
 
-        revenuResult.forEach(objects -> {
-            InvoiceLine invoiceLine = (InvoiceLine) objects[1];
+        if (revenuResult != null && !revenuResult.isEmpty()) {
+            log.info("Start creating revenue accounting entries for AO={} | INV_ID={} : {} invoice line to process",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId(), revenuResult.size());
 
-            JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
-                    occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                    objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                    recordedInvoice.getSeller(), null);
-            revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
-            revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
-            revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
+            revenuResult.forEach(objects -> {
+                InvoiceLine invoiceLine = (InvoiceLine) objects[1];
 
-            saved.add(revenuEntry);
+                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
+                        occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        recordedInvoice.getSeller(), null);
+                revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
+                revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
+                revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
 
-        });
+                saved.add(revenuEntry);
+
+            });
+        } else {
+            log.info("No revenue accounting entries to create for AO={} | INV_ID={}",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId());
+        }
 
         // 3- produce the taxes accounting entries
         Query queryTax = getEntityManager().createQuery(
@@ -116,20 +126,30 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         List<Object[]> taxResult = queryTax.getResultList();
 
-        taxResult.forEach(objects -> {
-            TaxInvoiceAgregate taxAgr = (TaxInvoiceAgregate) objects[1];
+        if (taxResult != null && !taxResult.isEmpty()) {
+            log.info("Start creating taxes accounting entries for AO={} | INV_ID={} : {} invoice line to process",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId(), taxResult.size());
 
-            JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
-                    occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                    objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                    recordedInvoice.getSeller(), taxAgr.getTax());
+            taxResult.forEach(objects -> {
+                TaxInvoiceAgregate taxAgr = (TaxInvoiceAgregate) objects[1];
 
-            saved.add(taxEntry);
+                JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
+                        occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        recordedInvoice.getSeller(), taxAgr.getTax());
 
-        });
+                saved.add(taxEntry);
+
+            });
+        } else {
+            log.info("No taxes accounting entries to create for AO={} | INV_ID={}",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId());
+        }
 
         // Persist all
         saved.forEach(this::create);
+
+        log.info("{} JournalEntries created for AO={}", saved.size(), recordedInvoice.getId());
 
         return saved;
     }
