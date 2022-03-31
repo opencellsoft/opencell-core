@@ -168,7 +168,8 @@ public class EncryptionService {
         StringBuilder getTablesBd = new StringBuilder("SELECT table_name FROM information_schema.COLUMNS \n" +
                 "WHERE COLUMN_NAME IN (");
 
-        getTablesBd.append("?,".repeat(columnNames.length));
+        for (int i = 0; i < columnNames.length; i++)
+            getTablesBd.append("?,");
 
         String getTablesWithEncColReq = getTablesBd.substring(0, getTablesBd.length() - 1);
         getTablesWithEncColReq += ")\n" + "GROUP BY table_name\n" + "HAVING COUNT(*) = " + columnNames.length;
