@@ -256,7 +256,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-    public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+       return  createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, null);
+    }	
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate,Long discountedInvoiceLineId) {
         
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -294,7 +297,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
          if(taxInfo!=null)
          invoiceLine.setTax(taxInfo.tax);
         }
+        if(discountedInvoiceLineId!=null) {
+        	InvoiceLine discountedInvoiceLine=findById(discountedInvoiceLineId);
+        	if(discountedInvoiceLine==null) {
+        		throw new EntityDoesNotExistsException(InvoiceLine.class, discountedInvoiceLineId);
+        	}
+        	invoiceLine.setDiscountedInvoiceLine(discountedInvoiceLine);
+        }
         create(invoiceLine);
+        return invoiceLine;
     }
 
     public void calculateAmountsAndCreateMinAmountLines(IBillableEntity billableEntity, Date lastTransactionDate,

@@ -31,7 +31,10 @@ import org.meveo.model.quote.QuotePrice;
         @Parameter(name = "sequence_name", value = "order_price_seq")})
 @NamedQueries({
 @NamedQuery(name="OrderPrice.findByOrder", query = "select o from OrderPrice o where o.order=:commercialOrder"),
-@NamedQuery(name="OrderPrice.findByQuote", query = "select o from OrderPrice o where o.order.quote=:quote")
+@NamedQuery(name="OrderPrice.findByQuote", query = "select o from OrderPrice o where o.order.quote=:quote"),
+@NamedQuery(name = "QuotePrice.sumPricesByArticle", query = "SELECT o.orderArticleLine.id,o.discountedOrderPrice.id,taxRate, sum(o.amountWithoutTax) as sumAmountWOTax, sum(o.amountWithTax), sum(o.taxAmount),"
+		+ "sum(o.quantity) FROM OrderPrice o WHERE o.order.id=:orderId AND o.priceTypeEnum=:priceType AND o.priceLevelEnum=:priceLevel GROUP BY o.orderArticleLine.id,o.discountedOrderPrice.id,o.taxRate order by sumAmountWOTax"),
+
 })
 public class OrderPrice extends BusinessEntity {
 

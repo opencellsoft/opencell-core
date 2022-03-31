@@ -204,10 +204,9 @@ public class QuoteValidationScript extends ModuleScript {
 			processOrderAttribute(quoteAttribute, commercialOrder, orderOffer, orderProduct);
 		});
 
-		final Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer, quoteToOrder);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer);
 		});
 		
 		
@@ -245,7 +244,8 @@ public class QuoteValidationScript extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
+		 Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();

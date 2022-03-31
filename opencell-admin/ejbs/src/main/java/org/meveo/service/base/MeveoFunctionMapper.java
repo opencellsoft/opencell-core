@@ -1997,9 +1997,15 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case COUNT :
 			case NUMERIC :
 			case INTEGER:
+				
 				if(attributInstance.get().getDoubleValue()!=null) {
-				return attributInstance.get().getDoubleValue(); 
-				}break;
+					return attributInstance.get().getDoubleValue(); 
+				}
+				if(NumberUtils.isCreatable(attributInstance.get().toString().trim())) {
+					return Double.valueOf(attributInstance.get().toString().trim());
+				}
+				
+				break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
