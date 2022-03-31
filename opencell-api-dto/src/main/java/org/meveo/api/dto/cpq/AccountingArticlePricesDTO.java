@@ -125,6 +125,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	        quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
 	        quotePrice.setQuoteOffer(quoteOffer);
 	    		Optional<QuotePrice> price = pricesPerType.get(key).stream().reduce((a, b) -> {
+	    			quotePrice.setTaxAmount(a.getQuantity().add(b.getQuantity()));
 		            quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
 		            quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
 		            quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));

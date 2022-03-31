@@ -164,6 +164,7 @@ OrderAdvancementScript extends ModuleScript {
 			totalAmountTax = (BigDecimal) groupedOrderPrice[5];
 			totalQuantity = (BigDecimal) groupedOrderPrice[6];
 			OrderArticleLine orderArticleLine = null;
+			log.info("createIlsAndInvoice orderArticleLineId={},discountedOrderPriceId={},totalAmountWithoutTax={}",orderArticleLineId,discountedOrderPriceId,totalAmountWithoutTax);
             if(orderArticleLineId!=null) {
             	orderArticleLine=orderArticleLineService.findById(orderArticleLineId);
             }
