@@ -46,7 +46,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -2014,7 +2014,53 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     
-    
+    public static Object getSubscriptionProductAttributeValue(Subscription subscription,String productCode,String attributeCode) { 
+    	Optional<AttributeInstance> attributInstance=Optional.empty();
+    	Attribute  attribute =getAttributeService().findByCode(attributeCode);
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
+    	
+    	Optional<ServiceInstance> serviceInstance = subscription.getServiceInstances().stream().filter(service -> productCode.equals(service.getCode())).findFirst();
+    	
+    	if(serviceInstance.isPresent()) {
+    	attributInstance=serviceInstance.get().getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	}
+    	
+    	if(attribute.getAttributeType()!=null && attributInstance.isPresent()) {
+    		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributInstance.get().getDoubleValue()!=null) {
+				return attributInstance.get().getDoubleValue(); 
+				}
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case TEXT:	
+				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
+					return attributInstance.get().getStringValue();  
+				}
+				break;
+			case EXPRESSION_LANGUAGE :
+				if(attributInstance.get().getDoubleValue()!=null) {
+					return attributInstance.get().getDoubleValue(); 
+				}else if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
+					return attributInstance.get().getStringValue();  
+				}
+				break;
+			case DATE:
+				if(attributInstance.get().getDateValue()!=null) {
+					return attributInstance.get().getDateValue();  
+				}break;
+			default:
+				break;  
+			}
+    		}
+    	
+    	return null;
+    }
     
     
     

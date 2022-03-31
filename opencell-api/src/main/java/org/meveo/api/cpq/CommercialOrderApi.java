@@ -768,18 +768,18 @@ public class CommercialOrderApi extends BaseApi {
     	}
         orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-        	if (orderOfferDto.getSubscritptionCode() == null) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscriptionCode()+", the order line code is: "+orderOffers.get(0));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
-        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
         	if(subscription == null) {
-        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
         }else {
@@ -845,17 +845,17 @@ public class CommercialOrderApi extends BaseApi {
         orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-        	if (orderOfferDto.getSubscritptionCode() == null) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscriptionCode()+", the order line code is: "+orderOffers.get(0));
         	}
         	
-        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
         	if(subscription == null) {
-        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
         }
@@ -1034,27 +1034,27 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(OrderLot.class,orderProductDto.getOrderLotCode());
 		}
 		}
-		ProductVersion productVersion =null;
-		if(!StringUtils.isBlank(orderProductDto.getProductCode())&&!StringUtils.isBlank(orderProductDto.getProductVersion()) ) {
-		 productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
-		if(productVersion == null) {
-			throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
-		}
-		} 
-		
-		DiscountPlan discountPlan=null;
-		if(!StringUtils.isBlank(orderProductDto.getDiscountPlanCode())) {
-		 discountPlan = discountPlanService.findByCode(orderProductDto.getDiscountPlanCode());	
-		if (discountPlan == null)
-			throw new EntityDoesNotExistsException(DiscountPlan.class, orderProductDto.getDiscountPlanCode());	
-		}
-		
 		if(orderProduct==null) {
 			orderProduct=new OrderProduct();
 		}
+		if(!StringUtils.isBlank(orderProductDto.getProductCode()) && !StringUtils.isBlank(orderProductDto.getProductVersion())) {
+			ProductVersion productVersion =null;
+			productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+			if(productVersion == null) {
+				throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+			}
+			orderProduct.setProductVersion(productVersion);
+		}
+
+		DiscountPlan discountPlan=null;
+		if(!StringUtils.isBlank(orderProductDto.getDiscountPlanCode())) {
+		 discountPlan = discountPlanService.findByCode(orderProductDto.getDiscountPlanCode());
+		if (discountPlan == null)
+			throw new EntityDoesNotExistsException(DiscountPlan.class, orderProductDto.getDiscountPlanCode());
+		}
+
 		orderProduct.setOrder(commercialOrder);
 		orderProduct.setOrderServiceCommercial(orderLot);
-		orderProduct.setProductVersion(productVersion);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity());
