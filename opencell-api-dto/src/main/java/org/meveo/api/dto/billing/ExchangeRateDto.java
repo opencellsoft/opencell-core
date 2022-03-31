@@ -3,13 +3,14 @@ package org.meveo.api.dto.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.Nullable;
 
 public class ExchangeRateDto {
 
+    @Nullable
     private Date fromDate;
     
-    @NotNull
+    @Nullable
     private BigDecimal exchangeRate;
 
     public ExchangeRateDto() {
