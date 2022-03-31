@@ -9673,14 +9673,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-6079_20220331" author="aelmalki">
-		<update tableName="crm_custom_field_tmpl">
-			<column name="description" value="Only closed periods" />
-			<where> applies_to='JobInstance_AccountingSchemesJob' AND code='onlyClosedPeriods'</where>
-		</update>
-	</changeSet>
-
-
     	<changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-37" />
