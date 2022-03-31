@@ -193,9 +193,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         postData.setNewValidFrom(postData.getValidFrom());
         postData.setNewValidTo(postData.getValidTo());
-        if (postData.getValidFrom() == null) {
-            missingParameters.add("validFrom");
-        }
         handleMissingParameters();
 
         if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
@@ -237,14 +234,14 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         if (StringUtils.isBlank(postData.getName())) {
             postData.setName(postData.getCode());
         }
-        
+
         if (postData.getNewValidFrom() == null && postData.getNewValidTo() == null) {
             postData.setNewValidFrom(postData.getValidFrom());
             postData.setNewValidTo(postData.getValidTo());
         }
-        
+
         handleMissingParametersAndValidate(postData);
-        
+
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (offerTemplate == null) {
             String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
