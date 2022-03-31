@@ -36,7 +36,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.past"));
         }
         
-        if (postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
+        if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
         
