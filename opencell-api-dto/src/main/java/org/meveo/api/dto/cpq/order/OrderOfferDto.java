@@ -230,14 +230,14 @@ public class OrderOfferDto extends BaseEntityDto {
 
 
 
-	public String getSubscritptionCode() {
+	public String getSubscriptionCode() {
 		return subscriptionCode;
 	}
 
 
 
-	public void setSubscritptionCode(String subscritptionCode) {
-		this.subscriptionCode = subscritptionCode;
+	public void setSubscriptionCode(String subscriptionCode) {
+		this.subscriptionCode = subscriptionCode;
 	}
     
     
