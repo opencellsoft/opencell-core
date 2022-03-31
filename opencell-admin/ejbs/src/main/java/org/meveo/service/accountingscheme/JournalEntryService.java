@@ -81,7 +81,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                         occT.getAccountingCode(),
                 occT.getOccCategory(),
                 recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                recordedInvoice.getSeller(), null);
+                recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
+                null);
 
         saved.add(customerAccountEntry);
 
@@ -108,7 +109,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                         objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                        recordedInvoice.getSeller(), null);
+                        recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
+                        null);
                 revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
                 revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
                 revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
@@ -140,7 +142,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                         objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                        recordedInvoice.getSeller(), taxAgr.getTax());
+                        recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
+                        taxAgr.getTax());
 
                 saved.add(taxEntry);
 
