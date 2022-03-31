@@ -133,7 +133,7 @@ public class OrderProductDto extends BaseEntityDto{
 				break;
 			case NUMERIC:
 			case INTEGER:
-				if(orderAttributeDto.getDoubleValue() == null && pAttribute.getDefaultValue() != null){
+				if(orderAttributeDto.getDoubleValue() == null && pAttribute.getDefaultValue() != null  &&  !pAttribute.getDefaultValue().isEmpty()){
 					orderAttributeDto.setDoubleValue(Double.valueOf(pAttribute.getDefaultValue()));
 				}
 				break;
