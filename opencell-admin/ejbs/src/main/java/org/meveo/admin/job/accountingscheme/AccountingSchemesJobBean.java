@@ -61,50 +61,55 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
         Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
                 .forEach(accountOperation -> {
-                    // Find OOC Template
-                    OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
+                    try {
+                        // Find OOC Template
+                        OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
 
-                    if (occT == null) {
-                        log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
-                        return;
+                        if (occT == null) {
+                            log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
+                            return;
+                        }
+
+                        if (occT.getAccountingScheme() == null) {
+                            log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
+                                    accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
+                            accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
+                            throw new BusinessException("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
+                                            ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
+                        }
+
+                        ScriptInterface script = findScript(accountOperation, occT.getAccountingScheme(), jobExecutionResult);
+
+                        Map<String, Object> methodContext = new HashMap<>();
+                        methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
+                        methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                        methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+                        script.execute(methodContext);
+
+                        List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
+                        log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
+                                createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
+                        if (!createdEntries.isEmpty()) {
+                            accountOperation.setStatus(AccountOperationStatus.EXPORTED);
+                        } else {
+                            accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
+                        }
+
+                        accountOperationService.update(accountOperation);
+
+                    } catch (BusinessException e) {
+                        jobExecutionResult.registerError(e.getMessage());
+                        throw new BusinessException(e);
+                    } catch (Exception e) {
+                        log.error("Error during process AO={} - {}", accountOperation.getId(), e.getMessage());
+                        log.debug("Error during process AO={} - {}", accountOperation.getId(), e.getMessage(), e);
+                        jobExecutionResult.registerError("Error in Account operation (id=" + accountOperation.getId() + ") : " + e.getMessage());
+                        throw new BusinessException(e);
                     }
-
-                    if (occT.getAccountingScheme() == null) {
-                        log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
-                                accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                        accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
-                        markAsError("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
-                                        ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")",
-                                jobExecutionResult);
-                    }
-
-                    ScriptInterface script = findScript(accountOperation, occT.getAccountingScheme(), jobExecutionResult);
-
-                    Map<String, Object> methodContext = new HashMap<>();
-                    methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
-                    methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-                    methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-
-                    script.execute(methodContext);
-
-                    List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
-                    log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                            createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                    if (!createdEntries.isEmpty()) {
-                        accountOperation.setStatus(AccountOperationStatus.EXPORTED);
-                    } else {
-                        accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
-                    }
-
-                    accountOperationService.update(accountOperation);
 
                 });
 
-    }
-
-    private void markAsError(String error, JobExecutionResultImpl jobExecutionResult) {
-        jobExecutionResult.registerError(error);
-        throw new BusinessException(error);
     }
 
     private ScriptInterface findScript(AccountOperation ao, AccountingScheme as, JobExecutionResultImpl jobExecutionResult) {
@@ -113,9 +118,8 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
         } catch (BusinessException e) {
             log.error("Error during loading script by code={} | {}", as.getScriptInstance().getCode(), e.getMessage(), e);
             accountOperationService.updateStatusInNewTransaction(List.of(ao), AccountOperationStatus.EXPORT_FAILED);
-            jobExecutionResult.registerError("Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
+            throw new BusinessException("Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
                     " couldn't be processed by accounting scheme (code=" + as.getScriptInstance().getCode() + "): " + e.getMessage());
-            throw new BusinessException(e);
         }
 
     }
