@@ -45,10 +45,12 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -130,6 +132,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
+			if(o.getOrderLineType() == OfferLineTypeEnum.AMEND) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -171,42 +174,67 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			order = serviceSingleton.assignCommercialOrderNumber(order);
 
 		for(OrderOffer offer : validOffers){
-			Subscription subscription = new Subscription();
-			subscription.setSeller(getSelectedSeller(order));
-			if(offer.getUserAccount()==null) {
-				subscription.setUserAccount(userAccount);
-			}else {
-				subscription.setUserAccount(offer.getUserAccount());
-			}
-			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
-			subscription.setOffer(offer.getOfferTemplate());
-			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
-			if (subscription.getSubscriptionDate().after(new Date())) {
-				subscription.setStatus(SubscriptionStatusEnum.PENDING);
-			}else {
-				subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-			}
-			subscription.setEndAgreementDate(null);
-			subscription.setRenewed(true);
-			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
-			subscription.setOrder(order);
-			subscription.setOrderOffer(offer);
-			subscriptionService.create(subscription);
-			if(offer.getDiscountPlan()!=null) {
-				discountPlans.add(offer.getDiscountPlan());
-			}
-			
-			for (OrderProduct product : offer.getProducts()){
-				if(product.getDiscountPlan()!=null) {
-					discountPlans.add(product.getDiscountPlan());
+			if(offer.getOrderLineType() == OfferLineTypeEnum.CREATE) {
+				
+				Subscription subscription = new Subscription();
+				subscription.setSeller(getSelectedSeller(order));
+				if(offer.getUserAccount()==null) {
+					subscription.setUserAccount(userAccount);
+				}else {
+					subscription.setUserAccount(offer.getUserAccount());
 				}
-				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+				subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
+				subscription.setOffer(offer.getOfferTemplate());
+				subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
+				if (subscription.getSubscriptionDate().after(new Date())) {
+					subscription.setStatus(SubscriptionStatusEnum.PENDING);
+				}else {
+					subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+				}
+				subscription.setEndAgreementDate(null);
+				subscription.setRenewed(true);
+				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
+				subscription.setOrder(order);
+				subscription.setOrderOffer(offer);
+				subscriptionService.create(subscription);
+				if(offer.getDiscountPlan()!=null) {
+					discountPlans.add(offer.getDiscountPlan());
+				}
+				
+				for (OrderProduct product : offer.getProducts()){
+					if(product.getDiscountPlan()!=null) {
+						discountPlans.add(product.getDiscountPlan());
+					}
+					processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+				}
+				instanciateDiscountPlans(subscription, discountPlans);
+				subscriptionService.update(subscription);
+				subscriptionService.activateInstantiatedService(subscription);
+				
+			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
+				for (OrderProduct product : offer.getProducts()){
+					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
+						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+		                        InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
+						if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
+							serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
+						}else {
+							serviceInstanceService.serviceActivation(serviceInstanceToActivate);
+						}
+					}				
+					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
+						ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+		                        InstanceStatusEnum.ACTIVE);
+						serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+					}
+					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
+						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
+		                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
+					}
+				}
 			}
-			instanciateDiscountPlans(subscription, discountPlans);
-			subscriptionService.update(subscription);
-			subscriptionService.activateInstantiatedService(subscription);
 		}
-
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 

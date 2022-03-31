@@ -29,11 +29,15 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1191,5 +1195,49 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (chargeInstance.getCounter() != null) {
             counterInstanceService.createCounterPeriodIfMissing(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
         }
-    }    
+    } 
+    
+    /**
+     * Find a service instance matching id or code for a given subscription and optional statuses. I
+     *
+     * @param serviceId Service instance id
+     * @param serviceCode Service instance code
+     * @param subscription Subscription containing service instance
+     * @param statuses Statuses to match (optional)
+     * @return Service instance matched
+     * @throws MissingParameterException Either serviceId or serviceCode value must be provided
+     * @throws EntityDoesNotExistsException Service instance was not matched
+     * @throws InvalidParameterException More than one matching service instance found or does not correspond to given subscription and/or statuses
+     */
+    public ServiceInstance getSingleServiceInstance(Long serviceId, String serviceCode, Subscription subscription, InstanceStatusEnum... statuses)
+            throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException {
+
+        ServiceInstance serviceInstance = null;
+        if (serviceId != null) {
+            serviceInstance = findById(serviceId);
+
+            if (serviceInstance == null) {
+                throw new EntityDoesNotExistsException(ServiceInstance.class, serviceId);
+
+            } else if (!serviceInstance.getSubscription().equals(subscription) || (statuses != null && statuses.length > 0 && !ArrayUtils.contains(statuses, serviceInstance.getStatus()))) {
+                throw new InvalidParameterException("Service instance id " + serviceId + " does not correspond to subscription " + subscription.getCode() + " or is not of status ["
+                        + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
+            }
+
+        } else if (!StringUtils.isBlank(serviceCode)) {
+            List<ServiceInstance> services = findByCodeSubscriptionAndStatus(serviceCode, subscription, statuses);
+            if (services.size() == 1) {
+                serviceInstance = services.get(0);
+            } else if (services.size() > 1) {
+                throw new InvalidParameterException(
+                        "More than one service instance with status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "] was found. Please use ID to refer to service instance.");
+            } else {
+                throw new EntityDoesNotExistsException("Service instance with code " + serviceCode + " was not found or is not of status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
+            }
+
+        } else {
+            throw new MissingParameterException("service id or code");
+        }
+        return serviceInstance;
+    }
 }
