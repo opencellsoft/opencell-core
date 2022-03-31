@@ -1,13 +1,13 @@
 package org.meveo.service.security;
 
 import org.meveo.commons.encryption.EncryptionFactory;
-import org.meveo.commons.encryption.IEncryptable;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
@@ -83,12 +83,12 @@ public class EncryptionService {
     private void updateEncryptedCFValues(String tableName){
         assert accountEntityService != null;
 
-        String getEncCFRequest = "SELECT id, CAST(cf_values AS TEXT)\n" +
-                "FROM " + tableName + "\n" +
-                "WHERE CAST(cf_values AS TEXT) LIKE '%AES%' OR CAST(cf_values AS TEXT) LIKE '%pref%'";
+        String getEncCFRequest = String.format("SELECT id, CAST(cf_values AS TEXT) FROM `%s`", tableName).replace("`", "")
+                + " WHERE CAST(cf_values AS TEXT) LIKE '%AES%' OR CAST(cf_values AS TEXT) LIKE '%pref%'";
 
-        List<Object[]> entities = accountEntityService.getEntityManager().createNativeQuery(getEncCFRequest)
-                .getResultList();
+        Query query = accountEntityService.getEntityManager().createNativeQuery(getEncCFRequest);
+
+        List<Object[]> entities = query.getResultList();
 
         for (Object[] result : entities) {
             long cfId = ((BigInteger) result[0]).longValue();
@@ -111,9 +111,14 @@ public class EncryptionService {
                         : cfValue.indexOf("\"" + EncryptionFactory.PREFIX, startIdx + 1);
             }
 
-            String updateEncCFRequest = "UPDATE " + tableName + " SET cf_values='" + cfValue + "' WHERE id = " + cfId;
+            String updateEncCFRequest = String.format("UPDATE `%s`", tableName).replace("`", "")
+                    + " SET cf_values = CAST(:cfValue AS JSONB) WHERE id = :cfId";
 
-            int resultStm = accountEntityService.getEntityManager().createNativeQuery(updateEncCFRequest).executeUpdate();
+            query = accountEntityService.getEntityManager().createNativeQuery(updateEncCFRequest);
+            query.setParameter("cfValue", cfValue);
+            query.setParameter("cfId", cfId);
+
+            int resultStm = query.executeUpdate();
 
             if (resultStm > 0)
                 nbItemsCorrectlyProcessed++;
@@ -169,28 +174,32 @@ public class EncryptionService {
 
     private List getTablesWithEncryptedColumns(String[] columnNames) {
         StringBuilder getTablesBd = new StringBuilder("SELECT table_name FROM information_schema.COLUMNS \n" +
-                "WHERE COLUMN_NAME IN ('");
-        for (String columnName : columnNames)
-            getTablesBd.append(columnName).append("','");
+                "WHERE COLUMN_NAME IN (");
 
-        String getTablesWithEncColReq = getTablesBd.substring(0, getTablesBd.length() - 3);
-        getTablesWithEncColReq += "')\n" + "GROUP BY table_name\n" + "HAVING COUNT(*) = " + columnNames.length;
+        getTablesBd.append("?,".repeat(columnNames.length));
 
-        return accountEntityService.getEntityManager()
-                .createNativeQuery(getTablesWithEncColReq)
-                .getResultList();
+        String getTablesWithEncColReq = getTablesBd.substring(0, getTablesBd.length() - 1);
+        getTablesWithEncColReq += ")\n" + "GROUP BY table_name\n" + "HAVING COUNT(*) = " + columnNames.length;
+
+        Query query = accountEntityService.getEntityManager().createNativeQuery(getTablesWithEncColReq);
+
+        for (int i = 0; i < columnNames.length; i++)
+            query.setParameter(i+1, columnNames[i]);
+
+        return query.getResultList();
     }
 
     private void decryptValues(String tableName, String[] columnNames) {
-        StringBuilder getEncValuesBd = new StringBuilder("SELECT id,");
-        for (String columnName : columnNames) {
-            getEncValuesBd.append(columnName).append(",");
-        }
-        String getEncValuesRequest = getEncValuesBd.substring(0, getEncValuesBd.length() - 1);
-        getEncValuesRequest += " FROM " + tableName;
+        StringBuilder columnNameStrBd = new StringBuilder();
+        for (String column : columnNames)
+            columnNameStrBd.append(column).append(",");
+        String columnNameStr = columnNameStrBd.substring(0, columnNameStrBd.length() - 1);
+        String getEncValuesRequestFormat = String.format("SELECT id, `%s`", columnNameStr).replace("`", "");
 
-        List<Object[]> entities = accountEntityService.getEntityManager().createNativeQuery(getEncValuesRequest)
-                .getResultList();
+        String getEncValuesRequest = String.format(getEncValuesRequestFormat + " FROM `%s`", tableName).replace("`", "");
+
+        Query query = accountEntityService.getEntityManager().createNativeQuery(getEncValuesRequest);
+        List<Object[]> entities = query.getResultList();
 
         for (Object[] result : entities) {
             long id = ((BigInteger) result[0]).longValue();
