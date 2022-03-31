@@ -12044,4 +12044,21 @@ order by date_trunc('month', i.invoice_date) DESC
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
      </changeSet>
+     
+     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA">
+		<createSequence sequenceName="global_settings_seq" startValue="1"/>
+        <createTable tableName="global_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="global_settings_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="quote_default_validity_delay" type="int"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
