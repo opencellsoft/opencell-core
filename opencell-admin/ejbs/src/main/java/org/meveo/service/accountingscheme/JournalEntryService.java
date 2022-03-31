@@ -49,14 +49,18 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // INTRD-4702
         // First JournalEntry
         JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), ao.getSeller(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+                ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller(),
+                null);
 
         // Second JournalEntry
         JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), ao.getSeller(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+                ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller(),
+                null);
 
         create(firstEntry);
         create(secondEntry);

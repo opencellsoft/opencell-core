@@ -16,7 +16,7 @@ public class GlobalSettings extends AuditableEntity {
 
     private static final long serialVersionUID = 7097186153182628716L;
 
-    @Column(name = "quote_default_validity_delay")
+    @Column(name = "quote_default_validity_delay", nullable = false)
     private Integer quoteDefaultValidityDelay;
 
     public GlobalSettings() {
