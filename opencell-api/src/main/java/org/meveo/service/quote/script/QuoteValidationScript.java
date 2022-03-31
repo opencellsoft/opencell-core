@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.MeveoUser;
@@ -204,10 +206,27 @@ public class QuoteValidationScript extends ModuleScript {
 			processOrderAttribute(quoteAttribute, commercialOrder, orderOffer, orderProduct);
 		});
 
+		final Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer, quoteToOrder);
 		});
+		
+		//set disocuntedOrderPrice
+        Iterator<Map.Entry<Long, OrderPrice>> itr = quoteToOrder.entrySet().iterator();
+         
+        while(itr.hasNext())
+        {
+             Map.Entry<Long, OrderPrice> entry = itr.next();
+             QuotePrice quotePrice=quotePriceService.findById(entry.getKey());
+             if(quotePrice!=null && quotePrice.getDiscountedQuotePrice()!=null) {
+            	 OrderPrice discountedOrderPrice=quoteToOrder.get(quotePrice.getDiscountedQuotePrice().getId());
+            	 OrderPrice orderPrice= entry.getValue();
+            	 orderPrice.setDiscountedOrderPrice(discountedOrderPrice);
+            	 orderPriceService.update(orderPrice);
+             }
+            	 
+             }
 		
 		
 		return orderProduct;
@@ -244,8 +263,7 @@ public class QuoteValidationScript extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
-		 Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();

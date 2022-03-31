@@ -183,7 +183,7 @@ OrderAdvancementScript extends ModuleScript {
                 	 
                 }
                 
-                InvoiceLine invoiceLine=createInvoiceLine(commercialOrder, orderArticleLine.getAccountingArticle(),orderArticleLine.getOrderProduct().getProductVersion(),orderArticleLine.getOrderProduct().getOrderOffer(), totalAmountWithoutTax, totalAmountWithTax, totalAmountTax, taxRate,discountedInvoiceLine.getId());
+                InvoiceLine invoiceLine=createInvoiceLine(commercialOrder, orderArticleLine.getAccountingArticle(),orderArticleLine.getOrderProduct().getProductVersion(),orderArticleLine.getOrderProduct().getOrderOffer(), totalAmountWithoutTax, totalAmountWithTax, totalAmountTax, taxRate,discountedInvoiceLine!=null?discountedInvoiceLine.getId():null);
                 
                orderToInvoiceLine.put(orderArticleLineId, invoiceLine);
            
