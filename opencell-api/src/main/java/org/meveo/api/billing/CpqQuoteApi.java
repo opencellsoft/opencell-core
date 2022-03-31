@@ -2004,7 +2004,7 @@ public class CpqQuoteApi extends BaseApi {
                     BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), 6, RoundingMode.HALF_UP);
 
                     quotePrices.forEach(quotePrice -> {
-                        BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax());
+                        BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                         quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
                         quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
                         quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
@@ -2031,9 +2031,13 @@ public class CpqQuoteApi extends BaseApi {
     		log.info("assigned attribute code={}",attribute.getCode());
     	    totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
     		log.info("Sum doubleValue={}",totalSum);
-    		sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
+    		if(totalSum!=null) {
+    			sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
+    		}
+    		
     	}
     	quoteAttribute.setDoubleValue(sumTotalAttribute);
+    	quoteAttribute.setStringValue(sumTotalAttribute+"");
     	quoteAttributeService.update(quoteAttribute);
     	}
 
