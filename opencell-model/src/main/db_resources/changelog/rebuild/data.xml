@@ -9897,6 +9897,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-6079_20220331" author="aelmalki">
+		<update tableName="crm_custom_field_tmpl">
+			<column name="description" value="Only closed periods" />
+			<where> applies_to='JobInstance_AccountingSchemesJob' AND code='onlyClosedPeriods'</where>
+		</update>
+	</changeSet>
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
