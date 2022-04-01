@@ -117,7 +117,6 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         
         try {
             remove(exchangeRate);
-            commit();
         } catch (Exception e) {
             throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
         }
