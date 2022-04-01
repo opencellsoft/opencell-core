@@ -109,7 +109,7 @@ public class OccTemplateApi extends BaseApi {
             if(commissionAccountingCode == null) {
                 throw new NotFoundException("Commission accounting code does not exist in the chart of accounts");
             }
-            occTemplate.setContraAccountingCode(commissionAccountingCode);
+            occTemplate.setCommissionAccountingCode(commissionAccountingCode);
         }
 
         occTemplateService.create(occTemplate);
