@@ -104,7 +104,7 @@ public class EncryptionService {
             }
 
             String updateEncCFRequest = String.format("UPDATE `%s`", tableName).replace("`", "")
-                    + " SET cf_values = CAST(:cfValue AS JSONB) WHERE id = :cfId";
+                    + " SET cf_values = :cfValue WHERE id = :cfId";
 
             query = accountEntityService.getEntityManager().createNativeQuery(updateEncCFRequest);
             query.setParameter("cfValue", cfValue);
