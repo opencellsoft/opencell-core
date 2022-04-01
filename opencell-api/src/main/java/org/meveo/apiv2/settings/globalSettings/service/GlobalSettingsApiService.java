@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.settings.GlobalSettings;
@@ -26,7 +27,7 @@ public class GlobalSettingsApiService implements ApiService<GlobalSettings> {
 
     @Override
     public Optional<GlobalSettings> findById(Long id) {
-        return null;
+        return Optional.ofNullable(globalSettingsService.findById(id));
     }
 
     @Override
@@ -37,7 +38,11 @@ public class GlobalSettingsApiService implements ApiService<GlobalSettings> {
 
     @Override
     public Optional<GlobalSettings> update(Long id, GlobalSettings baseEntity) {
-        return null;
+        GlobalSettings entityToUpdate = findById(id).orElseThrow(() -> new NotFoundException("The QuotesSettings does not exist"));
+
+        entityToUpdate.setQuoteDefaultValidityDelay(baseEntity.getQuoteDefaultValidityDelay());
+
+        return Optional.of(globalSettingsService.update(entityToUpdate));
     }
 
     @Override

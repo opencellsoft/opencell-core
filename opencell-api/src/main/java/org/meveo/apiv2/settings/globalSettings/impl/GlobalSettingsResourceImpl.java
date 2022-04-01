@@ -21,10 +21,15 @@ public class GlobalSettingsResourceImpl implements GlobalSettingsResource {
 
     @Override
     public Response create(GlobalSettingsInput input) {
-        GlobalSettings openOrderSetting = globalSettingsMapper.toEntity(input);
-        globalSettingsApiService.create(openOrderSetting);
-        return Response.ok().entity(buildResponse(globalSettingsMapper.toResource(openOrderSetting))).build();
+        GlobalSettings globalSetting = globalSettingsMapper.toEntity(input);
+        globalSettingsApiService.create(globalSetting);
+        return Response.ok().entity(buildResponse(globalSettingsMapper.toResource(globalSetting))).build();
+    }
 
+    @Override
+    public Response update(Long id, GlobalSettingsInput input) {
+        GlobalSettings entityToUpdate = globalSettingsApiService.update(id, globalSettingsMapper.toEntity(input)).get();
+        return Response.ok().entity(buildResponse(globalSettingsMapper.toResource(entityToUpdate))).build();
     }
 
     private Map<String, Object> buildResponse(GlobalSettingsInput resource) {
