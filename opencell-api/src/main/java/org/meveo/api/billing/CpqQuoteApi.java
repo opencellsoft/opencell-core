@@ -1478,6 +1478,7 @@ public class CpqQuoteApi extends BaseApi {
             Map<String, Object> attributes = new HashMap<String, Object>();
             ;
             // Add Service charges
+            boolean EdrApplied=false;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
@@ -1539,71 +1540,75 @@ public class CpqQuoteApi extends BaseApi {
                 
                 // Add subscription charges
                 EDR edr =null;
-                for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
-                    if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
-                        UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                        if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
-                            edr = new EDR();
-                            try {
+                if(!EdrApplied) {
+                    for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
+                        if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
+                            UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
+                            if (chargetemplate.getUsageQuantityAttribute() != null && !overrodeArticle.contains(usageArticle)) {
+                                edr = new EDR();
+                                try {
 
-                                edr.setAccessCode(null);
-                                edr.setEventDate(usageCharge.getChargeDate());
-                                edr.setSubscription(subscription);
-                                edr.setStatus(EDRStatusEnum.OPEN);
-                                edr.setCreated(new Date());
-                                edr.setOriginBatch("QUOTE");
-                                edr.setOriginRecord(System.currentTimeMillis() + "");
-                                Double quantity = 0d;
-                                Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                                if (quantityValue != null && quantityValue instanceof Double) {
-                                    quantity = (Double) quantityValue;
-                                } else {
-                                    throw new MissingParameterException(
-                                            "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-                                                    + " for the usage charge " + usageCharge.getCode());
-                                }
-                                if (quantity != 0) {
-                                    edr.setQuantity(new BigDecimal(quantity));
-                                    Object param1 = attributes.get("EDR_text_parameter_1");
-                                    if (param1 != null) {
-                                        edr.setParameter1(param1.toString());
+                                    edr.setAccessCode(null);
+                                    edr.setEventDate(usageCharge.getChargeDate());
+                                    edr.setSubscription(subscription);
+                                    edr.setStatus(EDRStatusEnum.OPEN);
+                                    edr.setCreated(new Date());
+                                    edr.setOriginBatch("QUOTE");
+                                    edr.setOriginRecord(System.currentTimeMillis() + "");
+                                    Double quantity = 0d;
+                                    Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+                                    if (quantityValue != null && quantityValue instanceof Double) {
+                                        quantity = (Double) quantityValue;
+                                    } else {
+                                        throw new MissingParameterException(
+                                                "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+                                                        + " for the usage charge " + usageCharge.getCode());
                                     }
-                                    Object param2 = attributes.get("EDR_text_parameter_2");
-                                    if (param2 != null) {
-                                        edr.setParameter2(param2.toString());
-                                    }
-                                    Object param3 = attributes.get("EDR_text_parameter_3");
-                                    if (param3 != null) {
-                                        edr.setParameter3(param3.toString());
-                                    }
-                                    List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-
-                                    if (walletOperationsFromEdr != null) {
-                                        for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                        	if(walletOperation.getAccountingArticle()==null) {
-                                        		  usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
-                                                  if (usageArticle==null) new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
-                                           walletOperation.setAccountingArticle(usageArticle);
-                                        	}
-                                            walletOperations.add(walletOperation);
+                                    if (quantity != 0) {
+                                        edr.setQuantity(new BigDecimal(quantity));
+                                        Object param1 = attributes.get("EDR_text_parameter_1");
+                                        if (param1 != null) {
+                                            edr.setParameter1(param1.toString());
                                         }
+                                        Object param2 = attributes.get("EDR_text_parameter_2");
+                                        if (param2 != null) {
+                                            edr.setParameter2(param2.toString());
+                                        }
+                                        Object param3 = attributes.get("EDR_text_parameter_3");
+                                        if (param3 != null) {
+                                            edr.setParameter3(param3.toString());
+                                        }
+                                        List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+
+                                        if (walletOperationsFromEdr != null) {
+                                            for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                                            	if(walletOperation.getAccountingArticle()==null) {
+                                            		  usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+                                                      if (usageArticle==null) new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+                                               walletOperation.setAccountingArticle(usageArticle);
+                                            	}
+                                                walletOperations.add(walletOperation);
+                                            }
+                                        }
+                                        EdrApplied=true;
+                                        break;
                                     }
-                                    break;
+
+                                   
+                                } catch (RatingException e) {
+                                    log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                                    throw new BusinessApiException(e.getMessage());
+
+                                } catch (BusinessException e) {
+                                    log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                                    throw new BusinessApiException(e.getMessage());
+
                                 }
-
-                               
-                            } catch (RatingException e) {
-                                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                                throw new BusinessApiException(e.getMessage());
-
-                            } catch (BusinessException e) {
-                                log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                                throw new BusinessApiException(e.getMessage());
-
                             }
                         }
                     }
                 }
+            
                 walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
 						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, serviceInstance.getCode(), false, null, null, DiscountPlanTypeEnum.PRODUCT));
             }
