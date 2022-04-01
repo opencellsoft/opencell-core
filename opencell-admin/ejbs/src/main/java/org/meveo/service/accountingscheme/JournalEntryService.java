@@ -50,7 +50,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // First JournalEntry
         JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller(),
                 null);
 
         // Second JournalEntry
@@ -59,7 +58,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller(),
                 null);
 
         create(firstEntry);
@@ -81,7 +79,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                         occT.getAccountingCode(),
                 occT.getOccCategory(),
                 recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
                 null);
 
         saved.add(customerAccountEntry);
@@ -109,7 +106,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                         objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                        recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
                         null);
                 revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
                 revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
@@ -142,7 +138,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                         objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                        recordedInvoice.getSeller() != null ? recordedInvoice.getSeller() : recordedInvoice.getCustomerAccount().getCustomer().getSeller(),
                         taxAgr.getTax());
 
                 saved.add(taxEntry);
@@ -193,17 +188,23 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
                                            OperationCategoryEnum categoryEnum, BigDecimal amount,
-                                           Seller seller, Tax tax) {
+                                           Tax tax) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
         firstEntry.setAmount(amount);
         firstEntry.setCustomerAccount(ao.getCustomerAccount());
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
-        firstEntry.setSeller(seller);
+        firstEntry.setSeller(getSeller(ao));
         firstEntry.setTax(tax);
 
         return firstEntry;
+    }
+
+    private Seller getSeller(AccountOperation ao) {
+        return ao.getSeller() != null ? ao.getSeller() :
+                ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
+                        ao.getCustomerAccount().getCustomer().getSeller() : null;
     }
 
 }
