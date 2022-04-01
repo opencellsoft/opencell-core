@@ -385,4 +385,8 @@ public class CurrencyApi extends BaseApi {
             auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
         }
     }
+    
+    public void removeExchangeRateById(Long id) {
+        exchangeRateService.delete(id);
+    }
 }
