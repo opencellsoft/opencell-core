@@ -16,9 +16,14 @@ public class GlobalSettingsService extends PersistenceService<GlobalSettings> {
         super.create(entity);
     }
 
+    @Override
+    public GlobalSettings update(GlobalSettings entity) throws BusinessException {
+        checkParameters(entity);
+        return super.update(entity);
+    }
+
     public void checkParameters(GlobalSettings entity) {
         if (entity.getQuoteDefaultValidityDelay() <= 0)
             throw new InvalidParameterException("QuoteDefaultValidityDelay must be greater than 0");
     }
-
 }
