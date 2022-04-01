@@ -162,8 +162,11 @@ public class EncryptionFactory {
     }
 
     public static String decrypt(String encryptedText){
+log.info("decrypt step 1");
         try {
+log.info("decrypt step 2");
             if (encryptedText != null) {
+log.info("decrypt step 3");
                 // this if is for migration from data encrypted by AES in client database
                 if (encryptedText.startsWith(ENCRYPTION_CHECK_STRING)) {
                     encryptedText = encryptedText.replace(ENCRYPTION_CHECK_STRING, "");
@@ -197,6 +200,7 @@ public class EncryptionFactory {
             return ON_ERROR_RETURN;
         }
 
+log.info("decrypt step encryptedText");
         return encryptedText;
     }
 
