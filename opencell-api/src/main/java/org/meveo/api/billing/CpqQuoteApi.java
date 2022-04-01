@@ -2024,7 +2024,7 @@ public class CpqQuoteApi extends BaseApi {
     }
     
  
-    private void calculateTotalAttributes (QuoteVersion quoteVersion) {
+    public void calculateTotalAttributes (QuoteVersion quoteVersion) {
     	List<QuoteAttribute>totalQuoteAttributes=quoteAttributeService.findByQuoteVersionAndTotaltype(quoteVersion.getId());
     	log.info("totalQuoteAttributes size{},"+totalQuoteAttributes.size());
     	Double sumTotalAttribute=0.0;

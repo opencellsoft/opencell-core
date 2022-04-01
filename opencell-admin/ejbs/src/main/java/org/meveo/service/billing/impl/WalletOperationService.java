@@ -1534,6 +1534,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return false;
     }
     
+    /**
+     * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
+     * 
+     * @param invoicingDate Invoicing date
+     * @param nbToRetrieve Number of items to retrieve for processing
+     * @return A list of Wallet operation ids
+     */
+    public List<WalletOperation> getDiscountWalletOperation(Date invoicingDate,List<Long> woIds) {
+        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
+    }
+    
 //    @Override
 //    public void create(WalletOperation entity) throws BusinessException {
 //    	if(entity.getId() == null)
