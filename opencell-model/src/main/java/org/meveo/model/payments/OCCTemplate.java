@@ -92,9 +92,6 @@ public class OCCTemplate extends BusinessEntity {
     private AccountingCode contraAccountingCode2;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contra_accounting_code2_id")
-    private AccountingCode contraAccountingCode2;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
@@ -181,11 +178,5 @@ public class OCCTemplate extends BusinessEntity {
         this.contraAccountingCode2 = commissionAccountingCode;
     }
 
-    public AccountingCode getContraAccountingCode2() {
-        return contraAccountingCode2;
-    }
 
-    public void setContraAccountingCode2(AccountingCode commissionAccountingCode) {
-        this.contraAccountingCode2 = commissionAccountingCode;
-    }
 }
