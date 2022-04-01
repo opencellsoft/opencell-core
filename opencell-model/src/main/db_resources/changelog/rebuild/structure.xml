@@ -2329,7 +2329,6 @@
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
-            <column name="commission_accounting_code_id" type="bigint"/>
             <column name="contra_accounting_code2_id" type="bigint"/>
         </createTable>
     </changeSet>
@@ -16006,8 +16005,8 @@
 
 
     <changeSet id="#INTRD-5994-20220328-fk" author="HichamELHALOUI">
-        <addForeignKeyConstraint baseColumnNames="commission_accounting_code_id" baseTableName="ar_occ_template"
-                                 constraintName="fk_commission_accounting_code_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
