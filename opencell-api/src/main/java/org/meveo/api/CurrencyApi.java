@@ -314,7 +314,11 @@ public class CurrencyApi extends BaseApi {
         if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
-        
+
+        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
+        }
+
         // We can modify only the future rates
         if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
