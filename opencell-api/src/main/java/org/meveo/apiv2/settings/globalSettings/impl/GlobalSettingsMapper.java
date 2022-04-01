@@ -26,7 +26,6 @@ public class GlobalSettingsMapper extends ResourceMapper<GlobalSettingsInput, Gl
     }
 
     protected GlobalSettings toEntity(GlobalSettings entity, GlobalSettingsInput resource) {
-        entity.setId(resource.getId());
         entity.setQuoteDefaultValidityDelay(resource.getQuoteSettings().getQuoteDefaultValidityDelay());
         return entity;
     }
