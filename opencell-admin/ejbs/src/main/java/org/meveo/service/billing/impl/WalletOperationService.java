@@ -1542,7 +1542,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @return A list of Wallet operation ids
      */
     public List<WalletOperation> getDiscountWalletOperation(Date invoicingDate,List<Long> woIds) {
-        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setParameter("woIds", woIds).getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
     }
     
 //    @Override
