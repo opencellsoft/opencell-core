@@ -12439,7 +12439,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="accounting_code_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="seller_id" type="bigint" />
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -12502,7 +12504,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime"/>
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
-            <column name="quote_default_validity_delay" type="int"/>
+            <column name="quote_default_validity_delay" type="int">
+            	<constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

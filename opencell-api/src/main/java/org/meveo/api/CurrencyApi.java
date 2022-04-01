@@ -367,17 +367,22 @@ public class CurrencyApi extends BaseApi {
         DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
         String parameters = "User " + auditLogService.getActor() + " has changed ";
+        boolean areThereAnyChanges = false;
         boolean addAnd = false;
         if (fromRate.compareTo(toRate) != 0) {
-            parameters += "for Exchange rate from " + rateFormatter.format(fromRate) + " to " + rateFormatter.format(toRate);
+            parameters += "the Exchange rate from " + rateFormatter.format(fromRate) + " to " + rateFormatter.format(toRate);
             addAnd = true;
+            areThereAnyChanges = true;
         }
         if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
             if (addAnd) {
-                parameters += " AND ";
+                parameters += " and ";
             }
             parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
+            areThereAnyChanges = true;
         }
-        auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
+        if (areThereAnyChanges) {            
+            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
+        }
     }
 }

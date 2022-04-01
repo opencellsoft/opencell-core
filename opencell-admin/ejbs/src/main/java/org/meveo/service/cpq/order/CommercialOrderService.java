@@ -213,6 +213,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
+					if(product.getProductActionType() == ProductActionTypeEnum.CREATE) {
+						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);	
+					}
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
 						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
 		                        InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);

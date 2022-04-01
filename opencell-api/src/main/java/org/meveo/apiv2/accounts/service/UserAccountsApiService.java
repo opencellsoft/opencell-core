@@ -7,6 +7,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -72,14 +74,32 @@ public class UserAccountsApiService {
         userAccounts.remove(userAccount);
         
 		for (UserAccount ua : userAccounts) {
-			UserAccountDto userAccountDto = new UserAccountDto();
-			userAccountDto.setId(ua.getId());
-			userAccountDto.setCode(ua.getCode());
-
-			userAccountsDto.getUserAccount().add(userAccountDto);
+			userAccountsDto.getUserAccount().add(buildUserAccountDto(ua));
 		}
 
         return userAccountsDto;
+    }
+    
+    private UserAccountDto buildUserAccountDto(UserAccount ua) {
+		UserAccountDto userAccountDto = new UserAccountDto();
+		
+		userAccountDto.setId(ua.getId());
+        userAccountDto.setCode(ua.getCode());
+        userAccountDto.setName(new NameDto(ua.getName()));
+        userAccountDto.setStatus(ua.getStatus());
+        userAccountDto.setBillingAccount(ua.getBillingAccount().getCode());
+        userAccountDto.setAddress(new AddressDto(ua.getAddress()));
+        userAccountDto.setJobTitle(ua.getJobTitle());
+        userAccountDto.setIsCompany(ua.getIsCompany());
+        userAccountDto.setIsConsumer(ua.getIsConsumer());
+        userAccountDto.setCustomerAccountDescription(ua.getDescription());
+        
+        if (ua.getParentUserAccount() != null) {
+        	userAccountDto.setParentUserAccountCode(ua.getParentUserAccount().getCode());
+        	userAccountDto.setParentUserAccount(buildUserAccountDto(ua.getParentUserAccount()));
+        }
+
+    	return userAccountDto;
     }
     
     private void removeChildrenUserAccount(List<UserAccount> userAccounts,List<UserAccount> userAccountListToRemove, UserAccount userAccountToRemove) {

@@ -9840,5 +9840,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 
         </changeSet>
+        
+    <changeSet id="#INTRD-4666_20220331" author="HatimOUDAD">
+		<update tableName="cpq_order_product">
+			<column name="production_action_type" value="CREATE" />
+			<where> production_action_type is null</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
