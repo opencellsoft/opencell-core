@@ -213,8 +213,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
             // Assign invoice numbers
             BiConsumer<Long, JobExecutionResultImpl> task = (invoiceId, jobResult) -> {
-                invoiceService.recalculateDates(invoiceId);
-                invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
+                invoiceService.assignInvoiceNumberAndRecalculateDates(invoiceId, invoicesToNumberInfo);
 
             };
             iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
