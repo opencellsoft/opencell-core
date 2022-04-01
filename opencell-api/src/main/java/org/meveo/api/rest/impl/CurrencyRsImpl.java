@@ -191,4 +191,15 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
         return result;
     }
+    
+    public ActionStatus removeExchangeRateById(Long id) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.removeExchangeRateById(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 }

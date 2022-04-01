@@ -107,7 +107,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
                 listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
             }
-            
+
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
                 continue;
             }
@@ -138,24 +138,26 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     amountDebit = BigDecimal.ZERO;
                 }
             }
-            
-            if(accountOperation instanceof RecordedInvoice) {
-                Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
+
+            if (accountOperation instanceof RecordedInvoice) {
+                Invoice invoice = ((RecordedInvoice) accountOperation).getInvoice();
                 if (invoice != null) {
-                    if(withWriteOff) {
+                    if (withWriteOff) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
-                    } else if(withRefund) {
+                    } else if (withRefund) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
-                    } else if(fullMatch) {
+                    } else if (fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                    } else if(!fullMatch) {
+                    } else if (!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
                     entityUpdatedEventProducer.fire(invoice);
                 }
             }
-            
-            accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+
+
+            if(0 != amountToMatch.longValue()){
+                accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
             matchingAmount.setMatchingAmount(amountToMatch);
@@ -165,6 +167,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             accountOperation.getMatchingAmounts().add(matchingAmount);
             matchingCode.getMatchingAmounts().add(matchingAmount);
+        }
         }
 
         // Leave AO to be matched as partial to the end. It will be matched only if any unmatched amount remains.
@@ -216,16 +219,18 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
             }
 
-            accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
-            accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
-            accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
-            matchingAmount.setMatchingAmount(amountToMatch);
-            matchingAmount.updateAudit(currentUser);
-            matchingAmount.setAccountOperation(accountOperation);
-            matchingAmount.setMatchingCode(matchingCode);
+            if(0 != amountToMatch.longValue()) {
+                accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+                accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
+                accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+                matchingAmount.setMatchingAmount(amountToMatch);
+                matchingAmount.updateAudit(currentUser);
+                matchingAmount.setAccountOperation(accountOperation);
+                matchingAmount.setMatchingCode(matchingCode);
 
-            accountOperation.getMatchingAmounts().add(matchingAmount);
-            matchingCode.getMatchingAmounts().add(matchingAmount);
+                accountOperation.getMatchingAmounts().add(matchingAmount);
+                matchingCode.getMatchingAmounts().add(matchingAmount);
+            }
         }
 
         matchingCode.setMatchingAmountDebit(amount);
