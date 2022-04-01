@@ -49,7 +49,7 @@ public class DunningPolicyApiServiceTest {
     public void setUp() {
         dunningPolicy.setId(1L);
         dunningPolicy.setPolicyName("policy");
-        dunningPolicy.setDefaultPolicy(TRUE);
+        dunningPolicy.setIsDefaultPolicy(TRUE);
         dunningPolicy.setPolicyDescription("Description");
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(1L);
@@ -101,12 +101,12 @@ public class DunningPolicyApiServiceTest {
     @Test
     public void shouldArchiveDunningPolicy() {
         DunningPolicy policy = new DunningPolicy();
-        policy.setActivePolicy(FALSE);
+        policy.setIsActivePolicy(FALSE);
         policy.setId(1L);
         when(dunningPolicyService.update(any())).thenReturn(policy);
         Optional<DunningPolicy> dunningPolicyArchived = dunningPolicyApiService.archiveDunningPolicy(dunningPolicy);
         assertTrue(dunningPolicyArchived.isPresent());
         DunningPolicy dunningPolicy1 = dunningPolicyArchived.get();
-        assertEquals(FALSE, dunningPolicy1.getActivePolicy());
+        assertEquals(FALSE, dunningPolicy1.getIsActivePolicy());
     }
 }
