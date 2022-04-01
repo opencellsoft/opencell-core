@@ -314,7 +314,11 @@ public class CurrencyApi extends BaseApi {
         if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
-        
+
+        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
+        }
+
         // We can modify only the future rates
         if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
@@ -364,25 +368,26 @@ public class CurrencyApi extends BaseApi {
             Date fromDate, Date toDate) {
 
         DecimalFormat rateFormatter = new DecimalFormat("#0.######");
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        String parameters = "User " + auditLogService.getActor() + " has changed ";
-        boolean areThereAnyChanges = false;
-        boolean addAnd = false;
-        if (fromRate.compareTo(toRate) != 0) {
-            parameters += "the Exchange rate from " + rateFormatter.format(fromRate) + " to " + rateFormatter.format(toRate);
-            addAnd = true;
-            areThereAnyChanges = true;
+        boolean ratesAreChanged = fromRate.compareTo(toRate) != 0;
+        boolean datesAreChanged = DateUtils.truncateTime(fromDate).compareTo(DateUtils.truncateTime(toDate)) != 0;
+
+        StringBuilder parameters = new StringBuilder("User ").append(auditLogService.getActor()).append(" has changed ");
+        if (ratesAreChanged) {
+            parameters.append("the Exchange rate ");
+            parameters.append("for ").append(exchangeRate.getTradingCurrency().getCurrencyCode()).append(" ");
+            parameters.append("from ").append(rateFormatter.format(fromRate)).append(" to ").append(rateFormatter.format(toRate));
         }
-        if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
-            if (addAnd) {
-                parameters += " and ";
+
+        if (datesAreChanged) {
+            if (ratesAreChanged) {
+                parameters.append(" and ");
             }
-            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
-            areThereAnyChanges = true;
+            parameters.append("From date ").append(dateFormatter.format(fromDate)).append(" to ").append(dateFormatter.format(toDate));
         }
-        if (areThereAnyChanges) {            
-            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
+        if (ratesAreChanged || datesAreChanged) {            
+            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters.toString());
         }
     }
     
