@@ -247,20 +247,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return Rated transaction
      * @throws BusinessException business exception
      */
+    /**
+     * @param walletOperation
+     * @param isVirtual
+     * @return
+     * @throws BusinessException
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
     	
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-        if(walletOperation.getDiscountPlan() != null && walletOperation.getDiscountedWalletOperation()!=null) {
-        	log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
-        	RatedTransaction discountedRatedTransaction = findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
-        	
-        	if(discountedRatedTransaction!=null) {
-        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
-        		ratedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
-        	}	
-        }
+//        if(walletOperation.getDiscountPlan() != null && walletOperation.getDiscountedWalletOperation()!=null) {
+//        	log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
+//        	RatedTransaction discountedRatedTransaction = findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
+//        	
+//        	if(discountedRatedTransaction!=null) {
+//        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
+//        		ratedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+//        	}	
+//        }
         
         walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
 

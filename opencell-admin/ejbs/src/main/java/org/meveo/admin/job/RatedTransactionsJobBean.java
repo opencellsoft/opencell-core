@@ -31,6 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -64,11 +65,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
+    
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, this::fillDiscountedRT);
     }
 
     /**
@@ -114,6 +116,30 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
         WalletOperation walletOperation = walletOperationService.findById(woId);
         ratedTransactionService.createRatedTransactionNewTx(walletOperation, false);
+    }
+    
+    /**
+     * Convert a single Wallet operation to a Rated transaction
+     * 
+     * @param woId Wallet operation id to convert
+     * @param jobExecutionResult Job execution result
+     */
+    private void fillDiscountedRT(JobExecutionResultImpl jobExecutionResult) {
+    	List<WalletOperation> discountWO=walletOperationService.getDiscountWalletOperation(new Date());
+    	for(WalletOperation walletOperation:discountWO) {
+    		
+    		log.debug("createRatedTransaction walletOperation={}",walletOperation.getDiscountedWalletOperation());
+        	RatedTransaction discountedRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
+        	
+        	if(discountedRatedTransaction!=null) {
+        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
+        		RatedTransaction discountRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getId());
+            	
+        		discountRatedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        		ratedTransactionService.update(discountRatedTransaction);
+        	}
+    		
+    	}
     }
 
     private boolean hasMore(JobInstance jobInstance) {
