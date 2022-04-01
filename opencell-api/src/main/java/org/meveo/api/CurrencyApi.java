@@ -364,25 +364,26 @@ public class CurrencyApi extends BaseApi {
             Date fromDate, Date toDate) {
 
         DecimalFormat rateFormatter = new DecimalFormat("#0.######");
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        String parameters = "User " + auditLogService.getActor() + " has changed ";
-        boolean areThereAnyChanges = false;
-        boolean addAnd = false;
-        if (fromRate.compareTo(toRate) != 0) {
-            parameters += "the Exchange rate from " + rateFormatter.format(fromRate) + " to " + rateFormatter.format(toRate);
-            addAnd = true;
-            areThereAnyChanges = true;
+        boolean ratesAreChanged = fromRate.compareTo(toRate) != 0;
+        boolean datesAreChanged = DateUtils.truncateTime(fromDate).compareTo(DateUtils.truncateTime(toDate)) != 0;
+
+        StringBuilder parameters = new StringBuilder("User ").append(auditLogService.getActor()).append(" has changed ");
+        if (ratesAreChanged) {
+            parameters.append("the Exchange rate ");
+            parameters.append("for ").append(exchangeRate.getTradingCurrency().getCurrencyCode()).append(" ");
+            parameters.append("from ").append(rateFormatter.format(fromRate)).append(" to ").append(rateFormatter.format(toRate));
         }
-        if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
-            if (addAnd) {
-                parameters += " and ";
+
+        if (datesAreChanged) {
+            if (ratesAreChanged) {
+                parameters.append(" and ");
             }
-            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
-            areThereAnyChanges = true;
+            parameters.append("From date ").append(dateFormatter.format(fromDate)).append(" to ").append(dateFormatter.format(toDate));
         }
-        if (areThereAnyChanges) {            
-            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
+        if (ratesAreChanged || datesAreChanged) {            
+            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters.toString());
         }
     }
 }
