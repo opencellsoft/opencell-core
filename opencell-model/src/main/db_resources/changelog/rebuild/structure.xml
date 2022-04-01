@@ -2330,7 +2330,7 @@
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
-            <column name="commission_accounting_code_id" type="bigint"/>
+            <column name="contra_accounting_code2_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -15976,8 +15976,8 @@
 
 
     <changeSet id="#INTRD-5994-20220328-fk" author="HichamELHALOUI">
-        <addForeignKeyConstraint baseColumnNames="commission_accounting_code_id" baseTableName="ar_occ_template"
-                                 constraintName="fk_commission_accounting_code_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
@@ -17505,6 +17505,9 @@
 	<changeSet id="#INTRD-5846-24032022" author="TarikRabeh" />
     <changeSet id="#INTRD-5994-20220328" author="HichamELHALOUI" />
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
+
+
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
