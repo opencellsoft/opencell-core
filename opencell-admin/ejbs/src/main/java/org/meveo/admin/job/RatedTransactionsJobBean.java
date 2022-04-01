@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -64,11 +66,14 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
+    
+    private  List<Long> ids=new ArrayList<Long>();
+    
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, this::fillDiscountedRT);
     }
 
     /**
@@ -95,13 +100,9 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
-        
-        List<Long> sortedList = ids.stream()
-    			.sorted(Comparator.reverseOrder())
-    			.collect(Collectors.toList());
+        ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
 
-        return Optional.of(new SynchronizedIterator<Long>(sortedList));
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
     /**
@@ -114,6 +115,31 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
         WalletOperation walletOperation = walletOperationService.findById(woId);
         ratedTransactionService.createRatedTransactionNewTx(walletOperation, false);
+    }
+    
+    /**
+     * Convert a single Wallet operation to a Rated transaction
+     * 
+     * @param woId Wallet operation id to convert
+     * @param jobExecutionResult Job execution result
+     */
+    private void fillDiscountedRT(JobExecutionResultImpl jobExecutionResult) {
+    	log.info("fillDiscountedRT woIds={}",ids);
+    	List<WalletOperation> discountWO=walletOperationService.getDiscountWalletOperation(new Date(),ids);
+    	log.debug("createRatedTransaction discountWO size={}",discountWO!=null?discountWO.size():0);
+    	for(WalletOperation walletOperation:discountWO) {
+    		
+        	RatedTransaction discountedRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getDiscountedWalletOperation());
+        	
+        	if(discountedRatedTransaction!=null) {
+        		log.debug("createRatedTransaction discountedRatedTransaction={}",discountedRatedTransaction.getId());
+        		RatedTransaction discountRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getId());
+            	
+        		discountRatedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        		ratedTransactionService.update(discountRatedTransaction);
+        	}
+    		
+    	}
     }
 
     private boolean hasMore(JobInstance jobInstance) {
