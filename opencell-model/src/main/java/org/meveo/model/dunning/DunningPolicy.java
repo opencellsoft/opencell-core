@@ -166,20 +166,20 @@ public class DunningPolicy extends AuditableEntity {
         this.policyPriority = policyPriority;
     }
 
-    public Boolean getDefaultPolicy() {
+    public Boolean getIsDefaultPolicy() {
         return isDefaultPolicy;
     }
 
-    public void setDefaultPolicy(Boolean defaultPolicy) {
-        isDefaultPolicy = defaultPolicy;
+    public void setIsDefaultPolicy(Boolean isDefaultPolicy) {
+        this.isDefaultPolicy = isDefaultPolicy;
     }
 
-    public Boolean getActivePolicy() {
+    public Boolean getIsActivePolicy() {
         return isActivePolicy;
     }
 
-    public void setActivePolicy(Boolean activePolicy) {
-        isActivePolicy = activePolicy;
+    public void setIsActivePolicy(Boolean isActivePolicy) {
+        this.isActivePolicy = isActivePolicy;
     }
 
     public List<DunningPolicyLevel> getDunningLevels() {
