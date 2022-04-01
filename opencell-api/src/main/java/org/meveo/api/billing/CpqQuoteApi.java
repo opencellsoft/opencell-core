@@ -495,7 +495,7 @@ public class CpqQuoteApi extends BaseApi {
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
             quoteAttribute.setQuoteProduct(quoteProduct);
-            quoteAttribute.setQuoteOffer(quoteProduct.getQuoteOffer());
+            //quoteAttribute.setQuoteOffer(quoteProduct.getQuoteOffer());
         }
         quoteAttribute.updateAudit(currentUser);
         if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
