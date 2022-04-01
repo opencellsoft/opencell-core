@@ -42,6 +42,10 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
         
+        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
+        }
+
         // Check if a user choose a date that is already taken
         if (findByfromDate(postData.getFromDate(), postData.getTradingCurrency().getId()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
