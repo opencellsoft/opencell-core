@@ -1,7 +1,6 @@
 package org.meveo.commons.utils;
 
 import org.apache.commons.codec.binary.Base64;
-import org.meveo.commons.encryption.EncryptionFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -89,7 +88,8 @@ public class AesEncrypt {
 	 */
 	public String encryptText(String msg, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException,
 			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		return EncryptionFactory.encrypt(msg);
+		this.cipher.init(Cipher.ENCRYPT_MODE, key);
+		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
 	}
 
 	/**
@@ -104,7 +104,8 @@ public class AesEncrypt {
 	 */
 	public String decryptText(String msg, SecretKey key)
 			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
-		return EncryptionFactory.decrypt(msg);
+		this.cipher.init(Cipher.DECRYPT_MODE, key);
+		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 
 	/**

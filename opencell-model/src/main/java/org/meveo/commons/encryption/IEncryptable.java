@@ -65,9 +65,7 @@ public interface IEncryptable {
 					return strToEncrypt;
 				}
 
-				String encrypted = EncryptionFactory.encrypt(strToEncrypt);
-
-				return ENCRYPTION_CHECK_STRING + encrypted;
+				return EncryptionFactory.encrypt(strToEncrypt);
 			}
 			
 		} catch (Exception e) {
@@ -85,23 +83,10 @@ public interface IEncryptable {
 	 *         instead
 	 */
 	default String decrypt(String strToDecrypt) {
-		try {
-			if (strToDecrypt != null) {
-				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
-					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
 
-					String decrypted = EncryptionFactory.decrypt(strToDecrypt);
+		String decrypted = EncryptionFactory.decrypt(strToDecrypt);
 
-					return decrypted;
-				}
-				return strToDecrypt;
-				
-			}
-		} catch (Exception e) {
-			log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
-			return ON_ERROR_RETURN;
-		}
-		return strToDecrypt;
+		return decrypted;
 	}
 
 	/**
