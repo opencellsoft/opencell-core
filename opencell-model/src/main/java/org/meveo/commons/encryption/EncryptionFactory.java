@@ -169,6 +169,7 @@ log.info("decrypt step 2");
 log.info("decrypt step 3");
                 // this if is for migration from data encrypted by AES in client database
                 if (encryptedText.startsWith(ENCRYPTION_CHECK_STRING)) {
+log.info("step encryptedText AES : " + encryptedText);
                     encryptedText = encryptedText.replace(ENCRYPTION_CHECK_STRING, "");
                     SecretKeySpec secretKey = buildSecretKey();
                     cipher = Cipher.getInstance(OLD_AES_ENCRYPTION_ALGORITHM);
@@ -177,6 +178,7 @@ log.info("decrypt step 3");
                     return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
                 }
                 else if (encryptedText.startsWith(PREFIX)) {
+log.info("step encryptedText PREFIX : " + encryptedText);
                     String completePrefix = encryptedText.substring(0, PREFIX.length() + LENGTH_HASH_MD5_EN_HEXA); // get complete prefix
                     encryptedText = encryptedText.substring(PREFIX.length() + LENGTH_HASH_MD5_EN_HEXA + 1);
 
@@ -200,7 +202,8 @@ log.info("decrypt step 3");
             return ON_ERROR_RETURN;
         }
 
-log.info("decrypt step encryptedText");
+log.info("decrypt step encryptedText : " + encryptedText);
+log.info("*************************");
         return encryptedText;
     }
 
