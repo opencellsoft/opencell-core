@@ -19,8 +19,8 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
 
     @Override
     protected DunningPolicy toResource(org.meveo.model.dunning.DunningPolicy entity) {
-        ImmutableDunningPolicy.Builder builder = ImmutableDunningPolicy.builder().id(entity.getId()).isDefaultPolicy(entity.getDefaultPolicy())
-            .isActivePolicy(entity.getActivePolicy()).policyName(entity.getPolicyName()).policyDescription(entity.getPolicyDescription())
+        ImmutableDunningPolicy.Builder builder = ImmutableDunningPolicy.builder().id(entity.getId()).isDefaultPolicy(entity.getIsDefaultPolicy())
+            .isActivePolicy(entity.getIsActivePolicy()).policyName(entity.getPolicyName()).policyDescription(entity.getPolicyDescription())
             .minBalanceTrigger(entity.getMinBalanceTrigger()).policyPriority(entity.getPolicyPriority()).interestForDelaySequence(entity.getInterestForDelaySequence())
             .isIncludeDueInvoicesInThreshold(entity.getIncludeDueInvoicesInThreshold()).isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
             .isIncludePayReminder(entity.getIncludePayReminder()).determineLevelBy(entity.getDetermineLevelBy());
@@ -46,8 +46,8 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         entity.setIncludePayReminder(resource.isIncludePayReminder());
         ofNullable(resource.isAttachInvoicesToEmails()).ifPresent(attachInvoicesToEmail -> entity.setAttachInvoicesToEmails(attachInvoicesToEmail));
         entity.setPolicyPriority(resource.getPolicyPriority());
-        entity.setDefaultPolicy(resource.isDefaultPolicy());
-        entity.setActivePolicy(resource.isActivePolicy());
+        entity.setIsDefaultPolicy(resource.isDefaultPolicy());
+        entity.setIsActivePolicy(resource.isActivePolicy());
         if(resource.getMinBalanceTriggerCurrency() != null && resource.getMinBalanceTriggerCurrency().getCode() != null) {
             Currency currency = new Currency();
             currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
@@ -71,16 +71,16 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             toUpdate.setPolicyDescription(description);
         });
         ofNullable(resource.isActivePolicy()).ifPresent(activePolicy -> {
-            if (!resource.isActivePolicy().equals(toUpdate.getActivePolicy())) {
+            if (!resource.isActivePolicy().equals(toUpdate.getIsActivePolicy())) {
                 updatedFields.add("activePolicy");
             }
-            toUpdate.setActivePolicy(activePolicy);
+            toUpdate.setIsActivePolicy(activePolicy);
         });
         ofNullable(resource.isDefaultPolicy()).ifPresent(defaultPolicy -> {
-            if (!resource.isDefaultPolicy().equals(toUpdate.getDefaultPolicy())) {
+            if (!resource.isDefaultPolicy().equals(toUpdate.getIsDefaultPolicy())) {
                 updatedFields.add("defaultPolicy");
             }
-            toUpdate.setDefaultPolicy(defaultPolicy);
+            toUpdate.setIsDefaultPolicy(defaultPolicy);
         });
         ofNullable(resource.isAttachInvoicesToEmails()).ifPresent(attachInvoicesToEmails -> {
             if (!resource.isAttachInvoicesToEmails().equals(toUpdate.getAttachInvoicesToEmails())) {
