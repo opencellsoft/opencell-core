@@ -26,8 +26,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 /**
  * @author melyoussoufi
@@ -64,8 +66,11 @@ public interface IEncryptable {
 				if(strToEncrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
 					return strToEncrypt;
 				}
-
-				return EncryptionFactory.encrypt(strToEncrypt);
+				SecretKeySpec secretKey = buildSecretKey();
+				Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+				cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+				String encrypted  = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(UTF_8_ENCODING)));
+				return ENCRYPTION_CHECK_STRING + encrypted;
 			}
 			
 		} catch (Exception e) {
@@ -83,10 +88,25 @@ public interface IEncryptable {
 	 *         instead
 	 */
 	default String decrypt(String strToDecrypt) {
+		try {
+			if (strToDecrypt != null) {
+				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
+					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
+					SecretKeySpec secretKey = buildSecretKey();
+					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+					cipher.init(Cipher.DECRYPT_MODE, secretKey);
+					String res = new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+					return res;
+				}
+log.info("strToDecrypt decrypt : " + strToDecrypt);
+				return strToDecrypt;
 
-		String decrypted = EncryptionFactory.decrypt(strToDecrypt);
-
-		return decrypted;
+			}
+		} catch (Exception e) {
+			log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
+			return ON_ERROR_RETURN;
+		}
+		return strToDecrypt;
 	}
 
 	/**
