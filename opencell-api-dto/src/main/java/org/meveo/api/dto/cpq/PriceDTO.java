@@ -75,6 +75,7 @@ public class PriceDTO extends BaseEntityDto {
     private String taxCategory;
     private String taxCode;
     private BigDecimal quantity;
+    private BigDecimal unitMultiplicator;
     private PriceDTO discountedQuotePrice;
     
     private CustomFieldsDto customFields;
@@ -104,6 +105,7 @@ public class PriceDTO extends BaseEntityDto {
 	   TaxClass taxClass=quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass() : null;
 	   taxCode=taxClass!=null?taxClass.getCode():null;
 	   quantity = quotePrice.getQuantity();
+	   unitMultiplicator=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getUnitMultiplicator():null;
 	   if(quotePrice.getDiscountedQuotePrice() != null) {
 		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
 	   }
@@ -256,5 +258,13 @@ public class PriceDTO extends BaseEntityDto {
 	public void setDiscountedQuotePrice(PriceDTO discountedQuotePrice) {
 		this.discountedQuotePrice = discountedQuotePrice;
 	}
+	public BigDecimal getUnitMultiplicator() {
+		return unitMultiplicator;
+	}
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+		this.unitMultiplicator = unitMultiplicator;
+	}
+	
+	
     
 }
