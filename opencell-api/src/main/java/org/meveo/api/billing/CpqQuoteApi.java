@@ -817,7 +817,7 @@ public class CpqQuoteApi extends BaseApi {
             OfferTemplate offerTemplate = null;
             if(quoteOfferDto.getOfferId() != null && quoteOfferDto.getOfferCode() != null) {
             	offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
-            	if(offerTemplate != null && !offerTemplate.getCode().equals(quoteOfferDto.getCode())) {
+            	if(offerTemplate != null && !offerTemplate.getCode().equals(quoteOfferDto.getOfferCode())) {
             		throw new MeveoApiException("The offer ID doesn’t match with the offer CODE, please correct the request");
             	}
             }else if(quoteOfferDto.getOfferId() != null) {
