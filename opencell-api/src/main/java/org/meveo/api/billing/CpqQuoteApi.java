@@ -92,6 +92,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.Attribute;
@@ -294,7 +295,15 @@ public class CpqQuoteApi extends BaseApi {
             cpqQuote.setBillableAccount(applicantAccount);
         }
         if(!Strings.isEmpty(quote.getUserAccountCode())) {
-            cpqQuote.setUserAccount(userAccountService.findByCode(quote.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quote.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quote.getUserAccountCode());
+            }
+            
+			if(!userAccount.getIsConsumer()) {
+	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote for this user account is not allowed.");
+			}
+            cpqQuote.setUserAccount(userAccount);
         }
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
@@ -638,7 +647,15 @@ public class CpqQuoteApi extends BaseApi {
             quote.setBillableAccount(quote.getApplicantAccount());
         }
         if(!Strings.isEmpty(quoteDto.getUserAccountCode())) {
-            quote.setUserAccount(userAccountService.findByCode(quoteDto.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quoteDto.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quoteDto.getUserAccountCode());
+            }
+            
+			if(!userAccount.getIsConsumer()) {
+	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote for this user account is not allowed.");
+			}
+            quote.setUserAccount(userAccount);
         }
         try {
             cpqQuoteService.update(quote);
