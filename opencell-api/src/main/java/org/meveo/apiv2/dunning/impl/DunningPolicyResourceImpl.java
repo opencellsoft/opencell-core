@@ -150,7 +150,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         String operationType = "update";
         
         if(dunningPolicyInput.isActivePolicy() != null
-                && dunningPolicyEntity.getActivePolicy() != dunningPolicyInput.isActivePolicy()) {
+                && dunningPolicyEntity.getIsActivePolicy() != dunningPolicyInput.isActivePolicy()) {
         	operationType = dunningPolicyInput.isActivePolicy() ? "activation" : "deactivation";
         }
         

@@ -768,18 +768,18 @@ public class CommercialOrderApi extends BaseApi {
     	}
         orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-        	if (orderOfferDto.getSubscritptionCode() == null) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscriptionCode()+", the order line code is: "+orderOffers.get(0));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
-        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
         	if(subscription == null) {
-        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
         }else {
@@ -835,7 +835,10 @@ public class CommercialOrderApi extends BaseApi {
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, orderOfferDto.getUserAccountCode());
 			}
-			orderOffer.setUserAccount(userAccount);
+	        if(!userAccount.getIsConsumer()) {
+	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Order for this user account is not allowed.");
+	        }
+	        orderOffer.setUserAccount(userAccount);
 		} 
     	
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
@@ -845,17 +848,13 @@ public class CommercialOrderApi extends BaseApi {
         orderOffer.setOrderLineType(orderOfferDto.getOrderLineType());
         
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-        	if (orderOfferDto.getSubscritptionCode() == null) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
-        	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
-        	}
         	
-        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
         	if(subscription == null) {
-        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
         }

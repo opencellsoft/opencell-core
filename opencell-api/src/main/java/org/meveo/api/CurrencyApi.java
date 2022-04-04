@@ -311,6 +311,14 @@ public class CurrencyApi extends BaseApi {
         Date fromDate = exchangeRate.getFromDate();
         Date toDate = postData.getFromDate();
         
+        if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
+        }
+
+        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
+        }
+
         // We can modify only the future rates
         if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
@@ -352,28 +360,38 @@ public class CurrencyApi extends BaseApi {
         exchangeRate.setFromDate(postData.getFromDate());
         exchangeRate.setExchangeRate(postData.getExchangeRate());
         exchangeRateService.update(exchangeRate);
-        auditLogUpdateExchangeRate(exchangeRate, fromDate, toDate, fromRate, toRate);
+        auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate, fromDate, toDate);
     }
     
-    private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate, 
-            Date fromDate, Date toDate,
-            BigDecimal fromRateAmount, BigDecimal toRateAmount) {
+    private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate,
+            BigDecimal fromRate, BigDecimal toRate,
+            Date fromDate, Date toDate) {
 
-        DecimalFormat rateFormatter = new DecimalFormat("#0.##");
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DecimalFormat rateFormatter = new DecimalFormat("#0.######");
+        DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        String parameters = "User " + auditLogService.getActor() + " has changed ";
-        boolean addAnd = false;
-        if (!fromRateAmount.equals(toRateAmount)) {
-            parameters += "for " + exchangeRate.getTradingCurrency().getCurrencyCode() + " from " + rateFormatter.format(fromRateAmount) + " to " + rateFormatter.format(toRateAmount);
-            addAnd = true;
+        boolean ratesAreChanged = fromRate.compareTo(toRate) != 0;
+        boolean datesAreChanged = DateUtils.truncateTime(fromDate).compareTo(DateUtils.truncateTime(toDate)) != 0;
+
+        StringBuilder parameters = new StringBuilder("User ").append(auditLogService.getActor()).append(" has changed ");
+        if (ratesAreChanged) {
+            parameters.append("the Exchange rate ");
+            parameters.append("for ").append(exchangeRate.getTradingCurrency().getCurrencyCode()).append(" ");
+            parameters.append("from ").append(rateFormatter.format(fromRate)).append(" to ").append(rateFormatter.format(toRate));
         }
-        if (!DateUtils.truncateTime(fromDate).equals(DateUtils.truncateTime(toDate))) {
-            if (addAnd) {
-                parameters += " AND ";
+
+        if (datesAreChanged) {
+            if (ratesAreChanged) {
+                parameters.append(" and ");
             }
-            parameters += "From date " + dateFormatter.format(fromDate) + " to " + dateFormatter.format(toDate);
+            parameters.append("From date ").append(dateFormatter.format(fromDate)).append(" to ").append(dateFormatter.format(toDate));
         }
-        auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters);
+        if (ratesAreChanged || datesAreChanged) {            
+            auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters.toString());
+        }
+    }
+    
+    public void removeExchangeRateById(Long id) {
+        exchangeRateService.delete(id);
     }
 }

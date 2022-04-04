@@ -9,8 +9,10 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ExchangeRateDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
@@ -36,12 +38,16 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.past"));
         }
         
-        if (postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
+        if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
         }
         
+        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
+        }
+
         // Check if a user choose a date that is already taken
-        if (findByfromDate(postData.getFromDate(),postData.getTradingCurrency().getId()) != null) {
+        if (findByfromDate(postData.getFromDate(), postData.getTradingCurrency().getId()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
         
@@ -100,6 +106,23 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         } catch (NoResultException e) {
             log.debug("No ExchangeRate entity found");
             return null;
+        }
+    }
+    
+    public void delete(Long id) throws MeveoApiException {
+        ExchangeRate exchangeRate = findById(id);
+        if(exchangeRate == null) {
+            throw new EntityDoesNotExistsException(ExchangeRate.class, id);
+        }
+        // User cannot delete rate in a paste date
+        if (exchangeRate.getFromDate().before(DateUtils.setTimeToZero(new Date()))) {
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.delete.fromDate.past"));
+        }
+        
+        try {
+            remove(exchangeRate);
+        } catch (Exception e) {
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
         }
     }
 }

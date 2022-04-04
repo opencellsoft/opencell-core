@@ -68,7 +68,7 @@ public class DunningPolicyResourceImplTest {
         dunningPolicy.setId(1L);
         dunningPolicy.setPolicyName("policyNAme");
         dunningPolicy.setPolicyDescription("description");
-        dunningPolicy.setDefaultPolicy(Boolean.TRUE);
+        dunningPolicy.setIsDefaultPolicy(Boolean.TRUE);
         dunningPolicy.setMinBalanceTrigger(0.5);
         dunningPolicy.setTotalDunningLevels(1);
 

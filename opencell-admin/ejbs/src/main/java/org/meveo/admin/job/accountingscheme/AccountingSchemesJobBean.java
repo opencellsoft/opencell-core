@@ -8,6 +8,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
+import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -56,13 +57,14 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private void executeScript(List<Long> idAOs, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
-        try {
-            List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
+        List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
 
-            Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
-                    .forEach(accountOperation -> {
+        Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+                .forEach(accountOperation -> {
+                    OCCTemplate occT = null;
+                    try {
                         // Find OOC Template
-                        OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
+                        occT = occTemplateService.findByCode(accountOperation.getCode());
 
                         if (occT == null) {
                             log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
@@ -72,16 +74,12 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         if (occT.getAccountingScheme() == null) {
                             log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
                                     accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                            accountOperationService.updateStatusInNewTransaction(Arrays.asList(accountOperation), AccountOperationStatus.EXPORT_FAILED);
-                            markAsError("No scheme found for OCCTemplate id=" + occT.getId(), jobExecutionResult);
+                            accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
+                            throw new BusinessException("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
+                                    ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
                         }
 
-                        ScriptInterface script = scriptInstanceService.getScriptInstance(occT.getAccountingScheme().getCode());
-
-                        if (script == null) {
-                            log.warn("No Script linked to AccountingScheme with code={}", occT.getAccountingScheme().getCode());
-                            return;
-                        }
+                        ScriptInterface script = findScript(accountOperation, occT.getAccountingScheme());
 
                         Map<String, Object> methodContext = new HashMap<>();
                         methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
@@ -91,27 +89,48 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         script.execute(methodContext);
 
                         List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
-                        log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                                createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                        if (!createdEntries.isEmpty()) {
+                        if (createdEntries != null && !createdEntries.isEmpty()) {
+                            log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
+                                    createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
                             accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         } else {
+                            log.info("No JournalEntry created for AO={}, OCC={}, ASCH={}",
+                                    accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
                             accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
                         }
 
                         accountOperationService.update(accountOperation);
 
-                    });
-        } finally {
-            jobExecutionResult.setNbItemsProcessedWithError(
-                    jobExecutionResult.getErrors() == null ? 0 : jobExecutionResult.getErrors().size());
+                    } catch (BusinessException e) {
+                        jobExecutionResult.registerError(e.getMessage());
+                        throw new BusinessException(e);
+                    } catch (Exception e) {
+                        log.error("Error during process AO={} - {}", accountOperation.getId(), e.getMessage());
+                        log.debug("Error during process AO={} - {}", accountOperation.getId(), e.getMessage(), e);
+                        jobExecutionResult.registerError(buildTechnicalError(accountOperation,
+                                (occT == null ? "UNDEFINED" : occT.getAccountingScheme().getScriptInstance().getCode()), e));
+                        accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
+                        throw new BusinessException(e);
+                    }
+
+                });
+
+    }
+
+    private ScriptInterface findScript(AccountOperation ao, AccountingScheme as) {
+        try {
+            return scriptInstanceService.getScriptInstance(as.getScriptInstance().getCode());
+        } catch (BusinessException e) {
+            log.error("Error during loading script by code={} | {}", as.getScriptInstance().getCode(), e.getMessage(), e);
+            accountOperationService.updateStatusInNewTransaction(List.of(ao), AccountOperationStatus.EXPORT_FAILED);
+            throw new BusinessException(buildTechnicalError(ao, as.getScriptInstance().getCode(), e));
         }
 
     }
 
-    private void markAsError(String error, JobExecutionResultImpl jobExecutionResult) {
-        jobExecutionResult.addErrorReport(error);
-        throw new BusinessException(error);
+    private String buildTechnicalError(AccountOperation ao, String scriptCode, Exception e) {
+        return "Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
+                " couldn't be processed by accounting scheme (code=" + scriptCode + "): " + e.getMessage();
     }
 
 }
