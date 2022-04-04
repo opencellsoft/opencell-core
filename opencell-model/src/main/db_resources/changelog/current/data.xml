@@ -9869,5 +9869,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
 		</insert>
 	</changeSet>
+	
+	
+	
+	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
+		<update tableName="ar_occ_template">
+			<column name="description" value="WIRETRANSFER" />
+			<where>id=-61</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - direct debit" />
+			<where>id=-56</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
