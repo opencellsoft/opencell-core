@@ -9521,31 +9521,31 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="script" >
             	<![CDATA[
 			package org.meveo.service.script;
-			
+
 			import java.util.List;
 			import java.util.Map;
-			
+
 			import org.meveo.admin.exception.BusinessException;
 			import org.meveo.model.billing.BillingRun;
 			import org.meveo.model.billing.BillingRunStatusEnum;
 			import org.meveo.service.billing.impl.BillingRunExtensionService;
 			import org.meveo.service.billing.impl.BillingRunService;
-			
+
 			public class ValidateBRScript extends Script {
-			
+
 				@Override
 				public void execute(Map<String, Object> methodContext) throws BusinessException {
-			
+
 					BillingRunService billingRunService = (BillingRunService) getServiceInterface("BillingRunService");
-			
+
 					BillingRunExtensionService billingRunExtensionService = (BillingRunExtensionService) getServiceInterface(
 							"BillingRunExtensionService");
-			
+
 					if (billingRunService != null) {
 						List<BillingRun> billingRuns = billingRunService.getBillingRuns(BillingRunStatusEnum.PREINVOICED,  BillingRunStatusEnum.POSTINVOICED);
-			
+
 						for (BillingRun billingRun : billingRuns) {
-			
+
 							try {
 								billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
 										BillingRunStatusEnum.POSTVALIDATED, null);
@@ -9553,9 +9553,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								System.err.println("Error " + e.getMessage());
 							}
 						}
-			
+
 					}
-			
+
 				}
 			}
 					]]>
@@ -9704,7 +9704,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 		</insert>
 	</changeSet>
-	
+
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh">
         <update tableName="billing_accounting_article">
 			<column name="accounting_code_id" value="-36"/>
@@ -10164,5 +10164,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 
         </changeSet>
+
+
+
+	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
+		<update tableName="ar_occ_template">
+			<column name="description" value="WIRETRANSFER" />
+			<where>id=-61</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - direct debit" />
+			<where>id=-56</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
