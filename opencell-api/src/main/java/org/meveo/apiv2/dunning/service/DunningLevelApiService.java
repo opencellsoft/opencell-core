@@ -252,7 +252,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     private void setDefaultValues(DunningLevel newDunningLevel) {
         if (newDunningLevel.isActive() == null) {
-            newDunningLevel.setActive(Boolean.TRUE);
+            newDunningLevel.setActive(Boolean.FALSE);
         }
         if (newDunningLevel.isReminder() == null) {
             newDunningLevel.setReminder(Boolean.FALSE);
