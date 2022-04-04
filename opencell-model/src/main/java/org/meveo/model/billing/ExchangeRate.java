@@ -25,7 +25,7 @@ import org.meveo.model.EnableEntity;
         @Parameter(name = "sequence_name", value = "exchange_rate_seq"), })
 @NamedQueries({
     @NamedQuery(name = "ExchangeRate.getAllTradingCurrencyWithCurrentRate", query = "SELECT s.id FROM ExchangeRate s WHERE s.fromDate =:sysDate and isCurrentRate=false"),
-    @NamedQuery(name = "ExchangeRate.findByfromDate", query = "SELECT ec FROM ExchangeRate ec WHERE ec.fromDate = :fromDate")
+    @NamedQuery(name = "ExchangeRate.findByfromDate", query = "SELECT ec FROM ExchangeRate ec WHERE ec.fromDate = :fromDate and ec.tradingCurrency.id = :tradingCurrencyId")
 })
 public class ExchangeRate extends EnableEntity {
     private static final long serialVersionUID = 1L;

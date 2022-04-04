@@ -104,12 +104,12 @@ public class OccTemplateApi extends BaseApi {
             occTemplate.setContraAccountingCode(contractAccountingCode);
         }
 
-        if(postData.getCommissionAccountingCode() != null) {
-            AccountingCode commissionAccountingCode = accountingCodeService.findByCode(postData.getCommissionAccountingCode());
-            if(commissionAccountingCode == null) {
+        if(postData.getContraAccountingCode2() != null) {
+            AccountingCode contraAccountingCode2 = accountingCodeService.findByCode(postData.getContraAccountingCode2());
+            if(contraAccountingCode2 == null) {
                 throw new NotFoundException("Commission accounting code does not exist in the chart of accounts");
             }
-            occTemplate.setContraAccountingCode(commissionAccountingCode);
+            occTemplate.setContraAccountingCode2(contraAccountingCode2);
         }
 
         occTemplateService.create(occTemplate);
@@ -164,14 +164,14 @@ public class OccTemplateApi extends BaseApi {
             occTemplate.setContraAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
         }
 
-        if(postData.getCommissionAccountingCode() != null) {
-            AccountingCode commissionAccountingCode = accountingCodeService.findByCode(postData.getCommissionAccountingCode());
-            if(commissionAccountingCode == null) {
+        if(postData.getContraAccountingCode2() != null) {
+            AccountingCode contraAccountingCode2 = accountingCodeService.findByCode(postData.getContraAccountingCode2());
+            if(contraAccountingCode2 == null) {
                 throw new NotFoundException("Commission accounting code does not exist in the chart of accounts");
             }
-            occTemplate.setCommissionAccountingCode(commissionAccountingCode);
+            occTemplate.setContraAccountingCode2(contraAccountingCode2);
         } else {
-            occTemplate.setCommissionAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
+            occTemplate.setContraAccountingCode2(null); // if no contraAccountingCode send for update, we must clear the old one.
         }
         occTemplateService.update(occTemplate);
     }
@@ -344,7 +344,7 @@ public class OccTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptCode);
         else {
             ScriptInstanceCategory category = PersistenceUtils.initializeAndUnproxy(scriptInstance.getScriptInstanceCategory());
-            if (category == null || !"FILE_ACCOUNTING_SCHEMES".equals(category.getCode())) {
+            if (category == null || !"ACCOUNTING_SCHEMES".equals(category.getCode())) {
                 throw new MissingParameterException("the script with code=" + scriptCode + " does not belong to category ‘File accounting schemes’");
             }
         }

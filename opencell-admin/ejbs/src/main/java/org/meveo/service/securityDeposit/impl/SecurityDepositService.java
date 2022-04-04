@@ -285,7 +285,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         checkSecurityDepositPaymentAmount(securityDeposit, securityDepositPaymentInput.getAmount(), recordedInvoice);
         checkSecurityDepositSubscription(securityDeposit, recordedInvoice);
         checkSecurityDepositServiceInstance(securityDeposit, recordedInvoice);
-        matchSecurityDepositPayments(securityDeposit, recordedInvoice);
+        matchSecurityDepositPayments(securityDeposit, recordedInvoice, securityDepositPaymentInput.getAmount());
         logPaymentHistory(securityDepositPaymentInput, securityDeposit);
 
         DebitSecurityDeposit(securityDeposit, securityDepositPaymentInput.getAmount());
@@ -318,18 +318,19 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         update(securityDeposit);
     }
 
-    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation)  {
+    private void matchSecurityDepositPayments(SecurityDeposit securityDeposit, AccountOperation accountOperation, BigDecimal amount)  {
 
         CustomerAccount customerAccount = securityDeposit.getCustomerAccount();
 
         List<Long> aosIdsToMatch = securityDepositTransactionService.getSecurityDepositTransactionBySecurityDepositId(securityDeposit.getId())
                 .stream().filter(securityDepositTransaction ->OperationCategoryEnum.CREDIT.equals(securityDepositTransaction.getAccountOperation().getTransactionCategory()))
+                .filter(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.O || securityDepositTransaction.getAccountOperation().getMatchingStatus() == MatchingStatusEnum.P)
                 .map(securityDepositTransaction -> securityDepositTransaction.getAccountOperation().getId())
                         .collect(Collectors.toList());
         aosIdsToMatch.add(accountOperation.getId());
 
         try {
-            matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);
+            matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A, amount);
         } catch (UnbalanceAmountException | NoAllOperationUnmatchedException e) {
             throw new BusinessException(e);
         }
@@ -343,8 +344,13 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     private void checkSecurityDepositServiceInstance(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getServiceInstance() != null) {
-            ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
-                    .stream()
+            List<RatedTransaction> ratedTransactions =  ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true);
+            if(ratedTransactions == null || ratedTransactions.isEmpty())
+            {
+               throw new InvalidParameterException("All invoices should have the same serviceInstance");
+            }
+
+           ratedTransactions.stream()
                     .flatMap(ratedTransaction -> ratedTransaction.getSubscription().getServiceInstances().stream())
                     .filter(serviceInstance -> !securityDeposit.getServiceInstance().equals(serviceInstance))
                     .findAny()
@@ -358,8 +364,14 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     private void checkSecurityDepositSubscription(SecurityDeposit securityDeposit, RecordedInvoice recordedInvoice) {
 
         if (securityDeposit.getSubscription() != null) {
-             ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true)
-            .stream()
+           List<RatedTransaction> ratedTransactions =  ratedTransactionService.getRatedTransactionsByInvoice(recordedInvoice.getInvoice(), true);
+            if(ratedTransactions == null || ratedTransactions.isEmpty())
+            {
+               throw new InvalidParameterException("All invoices should have the same subscription");
+            }
+
+           ratedTransactions.stream()
+
                     .filter(ratedTransaction -> !securityDeposit.getSubscription().equals(ratedTransaction.getSubscription()))
                     .findAny()
                     .ifPresent(ratedTransaction -> {

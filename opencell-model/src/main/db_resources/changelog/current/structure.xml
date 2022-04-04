@@ -12234,7 +12234,7 @@ order by date_trunc('month', i.invoice_date) DESC
 
     </changeSet>
 
-<changeSet id="#INTRD-5341_20220307" author="aelmalki">
+	<changeSet id="#INTRD-5341_20220307" author="aelmalki">
         <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
         <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
 
@@ -12439,7 +12439,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="accounting_code_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="seller_id" type="bigint" />
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -12487,6 +12489,34 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="fk_commission_accounting_code_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
 
+    </changeSet>
+
+	<changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA">
+		<createSequence sequenceName="global_settings_seq" startValue="1"/>
+        <createTable tableName="global_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="global_settings_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="quote_default_validity_delay" type="int">
+            	<constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI">
+        <dropForeignKeyConstraint baseTableName="ar_occ_template" constraintName="fk_commission_accounting_code_id"/>
+        <renameColumn tableName="ar_occ_template" newColumnName="contra_accounting_code2_id" oldColumnName="commission_accounting_code_id"
+                      columnDataType="bigint"/>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
 </databaseChangeLog>
