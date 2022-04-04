@@ -238,7 +238,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
                 throw new InvalidParameterException("Reminder Dunning level days overdue should be negative");
             }
             if (!baseEntity.isReminder() && baseEntity.getDaysOverdue() < 0) {
-                throw new InvalidParameterException("Dunning level days Overdue should be positive");
+                throw new InvalidParameterException("Negative days overdue allowed only for reminder levels");
             }
         }
         if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {
