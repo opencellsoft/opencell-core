@@ -1230,11 +1230,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "");
         }
         if (!StringUtils.isBlank(aggregationSettings.getAdditionalOrderBy())) {
-            String orderByClause = "";
-            String[] orderByFields = aggregationSettings.getAdditionalOrderBy().split(",");
-            for (String orderByField : orderByFields) {
-                orderByClause += ", o." + orderByField;
-            }
+            String orderByClause = ", "+aggregationSettings.getAdditionalOrderBy();
             parameters.put("{{ADDITIONAL_ORDER_BY}}", orderByClause);
         } else {
             parameters.put("{{ADDITIONAL_ORDER_BY}}", "");
