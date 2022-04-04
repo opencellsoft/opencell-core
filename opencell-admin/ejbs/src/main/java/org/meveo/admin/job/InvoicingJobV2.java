@@ -22,13 +22,13 @@ import javax.inject.Inject;
 public class InvoicingJobV2 extends Job {
 
     @Inject
-    private InvoicingJobV2Bean invoiceSplitJobBean;
+    private InvoicingJobV2Bean invoicingJobV2Bean;
 
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        invoiceSplitJobBean.execute(result, jobInstance);
+    	invoicingJobV2Bean.execute(result, jobInstance);
         return result;
     }
 
@@ -41,6 +41,16 @@ public class InvoicingJobV2 extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+
+		CustomFieldTemplate customFieldCommitInterval = new CustomFieldTemplate();
+		customFieldCommitInterval.setCode("maxBAsPerTransaction");
+		customFieldCommitInterval.setAppliesTo("JobInstance_InvoicingJobV2");
+		customFieldCommitInterval.setActive(true);
+		customFieldCommitInterval.setDescription("commit interval");
+		customFieldCommitInterval.setFieldType(CustomFieldTypeEnum.LONG);
+		customFieldCommitInterval.setValueRequired(false);
+		customFieldCommitInterval.setDefaultValue("1000");
+		result.put("maxBAsPerTransaction", customFieldCommitInterval);
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);

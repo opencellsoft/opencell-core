@@ -54,6 +54,7 @@ import org.meveo.model.ObservableEntity;
         @NamedQuery(name = "TradingLanguage.getLanguagesNotAssociated", query = "from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
         @NamedQuery(name = "TradingLanguage.getByCode", query = "from TradingLanguage tr where tr.language.languageCode = :tradingLanguageCode ", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "TradingLanguage.findAll", query = "from TradingLanguage tr left join fetch tr.language"),
         @NamedQuery(name = "TradingLanguage.languageCodes", query = "select distinct la.languageCode from TradingLanguage tr left join tr.language la order by la.languageCode", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingLanguage extends EnableEntity {

@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -137,6 +138,21 @@ public class ServiceSingleton {
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
+    private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
+
+    
+
+    public String getTempInvoiceNumber(Long billingRunId){
+    	// #MEL when remove brs from this map?
+    	if(!invoicingTempNumber.containsKey(billingRunId)) {
+    		AtomicInteger counter = new AtomicInteger(0);
+    		invoicingTempNumber.put(billingRunId, counter);
+    	}
+    	AtomicInteger counter = invoicingTempNumber.get(billingRunId);
+    	final String index = ""+counter.incrementAndGet();
+    	return ""+billingRunId+"-"+("000000000"+index).substring(index.length());
+    }
+    
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.

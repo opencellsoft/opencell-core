@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -43,6 +45,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -53,6 +56,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.job.InvoicingJobV2Bean;
+import org.meveo.admin.job.invoicing.BillingAccountDetailsItem;
+import org.meveo.admin.job.invoicing.InvoicingItem;
+import org.meveo.admin.job.invoicing.RefactoredInvoicingJob;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
@@ -1463,4 +1469,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         return pollingQuery;
     }
+    
+	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

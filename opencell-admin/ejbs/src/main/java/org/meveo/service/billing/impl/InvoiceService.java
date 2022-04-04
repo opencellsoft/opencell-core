@@ -1236,7 +1236,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
 
-    private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
+    public void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
         if (billingCycle.getCollectionDateDelayEl() == null) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
@@ -1289,7 +1289,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * @param invoiceList
      */
-    private void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
+    public void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
         if (automaticInvoiceCheck) {
             for (Invoice invoice : invoiceList) {
                 applyAutomaticInvoiceCheck(invoice, automaticInvoiceCheck);
@@ -2742,15 +2742,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Applicable invoice type
      * @throws BusinessException General business exception
      */
-    private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    public InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
 
         if (billingRun != null && billingRun.getInvoiceType() != null) {
             return billingRun.getInvoiceType();
         }
-
         if (isPrepaid) {
             invoiceType = invoiceTypeService.getDefaultPrepaid();
+        } else if (isDraft) {
+            invoiceType = invoiceTypeService.getDefaultDraft();
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
         } else {
@@ -2765,7 +2766,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = invoiceTypeService.getDefaultCommertial();
             }
         }
-
         return invoiceType;
     }
 
@@ -2933,7 +2933,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingAccount Billing account
      * @throws BusinessException business exception
      */
-    private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    public BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
 
         Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
         Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
@@ -4004,7 +4004,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDueDate(dueDate);
     }
 
-    private Date calculateDueDate(Invoice invoice, BillingCycle billingCycle, BillingAccount billingAccount, CustomerAccount customerAccount, Order order) {
+    public Date calculateDueDate(Invoice invoice, BillingCycle billingCycle, BillingAccount billingAccount, CustomerAccount customerAccount, Order order) {
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = 0;
         if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
