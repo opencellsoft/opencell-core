@@ -875,7 +875,15 @@ public class CpqQuoteApi extends BaseApi {
             	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
             }
             if(!StringUtils.isBlank(quoteOfferDto.getUserAccountCode())) {
-            	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDto.getUserAccountCode()));
+                UserAccount userAccount = userAccountService.findByCode(quoteOfferDto.getUserAccountCode());
+                if(userAccount == null) {
+                    throw new EntityDoesNotExistsException(UserAccount.class, quoteOfferDto.getUserAccountCode());
+                }
+                
+    			if(!userAccount.getIsConsumer()) {
+    	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote item for this user account is not allowed.");
+    			}
+    			quoteOffer.setUserAccount(userAccount);
             }
             quoteOffer.setSequence(quoteOfferDto.getSequence());
             quoteOffer.setCode(quoteOfferDto.getCode());
@@ -938,7 +946,15 @@ public class CpqQuoteApi extends BaseApi {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDTO.getDiscountPlanCode()));
         }
         if(!StringUtils.isBlank(quoteOfferDTO.getUserAccountCode())) {
-        	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDTO.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quoteOfferDTO.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quoteOfferDTO.getUserAccountCode());
+            }
+            
+			if(!userAccount.getIsConsumer()) {
+	            throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote item for this user account is not allowed.");
+			}
+			quoteOffer.setUserAccount(userAccount);
         }
         if (!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode())){
             quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
