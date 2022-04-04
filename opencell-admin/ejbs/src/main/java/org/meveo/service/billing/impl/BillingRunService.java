@@ -17,7 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
 
@@ -35,8 +35,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -45,7 +43,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -56,9 +53,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.job.InvoicingJobV2Bean;
-import org.meveo.admin.job.invoicing.BillingAccountDetailsItem;
-import org.meveo.admin.job.invoicing.InvoicingItem;
-import org.meveo.admin.job.invoicing.RefactoredInvoicingJob;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
@@ -67,7 +61,25 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.BillingRunList;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.BillingRunTypeEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
