@@ -455,6 +455,11 @@ public class CpqQuoteApi extends BaseApi {
                 quoteAttribute.setAttribute(attribute);
                 quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
                 quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+                if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+                	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+                		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+        			}
+                }
                 quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
                 quoteAttribute.updateAudit(currentUser);
                 quoteAttribute.setQuoteOffer(quoteOffer);
@@ -503,6 +508,11 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setAttribute(attribute);
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+        	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+        		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+			}
+        }
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
@@ -1271,6 +1281,10 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
+        
+        //calculate totalQuoteAttribute
+        calculateTotalAttributes (quoteVersion);
+        
         //get quote discountPlanitem of type percentage
         if(quoteVersion.getDiscountPlan()!=null) {
         	
@@ -2041,5 +2055,31 @@ public class CpqQuoteApi extends BaseApi {
 			return quote.getQuoteDate();
 		}
 	}
+    
+    
+    private void calculateTotalAttributes (QuoteVersion quoteVersion) {
+    	List<QuoteAttribute>totalQuoteAttributes=quoteAttributeService.findByQuoteVersionAndTotaltype(quoteVersion.getId());
+    	log.info("totalQuoteAttributes size{},"+totalQuoteAttributes.size());
+    	Double sumTotalAttribute=0.0;
+    	Double totalSum=0.0;
+    	for(QuoteAttribute quoteAttribute: totalQuoteAttributes) {
+    		sumTotalAttribute=0.0;
+    		log.info("TotalQuoteAttribute Id={},doubleValue={}",quoteAttribute.getId(),quoteAttribute.getDoubleValue());
+    	for(Attribute attribute : quoteAttribute.getAttribute().getAssignedAttributes()) {
+    		log.info("assigned attribute code={}",attribute.getCode());
+    	    totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
+    		log.info("Sum doubleValue={}",totalSum);
+    		if(totalSum!=null) {
+    			sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
+    		}
+    		
+    	}
+    	quoteAttribute.setDoubleValue(sumTotalAttribute);
+    	quoteAttribute.setStringValue(sumTotalAttribute+"");
+    	quoteAttributeService.update(quoteAttribute);
+    	}
+
+
+    	}
 
 }
