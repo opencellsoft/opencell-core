@@ -187,11 +187,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
 
-        if (isDefaultCheck) {
-            if (occT.getContraAccountingCode() == null) {
-                log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
-                throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
-            }
+        if (isDefaultCheck && occT.getContraAccountingCode() == null) {
+            log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
 
     }
