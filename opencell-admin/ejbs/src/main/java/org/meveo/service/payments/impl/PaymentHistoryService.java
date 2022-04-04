@@ -112,7 +112,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		}
 		super.create(paymentHistory);
 	}
-    
+
     public PaymentHistory findHistoryByPaymentId(String paymentId) {
         try {
             QueryBuilder qb = new QueryBuilder(PaymentHistory.class, "a");

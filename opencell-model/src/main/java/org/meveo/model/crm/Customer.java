@@ -279,7 +279,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
     }
-    
+
     public BillingAccount getMinimumTargetAccount() {
         return minimumTargetAccount;
     }
