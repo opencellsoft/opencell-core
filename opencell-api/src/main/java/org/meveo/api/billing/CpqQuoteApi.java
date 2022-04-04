@@ -89,6 +89,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -294,7 +295,15 @@ public class CpqQuoteApi extends BaseApi {
             cpqQuote.setBillableAccount(applicantAccount);
         }
         if(StringUtils.isNotBlank(quoteDto.getUserAccountCode())) {
-            cpqQuote.setUserAccount(userAccountService.findByCode(quoteDto.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quoteDto.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quoteDto.getUserAccountCode());
+            }
+            
+            if(!userAccount.getIsConsumer()) {
+                throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote for this user account is not allowed.");
+            }
+            cpqQuote.setUserAccount(userAccount);
         }
         cpqQuote.setStatusDate(new Date());
         cpqQuote.setSendDate(quoteDto.getSendDate());
@@ -463,6 +472,11 @@ public class CpqQuoteApi extends BaseApi {
                 quoteAttribute.setAttribute(attribute);
                 quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
                 quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+                if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+                	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+                		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+        			}
+                }
                 quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
                 quoteAttribute.updateAudit(currentUser);
                 quoteAttribute.setQuoteOffer(quoteOffer);
@@ -511,6 +525,11 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setAttribute(attribute);
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
+        	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
+        		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
+			}
+        }
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
@@ -646,7 +665,15 @@ public class CpqQuoteApi extends BaseApi {
             quote.setBillableAccount(quote.getApplicantAccount());
         }
         if(StringUtils.isNotBlank(quoteDto.getUserAccountCode())) {
-            quote.setUserAccount(userAccountService.findByCode(quoteDto.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quoteDto.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quoteDto.getUserAccountCode());
+            }
+            
+            if(!userAccount.getIsConsumer()) {
+                throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote for this user account is not allowed.");
+            }
+            quote.setUserAccount(userAccount);
         }
         try {
             cpqQuoteService.update(quote);
@@ -849,7 +876,15 @@ public class CpqQuoteApi extends BaseApi {
             	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
             }
             if(!StringUtils.isBlank(quoteOfferDto.getUserAccountCode())) {
-            	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDto.getUserAccountCode()));
+                UserAccount userAccount = userAccountService.findByCode(quoteOfferDto.getUserAccountCode());
+                if(userAccount == null) {
+                    throw new EntityDoesNotExistsException(UserAccount.class, quoteOfferDto.getUserAccountCode());
+                }
+                
+                if(!userAccount.getIsConsumer()) {
+                    throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote item for this user account is not allowed.");
+                }
+                quoteOffer.setUserAccount(userAccount);
             }
             quoteOffer.setSequence(quoteOfferDto.getSequence());
             quoteOffer.setCode(quoteOfferDto.getCode());
@@ -912,7 +947,15 @@ public class CpqQuoteApi extends BaseApi {
         	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDTO.getDiscountPlanCode()));
         }
         if(!StringUtils.isBlank(quoteOfferDTO.getUserAccountCode())) {
-        	quoteOffer.setUserAccount(userAccountService.findByCode(quoteOfferDTO.getUserAccountCode()));
+            UserAccount userAccount = userAccountService.findByCode(quoteOfferDTO.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, quoteOfferDTO.getUserAccountCode());
+            }
+            
+            if(!userAccount.getIsConsumer()) {
+                throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Quote item for this user account is not allowed.");
+            }
+            quoteOffer.setUserAccount(userAccount);
         }
         if (StringUtils.isNotBlank(quoteOfferDTO.getBillableAccountCode())){
             quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
@@ -1289,6 +1332,10 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
+        
+        //calculate totalQuoteAttribute
+        calculateTotalAttributes (quoteVersion);
+        
         //get quote discountPlanitem of type percentage
         if(quoteVersion.getDiscountPlan()!=null) {
         	
@@ -2059,5 +2106,29 @@ public class CpqQuoteApi extends BaseApi {
 			return quote.getQuoteDate();
 		}
 	}
+    private void calculateTotalAttributes (QuoteVersion quoteVersion) {
+    	List<QuoteAttribute>totalQuoteAttributes=quoteAttributeService.findByQuoteVersionAndTotaltype(quoteVersion.getId());
+    	log.info("totalQuoteAttributes size{},"+totalQuoteAttributes.size());
+    	Double sumTotalAttribute=0.0;
+    	Double totalSum=0.0;
+    	for(QuoteAttribute quoteAttribute: totalQuoteAttributes) {
+    		sumTotalAttribute=0.0;
+    		log.info("TotalQuoteAttribute Id={},doubleValue={}",quoteAttribute.getId(),quoteAttribute.getDoubleValue());
+    	for(Attribute attribute : quoteAttribute.getAttribute().getAssignedAttributes()) {
+    		log.info("assigned attribute code={}",attribute.getCode());
+    	    totalSum=quoteAttributeService.getSumDoubleByVersionAndAttribute(quoteVersion.getId(),attribute.getId());
+    		log.info("Sum doubleValue={}",totalSum);
+    		if(totalSum!=null) {
+    			sumTotalAttribute=Double.sum(totalSum,sumTotalAttribute);	
+    		}
+    		
+    	}
+    	quoteAttribute.setDoubleValue(sumTotalAttribute);
+    	quoteAttribute.setStringValue(sumTotalAttribute+"");
+    	quoteAttributeService.update(quoteAttribute);
+    	}
+
+
+    	}
 
 }
