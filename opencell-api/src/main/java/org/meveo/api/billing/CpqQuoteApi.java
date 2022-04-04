@@ -661,7 +661,7 @@ public class CpqQuoteApi extends BaseApi {
                 quote.setBillableAccount(quote.getApplicantAccount());
             else
                 quote.setBillableAccount(billableAccount);
-        }else {
+        } else {
             quote.setBillableAccount(quote.getApplicantAccount());
         }
         if(StringUtils.isNotBlank(quoteDto.getUserAccountCode())) {
@@ -680,54 +680,70 @@ public class CpqQuoteApi extends BaseApi {
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
             if(quoteVersionDto != null) {
                 final QuoteVersion qv = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteVersionDto.getCurrentVersion());
-                if(qv != null) {
-                    if(StringUtils.isNotBlank(quoteVersionDto.getShortDescription()))
-                        qv.setShortDescription(quoteVersionDto.getShortDescription());
-                    if(quoteVersionDto.getStartDate() != null)
-                        qv.setStartDate(quoteVersionDto.getStartDate());
-                    if(quoteVersionDto.getEndDate() != null)
-                        qv.setEndDate(quoteVersionDto.getEndDate());
-                    if(quoteVersionDto.getStatus() != null) {
-                        qv.setStatus(quoteVersionDto.getStatus());
-                        qv.setStatusDate(new Date());
-                    }
-                    if (!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-                        InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());
-                        if (invoicingPlan == null) {
-                            throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-                        }
-                        qv.setInvoicingPlan(invoicingPlan);
-                    }
-                    if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
-                        qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
-                    }
-                    if(quoteVersionDto.getContractCode() == null) {
-                    	qv.setContract(null);
-                    }else {
-                    	Contract contract = contractService.findByCode(quoteVersionDto.getContractCode());
-                    	if (contract == null) {
-                            throw new EntityDoesNotExistsException(Contract.class, quoteVersionDto.getContractCode());
-                        }
-       				    qv.setContract(contract);
-                    }
-                    qv.getMedias().clear();
-                    if(quoteVersionDto.getMediaCodes() != null) {
-                    	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
-                    		var media = mediaService.findByCode(mediaCode);
-                    		if(media == null)
-                    			throw new EntityDoesNotExistsException(Media.class, mediaCode);
-                    		qv.getMedias().add(media);
-                    	});
-                    }
-                    populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
-                    quoteVersionService.update(qv);
-                    quoteVersionDto = new QuoteVersionDto(qv);
-                    quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(qv));
-                    quoteDto.setQuoteVersion(quoteVersionDto);
-                }else {
+                if(qv == null) {
                     throw new EntityDoesNotExistsException("No quote version with number = " + quoteVersionDto.getCurrentVersion() + " for the quote code = " + quoteCode);
                 }
+                if(StringUtils.isNotBlank(quoteVersionDto.getShortDescription()))
+                    qv.setShortDescription(quoteVersionDto.getShortDescription());
+
+                if (quoteVersionDto.getStartDate() == null) {
+                    qv.setStartDate(new Date());
+                }
+                else {
+                    qv.setStartDate(quoteVersionDto.getStartDate());
+                }
+
+                if (quoteVersionDto.getEndDate() == null) {
+                    GlobalSettings globalSettings = globalSettingsService.findLastOne();
+                    Date endDate = null;
+                    if (globalSettings != null) {
+                        endDate = DateUtils.addDaysToDate(endDate, globalSettings.getQuoteDefaultValidityDelay());
+                    }
+                    qv.setEndDate(endDate);
+                }
+                else {
+                    qv.setEndDate(quoteVersionDto.getEndDate());
+                }
+
+                if(quoteVersionDto.getStatus() != null) {
+                    qv.setStatus(quoteVersionDto.getStatus());
+                    qv.setStatusDate(new Date());
+                }
+                if (StringUtils.isNotBlank(quoteVersionDto.getBillingPlanCode())) {
+                    InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());
+                    if (invoicingPlan == null) {
+                        throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+                    }
+                    qv.setInvoicingPlan(invoicingPlan);
+                }
+                if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
+                    qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
+                }
+                if(quoteVersionDto.getContractCode() == null) {
+                	qv.setContract(null);
+                } else {
+                	Contract contract = contractService.findByCode(quoteVersionDto.getContractCode());
+                	if (contract == null) {
+                        throw new EntityDoesNotExistsException(Contract.class, quoteVersionDto.getContractCode());
+                    }
+   				    qv.setContract(contract);
+                }
+                qv.getMedias().clear();
+                if(quoteVersionDto.getMediaCodes() != null) {
+                	quoteVersionDto.getMediaCodes().forEach(mediaCode -> {
+                		var media = mediaService.findByCode(mediaCode);
+                		if(media == null)
+                			throw new EntityDoesNotExistsException(Media.class, mediaCode);
+                		qv.getMedias().add(media);
+                	});
+                }
+                populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
+                quoteVersionService.update(qv);
+                quoteVersionDto = new QuoteVersionDto(qv);
+                quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(qv));
+                quoteDto.setQuoteVersion(quoteVersionDto);
             }
+            
         }catch(BusinessApiException e) {
             throw new MeveoApiException(e);
         }
