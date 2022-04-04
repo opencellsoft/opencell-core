@@ -191,12 +191,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         if (postData.getLifeCycleStatus() == null) {
             postData.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
         }
-        if (postData.getNewValidFrom() != null && postData.getValidFrom() == null) {
-            postData.setValidFrom(postData.getNewValidFrom());
-        }
-        if (postData.getValidFrom() == null) {
-            missingParameters.add("validFrom");
-        }
         handleMissingParameters();
 
         if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {

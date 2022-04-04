@@ -2869,6 +2869,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
@@ -2913,6 +2914,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void assignInvoiceNumberAndRecalculateDates(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
+        Invoice invoice = findById(invoiceId);
+        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
+
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        //Recalculate dates :
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
+        BillingRun billingRun = invoice.getBillingRun();
+        if (billingRun != null && billingRun.getBillingCycle() != null) {
+            billingCycle = billingRun.getBillingCycle();
+        }
+        billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
+        if (billingRun == null) {
+            return;
+        }
+//        if ((billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) 
+//        		|| (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation())){
+//            return;
+//        }
+        
+        if ((billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) 
+        		|| (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation())) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+        }
+
+        //Assign invoice number :
+        billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+        // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        invoice = update(invoice);
+
     }
 
     private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {

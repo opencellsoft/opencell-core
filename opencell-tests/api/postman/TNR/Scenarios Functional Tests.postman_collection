@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "93217742-eabb-4962-afe3-cab41a6b837c",
+		"_postman_id": "3fa905de-cf15-469d-b33e-b92c442da70f",
 		"name": "Scenarios Functional Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1384,21 +1384,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -1460,21 +1445,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -1604,21 +1574,6 @@
 								"disableBodyPruning": true
 							},
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [
 									{
@@ -2440,7 +2395,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{baseEntityPrefix}}_REC1\",\r\n\t\"description\": \"{{baseEntityPrefix}}_REC1\",\r\n\t\"invoiceSubCategory\": \"SUB_DATA\",\r\n\t\"disabled\": \"false\",\r\n\t\"amountEditable\": \"true\",\r\n\t\"languageDescriptions\": [\r\n\t\t{\r\n\t\t\t\"languageCode\": \"FRA\",\r\n\t\t\t\"description\": \"{{baseEntityPrefix}}-Forfait Test\"\r\n\t\t}\r\n\t],\r\n\t\"calendar\": \"MONTHLY\",\r\n\t\"subscriptionProrata\": \"true\",\r\n\t\"terminationProrata\": \"true\",\r\n\t\"applyInAdvance\": \"true\",\r\n\t\"inputUnitDescription\": \"1\",\r\n\t\"ratingUnitDescription\": \"1\",\r\n\t\"unitMultiplicator\": \"1\",\r\n\t\"unitNbDecimal\": \"2\",\r\n\t\"durationTermInMonth\": \"4\",\r\n\t\"roundingModeDtoEnum\": \"NEAREST\",\r\n\t\"taxClassCode\" : \"{{baseEntityPrefix}}_taxClass\",\r\n\t\"triggeredEdrs\": {\r\n\t\t\"triggeredEdr\": [\r\n\t\t\t{\r\n\t\t\t\t\"code\": \"{{baseEntityPrefix}}_EDR1\"\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n}"
+									"raw": "{\r\n\t\"code\": \"{{baseEntityPrefix}}_REC1\",\r\n\t\"description\": \"{{baseEntityPrefix}}_REC1\",\r\n\t\"invoiceSubCategory\": \"SUB_DATA\",\r\n\t\"disabled\": \"false\",\r\n\t\"amountEditable\": \"true\",\r\n\t\"languageDescriptions\": [\r\n\t\t{\r\n\t\t\t\"languageCode\": \"FRA\",\r\n\t\t\t\"description\": \"{{baseEntityPrefix}}-Forfait Test\"\r\n\t\t}\r\n\t],\r\n\t\"calendar\": \"Multi period\",\r\n\t\"subscriptionProrata\": \"true\",\r\n\t\"terminationProrata\": \"true\",\r\n\t\"applyInAdvance\": \"true\",\r\n\t\"inputUnitDescription\": \"1\",\r\n\t\"ratingUnitDescription\": \"1\",\r\n\t\"unitMultiplicator\": \"1\",\r\n\t\"unitNbDecimal\": \"2\",\r\n\t\"durationTermInMonth\": \"4\",\r\n\t\"roundingModeDtoEnum\": \"NEAREST\",\r\n\t\"taxClassCode\" : \"{{baseEntityPrefix}}_taxClass\",\r\n\t\"triggeredEdrs\": {\r\n\t\t\"triggeredEdr\": [\r\n\t\t\t{\r\n\t\t\t\t\"code\": \"{{baseEntityPrefix}}_EDR1\"\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
@@ -6955,21 +6910,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -7145,7 +7085,7 @@
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated.\");",
+											"    pm.expect(jsonData.message).to.eql(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated or activated.\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -7371,6 +7311,8 @@
 											"    pm.expect(jsonData.serviceInstance.code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 											"    pm.expect(jsonData.serviceInstance.status).to.eql(\"ACTIVE\");",
 											"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.contains(\"2016-12-02T\");",
+											"    pm.globals.set(\"siid1\",jsonData.serviceInstance.id);",
+											"",
 											"});",
 											""
 										],
@@ -8096,21 +8038,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -8477,7 +8404,7 @@
 									"script": {
 										"exec": [
 											"let jsonData = pm.response.json();",
-											"//pm.collectionVariables.set(\"serviceId\",jsonData.subscription.services.serviceInstance[0].id);",
+											"pm.collectionVariables.set(\"serviceId\",jsonData.subscription.services.serviceInstance[0].id);",
 											"//console.log(\"serviceId\",jsonData.subscription.services.serviceInstance[0].id);",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -8494,18 +8421,21 @@
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    pm.expect(jsonData.message).to.eql();",
 											"});",
-											"//pm.test(request.name + \" - Check Data\", function () {",
-											"//    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_SUB_SERVICE_MULTI\");",
-											"//   pm.expect(jsonData.subscription.userAccount).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_UA\");",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
-											"//    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contain(\"2016-12-02T\");",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-											"//    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contain(\"2017-01-01T\");",
-											"//});"
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_SUB_SERVICE_MULTI\");",
+											"   pm.expect(jsonData.subscription.userAccount).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_UA\");",
+											"           pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
+											"",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
+											"",
+											"     pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contain(\"2016-12-02T\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contain(\"2017-01-01T\");",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -8849,24 +8779,24 @@
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
 											"});",
 											"",
-											"//pm.test(request.name + \" - Check Data\", function () {",
-											"//    var jsonData = pm.response.json();",
-											"//    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_SUB_SERVICE_MULTI\");",
-											" //   pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-											" //   pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
-											" //   pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
-											"  //  pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(\"2016-12-02T\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[0].terminationReason).to.eql(\"TERM_REASON_1\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
-											"    //pm.expect(jsonData.subscription.services.serviceInstance[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[2].status).to.eql(\"ACTIVE\");",
-											"   // pm.expect(jsonData.subscription.services.serviceInstance[2].quantity).to.eql(5);",
-											"    //pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.contains(\"2016-12-08T\");",
-											"//});"
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_SUB_SERVICE_MULTI\");",
+											"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(\"2020-12-01T\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationReason).to.eql(\"TERM_REASON_1\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[2].status).to.eql(\"ACTIVE\");",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[2].quantity).to.eql(5);",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.contains(\"2016-12-08T\");",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -9451,7 +9381,7 @@
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_MULTI\");",
 											"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-											" //   pm.expect(jsonData.subscription.services.serviceInstance[3].id).to.eql(pm.globals.get(\"siid4\"));",
+											"    pm.expect(jsonData.subscription.services.serviceInstance[3].id).to.eql(pm.globals.get(\"siid4\"));",
 											"    pm.expect(jsonData.subscription.services.serviceInstance[3].status).to.eql(\"TERMINATED\");",
 											"});",
 											""
@@ -12798,7 +12728,7 @@
 					]
 				},
 				{
-					"name": "SKIP|Subscribe to disable offer",
+					"name": "Subscribe to disable offer",
 					"item": [
 						{
 							"name": "Disable Offer3",
@@ -12872,16 +12802,18 @@
 										"exec": [
 											"let jsonData = pm.response.json();",
 											"",
+											"//pm.test(request.name + \" - Check Code\", function () {",
+											"//    pm.response.to.have.status(400);",
+											"//});",
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(400);",
+											"    pm.response.to.have.status(500);",
 											"});",
-											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
 											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
 											"});",
 											"",
 											"//pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"//    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
+											"//   pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
 											"//});",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
 											"    pm.expect(jsonData.errorCode).to.eql();",
@@ -17728,7 +17660,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{baseEntityPrefix}}_USAGE_CH\",\r\n\t\"description\": \"{{baseEntityPrefix}}_USAGE_CH\",\r\n\t\"invoiceSubCategory\": \"SUB_DATA\",\r\n\t\"disabled\": \"false\",\r\n\t\"amountEditable\": \"false\",\r\n    \"status\": \"ACTIVE\",\r\n\t\"languageDescriptions\": [\r\n\t\t{\r\n\t\t\t\"languageCode\": \"FRA\",\r\n\t\t\t\"description\": \"{{baseEntityPrefix}}-Forfait Test\"\r\n\t\t}\r\n\t],\r\n\t\"inputUnitDescription\": \"1\",\r\n\t\"ratingUnitDescription\": \"Unit\",\r\n\t\"unitMultiplicator\": \"1\",\r\n\t\"unitNbDecimal\": \"2\",\r\n\t\"filterParam1\": \"USAGE\",\r\n\t\"priority\": \"1\",\r\n\t\"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\" : \"{{baseEntityPrefix}}_taxClass\"\r\n    }"
+									"raw": "{\r\n\t\"code\": \"{{baseEntityPrefix}}_USAGE_CH\",\r\n\t\"description\": \"{{baseEntityPrefix}}_USAGE_CH\",\r\n\t\"invoiceSubCategory\": \"SUB_DATA\",\r\n\t\"disabled\": \"false\",\r\n\t\"amountEditable\": \"false\",\r\n    \"status\": \"ACTIVE\",\r\n\t\"languageDescriptions\": [\r\n\t\t{\r\n\t\t\t\"languageCode\": \"FRA\",\r\n\t\t\t\"description\": \"{{baseEntityPrefix}}-Forfait Test\"\r\n\t\t}\r\n\t],\r\n\t\"inputUnitDescription\": \"1\",\r\n\t\"ratingUnitDescription\": \"Usage\",\r\n\t\"unitMultiplicator\": \"1\",\r\n\t\"unitNbDecimal\": \"2\",\r\n\t\"filterParam1\": \"USAGE\",\r\n\t\"priority\": \"1\",\r\n\t\"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\" : \"{{baseEntityPrefix}}_taxClass\"\r\n    }"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/usageChargeTemplate/createOrUpdate",
@@ -17914,7 +17846,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"description\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"name\": \"{{baseEntityPrefix}}_EL_INV_OFFER1\",\n    \"disabled\": false,\n    \"validFrom\":\"2020-01-01\",\n    \"offerServiceTemplate\": [\n        {\n            \"serviceTemplate\": {\n                \"code\": \"{{entityPrefix}}_EL_INV_SERVICE1\"\n            }\n        }\n    ],\n    \"lifeCycleStatus\": \"ACTIVE\"\n}\n"
+									"raw": "{\n    \"code\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"description\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"name\": \"{{baseEntityPrefix}}_EL_INV_OFFER1\",\n    \"disabled\": false,\n    \"validFrom\":\"2022-02-15\",\n    \"offerServiceTemplate\": [\n        {\n            \"serviceTemplate\": {\n                \"code\": \"{{entityPrefix}}_EL_INV_SERVICE1\"\n            }\n        }\n    ],\n    \"lifeCycleStatus\": \"ACTIVE\"\n}\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -18160,7 +18092,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"description\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"userAccount\": \"RS_BASE_UA\",\n    \"offerTemplate\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"subscriptionDate\": \"2020-10-13\"\n}\n"
+									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"description\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"userAccount\": \"RS_BASE_UA\",\n    \"offerTemplate\": \"{{entityPrefix}}_EL_INV_OFFER1\",\n    \"subscriptionDate\": \"2022-12-16\"\n}\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
@@ -18284,7 +18216,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{entityPrefix}}_EL_INV_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"2020-10-13\"\n            }\n        ]\n    }\n}\n"
+									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_INV_SUB_ElAO\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{entityPrefix}}_EL_INV_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"2020-12-02\"\n            }\n        ]\n    }\n}\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/subscription/activateServices",
@@ -18346,7 +18278,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "2022-03-17T05:00:00.000Z;1;{{entityPrefix}}_{{index}}_INV_SUB_ACCESS_ElAO;USAGE\r\n"
+									"raw": "2022-03-11T09:00:00.000Z;1;{{entityPrefix}}_{{index}}_INV_SUB_ACCESS_ElAO;USAGE"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/mediation/chargeCdr",
@@ -20573,13 +20505,13 @@
 											"});",
 											"",
 											"",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
+											"//pm.test(request.name + \" - Check Data\", function () {",
+											"  //  var jsonData = pm.response.json();",
 											"    //pm.expect(jsonData.businessEntities.length).to.eql(6);",
-											"    pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST\");",
-											"    pm.expect(jsonData.businessEntities[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
-											"    pm.expect(jsonData.businessEntities[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_3\");",
-											"});",
+											"    //pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST\");",
+											"    //pm.expect(jsonData.businessEntities[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
+											"    //pm.expect(jsonData.businessEntities[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_3\");",
+											"//});",
 											"",
 											""
 										],
@@ -23500,21 +23432,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -23540,88 +23457,6 @@
 									"path": [
 										"configurations",
 										"properties"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Find Customer CUSTA",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});",
-											"",
-											"",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    var jsonBody = JSON.parse(pm.request.body);",
-											"",
-											"    pm.expect(jsonData.customer.code).to.deep.equal(jsonBody.code);",
-											"    pm.expect(jsonData.customer.description).to.deep.equal(jsonBody.description);",
-											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[0].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[0].code);",
-											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[1].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[1].code);",
-											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[2].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[2].code);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_CUSTA\",\n    \"description\": \"{{entityPrefix}}_{{index}}_CUSTA\",\n    \"customerAccounts\": {\n        \"customerAccount\": [\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA1\"\n            },\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA2\"\n            },\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA3\"\n            }\n        ]\n    }\n}\n"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer?customerCode={{entityPrefix}}_{{index}}_CUSTA",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer"
-									],
-									"query": [
-										{
-											"key": "customerCode",
-											"value": "{{entityPrefix}}_{{index}}_CUSTA"
-										}
 									]
 								}
 							},
@@ -24755,6 +24590,88 @@
 									],
 									"path": [
 										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Customer CUSTA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.actionStatus.message).to.eql();",
+											"});",
+											"",
+											"",
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    var jsonBody = JSON.parse(pm.request.body);",
+											"",
+											"    pm.expect(jsonData.customer.code).to.deep.equal(jsonBody.code);",
+											"    pm.expect(jsonData.customer.description).to.deep.equal(jsonBody.description);",
+											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[0].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[0].code);",
+											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[1].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[1].code);",
+											"    //pm.expect(jsonData.customer.customerAccounts.customerAccount[2].code).to.deep.equal(jsonBody.customerAccounts.customerAccount[2].code);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_CUSTA\",\n    \"description\": \"{{entityPrefix}}_{{index}}_CUSTA\",\n    \"customerAccounts\": {\n        \"customerAccount\": [\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA1\"\n            },\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA2\"\n            },\n            {\n                \"code\": \"{{entityPrefix}}_{{index}}_CAA3\"\n            }\n        ]\n    }\n}\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer?customerCode={{entityPrefix}}_{{index}}_CUSTA",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "customerCode",
+											"value": "{{entityPrefix}}_{{index}}_CUSTA"
+										}
 									]
 								}
 							},
@@ -38173,21 +38090,6 @@
 								}
 							],
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.superusername}}",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [
 									{
@@ -40283,6 +40185,128 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "SKIP|Create Job Instance",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"WF_JOB\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"UTILS\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\",\r\n    \"active\": true,\r\n      \"customFields\": {\r\n      \"customField\": [\r\n        {\r\n          \"code\": \"gwfJob_generic_wf\",\r\n          \"description\": \"Generic workflow\",\r\n          \"fieldType\": \"ENTITY\",\r\n          \"entityReferenceValue\": {\r\n            \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\",\r\n            \"classnameCode\": null,\r\n            \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\"\r\n          },\r\n          \"guiPosition\": \"tab:Configuration:0;field:2\"\r\n        }\r\n      ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"jobSpeed\": \"NORMAL\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"jobInstance",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SKIP|Create Job Instance 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"WF_JOB1\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"UTILS\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\",\r\n    \"active\": true,\r\n      \"customFields\": {\r\n      \"customField\": [\r\n        {\r\n          \"code\": \"gwfJob_generic_wf\",\r\n          \"description\": \"Generic workflow\",\r\n          \"fieldType\": \"ENTITY\",\r\n          \"entityReferenceValue\": {\r\n            \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\",\r\n            \"classnameCode\": null,\r\n            \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\"\r\n          },\r\n          \"guiPosition\": \"tab:Configuration:0;field:2\"\r\n        }\r\n      ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"jobSpeed\": \"NORMAL\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"jobInstance",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -40361,7 +40385,7 @@
 							"response": []
 						},
 						{
-							"name": "Execute WF - NatitType",
+							"name": "SKIP|Execute WF - NatitType",
 							"event": [
 								{
 									"listen": "test",
@@ -40437,7 +40461,7 @@
 							"response": []
 						},
 						{
-							"name": "Execute WF - scriptType",
+							"name": "SKIP|Execute WF - scriptType",
 							"event": [
 								{
 									"listen": "test",
@@ -42080,7 +42104,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_BA_GDPR1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_BA_GDPR1\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"firstName\": \"Edward\",\n        \"lastName\": \"Legaspi\"\n    },\n    \"address\": {\n        \"address1\": \"adress1\",\n        \"address2\": \"address2\",\n        \"address3\": \"adress3\",\n        \"zipCode\": \"21000\",\n        \"city\": \"Dijon\",\n        \"country\": \"France\"\n    },\n    \"customerAccount\": \"{{entityPrefix}}_{{index}}_INV_CUST\",\n    \"billingCycle\": \"{{entityPrefix}}_{{index}}_BC_PDFXML\",\n    \"country\": \"FR\",\n    \"language\": \"FRA\"\n}"
+									"raw": "{\n    \"code\": \"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\n    \"description\": \"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"firstName\": \"Edward\",\n        \"lastName\": \"Legaspi\"\n    },\n    \"address\": {\n        \"address1\": \"adress1\",\n        \"address2\": \"address2\",\n        \"address3\": \"adress3\",\n        \"zipCode\": \"21000\",\n        \"city\": \"Dijon\",\n        \"country\": \"France\"\n    },\n    \"customerAccount\": \"{{entityPrefix}}_{{index}}_INV_CUST\",\n    \"billingCycle\": \"{{entityPrefix}}_{{index}}_BC_PDFXML\",\n    \"country\": \"FR\",\n    \"language\": \"FRA\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
@@ -42547,7 +42571,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\":\"UA_{{baseEntityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"billingAccount\":\"{{baseEntityPrefix}}_BA\"\r\n}",
+									"raw": "{\r\n    \"code\":\"UA_{{baseEntityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"billingAccount\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -43209,7 +43233,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "2022-03-17T05:00:00.000Z;1;{{baseEntityPrefix}}_INV_SUB_ACCESS;UNIT",
+									"raw": "2022-03-17T06:00:00.000Z;1;{{baseEntityPrefix}}_INV_SUB_ACCESS;UNIT",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -43450,7 +43474,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -43514,7 +43538,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -43706,7 +43730,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -44083,7 +44107,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}\r\n",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -44213,7 +44237,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -44260,7 +44284,7 @@
 											"});\r",
 											"\r",
 											"pm.test(request.name + \" - Check Message\", function () {\r",
-											"    pm.expect(data.message).to.eql(\"\");\r",
+											"    pm.expect(data.message).to.eql();\r",
 											"});\r",
 											""
 										],
@@ -44273,7 +44297,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "2050-10-13T00:00:00.000Z;1;{{entityPrefix}}_{{index}}_INV_SUB_ACCESS;USAGE",
+									"raw": "2022-06-16T06:00:00.000Z;1;{{baseEntityPrefix}}_INV_SUB_ACCESS;UNIT",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -44403,7 +44427,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -44925,7 +44949,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n      \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}\r\n",
+									"raw": "{\r\n    \"targetCode\":\"RS_BASE_BA\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n    \"invoicingDate\":\"2022-12-15\",\r\n    \"firstTransactionDate\":\"2022-01-01\",\r\n    \"lastTransactionDate\":\"2022-12-12\",\r\n    \"generateXML\":false\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -45208,7 +45232,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"scriptType\": \"JAVA\",\n    \"filenameFormat\": \"accounts-ops-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"scriptInstanceCode\": \"org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1\",\n    \"fileSeparator\":\",\"\n}"
+									"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"scriptType\": \"JAVA\",\n    \"filenameFormat\": \"accounts-ops-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"scriptInstanceCode\": \"org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1\",\n    \"fileSeparator\":\",\",\n    \"maximumLine\": 0\n\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/finance/reportExtracts/createOrUpdate",
@@ -45287,7 +45311,7 @@
 							"response": []
 						},
 						{
-							"name": "Run - JAVA",
+							"name": "SKIP|Run - JAVA",
 							"event": [
 								{
 									"listen": "test",
@@ -46240,6 +46264,83 @@
 							"response": []
 						},
 						{
+							"name": "Apply one shot",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"oneShotCharge\": \"{{baseEntityPrefix}}_OS_OTHER\",\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB\",\n    \"operationDate\": \"2020-12-01\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"applyOneShotChargeInstance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Run RT",
 							"event": [
 								{
@@ -46346,7 +46447,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"targetCode\": \"RS_BASE_BA\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2022-11-01\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}"
+									"raw": "{\n    \"targetCode\": \"GDPR_{{index}}\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2020-12-31\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/invoice/generateInvoice",
@@ -46407,7 +46508,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Payment for ${#TestSuite#invoice1_number}\",\n    \"amount\": \"1017.10\",\n    \"unMatchingAmount\": \"1017.10\",\n    \"dueDate\": \"2007-09-01\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2007-10-15\",\n    \"transactionCategory\": \"CREDIT\",\n    \"reference\": \"INV-CLASSIC-000000001\",\n    \"accountCode\": \"651100000\",\n    \"accountCodeClientSide\": \"651100000\",\n    \"code\": \"RG_PLVT\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2007-10-15\"\n    },\n    \"matchingStatus\": \"O\"\n}"
+									"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Payment for ${#TestSuite#invoice1_number}\",\n    \"amount\": \"1017.10\",\n    \"unMatchingAmount\": \"1017.10\",\n    \"dueDate\": \"2020-09-01\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2020-10-15\",\n    \"transactionCategory\": \"CREDIT\",\n    \"reference\": \"INV-CLASSIC-000000001\",\n    \"accountCode\": \"651100000\",\n    \"accountCodeClientSide\": \"651100000\",\n    \"code\": \"RG_PLVT\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2020-10-15\"\n    },\n    \"matchingStatus\": \"O\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/accountOperation",
@@ -46545,6 +46646,83 @@
 							"response": []
 						},
 						{
+							"name": "Apply one shot",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"oneShotCharge\": \"{{baseEntityPrefix}}_OS_OTHER\",\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB_NEW\",\n    \"operationDate\": \"2022-12-31\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"applyOneShotChargeInstance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Run RT 2",
 							"event": [
 								{
@@ -46651,7 +46829,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"targetCode\": \"RS_BASE_BA\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2023-12-31\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}"
+									"raw": "{\n    \"targetCode\": \"GDPR_{{index}}\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2023-01-31\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/invoice/generateInvoice",
@@ -51885,22 +52063,15 @@
 			"value": "9.2+"
 		},
 		{
-			"key": "serviceId",
-			"value": "5"
-		},
-		{
-			"key": "siid1",
-			"value": "1"
-		},
-		{
-			"value": ""
-		},
-		{
 			"key": "errorCode",
 			"value": ""
 		},
 		{
 			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "serviceId",
 			"value": ""
 		}
 	]
