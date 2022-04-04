@@ -51808,6 +51808,1140 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "SKIP|cutom_table",
+			"item": [
+				{
+					"name": "01_CREATE|ct_test_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customTableCode}}\",\r\n    \"description\": \"test de custom table\",\r\n    \"disabled\": false,\r\n    \"name\": \"test_custom_table\",\r\n    \"storeAsTable\": true,\r\n    \"field\": [\r\n       {\r\n            \"code\": \"cf_test_id\",\r\n            \"description\": \"ID\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"LONG\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": true,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{customTableCode}}:0;field:0\",\r\n            \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n        },\r\n        {\r\n            \"code\": \"cf_test_clob\",\r\n            \"description\": \"custom table\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"TEXT_AREA\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{customTableCode}}:0;field:1\"\r\n        },\r\n        {\r\n            \"code\": \"cf_test_visibility\",\r\n            \"description\": \"Visibilité\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"BOOLEAN\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"defaultValue\": 1,\r\n            \"valueRequired\": true,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{customTableCode}}:0;field:2\",\r\n            \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n        }\r\n    ],\r\n    \"action\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_CREATE|custom_table_referenced",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{       \r\n        \"code\": \"ct_custom_table_referenced\",\r\n        \"disabled\": false,\r\n        \"name\": \"custom_table_referenced\",\r\n        \"storeAsTable\": true,\r\n        \"storeInES\": false,\r\n        \"versioned\": false,\r\n        \"field\": [\r\n            {\r\n                \"id\": 206,\r\n                \"code\": \"test_cf\",\r\n                \"description\": \"tt\",\r\n                \"disabled\": false,\r\n                \"fieldType\": \"ENTITY\",\r\n                \"accountLevel\": \"CE_custom_table_referenced\",\r\n                \"appliesTo\": \"CE_custom_table_referenced\",\r\n                \"useInheritedAsDefaultValue\": false,\r\n                \"storageType\": \"SINGLE\",\r\n                \"valueRequired\": false,\r\n                \"uniqueConstraint\": false,\r\n                \"versionable\": false,\r\n                \"triggerEndPeriodEvent\": false,\r\n                \"entityClazz\": \"org.meveo.model.crm.Customer\",\r\n                \"allowEdit\": true,\r\n                \"hideOnNew\": false,\r\n                \"guiPosition\": \"tab:{{entityCode}}:0;field:0\",\r\n                \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n            }\r\n        ]\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_Enable|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customTableCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}/enable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_Disable|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customTableCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}/disable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_RETREIVE|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_UPDATE|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{customTableCode}}\",\r\n    \"description\": \"test de custom table updated\",\r\n    \"disabled\": false,\r\n    \"name\": \"test_custom_table_updated\",\r\n    \"storeAsTable\": true,\r\n    \"field\": [\r\n       {\r\n            \"code\": \"cf_test_id\",\r\n            \"description\": \"ID\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"LONG\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": true,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:Notes de test:0;field:0\",\r\n            \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n        },\r\n        {\r\n            \"code\": \"cf_test_clob\",\r\n            \"description\": \"test clob\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"TEXT_AREA\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:Notes de test:0;field:1\"\r\n        },\r\n        {\r\n            \"code\": \"cf_test_visibility\",\r\n            \"description\": \"Visibilité\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"BOOLEAN\",\r\n            \"appliesTo\": \"{{customTableCode}}\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"defaultValue\": 1,\r\n            \"valueRequired\": true,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:Notes de tests:0;field:2\",\r\n            \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n        }\r\n    ],\r\n    \"action\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_RETREIVE|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02_FILL|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customTableCode\": \"{{customTableCode}}\",\r\n    \"overwrite\": true,\r\n    \"record\": [\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 1,\r\n                \"cf_test_clob\": \"Absence de services\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        },\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 2,\r\n                \"cf_test_clob\": \"Problème compteur\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        },\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 3,\r\n                \"cf_test_clob\": \"Problème compteur (incident Linky)\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/customTable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"customTable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03_FILL|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customTableCode\": \"{{customTableCode}}\",\r\n    \"overwrite\": false,\r\n    \"record\": [\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 4,\r\n                \"cf_test_clob\": \"Absence de services\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        },\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 5,\r\n                \"cf_test_clob\": \"Problème compteur\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        },\r\n        {\r\n            \"values\": {\r\n                \"cf_test_id\": 6,\r\n                \"cf_test_clob\": \"Problème compteur (incident Linky)\",\r\n                \"cf_test_visibility\":true\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/customTable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"customTable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_Enable_row|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{entityCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}/enable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_DELETE_row|custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/unitaryCustomTable/{{customTableCode}}/1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"unitaryCustomTable",
+								"{{customTableCode}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02_RETREIVE|ct_test_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/customTable/list/{{customTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"customTable",
+								"list",
+								"{{customTableCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_DELETE ct_test_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{customTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{customTableCode}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SKIP|versionned_cutom_table",
+			"item": [
+				{
+					"name": "01_CREATE|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \"code\": \"{{versionnedCustomTableCode}}\",\r\n    \"disabled\": false,\r\n    \"name\": \"test\",\r\n    \"storeAsTable\": true,\r\n    \"storeInES\": false,\r\n    \"field\": [\r\n      {\r\n        \"code\": \"test_cf\",\r\n        \"description\": \"tt\",\r\n        \"disabled\": false,\r\n        \"fieldType\": \"ENTITY\",\r\n        \"accountLevel\": \"CE_test\",\r\n        \"appliesTo\": \"CE_ct_versionned_custom_table\",\r\n        \"useInheritedAsDefaultValue\": false,\r\n        \"storageType\": \"SINGLE\",\r\n        \"valueRequired\": false,\r\n        \"uniqueConstraint\": false,\r\n        \"versionable\": false,\r\n        \"triggerEndPeriodEvent\": false,\r\n        \"entityClazz\": \"org.meveo.model.crm.Customer\",\r\n        \"allowEdit\": true,\r\n        \"hideOnNew\": false,\r\n        \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:3\",\r\n        \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n      },\r\n      {\r\n        \"code\": \"valid_from\",\r\n        \"description\": \"valid_from\",\r\n        \"disabled\": false,\r\n        \"fieldType\": \"DATE\",\r\n        \"accountLevel\": \"CE_test\",\r\n        \"appliesTo\": \"CE_ct_versionned_custom_table\",\r\n        \"useInheritedAsDefaultValue\": false,\r\n        \"storageType\": \"SINGLE\",\r\n        \"valueRequired\": false,\r\n        \"uniqueConstraint\": false,\r\n        \"versionable\": false,\r\n        \"triggerEndPeriodEvent\": false,\r\n        \"allowEdit\": true,\r\n        \"hideOnNew\": false,\r\n        \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:1\"\r\n      },\r\n      {\r\n        \"code\": \"valid_priority\",\r\n        \"description\": \"valid_priority\",\r\n        \"disabled\": false,\r\n        \"fieldType\": \"LONG\",\r\n        \"accountLevel\": \"CE_test\",\r\n        \"appliesTo\": \"CE_ct_versionned_custom_table\",\r\n        \"useInheritedAsDefaultValue\": false,\r\n        \"storageType\": \"SINGLE\",\r\n        \"valueRequired\": false,\r\n        \"uniqueConstraint\": false,\r\n        \"versionable\": false,\r\n        \"triggerEndPeriodEvent\": false,\r\n        \"allowEdit\": true,\r\n        \"hideOnNew\": false,\r\n        \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:3\"\r\n      },\r\n      {\r\n        \"code\": \"valid_to\",\r\n        \"description\": \"valid_to\",\r\n        \"disabled\": false,\r\n        \"fieldType\": \"DATE\",\r\n        \"accountLevel\": \"CE_test\",\r\n        \"appliesTo\": \"CE_ct_versionned_custom_table\",\r\n        \"useInheritedAsDefaultValue\": false,\r\n        \"storageType\": \"SINGLE\",\r\n        \"valueRequired\": false,\r\n        \"uniqueConstraint\": false,\r\n        \"versionable\": false,\r\n        \"triggerEndPeriodEvent\": false,\r\n        \"allowEdit\": true,\r\n        \"hideOnNew\": false,\r\n        \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:2\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_RETREIVE|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{versionnedCustomTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{versionnedCustomTableCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_UPDATE|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{versionnedCustomTableCode}}\",\r\n    \"disabled\": false,\r\n    \"name\": \"test updated\",\r\n    \"storeAsTable\": true,\r\n    \"storeInES\": false,\r\n    \"field\": [\r\n        {\r\n            \"code\": \"test_cf\",\r\n            \"description\": \"tt\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"ENTITY\",\r\n            \"accountLevel\": \"CE_test\",\r\n            \"appliesTo\": \"CE_test\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"entityClazz\": \"org.meveo.model.crm.Customer\",\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:3\",\r\n            \"indexType\": \"INDEX_NOT_ANALYZE\"\r\n        },\r\n        {\r\n            \"code\": \"valid_from\",\r\n            \"description\": \"valid_from\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"DATE\",\r\n            \"accountLevel\": \"CE_test\",\r\n            \"appliesTo\": \"CE_test\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:1\"\r\n        },\r\n        {\r\n            \"code\": \"valid_priority\",\r\n            \"description\": \"valid_priority\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"LONG\",\r\n            \"accountLevel\": \"CE_test\",\r\n            \"appliesTo\": \"CE_test\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:3\"\r\n        },\r\n        {\r\n            \"code\": \"valid_to\",\r\n            \"description\": \"valid_to\",\r\n            \"disabled\": false,\r\n            \"fieldType\": \"DATE\",\r\n            \"accountLevel\": \"CE_test\",\r\n            \"appliesTo\": \"CE_test\",\r\n            \"useInheritedAsDefaultValue\": false,\r\n            \"storageType\": \"SINGLE\",\r\n            \"valueRequired\": false,\r\n            \"uniqueConstraint\": false,\r\n            \"versionable\": false,\r\n            \"triggerEndPeriodEvent\": false,\r\n            \"allowEdit\": true,\r\n            \"hideOnNew\": false,\r\n            \"guiPosition\": \"tab:{{versionnedCustomTableCode}}:0;field:2\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_RETREIVE|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{versionnedCustomTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{versionnedCustomTableCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03_FILL|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customTableCode\": \"{{versionnedCustomTableCode}}\",\r\n    \"overwrite\": true,\r\n    \"record\": [\r\n        {\r\n            \"values\": {\r\n                \"valid_from\": \"2022-04-01\",\r\n                \"valid_priority\": 0,\r\n                \"valid_to\":\"2022-04-31\"\r\n            }\r\n        },\r\n        {\r\n              \"values\": {\r\n                \"valid_from\": \"2022-03-01\",\r\n                \"valid_priority\": 1,\r\n                \"valid_to\":\"2022-03-31\"\r\n            }\r\n        },\r\n        {\r\n              \"values\": {\r\n                \"valid_from\": \"2022-04-15\",\r\n                \"valid_priority\": 1,\r\n                \"valid_to\":\"2022-04-31\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/customTable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"customTable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_DELETE_row|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/unitaryCustomTable/{{versionnedCustomTableCode}}/1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"unitaryCustomTable",
+								"{{versionnedCustomTableCode}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01_DELETE|versionned_custom_table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(request.name + \" - Check Code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.errorCode).to.eql();\r",
+									"});\r",
+									"\r",
+									"pm.test(request.name + \" - Check Message\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/entityCustomization/entity/{{versionnedCustomTableCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"entityCustomization",
+								"entity",
+								"{{versionnedCustomTableCode}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -52073,6 +53207,14 @@
 		{
 			"key": "serviceId",
 			"value": ""
+		},
+		{
+			"key": "customTableCode",
+			"value": "ct_test_custom_table"
+		},
+		{
+			"key": "versionnedCustomTableCode",
+			"value": "ct_versionned_custom_table"
 		}
 	]
 }
