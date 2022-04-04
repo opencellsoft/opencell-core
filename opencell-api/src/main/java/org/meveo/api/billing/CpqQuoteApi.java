@@ -809,12 +809,22 @@ public class CpqQuoteApi extends BaseApi {
                 missingParameters.add("quoteVersion");
             if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
                 missingParameters.add("quoteCode");
-            if (quoteOfferDto.getOfferId() == null)
-                missingParameters.add("offerId");
+            if (quoteOfferDto.getOfferId() == null && quoteOfferDto.getOfferCode() == null)
+                missingParameters.add("offerId or offerCode");
 
             handleMissingParameters();
-
-            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            
+            OfferTemplate offerTemplate = null;
+            if(quoteOfferDto.getOfferId() != null && quoteOfferDto.getOfferCode() != null) {
+            	offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            	if(offerTemplate != null && !offerTemplate.getCode().equals(quoteOfferDto.getOfferCode())) {
+            		throw new MeveoApiException("The offer ID doesn’t match with the offer CODE, please correct the request");
+            	}
+            }else if(quoteOfferDto.getOfferId() != null) {
+            	offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            }else if(quoteOfferDto.getOfferCode() != null) {
+            	offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+            }
             if (offerTemplate == null)
                 throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
