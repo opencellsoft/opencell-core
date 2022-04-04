@@ -88,9 +88,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // 2- produce the revenue accounting entries
         Query query = getEntityManager().createQuery(
                         "SELECT sum(ivL.amountWithoutTax), ivl" +
-                                " FROM InvoiceLine ivL WHERE ivL.invoice.id = :" + PARAM_ID_INV +
-                                " GROUP BY ivl," +
-                                " ivl.accountingArticle.accountingCode.code," +
+                                " FROM InvoiceLine ivL LEFT JOIN AccountingCode ac ON ivL.accountingArticle.accountingCode = ac" +
+                                " WHERE ivL.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY ivl, ac.code," +
                                 " ivl.accountingArticle.analyticCode1, ivl.accountingArticle.analyticCode2, ivl.accountingArticle.analyticCode3")
                 .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
 
@@ -103,9 +103,10 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             revenuResult.forEach(objects -> {
                 InvoiceLine invoiceLine = (InvoiceLine) objects[1];
 
-                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
+                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice,
+                        invoiceLine.getAccountingArticle().getAccountingCode() != null ? invoiceLine.getAccountingArticle().getAccountingCode() : recordedInvoice.getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        objects[0] == null ? BigDecimal.ZERO : (BigDecimal) objects[0],
                         null);
                 revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
                 revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
@@ -122,8 +123,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // 3- produce the taxes accounting entries
         Query queryTax = getEntityManager().createQuery(
                         "SELECT sum(taxAg.amountTax), taxAg" +
-                                " FROM TaxInvoiceAgregate taxAg WHERE taxAg.invoice.id = :" + PARAM_ID_INV +
-                                " GROUP BY taxAg, taxAg.accountingCode.code, taxAg.tax.code")
+                                " FROM TaxInvoiceAgregate taxAg LEFT JOIN AccountingCode ac ON taxAg.accountingCode = ac" +
+                                " WHERE taxAg.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY taxAg, ac.code, taxAg.tax.code")
                 .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
 
         List<Object[]> taxResult = queryTax.getResultList();
@@ -135,9 +137,10 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             taxResult.forEach(objects -> {
                 TaxInvoiceAgregate taxAgr = (TaxInvoiceAgregate) objects[1];
 
-                JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
+                JournalEntry taxEntry = buildJournalEntry(recordedInvoice,
+                        taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : recordedInvoice.getAccountingCode(),
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        objects[0] == null ? BigDecimal.ZERO : (BigDecimal) objects[0],
                         taxAgr.getTax());
 
                 saved.add(taxEntry);
