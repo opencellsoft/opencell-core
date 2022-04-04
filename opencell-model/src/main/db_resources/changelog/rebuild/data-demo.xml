@@ -2539,7 +2539,7 @@
 			<column name="accounting_code_id" valueNumeric="-20" />
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_DIRECT_DEBIT" />
-			<column name="description" value="Payment - direct debit (prélèvement)" />
+			<column name="description" value="Payment - direct debit" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
@@ -2599,7 +2599,7 @@
 			<column name="accounting_code_id" valueNumeric="-20" />
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_WIRE" />
-			<column name="description" value="WIRETRANSFER (virement)" />
+			<column name="description" value="WIRETRANSFER" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
@@ -2607,6 +2607,8 @@
 
             
         </changeSet>
+        
+    <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
