@@ -689,7 +689,6 @@ public class EntityExportImportService implements Serializable {
 
             for (IEntity entity : principalEntities) {
 
-                setStatusToDefault(entity);
                 xstream.marshal(entity, writer);
             }
             exportStats.updateSummary(exportTemplate.getEntityToExport(), principalEntities.size());
@@ -730,22 +729,7 @@ public class EntityExportImportService implements Serializable {
         log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
     }
 
-    private void setStatusToDefault(IEntity entity) {
-        if(entity instanceof Product)
-                {
-                    ((Product)entity).setStatus(ProductStatusEnum.DRAFT);
-                }
 
-                if(entity instanceof OfferTemplate)
-                {
-                    ((OfferTemplate)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
-                }
-
-                if(entity instanceof ProductOffering)
-                {
-                    ((ProductOffering)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
-                }
-    }
 
     /**
      * Import entities from xml stream.
