@@ -95,7 +95,7 @@ public class DunningPolicyApiServiceTest {
         Optional<DunningPolicy> dunningPolicyUpdated = dunningPolicyApiService.update(1L, dunningPolicy);
         assertTrue(dunningPolicyUpdated.isPresent());
         DunningPolicy dunningPolicy1 = dunningPolicyUpdated.get();
-        assertEquals(1, dunningPolicy1.getTotalDunningLevels().intValue());
+        assertEquals(2, dunningPolicy1.getTotalDunningLevels().intValue());
     }
 
     @Test
