@@ -79,8 +79,8 @@ public class DunningCollectionPlanMapper
     private org.meveo.apiv2.dunning.DunningPolicy toPolicy(DunningPolicy policy) {
         return ImmutableDunningPolicy.builder()
                 .id(policy.getId())
-                .isDefaultPolicy(policy.getDefaultPolicy())
-                .isActivePolicy(policy.getActivePolicy())
+                .isDefaultPolicy(policy.getIsDefaultPolicy())
+                .isActivePolicy(policy.getIsActivePolicy())
                 .policyName(policy.getPolicyName())
                 .minBalanceTriggerCurrency(buildMinBalanceCurrencyResource(policy.getMinBalanceTriggerCurrency()))
                 .policyDescription(policy.getPolicyDescription())

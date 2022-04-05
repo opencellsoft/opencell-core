@@ -19,7 +19,7 @@ public interface ExchangeRateDto extends Resource {
     @Nullable
     Date getFromDate();
 
-    @NotNull
+    @Nullable
     BigDecimal getExchangeRate();
 
     @NotNull

@@ -1296,7 +1296,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (terminateSubscriptionDto.getServices() != null) {
             for (String serviceInstanceCode : terminateSubscriptionDto.getServices()) {
-                ServiceInstance serviceInstance = getSingleServiceInstance(null, serviceInstanceCode, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+                ServiceInstance serviceInstance = serviceInstanceService.getSingleServiceInstance(null, serviceInstanceCode, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
                 serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
                 serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
@@ -1311,7 +1311,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (terminateSubscriptionDto.getServiceIds() != null) {
             for (Long serviceInstanceId : terminateSubscriptionDto.getServiceIds()) {
-                ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, null, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+                ServiceInstance serviceInstance = serviceInstanceService.getSingleServiceInstance(serviceInstanceId, null, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
                 serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
                 serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
@@ -1978,7 +1978,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (postData != null) {
             for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
-                ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
+                ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
                         isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
 
                 if (isToSuspend) {
@@ -2007,7 +2007,7 @@ public class SubscriptionApi extends BaseApi {
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
             // Allow all services to be updated regardless of the status
-            ServiceInstance serviceToUpdate = getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
+            ServiceInstance serviceToUpdate = serviceInstanceService.getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
@@ -2101,7 +2101,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
 
-        ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, serviceInstanceCode, subscription);
+        ServiceInstance serviceInstance = serviceInstanceService.getSingleServiceInstance(serviceInstanceId, serviceInstanceCode, subscription);
         if (serviceInstance != null) {
             result = serviceInstanceToDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
         }
@@ -2302,50 +2302,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         return renewalInfo;
-    }
-
-    /**
-     * Find a service instance matching id or code for a given subscription and optional statuses. I
-     *
-     * @param serviceId Service instance id
-     * @param serviceCode Service instance code
-     * @param subscription Subscription containing service instance
-     * @param statuses Statuses to match (optional)
-     * @return Service instance matched
-     * @throws MissingParameterException Either serviceId or serviceCode value must be provided
-     * @throws EntityDoesNotExistsException Service instance was not matched
-     * @throws InvalidParameterException More than one matching service instance found or does not correspond to given subscription and/or statuses
-     */
-    private ServiceInstance getSingleServiceInstance(Long serviceId, String serviceCode, Subscription subscription, InstanceStatusEnum... statuses)
-            throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException {
-
-        ServiceInstance serviceInstance = null;
-        if (serviceId != null) {
-            serviceInstance = serviceInstanceService.findById(serviceId);
-
-            if (serviceInstance == null) {
-                throw new EntityDoesNotExistsException(ServiceInstance.class, serviceId);
-
-            } else if (!serviceInstance.getSubscription().equals(subscription) || (statuses != null && statuses.length > 0 && !ArrayUtils.contains(statuses, serviceInstance.getStatus()))) {
-                throw new InvalidParameterException("Service instance id " + serviceId + " does not correspond to subscription " + subscription.getCode() + " or is not of status ["
-                        + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
-            }
-
-        } else if (!StringUtils.isBlank(serviceCode)) {
-            List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscription, statuses);
-            if (services.size() == 1) {
-                serviceInstance = services.get(0);
-            } else if (services.size() > 1) {
-                throw new InvalidParameterException(
-                        "More than one service instance with status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "] was found. Please use ID to refer to service instance.");
-            } else {
-                throw new EntityDoesNotExistsException("Service instance with code " + serviceCode + " was not found or is not of status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
-            }
-
-        } else {
-            throw new MissingParameterException("service id or code");
-        }
-        return serviceInstance;
     }
 
     public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, Date subscriptionValidityDate, String serviceInstanceCode) throws MissingParameterException {

@@ -44,14 +44,14 @@ public class AccountingSchemesJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put("AccountingSchemesJob_onlyClosedPeriods", buildCF(CF_ONLYCLOSEDPERIODS, "Application date",
-                CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;field:2", "false"));
-
         result.put(CF_NB_RUNS, buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
                 CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "-1"));
 
         result.put(CF_WAITING_MILLIS, buildCF(CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"),
                 CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0"));
+
+        result.put(CF_ONLYCLOSEDPERIODS, buildCF(CF_ONLYCLOSEDPERIODS, resourceMessages.getString("jobExecution.onlyClosedPeriods"),
+                CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;field:2", "false"));
 
         return result;
     }

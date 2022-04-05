@@ -6,9 +6,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromResource;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -83,9 +81,8 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
                 dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
                 dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
+                totalDunningLevels++;
                 if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
-                    totalDunningLevels++;
-                } else {
                     countReminderLevels++;
                 }
                 if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
@@ -150,7 +147,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         String operationType = "update";
         
         if(dunningPolicyInput.isActivePolicy() != null
-                && dunningPolicyEntity.getActivePolicy() != dunningPolicyInput.isActivePolicy()) {
+                && dunningPolicyEntity.getIsActivePolicy() != dunningPolicyInput.isActivePolicy()) {
         	operationType = dunningPolicyInput.isActivePolicy() ? "activation" : "deactivation";
         }
         
@@ -265,6 +262,16 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         return Response
                 .ok(getUriBuilderFromResource(DunningPolicyResource.class, entity.getId()).build())
                 .entity(mapper.toResource(dunningPolicyApiService.archiveDunningPolicy(entity).get()))
+                .build();
+    }
+
+    public Response deactivate(Map<String, Set<Long>> dunningPolicyIds){
+        int affectedDunningPolicies = dunningPolicyService.deactivatePoliciesByIds(dunningPolicyIds.getOrDefault("dunningPolicyIds", Collections.EMPTY_SET));
+        return Response
+                .ok(ImmutableSuccessResponse.builder()
+                .status("SUCCESS")
+                .message(affectedDunningPolicies + " Dunning Policies has successfully deactivated")
+                .build())
                 .build();
     }
 

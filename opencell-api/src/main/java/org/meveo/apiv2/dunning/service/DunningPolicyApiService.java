@@ -112,9 +112,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     refreshPolicyLevel(policyLevel);
                     if (policyLevel.getDunningLevel().isReminder()) {
                         countReminderLevels++;
-                    } else {
-                        totalDunningLevels++;
                     }
+                    totalDunningLevels++;
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
                         endOfLevelDayOverDue = policyLevel.getDunningLevel().getDaysOverdue();
                         countEndOfDunningLevel++;
@@ -225,7 +224,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
-        dunningPolicy.setActivePolicy(FALSE);
+        dunningPolicy.setIsActivePolicy(FALSE);
         auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
