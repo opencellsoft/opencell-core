@@ -17,6 +17,7 @@
  */
 package org.meveo.model.payments;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -27,10 +28,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -48,12 +49,9 @@ public class AccountingScheme extends BusinessEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;
 
-    /**
-     * Description
-     */
-    @Column(name = "long_description")
-    @Size(max = 2000)
-    private String longDescription;
+    @Type(type = "json")
+    @Column(name = "long_description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> longDescriptionI18n;
 
     /**
      * The script instance.
@@ -61,24 +59,6 @@ public class AccountingScheme extends BusinessEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
-
-    /**
-     * Gets long description.
-     *
-     * @return the long description
-     */
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    /**
-     * Sets long description.
-     *
-     * @param longDescription the long description
-     */
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
-    }
 
     /**
      * Gets script instance.
@@ -98,6 +78,24 @@ public class AccountingScheme extends BusinessEntity {
         this.scriptInstance = scriptInstance;
     }
 
+    /**
+     * Get i18 long description values.
+     *
+     * @return Map with language
+     */
+    public Map<String, String> getLongDescriptionI18n() {
+        return longDescriptionI18n;
+    }
+
+    /**
+     * Set i18 long description values.
+     *
+     * @param longDescriptionI18n Map with language
+     */
+    public void setLongDescriptionI18n(Map<String, String> longDescriptionI18n) {
+        this.longDescriptionI18n = longDescriptionI18n;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -112,13 +110,13 @@ public class AccountingScheme extends BusinessEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getLongDescription(), getScriptInstance());
+        return Objects.hash(super.hashCode(), getLongDescriptionI18n(), getScriptInstance());
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", AccountingScheme.class.getSimpleName() + "[", "]").add("code='" + code + "'").add("description='" + description + "'")
-                .add("longDescription='" + longDescription + "'").add("scriptInstance=" + scriptInstance).toString();
+                .add("longDescriptionI18n='" + longDescriptionI18n + "'").add("scriptInstance=" + scriptInstance).toString();
     }
 
 }

@@ -275,7 +275,7 @@ public class OccTemplateApi extends BaseApi {
             } else {
                 updateTheAccountingScheme(accSchemeDto, scriptInstance, accountingScheme);
             }
-        } else if (StringUtils.isNotBlank(accSchemeDto.getLongDescription())) {
+        } else if (accSchemeDto.getLongDescriptionsTranslated()!=null && !accSchemeDto.getLongDescriptionsTranslated().isEmpty()) {
             accountingScheme = createNewAccountingScheme(accSchemeDto, scriptInstance, null, dto);
         } else
             throw new MissingParameterException("code or longDescription");
@@ -284,7 +284,7 @@ public class OccTemplateApi extends BaseApi {
 
     private void updateTheAccountingScheme(AccountingSchemeDto accSchemeDto, ScriptInstance scriptInstance, AccountingScheme accountingScheme) {
         accountingScheme.setDescription(accSchemeDto.getDescription());
-        accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(accSchemeDto.getLongDescriptionsTranslated(), accountingScheme.getLongDescriptionI18n()));
         accountingScheme.setScriptInstance(scriptInstance);
         accountingSchemeService.update(accountingScheme);
     }
@@ -296,7 +296,7 @@ public class OccTemplateApi extends BaseApi {
         }
         accountingScheme.setCode(code);
         accountingScheme.setDescription(accSchemeDto.getDescription());
-        accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(accSchemeDto.getLongDescriptionsTranslated(), null));
         accountingScheme.setScriptInstance(scriptInstance);
         accountingSchemeService.create(accountingScheme);
         return accountingScheme;

@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.payment;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -42,8 +44,8 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     /**
      * The longDescription.
      */
-    @Schema(description = "a long description")
-    private String longDescription;
+    @Schema(description = "i18n a long description")
+    private List<LanguageDescriptionDto> longDescriptionsTranslated;
 
     /**
      * The scriptCode.
@@ -56,16 +58,8 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     public AccountingSchemeDto(AccountingScheme accountingScheme) {
         code = accountingScheme.getCode();
         description = accountingScheme.getDescription();
-        longDescription = accountingScheme.getLongDescription();
         scriptCode = Optional.ofNullable(accountingScheme.getScriptInstance()).map(ScriptInstance::getCode).orElse(null);
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+        longDescriptionsTranslated = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(accountingScheme.getLongDescriptionI18n());
     }
 
     public String getScriptCode() {
@@ -74,5 +68,13 @@ public class AccountingSchemeDto extends BusinessEntityDto {
 
     public void setScriptCode(String scriptCode) {
         this.scriptCode = scriptCode;
+    }
+
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
     }
 }
