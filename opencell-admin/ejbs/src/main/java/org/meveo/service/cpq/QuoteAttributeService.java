@@ -1,9 +1,11 @@
 package org.meveo.service.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -79,4 +81,25 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     		}
         }
     }
+	
+	  @SuppressWarnings("unchecked")
+	    public List<QuoteAttribute> findByQuoteVersionAndTotaltype(Long quoteVersionId) { 
+		 List<QuoteAttribute> quoteAttributs=new ArrayList<QuoteAttribute>();
+	    	try {
+	    		quoteAttributs = (List<QuoteAttribute>)getEntityManager().createNamedQuery("QuoteAttribute.findByQuoteVersionAndTotalType").setParameter("quoteVersionId", quoteVersionId).getResultList();
+	    	} catch (Exception e) {
+	    		log.error("findByQuoteVersionAndTotaltype error ", e.getMessage());
+	    	}
+	    	return quoteAttributs;
+	    }
+	     
+	    public Double getSumDoubleByVersionAndAttribute(Long quoteVersionId,Long attributeId) {  
+	    	Double totalValue=0.0;
+	    	try {
+	    		totalValue = (Double)getEntityManager().createNamedQuery("QuoteAttribute.getSumDoubleByVersionAndAttribute").setParameter("quoteVersionId", quoteVersionId).setParameter("attributeId", attributeId).getSingleResult();
+	    	} catch (Exception e) {
+	    		log.error("getSumDoubleByVersionAndAttribute error ", e.getMessage());
+	    	}
+	    	return totalValue;
+	    }
 }

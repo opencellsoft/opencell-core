@@ -168,7 +168,15 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
     }
 
-    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT) {
+    /**
+     * Check OCCTemplate fields
+     *
+     * @param ao             account operation
+     * @param occT           occt.code = ao.code
+     * @param isDefaultCheck for Default Script we must check accountinfCode and contraAccountingCode,
+     *                       for Invoice one for exemple, we must on check accountinfode
+     */
+    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck) {
         if (occT == null) {
             log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
             throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
@@ -179,7 +187,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
 
-        if (occT.getContraAccountingCode() == null) {
+        if (isDefaultCheck && occT.getContraAccountingCode() == null) {
             log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
             throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
