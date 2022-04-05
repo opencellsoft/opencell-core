@@ -487,22 +487,26 @@ public class UsageRatingService implements Serializable {
             }
 
             boolean foundPricePlan = true;
+            boolean requirePP=false;
 
             // Find the first matching charge and rate it
             for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
+            	requirePP=true;
+            	log.trace("Try to rate EDR {} with charge {}", edr.getId(), usageChargeInstance.getCode());
+            	try {
+            		if (usageChargeInstance != null && usageChargeInstance.getChargeTemplate().getRatingScript() != null) {
+            			requirePP=false;
+            		}
 
-                log.trace("Try to rate EDR {} with charge {}", edr.getId(), usageChargeInstance.getCode());
-                try {
+            		if (!isChargeMatch(usageChargeInstance, edr, requirePP)) {
+            			continue;
+            		}
 
-                    if (!isChargeMatch(usageChargeInstance, edr, true)) {
-                        continue;
-                    }
-
-                } catch (NoPricePlanException e) {
-                    log.debug("Charge {} was matched for EDR {} but does not contain a priceplan", usageChargeInstance.getCode(), edr.getId());
-                    foundPricePlan = false;
-                    continue;
-                }
+            	} catch (NoPricePlanException e) {
+            		log.debug("Charge {} was matched for EDR {} but does not contain a priceplan", usageChargeInstance.getCode(), edr.getId());
+            		foundPricePlan = false;
+            		continue;
+            	}
 
                 log.debug("Will apply matching charge instance id={} for EDR {}", usageChargeInstance.getId(), edr.getId());
 
@@ -681,21 +685,24 @@ public class UsageRatingService implements Serializable {
         reservation.setQuantity(edr.getQuantity());
 
         reservationService.create(reservation);
-
+        boolean requirePP=false;
         for (UsageChargeInstance usageChargeInstance : charges != null ? charges : null) {
+        	requirePP=true;
+        	try {
+        		if (usageChargeInstance != null && usageChargeInstance.getChargeTemplate().getRatingScript() != null) {
+        			requirePP=false;
+        		}
+        		if (isChargeMatch(usageChargeInstance, edr, requirePP)) {
 
-            try {
-                if (isChargeMatch(usageChargeInstance, edr, true)) {
-
-                    log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
-                    edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
-                    if (edrIsRated) {
-                        edr.changeStatus(EDRStatusEnum.RATED);
-                        break;
-                    }
-                }
-            } catch (NoPricePlanException e) {
-            }
+        			log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
+        			edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
+        			if (edrIsRated) {
+        				edr.changeStatus(EDRStatusEnum.RATED);
+        				break;
+        			}
+        		}
+        	} catch (NoPricePlanException e) {
+        	}
         }
 
         if (!edrIsRated) {
