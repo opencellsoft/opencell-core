@@ -112,9 +112,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     refreshPolicyLevel(policyLevel);
                     if (policyLevel.getDunningLevel().isReminder()) {
                         countReminderLevels++;
-                    } else {
-                        totalDunningLevels++;
                     }
+                    totalDunningLevels++;
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
                         endOfLevelDayOverDue = policyLevel.getDunningLevel().getDaysOverdue();
                         countEndOfDunningLevel++;

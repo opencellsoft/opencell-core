@@ -81,9 +81,8 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 DunningPolicyLevel dunningPolicyLevelEntity = policyLevelMapper.toEntity(dunningPolicyLevel);
                 dunningPolicyLevelEntity.setDunningPolicy(savedEntity);
                 dunningPolicyApiService.refreshPolicyLevel(dunningPolicyLevelEntity);
+                totalDunningLevels++;
                 if (!dunningPolicyLevelEntity.getDunningLevel().isReminder()) {
-                    totalDunningLevels++;
-                } else {
                     countReminderLevels++;
                 }
                 if (dunningPolicyLevelEntity.getDunningLevel().isEndOfDunningLevel()) {
