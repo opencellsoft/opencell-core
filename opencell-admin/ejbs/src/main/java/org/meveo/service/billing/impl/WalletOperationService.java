@@ -43,6 +43,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
@@ -562,9 +563,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
+       
+        String truncateDateFunction = EntityManagerProvider.isDBOracle()?"TRUNC":"DATE";
+        
         String queryTemplate = "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
-                + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
+                + " from (select o.*, (case when (" + truncateDateFunction + "(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= " + truncateDateFunction + "(o.start_date)) then 0 else 1 end) as flag "
                 + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
+        
         Map<String, String> parameters = new HashMap<>();
         if (aggregationSettings.isPeriodEndDateIncluded()) {
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "+ interval '1' day");
@@ -572,11 +577,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "");
         }
         if (!StringUtils.isBlank(aggregationSettings.getAdditionalOrderBy())) {
-            String orderByClause = "";
-            String[] orderByFields = aggregationSettings.getAdditionalOrderBy().split(",");
-            for (String orderByField : orderByFields) {
-                orderByClause += ", o." + orderByField;
-            }
+            String orderByClause = ", "+aggregationSettings.getAdditionalOrderBy();
             parameters.put("{{ADDITIONAL_ORDER_BY}}", orderByClause);
         } else {
             parameters.put("{{ADDITIONAL_ORDER_BY}}", "");
