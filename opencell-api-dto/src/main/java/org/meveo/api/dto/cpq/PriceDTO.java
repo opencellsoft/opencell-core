@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.tax.TaxCategory;
@@ -78,9 +77,6 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal quantity;
     private BigDecimal unitMultiplicator;
     private PriceDTO discountedQuotePrice;
-    private BigDecimal discountValue;
-    private DiscountPlanItemTypeEnum discountPlanType;
-    private String discountPlanItemCode;
     
     private CustomFieldsDto customFields;
     
@@ -99,6 +95,8 @@ public class PriceDTO extends BaseEntityDto {
 	    amountWithtax=quotePrice.getAmountWithTax();
 		amountWithoutTax=quotePrice.getAmountWithoutTax();
 		amountWithoutTaxWithoutDiscount=quotePrice.getAmountWithoutTaxWithoutDiscount();
+		
+
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
 	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
@@ -111,10 +109,6 @@ public class PriceDTO extends BaseEntityDto {
 	   if(quotePrice.getDiscountedQuotePrice() != null) {
 		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
 	   }
-	   discountPlanItemCode=quotePrice.getDiscountPlanItem()!=null?quotePrice.getDiscountPlanItem().getCode():null;
-	   discountPlanType=quotePrice.getDiscountPlanType();
-	   discountValue=quotePrice.getDiscountValue();
-	   
 		
 	}
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
@@ -270,26 +264,6 @@ public class PriceDTO extends BaseEntityDto {
 	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
 		this.unitMultiplicator = unitMultiplicator;
 	}
-	public BigDecimal getDiscountValue() {
-		return discountValue;
-	}
-	public void setDiscountValue(BigDecimal discountValue) {
-		this.discountValue = discountValue;
-	}
-	public DiscountPlanItemTypeEnum getDiscountPlanType() {
-		return discountPlanType;
-	}
-	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
-		this.discountPlanType = discountPlanType;
-	}
-	public String getDiscountPlanItemCode() {
-		return discountPlanItemCode;
-	}
-	public void setDiscountPlanItemCode(String discountPlanItemCode) {
-		this.discountPlanItemCode = discountPlanItemCode;
-	}
-	
-	
 	
 	
     
