@@ -136,8 +136,8 @@ public class EncryptionFactory {
 
     public static String encrypt(String clearText){
         try {
-            String algorithm = ParamBean.getInstance().getProperty(ENCRYPTION_ALGO_PROP, null);
-            String secretKey = ParamBean.getInstance().getProperty(ENCRYPTION_KEY_PROP, null);
+            String algorithm = KeystoreManager.retrieveCredential(ENCRYPTION_ALGO_PROP);
+            String secretKey = KeystoreManager.retrieveCredential(ENCRYPTION_KEY_PROP);
             String algoKey = algorithm + SEPARATOR + secretKey;
             String hashAlgoKey = getHashOfAlgoKey(algoKey);
 

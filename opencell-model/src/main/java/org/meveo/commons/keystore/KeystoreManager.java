@@ -4,6 +4,8 @@ import org.jboss.as.server.CurrentServiceContainer;
 import org.jboss.msc.service.ServiceContainer;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wildfly.security.credential.PasswordCredential;
 import org.wildfly.security.credential.store.CredentialStore;
 import org.wildfly.security.credential.store.CredentialStoreException;
@@ -11,6 +13,8 @@ import org.wildfly.security.password.Password;
 import org.wildfly.security.password.interfaces.ClearPassword;
 
 public class KeystoreManager {
+
+    private static final Logger log = LoggerFactory.getLogger(KeystoreManager.class);
 
     private static CredentialStore credentialStore;
 
@@ -44,11 +48,18 @@ public class KeystoreManager {
             assert credStoreService != null;
             credentialStore = (CredentialStore) credStoreService.getValue();
 
-            password = credentialStore.retrieve(credentialAlias, PasswordCredential.class).getPassword();
+            PasswordCredential passwordCred = credentialStore.retrieve(credentialAlias, PasswordCredential.class);
 
-            if (password instanceof ClearPassword)
-            {
-                return new String(((ClearPassword) password).getPassword());
+            if (passwordCred != null) {
+                password = passwordCred.getPassword();
+
+                if (password instanceof ClearPassword)
+                {
+                    return new String(((ClearPassword) password).getPassword());
+                }
+            }
+            else {
+                log.error("Keystore does not contain a password with credential alias {}", credentialAlias);
             }
         } catch (CredentialStoreException e) {
             e.printStackTrace();
