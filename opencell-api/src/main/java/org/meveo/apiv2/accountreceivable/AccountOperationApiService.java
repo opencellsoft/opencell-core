@@ -28,6 +28,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
 import org.meveo.apiv2.AcountReceivable.UnMatchingAccountOperationDetail;
+import org.meveo.apiv2.AcountReceivable.CustomerAccount;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
@@ -108,7 +109,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 		if (AccountOperationStatus.EXPORTED.equals(status)) {
 			Map<Boolean, List<AccountOperation>> statusGroups = accountOperations.stream()
-					.collect(Collectors.partitioningBy(ao -> AccountOperationStatus.POSTED.equals(ao.getStatus())));
+					.collect(Collectors.partitioningBy(ao -> POSTED.equals(ao.getStatus())));
 			accountOperationService.updateStatusInNewTransaction(statusGroups.get(true), status);
 			if (!CollectionUtils.isEmpty(statusGroups.get(false))) {
 				throw new ConflictException("The status of following account operations can not be updated: "
@@ -140,6 +141,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return of(accountOperation);
 		}
 	}
+
 
 	public MatchingReturnObject matchOperations(List<AccountOperationAndSequence> accountOperations) {
 		// Get and Sort AccountOperation by sequence (sort used for send order in matchingOperation service)
@@ -237,6 +239,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		});
 		return toUnmatch;
 	}
+
 
 	private org.meveo.model.payments.CustomerAccount getCustomerAccount(CustomerAccount customerAccountInput) {
 		org.meveo.model.payments.CustomerAccount customerAccount = null;

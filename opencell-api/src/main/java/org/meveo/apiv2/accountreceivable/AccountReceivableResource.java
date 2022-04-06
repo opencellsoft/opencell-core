@@ -1,8 +1,8 @@
 package org.meveo.apiv2.accountreceivable;
 
-
 import java.util.Map;
 import java.util.Set;
+
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -10,6 +10,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -21,10 +23,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import org.meveo.apiv2.AcountReceivable.*;
+import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
+
 @Path("/accountReceivable/accountOperation")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public interface AccountReceivableResource {
+
     @POST
     @Path("/post")
     @Operation(summary = "Refund By SCT",
@@ -114,4 +120,16 @@ public interface AccountReceivableResource {
 	Response unMatchOperations(UnMatchingAccountOperation unMatchingAO);
 
 
+	@POST
+	@Path("/assignOperation/{id}")
+	@Operation(summary = "Assign an account operation to a customer", tags = {
+			"AccountOperation"}, description = "Assign an account operation to a customer", responses = {
+			@ApiResponse(responseCode = "200", description = "Account operation is successfully assigned"),
+			@ApiResponse(responseCode = "400", description = "Action is failed"),
+			@ApiResponse(responseCode = "404", description = "Entity does not exist"),
+			@ApiResponse(responseCode = "412", description = "Missing parameters")})
+	Response assignAccountOperation(@Parameter(description = "Account operation id", required = true) @PathParam("id")
+											Long accountOperationId,
+									@Parameter(description = "Customer account", required = true)
+											CustomerAccountInput customerAccount);
 }

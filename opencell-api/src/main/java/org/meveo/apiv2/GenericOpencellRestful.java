@@ -22,6 +22,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
 import org.meveo.apiv2.accountreceivable.AccountReceivableResourceImpl;
+import org.meveo.apiv2.accountreceivable.accountOperation.*;
+import org.meveo.apiv2.accountreceivable.deferralPayments.AccountReceivableDeferralPaymentsResourceImpl;
 import org.meveo.apiv2.accounts.impl.AccountsManagementResourceImpl;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
