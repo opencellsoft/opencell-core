@@ -43,6 +43,13 @@ import java.util.List;
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     private static final String PARAM_ID_INV = "ID_INV";
+    private static final String REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+            " make sure that all related accounting articles have an accounting code or that the default revenue accounting code" +
+            " is set in the account operation type (contra accounting code)";
+
+    private static final String TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+            " make sure that all related taxes have an accounting code or that the default tax accounting code" +
+            " is set in the account operation type (contra accounting code 2)";
 
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
@@ -88,9 +95,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // 2- produce the revenue accounting entries
         Query query = getEntityManager().createQuery(
                         "SELECT sum(ivL.amountWithoutTax), ivl" +
-                                " FROM InvoiceLine ivL WHERE ivL.invoice.id = :" + PARAM_ID_INV +
-                                " GROUP BY ivl," +
-                                " ivl.accountingArticle.accountingCode.code," +
+                                " FROM InvoiceLine ivL LEFT JOIN AccountingCode ac ON ivL.accountingArticle.accountingCode = ac" +
+                                " WHERE ivL.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY ivl, ac.code," +
                                 " ivl.accountingArticle.analyticCode1, ivl.accountingArticle.analyticCode2, ivl.accountingArticle.analyticCode3")
                 .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
 
@@ -103,9 +110,16 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             revenuResult.forEach(objects -> {
                 InvoiceLine invoiceLine = (InvoiceLine) objects[1];
 
-                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, invoiceLine.getAccountingArticle().getAccountingCode(),
+                AccountingCode revenuACC = invoiceLine.getAccountingArticle().getAccountingCode() != null ?
+                        invoiceLine.getAccountingArticle().getAccountingCode() : occT.getContraAccountingCode();
+
+                if (revenuACC == null) {
+                    throw new BusinessException(REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                }
+
+                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC,
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        objects[0] == null ? BigDecimal.ZERO : (BigDecimal) objects[0],
                         null);
                 revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
                 revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
@@ -122,8 +136,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         // 3- produce the taxes accounting entries
         Query queryTax = getEntityManager().createQuery(
                         "SELECT sum(taxAg.amountTax), taxAg" +
-                                " FROM TaxInvoiceAgregate taxAg WHERE taxAg.invoice.id = :" + PARAM_ID_INV +
-                                " GROUP BY taxAg, taxAg.accountingCode.code, taxAg.tax.code")
+                                " FROM TaxInvoiceAgregate taxAg LEFT JOIN AccountingCode ac ON taxAg.accountingCode = ac" +
+                                " WHERE taxAg.invoice.id = :" + PARAM_ID_INV +
+                                " GROUP BY taxAg, ac.code, taxAg.tax.code")
                 .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
 
         List<Object[]> taxResult = queryTax.getResultList();
@@ -135,9 +150,15 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             taxResult.forEach(objects -> {
                 TaxInvoiceAgregate taxAgr = (TaxInvoiceAgregate) objects[1];
 
-                JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxAgr.getAccountingCode(),
+                AccountingCode taxACC = taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
+
+                if (taxACC == null) {
+                    throw new BusinessException(TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                }
+
+                JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
                         occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                        objects[0] == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                        objects[0] == null ? BigDecimal.ZERO : (BigDecimal) objects[0],
                         taxAgr.getTax());
 
                 saved.add(taxEntry);
