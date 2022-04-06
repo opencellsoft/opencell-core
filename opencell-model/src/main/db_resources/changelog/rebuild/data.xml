@@ -8061,7 +8061,7 @@
             <column name="code" value="INV_CRN" />
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
-        </insert>        
+        </insert>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
@@ -9919,14 +9919,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="sequence_id"
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
 		</insert>
-	</changeSet>
-
-	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
-		<update tableName="ar_occ_template">
-			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
-			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
-			<where> code IN ('INV_STD', 'INV_CRN')</where>
-		</update>
 	</changeSet>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
