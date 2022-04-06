@@ -44,6 +44,12 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     /**
      * The longDescription.
      */
+    @Schema(description = "a long description")
+    private String longDescription;
+
+    /**
+     * The longDescription I18N.
+     */
     @Schema(description = "i18n a long description")
     private List<LanguageDescriptionDto> longDescriptionsTranslated;
 
@@ -76,5 +82,13 @@ public class AccountingSchemeDto extends BusinessEntityDto {
 
     public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
         this.longDescriptionsTranslated = longDescriptionsTranslated;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 }

@@ -12545,9 +12545,6 @@ order by date_trunc('month', i.invoice_date) DESC
                 <constraints nullable="false" />
             </column>
         </addColumn>
-        <dropColumn tableName="ar_accounting_scheme">
-            <column name="long_description" />
-        </dropColumn>
     </changeSet>
 
 </databaseChangeLog>

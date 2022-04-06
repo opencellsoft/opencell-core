@@ -2306,6 +2306,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="ar_accounting_scheme_pkey_unique"/>
             </column>
             <column name="description" type="varchar(255)"/>
+            <column name="long_description" type="varchar(2000)"/>
             <column name="long_description_i18n" type="${type.json}"/>
             <column name="script_instance_id" type="${cast.long}"/>
         </createTable>
