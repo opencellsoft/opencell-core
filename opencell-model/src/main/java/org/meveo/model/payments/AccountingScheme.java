@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -49,6 +50,16 @@ public class AccountingScheme extends BusinessEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;
 
+    /**
+     * Long Description
+     */
+    @Column(name = "long_description")
+    @Size(max = 2000)
+    private String longDescription;
+
+    /**
+     * i18n Long Description
+     */
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "jsonb")
     private Map<String, String> longDescriptionI18n;
@@ -76,6 +87,24 @@ public class AccountingScheme extends BusinessEntity {
      */
     public void setScriptInstance(ScriptInstance scriptInstance) {
         this.scriptInstance = scriptInstance;
+    }
+
+    /**
+     * Gets long description.
+     *
+     * @return the long description
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    /**
+     * Sets long description.
+     *
+     * @param longDescription the long description
+     */
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
     /**
@@ -115,8 +144,12 @@ public class AccountingScheme extends BusinessEntity {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AccountingScheme.class.getSimpleName() + "[", "]").add("code='" + code + "'").add("description='" + description + "'")
-                .add("longDescriptionI18n='" + longDescriptionI18n + "'").add("scriptInstance=" + scriptInstance).toString();
+        return new StringJoiner(", ", AccountingScheme.class.getSimpleName() + "[", "]")
+                .add("code='" + code + "'")
+                .add("description='" + description + "'")
+                .add("longDescription='" + longDescription + "'")
+                .add("longDescriptionI18n='" + longDescriptionI18n + "'")
+                .add("scriptInstance=" + scriptInstance).toString();
     }
 
 }
