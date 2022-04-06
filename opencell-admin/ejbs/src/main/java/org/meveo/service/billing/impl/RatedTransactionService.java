@@ -54,6 +54,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -330,7 +331,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         em.flush();
 
         // Mass update WOs with status and RT info
-        em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable").executeUpdate();
+        em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
     }
 

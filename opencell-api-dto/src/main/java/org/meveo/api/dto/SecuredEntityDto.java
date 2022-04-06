@@ -67,7 +67,7 @@ public class SecuredEntityDto extends BaseEntityDto {
     public SecuredEntityDto(SecuredEntity entity) {
         this.code = entity.getCode();
         this.entityClass = entity.getEntityClass();
-        this.disabled = entity.isDisabled();
+        this.disabled = entity.getDisabledAsBoolean();
     }
 
     /**
