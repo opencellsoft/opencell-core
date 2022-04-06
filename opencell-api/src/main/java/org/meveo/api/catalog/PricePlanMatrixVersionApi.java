@@ -159,7 +159,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }            
-            PricePlanMatrix pricePlanMatrix = pricePlanMatrixVersion.getPricePlanMatrix();//pricePlanMatrixService.findByCode(pricePlanMatrixCode);
+            PricePlanMatrix pricePlanMatrix = pricePlanMatrixVersion.getPricePlanMatrix();
             if (pricePlanMatrix == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixCode);
             }
