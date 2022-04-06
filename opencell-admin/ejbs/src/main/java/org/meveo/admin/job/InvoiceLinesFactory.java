@@ -121,6 +121,13 @@ public class InvoiceLinesFactory {
         		if(discountedILId!=null) {
         			InvoiceLine discountedIL=invoiceLineService.findById(discountedILId);
             		invoiceLine.setDiscountedInvoiceLine(discountedIL);
+            		RatedTransaction discountedRatedTransaction = ratedTransactionService.findById(rtID.longValue());
+            		if(discountedRatedTransaction!=null) {
+            			discountedIL.setDiscountPlan(discountedRatedTransaction.getDiscountPlan());
+            			discountedIL.setDiscountPlanItem(discountedRatedTransaction.getDiscountPlanItem());
+            			discountedIL.setDiscountPlanType(discountedRatedTransaction.getDiscountPlanType());
+            			discountedIL.setDiscountValue(discountedRatedTransaction.getDiscountValue());
+            		}
         		}
         		
         }

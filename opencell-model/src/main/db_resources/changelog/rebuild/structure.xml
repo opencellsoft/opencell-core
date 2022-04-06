@@ -3087,6 +3087,9 @@
             <column name="invoice_line_id" type="bigint"/>
 			<column name="discount_plan_id" type="bigint"/>
     		<column name="discounted_ratedtransaction_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3589,6 +3592,9 @@
             <column name="refunds_wo_id" type="bigint"/>
     		<column name="discounted_wallet_operation_id" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -9389,6 +9395,9 @@
      		<column name="discounted_quote_price" type="bigint"/>
 			<column name="uuid" type="varchar(60)"/>
     		<column name="discount_plan_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10126,6 +10135,9 @@
               <column name="quote_offer_id" type="bigint"/>
               <column name="order_offer_id" type="bigint"/>
               <column name="discounted_invoice_line" type="bigint"/>
+              <column name="discount_value" type="numeric(23,12)" />
+			  <column name="discount_plan_type" type="varchar(50)" />
+			  <column name="discount_plan_item_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14113,6 +14125,26 @@
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
       </changeSet>
+      
+       <changeSet id="rebuild-str-fk1-540-6296-fk1" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+       
+        <changeSet id="rebuild-str-fk2-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+       
+         <changeSet id="rebuild-str-fk3-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+    
+       <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15956,6 +15988,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-5872_20220326" author="R.AITYAAZZA" />
     <changeSet id="#INTRD-6108_20220330" author="TarikFA." />
+    <changeSet id="#20220404_M540_6296" author="Mbarek-Ay"/>
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

@@ -1344,6 +1344,9 @@ public class CpqQuoteApi extends BaseApi {
             	QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
             	quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
             	quotePrice.setDiscountPlan(wo.getDiscountPlan());
+            	quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
+            	quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
+            	quotePrice.setDiscountValue(wo.getDiscountValue());
             }else {
               quotePrice.setUuid(wo.getUuid());
             }
@@ -1633,6 +1636,9 @@ public class CpqQuoteApi extends BaseApi {
                discountQuotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
                discountQuotePrice.setQuoteOffer(quoteOffer);
                discountQuotePrice.setQuantity(wo.getQuantity());
+               discountQuotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
+               discountQuotePrice.setDiscountPlanType(wo.getDiscountPlanType());
+               discountQuotePrice.setDiscountValue(wo.getDiscountValue());
                quotePriceService.create(discountQuotePrice);
                accountingPrices.add(discountQuotePrice);
            }

@@ -205,7 +205,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			 BigDecimal taxPercent = null;
 			 BigDecimal walletOperationDiscountAmount = null;
 			 BigDecimal[] amounts = null;
-
+			 BigDecimal discountValue=null;
 			 List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
 			 
 			 if(discountPlanTypeEnum != null) {
@@ -231,7 +231,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                	 unitAmountWithoutTax = discountPlanItem.getDiscountValue();
 	                 }
 	                walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,null, Collections.emptyList());
-	                
+	                discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,null, Collections.emptySet());
 	                amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 	                
 	                discountWalletOperation.setAccountingArticle(discountAccountingArticle);
@@ -260,6 +260,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setChargeInstance(chargeInstance);
 	                discountWalletOperation.setInputQuantity(quantity);
 	                discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+	                discountWalletOperation.setDiscountPlanItem(discountPlanItem);
+	                discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
+	                discountWalletOperation.setDiscountValue(discountValue);
 	                if(!isVirtual) {
 	                	if(walletOperation != null && walletOperation.getId() != null)
 	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
