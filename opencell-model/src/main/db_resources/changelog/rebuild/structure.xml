@@ -2307,6 +2307,7 @@
             </column>
             <column name="description" type="varchar(255)"/>
             <column name="long_description" type="varchar(2000)"/>
+            <column name="long_description_i18n" type="${type.json}"/>
             <column name="script_instance_id" type="${cast.long}"/>
         </createTable>
     </changeSet>
@@ -17529,6 +17530,7 @@
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
     <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

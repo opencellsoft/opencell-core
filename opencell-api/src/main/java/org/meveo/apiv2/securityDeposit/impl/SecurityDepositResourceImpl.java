@@ -185,6 +185,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
         paymentDto.setFees(null);
         paymentDto.setComment(null);
         paymentDto.setPaymentOrder(null);
+        paymentDto.setCollectionDate(new Date());
         return paymentDto;
     }
         

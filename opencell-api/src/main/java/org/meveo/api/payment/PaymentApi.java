@@ -178,6 +178,7 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo4(paymentDto.getPaymentInfo4());
         payment.setPaymentInfo5(paymentDto.getPaymentInfo5());
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
+		payment.setCollectionDate(paymentDto.getCollectionDate());
 
         // populate customFields
         try {

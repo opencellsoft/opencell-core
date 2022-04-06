@@ -112,9 +112,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     refreshPolicyLevel(policyLevel);
                     if (policyLevel.getDunningLevel().isReminder()) {
                         countReminderLevels++;
-                    } else {
-                        totalDunningLevels++;
                     }
+                    totalDunningLevels++;
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
                         endOfLevelDayOverDue = policyLevel.getDunningLevel().getDaysOverdue();
                         countEndOfDunningLevel++;
@@ -163,14 +162,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         if (totalDunningLevels  < 1) {
             throw new BadRequestException("Dunning policy should have at least one dunning level other the reminder level");
         }
-        if (countEndOfDunningLevel + countReminderLevels == 0) {
-            throw new BadRequestException("Dunning policy should have a reminder level and an end of dunning level");
-        }
         if (countEndOfDunningLevel == 0) {
             throw new BadRequestException("Dunning policy should have an end of dunning level");
-        }
-        if (countReminderLevels == 0) {
-            throw new BadRequestException("Dunning policy should have a reminder level");
         }
     }
 
