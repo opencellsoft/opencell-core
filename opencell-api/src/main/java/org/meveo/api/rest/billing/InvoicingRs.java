@@ -18,18 +18,19 @@
 
 package org.meveo.api.rest.billing;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -38,8 +39,11 @@ import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/billing/invoicing")
 @Tag(name = "Invoicing", description = "@%Invoicing")
@@ -324,6 +328,29 @@ public interface InvoicingRs extends IBaseRs {
 	)
     ActionStatus validateInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
+    
+    /**
+     * Validate one or several invoices (change status to DRAFT).
+     * Body will contain a list of invoice id
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/invalidateInvoice")
+    @Operation(
+            summary="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
+            description="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
+            operationId="    PUT_Invoicing_billingRun_{billingRunId}_invalidateInvoice",
+            responses= {
+                @ApiResponse(description="type ActionStatus.class Invalidate billing run invoices",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
+    ActionStatus invalidateInvoice(@PathParam("billingRunId") Long billingRunId, InvalidateInvoiceDto invalidateInvoiceDto);
+
     /**
      * Move invoices to a new Billing Run with the same parameters as the current one, and also in status REJECTED|POSTINVOICED.
      *   

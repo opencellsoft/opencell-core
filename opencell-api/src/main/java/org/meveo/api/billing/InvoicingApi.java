@@ -266,6 +266,15 @@ public class InvoicingApi extends BaseApi {
 	public void validateInvoice(Long billingRunId, List<Long> invoices) {
 		invoiceService.validateInvoices(billingRunId, invoices);
 	}
+	
+	/**
+     * @param billingRunId
+     * @param invalidateXMLInvoices
+     * @param invalidatePDFInvoices
+     */
+    public void invalidateInvoice(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+        invoiceService.invalidateInvoice(billingRunId, invalidateXMLInvoices, invalidatePDFInvoices);
+    }
 
 	/**
 	 * @param billingRunId

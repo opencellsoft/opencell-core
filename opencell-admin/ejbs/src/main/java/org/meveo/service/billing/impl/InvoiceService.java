@@ -2544,6 +2544,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
             validateInvoice(invoice, true);
         }
     }
+    
+    
+   /**
+    * @param billingRunId
+    * @param invalidateXMLInvoices
+    * @param invalidatePDFInvoices
+    */
+   @JpaAmpNewTx
+   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+   public void invalidateInvoice(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+       BillingRun br = getBrById(billingRunId);
+       
+       if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
+           nullifyInvoiceXMLFileNames(br);
+       }
+
+       if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
+           nullifyInvoicePDFFileNames(br);
+       }
+   }
+
+   /**
+    * Nullify BR's invoices xml file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoiceXMLFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoiceXMLFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+   /**
+    * Nullify BR's invoices pdf file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoicePDFFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
 
     /**
      * @param billingRunId
