@@ -292,32 +292,36 @@ public class CurrencyApi extends BaseApi {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.valide.tradingCurrency"));
         }
         
-        ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);              
-        updateTradingCurrencyForExchangeRate(exchangeRate);
+        ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);
+
+        Set<ExchangeRate> exchangeRates = new HashSet<>(exchangeRate.getTradingCurrency().getExchangeRates());
+        exchangeRates.add(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
         return exchangeRate.getId();
     }
 
-    private void updateTradingCurrencyForExchangeRate(ExchangeRate exchangeRate){
+    private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates){
 
        // If tradingCurrency.currentRateFromDate is null
         // OR tradingCurrency.currentRateFromDate > new Date ( )
-        if(exchangeRate.getTradingCurrency() != null
-                && (exchangeRate.getTradingCurrency().getCurrentRateFromDate() == null ||
-                exchangeRate.getTradingCurrency().getCurrentRateFromDate().after(new Date()) )){
+        if(tradingCurrency != null
+                && (tradingCurrency.getCurrentRateFromDate() == null ||
+                tradingCurrency.getCurrentRateFromDate().after(new Date()))){
 
-             exchangeRate.getTradingCurrency().getExchangeRates().stream()
+             exchangeRates.stream()
                     .filter(exRate-> exRate.getFromDate().after(new Date()))
                     .min(Comparator.comparing(ExchangeRate::getFromDate))
                     .ifPresent(exchangeRate1->{
-                TradingCurrency tradingCurrency = exchangeRate1.getTradingCurrency();
-                tradingCurrency.setCurrentRate(exchangeRate1.getExchangeRate());
-                tradingCurrency.setCurrentRateFromDate(exchangeRate1.getFromDate());
-                tradingCurrency.setCurrentRateUpdater( exchangeRate1.getAuditable().getUpdater() != null ?
+
+                TradingCurrency tradingCurrencyToUpdate = exchangeRate1.getTradingCurrency();
+                tradingCurrencyToUpdate.setCurrentRate(exchangeRate1.getExchangeRate());
+                tradingCurrencyToUpdate.setCurrentRateFromDate(exchangeRate1.getFromDate());
+                tradingCurrencyToUpdate.setCurrentRateUpdater( exchangeRate1.getAuditable().getUpdater() != null ?
                         exchangeRate1.getAuditable().getUpdater() : exchangeRate1.getAuditable().getCreator()
 
                 );
 
-                tradingCurrencyService.update(tradingCurrency);
+                tradingCurrencyService.update(tradingCurrencyToUpdate);
             });
 
         }
@@ -387,7 +391,9 @@ public class CurrencyApi extends BaseApi {
         exchangeRate.setFromDate(postData.getFromDate());
         exchangeRate.setExchangeRate(postData.getExchangeRate());
         exchangeRateService.update(exchangeRate);
-        updateTradingCurrencyForExchangeRate(exchangeRate);
+        Set<ExchangeRate> exchangeRates = new HashSet<>(exchangeRate.getTradingCurrency().getExchangeRates());
+        exchangeRates.add(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
         auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate, fromDate, toDate);
     }
     
@@ -421,10 +427,13 @@ public class CurrencyApi extends BaseApi {
     
     public void removeExchangeRateById(Long id) {
         ExchangeRate exchangeRate = exchangeRateService.findById(id);
-        if(exchangeRate != null)
-        {
-            updateTradingCurrencyForExchangeRate( exchangeRate);
-        }
-        exchangeRateService.delete(id);
+
+         exchangeRateService.delete(id);
+
+         Set<ExchangeRate> exchangeRates = new HashSet<>(exchangeRate.getTradingCurrency().getExchangeRates());
+        exchangeRates.remove(exchangeRate);
+
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
+
     }
 }
