@@ -359,6 +359,71 @@
             <column name="chart_of_account_type" value="REVENUE" />
             <column name="chart_of_account_view_type" value="REGULAR" />
         </insert>
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-37" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511011000" />
+			<column name="description" value="CB à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-38" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511002000" />
+			<column name="description" value="Paypal à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-39" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511003000" />
+			<column name="description" value="Stripe à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511000610" />
+			<column name="description" value="TIP à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-41" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="531100000" />
+			<column name="description" value="Caisse en monnaie nationale"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-42" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511200000" />
+			<column name="description" value="Chèques à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
     </changeSet>
     
      <changeSet id="#INTRD-292_20210816" author="HatimOUDAD">
@@ -402,36 +467,39 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.046" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CHK" />
             <column name="description" value="Payment - check" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+           	<column name="contra_accounting_code_id" valueNumeric="-42" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.067" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_TIP" />
             <column name="description" value="Payment - TIP" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+			<column name="contra_accounting_code_id" valueNumeric="-40" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.088" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_DDT" />
             <column name="description" value="Payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="contra_accounting_code_id" valueNumeric="-20" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
@@ -727,13 +795,14 @@
             <column name="id" valueNumeric="-43" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CRD" />
             <column name="description" value="Payment - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-        </insert>        
+            <column name="contra_accounting_code_id" valueNumeric="-37" />
+        </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-44" />
             <column name="version" valueNumeric="0" />
@@ -760,24 +829,26 @@
             <column name="id" valueNumeric="-46" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_PAL" />
             <column name="description" value="Payment Paypal" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-        </insert>        
+            <column name="contra_accounting_code_id" valueNumeric="-38" />
+        </insert>
        <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-47" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_STP" />
             <column name="description" value="Payment Stripe" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-        </insert>    
+            <column name="contra_accounting_code_id" valueNumeric="-39" />
+        </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-50" />
             <column name="version" valueNumeric="0" />
@@ -2540,7 +2611,7 @@
 	</changeSet>
 	<changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
 
-    	<changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+    <changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-37" />
 			<column name="version" valueNumeric="0" />
@@ -2864,7 +2935,7 @@
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_CASH" />
 			<column name="description" value="Payment - cash" />
-			<column name="occ_category" value="DEBIT" />
+			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
 		</insert>
@@ -2876,15 +2947,14 @@
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_WIRE" />
 			<column name="description" value="WIRETRANSFER" />
-			<column name="occ_category" value="DEBIT" />
+			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
 		</insert>
-
-
         </changeSet>
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
+    <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
