@@ -9885,8 +9885,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
 		<update tableName="ar_occ_template">
-			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='700000000')" />
-			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
