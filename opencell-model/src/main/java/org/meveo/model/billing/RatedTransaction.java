@@ -55,6 +55,8 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -557,7 +559,18 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     
     @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
-
+    
+    @Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "discount_plan_type", length = 50)
+	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+    
     public RatedTransaction() {
         super();
     }
@@ -1472,5 +1485,32 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setDiscountedRatedTransaction(Long discountedRatedTransaction) {
 		this.discountedRatedTransaction = discountedRatedTransaction;
 	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	
+	
 	
 }

@@ -43,6 +43,8 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -138,6 +140,7 @@ public class InvoiceLine extends AuditableEntity {
     @NotNull
     private BigDecimal unitPrice;
     
+    @Deprecated
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
     private BigDecimal discountRate = BigDecimal.ZERO;
@@ -193,6 +196,7 @@ public class InvoiceLine extends AuditableEntity {
 	@Column(name = "order_number")
 	private String orderNumber;
 
+	@Deprecated
 	@Column(name = "discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@NotNull
 	private BigDecimal discountAmount = BigDecimal.ZERO;
@@ -251,6 +255,17 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
+	
+    @Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+ 	@Column(name = "discount_plan_type", length = 50)
+ 	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
 
 	public InvoiceLine() {
 	}
@@ -620,6 +635,32 @@ public class InvoiceLine extends AuditableEntity {
 	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
 		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	
 	
 	
 	
