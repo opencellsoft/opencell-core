@@ -24,9 +24,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -295,7 +293,36 @@ public class CurrencyApi extends BaseApi {
         }
         
         ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);              
+        updateTradingCurrencyForExchangeRate(exchangeRate);
         return exchangeRate.getId();
+    }
+
+    private void updateTradingCurrencyForExchangeRate(ExchangeRate exchangeRate){
+
+       // If tradingCurrency.currentRateFromDate is null
+        // OR tradingCurrency.currentRateFromDate > new Date ( )
+        if(exchangeRate.getTradingCurrency() != null
+                && (exchangeRate.getTradingCurrency().getCurrentRateFromDate() == null ||
+                exchangeRate.getTradingCurrency().getCurrentRateFromDate().after(new Date()) )){
+
+             exchangeRate.getTradingCurrency().getExchangeRates().stream()
+                    .filter(exRate-> exRate.getFromDate().after(new Date()))
+                    .min(Comparator.comparing(ExchangeRate::getFromDate))
+                    .ifPresent(exchangeRate1->{
+                TradingCurrency tradingCurrency = exchangeRate1.getTradingCurrency();
+                tradingCurrency.setCurrentRate(exchangeRate1.getExchangeRate());
+                tradingCurrency.setCurrentRateFromDate(exchangeRate1.getFromDate());
+                tradingCurrency.setCurrentRateUpdater( exchangeRate1.getAuditable().getUpdater() != null ?
+                        exchangeRate1.getAuditable().getUpdater() : exchangeRate1.getAuditable().getCreator()
+
+                );
+
+                tradingCurrencyService.update(tradingCurrency);
+            });
+
+        }
+
+
     }
 
     public void updateExchangeRate(Long id, ExchangeRateDto postData) {
@@ -360,6 +387,7 @@ public class CurrencyApi extends BaseApi {
         exchangeRate.setFromDate(postData.getFromDate());
         exchangeRate.setExchangeRate(postData.getExchangeRate());
         exchangeRateService.update(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate);
         auditLogUpdateExchangeRate(exchangeRate, fromRate, toRate, fromDate, toDate);
     }
     
@@ -392,6 +420,11 @@ public class CurrencyApi extends BaseApi {
     }
     
     public void removeExchangeRateById(Long id) {
+        ExchangeRate exchangeRate = exchangeRateService.findById(id);
+        if(exchangeRate != null)
+        {
+            updateTradingCurrencyForExchangeRate( exchangeRate);
+        }
         exchangeRateService.delete(id);
     }
 }
