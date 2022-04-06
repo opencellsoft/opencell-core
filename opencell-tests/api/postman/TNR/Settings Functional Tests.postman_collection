@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1192181b-c41c-4aec-b188-6f26dde4ed73",
+		"_postman_id": "c8570327-aa33-43eb-9440-e37b702f0132",
 		"name": "Settings Functional Tests",
 		"description": "# Portal APIs\r\n\r\nHere are all portal APIs. Are tested the CRUD processes when available as well as exceptions that might occure, to assure that everything works as intended.\r\n\r\n### Typical execution\r\n\r\nThe typical test consists of:\r\n1. A successful createOrUpdate (POST) - remplace with create when createOrUpdateis unavailable\r\n2. A successful read (GET) - check if entity created in point 1 is retreived\r\n3. A failed Create (POST) - due to entity already created\r\n4. A failed update (PUT) - due to a non existant entity\r\n5. A succesfull update (PUT) - update entity created in point 1\r\n6. A succesfull createOrUpdate(POST) - update entity created in point 1 - skip this if createOrUpdateis unavailable\r\n7. A successful read (GET) - check if updated entity from point 5 and 6 have been correctly updated\r\n8. Any extra failed tests such as MISSING_PARAMETER or INVALID_PARAMETER\r\n\r\nPlease ensure that tests are correctly asserted in the Tests tab.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -169,7 +169,7 @@
 							"response": []
 						},
 						{
-							"name": "Update|Title|TITLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION|SKIP",
+							"name": "Update|Title|TITLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -2338,7 +2338,7 @@
 							"response": []
 						},
 						{
-							"name": "SKIP|CreateOrUpdate|Currency|TST|INVALID_PARAMETER",
+							"name": "CreateOrUpdate|Currency|TST|INVALID_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
@@ -4881,9 +4881,8 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code.\");\r",
-											"pm.variables.set(\"code\",400);\r",
-											"pm.variables.set(\"errorCode\",\"MISSING_PARAMETER\");"
+											"pm.variables.set(\"message\", \"EmailTemplate with code=NOT_EXIST does not exists.\");\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -13271,11 +13270,11 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"var data = pm.response.json();",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
-											"    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
-											"});",
+											"//var data = pm.response.json();",
+											"//pm.test(request.name + \" - Check Data\", function () {",
+											"//    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"//    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
+											"//});",
 											"",
 											""
 										],
@@ -13481,7 +13480,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n     \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"newValidFrom\": \"{{valid_from}}\",\r\n    \"newValidTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate",
@@ -13525,7 +13524,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} update\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"TEST_ST\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"TEST_ST\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -13548,11 +13547,11 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"var data = pm.response.json();",
-											"pm.test(request.name + \" - Check Data \", function () {",
-											"    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
-											"    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
-											"});"
+											"//var data = pm.response.json();",
+											"//pm.test(request.name + \" - Check Data \", function () {",
+											"//    pm.expect(data.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"//    pm.expect(data.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
+											"//});"
 										],
 										"type": "text/javascript"
 									}
@@ -13670,7 +13669,7 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate  invalid validity date|OfferTemplate|OT|INVALID_PARAMETER",
+							"name": "SKIP|CreateOrUpdate  invalid validity date|OfferTemplate|OT|INVALID_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
@@ -13707,7 +13706,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"INVALID\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{not_exist}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -14278,7 +14277,7 @@
 					]
 				},
 				{
-					"name": "SKIP|Discount Plan",
+					"name": "Discount Plan",
 					"item": [
 						{
 							"name": "CreateOrUpdate|DiscountPlan|DP|SUCCESS",
@@ -14309,7 +14308,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
@@ -14407,7 +14406,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan",
@@ -14451,7 +14450,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan",
@@ -14495,7 +14494,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan",
@@ -14539,7 +14538,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"durationUnit\": \"1\",\r\n    \"startDate\": \"2019-03-03\",\r\n    \"endDate\": \"2019-03-04\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
@@ -14646,7 +14645,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": {{not_exist}},\r\n    \"startDate\": \"{{valid_from}}\",\r\n    \"endDate\": \"{{valid_to}}\",\r\n    \"defaultDuration\": \"1\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"durationUnit\": {{not_exist}},\r\n    \"startDate\": \"{{valid_from}}\",\r\n    \"endDate\": \"{{valid_to}}\",\r\n    \"defaultDuration\": \"1\",\r\n    \"discountPlanType\": \"INVOICE\"\r\n\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
@@ -15388,7 +15387,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"userAccount\": \"{{user_acc}}\",\r\n    \"offerTemplate\": \"{{offerTemplate}}\",\r\n    \"subscriptionDate\": \"2020-01-01T22:00:00Z\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"TEST_ST\",\r\n                \"subscriptionDate\": \"2019-01-01T22:00:00Z\",\r\n                \"quantity\": 1\r\n            }\r\n        ]\r\n    }\r\n}\r\n"
+							"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"userAccount\": \"{{user_acc}}\",\r\n    \"offerTemplate\": \"TEST_OT\",\r\n    \"subscriptionDate\": \"2020-01-01T22:00:00Z\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"TEST_ST\",\r\n                \"subscriptionDate\": \"2019-01-01T22:00:00Z\",\r\n                \"quantity\": 1\r\n            }\r\n        ]\r\n    }\r\n}\r\n"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/billing/subscription/subscribeAndActivateServices",
@@ -17132,7 +17131,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"oneShotCharge\": \"TEST_OS\",\n    \"subscription\": \"TEST_SUB2\",\n    \"createWallet\": false,\n    \"operationDate\": \"2020-04-06\",\n    \"quantity\": \"1\",\n    \"description\": \"Apply-OneShotChargeInstance_Description\",\n    \"amountWithoutTax\": \"11\",\n    \"amountWithTax\": \"13\",\n    \"criteria1\": \"criteria1\",\n    \"criteria2\": \"criteria2\",\n    \"criteria3\": \"criteria3\"\n}\n"
+									"raw": "{\n    \"oneShotCharge\": \"TEST_OS\",\n    \"subscription\": \"{{sub_code}}\",\n    \"createWallet\": false,\n    \"operationDate\": \"2020-04-06\",\n    \"quantity\": \"1\",\n    \"description\": \"Apply-OneShotChargeInstance_Description\",\n    \"amountWithoutTax\": \"11\",\n    \"amountWithTax\": \"13\",\n    \"criteria1\": \"criteria1\",\n    \"criteria2\": \"criteria2\",\n    \"criteria3\": \"criteria3\"\n}\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
