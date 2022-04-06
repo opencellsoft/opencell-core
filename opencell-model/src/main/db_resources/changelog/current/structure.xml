@@ -12539,4 +12539,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" /> 
     </changeSet>
 
+    <changeSet id="#INTRD-6298_20220405" author="aelmalki">
+        <addColumn tableName="ar_accounting_scheme">
+            <column name="long_description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
