@@ -10208,6 +10208,8 @@
             <column name="user_account_id" type="bigint"/>
             <column name ="order_line_type" type="varchar(10)" />
             <column name="subscription_id" type="bigint" />
+            <column name="termination_date" type="datetime" />
+            <column name="sub_termin_reason_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -15995,6 +15997,11 @@
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
     
+
+    <changeSet id="#INTRD-6136-20220406-fk" author="HatimOUDAD">
+        <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_offer" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdafs" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>
     <changeSet id="rebuild-str-540-5991-fk1" author="Mbarek-Ay">
        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" /> 
@@ -17530,6 +17537,7 @@
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
     <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-6136-20220406" author="HatimOUDAD" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
 
 
