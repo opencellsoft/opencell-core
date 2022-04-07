@@ -18,27 +18,10 @@
 
 package org.meveo.service.catalog.impl;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -51,21 +34,29 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
-import org.meveo.model.catalog.DiscountPlanTypeEnum;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceLineService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Edward P. Legaspi
@@ -249,19 +240,23 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
         log.debug("getApplicableDiscountPlanItems discountPlan code={},isDiscountApplicable={}",discountPlan.getCode(),isDiscountApplicable);
 
+        if (walletOperation.isOverrodePrice() && BooleanUtils.isFalse(discountPlan.isApplicableOnOverriddenPrice())) {
+            return Collections.emptyList();
+        }
+
         if (isDiscountApplicable) {
-        	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
-              Long lowPriority=null;
-              for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-              	
-                  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) 
-                		  && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
-                  	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
-                  	if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
-                  	applicableDiscountPlanItems.add(discountPlanItem);
-                  }
-                  
-              }
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority = null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+
+                if ((lowPriority == null || lowPriority.equals(discountPlanItem.getPriority()))
+                        && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle, subscription, walletOperation)) {
+                    lowPriority = lowPriority != null ? lowPriority : discountPlanItem.getPriority();
+                    if (discountPlanItemType == null || (discountPlanItemType != null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType())))
+                        applicableDiscountPlanItems.add(discountPlanItem);
+                }
+
+            }
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
        

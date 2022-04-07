@@ -9479,5 +9479,11 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
  
       </changeSet>
+
+    <changeSet id="#20220407_ADHOC" author="NabilOuachi">
+        <addColumn tableName="cat_discount_plan">
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
