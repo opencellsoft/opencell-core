@@ -1261,21 +1261,13 @@
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-taxDEMO">
         <insert tableName="billing_tax_category">
-            <column name="id" valueNumeric="-1"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="2020-02-08 00:03:59.983" />
-            <column name="version" valueNumeric="0" />
-            <column name="code" value="Tax category"/>
-            <column name="uuid" value="tax_category_1"/>
-        </insert>
-        <insert tableName="billing_tax_category">
             <column name="id" value="-2"/>
             <column name="code" value="EXEMPTED"/>
             <column name="description_i18n" value='{"FRA":"Exempté","ENG":"Exempted"}'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_exempted" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_category">
             <column name="id" value="-3"/>
@@ -1284,25 +1276,8 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_regular" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>        
-        <insert tableName="billing_tax_class">
-            <column name="id" valueNumeric="-1"/>
-            <column name="code" value="CMP_DATA"/>
-            <column name="description" value="Consumption Data" />
-            <column name="uuid" value="tax_class_-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.724" />
-        </insert>
-        <insert tableName="billing_tax_class">
-            <column name="id" valueNumeric="-2"/>
-            <column name="code" value="SUB_DATA"/>
-            <column name="description" value="Subscription Data" />
-            <column name="uuid" value="tax_class_-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.744" />
-        </insert>
-
         <insert tableName="billing_tax_class">
         	<column name="id" value="-3"/>
             <column name="code" value="NO_TAX"/>
@@ -1310,7 +1285,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_no_tax" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-4"/>
@@ -1319,7 +1294,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_reduced" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-5"/>
@@ -1328,43 +1303,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_normal" />
-           <column name="version" valueNumeric="0" />
-        </insert>        
-        <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-1"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-1" />
-            <column name="buyer_country_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.765" />
-        </insert>
-        <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-2"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-1" />
-            <column name="buyer_country_id" valueNumeric="-2" />
-            <column name="tax_id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.786" />
-        </insert>
-        <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-3"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-2" />
-            <column name="buyer_country_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.807" />
-        </insert>
-        <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-4"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-2" />
-            <column name="buyer_country_id" valueNumeric="-2" />
-            <column name="tax_id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.829" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-11'/>
@@ -1372,15 +1311,18 @@
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="100" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-12'/>
+            <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-3"/>
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="20" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-13'/>
@@ -1389,19 +1331,32 @@
             <column name="tax_id" value='-4'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="2" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-14'/>
             <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-5"/>
+            <column name="tax_id" value='-4'/>
+            <column name="buyer_country_id" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="10" />
+            <column name="version" valueNumeric="0" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-15'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-5'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="1" />
+            <column name="version" valueNumeric="0" />
         </insert>
     </changeSet>
-    
+        
     <changeSet author="AndriusKarpavicius" id="rebuild-data-subscriptionTerminationReasonsDEMO">
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-1" />
