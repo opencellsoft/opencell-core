@@ -18,16 +18,7 @@
 
 package org.meveo.api.dto.catalog;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
@@ -37,7 +28,14 @@ import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class DiscountPlanDto.
@@ -177,6 +175,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	@Schema(description = "A list of entities (CustomerCategory, Offer, Product, Article).")
 	private List<ApplicableEntityDto> applicableEntities;
 
+	private Boolean applicableOnOverriddenPrice;
+
 	/**
 	 * Instantiates a new DiscountPlanDto
 	 */
@@ -218,6 +218,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 			}
 			incompatibleDiscountPlans = discountPlansDto;
 		}
+		this.applicableOnOverriddenPrice = discountPlan.isApplicableOnOverriddenPrice();
 	}
 
     @Override
@@ -380,5 +381,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setDiscountPlanType(DiscountPlanTypeEnum discountPlanType) {
 		this.discountPlanType = discountPlanType;
+	}
+
+	public Boolean isApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
 }

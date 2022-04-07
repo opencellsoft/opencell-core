@@ -18,10 +18,15 @@
 
 package org.meveo.model.catalog;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
+import org.meveo.model.ObservableEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -44,15 +49,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ISearchable;
-import org.meveo.model.ObservableEntity;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Discount plan
@@ -213,6 +213,10 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JoinColumn(name = "discount_plan_id")
 	private List<DiscountPlan> incompatibleDiscountPlans;
+
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private Boolean applicableOnOverriddenPrice;
 
 	public enum DurationPeriodUnitEnum {
 		/**
@@ -442,8 +446,16 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	public void setExpressionEl(String expressionEl) {
 		this.expressionEl = expressionEl;
 	}
-	
-    /**
+
+	public Boolean isApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+
+	/**
      * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
      *
