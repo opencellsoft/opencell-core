@@ -386,7 +386,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "run_type")
     private BillingRunTypeEnum runType;
 
-
+    @Column(name = "pdf_job_execution_result_id")
+    private Long pdfJobExecutionResultId;
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -906,4 +907,12 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setRunType(BillingRunTypeEnum runType) {
 		this.runType = runType;
 	}
+
+    public Long getPdfJobExecutionResultId() {
+        return pdfJobExecutionResultId;
+    }
+
+    public void setPdfJobExecutionResultId(Long pdfJobExecutionResultId) {
+        this.pdfJobExecutionResultId = pdfJobExecutionResultId;
+    }
 }
