@@ -6,6 +6,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 @Entity
@@ -18,6 +19,10 @@ public class GlobalSettings extends AuditableEntity {
 
     @Column(name = "quote_default_validity_delay", nullable = false)
     private Integer quoteDefaultValidityDelay;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "activate_dunning")
+    private Boolean activateDunning = Boolean.FALSE;
 
     public GlobalSettings() {
         super();
@@ -35,5 +40,13 @@ public class GlobalSettings extends AuditableEntity {
      */
     public void setQuoteDefaultValidityDelay(Integer quoteDefaultValidityDelay) {
         this.quoteDefaultValidityDelay = quoteDefaultValidityDelay;
+    }
+
+    public Boolean getActivateDunning() {
+        return activateDunning;
+    }
+
+    public void setActivateDunning(Boolean activateDunning) {
+        this.activateDunning = activateDunning;
     }
 }

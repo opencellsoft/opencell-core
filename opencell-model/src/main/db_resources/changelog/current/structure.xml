@@ -12573,17 +12573,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="functional_unit_price" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6056_20220413" author="HatimOUDAD">
 	    <addColumn tableName="cpq_quote_product">
 	            <column name="product_action_type" type="varchar(10)" />
 	            <column name="termination_date" type="datetime" />
 	            <column name="sub_termin_reason_id" type="bigint" />
 	    </addColumn>
-	
+
 	        <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_quote_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdcc" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
-	
+
 	        <addColumn tableName="quote_offer">
 	            <column name="subscription_id" type="bigint" />
 	        </addColumn>
@@ -12714,22 +12714,22 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="symbol" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA">
 		<sql>
 			ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
-			
+
 			update ar_account_operation
 			set operation_number = nextval('account_operation_number_seq')
 			from (select ap.start_date, ap.end_date
 					 from accounting_period ap
 					 where accounting_period_year='2022-2023') as current_ap
 			where accounting_date between current_ap.start_date and current_ap.end_date;
-			
+
 			ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim">
     	<dropView viewName="billing_wallet_operation_period"/>
     	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_wallet_operation"/>
@@ -12759,4 +12759,10 @@ order by date_trunc('month', i.invoice_date) DESC
         </createView>
     </changeSet>
 
+
+    <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza">
+        <addColumn tableName="global_settings">
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
