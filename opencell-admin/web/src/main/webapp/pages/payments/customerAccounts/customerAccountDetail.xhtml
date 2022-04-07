@@ -98,8 +98,6 @@
                                         
                                         
                                         <h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
-                                            <hftl:formField label="#{messages['customerAccount.dunningLevel']}" field="dunningLevel" rendered="#{true or !customerAccountBean.edit}"
-                                                newLine="true" />
                                             <hftl:decorateFormField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
                                                 <h:outputText id="dunning_date_text" rendered="#{true or !customerAccountBean.edit}"
                                                     value="#{customerAccountBean.entity.getDateDunningLevel()}" style="font-weight:bold;">
