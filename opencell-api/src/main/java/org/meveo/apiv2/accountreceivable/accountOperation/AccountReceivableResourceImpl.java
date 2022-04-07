@@ -1,5 +1,7 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.AcountReceivable.*;
 import org.meveo.apiv2.accountreceivable.AccountOperationApiService;
 import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
 import org.meveo.apiv2.generic.exception.ConflictException;
@@ -27,15 +30,21 @@ import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
 public class AccountReceivableResourceImpl implements AccountReceivableResource {
+
     @Inject
     private AccountOperationService accountOperationService;
+
     @Inject
     private AccountingPeriodService accountingPeriodService;
+
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
     
 	@Inject
 	private AccountOperationApiService accountOperationServiceApi;
+
+    @Inject
+    private AccountOperationApiService accountOperationApiService;
 
     @Override
     public Response post(Map<String, Set<Long>> accountOperations) {
@@ -136,4 +145,17 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 			return Response.status(Response.Status.CONFLICT).entity(result).build();
 		}
 	}
+
+    @Override
+    public Response assignAccountOperation(Long accountOperationId, CustomerAccountInput customerAccount) {
+        if(customerAccount.getCustomerAccount() == null || (customerAccount.getCustomerAccount().getId() == null
+                && customerAccount.getCustomerAccount().getCode() == null)) {
+            return Response.status(PRECONDITION_FAILED)
+                    .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\":\"Missing customer account parameters\"}}")
+                    .build();
+        }
+        return Response.ok()
+                .entity(accountOperationApiService.assignAccountOperation(accountOperationId, customerAccount.getCustomerAccount()).get())
+                .build();
+    }
 }
