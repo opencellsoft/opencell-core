@@ -53,7 +53,6 @@ public class DunningWF extends WorkflowType<CustomerAccount> {
     @Override
     public void changeStatus(String newStatus) throws BusinessException {
         entity.setDunningLevel(DunningLevelEnum.valueOf(newStatus));
-        entity.setDateDunningLevel(new Date());
     }
 
     @Override

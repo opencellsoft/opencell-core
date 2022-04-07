@@ -226,7 +226,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * Populate entity with fields from DTO entity
-     * 
+     *
      * @param userAccount Entity to populate
      * @param postData DTO entity object to populate from
      * @param checkCustomField Should a check be made if CF field is required
@@ -290,12 +290,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getDunningLevel() != null) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
-        }
-
-        if (postData.getDateDunningLevel() != null) {
-            customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
-        } else if (isNew) {
-            customerAccount.setDateDunningLevel(new Date());
         }
 
         if (businessAccountModel != null) {
@@ -707,7 +701,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * Returns list of counters at a given date for a customer account.
-     * 
+     *
      * @param customerAccountCode the customer account code
      * @param date the selected date
      * @return a counter instance list
