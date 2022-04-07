@@ -457,19 +457,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
-            Element subscriptionTag = doc.createElement("subscription");
-            subscriptionTag.setAttribute("id", subscription.getId() + "");
-            subscriptionTag.setAttribute("code", subscription.getCode());
-            subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
-            subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
-            Element subscriptionDateTag = doc.createElement("subscriptionDate");
-            subscriptionDateTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
-            subscriptionTag.appendChild(subscriptionDateTag);
-            Element endAgreementTag = doc.createElement("endAgreementDate");
-            endAgreementTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
-            subscriptionTag.appendChild(endAgreementTag);
-            addCustomFields(subscription, doc, subscriptionTag);
-            subscriptionsTag.appendChild(subscriptionTag);
+            if(userAccount.getId() == subscription.getUserAccount().getId()
+                    && userAccount.getCode().equals(subscription.getUserAccount().getCode())) {
+                Element subscriptionTag = doc.createElement("subscription");
+                subscriptionTag.setAttribute("id", subscription.getId() + "");
+                subscriptionTag.setAttribute("code", subscription.getCode());
+                subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
+                subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
+                Element subscriptionDateTag = doc.createElement("subscriptionDate");
+                subscriptionDateTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
+                subscriptionTag.appendChild(subscriptionDateTag);
+                Element endAgreementTag = doc.createElement("endAgreementDate");
+                endAgreementTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
+                subscriptionTag.appendChild(endAgreementTag);
+                addCustomFields(subscription, doc, subscriptionTag);
+                subscriptionsTag.appendChild(subscriptionTag);
+            }
         }
         return subscriptionsTag;
     }
@@ -2433,7 +2436,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     userAccountsTag.appendChild(userAccountTag);        		
         		}
 
-        }else {
+        } else {
             for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
                 Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                         false, invoiceLanguageCode, invoiceConfiguration);
@@ -2486,7 +2489,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
             Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, null, isVirtual, ignoreUA, invoiceConfiguration, invoiceLines);
-            if (subscriptionsTag != null) {
+            if (subscriptionsTag != null
+                    && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);
             }
         }
