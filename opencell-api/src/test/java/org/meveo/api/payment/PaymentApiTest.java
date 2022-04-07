@@ -1,5 +1,6 @@
 package org.meveo.api.payment;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -68,7 +69,8 @@ public class PaymentApiTest {
                 any(), any(), any(), any(), any());
 
 
-        paymentApi.createPayment(paymentDto);
+        Long id = paymentApi.createPayment(paymentDto);
+        Assert.assertNull(id);
 
     }
 
