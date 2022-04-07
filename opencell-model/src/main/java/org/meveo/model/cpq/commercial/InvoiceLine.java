@@ -319,6 +319,9 @@ public class InvoiceLine extends AuditableEntity {
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
 		this.status = InvoiceLineStatusEnum.OPEN;
+		this.discountValue=copy.discountValue;
+		this.discountPlanType=copy.discountPlanType;
+		this.discountPlanItem=copy.discountPlanItem;
 	}
 
 	public Invoice getInvoice() {
