@@ -159,7 +159,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         CustomerAccount customerAccount = new CustomerAccount();
         populate(postData, customerAccount);
-		customerAccount.setDateDunningLevel(postData.getDateDunningLevel()!=null?postData.getDateDunningLevel():new Date());
         customerAccount.setCustomer(customer);
         customerAccount.setTradingCurrency(tradingCurrency);
         customerAccount.setTradingLanguage(tradingLanguage);
@@ -293,10 +292,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (!StringUtils.isBlank(postData.getDunningLevel())) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
-        }
-        
-        if(postData.getDateDunningLevel()!=null) {
-    		customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
         }
 
         if (businessAccountModel != null) {
