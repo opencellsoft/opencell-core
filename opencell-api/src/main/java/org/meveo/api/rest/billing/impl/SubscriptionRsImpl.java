@@ -472,6 +472,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus cancelSubscriptionTermination(String subscriptionCode, Date subscriptionValidityDate) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionTermination(subscriptionCode, subscriptionValidityDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 
     @Override
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
