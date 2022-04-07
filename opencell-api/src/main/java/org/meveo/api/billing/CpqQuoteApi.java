@@ -1561,10 +1561,15 @@ public class CpqQuoteApi extends BaseApi {
                     for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
                         if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
                             UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
+                            usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(usageCharge);
+                            if (usageArticle == null)
+                                throw new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+                            boolean overridden = false;
                             if (overrodeArticle.keySet().contains(usageArticle)) {
                                 QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
                                 usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
                                 usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                                overridden = true;
                             }
                             if (chargetemplate.getUsageQuantityAttribute() != null) {
                                 edr = new EDR();
@@ -1579,7 +1584,15 @@ public class CpqQuoteApi extends BaseApi {
                                     edr.setOriginRecord(System.currentTimeMillis() + "");
                                     Double quantity = 0d;
                                     Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                                    if (quantityValue != null && quantityValue instanceof Double) {
+                                    if (quantityValue != null && quantityValue instanceof String) {
+                                        try {
+                                            quantity = Double.parseDouble(quantityValue.toString());
+                                        } catch (NumberFormatException exp) {
+                                            throw new MissingParameterException(
+                                                    "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+                                                            + " for the usage charge " + usageCharge.getCode());
+                                        }
+                                    } else if (quantityValue != null && quantityValue instanceof Double) {
                                         quantity = (Double) quantityValue;
                                     } else {
                                         throw new MissingParameterException(
@@ -1604,10 +1617,9 @@ public class CpqQuoteApi extends BaseApi {
 
                                         if (walletOperationsFromEdr != null) {
                                             for (WalletOperation walletOperation : walletOperationsFromEdr) {
+                                                if ((walletOperation.getUnitAmountWithoutTax() != null && walletOperation.getUnitAmountWithoutTax().compareTo(BigDecimal.ZERO) >= 0) || (walletOperation.getUnitAmountWithTax() != null && walletOperation.getUnitAmountWithTax().compareTo(BigDecimal.ZERO) >= 0))
+                                                    walletOperation.setOverrodePrice(overridden);
                                                 if (walletOperation.getAccountingArticle() == null) {
-                                                    usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
-                                                    if (usageArticle == null)
-                                                        new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
                                                     walletOperation.setAccountingArticle(usageArticle);
                                                 }
                                                 walletOperations.add(walletOperation);
