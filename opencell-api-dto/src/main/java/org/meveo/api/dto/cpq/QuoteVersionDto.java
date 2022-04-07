@@ -1,9 +1,7 @@
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -11,10 +9,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -85,8 +83,8 @@ public class QuoteVersionDto extends BaseEntityDto {
 	public QuoteVersionDto(QuoteVersion q) {
 	 super();
 	 init(q);
-
 	}
+
 	private void init(QuoteVersion q) {
 		this.shortDescription = q.getShortDescription();
 		this.quoteCode = q.getQuote().getCode();
