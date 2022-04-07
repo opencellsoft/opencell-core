@@ -42,16 +42,6 @@ public class InvoicingJobV2 extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-		CustomFieldTemplate customFieldCommitInterval = new CustomFieldTemplate();
-		customFieldCommitInterval.setCode("maxBAsPerTransaction");
-		customFieldCommitInterval.setAppliesTo("JobInstance_InvoicingJobV2");
-		customFieldCommitInterval.setActive(true);
-		customFieldCommitInterval.setDescription("commit interval");
-		customFieldCommitInterval.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldCommitInterval.setValueRequired(false);
-		customFieldCommitInterval.setDefaultValue("1000");
-		result.put("maxBAsPerTransaction", customFieldCommitInterval);
-
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);
         customFieldNbRuns.setAppliesTo("JobInstance_InvoicingJobV2");
@@ -85,6 +75,7 @@ public class InvoicingJobV2 extends Job {
         customFieldBR.setValueRequired(false);
         customFieldBR.setGuiPosition("tab:Configuration:0;field:2");
         result.put("billingRuns", customFieldBR);
+        
         return result;
     }
 }
