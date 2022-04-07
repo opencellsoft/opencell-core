@@ -786,6 +786,17 @@ public class CommercialOrderApi extends BaseApi {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.TERMINATE);
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
@@ -855,6 +866,19 @@ public class CommercialOrderApi extends BaseApi {
         	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
+        }
+        
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.TERMINATE);
         	
         	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
         	if(subscription == null) {
