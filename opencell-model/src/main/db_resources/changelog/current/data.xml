@@ -9900,7 +9900,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid">
 		 <update tableName="ar_occ_template">
 			<column name="version" valueNumeric="1" />
@@ -9909,7 +9909,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="contra_accounting_code_id" valueNumeric="-42" />
             <where>id=-1</where>
 		</update>
-		
+
 		<update tableName="ar_occ_template">
 			<column name="version" valueNumeric="1" />
 			<column name="updated" valueDate="${db.current.time}" />
@@ -9967,11 +9967,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="occ_category" value="CREDIT" />
             <where>id=-61</where>
 		</update>
-		
-		<delete tableName="ar_occ_template">  
-	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>  
-	    </delete>  
+
+		<delete tableName="ar_occ_template">
+	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>
+	    </delete>
 	</changeSet>
-	
+
+	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
