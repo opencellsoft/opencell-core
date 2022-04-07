@@ -128,9 +128,6 @@ public class PaymentApi extends BaseApi {
         if (StringUtils.isBlank(paymentDto.getAmount())) {
             missingParameters.add("amount");
         }
-        if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
-            missingParameters.add("customerAccountCode");
-        }
         if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
         }
@@ -142,10 +139,6 @@ public class PaymentApi extends BaseApi {
         }
         handleMissingParameters();
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
-        if (customerAccount == null) {
-            throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
-        }
-
         OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
