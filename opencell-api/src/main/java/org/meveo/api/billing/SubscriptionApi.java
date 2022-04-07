@@ -2722,7 +2722,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
         
-        if(!userAccount.isConsumer()) {
+        if(!userAccount.getIsConsumer()) {
             throw new BusinessApiException("UserAccount: " + userAccount.getCode() + " is not a consumer. Offer subscription is not allowed.");
         }
 
