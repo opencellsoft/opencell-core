@@ -67,6 +67,9 @@ public class QuotePrice extends AuditableEntity {
 		this.quantity = copy.quantity;
 		this.discountedQuotePrice = copy.discountedQuotePrice;
 		this.discountPlan=copy.discountPlan;
+		this.discountPlanItem=copy.discountPlanItem;
+		this.discountPlanType=copy.discountPlanType;
+		this.discountValue=copy.discountValue;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
