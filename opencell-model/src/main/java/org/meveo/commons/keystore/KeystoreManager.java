@@ -84,4 +84,8 @@ public class KeystoreManager {
         return false;
     }
 
+    public static boolean existKeystore() {
+        return CurrentServiceContainer.getServiceContainer().getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME)) != null;
+    }
+
 }

@@ -34,11 +34,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AuthenticationTypeEnum;
-import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -254,7 +254,17 @@ public class MeveoInstance extends BusinessEntity {
      */
     @Column(name = "auth_password", length = 60)
     @Size(max = 60)
-    private String authPassword;
+    private String authPasswordDB;
+
+    /**
+     * transient authPassword
+     */
+    transient private String authPassword;
+
+    /**
+     * transient authPassword in Keystore
+     */
+    transient private String authPasswordKS;
     
     /**
      * Authentication client id
@@ -647,12 +657,38 @@ public class MeveoInstance extends BusinessEntity {
         this.authUsername = authUsername;
     }
 
-    public String getAuthPassword() {
-        return authPassword;
+    public String getAuthPasswordDB() {
+        return authPasswordDB;
     }
 
-    public void setAuthPassword(String authPassword) {
-        this.authPassword = authPassword;
+    public void setAuthPasswordDB(String authPasswordDB) {
+        this.authPasswordDB = authPasswordDB;
+    }
+
+    public String getAuthPassword() {
+        if (KeystoreManager.existKeystore())
+            return getAuthPasswordKS();
+        else
+            return getAuthPasswordDB();
+    }
+
+    public void setAuthPassword(String password) {
+        if (KeystoreManager.existKeystore()) {
+            authPasswordDB = null;
+            setAuthPasswordKS(password);
+        }
+        else
+            setAuthPasswordDB(password);
+    }
+
+    public String getAuthPasswordKS() {
+        return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getCode());
+    }
+
+    public void setAuthPasswordKS(String passwordKS) {
+        if (passwordKS == null)
+            passwordKS = "";
+        KeystoreManager.addCredential(getClass().getSimpleName() + "." + getCode(), passwordKS);
     }
     
     public String getClientId() {
