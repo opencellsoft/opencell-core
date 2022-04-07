@@ -2537,7 +2537,15 @@
 			<column name="creator" value="opencell.admin" />
 		</insert>
 	</changeSet>
-        
+
+    <changeSet id="#INTRD-6341_20220406" author="aelmalki">
+        <update tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+            <where> code IN ('INV_STD', 'INV_CRN')</where>
+        </update>
+    </changeSet>
+
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
     
