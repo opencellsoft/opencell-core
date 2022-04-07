@@ -151,7 +151,6 @@ public class CustomerImportService extends ImportService {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setCode(custAcc.getCode());
         customerAccount.setDescription(custAcc.getDescription());
-        customerAccount.setDateDunningLevel(new Date());
         customerAccount.setDunningLevel(DunningLevelEnum.R0);
         customerAccount.setPassword(RandomStringUtils.randomAlphabetic(8));
         customerAccount.setDateStatus(new Date());
@@ -281,7 +280,6 @@ public class CustomerImportService extends ImportService {
             org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         customerAccount.setDescription(custAcc.getDescription());
-        customerAccount.setDateDunningLevel(new Date());
         customerAccount.setDunningLevel(DunningLevelEnum.R0);
         customerAccount.setPassword(RandomStringUtils.randomAlphabetic(8));
         customerAccount.setDateStatus(new Date());

@@ -559,7 +559,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         CustomerAccount customerAccount = findCustomerAccount(id, code);
         customerAccount.setDunningLevel(dunningLevel);
-        customerAccount.setDateDunningLevel(new Date());
         update(customerAccount);
         log.info("successfully end updateDunningLevel!");
     }
