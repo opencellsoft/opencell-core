@@ -31,6 +31,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -108,6 +109,16 @@ public class OrderOffer extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
+    
+    /** termination timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "termination_date")
+    private Date terminationDate;
+    
+    /** Termination reason. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_termin_reason_id")
+    private SubscriptionTerminationReason terminationReason;
     
 	
     @Override
@@ -227,5 +238,20 @@ public class OrderOffer extends BusinessCFEntity {
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
 	}
-    
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+	public SubscriptionTerminationReason getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+		this.terminationReason = terminationReason;
+	}
 }
