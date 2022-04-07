@@ -172,6 +172,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 */
 	@Column(name = "dunning_level")
 	@Enumerated(EnumType.STRING)
+	@Deprecated
 	private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
 	/**
