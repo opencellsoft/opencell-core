@@ -13,7 +13,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.payments.impl.PaymentHistoryService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -22,12 +21,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentApiTest {
 
-    class PaymentApiMock extends PaymentApi {
+    static class PaymentApiMock extends PaymentApi {
         @Override
         protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return null;
@@ -47,8 +47,6 @@ public class PaymentApiTest {
     @Mock
     private PaymentService paymentService;
 
-    @Mock
-    private PaymentHistoryService paymentHistoryService;
 
 
 
@@ -65,10 +63,6 @@ public class PaymentApiTest {
         doReturn(null).when(customerAccountService).findByCode(any());
         doReturn(new OCCTemplate()).when(oCCTemplateService).findByCode(any());
         doNothing().when(paymentService).create(any());
-        doNothing().when(paymentHistoryService).addHistory(any(), any(), any(), any(), any(), any(), any(), any(),
-                any(), any(), any(), any(), any());
-
-
         Long id = paymentApi.createPayment(paymentDto);
         Assert.assertNull(id);
 
