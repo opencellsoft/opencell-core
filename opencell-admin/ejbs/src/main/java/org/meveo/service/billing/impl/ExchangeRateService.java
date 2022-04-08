@@ -1,8 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -69,9 +68,49 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         exchangeRate.setExchangeRate(postData.getExchangeRate());
         exchangeRate.setFromDate(postData.getFromDate());
         create(exchangeRate);
+
+        Set<ExchangeRate> exchangeRates = new HashSet<>(tradingCurrency.getExchangeRates());
+        exchangeRates.add(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
         return exchangeRate;
     }
-    
+
+        private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates){
+
+        if(tradingCurrency != null
+                && (tradingCurrency.getCurrentRateFromDate() == null ||
+                tradingCurrency.getCurrentRateFromDate().after(new Date()))){
+
+             exchangeRates.stream()
+                    .filter(exRate-> exRate.getFromDate().after(new Date()))
+                    .min(Comparator.comparing(ExchangeRate::getFromDate))
+                    .ifPresent(exchangeRate1->{
+
+                TradingCurrency tradingCurrencyToUpdate = exchangeRate1.getTradingCurrency();
+                tradingCurrencyToUpdate.setCurrentRate(exchangeRate1.getExchangeRate());
+                tradingCurrencyToUpdate.setCurrentRateFromDate(exchangeRate1.getFromDate());
+                tradingCurrencyToUpdate.setCurrentRateUpdater( exchangeRate1.getAuditable().getUpdater() != null ?
+                        exchangeRate1.getAuditable().getUpdater() : exchangeRate1.getAuditable().getCreator()
+
+                );
+
+                tradingCurrencyService.update(tradingCurrencyToUpdate);
+            });
+
+        }
+
+
+    }
+
+    @Override
+    public ExchangeRate update(ExchangeRate exchangeRate) {
+        ExchangeRate updatedExchangeRate =  super.update(exchangeRate);
+        Set<ExchangeRate> exchangeRates = new HashSet<>(exchangeRate.getTradingCurrency().getExchangeRates());
+        exchangeRates.add(exchangeRate);
+        updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
+        return updatedExchangeRate;
+    }
+
     public List<Long> getAllTradingCurrencyWithCurrentRate() {
         return getEntityManager()
                 .createNamedQuery("ExchangeRate.getAllTradingCurrencyWithCurrentRate", Long.class)
@@ -121,6 +160,9 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         
         try {
             remove(exchangeRate);
+            Set<ExchangeRate> exchangeRates = new HashSet<>(exchangeRate.getTradingCurrency().getExchangeRates());
+            exchangeRates.remove(exchangeRate);
+            updateTradingCurrencyForExchangeRate(exchangeRate.getTradingCurrency(), exchangeRates);
         } catch (Exception e) {
             throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
         }
