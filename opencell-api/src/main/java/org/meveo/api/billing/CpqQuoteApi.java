@@ -325,7 +325,9 @@ public class CpqQuoteApi extends BaseApi {
         
         try {
             cpqQuoteService.create(cpqQuote);
-            quoteVersionService.create(populateNewQuoteVersion(quoteDto.getQuoteVersion(), cpqQuote));
+            QuoteVersion newQuoteVersion = populateNewQuoteVersion(quoteDto.getQuoteVersion(), cpqQuote);
+            quoteVersionService.create(newQuoteVersion);
+            quoteDto.setQuoteVersion(new QuoteVersionDto(newQuoteVersion));
         } catch(BusinessApiException e) {
             throw new MeveoApiException(e);
         }
@@ -359,7 +361,7 @@ public class CpqQuoteApi extends BaseApi {
     		    GlobalSettings globalSettings = globalSettingsService.findLastOne();
     		    Date endDate = null;
     		    if (globalSettings != null) {
-    		        endDate = DateUtils.addDaysToDate(endDate, globalSettings.getQuoteDefaultValidityDelay());
+    		        endDate = DateUtils.addDaysToDate(new Date(), globalSettings.getQuoteDefaultValidityDelay());
                 }
                 quoteVersion.setEndDate(endDate);
             }
@@ -699,7 +701,7 @@ public class CpqQuoteApi extends BaseApi {
                     GlobalSettings globalSettings = globalSettingsService.findLastOne();
                     Date endDate = null;
                     if (globalSettings != null) {
-                        endDate = DateUtils.addDaysToDate(endDate, globalSettings.getQuoteDefaultValidityDelay());
+                        endDate = DateUtils.addDaysToDate(new Date(), globalSettings.getQuoteDefaultValidityDelay());
                     }
                     qv.setEndDate(endDate);
                 }
