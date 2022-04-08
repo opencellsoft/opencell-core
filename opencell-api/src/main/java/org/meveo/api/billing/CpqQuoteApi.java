@@ -1744,41 +1744,40 @@ public class CpqQuoteApi extends BaseApi {
 //            }
 //        }
 
-        //TODO: add discountplan instance for quoteOffer
         if(quoteOffer.getDiscountPlan() != null) {
-	        DiscountPlanInstance dpi = new DiscountPlanInstance();
-			dpi.assignEntityToDiscountPlanInstances(subscription);
-			var discountPlan = quoteOffer.getDiscountPlan();
-			dpi.setDiscountPlan(discountPlan);
-			dpi.copyEffectivityDates(discountPlan);
-			dpi.setDiscountPlanInstanceStatus(discountPlan);
-			dpi.setCfValues(discountPlan.getCfValues());
-			dpi.setSubscription(subscription);
-			subscription.getDiscountPlanInstances().add(dpi);
-			quoteOffer.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
+        	createDiscountPlanInstance(quoteOffer.getDiscountPlan(), subscription,null);
+        }
+        if(quoteOffer.getQuoteVersion().getDiscountPlan() != null) {
+        	createDiscountPlanInstance(quoteOffer.getQuoteVersion().getDiscountPlan(), subscription,null);
         }
         // instantiate and activate services
         processProducts(subscription, quoteOffer.getQuoteProduct());
 
         return subscription;
     }
-
-    private void processProductWithDiscount(Subscription subscription, QuoteProduct quoteProduct, ServiceInstance serviceInstance) {
-
-		if(quoteProduct.getDiscountPlan() != null) {
+    
+    private void createDiscountPlanInstance(DiscountPlan discountPlan,Subscription subscription, ServiceInstance serviceInstance) {
+		if (discountPlan != null) {
 			DiscountPlanInstance dpi = new DiscountPlanInstance();
-			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
-			var discountPlan = quoteProduct.getDiscountPlan();
 			dpi.setDiscountPlan(discountPlan);
 			dpi.copyEffectivityDates(discountPlan);
 			dpi.setDiscountPlanInstanceStatus(discountPlan);
 			dpi.setCfValues(discountPlan.getCfValues());
-			dpi.setServiceInstance(serviceInstance);
 			dpi.setSubscription(subscription);
-			serviceInstance.getDiscountPlanInstances().add(dpi);
-			quoteProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
+			dpi.setServiceInstance(serviceInstance);
+
+			if (serviceInstance != null) {
+				dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+				serviceInstance.getDiscountPlanInstances().add(dpi);
+			} else {
+				dpi.assignEntityToDiscountPlanInstances(subscription);
+				subscription.getDiscountPlanInstances().add(dpi);
+			}
 		}
-	}
+    				
+    }
+
+
     private void processProducts(Subscription subscription, List<QuoteProduct> products) {
 
         for (QuoteProduct quoteProduct : products) {
@@ -1805,7 +1804,7 @@ public class CpqQuoteApi extends BaseApi {
 
             serviceInstance.setSubscription(subscription);
 
-            processProductWithDiscount(subscription, quoteProduct, serviceInstance);
+            createDiscountPlanInstance(quoteProduct.getDiscountPlan(), subscription, serviceInstance);
 
             AttributeInstance attributeInstance = null;
             for (QuoteAttribute quoteAttribute : quoteProduct.getQuoteAttributes()) {
