@@ -111,9 +111,9 @@ public class AccountsManagementApiService {
             }
         }
 
-//		if(!newOwner.getIsConsumer()) {
-//            throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
-//		}            
+		if(newOwner != null && !newOwner.getIsConsumer()) {
+            throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
+		}            
 
 		// Check subscription
         Subscription subscription = subscriptionService.findByCode(subscriptionCode, Arrays.asList("userAccount"));
