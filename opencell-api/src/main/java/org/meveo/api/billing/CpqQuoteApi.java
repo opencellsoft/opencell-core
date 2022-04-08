@@ -2065,21 +2065,23 @@ public class CpqQuoteApi extends BaseApi {
         overrodPricesDto.getPrices()
                 .forEach(overrodePrice -> {
                     List<QuotePrice> quotePrices = quotePriceService.loadByQuoteOfferAndArticleCodeAndPriceLevel(overrodePrice.getOfferId(), overrodePrice.getAccountingArticleCode());
+                    if(!quotePrices.isEmpty()) {
+                    	  BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
-                    BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), 6, RoundingMode.HALF_UP);
-
-                    quotePrices.forEach(quotePrice -> {
-                        BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-                        quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
-                        quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
-                        quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
-                        quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
-                        if (overrodePrice.getPriceOverCharged() == null)
-                            quotePrice.setPriceOverCharged(true);
-                        else
-                            quotePrice.setPriceOverCharged(overrodePrice.getPriceOverCharged());
-                        quotePriceService.update(quotePrice);
-                    });
+                          quotePrices.forEach(quotePrice -> {
+                              BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                              quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
+                              quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
+                              quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
+                              quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
+                              if (overrodePrice.getPriceOverCharged() == null)
+                                  quotePrice.setPriceOverCharged(true);
+                              else
+                                  quotePrice.setPriceOverCharged(overrodePrice.getPriceOverCharged());
+                              quotePriceService.update(quotePrice);
+                          });
+                    }
+                  
                 });
     }
 
