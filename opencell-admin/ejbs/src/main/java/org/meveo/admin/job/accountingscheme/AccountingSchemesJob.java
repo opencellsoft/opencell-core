@@ -45,7 +45,7 @@ public class AccountingSchemesJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         result.put(CF_NB_RUNS, buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "-1"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "1"));
 
         result.put(CF_WAITING_MILLIS, buildCF(CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"),
                 CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0"));

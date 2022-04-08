@@ -9860,6 +9860,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-1" />
 			<column name="uuid" value="AccountingSchemesJob" />
+			<column name="cf_values" value='{"nbRuns": [{"long": 1}], "waitingMillis": [{"long": 0}], "onlyClosedPeriods": [{"boolean": false}]}'/>
 		</insert>
 	</changeSet>
 
