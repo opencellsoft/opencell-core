@@ -74,7 +74,6 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         if (occT.getAccountingScheme() == null) {
                             log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
                                     accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                            accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
                             throw new BusinessException("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
                                     ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
                         }
