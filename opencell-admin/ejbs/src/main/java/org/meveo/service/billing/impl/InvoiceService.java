@@ -2553,7 +2553,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     */
    @JpaAmpNewTx
    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-   public void invalidateInvoice(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+   public void invalidateInvoiceDocuments(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
        BillingRun br = getBrById(billingRunId);
        
        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {

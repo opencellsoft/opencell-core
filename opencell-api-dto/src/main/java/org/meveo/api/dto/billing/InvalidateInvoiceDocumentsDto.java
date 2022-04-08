@@ -8,7 +8,7 @@ import org.meveo.api.dto.BaseEntityDto;
 
 @XmlRootElement(name = "InvalidateInvoiceDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvalidateInvoiceDto extends BaseEntityDto {
+public class InvalidateInvoiceDocumentsDto extends BaseEntityDto {
 
     private static final long serialVersionUID = 2167574427839928842L;
 

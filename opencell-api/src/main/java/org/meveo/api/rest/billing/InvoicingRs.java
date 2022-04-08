@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
-import org.meveo.api.dto.billing.InvalidateInvoiceDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -335,13 +335,13 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/billingRun/{billingRunId}/invalidateInvoice")
+    @Path("/billingRun/{billingRunId}/invalidateInvoiceDocuments")
     @Operation(
             summary="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
             description="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
             operationId="    PUT_Invoicing_billingRun_{billingRunId}_invalidateInvoice",
             responses= {
-                @ApiResponse(description="type ActionStatus.class Invalidate billing run invoices",
+                @ApiResponse(description="type ActionStatus.class Invalidate billing run invoice files",
                         content=@Content(
                                     schema=@Schema(
                                             implementation= ActionStatus.class
@@ -349,7 +349,7 @@ public interface InvoicingRs extends IBaseRs {
                                 )
                 )}
     )
-    ActionStatus invalidateInvoice(@PathParam("billingRunId") Long billingRunId, InvalidateInvoiceDto invalidateInvoiceDto);
+    ActionStatus invalidateInvoiceDocuments(@PathParam("billingRunId") Long billingRunId, InvalidateInvoiceDocumentsDto invalidateInvoiceDocumentsDto);
 
     /**
      * Move invoices to a new Billing Run with the same parameters as the current one, and also in status REJECTED|POSTINVOICED.

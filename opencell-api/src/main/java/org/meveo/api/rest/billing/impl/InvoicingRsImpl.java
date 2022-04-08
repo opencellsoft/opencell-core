@@ -23,7 +23,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
-import org.meveo.api.dto.billing.InvalidateInvoiceDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -214,15 +214,15 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 	}
 	
 	@Override
-    public ActionStatus invalidateInvoice(Long billingRunId, InvalidateInvoiceDto invalidateInvoiceDto) {
+    public ActionStatus invalidateInvoiceDocuments(Long billingRunId, InvalidateInvoiceDocumentsDto invalidateInvoiceDocumentsDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        log.debug("invalidateInvoice request={}", billingRunId);
+        log.debug("invalidateInvoiceDocuments request={}", billingRunId);
         try {
-            invoicingApi.invalidateInvoice(billingRunId, invalidateInvoiceDto.getInvalidateXMLInvoices(), invalidateInvoiceDto.getInvalidatePDFInvoices());
+            invoicingApi.invalidateInvoiceDocuments(billingRunId, invalidateInvoiceDocumentsDto.getInvalidateXMLInvoices(), invalidateInvoiceDocumentsDto.getInvalidatePDFInvoices());
         } catch (Exception e) {
             processException(e, result);
         }
-        log.debug("invalidateInvoice Response={}", result);
+        log.debug("invalidateInvoiceDocuments Response={}", result);
         return result;
     }
 
