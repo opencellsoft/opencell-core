@@ -79,6 +79,7 @@ public class CustomerAccountDto extends AccountDto {
     private Date dateDunningLevel;
 
     /** The dunning level. */
+    @Deprecated
     private DunningLevelEnum dunningLevel;
     /**
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
