@@ -9,10 +9,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.generic.exception.ConflictException;
+import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
@@ -31,7 +34,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
     private AccountingPeriodService accountingPeriodService;
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
-    
+
 	@Inject
 	private AccountOperationApiService accountOperationServiceApi;
 
@@ -117,7 +120,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
         }
         return Response.ok().build();
     }
-    
+
 	@Override
 	public Response markExported(ChangeStatusDto changeStatusDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -134,4 +137,19 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 			return Response.status(Response.Status.CONFLICT).entity(result).build();
 		}
 	}
+
+    @Override
+    public Response matchOperations(Map<Integer, Long> accountOperations) {
+        if (accountOperations == null || accountOperations.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
+        }
+        try {
+            MatchingReturnObject result = accountOperationServiceApi.matchOperations(accountOperations);
+            return Response.status(Response.Status.OK).entity(result).build();
+        } catch (ElementNotFoundException e){
+            return Response.status(Response.Status.NOT_FOUND).entity("Entity does not exist : " + e.getMessage()).build();
+        } catch (BusinessException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Matching action is failed : " + e.getMessage()).build();
+        }
+    }
 }
