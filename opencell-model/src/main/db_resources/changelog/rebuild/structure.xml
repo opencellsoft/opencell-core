@@ -7792,6 +7792,7 @@
             </column>
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-381">
@@ -16134,6 +16135,11 @@
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
     </changeSet>
+    
+     <changeSet id="#INTRD-5859_20220321_build" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet> 
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -17200,6 +17206,7 @@
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

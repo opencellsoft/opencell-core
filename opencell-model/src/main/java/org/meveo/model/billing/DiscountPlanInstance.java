@@ -142,6 +142,12 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     @Column(name = "application_count")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long applicationCount;
+    
+
+    /** The service instance. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
     public boolean isValid() {
         return (startDate == null || endDate == null || startDate.before(endDate));
@@ -350,5 +356,13 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
         this.status = DiscountPlanInstanceStatusEnum.EXPIRED;
         this.statusDate = now;
     }
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
 
 }

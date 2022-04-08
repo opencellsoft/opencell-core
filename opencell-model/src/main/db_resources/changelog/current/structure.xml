@@ -12063,4 +12063,13 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA.">
+    	<addColumn tableName="billing_discount_plan_instance">
+    		<column name="service_instance_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet>
+    
 </databaseChangeLog>
