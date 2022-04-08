@@ -1238,6 +1238,10 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
+            quotePrice.setDiscountPlan(accountingArticlePrice.getDiscountPlan());
+            quotePrice.setDiscountPlanItem(accountingArticlePrice.getDiscountPlanItem());
+            quotePrice.setDiscountPlanType(accountingArticlePrice.getDiscountPlanType());
+            quotePrice.setDiscountValue(accountingArticlePrice.getDiscountValue());
 
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
@@ -1272,6 +1276,19 @@ public class CpqQuoteApi extends BaseApi {
 	            if(a.getRecurrencePeriodicity()!=null) {
 	            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
 	            }
+	            if(a.getDiscountPlan()!=null) {
+	            	quotePrice.setDiscountPlan(a.getDiscountPlan());
+	            }
+	            if(a.getDiscountPlanItem()!=null) {
+	            	 quotePrice.setDiscountPlanItem(a.getDiscountPlanItem());
+	            }
+	            if(a.getDiscountPlanType()!=null) {
+	            	 quotePrice.setDiscountPlanType(a.getDiscountPlanType());
+	            }
+	            if(a.getDiscountValue()!=null) {
+	            	 quotePrice.setDiscountValue(a.getDiscountValue());
+	            } 
+	            
 	            log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
 
 	            return quotePrice;
