@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -52,6 +52,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -202,13 +203,17 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			 BigDecimal walletOperationDiscountAmount = null;
 			 BigDecimal[] amounts = null;
 			 BigDecimal discountValue=null;
+			 Product product=null;
 			 List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
 			 
 			 if(discountPlanTypeEnum != null) {
 				 final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
 				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
 			 }
-			 
+             if(serviceInstance!=null) {
+             	if(serviceInstance.getProductVersion()!=null)
+             		product=serviceInstance.getProductVersion().getProduct();
+             }
 			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size());
 				
 			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
@@ -226,8 +231,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItem.getDiscountPlanItemType())) {
 	                	 unitAmountWithoutTax = discountPlanItem.getDiscountValue();
 	                 }
-	                walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,serviceInstance.getProductVersion().getProduct(),new ArrayList<>(serviceInstance.getAttributeInstances()));
-	                discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,serviceInstance.getProductVersion().getProduct(), new HashSet<>(serviceInstance.getAttributeInstances()));
+	               
+	                walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
+	                discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
 	                amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 	                
 	                discountWalletOperation.setAccountingArticle(discountAccountingArticle);
