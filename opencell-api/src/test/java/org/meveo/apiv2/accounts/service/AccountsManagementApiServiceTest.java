@@ -48,12 +48,12 @@ public class AccountsManagementApiServiceTest {
         UserAccount ua1 = mock(UserAccount.class);
         ua1.setId(1L);
         ua1.setCode("UA1");
-        ua1.setIsConsumer(true);
+        ua1.setIsConsumer(false);
 
         UserAccount ua2 = mock(UserAccount.class);
         ua2.setId(2L);
         ua2.setCode("UA2");
-        ua2.setIsConsumer(true);
+        ua2.setIsConsumer(false);
 
         Subscription su1 = mock(Subscription.class);
         su1.setCode("SU");
