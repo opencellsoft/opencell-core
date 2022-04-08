@@ -8312,7 +8312,7 @@
 			<column name="version" valueNumeric="1" />
 			<column name="max_dunning_levels" valueNumeric="5" />
 			<column name="max_days_outstanding" valueNumeric="3" />
-			<column name="dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="dunning_mode" value="INVOICE_LEVEL" />
 		</insert>
 		<insert tableName="dunning_pause_reasons">
 			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
