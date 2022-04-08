@@ -12555,6 +12555,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_offer" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdafs" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     </changeSet>
+    
+    <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA">
+        <addColumn tableName="billing_billing_run">
+            <column name="xml_job_execution_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA">
         <addColumn tableName="billing_billing_run">
