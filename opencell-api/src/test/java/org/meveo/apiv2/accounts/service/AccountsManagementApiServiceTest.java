@@ -14,7 +14,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
@@ -49,12 +48,10 @@ public class AccountsManagementApiServiceTest {
         UserAccount ua1 = mock(UserAccount.class);
         ua1.setId(1L);
         ua1.setCode("UA1");
-        ua1.setIsConsumer(true);
 
         UserAccount ua2 = mock(UserAccount.class);
         ua2.setId(2L);
         ua2.setCode("UA2");
-        ua2.setIsConsumer(true);
 
         Subscription su1 = mock(Subscription.class);
         su1.setCode("SU");
@@ -96,17 +93,10 @@ public class AccountsManagementApiServiceTest {
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
-    @Test(expected = BusinessApiException.class)
-    public void test_transferSubscription_with_a_non_no_consumer() {
-        ConsumerInput input = builder().consumerId(1L).build();
-        accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
-    }
-    
     @Test
     public void test_transferSubscription_with_a_terminated_sub() {
-        //TODO fix UT
-        //expectedEx.expect(ConflictException.class);
-        //expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
+        expectedEx.expect(ConflictException.class);
+        expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
 
         ConsumerInput input = builder().consumerId(1L).build();
         accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
