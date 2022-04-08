@@ -104,6 +104,9 @@ public class AccountsManagementApiService {
             if (newOwner == null) {
                 throw new NotFoundException("user account {id=[id]} doesn't exist".replace("[id]", consumerInput.getConsumerId().toString()));
             }
+    		if(!newOwner.getIsConsumer()) {
+                throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
+    		}            
         }
         
         if (StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
@@ -111,11 +114,10 @@ public class AccountsManagementApiService {
             if (newOwner == null) {
                 throw new NotFoundException("user account {code=[code]} doesn't exist".replace("[code]", consumerInput.getConsumerCode()));
             }
+    		if(!newOwner.getIsConsumer()) {
+                throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
+    		}            
         }
-
-		if(!newOwner.getIsConsumer()) {
-            throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
-		}            
 
 		// Check subscription
         Subscription subscription = subscriptionService.findByCode(subscriptionCode, Arrays.asList("userAccount"));
