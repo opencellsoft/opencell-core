@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.QuoteAttribute;
 
 import java.util.ArrayList;
@@ -102,10 +103,16 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
 
 	public String getStringValue() {
+		if(StringUtils.isBlank(stringValue))
+			stringValue=null;
+		
 		return stringValue;
 	}
 
 	public void setStringValue(String stringValue) {
+		if(StringUtils.isBlank(stringValue))
+			stringValue=null;
+		
 		this.stringValue = stringValue;
 	}
 

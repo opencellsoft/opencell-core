@@ -18,9 +18,13 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.payments.impl.CustomDDRequestBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AttributeValueService<T extends AttributeValue> extends PersistenceService<T> {
 
+    
     public static void validateValue(AttributeValue attributeValue, CpqQuote cpqQuote, QuoteVersion quoteVersion,
                                      CommercialOrder commercialOrder, ServiceInstance serviceInstance) throws BusinessException {
         if (!validate(attributeValue.getAttribute().getValidationType(),
@@ -39,7 +43,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                     Boolean.class, attributeValue, cpqQuote, quoteVersion, commercialOrder, serviceInstance);
         } else {
             Object value = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
-            return value != null ? Pattern.compile(validationPattern).matcher(value.toString()).find() : true;
+            return !StringUtils.isBlank(value)? Pattern.compile(validationPattern).matcher(value.toString()).find() : true;
         }
     }
 
