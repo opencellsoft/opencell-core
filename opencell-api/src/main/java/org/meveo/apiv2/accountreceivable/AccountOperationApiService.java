@@ -3,23 +3,21 @@ package org.meveo.apiv2.accountreceivable;
 import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.AcountReceivable.CustomerAccount;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
@@ -36,9 +34,10 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	private org.meveo.service.payments.impl.AccountOperationService accountOperationService;
 
 	@Inject
-	private MatchingCodeService matchingCodeService;
-	@Inject
 	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private MatchingCodeService matchingCodeService;
 
 	@Override
 	public List<AccountOperation> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -100,7 +99,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 		if (AccountOperationStatus.EXPORTED.equals(status)) {
 			Map<Boolean, List<AccountOperation>> statusGroups = accountOperations.stream()
-					.collect(Collectors.partitioningBy(ao -> AccountOperationStatus.POSTED.equals(ao.getStatus())));
+					.collect(Collectors.partitioningBy(ao -> POSTED.equals(ao.getStatus())));
 			accountOperationService.updateStatusInNewTransaction(statusGroups.get(true), status);
 			if (!CollectionUtils.isEmpty(statusGroups.get(false))) {
 				throw new ConflictException("The status of following account operations can not be updated: "
@@ -111,6 +110,37 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 	}
 
+	public Optional<AccountOperation> assignAccountOperation(Long accountOperationId,
+																					 CustomerAccount customerAccountInput) {
+		AccountOperation accountOperation = accountOperationService.findById(accountOperationId);
+		if(accountOperation == null) {
+			throw new NotFoundException("Account operation does not exits");
+		} else {
+			org.meveo.model.payments.CustomerAccount customerAccount = getCustomerAccount(customerAccountInput);
+			if(customerAccount == null) {
+				throw new NotFoundException("Customer account does not exits");
+			}
+			accountOperation.setCustomerAccount(customerAccount);
+			accountOperation.setStatus(POSTED);
+			try {
+				accountOperationService.update(accountOperation);
+			} catch (Exception exception) {
+				throw new BadRequestException(exception.getMessage());
+			}
+			return of(accountOperation);
+		}
+	}
+
+	private org.meveo.model.payments.CustomerAccount getCustomerAccount(CustomerAccount customerAccountInput) {
+		org.meveo.model.payments.CustomerAccount customerAccount = null;
+		if(customerAccountInput.getId() != null) {
+			customerAccount = customerAccountService.findById(customerAccountInput.getId());
+		}
+		if(customerAccountInput.getCode() != null && customerAccount == null) {
+			customerAccount = customerAccountService.findByCode(customerAccountInput.getCode());
+		}
+		return customerAccount;
+	}
 	public MatchingReturnObject matchOperations(Map<Integer, Long> accountOperations) {
 		// Check existence of all passed accountOperation
 		List<Long> aoIds = new ArrayList<>(accountOperations.values());

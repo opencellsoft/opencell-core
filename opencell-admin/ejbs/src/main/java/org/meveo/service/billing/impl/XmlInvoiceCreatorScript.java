@@ -360,19 +360,19 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
     
     private void createUserAccountChildSectionIL(Document doc, Invoice invoice, List<InvoiceLine> invoiceLines,
-                                                 UserAccount parentUserAccount, boolean isVirtual, String invoiceLanguageCode,
-                                                 InvoiceConfiguration invoiceConfiguration, List<UserAccount> userAccounts, Element parentUserAccountTag) {
+                                                 boolean isVirtual, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration,
+                                                 List<UserAccount> childUserAccounts, Element parentUserAccountTag) {
         Element childUserAccountsTag = doc.createElement("userAccounts");
         boolean existChild = false;
-    	for(UserAccount childUserAccount:userAccounts) {
-    		if(parentUserAccount.equals(childUserAccount.getParentUserAccount())) {
-    			existChild = true;
-    	    	Element childUserAccountTag = createUserAccountSectionIL(doc, invoice, childUserAccount, invoiceLines, isVirtual,
-                        false, invoiceLanguageCode, invoiceConfiguration);
-    	    	if(childUserAccountTag != null) {
-        	    	childUserAccountsTag.appendChild(childUserAccountTag);
-    	    	}
-    		}
+    	for(UserAccount childUserAccount : childUserAccounts) {
+            existChild = true;
+            Element childUserAccountTag = createUserAccountSectionIL(doc, invoice, childUserAccount, invoiceLines,
+                    isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+            if (childUserAccountTag != null) {
+                createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceLanguageCode,
+                        invoiceConfiguration, childUserAccount.getUserAccounts(), childUserAccountTag);
+                childUserAccountsTag.appendChild(childUserAccountTag);
+            }
     	}
     	if(existChild && childUserAccountsTag != null) {
     		parentUserAccountTag.appendChild(childUserAccountsTag);
@@ -794,6 +794,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element name = doc.createElement("name");
         if (account.getName() != null && account.getName().getLastName() != null) {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
+            name.appendChild(nameTxt);
+        }
+        if(account.getIsCompany()) {
+            Text nameTxt = this.createTextNode(doc, account.getDescription());
             name.appendChild(nameTxt);
         }
         nameTag.appendChild(name);
@@ -2425,14 +2429,15 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	for(UserAccount userAccount:userAccounts) {
-                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
-                            false, invoiceLanguageCode, invoiceConfiguration);
+        	List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
+        	for(UserAccount parentUserAccount : parentUserAccounts) {
+                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
+                            invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
                         continue;
                     }
-                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, userAccount, isVirtual, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
+                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual,
+                            invoiceLanguageCode, invoiceConfiguration, parentUserAccount.getUserAccounts(), userAccountTag);
                     userAccountsTag.appendChild(userAccountTag);        		
         		}
 
