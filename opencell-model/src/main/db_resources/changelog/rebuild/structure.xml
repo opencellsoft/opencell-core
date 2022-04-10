@@ -3949,6 +3949,7 @@
             <column name="accounting_article_id" type="bigint"></column>
             <column name="priorty" type="bigint"></column>
             <column name="price_plan_matrix_id" type="bigint" />
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -15992,6 +15993,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-6108_20220330" author="TarikFA." />
     <changeSet id="#20220404_M540_6296" author="Mbarek-Ay"/>
     <changeSet id="#20220407_ADHOC" author="NabilOuachi"/>
+    <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

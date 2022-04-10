@@ -9486,4 +9486,10 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza">
+        <addColumn tableName="cat_discount_plan_item">
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
