@@ -796,7 +796,18 @@ public class CommercialOrderApi extends BaseApi {
         	if(subscription == null) {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
+        	if(orderOfferDto.getTerminationDate()!=null && orderOfferDto.getTerminationDate().before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("Termination date can not be before the subscription date");	
+        	}
         	orderOffer.setSubscription(subscription);
+        	SubscriptionTerminationReason terminationReason = null;
+        	if(!StringUtils.isBlank(orderOfferDto.getTerminationReasonCode())) {
+    			terminationReason = terminationReasonService.findByCode(orderOfferDto.getTerminationReasonCode());
+    			if (terminationReason == null)
+    				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, orderOfferDto.getTerminationReasonCode());	
+    		}
+        	orderOffer.setTerminationReason(terminationReason);
+    		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
@@ -884,7 +895,18 @@ public class CommercialOrderApi extends BaseApi {
         	if(subscription == null) {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
+        	if(orderOfferDto.getTerminationDate()!=null && orderOfferDto.getTerminationDate().before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("Termination date can not be before the subscription date");	
+        	}
         	orderOffer.setSubscription(subscription);
+        	SubscriptionTerminationReason terminationReason = null;
+        	if(!StringUtils.isBlank(orderOfferDto.getTerminationReasonCode())) {
+    			terminationReason = terminationReasonService.findByCode(orderOfferDto.getTerminationReasonCode());
+    			if (terminationReason == null)
+    				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, orderOfferDto.getTerminationReasonCode());	
+    		}
+        	orderOffer.setTerminationReason(terminationReason);
+    		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
