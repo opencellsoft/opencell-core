@@ -248,8 +248,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
               Long lowPriority=null;
               for (DiscountPlanItem discountPlanItem : discountPlanItems) {
             	  isFixedDpItemIncluded=false;
-            	  if(DiscountPlanItemTypeEnum.FIXED==discountPlanItem.getDiscountPlanItemType() && discountPlanItem.getTargetAccountingArticle()!=null
-            			  && discountPlanItem.getTargetAccountingArticle().size()==1) {
+            	  if(discountPlanItem.isApplyByArticle() && discountPlanItem.getTargetAccountingArticle()!=null
+            			  && discountPlanItem.getTargetAccountingArticle().size()>0) {
             		  //this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
             		  isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
             		  if(!isFixedDpItemIncluded) {

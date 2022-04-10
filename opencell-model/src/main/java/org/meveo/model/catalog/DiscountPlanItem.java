@@ -71,7 +71,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
+    @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled= false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
@@ -210,6 +210,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "description", length = 255)
 	private String description;
 
+	
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "apply_by_article")
+	private boolean applyByArticle=false;
+	
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
 	}
@@ -473,6 +479,16 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public boolean isApplyByArticle() {
+		return applyByArticle;
+	}
+
+	public void setApplyByArticle(boolean applyByArticle) {
+		this.applyByArticle = applyByArticle;
+	}
+
+
 
 	
 
