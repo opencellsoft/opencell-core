@@ -9027,8 +9027,8 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <!--  Fix for ERROR: cannot alter type of a column used by a view or rule (recreation) -->
-    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql">
-    	<createView viewName="billing_wallet_operation_period">
+    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-fix" dbms="postgresql">
+    	<createView replaceIfExists="true" viewName="billing_wallet_operation_period">
             select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
             from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
