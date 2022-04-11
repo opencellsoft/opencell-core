@@ -667,7 +667,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
             Tax recalculatedTax = recalculatedTaxInfo.tax;
 
-            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
+            return new Object[] { recalculatedTax, tax == null ? true : recalculatedTax!=null && !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
 }
