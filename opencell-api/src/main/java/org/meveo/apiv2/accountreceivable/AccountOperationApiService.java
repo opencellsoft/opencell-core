@@ -7,7 +7,7 @@ import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +27,6 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
-import org.meveo.apiv2.AcountReceivable.MatchingAccountOperation;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
@@ -153,12 +152,13 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 
 		// Check that all AOs have the same customer account except for orphan AOs. if not throw an exception.
-		Set<Long> customerIds = aos.stream()
-				.map(AccountOperation::getCustomerAccount).map(org.meveo.model.payments.CustomerAccount::getId)
+		List<Long> customerIds = aos.stream()
+				.map(AccountOperation::getCustomerAccount)
 				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+				.map(org.meveo.model.payments.CustomerAccount::getId)
+				.collect(Collectors.toList());
 
-		if (customerIds.size() > 1) {
+		if (new HashSet<>(customerIds).size() > 1) {
 			throw new BusinessException("AccountOperations passed for matching are linked to different CustomerAccount");
 		}
 
@@ -176,12 +176,10 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 
 		// Update orphans AO by setting the same customerAccount
-		Optional<AccountOperation> ao = aos.stream()
-				.filter(accountOperation -> accountOperation.getCustomerAccount() != null)
-				.findAny();
-
-		org.meveo.model.payments.CustomerAccount customer = customerAccountService.findById(ao.map(AccountOperation::getCustomerAccount)
-				.orElseThrow(() -> new BusinessException("No CustomerAccount for matching")).getId());
+		org.meveo.model.payments.CustomerAccount customer = customerAccountService.findById(customerIds.get(0));
+		if (customer == null) {
+			throw new BusinessException("No CustomerAccount found with id " + customerIds.get(0) + " for matching");
+		}
 
 		Optional.of(aos.stream().filter(accountOperation -> accountOperation.getCustomerAccount() == null)
 						.collect(Collectors.toList())).orElse(Collections.emptyList())
