@@ -3963,7 +3963,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Set due balance
-        invoice.setDueBalance(balance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+        invoice.setDueBalance(balance != null
+                ? balance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) : null);
 
         return invoice;
     }
@@ -5146,7 +5147,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
-                        if (existingInvoice != null) {
+                        if (existingInvoice != null
+                                && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                             cleanInvoiceAggregates(existingInvoice.getId());
                             invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
