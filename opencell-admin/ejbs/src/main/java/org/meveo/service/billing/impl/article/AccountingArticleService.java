@@ -17,6 +17,7 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -56,19 +57,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
 					.collect(toList());;
 		}
-		if(param1 != null) {
+		if(!StringUtils.isBlank(param1)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> articleMappingLine.getParameter1().equals(param1))
+					.filter(articleMappingLine ->param1.equals(articleMappingLine.getParameter1()))
 					.collect(toList());
 		}
-		if (param2 != null) {
+		if(!StringUtils.isBlank(param2)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> articleMappingLine.getParameter2().equals(param2))
+					.filter(articleMappingLine ->param2.equals(articleMappingLine.getParameter2()))
 					.collect(toList());
 		}
-		if(param3 != null) {
+		if(!StringUtils.isBlank(param3)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> articleMappingLine.getParameter3().equals(param3))
+					.filter(articleMappingLine ->param3.equals(articleMappingLine.getParameter3()))
 					.collect(toList());
 		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
