@@ -114,7 +114,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                         invoiceLine.getAccountingArticle().getAccountingCode() : occT.getContraAccountingCode();
 
                 if (revenuACC == null) {
-                    throw new BusinessException(REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                    throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                            REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
                 }
 
                 JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC,
@@ -153,7 +154,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 AccountingCode taxACC = taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
 
                 if (taxACC == null) {
-                    throw new BusinessException(TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                    throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                            TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
                 }
 
                 JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
