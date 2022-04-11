@@ -1,7 +1,9 @@
 package org.meveo.apiv2.accounts.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -42,6 +44,7 @@ public class UserAccountsApiService {
 
     public UserAccountsDto allowedUserAccountParents(String userAccountCode) throws MeveoApiException {
     	UserAccountsDto userAccountsDto = new UserAccountsDto();
+    	List<UserAccountDto> userAccountDtos = new ArrayList<UserAccountDto>();
 
         if (StringUtils.isBlank(userAccountCode)) {
         	throw new ValidationException("The user account code must be non-null");
@@ -74,8 +77,13 @@ public class UserAccountsApiService {
         userAccounts.remove(userAccount);
         
 		for (UserAccount ua : userAccounts) {
-			userAccountsDto.getUserAccount().add(buildUserAccountDto(ua));
+			userAccountDtos.add(buildUserAccountDto(ua));
 		}
+
+		userAccountsDto.setUserAccount(userAccountDtos.stream()
+        	    .sorted(Comparator.comparing(UserAccountDto::getParentUserAccountCode,
+        	        	Comparator.nullsFirst(Comparator.reverseOrder())))
+        	    .collect(Collectors.toList()));
 
         return userAccountsDto;
     }
@@ -86,6 +94,9 @@ public class UserAccountsApiService {
 		userAccountDto.setId(ua.getId());
         userAccountDto.setCode(ua.getCode());
         userAccountDto.setName(new NameDto(ua.getName()));
+        userAccountDto.setDescription(ua.getDescription());
+        userAccountDto.setExternalRef1(ua.getExternalRef1());
+        userAccountDto.setExternalRef2(ua.getExternalRef2());
         userAccountDto.setStatus(ua.getStatus());
         userAccountDto.setBillingAccount(ua.getBillingAccount().getCode());
         userAccountDto.setAddress(new AddressDto(ua.getAddress()));
@@ -98,6 +109,8 @@ public class UserAccountsApiService {
         	userAccountDto.setParentUserAccountCode(ua.getParentUserAccount().getCode());
         	userAccountDto.setParentUserAccount(buildUserAccountDto(ua.getParentUserAccount()));
         }
+        
+        
 
     	return userAccountDto;
     }

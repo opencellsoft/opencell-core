@@ -314,12 +314,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
         	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	for(UserAccount userAccount:userAccounts) {
+        	for(UserAccount userAccount : userAccounts) {
         		if(userAccount.getParentUserAccount() == null) {
                     Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-                    if (userAccountTag == null) {
-                        continue;
-                    }
                     createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
                     userAccountsTag.appendChild(userAccountTag);
         		}
@@ -347,7 +344,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element childUserAccountsTag = doc.createElement("userAccounts");
         boolean existChild = false;
-    	for(UserAccount childUserAccount:userAccounts) {
+    	for(UserAccount childUserAccount : userAccounts) {
     		if(parentUserAccount.equals(childUserAccount.getParentUserAccount())) {
     			existChild = true;
     	    	Element childUserAccountTag = createUserAccountSection(doc, invoice, childUserAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
@@ -361,29 +358,27 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     		parentUserAccountTag.appendChild(childUserAccountsTag);
     	}
     }
-
-
     
-    
-    private void createUserAccountChildSectionIL(Document doc, Invoice invoice, List<InvoiceLine> invoiceLines, UserAccount parentUserAccount, boolean isVirtual, boolean ignoreUA, String invoiceLanguageCode,
-            InvoiceConfiguration invoiceConfiguration, List<UserAccount> userAccounts, Element parentUserAccountTag) {
+    private void createUserAccountChildSectionIL(Document doc, Invoice invoice, List<InvoiceLine> invoiceLines,
+                                                 boolean isVirtual, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration,
+                                                 List<UserAccount> childUserAccounts, Element parentUserAccountTag) {
         Element childUserAccountsTag = doc.createElement("userAccounts");
         boolean existChild = false;
-    	for(UserAccount childUserAccount:userAccounts) {
-    		if(parentUserAccount.equals(childUserAccount.getParentUserAccount())) {
-    			existChild = true;
-    	    	Element childUserAccountTag = createUserAccountSectionIL(doc, invoice, childUserAccount, invoiceLines, isVirtual,
-                        false, invoiceLanguageCode, invoiceConfiguration);
-    	    	if(childUserAccountTag != null) {
-                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, childUserAccount, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, childUserAccountTag);
-        	    	childUserAccountsTag.appendChild(childUserAccountTag);
-    	    	}
-    		}
+    	for(UserAccount childUserAccount : childUserAccounts) {
+            existChild = true;
+            Element childUserAccountTag = createUserAccountSectionIL(doc, invoice, childUserAccount, invoiceLines,
+                    isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+            if (childUserAccountTag != null) {
+                createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceLanguageCode,
+                        invoiceConfiguration, childUserAccount.getUserAccounts(), childUserAccountTag);
+                childUserAccountsTag.appendChild(childUserAccountTag);
+            }
     	}
     	if(existChild && childUserAccountsTag != null) {
     		parentUserAccountTag.appendChild(childUserAccountsTag);
     	}
     }
+
     /**
      * Create invoice/details/userAccounts/userAccount DOM element
      *
@@ -462,19 +457,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
-            Element subscriptionTag = doc.createElement("subscription");
-            subscriptionTag.setAttribute("id", subscription.getId() + "");
-            subscriptionTag.setAttribute("code", subscription.getCode());
-            subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
-            subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
-            Element subscriptionDateTag = doc.createElement("subscriptionDate");
-            subscriptionDateTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
-            subscriptionTag.appendChild(subscriptionDateTag);
-            Element endAgreementTag = doc.createElement("endAgreementDate");
-            endAgreementTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
-            subscriptionTag.appendChild(endAgreementTag);
-            addCustomFields(subscription, doc, subscriptionTag);
-            subscriptionsTag.appendChild(subscriptionTag);
+            if(userAccount.getId() == subscription.getUserAccount().getId()
+                    && userAccount.getCode().equals(subscription.getUserAccount().getCode())) {
+                Element subscriptionTag = doc.createElement("subscription");
+                subscriptionTag.setAttribute("id", subscription.getId() + "");
+                subscriptionTag.setAttribute("code", subscription.getCode());
+                subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
+                subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
+                Element subscriptionDateTag = doc.createElement("subscriptionDate");
+                subscriptionDateTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
+                subscriptionTag.appendChild(subscriptionDateTag);
+                Element endAgreementTag = doc.createElement("endAgreementDate");
+                endAgreementTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
+                subscriptionTag.appendChild(endAgreementTag);
+                addCustomFields(subscription, doc, subscriptionTag);
+                subscriptionsTag.appendChild(subscriptionTag);
+            }
         }
         return subscriptionsTag;
     }
@@ -796,6 +794,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element name = doc.createElement("name");
         if (account.getName() != null && account.getName().getLastName() != null) {
             Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
+            name.appendChild(nameTxt);
+        }
+        if(account.getIsCompany()) {
+            Text nameTxt = this.createTextNode(doc, account.getDescription());
             name.appendChild(nameTxt);
         }
         nameTag.appendChild(name);
@@ -2427,20 +2429,19 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         
         if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
-        	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
-        	for(UserAccount userAccount:userAccounts) {
-        		if(userAccount.getParentUserAccount() == null) {
-                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
-                            false, invoiceLanguageCode, invoiceConfiguration);
+        	List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
+        	for(UserAccount parentUserAccount : parentUserAccounts) {
+                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
+                            invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
                     if (userAccountTag == null) {
                         continue;
                     }
-                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, userAccount, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
+                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual,
+                            invoiceLanguageCode, invoiceConfiguration, parentUserAccount.getUserAccounts(), userAccountTag);
                     userAccountsTag.appendChild(userAccountTag);        		
         		}
-        	}
-        	
-        }else {
+
+        } else {
             for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
                 Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
                         false, invoiceLanguageCode, invoiceConfiguration);
@@ -2481,7 +2482,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            userAccountTag.setAttribute("description", "-");
+            return null;
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
@@ -2493,7 +2494,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
             Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, null, isVirtual, ignoreUA, invoiceConfiguration, invoiceLines);
-            if (subscriptionsTag != null) {
+            if (subscriptionsTag != null
+                    && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);
             }
         }
@@ -2543,7 +2545,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 categoriesTag.appendChild(categoryTag);
             }
         }
-        return categoriesTag.getChildNodes().getLength() > 0 ? categoriesTag : null;
+        return categoriesTag;
     }
 
     /**

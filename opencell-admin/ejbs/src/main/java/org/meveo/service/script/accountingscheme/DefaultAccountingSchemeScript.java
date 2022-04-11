@@ -31,7 +31,7 @@ public class DefaultAccountingSchemeScript extends Script {
 
         // Get OCCTemplate by AccountOperation code
         OCCTemplate occT = occTemplateService.findByCode(ao.getCode());
-        journalEntryService.validateOccTForAccountingScheme(ao, occT);
+        journalEntryService.validateOccTForAccountingScheme(ao, occT, true);
 
         List<JournalEntry> journalEntries = journalEntryService.createFromAccountOperation(ao, occT);
 

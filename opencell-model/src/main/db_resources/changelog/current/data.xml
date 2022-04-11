@@ -9869,5 +9869,116 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
 		</insert>
 	</changeSet>
+	
+	
+	
+	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
+		<update tableName="ar_occ_template">
+			<column name="description" value="WIRETRANSFER" />
+			<where>id=-61</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - direct debit" />
+			<where>id=-56</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6298_20220405" author="aelmalki">
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]>
+			</column>
+			<column name="code" value="Dual entry scheme" />
+			<where>code='DefaultAccountingScheme'</where>
+		</update>
+
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit des lignes d'écritures pour une facture ou un avoir (ci-dessous \"document\") :</p><ul><li>Une ligne unique pour le total TTC du document, sur le compte client (de la catégorie de client ou à défaut du type d'opération de compte).</li></ul><p class=\"ql-indent-1\">Le sens est celui de l'opération de compte (pour une facture : DEBIT, pour un avoir : CREDIT).</p><ul><li>Des lignes de contrepartie (au moins une) pour les montants HT pour les comptes de revenus, en utilisant les codes comptables des articles liés aux lignes du document.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p><ul><li>S'il y a lieu, des lignes pour les montants des différentes taxes appliquées au document, en utilisant les codes comptables de ces taxes.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p>","ENG":"<p>This scheme produces entries for an invoice or credit note (here after \"document\"):</p><ul><li>A single entry with the document total amount with tax using the customer accounting code (from the customer category, or if not set from the account operation type). </li></ul><p class=\"ql-indent-1\">Line direction is the one from the account operation type (for invoice: DEBIT, for credit note: CREDIT).</p><ul><li>\"Contra\" entries (at least one) with the amounts without tax for revenue accounts, using the accounting codes from the article linked to the document lines. </li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p><ul><li>\"Contra\" entries (if applies) with the tax amounts for the different taxes applied on the document, using the accounting codes from these taxes.</li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p>"}]]>
+			</column>
+			<column name="code" value="Invoice and Credit Note" />
+			<where>code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid">
+		 <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-42" />
+            <where>id=-1</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-37" />
+            <where>id=-43</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+            <where>id=-3</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-38" />
+            <where>id=-46</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-39" />
+            <where>id=-47</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-40" />
+            <where>id=-2</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-41" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-60</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-61</where>
+		</update>
+
+		<delete tableName="ar_occ_template">
+	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>
+	    </delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

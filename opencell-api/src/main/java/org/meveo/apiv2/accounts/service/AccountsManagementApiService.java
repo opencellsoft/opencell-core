@@ -11,6 +11,7 @@ import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
@@ -103,16 +104,18 @@ public class AccountsManagementApiService {
             if (newOwner == null) {
                 throw new NotFoundException("user account {id=[id]} doesn't exist".replace("[id]", consumerInput.getConsumerId().toString()));
             }
-        }
-
-        if (StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
+        }else if (StringUtils.isNotBlank(consumerInput.getConsumerCode())) {
             newOwner = userAccountService.findByCode(consumerInput.getConsumerCode());
             if (newOwner == null) {
                 throw new NotFoundException("user account {code=[code]} doesn't exist".replace("[code]", consumerInput.getConsumerCode()));
             }
         }
 
-        // Check subscription
+		if(!newOwner.getIsConsumer()) {
+            throw new BusinessApiException("UserAccount: " + newOwner.getCode() + " is not a consumer. Subscription transfer to this user account is not allowed.");
+		}            
+
+		// Check subscription
         Subscription subscription = subscriptionService.findByCode(subscriptionCode, Arrays.asList("userAccount"));
 
         if (subscription == null) {
