@@ -427,16 +427,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
 
         if (aoToMatchLast != null) {
-            AccountOperation lastAo = accountOperationService.findById(aoToMatchLast);
-            matching(listOcc, matchedAmount, lastAo, matchingTypeEnum);
+            matching(listOcc, matchedAmount, accountOperationService.findById(aoToMatchLast), matchingTypeEnum);
             matchingReturnObject.setOk(true);
-            // Last AO will be flaged as partially matched
-            if (balance.compareTo(BigDecimal.ZERO) > 0) {
-                PartialMatchingOccToSelect p = new PartialMatchingOccToSelect();
-                p.setAccountOperation(lastAo);
-                p.setPartialMatchingAllowed(true);
-                matchingReturnObject.getPartialMatchingOcc().add(p);
-            }
             log.info("matchOperations successful :  partial ok (idPartial recu)");
             return matchingReturnObject;
         }
