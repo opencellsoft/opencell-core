@@ -22,6 +22,26 @@ public class KeystoreManager {
 
     private static final String KEYSTORE_NAME = "opencellcredstore";
 
+    public static boolean existKeystore() {
+        return CurrentServiceContainer.getServiceContainer().getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME)) != null;
+    }
+
+    public static boolean existCredential(String credentialAlias) {
+        try {
+            ServiceContainer registry = CurrentServiceContainer.getServiceContainer();
+            assert registry != null;
+            ServiceController<?> credStoreService = registry.getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME));
+            assert credStoreService != null;
+            credentialStore = (CredentialStore) credStoreService.getValue();
+
+            return credentialStore.exists(credentialAlias, PasswordCredential.class);
+        } catch (CredentialStoreException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public static void addCredential(String credentialAlias, String password) {
         Password clearPassword = ClearPassword.createRaw(ClearPassword.ALGORITHM_CLEAR, password.toCharArray());
 
@@ -59,7 +79,7 @@ public class KeystoreManager {
                 }
             }
             else {
-                log.error("Keystore does not contain a password with credential alias {}", credentialAlias);
+                log.error("Keystore does not contain a password with credential alias {} to retrieve", credentialAlias);
             }
         } catch (CredentialStoreException e) {
             e.printStackTrace();
@@ -68,24 +88,19 @@ public class KeystoreManager {
         return null;
     }
 
-    public static boolean existCredential(String credentialAlias) {
+    public static void removeCredential(String credentialAlias) {
+        ServiceContainer registry = CurrentServiceContainer.getServiceContainer();
+        assert registry != null;
+        ServiceController<?> credStoreService = registry.getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME));
+        assert credStoreService != null;
+        credentialStore = (CredentialStore) credStoreService.getValue();
+
         try {
-            ServiceContainer registry = CurrentServiceContainer.getServiceContainer();
-            assert registry != null;
-            ServiceController<?> credStoreService = registry.getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME));
-            assert credStoreService != null;
-            credentialStore = (CredentialStore) credStoreService.getValue();
-
-            return credentialStore.exists(credentialAlias, PasswordCredential.class);
+            credentialStore.remove(credentialAlias, PasswordCredential.class);
+            credentialStore.flush();
         } catch (CredentialStoreException e) {
-            e.printStackTrace();
+            log.error("Keystore does not contain a password with credential alias {} to remove", credentialAlias);
         }
-
-        return false;
-    }
-
-    public static boolean existKeystore() {
-        return CurrentServiceContainer.getServiceContainer().getService(ServiceName.of(SERVICE_NAME_CRED_STORE, KEYSTORE_NAME)) != null;
     }
 
 }

@@ -27,6 +27,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -666,29 +667,43 @@ public class MeveoInstance extends BusinessEntity {
     }
 
     public String getAuthPassword() {
-        if (KeystoreManager.existKeystore())
+        if (KeystoreManager.existKeystore()) {
             return getAuthPasswordKS();
-        else
+        }
+        else {
             return getAuthPasswordDB();
+        }
     }
 
     public void setAuthPassword(String password) {
         if (KeystoreManager.existKeystore()) {
-            authPasswordDB = null;
-            setAuthPasswordKS(password);
+            authPasswordDB = "";
+            this.authPasswordKS = password;
+            setAuthPasswordKS();
         }
-        else
+        else {
             setAuthPasswordDB(password);
+        }
     }
 
     public String getAuthPasswordKS() {
-        return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getCode());
+        if (KeystoreManager.existCredential(getClass().getSimpleName() + "." + getId())) {
+            return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getId());
+        }
+        else {
+            return "";
+        }
     }
 
-    public void setAuthPasswordKS(String passwordKS) {
-        if (passwordKS == null)
-            passwordKS = "";
-        KeystoreManager.addCredential(getClass().getSimpleName() + "." + getCode(), passwordKS);
+    @PostPersist
+    public void setAuthPasswordKS() {
+        if (this.authPasswordKS == null) {
+            this.authPasswordKS = "";
+        }
+
+        if (getId() != null &&! this.authPasswordKS.equals(getAuthPasswordKS())) {
+            KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.authPasswordKS);
+        }
     }
     
     public String getClientId() {
