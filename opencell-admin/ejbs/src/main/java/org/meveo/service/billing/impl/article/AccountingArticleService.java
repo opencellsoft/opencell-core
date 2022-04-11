@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,10 +38,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private AttributeService attributeService;
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
-		return getAccountingArticle(product, null, attributes);
+		return getAccountingArticle(product, null, attributes, null, null, null);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, Map<String, Object> attributes) throws InvalidELException, ValidationException {
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+															Map<String, Object> attributes, String param1, String param2, String param3) throws InvalidELException, ValidationException {
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
@@ -54,7 +56,21 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
 					.collect(toList());;
 		}
-
+		if(param1 != null) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> articleMappingLine.getParameter1().equals(param1))
+					.collect(toList());
+		}
+		if (param2 != null) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> articleMappingLine.getParameter2().equals(param2))
+					.collect(toList());
+		}
+		if(param3 != null) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> articleMappingLine.getParameter3().equals(param3))
+					.collect(toList());
+		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
@@ -138,7 +154,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle = Optional.empty();
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, null, null, null);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
