@@ -155,19 +155,20 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                     .build();
         }
         return Response.ok()
-                .entity(accountOperationApiService.assignAccountOperation(accountOperationId, customerAccount.getCustomerAccount()).get())
+                .entity(accountOperationServiceApi.assignAccountOperation(accountOperationId, customerAccount.getCustomerAccount()).get())
                 .build();
     }
 
     @Override
-    public Response matchOperations(Map<Integer, Long> accountOperations) {
-        if (accountOperations == null || accountOperations.isEmpty()) {
+    public Response matchOperations(MatchingAccountOperation matchingAO) {
+        if (matchingAO == null ||
+                matchingAO.getAccountOperations() == null || matchingAO.getAccountOperations().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
         }
         try {
-            MatchingReturnObject result = accountOperationServiceApi.matchOperations(accountOperations);
+            MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
             return Response.status(Response.Status.OK).entity(result).build();
-        } catch (ElementNotFoundException e){
+        } catch (ElementNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity("Entity does not exist : " + e.getMessage()).build();
         } catch (BusinessException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Matching action is failed : " + e.getMessage()).build();
