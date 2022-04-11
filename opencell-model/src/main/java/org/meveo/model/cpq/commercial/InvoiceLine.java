@@ -159,6 +159,9 @@ public class InvoiceLine extends AuditableEntity {
     @NotNull
     private BigDecimal unitPrice;
     
+    @Column(name = "functional_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal functionalUnitPrice;
+    
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
     private BigDecimal discountRate = BigDecimal.ZERO;
@@ -310,6 +313,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.validity = copy.validity;
 		this.quantity = copy.quantity;
 		this.unitPrice = copy.unitPrice;
+		this.functionalUnitPrice = copy.functionalUnitPrice;
 		this.discountRate = copy.discountRate;
 		this.amountWithoutTax = copy.amountWithoutTax;
 		this.taxRate = copy.taxRate;
@@ -406,6 +410,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
+	}
+	
+	public BigDecimal getFunctionalUnitPrice() {
+		return functionalUnitPrice;
+	}
+
+	public void setFunctionalUnitPrice(BigDecimal functionalUnitPrice) {
+		this.functionalUnitPrice = functionalUnitPrice;
 	}
 
 	public BigDecimal getDiscountRate() {
