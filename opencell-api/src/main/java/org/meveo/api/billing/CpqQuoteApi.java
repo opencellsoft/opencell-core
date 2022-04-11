@@ -828,13 +828,17 @@ public class CpqQuoteApi extends BaseApi {
             	if(offerTemplate != null && !offerTemplate.getCode().equals(quoteOfferDto.getOfferCode())) {
             		throw new MeveoApiException("The offer ID doesn’t match with the offer CODE, please correct the request");
             	}
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             }else if(quoteOfferDto.getOfferId() != null) {
             	offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             }else if(quoteOfferDto.getOfferCode() != null) {
             	offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
             }
-            if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
             if (quoteVersion == null)
                 throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
