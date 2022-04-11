@@ -30,8 +30,10 @@ import org.meveo.apiv2.AcountReceivable.CustomerAccount;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
+import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.service.payments.impl.*;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
@@ -189,8 +191,25 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
-			return matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+			MatchingReturnObject matchingResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
 					aoIds, aoIds.get(aoIds.size() - 1));
+
+			if (matchingResult.getPartialMatchingOcc() == null || matchingResult.getPartialMatchingOcc().isEmpty()) {
+				// Reload AO to get updated MatchingStatus
+				List<AccountOperation> aoPartially = accountOperationService.findByIds(aoIds).stream()
+						.filter(accountOperation -> accountOperation.getMatchingStatus() == MatchingStatusEnum.P)
+						.collect(Collectors.toList());
+
+				if (!aoPartially.isEmpty()) {
+					PartialMatchingOccToSelect p = new PartialMatchingOccToSelect();
+					p.setAccountOperation(aoPartially.get(0));
+					p.setPartialMatchingAllowed(true);
+					matchingResult.getPartialMatchingOcc().add(p);
+				}
+			}
+
+			return matchingResult;
+
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
 		}
