@@ -6,6 +6,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.io.IOUtils;
 import org.carlspring.cloud.storage.s3fs.S3FileSystem;
 import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.w3c.dom.Document;
@@ -71,8 +72,20 @@ public class StorageFactory {
             String endpointUrl = tmpParamBean.getProperty("S3.endpointUrl", "endPointUrl");
             String region = tmpParamBean.getProperty("S3.region", "region");
             bucketName = tmpParamBean.getProperty("S3.bucketName", "bucketName");
-            String accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
-            String secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
+
+            String accessKeyId;
+            String secretAccessKey;
+            boolean credInKeystore = tmpParamBean.getPropertyAsBoolean("S3.credential.in.keystore", false);
+            if (credInKeystore) {
+                // get accessKeyId and secretAccessKey from the Keystore
+                accessKeyId = KeystoreManager.retrieveCredential("S3.accessKeyId");
+                secretAccessKey = KeystoreManager.retrieveCredential("S3.secretAccessKey");
+            }
+            else {
+                // get accessKeyId and secretAccessKey from System Settings
+                accessKeyId = tmpParamBean.getProperty("S3.accessKeyId", "accessKeyId");
+                secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
+            }
 
             S3Client client =
                     S3Client.builder().region(Region.of(region))
