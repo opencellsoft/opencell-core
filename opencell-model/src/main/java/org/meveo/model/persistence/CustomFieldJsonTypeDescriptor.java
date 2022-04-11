@@ -49,7 +49,10 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
         	string = decrypt(string);
 		}
-        
+        if (string.equals(ON_ERROR_RETURN)) {
+            log.error("Couldn't restore CFs values due to decryption error. NULL is returned!");
+            return null;
+        }
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
 

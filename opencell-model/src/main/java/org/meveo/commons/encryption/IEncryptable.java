@@ -57,7 +57,7 @@ public interface IEncryptable {
 			}
 			
 		} catch (Exception e) {
-			log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
+			log.error("Error while encrypting value: " + strToEncrypt, e);
 			return ON_ERROR_RETURN;
 		}
 		return strToEncrypt;
@@ -74,7 +74,7 @@ public interface IEncryptable {
 		try {
 			if (strToDecrypt != null) {
 				if(strToDecrypt.startsWith(ENCRYPTION_CHECK_STRING)) {
-					strToDecrypt = strToDecrypt.replace(ENCRYPTION_CHECK_STRING, "");
+					strToDecrypt = strToDecrypt.replaceFirst(ENCRYPTION_CHECK_STRING, "");
 					SecretKeySpec secretKey = buildSecretKey();
 					Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
 					cipher.init(Cipher.DECRYPT_MODE, secretKey);
@@ -85,7 +85,7 @@ public interface IEncryptable {
 				
 			}
 		} catch (Exception e) {
-			log.error("Error while decrypting: " + e.getLocalizedMessage(), e);
+			log.error("Error while decrypting value: " + strToDecrypt, e);
 			return ON_ERROR_RETURN;
 		}
 		return strToDecrypt;
