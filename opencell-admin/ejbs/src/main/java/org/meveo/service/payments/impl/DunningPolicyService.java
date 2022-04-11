@@ -324,6 +324,13 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
     }
 
+    public int deactivatePoliciesByIds(Set<Long> dunningPolicyIds){
+        return getEntityManager()
+                .createNamedQuery("DunningPolicy.DeactivateDunningPolicies")
+                .setParameter("ids", dunningPolicyIds)
+                .executeUpdate();
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updatePolicyWithLevel(DunningPolicy dunningPolicy, List<DunningPolicyLevel> dunningPolicyLevels) {
         int sequence = 0;

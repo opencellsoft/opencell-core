@@ -2353,7 +2353,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" of relation \\\"adm_currency\\\" violates not-null constraint\");"
+											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");"
 										],
 										"type": "text/javascript"
 									}
@@ -11804,7 +11804,7 @@
 					]
 				},
 				{
-					"name": "SKIP|Job Instance",
+					"name": "Job Instance",
 					"item": [
 						{
 							"name": "CreateOrUpdate|JobInstance|JI|SUCCESS",
