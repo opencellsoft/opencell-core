@@ -51,6 +51,14 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** Order line type */
     @Schema(description = "The order line type")
     private OfferLineTypeEnum orderLineType;
+    
+    /** The delivery date. */
+	@Schema(description = "The termination date") 
+    private Date terminationDate;
+	
+	/** The delivery date. */
+	@Schema(description = "The termination reason") 
+    private String terminationReasonCode;
 
     public OrderOfferDto() {
 	}
@@ -65,6 +73,8 @@ public class OrderOfferDto extends BaseEntityDto {
         this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
         this.subscriptionCode = orderOffer.getSubscription().getCode();
+        this.terminationDate = orderOffer.getTerminationDate();
+        this.terminationReasonCode = orderOffer.getTerminationReason() != null ? orderOffer.getTerminationReason().getCode() : null;
 	}
  
 
@@ -228,17 +238,30 @@ public class OrderOfferDto extends BaseEntityDto {
         return orderLineType;
     }
 
-
-
 	public String getSubscriptionCode() {
 		return subscriptionCode;
 	}
 
-
-
 	public void setSubscriptionCode(String subscriptionCode) {
 		this.subscriptionCode = subscriptionCode;
 	}
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+	public String getTerminationReasonCode() {
+		return terminationReasonCode;
+	}
+
+	public void setTerminationReasonCode(String terminationReasonCode) {
+		this.terminationReasonCode = terminationReasonCode;
+	}
+	
     
     
  
