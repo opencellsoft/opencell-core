@@ -1,5 +1,7 @@
 package org.meveo.apiv2.accountreceivable;
 
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +16,8 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.AcountReceivable.CustomerAccountInput;
+import org.meveo.apiv2.AcountReceivable.MatchingAccountOperation;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.accounting.AccountingPeriod;
@@ -139,14 +143,28 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 	}
 
     @Override
-    public Response matchOperations(Map<Integer, Long> accountOperations) {
-        if (accountOperations == null || accountOperations.isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
+    public Response assignAccountOperation(Long accountOperationId, CustomerAccountInput customerAccount) {
+        if(customerAccount.getCustomerAccount() == null || (customerAccount.getCustomerAccount().getId() == null
+                && customerAccount.getCustomerAccount().getCode() == null)) {
+            return Response.status(PRECONDITION_FAILED)
+                    .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\":\"Missing customer account parameters\"}}")
+                    .build();
+        }
+        return Response.ok()
+                .entity(accountOperationServiceApi.assignAccountOperation(accountOperationId, customerAccount.getCustomerAccount()).get())
+                .build();
+    }
+
+    @Override
+    public Response matchOperations(MatchingAccountOperation matchingAO) {
+        if (matchingAO == null ||
+                matchingAO.getAccountOperations() == null || matchingAO.getAccountOperations().isEmpty()) {
+        	return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
         }
         try {
-            MatchingReturnObject result = accountOperationServiceApi.matchOperations(accountOperations);
+            MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
             return Response.status(Response.Status.OK).entity(result).build();
-        } catch (ElementNotFoundException e){
+        } catch (ElementNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity("Entity does not exist : " + e.getMessage()).build();
         } catch (BusinessException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Matching action is failed : " + e.getMessage()).build();

@@ -1,9 +1,12 @@
 package org.meveo.apiv2.accountreceivable;
 
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,20 +18,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
+import org.meveo.apiv2.AcountReceivable.CustomerAccount;
+import org.meveo.apiv2.AcountReceivable.MatchingAccountOperation;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.*;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
 
@@ -111,9 +116,36 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		}
 	}
 
-	public MatchingReturnObject matchOperations(Map<Integer, Long> accountOperations) {
+
+	public Optional<AccountOperation> assignAccountOperation(Long accountOperationId,
+																					 CustomerAccount customerAccountInput) {
+		AccountOperation accountOperation = accountOperationService.findById(accountOperationId);
+		if(accountOperation == null) {
+			throw new NotFoundException("Account operation does not exits");
+		} else {
+			org.meveo.model.payments.CustomerAccount customerAccount = getCustomerAccount(customerAccountInput);
+			if(customerAccount == null) {
+				throw new NotFoundException("Customer account does not exits");
+			}
+			accountOperation.setCustomerAccount(customerAccount);
+			accountOperation.setStatus(POSTED);
+			try {
+				accountOperationService.update(accountOperation);
+			} catch (Exception exception) {
+				throw new BadRequestException(exception.getMessage());
+			}
+			return of(accountOperation);
+		}
+	}
+
+	public MatchingReturnObject matchOperations(List<AccountOperationAndSequence> accountOperations) {
+		// Get and Sort AccountOperation by sequence (sort used for send order in matchingOperation service)
+		List<Long> aoIds = accountOperations.stream()
+				.sorted(Comparator.comparing(AccountOperationAndSequence::getSequence))
+				.map(AccountOperationAndSequence::getId)
+				.collect(Collectors.toList());
+
 		// Check existence of all passed accountOperation
-		List<Long> aoIds = new ArrayList<>(accountOperations.values());
 		List<AccountOperation> aos = accountOperationService.findByIds(aoIds);
 
 		if (aoIds.size() != aos.size()) {
@@ -122,7 +154,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 
 		// Check that all AOs have the same customer account except for orphan AOs. if not throw an exception.
 		Set<Long> customerIds = aos.stream()
-				.map(AccountOperation::getCustomerAccount).map(CustomerAccount::getId)
+				.map(AccountOperation::getCustomerAccount).map(org.meveo.model.payments.CustomerAccount::getId)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 
@@ -133,7 +165,6 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		// Can not match AOs of  type SecurityDeposit(CRD_SD/DEB_SD/REF_SD)
 		Set<String> aoCodes = aos.stream()
 				.map(AccountOperation::getCode)
-				//.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 
 		Set<String> unExpectedAoCodes = Stream.of("CRD_SD", "DEB_SD", "REF_SD")
@@ -148,10 +179,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		Optional<AccountOperation> ao = aos.stream()
 				.filter(accountOperation -> accountOperation.getCustomerAccount() != null)
 				.findAny();
-//
-//		CustomerAccount customer = ao.map(AccountOperation::getCustomerAccount)
-//				.orElseThrow(() -> new BusinessException("No CustomerAccount for matching"));
-		CustomerAccount customer = customerAccountService.findById(ao.map(AccountOperation::getCustomerAccount)
+
+		org.meveo.model.payments.CustomerAccount customer = customerAccountService.findById(ao.map(AccountOperation::getCustomerAccount)
 				.orElseThrow(() -> new BusinessException("No CustomerAccount for matching")).getId());
 
 		Optional.of(aos.stream().filter(accountOperation -> accountOperation.getCustomerAccount() == null)
@@ -161,20 +190,22 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 					accountOperationService.update(accountOperation);
 				});
 
-		// Sort request
-		Map<Integer, Long> sortedAos = accountOperations.entrySet().stream()
-				.sorted(Map.Entry.comparingByKey())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-						(oldValue, newValue) -> oldValue, LinkedHashMap::new));
-
-		List<Long> toMatchAoIds = new ArrayList<>(sortedAos.values());
-
 		try {
 			return matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-					toMatchAoIds, toMatchAoIds.get(toMatchAoIds.size() - 1));
+					aoIds, aoIds.get(aoIds.size() - 1));
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
 		}
 	}
 
+	private org.meveo.model.payments.CustomerAccount getCustomerAccount(CustomerAccount customerAccountInput) {
+		org.meveo.model.payments.CustomerAccount customerAccount = null;
+		if(customerAccountInput.getId() != null) {
+			customerAccount = customerAccountService.findById(customerAccountInput.getId());
+		}
+		if(customerAccountInput.getCode() != null && customerAccount == null) {
+			customerAccount = customerAccountService.findByCode(customerAccountInput.getCode());
+		}
+		return customerAccount;
+	}
 }

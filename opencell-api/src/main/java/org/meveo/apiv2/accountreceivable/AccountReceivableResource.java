@@ -63,8 +63,8 @@ public interface AccountReceivableResource {
 
 	/**
 	 * @since 13.0
-	 * @param accountOperations
-	 * @return
+	 * @param matchingAO contains data for AccountOperation and Sequence for matching
+	 * @return Matching result
 	 */
 	@POST
 	@Path("/matchOperations")
@@ -77,6 +77,6 @@ public interface AccountReceivableResource {
                     @ApiResponse(responseCode = "412", description = "Missing parameters"),
                     @ApiResponse(responseCode = "400", description = "Matching action is failed")
 			})
-	Response matchOperations(Map<Integer, Long> accountOperations);
+	Response matchOperations(MatchingAccountOperation matchingAO);
 
 }
