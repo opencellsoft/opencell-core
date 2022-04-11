@@ -31,6 +31,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
@@ -203,29 +204,42 @@ public class WebHook extends Notification {
     }
 
     public String getPassword() {
-        if (KeystoreManager.existKeystore())
+        if (KeystoreManager.existKeystore()) {
             return getPasswordKS();
-        else
+        }
+        else {
             return getPasswordDB();
+        }
     }
 
     public void setPassword(String password) {
         if (KeystoreManager.existKeystore()) {
-            passwordDB = null;
-            setPasswordKS(password);
+            passwordDB = "";
+            this.passwordKS = password;
+            setPasswordKS();
         }
         else
             setPasswordDB(password);
     }
 
     public String getPasswordKS() {
-        return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getCode());
+        if (KeystoreManager.existCredential(getClass().getSimpleName() + "." + getId())) {
+            return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getId());
+        }
+        else {
+            return "";
+        }
     }
 
-    public void setPasswordKS(String passwordKS) {
-        if (passwordKS == null)
-            passwordKS = "";
-        KeystoreManager.addCredential(getClass().getSimpleName() + "." + getCode(), passwordKS);
+    @PostPersist
+    public void setPasswordKS() {
+        if (this.passwordKS == null) {
+            this.passwordKS = "";
+        }
+
+        if (getId() != null &&! this.passwordKS.equals(getPasswordKS())) {
+            KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.passwordKS);
+        }
     }
 
     public Map<String, String> getHeaders() {
