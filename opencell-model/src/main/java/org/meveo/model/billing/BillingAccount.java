@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -790,5 +791,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Override
     public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
         this.minInvoiceLines = invoiceLines;
+    }
+
+    public List<UserAccount> getParentUserAccounts() {
+        return getUsersAccounts()
+                .stream()
+                .filter(userAccount -> userAccount.getParentUserAccount() == null)
+                .collect(toList());
     }
 }

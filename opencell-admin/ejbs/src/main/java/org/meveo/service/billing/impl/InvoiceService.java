@@ -2474,6 +2474,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
+        checkNonValidateInvoice(invoice);
         cancelInvoiceAndRts(invoice);
         List<Long> invoicesIds = new ArrayList<Long>();
         invoicesIds.add(invoice.getId());
@@ -2487,12 +2488,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoiceAndRts(Invoice invoice) {
+        checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
+    }
+    
+    private void checkNonValidateInvoice(Invoice invoice) {
+        if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
+            throw new BusinessException("You can't cancel a validated invoice");
+        }
     }
 
     public void validateInvoice(Invoice invoice, boolean save) {
@@ -2544,6 +2552,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
             validateInvoice(invoice, true);
         }
     }
+    
+    
+   /**
+    * @param billingRunId
+    * @param invalidateXMLInvoices
+    * @param invalidatePDFInvoices
+    */
+   @JpaAmpNewTx
+   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+   public void invalidateInvoiceDocuments(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+       BillingRun br = getBrById(billingRunId);
+       
+       if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
+           nullifyInvoiceXMLFileNames(br);
+       }
+
+       if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
+           nullifyInvoicePDFFileNames(br);
+       }
+   }
+
+   /**
+    * Nullify BR's invoices xml file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoiceXMLFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoiceXMLFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+   /**
+    * Nullify BR's invoices pdf file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoicePDFFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
 
     /**
      * @param billingRunId
