@@ -830,6 +830,7 @@ public class NativePersistenceService extends BaseService {
     private String aggregationFields(List<String> fields, Predicate<String> predicate) {
         return fields.stream()
                     .filter(predicate)
+                    .map(field-> field.replaceFirst("\\(", "(a."))
                     .collect(joining(","));
     }
 
