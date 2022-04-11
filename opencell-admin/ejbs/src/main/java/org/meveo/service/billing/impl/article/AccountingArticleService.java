@@ -137,9 +137,14 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("accountingCode", accountingCode)
 				.getResultList();
 	}
-
+	
 	@SuppressWarnings("rawtypes")
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) throws InvalidELException, ValidationException {
+		return getAccountingArticleByChargeInstance(chargeInstance,null,null,null);
+	}
+
+	@SuppressWarnings("rawtypes")
+    public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance,String parameter1,String parameter2,String parameter3) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;
         }
@@ -154,7 +159,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle = Optional.empty();
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, null, null, null);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, parameter1, parameter2, parameter3);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
