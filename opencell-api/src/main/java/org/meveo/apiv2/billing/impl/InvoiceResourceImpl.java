@@ -7,6 +7,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -37,6 +39,7 @@ import org.meveo.apiv2.billing.ImmutableInvoices;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
@@ -351,5 +354,34 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("invoice", invoiceResource);
         return response;
+    }
+    
+    @Override
+    public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        List<Long> idsInvoiceLineNotFound = new ArrayList<Long>();
+        for(org.meveo.model.cpq.commercial.InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+            idsInvoiceLineForInvoice.add(invoiceLine.getId());
+        }
+        
+        for(Long lineId : invoiceLinesToDuplicate.getInvoiceLineIds()) {
+            if (!idsInvoiceLineForInvoice.contains(lineId)) {                
+                idsInvoiceLineNotFound.add(lineId);
+            }
+        }
+        
+        String idsInvoiceLineNotFoundStr = "";
+        if (idsInvoiceLineNotFound.size() > 0) {
+            for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
+                idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
+            }
+            idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
+            throw new EntityDoesNotExistsException("Invoice Line ids:[" + idsInvoiceLineNotFoundStr + "] does not exist."); 
+        }
+        invoice = invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds());
+        
+        return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResource(invoice))).build();
+
     }
 }
