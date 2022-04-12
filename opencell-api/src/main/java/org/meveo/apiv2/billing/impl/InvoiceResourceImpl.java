@@ -52,6 +52,7 @@ import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -369,6 +370,13 @@ public class InvoiceResourceImpl implements InvoiceResource {
             if (!idsInvoiceLineForInvoice.contains(lineId)) {                
                 idsInvoiceLineNotFound.add(lineId);
             }
+        }
+        
+        if(!InvoiceStatusEnum.NEW.equals(invoice.getStatus()) 
+                && !InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())){
+            throw new EntityDoesNotExistsException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
         }
         
         String idsInvoiceLineNotFoundStr = "";
