@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
@@ -35,6 +37,8 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -195,13 +199,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
 			}
-			
 			for (OrderProduct product : offer.getProducts()){
 				processProductWithDiscount(subscription, product);
 			}
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
-			subscriptionService.activateInstantiatedService(subscription);
+			RatingResult ratingResult = subscriptionService.activateInstantiatedService(subscription);
+
+            discountPlanService.calculateDiscountplanItems(new ArrayList<>(ratingResult.getEligibleFixedDiscountItems()), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), false, null, null,DiscountPlanTypeEnum.OFFER);
 		}
 
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
@@ -226,7 +232,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         return seller;
     }
 	
-	private void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
+	public void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
 	     // instantiate the discounts
             for (DiscountPlan dp : discountPlans) {
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
@@ -236,7 +242,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	
 	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
 		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
-
+		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 		if(orderProduct.getDiscountPlan() != null) {
 			DiscountPlanInstance dpi = new DiscountPlanInstance();
 			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
@@ -246,7 +252,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			dpi.setDiscountPlanInstanceStatus(discountPlan);
 			dpi.setCfValues(discountPlan.getCfValues());
 			dpi.setServiceInstance(serviceInstance);
+			dpi.setSubscription(subscription);
 			discountPlanInstanceService.create(dpi, discountPlan);
+			serviceInstance.getDiscountPlanInstances().add(dpi);
+			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
 		}
 	}
 
@@ -309,6 +318,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
+		
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()

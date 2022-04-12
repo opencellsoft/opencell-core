@@ -7,11 +7,13 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.util.Arrays;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.DatePeriod;
@@ -19,6 +21,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -35,6 +38,8 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -59,8 +64,13 @@ public class InvoiceLinesFactory {
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
 
+    private RatedTransactionService ratedTransactionService =
+            (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    private InvoiceLineService invoiceLineService =
+            (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
+    
 
     /**
      * @param record        map of ratedTransaction
@@ -69,13 +79,14 @@ public class InvoiceLinesFactory {
      * @param billingRun
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
-        InvoiceLine invoiceLine = initInvoiceLine(record, result, appProvider, billingRun, configuration);
+    public InvoiceLine create(Map<String, Object> record,  Map<Long, Long> iLIdsRtIdsCorrespondence, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
+        InvoiceLine invoiceLine = initInvoiceLine(record, iLIdsRtIdsCorrespondence, result, appProvider, billingRun, configuration);
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record, Map<Long, Long> iLIdsRtIdsCorrespondence, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = new InvoiceLine();
+        String rtID = (String) record.get("rated_transaction_ids");
         ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, id)));
         ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, id)));
         ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, id)));
@@ -84,6 +95,27 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, id)));
         ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
         ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
+        ofNullable(record.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById((Long)id)));
+        ofNullable(record.get("article_id"))
+        .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById((Long) id)));
+        log.debug("discounted_Ratedtransaction_id={},{}",record.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
+        if(record.get("discounted_ratedtransaction_id")!=null) {
+        	Long discountedILId=iLIdsRtIdsCorrespondence.get((Long) record.get("discounted_ratedtransaction_id"));
+        		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
+        		if(discountedILId!=null) {
+        			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
+            		invoiceLine.setDiscountedInvoiceLine(discountedIL);
+            		RatedTransaction discountRatedTransaction = ratedTransactionService.findById(Long.valueOf(rtID));
+            		if(discountRatedTransaction!=null) {
+            			invoiceLine.setDiscountPlan(discountRatedTransaction.getDiscountPlan());
+            			invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
+            			invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
+            			invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
+            		}
+        		}
+        		
+        }
+        
 
         Date usageDate = getUsageDate(record.get("usage_date"), configuration.getDateAggregationOption());
         invoiceLine.setValueDate(usageDate);
