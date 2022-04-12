@@ -29,6 +29,8 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -361,31 +363,30 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
-        List<Long> idsInvoiceLineNotFound = new ArrayList<Long>();
+        List<String> idsInvoiceLineNotFound = new ArrayList<String>();
         for(org.meveo.model.cpq.commercial.InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
+        }
+        int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();
+        if(sizeInvoiceLineIds == 0){
+            throw new MissingParameterException("The following parameters are required or contain invalid values: invoiceLineIds");
         }
         
         for(Long lineId : invoiceLinesToDuplicate.getInvoiceLineIds()) {
             if (!idsInvoiceLineForInvoice.contains(lineId)) {                
-                idsInvoiceLineNotFound.add(lineId);
+                idsInvoiceLineNotFound.add(""+lineId);
             }
         }
-        
+
         if(!InvoiceStatusEnum.NEW.equals(invoice.getStatus()) 
                 && !InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
                 && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
                 && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())){
-            throw new EntityDoesNotExistsException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
+            throw new MeveoApiException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
         }
         
-        String idsInvoiceLineNotFoundStr = "";
         if (idsInvoiceLineNotFound.size() > 0) {
-            for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
-                idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
-            }
-            idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
-            throw new EntityDoesNotExistsException("Invoice Line ids:[" + idsInvoiceLineNotFoundStr + "] does not exist."); 
+            throw new MissingParameterException(idsInvoiceLineNotFound);
         }
         
         return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResourceInvoiceLine(invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds())))).build();

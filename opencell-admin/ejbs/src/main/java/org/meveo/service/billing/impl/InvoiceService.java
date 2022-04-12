@@ -6105,7 +6105,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             for (InvoiceLine invoiceLine : invoiceLines) {
                 if (invoiceLineIds.contains(invoiceLine.getId())) {
                     invoiceLinesService.detach(invoiceLine);
-                    InvoiceLine duplicateInvoiceLine = invoiceLine.clone();
+                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
                     invoiceLinesService.create(duplicateInvoiceLine);
                     invoice.getInvoiceLines().add(duplicateInvoiceLine);
                 }                
