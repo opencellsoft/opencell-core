@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import java.util.Map;
+
 @Path("/catalog/priceManagement")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,5 +30,18 @@ public interface PricePlanMatrixResource {
                     @ApiResponse(responseCode = "409", description = "A line having similar values already exists!")
             })
     Response importPricePlanMatrixLines(@Parameter(description = "input data", required = true) PricePlanMLinesDTO pricePlanMLinesDTO);
+
+    @POST
+    @Path("/pricePlanMatrixVersions/export")
+    @Operation(summary = "Export price plan matrix versions",
+            tags = { "Price Plan Matrix" },
+            description ="Export price plan matrix versions",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "The price plan matrix versions successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error"),
+                    @ApiResponse(responseCode = "404", description = "PricePlanMatrixVersion with provided ids does not exists."),
+                    @ApiResponse(responseCode = "409", description = "A line having similar values already exists!")
+            })
+    Response exportPricePlanMatrixVersions(@Parameter(description = "input data", required = true) Map<String, Object> payload);
 
 }
