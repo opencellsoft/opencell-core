@@ -16,13 +16,18 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
+import org.meveo.apiv2.AcountReceivable.UnMatchingAccountOperationDetail;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.service.payments.impl.*;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
 
@@ -31,6 +36,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private SecurityDepositTransactionService securityDepositTransactionService;
 
 	@Override
 	public List<AccountOperation> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -122,6 +130,38 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			}
 			return of(accountOperation);
 		}
+	}
+
+	public List<UnMatchingOperationRequestDto> validateAndGetAOForUnmatching(List<UnMatchingAccountOperationDetail> accountOperations){
+		// Get AccountOperation
+		List<Long> aoIds = accountOperations.stream()
+				.map(UnMatchingAccountOperationDetail::getId)
+				.collect(Collectors.toList());
+
+		// Check existence of all passed accountOperation
+		List<AccountOperation> aos = accountOperationService.findByIds(aoIds);
+
+		if (aoIds.size() != aos.size()) {
+			throw new ElementNotFoundException("One or more AccountOperations passed for unmatching are not found");
+		}
+
+		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AOs of type SecurityDeposit
+		if (securityDepositTransactionService.checkExistanceByAoIds(aoIds)) {
+			throw new BusinessApiException("Can not unMatch AOs of type SecurityDeposit");
+		}
+
+		List<UnMatchingOperationRequestDto> toUnmatch = new ArrayList<>(aos.size());
+
+		aos.forEach(ao -> {
+			UnMatchingOperationRequestDto unM = new UnMatchingOperationRequestDto();
+			unM.setAccountOperationId(ao.getId());
+			unM.setCustomerAccountCode(customerAccountService.findById(ao.getCustomerAccount().getId()).getCode());
+
+			toUnmatch.add(unM);
+		});
+
+		return toUnmatch;
+
 	}
 
 	private org.meveo.model.payments.CustomerAccount getCustomerAccount(CustomerAccount customerAccountInput) {
