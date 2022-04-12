@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -37,10 +39,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private AttributeService attributeService;
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
-		return getAccountingArticle(product, null, attributes);
+		return getAccountingArticle(product, null, attributes, null, null, null);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, Map<String, Object> attributes) throws InvalidELException, ValidationException {
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+															Map<String, Object> attributes, String param1, String param2, String param3) throws InvalidELException, ValidationException {
 		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
@@ -54,7 +57,21 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
 					.collect(toList());;
 		}
-
+		if(!StringUtils.isBlank(param1)) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine ->param1.equals(articleMappingLine.getParameter1()))
+					.collect(toList());
+		}
+		if(!StringUtils.isBlank(param2)) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine ->param2.equals(articleMappingLine.getParameter2()))
+					.collect(toList());
+		}
+		if(!StringUtils.isBlank(param3)) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine ->param3.equals(articleMappingLine.getParameter3()))
+					.collect(toList());
+		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
@@ -121,9 +138,14 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("accountingCode", accountingCode)
 				.getResultList();
 	}
-
+	
 	@SuppressWarnings("rawtypes")
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) throws InvalidELException, ValidationException {
+		return getAccountingArticleByChargeInstance(chargeInstance,null,null,null);
+	}
+
+	@SuppressWarnings("rawtypes")
+    public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance,String parameter1,String parameter2,String parameter3) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;
         }
@@ -138,7 +160,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle = Optional.empty();
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, parameter1, parameter2, parameter3);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
