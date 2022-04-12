@@ -9,6 +9,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -40,4 +41,11 @@ public class OrderPriceService extends BusinessService<OrderPrice> {
                   .setParameter("priceLevel", PriceLevelEnum.PRODUCT)
                   .getResultList();
     }
+	
+	public List<OrderPrice> loadOverridenPricesByOrderProductAndCharge(Long orderProductId, Long chargeTemplateId){
+		return getEntityManager().createNamedQuery("QuotePrice.loadOverridenPricesByOrderProductAndCharge", OrderPrice.class)
+				.setParameter("orderProductId", orderProductId)
+				.setParameter("chargeTemplateId", chargeTemplateId)
+				.getResultList();
+	}
 }

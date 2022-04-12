@@ -55,6 +55,7 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 				.setParameter("priceLevelEnum", PriceLevelEnum.PRODUCT)
 				.getResultList();
 	}
+
 	
 	public QuotePrice findByUuid(String uuid) {
 		if(uuid == null) return null;

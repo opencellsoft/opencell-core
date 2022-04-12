@@ -223,7 +223,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 
 	
-	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
+	public ServiceInstance processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
 		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes());
 		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 		if(orderProduct.getDiscountPlan() != null) {
@@ -240,6 +240,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.getDiscountPlanInstances().add(dpi);
 			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
 		}
+		return serviceInstance;
 	}
 
 	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
