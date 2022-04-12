@@ -9983,6 +9983,9 @@
     		<column name="quantity" type="numeric(19,2)" />
     		<column name="discounted_order_price" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
             
         </createTable>
     </changeSet>
@@ -14148,6 +14151,12 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
+       
+       <changeSet id="rebuild-str-fk5-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+       
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15994,6 +16003,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20220404_M540_6296" author="Mbarek-Ay"/>
     <changeSet id="#20220407_ADHOC" author="NabilOuachi"/>
     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
+    <changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
