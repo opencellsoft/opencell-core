@@ -10120,4 +10120,31 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+		<sql>
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = (select current_rate from cte where cte.id = bil.id) * bil.unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is not null);
+
+
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
