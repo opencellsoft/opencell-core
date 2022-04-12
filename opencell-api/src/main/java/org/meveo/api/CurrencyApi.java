@@ -276,6 +276,9 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setPrDescription(currency.getDescription());
             tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
             tradingCurrency.setDecimalPlaces(2);
+            tradingCurrency.setCurrentRate(BigDecimal.ONE);
+            tradingCurrency.setCurrentRateFromDate(new Date());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
             tradingCurrencyService.create(tradingCurrency);
         }
 
