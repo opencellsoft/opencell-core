@@ -49,6 +49,7 @@ import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
@@ -188,23 +189,31 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
         String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
         try {
             ResteasyClient client = new ResteasyClientProxyBuilder().build();
-         ResteasyWebTarget target = client.target(baseurl + url);
-         log.debug("call {} with body:{}", (baseurl + url), body);
-         BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
-         target.register(basicAuthentication);
+            ResteasyWebTarget target = client.target(baseurl + url);
+            log.debug("call {} with body:{}", (baseurl + url), body);
+            BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
+            target.register(basicAuthentication);
 
-         Response response = target.request().post(Entity.entity(body, MediaType.APPLICATION_JSON));
-         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-             if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
-                 throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-             } else {
-                 throw new CommunicateToRemoteInstanceException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
-             }
-         }
-         return response;
-         
-     } catch (Exception e) {
-         throw new CommunicateToRemoteInstanceException(meveoInstance.getCode(), e);
-     }
- }
+            Response response = target.request().post(Entity.entity(body, MediaType.APPLICATION_JSON));
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
+                    throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                } else {
+                    throw new CommunicateToRemoteInstanceException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                }
+            }
+            return response;
+
+        } catch (Exception e) {
+            throw new CommunicateToRemoteInstanceException(meveoInstance.getCode(), e);
+        }
+    }
+
+    @Override
+    public void remove(MeveoInstance meveoInstance) {
+        // remove credential of opencellInstance in the keystore
+        KeystoreManager.removeCredential(meveoInstance.getClass().getSimpleName() + "." + meveoInstance.getId());
+
+        super.remove(meveoInstance);
+    }
 }
