@@ -90,4 +90,21 @@ public interface AccountReceivableResource {
 			})
 	Response matchOperations(MatchingAccountOperation matchingAO);
 
+
+	/**
+	 * @since 13.0
+	 * @param unMatchingAO contains data for AccountOperation for unMatching
+	 * @return UnMatching result
+	 */
+	@POST
+	@Path("/unMatchOperations")
+	@Operation(summary = "API to match Account operations",
+			tags = {"Post"},
+			description = "Process unMatching for AccountOperations",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Successfully matched"),
+					@ApiResponse(responseCode = "404", description = "Entity does not exist"),
+					@ApiResponse(responseCode = "400", description = "Matching action is failed")
+			})
+	Response unMatchOperations(UnMatchingAccountOperation unMatchingAO);
 }

@@ -22,11 +22,12 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
+import org.meveo.apiv2.AcountReceivable.UnMatchingAccountOperationDetail;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
@@ -35,6 +36,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.service.payments.impl.*;
+import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
 
@@ -46,6 +48,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+
+	@Inject
+	private SecurityDepositTransactionService securityDepositTransactionService;
 
 	@Override
 	public List<AccountOperation> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -150,7 +155,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		List<AccountOperation> aos = accountOperationService.findByIds(aoIds);
 
 		if (aoIds.size() != aos.size()) {
-			throw new ElementNotFoundException("One or more AccountOperations passed for matching are not found");
+			throw new EntityDoesNotExistsException("One or more AccountOperations passed for matching are not found");
 		}
 
 		// Check that all AOs have the same customer account except for orphan AOs. if not throw an exception.
@@ -161,7 +166,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				.collect(Collectors.toList());
 
 		if (new HashSet<>(customerIds).size() > 1) {
-			throw new BusinessException("AccountOperations passed for matching are linked to different CustomerAccount");
+			throw new BusinessApiException("Matching action is failed : AccountOperations passed for matching are linked to different CustomerAccount");
 		}
 
 		// Can not match AOs of  type SecurityDeposit(CRD_SD/DEB_SD/REF_SD)
@@ -173,14 +178,14 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				.collect(Collectors.toSet());
 
 		if (!Collections.disjoint(unExpectedAoCodes, aoCodes)) {
-			throw new BusinessException("AccountOperations passed for matching contains one of unexpected codes ["
+			throw new BusinessApiException("Matching action is failed : AccountOperations passed for matching contains one of unexpected codes ["
 					+ unExpectedAoCodes + "]");
 		}
 
 		// Update orphans AO by setting the same customerAccount
 		org.meveo.model.payments.CustomerAccount customer = customerAccountService.findById(customerIds.get(0));
 		if (customer == null) {
-			throw new BusinessException("No CustomerAccount found with id " + customerIds.get(0) + " for matching");
+			throw new BusinessApiException("Matching action is failed : No CustomerAccount found with id " + customerIds.get(0) + " for matching");
 		}
 
 		Optional.of(aos.stream().filter(accountOperation -> accountOperation.getCustomerAccount() == null)
@@ -211,8 +216,40 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return matchingResult;
 
 		} catch (Exception e) {
-			throw new BusinessException(e.getMessage());
+			throw new BusinessApiException("Matching action is failed : " + e.getMessage());
 		}
+	}
+
+	public List<UnMatchingOperationRequestDto> validateAndGetAOForUnmatching(List<UnMatchingAccountOperationDetail> accountOperations){
+		// Get AccountOperation
+		List<Long> aoIds = accountOperations.stream()
+				.map(UnMatchingAccountOperationDetail::getId)
+				.collect(Collectors.toList());
+
+		// Check existence of all passed accountOperation
+		List<AccountOperation> aos = accountOperationService.findByIds(aoIds);
+
+		if (aoIds.size() != aos.size()) {
+			throw new EntityDoesNotExistsException("One or more AccountOperations passed for unmatching are not found");
+		}
+
+		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AOs of type SecurityDeposit
+		if (securityDepositTransactionService.checkExistanceByAoIds(aoIds)) {
+			throw new BusinessApiException("UnMatching action is failed : Can not unMatch AOs of type SecurityDeposit");
+		}
+
+		List<UnMatchingOperationRequestDto> toUnmatch = new ArrayList<>(aos.size());
+
+		aos.forEach(ao -> {
+			UnMatchingOperationRequestDto unM = new UnMatchingOperationRequestDto();
+			unM.setAccountOperationId(ao.getId());
+			unM.setCustomerAccountCode(customerAccountService.findById(ao.getCustomerAccount().getId()).getCode());
+
+			toUnmatch.add(unM);
+		});
+
+		return toUnmatch;
+
 	}
 
 	private org.meveo.model.payments.CustomerAccount getCustomerAccount(CustomerAccount customerAccountInput) {
