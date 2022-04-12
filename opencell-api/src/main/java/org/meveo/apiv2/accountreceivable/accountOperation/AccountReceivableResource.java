@@ -1,5 +1,6 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
+
 import java.util.Map;
 import java.util.Set;
 
@@ -45,14 +46,14 @@ public interface AccountReceivableResource {
                             description = "Following account operations does not exist : {accountOperation ids}")
             })
     Response forcePosting(Map<String, Set<Long>> accountOperations);
-    
+
 	/**
 	 * @param id
 	 * @return
 	 */
 	@PUT
 	@Path("/changeStatus")
-	@Operation(summary = "mark account operation as exported",  description = "mark account operation as exported", 
+	@Operation(summary = "mark account operation as exported",  description = "mark account operation as exported",
 	responses = {
 	@ApiResponse(responseCode = "200", description = "Account operations status are successfully updated"),
 	@ApiResponse(responseCode = "404", description = "Account operations don't exist"),
@@ -71,6 +72,24 @@ public interface AccountReceivableResource {
 											Long accountOperationId,
 									@Parameter(description = "Customer account", required = true)
 											CustomerAccountInput customerAccount);
+	/**
+	 * @since 13.0
+	 * @param matchingAO contains data for AccountOperation and Sequence for matching
+	 * @return Matching result
+	 */
+	@POST
+	@Path("/matchOperations")
+	@Operation(summary = "API to match Account operations",
+			tags = {"Post"},
+			description = "Process matching for AccountOperations",
+			responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully matched"),
+					@ApiResponse(responseCode = "404", description = "Entity does not exist"),
+                    @ApiResponse(responseCode = "412", description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400", description = "Matching action is failed")
+			})
+	Response matchOperations(MatchingAccountOperation matchingAO);
+
 
 	/**
 	 * @since 13.0
