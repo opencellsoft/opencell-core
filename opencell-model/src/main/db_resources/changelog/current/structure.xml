@@ -9492,4 +9492,16 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="#20220412_M540_172" author="Mbarek-Ay">
+	
+		<addColumn tableName="order_price">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn> 
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" /> 
+      </changeSet>
+    
 </databaseChangeLog>

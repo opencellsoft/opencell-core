@@ -325,8 +325,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         Renewal renewal = new Renewal(subscriptionRenewal, subscription.getSubscribedTillDate());
         subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
 
-        subscription.setSubscribedTillDate(terminationDate);
-        subscription.setToValidity(terminationDate);
+        subscription.setSubscribedTillDate(terminationDate); 
         subscriptionRenewal.setTerminationReason(terminationReason);
         subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
         subscriptionRenewal.setAutoRenew(false);
