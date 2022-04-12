@@ -379,9 +379,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
             idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
             throw new EntityDoesNotExistsException("Invoice Line ids:[" + idsInvoiceLineNotFoundStr + "] does not exist."); 
         }
-        invoice = invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds());
         
-        return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResource(invoice))).build();
-
+        return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResourceInvoiceLine(invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds())))).build();
     }
 }

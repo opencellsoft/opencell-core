@@ -298,7 +298,49 @@ public class InvoiceLine extends AuditableEntity {
 		this.accountingArticle = accountingArticle;
 	}
 	
-	
+	@Override
+	public InvoiceLine clone() {
+	    InvoiceLine invoiceLine = new InvoiceLine();
+        invoiceLine.setInvoice(this.invoice);
+        invoiceLine.setPrestation(this.prestation);
+	    invoiceLine.setAccountingArticle(this.accountingArticle);
+	    invoiceLine.setOfferServiceTemplate(this.offerServiceTemplate);
+	    invoiceLine.setProduct(this.product);
+	    invoiceLine.setServiceTemplate(this.serviceTemplate);
+	    invoiceLine.setValidity(this.validity);
+	    invoiceLine.setQuantity(this.quantity);
+	    invoiceLine.setUnitPrice(this.unitPrice);
+	    invoiceLine.setDiscountRate(this.discountRate);
+	    invoiceLine.setAmountWithoutTax(this.amountWithoutTax);
+	    invoiceLine.setTaxRate(this.taxRate);
+        invoiceLine.setAmountWithTax(this.amountWithTax);
+	    invoiceLine.setAmountTax(this.amountTax);
+	    invoiceLine.setDiscountPlan(this.discountPlan);
+	    invoiceLine.setTax(this.tax);
+	    invoiceLine.setOrderRef(this.orderRef);
+	    invoiceLine.setAccessPoint(this.accessPoint);
+	    invoiceLine.setCommercialOrder(this.commercialOrder);
+	    invoiceLine.setBillingRun(this.billingRun);
+	    invoiceLine.setBillingAccount(this.billingAccount);
+	    invoiceLine.setValueDate(this.valueDate);
+	    invoiceLine.setOrderNumber(this.orderNumber);
+	    invoiceLine.setDiscountAmount(this.discountAmount);
+	    invoiceLine.setLabel(this.label);
+	    invoiceLine.setRawAmount(this.rawAmount);
+	    invoiceLine.setServiceInstance(this.serviceInstance);
+	    invoiceLine.setSubscription(this.subscription);
+	    invoiceLine.setOfferTemplate(this.offerTemplate);
+	    invoiceLine.setProductVersion(this.productVersion);
+	    invoiceLine.setOrderLot(this.orderLot);
+	    invoiceLine.setTaxRecalculated(this.taxRecalculated);
+        invoiceLine.setStatus(this.status);
+        invoiceLine.setInvoiceAggregateF(this.invoiceAggregateF);
+        invoiceLine.setQuote(this.quote);
+        invoiceLine.setQuoteOffer(this.quoteOffer);
+        invoiceLine.setOrderOffer(this.orderOffer);
+        invoiceLine.setDiscountedInvoiceLine(this.discountedInvoiceLine);
+        return invoiceLine;
+    }
 
 	public InvoiceLine(InvoiceLine copy, Invoice invoice) {
 		this.invoice = invoice;

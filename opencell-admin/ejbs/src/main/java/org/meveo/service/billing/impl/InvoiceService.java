@@ -80,6 +80,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -6104,50 +6105,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             for (InvoiceLine invoiceLine : invoiceLines) {
                 if (invoiceLineIds.contains(invoiceLine.getId())) {
                     invoiceLinesService.detach(invoiceLine);
-                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
+                    InvoiceLine duplicateInvoiceLine = invoiceLine.clone();
                     invoiceLinesService.create(duplicateInvoiceLine);
+                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
                 }                
             }
         }
         
-        var invoiceAgregates = new ArrayList<InvoiceAgregate>();
-        if (invoice.getInvoiceAgregates() != null) {
-            invoice.getInvoiceAgregates().size();
-            invoiceAgregates.addAll(invoice.getInvoiceAgregates());
-        }        
-
-        if (invoiceLines.isEmpty()) {
-            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-    
-                invoiceAgregateService.detach(invoiceAgregate);
-    
-                switch (invoiceAgregate.getDescriminatorValue()) {
-                    case TAX_INVOICE_AGREGATE: {
-                        var taxInvoiceAgregate = new TaxInvoiceAgregate((TaxInvoiceAgregate) invoiceAgregate);
-                        taxInvoiceAgregate.setInvoice(invoice);
-                        invoiceAgregateService.create(taxInvoiceAgregate);
-                        invoice.getInvoiceAgregates().add(taxInvoiceAgregate);
-                        break;
-                    }
-                    case CATEGORY_INVOICE_AGREGATE: {
-                        var categoryInvoiceAgregate = new CategoryInvoiceAgregate((CategoryInvoiceAgregate) invoiceAgregate);
-                        categoryInvoiceAgregate.setInvoice(invoice);
-                        invoiceAgregateService.create(categoryInvoiceAgregate);
-                        invoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
-                        break;
-                    }
-                    case SUBCATEGORY_INVOICE_AGREGATE: {
-                        var subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate((SubCategoryInvoiceAgregate) invoiceAgregate);
-                        subCategoryInvoiceAgregate.setInvoice(invoice);
-                        invoiceAgregateService.create(subCategoryInvoiceAgregate);
-                        invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
-                        break;
-                    }
-                }
-            }
-        }
-        
-        invoice = update(invoice);
-        return invoice;
+        calculateInvoice(invoice);
+        return update(invoice);
     }
 }

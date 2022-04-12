@@ -296,9 +296,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
-        invoice = invoiceService.duplicateInvoiceLines(invoice, invoiceLineIds);
-        invoice = invoiceService.refreshOrRetrieve(invoice);
-        return invoice;
+        return invoiceService.duplicateInvoiceLines(invoice, invoiceLineIds);        
     }
     
 	/**
