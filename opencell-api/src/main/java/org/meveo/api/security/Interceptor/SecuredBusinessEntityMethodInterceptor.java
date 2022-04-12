@@ -129,8 +129,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         }
 
         SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(context);
-log.info("aroundInvoke Thang 1 : " + (context != null));
-log.info("aroundInvoke Thang 2 : " + (sbeConfig != null));
         return checkForSecuredEntities(context, sbeConfig);
     }
 
@@ -147,7 +145,6 @@ log.info("aroundInvoke Thang 2 : " + (sbeConfig != null));
             return context.proceed();
         }
 
-log.info("checkForSecuredEntities Thang 1 : " + (currentUser != null));
         Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntities(currentUser);
         boolean hasRestrictions = !allSecuredEntitiesMap.isEmpty();
         if (!hasRestrictions) {
@@ -211,9 +208,6 @@ log.info("checkForSecuredEntities Thang 1 : " + (currentUser != null));
     private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user = userService.findByUsername(currentUser.getUserName());
-log.info("user Thang 1 : " + (user != null));
-assert user != null;
-log.info("user Thang 2 : " + user.getUserName());
         allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
 
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class).setParameter("currentUserRoles", currentUser.getRoles()).getResultList();
