@@ -272,6 +272,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                }else if(walletOperation != null) {
 	                	discountWalletOperation.setUuid(walletOperation.getUuid());
 	                }
+	                log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
 	                //TODO: must have wallet operation for : link discountWallet to the current wallet, and
 	                discountWalletOperations.add(discountWalletOperation);
 			}

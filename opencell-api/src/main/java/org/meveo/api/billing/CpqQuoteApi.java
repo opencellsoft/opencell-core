@@ -1316,7 +1316,7 @@ public class CpqQuoteApi extends BaseApi {
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
         for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
-        	log.info("offerQuotation : overrodeLine AR code",overrodeLine.getAccountingArticle().getCode());
+        	log.debug("offerQuotation : overrodeLine AR code={}",overrodeLine.getAccountingArticle().getCode());
             if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
                 quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), overrodeLine);
                 quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
@@ -1654,9 +1654,10 @@ public class CpqQuoteApi extends BaseApi {
 						edr.setParameter3(param3.toString());
 					}
 					List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-
+					log.debug("walletOperationsFromEdr count={}",walletOperationsFromEdr.size());
 					if (walletOperationsFromEdr != null) {
 						for (WalletOperation walletOperation : walletOperationsFromEdr) {
+							log.debug("walletOperationsFromEdr code={},UnitAmountWithoutTax={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
 							if ((walletOperation.getUnitAmountWithoutTax() != null && walletOperation
 									.getUnitAmountWithoutTax().compareTo(BigDecimal.ZERO) >= 0)
 									|| (walletOperation.getUnitAmountWithTax() != null && walletOperation
