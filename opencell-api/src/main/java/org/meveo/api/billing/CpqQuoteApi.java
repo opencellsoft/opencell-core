@@ -832,13 +832,17 @@ public class CpqQuoteApi extends BaseApi {
             	if(offerTemplate != null && !offerTemplate.getCode().equals(quoteOfferDto.getOfferCode())) {
             		throw new MeveoApiException("The offer ID doesn’t match with the offer CODE, please correct the request");
             	}
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             }else if(quoteOfferDto.getOfferId() != null) {
             	offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             }else if(quoteOfferDto.getOfferCode() != null) {
             	offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+            	if (offerTemplate == null)
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
             }
-            if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
             final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
             if (quoteVersion == null)
                 throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
@@ -1594,7 +1598,7 @@ public class CpqQuoteApi extends BaseApi {
                         	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes,null,null,null)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
@@ -1618,7 +1622,7 @@ public class CpqQuoteApi extends BaseApi {
                         if(localRatingResult != null)
                         	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null,null,null)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
                          }
 
@@ -1669,7 +1673,7 @@ public class CpqQuoteApi extends BaseApi {
 		                			ratingResult.add(localRatingResult);
 		                			if (localRatingResult != null) {
 		                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
-		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes)
+		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes,edr.getParameter1(),edr.getParameter2(),edr.getParameter3())
 		                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
 		                				}
 		

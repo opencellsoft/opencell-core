@@ -7,13 +7,11 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.util.Arrays;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.DatePeriod;
@@ -63,9 +61,8 @@ public class InvoiceLinesFactory {
     private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
+    private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
 
-    private RatedTransactionService ratedTransactionService =
-            (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private InvoiceLineService invoiceLineService =
@@ -158,12 +155,15 @@ public class InvoiceLinesFactory {
             }
         }
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
+            String param1 = (String) record.get("parameter_1");
+            String param2 = (String) record.get("parameter_2");
+            String param3 = (String) record.get("parameter_3");
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
             Map<String, Object> attributes = fromAttributeValue(attributeValues);
-            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
+            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, param1, param2, param3)
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }
