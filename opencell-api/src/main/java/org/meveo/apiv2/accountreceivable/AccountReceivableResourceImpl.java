@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -47,8 +45,8 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 
 	@Inject
 	private AccountOperationApiService accountOperationServiceApi;
-	
-	@Inject
+
+    @Inject
     private AccountOperationApi accountOperationApi;
 
     @Override
@@ -170,14 +168,8 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                 matchingAO.getAccountOperations() == null || matchingAO.getAccountOperations().isEmpty()) {
         	return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
         }
-        try {
-            MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
-            return Response.status(Response.Status.OK).entity(result).build();
-        } catch (ElementNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Entity does not exist : " + e.getMessage()).build();
-        } catch (BusinessException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Matching action is failed : " + e.getMessage()).build();
-        }
+        MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
+        return Response.status(Response.Status.OK).entity(result).build();
     }
     
     @Override
@@ -186,24 +178,23 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                 unMatchingAO.getAccountOperations() == null || unMatchingAO.getAccountOperations().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations passed for unmatching").build();
         }
-        try {
-            // Check Business rules
-            List<UnMatchingOperationRequestDto> unmatchDtos = accountOperationServiceApi.validateAndGetAOForUnmatching(unMatchingAO.getAccountOperations());
-            // for each AO, call AccountOperationApi.unMatchingOperations (dto)
-            Optional.ofNullable(unmatchDtos).orElse(Collections.emptyList())
-                    .forEach(unmatchDto -> {
-                        // The dto can be created from AO.Id and AO.customerAccount.code
-                        try {
-                            accountOperationApi.unMatchingOperations(unmatchDto);
-                        } catch (Exception e) {
-                            throw new BusinessApiException(e);
-                        }
-                    });
-            return Response.status(Response.Status.OK).build();
-        } catch (ElementNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Entity does not exist : " + e.getMessage()).build();
-        } catch (BusinessException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Matching action is failed : " + e.getMessage()).build();
-        }
+        
+        // Check Business rules
+        List<UnMatchingOperationRequestDto> unmatchDtos = accountOperationServiceApi.validateAndGetAOForUnmatching(unMatchingAO.getAccountOperations());
+        // for each AO, call AccountOperationApi.unMatchingOperations (dto)
+        Optional.ofNullable(unmatchDtos).orElse(Collections.emptyList())
+                .forEach(unmatchDto -> {
+                    // The dto can be created from AO.Id and AO.customerAccount.code
+                    try {
+                        accountOperationApi.unMatchingOperations(unmatchDto);
+                    } catch (Exception e) {
+                        throw new BusinessApiException(e);
+                    }
+                });
+        return Response.status(Response.Status.OK).build();
+       
+
+ 
+        
     }
 }
