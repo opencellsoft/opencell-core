@@ -10425,6 +10425,7 @@
             <column name="unit_price" type="numeric(23, 12)"  >
                 <constraints nullable="false"/>
             </column>
+            <column name="functional_unit_price" type="numeric(23, 12)" />
             <column name="discount_rate" type="numeric(23, 12)"  >
                 <constraints nullable="false"/>
             </column>
@@ -17543,6 +17544,7 @@
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
