@@ -39,6 +39,7 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -158,25 +159,29 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @Override
     public void create(InvoiceLine entity) throws BusinessException {
     	AccountingArticle accountingArticle=entity.getAccountingArticle();
-    	Invoice invoice=entity.getInvoice();
-    	Date date=new Date();
-    	if(entity.getValueDate()!=null) {
-    		date=entity.getValueDate();
-    	}
-    	BillingAccount billingAccount=entity.getBillingAccount();
-    	Seller seller=null;
-    	if(invoice!=null) {
-       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-       	 billingAccount=invoice.getBillingAccount();
-       	}
-    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-    	if(seller==null) {
-    		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
-    	}
-    	 if (accountingArticle != null && entity.getTax()==null) {
-             seller = sellerService.refreshOrRetrieve(seller);
-             setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
-         }
+    	if (accountingArticle != null && entity.getTax()==null) {
+			Invoice invoice = entity.getInvoice();
+			Date date = new Date();
+			if (entity.getValueDate() != null) {
+				date = entity.getValueDate();
+			}
+			BillingAccount billingAccount = entity.getBillingAccount();
+			Seller seller = null;
+			if (invoice != null) {
+				seller = invoice.getSeller() != null ? invoice.getSeller() : seller;
+				billingAccount = invoice.getBillingAccount();
+			}
+			billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+			if (seller == null) {
+				seller = entity.getCommercialOrder() != null ? entity.getCommercialOrder().getSeller()
+						: billingAccount.getCustomerAccount().getCustomer().getSeller();
+			}
+
+			seller = sellerService.refreshOrRetrieve(seller);
+			setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
+    	}	
+    	
+         
     	super.create(entity);
     	
 
@@ -319,7 +324,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
 
         invoiceLine.setValueDate(new Date());
-        create(invoiceLine);
+        getEntityManager().persist(invoiceLine);
         commit();
         return invoiceLine;
     }
