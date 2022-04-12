@@ -173,7 +173,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(seller==null) {
     		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
     	}
-    	 if (accountingArticle != null) {
+    	 if (accountingArticle != null && entity.getTax()==null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
@@ -325,13 +325,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
-        Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
+        Tax defaultTax = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : invoiceLine.getTax();
         Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
         if (isExonerated == null) {
             isExonerated = billingAccountService.isExonerated(billingAccount);
         }
         Object[] applicableTax = taxMappingService
-                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, defaultTax);
         boolean taxRecalculated = (boolean) applicableTax[1];
         if (taxRecalculated) {
             Tax tax = (Tax) applicableTax[0];
