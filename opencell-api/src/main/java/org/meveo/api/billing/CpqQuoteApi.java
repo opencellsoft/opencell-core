@@ -1314,27 +1314,20 @@ public class CpqQuoteApi extends BaseApi {
         List<QuotePrice> accountingPrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
-        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
-        	log.debug("offerQuotation : overrodeLine AR code={}",overrodeLine.getAccountingArticle().getCode());
-            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
-                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), overrodeLine);
-                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
-                accountingPrices.addAll(overrodeLine.getQuotePrices());
-            }
-
-        }
+//        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
+//        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
+//        	log.debug("offerQuotation : overrodeLine AR code={}",overrodeLine.getAccountingArticle().getCode());
+//            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
+//                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), overrodeLine);
+//                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
+//                accountingPrices.addAll(overrodeLine.getQuotePrices());
+//            }
+//
+//        }
         String accountingArticleCode = null;
-        BigDecimal quoteProductAmount=BigDecimal.ZERO;
+        clearOfferPrices(quoteOffer);
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
-            Long quoteProductId=wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct().getId() : null;
-            if (quoteProductId == null || !quoteProductTotalAmount.containsKey(quoteProductId)) {
-            	quoteProductTotalAmount.put(quoteProductId, wo.getAmountWithoutTax());
-            }else {
-            	quoteProductAmount=quoteProductTotalAmount.get(quoteProductId);
-            	quoteProductTotalAmount.put(quoteProductId,quoteProductAmount.add(wo.getAmountWithoutTax()));
-            }
             if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
                 quoteArticleLine = new QuoteArticleLine();
                 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
@@ -1352,7 +1345,7 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
             //create price only for not overrided charges
-            if (!wo.isOverrodePrice()) {
+           // if (!wo.isOverrodePrice()) {
                 QuotePrice quotePrice = new QuotePrice();
                 quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
                 quotePrice.setPriceLevelEnum(PriceLevelEnum.PRODUCT);
@@ -1390,7 +1383,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePriceService.create(quotePrice);
                 quoteArticleLine.getQuotePrices().add(quotePrice);
                 accountingPrices.add(quotePrice);
-            }
+          //  }
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
 //            if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
 //            	applicablePercentageDiscountItems.addAll(
@@ -1478,11 +1471,23 @@ public class CpqQuoteApi extends BaseApi {
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
         if (quoteVersion.getQuoteArticleLines() != null) {
-//            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
-//                    .stream()
-//                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
-//                    .collect(Collectors.toList());
-            quoteVersion.getQuoteArticleLines().clear();
+            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
+                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
+            quoteVersionService.update(quoteVersion);
+        }
+    }
+    
+    private void clearOfferPrices(QuoteOffer quoteOffer) {
+    	QuoteVersion quoteVersion=quoteOffer.getQuoteVersion();
+        if (quoteVersion.getQuoteArticleLines() != null) {
+            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(article -> article.getQuoteProduct().getQuoteOffer().getId()==quoteOffer.getId())
+                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
             quoteVersionService.update(quoteVersion);
         }
     }
