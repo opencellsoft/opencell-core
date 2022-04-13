@@ -324,7 +324,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setTaxRate(totalTaxRate);
 
         invoiceLine.setValueDate(new Date());
-        getEntityManager().persist(invoiceLine);
+        create(invoiceLine);
         commit();
         return invoiceLine;
     }
