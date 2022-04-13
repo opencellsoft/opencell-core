@@ -1344,8 +1344,6 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
             	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
-            //create price only for not overrided charges
-           // if (!wo.isOverrodePrice()) {
                 QuotePrice quotePrice = new QuotePrice();
                 quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
                 quotePrice.setPriceLevelEnum(PriceLevelEnum.PRODUCT);
@@ -1361,12 +1359,14 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
                 quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
                 quotePrice.setDiscountValue(wo.getDiscountValue());
+                quotePrice.setPriceOverCharged(wo.isOverrodePrice());
                 QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
                 if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
                     quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
                 } else {
                     quotePrice.setUuid(wo.getUuid());
                 }
+                
 
                 ChargeInstance chargeInstance = wo.getChargeInstance();
                 quotePrice.setChargeTemplate(chargeInstance != null ? chargeInstance.getChargeTemplate() : null);
@@ -1383,7 +1383,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePriceService.create(quotePrice);
                 quoteArticleLine.getQuotePrices().add(quotePrice);
                 accountingPrices.add(quotePrice);
-          //  }
+          
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
 //            if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
 //            	applicablePercentageDiscountItems.addAll(
