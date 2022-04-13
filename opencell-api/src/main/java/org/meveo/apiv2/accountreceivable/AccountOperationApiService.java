@@ -178,8 +178,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				.collect(Collectors.toSet());
 
 		if (!Collections.disjoint(unExpectedAoCodes, aoCodes)) {
-			throw new BusinessApiException("Matching action is failed : AccountOperations passed for matching contains one of unexpected codes ["
-					+ unExpectedAoCodes + "]");
+			throw new BusinessApiException("Matching action is failed : AccountOperations passed for matching contains one of unexpected codes "
+					+ unExpectedAoCodes);
 		}
 
 		// Update orphans AO by setting the same customerAccount

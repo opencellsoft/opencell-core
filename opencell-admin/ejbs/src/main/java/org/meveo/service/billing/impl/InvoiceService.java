@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.asList;
+import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
@@ -80,6 +81,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -651,6 +653,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
             }
+            qb.addSql("i.status = 'VALIDATED' ");
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with amount and with no account operation", ex);
@@ -6093,6 +6096,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
+        duplicatedInvoice.setLinkedInvoices(of(invoice));
+        getEntityManager().flush();
 
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             calculateInvoice(duplicatedInvoice);
@@ -6102,5 +6107,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return duplicatedInvoice;
+    }
+    
+    public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        invoice = refreshOrRetrieve(invoice);
+        var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
+        
+        if (invoiceLines != null) {
+            for (InvoiceLine invoiceLine : invoiceLines) {
+                if (invoiceLineIds.contains(invoiceLine.getId())) {
+                    invoiceLinesService.detach(invoiceLine);
+                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
+                    invoiceLinesService.create(duplicateInvoiceLine);
+                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
+                }                
+            }
+        }
+        
+        calculateInvoice(invoice);
+        return update(invoice);
     }
 }

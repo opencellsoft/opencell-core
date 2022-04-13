@@ -770,7 +770,7 @@ public class CommercialOrderApi extends BaseApi {
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
-        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
+        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate() != null ? orderOfferDto.getDeliveryDate(): commercialOrder.getDeliveryDate() );
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
         	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
@@ -1062,7 +1062,12 @@ public class CommercialOrderApi extends BaseApi {
         }else {
         	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
         }
-        	processOrderProduct( orderProductDTO, orderProduct); 
+        	processOrderProduct( orderProductDTO, orderProduct);
+
+		if(orderProduct.getDeliveryDate() == null && orderOffer.getOrder()!= null)
+		{
+			orderProduct.setDeliveryDate(orderOffer.getOrder().getDeliveryDate());
+		}
         
         return orderProduct;
         
