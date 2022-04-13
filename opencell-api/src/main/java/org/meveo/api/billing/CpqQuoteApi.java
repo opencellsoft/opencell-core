@@ -1364,13 +1364,13 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
                 quotePrice.setQuoteOffer(quoteOffer);
                 quotePrice.setQuantity(wo.getQuantity());
+                quotePrice.setDiscountPlan(wo.getDiscountPlan());
+                quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
+                quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
+                quotePrice.setDiscountValue(wo.getDiscountValue());
                 QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
                 if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
                     quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
-                    quotePrice.setDiscountPlan(wo.getDiscountPlan());
-                    quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
-                    quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
-                    quotePrice.setDiscountValue(wo.getDiscountValue());
                 } else {
                     quotePrice.setUuid(wo.getUuid());
                 }
@@ -1478,11 +1478,11 @@ public class CpqQuoteApi extends BaseApi {
 
     private void clearExistingQuotations(QuoteVersion quoteVersion) {
         if (quoteVersion.getQuoteArticleLines() != null) {
-            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
-                    .stream()
-                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
-                    .collect(Collectors.toList());
-            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
+//            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+//                    .stream()
+//                    .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
+//                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().clear();
             quoteVersionService.update(quoteVersion);
         }
     }
