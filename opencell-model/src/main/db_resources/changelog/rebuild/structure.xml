@@ -9178,6 +9178,9 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="delivery_date" type="datetime" />
+            <column name="product_action_type" type="varchar(10)" />
+	        <column name="termination_date" type="datetime" />
+	        <column name="sub_termin_reason_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9507,6 +9510,7 @@
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint" />
             <column name ="quote_line_type" type="varchar(10)" />
+            <column name="subscription_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -16014,6 +16018,13 @@
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
       </changeSet>
+      
+      <changeSet id="#INTRD-6056_20220413-fk" author="HatimOUDAD">
+      <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_quote_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdcc" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+	  <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="quote_offer" constraintName="fk_dwdlb9d5mlvdddm3yowwa9uembdcc" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+	  </changeSet>
 
     <!-- end fk -->
 
@@ -17545,6 +17556,7 @@
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
+    <changeSet id="#INTRD-6056_20220413" author="HatimOUDAD" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
