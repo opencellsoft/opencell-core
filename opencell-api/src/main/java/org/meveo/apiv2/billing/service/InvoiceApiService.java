@@ -295,6 +295,10 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 
+    public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        return invoiceService.duplicateInvoiceLines(invoice, invoiceLineIds);        
+    }
+    
 	/**
 	 * Generate Invoice
 	 * @param invoice Invoice input
