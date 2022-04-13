@@ -80,6 +80,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -6103,5 +6104,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return duplicatedInvoice;
+    }
+    
+    public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        invoice = refreshOrRetrieve(invoice);
+        var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
+        
+        if (invoiceLines != null) {
+            for (InvoiceLine invoiceLine : invoiceLines) {
+                if (invoiceLineIds.contains(invoiceLine.getId())) {
+                    invoiceLinesService.detach(invoiceLine);
+                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
+                    invoiceLinesService.create(duplicateInvoiceLine);
+                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
+                }                
+            }
+        }
+        
+        calculateInvoice(invoice);
+        return update(invoice);
     }
 }
