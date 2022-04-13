@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -110,11 +111,12 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param jobInstanceId
 	 * @param lastCurrentUser
 	 * @param isFullAutomatic
+	 * @param invoicesCount 
 	 */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Future<String> createAgregatesAndInvoiceForJob(List<Long> baIds, BillingRun billingRun, BillingCycle billingCycle,  Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
-		return processInvoicingItems(billingRun, billingCycle, readInvoicingItems(billingRun, baIds), jobInstanceId, lastCurrentUser, isFullAutomatic);
+	public Future<String> createAgregatesAndInvoiceForJob(List<Long> baIds, BillingRun billingRun, BillingCycle billingCycle,  Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, AtomicInteger invoicesCount) {
+		return processInvoicingItems(billingRun, billingCycle, readInvoicingItems(billingRun, baIds), jobInstanceId, lastCurrentUser, isFullAutomatic, invoicesCount);
 	}
 	
 	private List<BillingAccountDetailsItem> readInvoicingItems(BillingRun billingRun, List<Long> baIDs) {
@@ -139,9 +141,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
 	}
     
-	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic) {
+	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, AtomicInteger invoicesCount) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle);
+        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, invoicesCount);
         if(!CollectionUtils.isEmpty(invoicesbyBA)) {
         	validateInvoices(invoicesbyBA);
             writeInvoicingData(billingRun, isFullAutomatic, invoicesbyBA, billingCycle);
@@ -153,7 +155,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true));
 	}
 
-	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle) {
+	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, AtomicInteger invoicesCount) {
         List<List<Invoice>> invoicesByBA = new ArrayList<List<Invoice>>();
         List<Invoice> invoices;
         for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
@@ -162,6 +164,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
             invoicesByBA.add(invoices);
             try {
                 createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, billingRun, invoices, billingCycle, billingAccount,isFullAutomatic);
+                invoicesCount.addAndGet(invoices.size());
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccount.getId(), e);
                 rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage().toString());
@@ -395,8 +398,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     }
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
-        return subscriptions.stream().map(Subscription::getDiscountPlanInstances)
-                .flatMap(Collection::stream).collect(toList());
+        return subscriptions.stream().map(Subscription::getDiscountPlanInstances).flatMap(Collection::stream).collect(toList());
     }
 
     private SubCategoryInvoiceAgregate initDiscountAggregates(BillingAccount billingAccount, Invoice invoice, 

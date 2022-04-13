@@ -9830,7 +9830,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="description" value="Number of parallel execution"/>
             <column name="field_type" value="LONG"/>
             <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="1"/>
+            <column name="default_value" valueNumeric="-1"/>
             <column name="value_required" value="0"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
