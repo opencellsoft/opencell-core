@@ -168,7 +168,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(seller==null) {
     		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
     	}
-    	 if (accountingArticle != null) {
+    	if (accountingArticle != null && entity.getTax() == null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
