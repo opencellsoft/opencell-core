@@ -126,6 +126,10 @@ public class OrderPrice extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_discounts_on_overriden_price")
+    private Boolean applyDiscountsOnOverridenPrice;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -302,6 +306,16 @@ public class OrderPrice extends BusinessEntity {
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
 	}
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+	
+	
     
 	
     

@@ -248,7 +248,11 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
         log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
-        if (walletOperation.isOverrodePrice() && BooleanUtils.isFalse(discountPlan.isApplicableOnOverriddenPrice())) {
+        
+        Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
+        boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isFalse(discountPlan.isApplicableOnOverriddenPrice());
+        
+        if (walletOperation.isOverrodePrice() && applyDiscountsOnOverridenPrice) {
             return Collections.emptyList();
         }
         boolean isFixedDpItemIncluded=false;

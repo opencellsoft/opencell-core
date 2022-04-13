@@ -262,6 +262,10 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
     @OrderColumn(name = "INDX")
     protected List<CounterInstance> counterInstances = new ArrayList<>();
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_discounts_on_overriden_price")
+    private Boolean applyDiscountsOnOverridenPrice;
 
     /**
      * Resolved taxClass
@@ -616,4 +620,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public void setChargeType(String chargeType) {
         this.chargeType = chargeType;
     }
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+    
+    
 }

@@ -24,7 +24,7 @@ import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.cpq.OverrodPricesDto;
+import org.meveo.api.dto.cpq.OverrideChargedPricesDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -1540,6 +1540,7 @@ public class CpqQuoteApi extends BaseApi {
                             QuoteArticleLine quoteArticleLine = overrodeArticle.get(subscriptionChargeArticle).get(0);
                             subscriptionCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
                             subscriptionCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                            subscriptionCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
                         }
 
                         RatingResult ratingResult = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
@@ -1567,6 +1568,7 @@ public class CpqQuoteApi extends BaseApi {
                             QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
                             recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
                             recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                            recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
                         }
                             Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
                             RatingResult ratingResult = recurringChargeInstanceService
@@ -1598,6 +1600,7 @@ public class CpqQuoteApi extends BaseApi {
 								QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
 								usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
 								usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS,RoundingMode.HALF_UP));
+								usageCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
 								log.info("Usage quotation : usageCharge amountWTax={}",usageCharge.getAmountWithoutTax());
 							}
 							if (!quantityFound && chargetemplate.getUsageQuantityAttribute() != null) {
@@ -2073,7 +2076,7 @@ public class CpqQuoteApi extends BaseApi {
 
 
 
-    public void overridePrices(OverrodPricesDto overrodPricesDto) {
+    public void overridePrices(OverrideChargedPricesDto overrodPricesDto) {
         overrodPricesDto.getPrices()
                 .forEach(overrodePrice -> {
                     List<QuotePrice> quotePrices = quotePriceService.loadByQuoteOfferAndArticleCodeAndPriceLevel(overrodePrice.getOfferId(), overrodePrice.getAccountingArticleCode());
@@ -2086,6 +2089,7 @@ public class CpqQuoteApi extends BaseApi {
                               quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
                               quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
                               quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
+                              quotePrice.setApplyDiscountsOnOverridenPrice(overrodePrice.getApplyDiscountsOnOverridenPrice());
                               if (overrodePrice.getPriceOverCharged() == null)
                                   quotePrice.setPriceOverCharged(true);
                               else

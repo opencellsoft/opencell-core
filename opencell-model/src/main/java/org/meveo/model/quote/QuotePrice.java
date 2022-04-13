@@ -70,6 +70,7 @@ public class QuotePrice extends AuditableEntity {
 		this.discountPlanItem=copy.discountPlanItem;
 		this.discountPlanType=copy.discountPlanType;
 		this.discountValue=copy.discountValue;
+		this.applyDiscountsOnOverridenPrice=copy.getApplyDiscountsOnOverridenPrice();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -155,6 +156,10 @@ public class QuotePrice extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_discounts_on_overriden_price")
+    private Boolean applyDiscountsOnOverridenPrice;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
@@ -338,6 +343,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
+	}
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
 	}
 
 
