@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
@@ -135,7 +136,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @SuppressWarnings("unchecked")
 	public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
-                    .setParameter("pricePlanMatrixCode", ppmCode)
+                    .setParameter("pricePlanMatrixCode", ppmCode).setFlushMode(FlushModeType.COMMIT)
                     .getResultList();
         
         return result.isEmpty()?null:result.get(0);

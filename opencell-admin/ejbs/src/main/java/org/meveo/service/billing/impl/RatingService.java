@@ -353,7 +353,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setEdr(edr);
 
         rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency());
-
+        log.info("rateCharge walletoperation={}, unitamount={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
         

@@ -1,4 +1,4 @@
-/** (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+/**** (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
@@ -1314,26 +1314,20 @@ public class CpqQuoteApi extends BaseApi {
         List<QuotePrice> accountingPrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
-        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
-            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
-                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), overrodeLine);
-                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
-                accountingPrices.addAll(overrodeLine.getQuotePrices());
-            }
-
-        }
+//        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
+//        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
+//        	log.debug("offerQuotation : overrodeLine AR code={}",overrodeLine.getAccountingArticle().getCode());
+//            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
+//                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), overrodeLine);
+//                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
+//                accountingPrices.addAll(overrodeLine.getQuotePrices());
+//            }
+//
+//        }
         String accountingArticleCode = null;
-        BigDecimal quoteProductAmount=BigDecimal.ZERO;
+        clearOfferPrices(quoteOffer);
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
-            Long quoteProductId=wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct().getId() : null;
-            if (quoteProductId == null || !quoteProductTotalAmount.containsKey(quoteProductId)) {
-            	quoteProductTotalAmount.put(quoteProductId, wo.getAmountWithoutTax());
-            }else {
-            	quoteProductAmount=quoteProductTotalAmount.get(quoteProductId);
-            	quoteProductTotalAmount.put(quoteProductId,quoteProductAmount.add(wo.getAmountWithoutTax()));
-            }
             if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
                 quoteArticleLine = new QuoteArticleLine();
                 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
@@ -1351,7 +1345,7 @@ public class CpqQuoteApi extends BaseApi {
             	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
             }
             //create price only for not overrided charges
-            if (!wo.isOverrodePrice()) {
+           // if (!wo.isOverrodePrice()) {
                 QuotePrice quotePrice = new QuotePrice();
                 quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
                 quotePrice.setPriceLevelEnum(PriceLevelEnum.PRODUCT);
@@ -1363,13 +1357,13 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
                 quotePrice.setQuoteOffer(quoteOffer);
                 quotePrice.setQuantity(wo.getQuantity());
+                quotePrice.setDiscountPlan(wo.getDiscountPlan());
+                quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
+                quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
+                quotePrice.setDiscountValue(wo.getDiscountValue());
                 QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
                 if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
                     quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
-                    quotePrice.setDiscountPlan(wo.getDiscountPlan());
-                    quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
-                    quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
-                    quotePrice.setDiscountValue(wo.getDiscountValue());
                 } else {
                     quotePrice.setUuid(wo.getUuid());
                 }
@@ -1389,7 +1383,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePriceService.create(quotePrice);
                 quoteArticleLine.getQuotePrices().add(quotePrice);
                 accountingPrices.add(quotePrice);
-            }
+          //  }
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
 //            if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
 //            	applicablePercentageDiscountItems.addAll(
@@ -1485,6 +1479,18 @@ public class CpqQuoteApi extends BaseApi {
             quoteVersionService.update(quoteVersion);
         }
     }
+    
+    private void clearOfferPrices(QuoteOffer quoteOffer) {
+    	QuoteVersion quoteVersion=quoteOffer.getQuoteVersion();
+        if (quoteVersion.getQuoteArticleLines() != null) {
+            List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
+                    .stream()
+                    .filter(article -> article.getQuoteProduct().getQuoteOffer().getId()==quoteOffer.getId())
+                    .collect(Collectors.toList());
+            quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
+            quoteVersionService.update(quoteVersion);
+        }
+    }
 
     @SuppressWarnings("unused")
     public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, List<QuotePrice> accountingPrices, boolean isVirtual) throws BusinessException {
@@ -1509,7 +1515,7 @@ public class CpqQuoteApi extends BaseApi {
             Map<String, Object> attributes = new HashMap<String, Object>();
             ;
             // Add Service charges
-            boolean EdrApplied=false;
+            Double edrQuantity = 0d;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
@@ -1578,97 +1584,104 @@ public class CpqQuoteApi extends BaseApi {
                 }
 
                 // Add subscription charges
-                EDR edr =null;
-                if(!EdrApplied) {
-                    for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
-                        if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
-                            UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-                            usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(usageCharge);
-                            if (usageArticle == null)
-                                throw new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
-                            boolean overridden = false;
-                            if (overrodeArticle.keySet().contains(usageArticle)) {
-                                QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
-                                usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
-                                usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                                overridden = true;
-                            }
-                            if (chargetemplate.getUsageQuantityAttribute() != null) {
-                                edr = new EDR();
-                                try {
-
-                                    edr.setAccessCode(null);
-                                    edr.setEventDate(usageCharge.getChargeDate());
-                                    edr.setSubscription(subscription);
-                                    edr.setStatus(EDRStatusEnum.OPEN);
-                                    edr.setCreated(new Date());
-                                    edr.setOriginBatch("QUOTE");
-                                    edr.setOriginRecord(System.currentTimeMillis() + "");
-                                    Double quantity = 0d;
-                                    Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
-                                    if (quantityValue != null && quantityValue instanceof String) {
-                                        try {
-                                            quantity = Double.parseDouble(quantityValue.toString());
-                                        } catch (NumberFormatException exp) {
-                                            throw new MissingParameterException(
-                                                    "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-                                                            + " for the usage charge " + usageCharge.getCode());
-                                        }
-                                    } else if (quantityValue != null && quantityValue instanceof Double) {
-                                        quantity = (Double) quantityValue;
-                                    } else {
-                                        throw new MissingParameterException(
-                                                "The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
-                                                        + " for the usage charge " + usageCharge.getCode());
-                                    }
-                                    if (quantity != 0) {
-                                        edr.setQuantity(new BigDecimal(quantity));
-                                        Object param1 = attributes.get("EDR_text_parameter_1");
-                                        if (param1 != null) {
-                                            edr.setParameter1(param1.toString());
-                                        }
-                                        Object param2 = attributes.get("EDR_text_parameter_2");
-                                        if (param2 != null) {
-                                            edr.setParameter2(param2.toString());
-                                        }
-                                        Object param3 = attributes.get("EDR_text_parameter_3");
-                                        if (param3 != null) {
-                                            edr.setParameter3(param3.toString());
-                                        }
-                                        List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
-
-                                        if (walletOperationsFromEdr != null) {
-                                            for (WalletOperation walletOperation : walletOperationsFromEdr) {
-                                                if ((walletOperation.getUnitAmountWithoutTax() != null && walletOperation.getUnitAmountWithoutTax().compareTo(BigDecimal.ZERO) >= 0) || (walletOperation.getUnitAmountWithTax() != null && walletOperation.getUnitAmountWithTax().compareTo(BigDecimal.ZERO) >= 0))
-                                                    walletOperation.setOverrodePrice(overridden);
-                                                if (walletOperation.getAccountingArticle() == null) {
-                                                    walletOperation.setAccountingArticle(usageArticle);
-                                                }
-                                                walletOperations.add(walletOperation);
-                                            }
-                                        }
-                                        EdrApplied=true;
-                                        break;
-                                    }
-
-
-                                } catch (RatingException e) {
-                                    log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-                                    throw new BusinessApiException(e.getMessage());
-
-                                } catch (BusinessException e) {
-                                    log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                                    throw new BusinessApiException(e.getMessage());
-
-                                }
-                            }
-                        }
-                    }
-                }
+				EDR edr = null;
+					boolean quantityFound=false;
+					for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
+						if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
+							UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
+							usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(usageCharge);
+							if (usageArticle == null)
+								throw new BusinessException(
+										errorMsg + " and charge " + usageCharge.getChargeTemplate());
+							if (overrodeArticle.keySet().contains(usageArticle)) {
+								log.info("Usage quotation : usageArticle={}",usageArticle.getCode());
+								QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
+								usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
+								usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS,RoundingMode.HALF_UP));
+								log.info("Usage quotation : usageCharge amountWTax={}",usageCharge.getAmountWithoutTax());
+							}
+							if (!quantityFound && chargetemplate.getUsageQuantityAttribute() != null) {
+								Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
+								if (quantityValue != null && quantityValue instanceof String) {
+									try {
+										edrQuantity = Double.parseDouble(quantityValue.toString());
+									} catch (NumberFormatException exp) {
+										throw new MissingParameterException(
+												"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+														+ " for the usage charge " + usageCharge.getCode());
+									}
+								} else if (quantityValue != null && quantityValue instanceof Double) {
+									edrQuantity = (Double) quantityValue;
+								} else {
+									throw new MissingParameterException(
+											"The attribute " + chargetemplate.getUsageQuantityAttribute().getCode()
+													+ " for the usage charge " + usageCharge.getCode());
+								}
+								if (edrQuantity > 0) {
+									quantityFound=true;
+								}
+								
+							}
+							
+						}
+					}
+				
+				
+				
 
                 walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
 						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, serviceInstance.getCode(), false, null, null, DiscountPlanTypeEnum.PRODUCT));
             }
+            
+
+			if (edrQuantity>0) {
+				EDR edr = new EDR();
+				try {
+
+					edr.setAccessCode(null);
+					edr.setEventDate(new Date());
+					edr.setSubscription(subscription);
+					edr.setStatus(EDRStatusEnum.OPEN);
+					edr.setCreated(new Date());
+					edr.setOriginBatch("QUOTE");
+					edr.setOriginRecord(System.currentTimeMillis() + "");
+					edr.setQuantity(new BigDecimal(edrQuantity));
+					Object param1 = attributes.get("EDR_text_parameter_1");
+					if (param1 != null) {
+						edr.setParameter1(param1.toString());
+					}
+					Object param2 = attributes.get("EDR_text_parameter_2");
+					if (param2 != null) {
+						edr.setParameter2(param2.toString());
+					}
+					Object param3 = attributes.get("EDR_text_parameter_3");
+					if (param3 != null) {
+						edr.setParameter3(param3.toString());
+					}
+					List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
+					log.debug("walletOperationsFromEdr count={}",walletOperationsFromEdr.size());
+					if (walletOperationsFromEdr != null) {
+						for (WalletOperation walletOperation : walletOperationsFromEdr) {
+							log.debug("walletOperationsFromEdr code={},UnitAmountWithoutTax={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
+							if ((walletOperation.getUnitAmountWithoutTax() != null && walletOperation
+									.getUnitAmountWithoutTax().compareTo(BigDecimal.ZERO) != 0)
+									|| (walletOperation.getUnitAmountWithTax() != null && walletOperation
+											.getUnitAmountWithTax().compareTo(BigDecimal.ZERO) != 0))
+							walletOperations.add(walletOperation);
+						}
+					}
+
+				} catch (RatingException e) {
+					log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+					throw new BusinessApiException(e.getMessage());
+
+				} catch (BusinessException e) {
+					log.error("Quotation : Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+					throw new BusinessApiException(e.getMessage());
+
+				}
+			}
+
 
             var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
             		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);

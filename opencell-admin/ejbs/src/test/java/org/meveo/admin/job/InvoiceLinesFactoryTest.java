@@ -135,7 +135,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record,new HashMap<Long, Long>(), configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -148,7 +148,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(false, DATE);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record,new HashMap<Long, Long>(), configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -161,7 +161,7 @@ public class InvoiceLinesFactoryTest {
         AggregationConfiguration configuration = new AggregationConfiguration(true, NO_AGGREGATION);
         Map<String, Object> record = buildRecord();
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null);
+        InvoiceLine invoiceLine = factory.create(record,new HashMap<Long, Long>(), configuration, null);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");

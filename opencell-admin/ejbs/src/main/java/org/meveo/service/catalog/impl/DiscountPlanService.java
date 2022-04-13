@@ -214,7 +214,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
              	if(serviceInstance.getProductVersion()!=null)
              		product=serviceInstance.getProductVersion().getProduct();
              }
-			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size());
+			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={},walletOperation code={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size(),walletOperation!=null?walletOperation.getCode():null);
 				
 			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
 					 
@@ -272,6 +272,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                }else if(walletOperation != null) {
 	                	discountWalletOperation.setUuid(walletOperation.getUuid());
 	                }
+	                log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
 	                //TODO: must have wallet operation for : link discountWallet to the current wallet, and
 	                discountWalletOperations.add(discountWalletOperation);
 			}

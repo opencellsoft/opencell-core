@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.FlushModeType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -121,7 +122,7 @@ public class ContractService extends BusinessService<Contract>  {
 		try {
 			contract = (Contract) getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).getSingleResult();
+					.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getSingleResult();
 		} catch (Exception e) {
 		}
 		return contract;
