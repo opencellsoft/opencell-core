@@ -48,6 +48,8 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -302,7 +304,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
      * @return A list of applicable price plans matching a charge code and ordered by priority
      */
     public List<DiscountPlanItem> getActiveDiscountPlanItem(Long discountPlanId) {
-        return getEntityManager().createNamedQuery("DiscountPlanItem.getActiveDiscountPlanItem", DiscountPlanItem.class).setParameter("discountPlanId", discountPlanId).getResultList();
+        return getEntityManager().createNamedQuery("DiscountPlanItem.getActiveDiscountPlanItem", DiscountPlanItem.class).setParameter("discountPlanId", discountPlanId).setFlushMode(FlushModeType.COMMIT).getResultList();
     }
 
 }
