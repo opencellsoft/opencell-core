@@ -647,6 +647,11 @@ public class EntityExportImportService implements Serializable {
                 xstream.omitField(ExportTemplate.class, "parameters");
                 xstream.omitField(ExportTemplate.class, "relatedEntities");
 
+                //status for the OfferTemplate should be by default IN_DESIGN
+                xstream.omitField(OfferTemplate.class, "lifeCycleStatus");
+				xstream.omitField(ProductOffering.class, "lifeCycleStatus");
+                //status for the OfferTemplate should be by default DRAFT
+				xstream.omitField(Product.class, "status");
 
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
@@ -656,6 +661,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
                 xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
                 xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true, null), XStream.PRIORITY_LOW);
+                xstream.registerConverter(new DefaultStatusConverter(xstream.getMapper(), xstream.getReflectionProvider()));
 
                 xstream.processAnnotations(ScriptInstance.class);
                 // Indicate XStream to omit certain attributes except ones matching the classes to be exported fully (except the root class)
@@ -689,7 +695,6 @@ public class EntityExportImportService implements Serializable {
 
             for (IEntity entity : principalEntities) {
 
-                setStatusToDefault(entity);
                 xstream.marshal(entity, writer);
             }
             exportStats.updateSummary(exportTemplate.getEntityToExport(), principalEntities.size());
@@ -730,22 +735,7 @@ public class EntityExportImportService implements Serializable {
         log.info("Serialized {} entities from export template {}", totalEntityCount, exportTemplate.getName());
     }
 
-    private void setStatusToDefault(IEntity entity) {
-        if(entity instanceof Product)
-                {
-                    ((Product)entity).setStatus(ProductStatusEnum.DRAFT);
-                }
 
-                if(entity instanceof OfferTemplate)
-                {
-                    ((OfferTemplate)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
-                }
-
-                if(entity instanceof ProductOffering)
-                {
-                    ((ProductOffering)entity).setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
-                }
-    }
 
     /**
      * Import entities from xml stream.

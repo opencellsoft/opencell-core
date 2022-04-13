@@ -236,6 +236,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
 					}
 				}
+			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
+				Subscription subscription = offer.getSubscription();
+				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
 			}
 		}
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());

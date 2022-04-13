@@ -74,7 +74,6 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         if (occT.getAccountingScheme() == null) {
                             log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
                                     accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                            accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
                             throw new BusinessException("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
                                     ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
                         }
@@ -89,20 +88,16 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         script.execute(methodContext);
 
                         List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
-                        if (createdEntries != null && !createdEntries.isEmpty()) {
-                            log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                                    createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                            accountOperation.setStatus(AccountOperationStatus.EXPORTED);
-                        } else {
-                            log.info("No JournalEntry created for AO={}, OCC={}, ASCH={}",
-                                    accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                            accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
-                        }
+                        log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
+                                createdEntries == null ? 0 : createdEntries.size(),
+                                accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
 
+                        accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         accountOperationService.update(accountOperation);
 
                     } catch (BusinessException e) {
                         jobExecutionResult.registerError(e.getMessage());
+                        accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
                         throw new BusinessException(e);
                     } catch (Exception e) {
                         log.error("Error during process AO={} - {}", accountOperation.getId(), e.getMessage());

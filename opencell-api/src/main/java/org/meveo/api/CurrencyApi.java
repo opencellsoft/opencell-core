@@ -24,9 +24,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -278,6 +276,9 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setPrDescription(currency.getDescription());
             tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
             tradingCurrency.setDecimalPlaces(2);
+            tradingCurrency.setCurrentRate(BigDecimal.ONE);
+            tradingCurrency.setCurrentRateFromDate(new Date());
+            tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
             tradingCurrencyService.create(tradingCurrency);
         }
 
@@ -294,9 +295,12 @@ public class CurrencyApi extends BaseApi {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.valide.tradingCurrency"));
         }
         
-        ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);              
+        ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);
+
         return exchangeRate.getId();
     }
+
+
 
     public void updateExchangeRate(Long id, ExchangeRateDto postData) {
 
@@ -393,5 +397,8 @@ public class CurrencyApi extends BaseApi {
     
     public void removeExchangeRateById(Long id) {
         exchangeRateService.delete(id);
+
+
+
     }
 }

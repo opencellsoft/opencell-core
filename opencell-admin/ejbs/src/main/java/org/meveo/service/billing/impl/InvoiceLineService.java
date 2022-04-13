@@ -56,6 +56,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -77,6 +78,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -138,6 +140,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private DiscountPlanService discountPlanService;
+
+    @Inject
+	private TradingCurrencyService tradingCurrencyService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -498,12 +503,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
 
 	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+		boolean isFunctionalUnitPriceModified = false;
 		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
+		}else {
+			isFunctionalUnitPriceModified = invoiceLine.getFunctionalUnitPrice() != resource.getFunctionalUnitPrice();
 		}
+		
 		ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
 		ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
 		ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
+		ofNullable(resource.getFunctionalUnitPrice()).ifPresent(invoiceLine::setFunctionalUnitPrice);
 		ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
 		ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
 		ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
@@ -523,17 +533,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
 		
+		BigDecimal currentRate = BigDecimal.ONE;
+		
+		if(invoiceLine.getInvoice().getTradingCurrency() != null) {
+			TradingCurrency tradingCurrency = tradingCurrencyService.findById(invoiceLine.getInvoice().getTradingCurrency().getId());
+			if (tradingCurrency.getCurrentRate() != null && tradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+				currentRate = tradingCurrency.getCurrentRate();
+			}
+		}
+		
+		if(invoiceLine.getUnitPrice() == null || isFunctionalUnitPriceModified) {
+			if(invoiceLine.getFunctionalUnitPrice() == null && accountingArticle != null) {
+				invoiceLine.setFunctionalUnitPrice(accountingArticle.getUnitPrice());
+			}
+			invoiceLine.setUnitPrice(invoiceLine.getFunctionalUnitPrice().divide(currentRate,BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+		}else {
+			invoiceLine.setFunctionalUnitPrice(invoiceLine.getUnitPrice().multiply(currentRate));
+		}
+		
 		if(invoiceLine.getUnitPrice() == null) {
-				if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
-					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
-					if(resource.getQuantity() != null) {
-						invoiceLine.setAmountWithoutTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
-						invoiceLine.setAmountWithTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
-						/****amountWithoutTax and amountWithTax will be recalculated bellow according to tax percent and the business model (b2b or b2c)*/
-					}
-				} else {
-					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
-				}
+			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
 		} else {
             invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
             invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),

@@ -80,6 +80,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -2474,6 +2475,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
+        checkNonValidateInvoice(invoice);
         cancelInvoiceAndRts(invoice);
         List<Long> invoicesIds = new ArrayList<Long>();
         invoicesIds.add(invoice.getId());
@@ -2487,12 +2489,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoiceAndRts(Invoice invoice) {
+        checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
+    }
+    
+    private void checkNonValidateInvoice(Invoice invoice) {
+        if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
+            throw new BusinessException("You can't cancel a validated invoice");
+        }
     }
 
     public void validateInvoice(Invoice invoice, boolean save) {
@@ -2544,6 +2553,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
             validateInvoice(invoice, true);
         }
     }
+    
+    
+   /**
+    * @param billingRunId
+    * @param invalidateXMLInvoices
+    * @param invalidatePDFInvoices
+    */
+   @JpaAmpNewTx
+   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+   public void invalidateInvoiceDocuments(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+       BillingRun br = getBrById(billingRunId);
+       
+       if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
+           nullifyInvoiceXMLFileNames(br);
+       }
+
+       if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
+           nullifyInvoicePDFFileNames(br);
+       }
+   }
+
+   /**
+    * Nullify BR's invoices xml file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoiceXMLFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoiceXMLFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+   /**
+    * Nullify BR's invoices pdf file names.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyInvoicePDFFileNames(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
+   }
 
     /**
      * @param billingRunId
@@ -5414,7 +5461,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         int rtRounding = appProvider.getRounding();
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
-        Tax taxZero = isExonerated ? taxService.getZeroTax() : null;
+        Tax defaultTax = isExonerated ? taxService.getZeroTax() : null;
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
@@ -5458,8 +5505,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
-                    taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    defaultTax = defaultTax == null ? tax : defaultTax;
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, defaultTax);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -6056,5 +6103,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return duplicatedInvoice;
+    }
+    
+    public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        invoice = refreshOrRetrieve(invoice);
+        var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
+        
+        if (invoiceLines != null) {
+            for (InvoiceLine invoiceLine : invoiceLines) {
+                if (invoiceLineIds.contains(invoiceLine.getId())) {
+                    invoiceLinesService.detach(invoiceLine);
+                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
+                    invoiceLinesService.create(duplicateInvoiceLine);
+                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
+                }                
+            }
+        }
+        
+        calculateInvoice(invoice);
+        return update(invoice);
     }
 }

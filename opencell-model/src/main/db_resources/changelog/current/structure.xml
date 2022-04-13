@@ -12539,4 +12539,39 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" /> 
     </changeSet>
 
+    <changeSet id="#INTRD-6298_20220405" author="aelmalki">
+        <addColumn tableName="ar_accounting_scheme">
+            <column name="long_description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-6136-20220406" author="HatimOUDAD">
+         <addColumn tableName="cpq_order_offer">
+            <column name="termination_date" type="datetime" />
+            <column name="sub_termin_reason_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_offer" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdafs" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA">
+        <addColumn tableName="billing_billing_run">
+            <column name="xml_job_execution_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA">
+        <addColumn tableName="billing_billing_run">
+            <column name="pdf_job_execution_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-6453_20220411" author="TarikRabeh">
+        <addColumn tableName="billing_invoice_line">
+            <column name="functional_unit_price" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

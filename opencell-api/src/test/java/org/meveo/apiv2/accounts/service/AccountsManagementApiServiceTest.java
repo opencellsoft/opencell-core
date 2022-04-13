@@ -1,7 +1,10 @@
 package org.meveo.apiv2.accounts.service;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.meveo.apiv2.accounts.ImmutableConsumerInput.builder;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
@@ -48,11 +52,17 @@ public class AccountsManagementApiServiceTest {
         UserAccount ua1 = mock(UserAccount.class);
         ua1.setId(1L);
         ua1.setCode("UA1");
+        ua1.setIsConsumer(Boolean.TRUE);
 
         UserAccount ua2 = mock(UserAccount.class);
         ua2.setId(2L);
         ua2.setCode("UA2");
 
+        UserAccount ua3 = mock(UserAccount.class);
+        ua3.setId(3L);
+        ua3.setCode("UA3");
+        ua3.setIsConsumer(Boolean.FALSE);
+        
         Subscription su1 = mock(Subscription.class);
         su1.setCode("SU");
         su1.setDescription("The subscription");
@@ -66,7 +76,6 @@ public class AccountsManagementApiServiceTest {
         terminatedSU.setStatus(SubscriptionStatusEnum.RESILIATED);
 
         when(userAccountService.findById(0L)).thenReturn(null);
-        when(userAccountService.findById(1L)).thenReturn(ua1);
         when(subscriptionService.findByCode(eq("TR_SU"), anyList())).thenReturn(terminatedSU);
     }
 
@@ -93,12 +102,30 @@ public class AccountsManagementApiServiceTest {
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
+    @Test(expected = BusinessApiException.class)
+    public void test_transferSubscription_with_a_non_consumer_ua() {
+        UserAccount ua = new UserAccount();
+        ua.setId(1L);
+        ua.setCode("UA1");
+        ua.setIsConsumer(Boolean.FALSE);
+
+        ConsumerInput input = builder().consumerId(1L).build();
+        when(userAccountService.findById(any())).thenReturn(ua);
+        accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
+    }
+    
     @Test
     public void test_transferSubscription_with_a_terminated_sub() {
         expectedEx.expect(ConflictException.class);
         expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
 
+        UserAccount ua =  new UserAccount();
+        ua.setId(1L);
+        ua.setCode("UA1");
+        ua.setIsConsumer(Boolean.TRUE);
+
         ConsumerInput input = builder().consumerId(1L).build();
+        when(userAccountService.findById(any())).thenReturn(ua);
         accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
     }
 }

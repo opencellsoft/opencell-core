@@ -70,11 +70,8 @@ public class UserInfoManagement {
                 if (updateLastLogin) {
                     log.debug("User username {} updated with a new login date", currentUser.getUserName());
 
-                    int nrUpdated = 1;
-                    if("false".equals(ParamBean.getInstance().getProperty("user.ignoreUpdateLastLogin", "true"))) {
-	                    em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", value)
-	                            .setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
-                    }
+                    int nrUpdated = em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", value)
+                            .setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
 
                     if (nrUpdated > 0) {
                         userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
