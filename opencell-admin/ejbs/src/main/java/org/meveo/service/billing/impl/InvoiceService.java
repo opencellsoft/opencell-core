@@ -652,6 +652,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
             }
+            qb.addSql("i.status = 'VALIDATED' ");
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with amount and with no account operation", ex);
