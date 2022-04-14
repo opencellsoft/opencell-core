@@ -777,7 +777,7 @@ public class CommercialOrderApi extends BaseApi {
 			}
         	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscriptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException(String.format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
