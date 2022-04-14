@@ -4308,7 +4308,7 @@
             <column name="parameter3_el" type="varchar(2000)"/>
             <column name="charge_template_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_charge_template" constraintName="fk_cat_price_plan_matrix_cat_charge_template"
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_price_plan_matrix" constraintName="fk_cat_price_plan_matrix_cat_charge_template"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-219">

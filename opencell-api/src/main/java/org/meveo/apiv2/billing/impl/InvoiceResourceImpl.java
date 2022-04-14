@@ -139,7 +139,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
 						.map(matchingCode -> matchingCode.getMatchingAmounts())
 						.flatMap(Collection::stream)
-						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
+						.filter(matchingAmount -> accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
 						.collect(Collectors.toSet())
 				)
 				.flatMap(Collection::stream)
@@ -385,8 +385,13 @@ public class InvoiceResourceImpl implements InvoiceResource {
             throw new MeveoApiException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
         }
         
+        String idsInvoiceLineNotFoundStr = "";
         if (idsInvoiceLineNotFound.size() > 0) {
-            throw new MissingParameterException(idsInvoiceLineNotFound);
+            for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
+                idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
+            }
+            idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
+            throw new MeveoApiException("Invoice Line ids:[" + idsInvoiceLineNotFoundStr + "] does not exist."); 
         }
         
         return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResourceInvoiceLine(invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds())))).build();
