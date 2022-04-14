@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static org.meveo.api.MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
-import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.reflections.Reflections.log;
 
 public class ImportExportResourceImpl implements ImportExportResource {
@@ -91,7 +89,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
             String executionId = generateExecutionId(fileName);
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), true, true, appProvider);
+          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true);
 
            // executionResults.put(executionId, exportImport);
             return importStatisticsToDto(executionId, exportImport);
