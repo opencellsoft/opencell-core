@@ -139,7 +139,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
 						.map(matchingCode -> matchingCode.getMatchingAmounts())
 						.flatMap(Collection::stream)
-						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
+						.filter(matchingAmount -> accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
 						.collect(Collectors.toSet())
 				)
 				.flatMap(Collection::stream)
