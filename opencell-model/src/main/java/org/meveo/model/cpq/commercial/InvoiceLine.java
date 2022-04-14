@@ -300,8 +300,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.taxRate = taxRate;
 		this.accountingArticle = accountingArticle;
 	}
-	
-	
 
 	public InvoiceLine(InvoiceLine copy, Invoice invoice) {
 		this.invoice = invoice;
