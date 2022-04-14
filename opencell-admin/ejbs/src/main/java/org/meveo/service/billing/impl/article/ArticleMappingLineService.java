@@ -77,6 +77,10 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
 	        articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
 	        
+	        articleMappingLineUpdated.setOfferTemplate(articleMappingLine.getOfferTemplate());
+	        articleMappingLineUpdated.setChargeTemplate(articleMappingLine.getChargeTemplate());
+	        articleMappingLineUpdated.setProduct(articleMappingLine.getProduct());
+	        
 	        articleMappingLineUpdated.getAttributesMapping().clear();
 	        if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
 	            List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
