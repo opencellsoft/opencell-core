@@ -1370,6 +1370,8 @@ public class CpqQuoteApi extends BaseApi {
 
                 ChargeInstance chargeInstance = wo.getChargeInstance();
                 quotePrice.setChargeTemplate(chargeInstance != null ? chargeInstance.getChargeTemplate() : null);
+                quotePrice.setApplyDiscountsOnOverridenPrice(chargeInstance != null ? chargeInstance.getApplyDiscountsOnOverridenPrice() : Boolean.FALSE);
+                
                 if (chargeInstance != null && PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
                     RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
 
