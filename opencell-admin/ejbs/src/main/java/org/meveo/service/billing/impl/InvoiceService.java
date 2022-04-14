@@ -650,6 +650,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
             }
+            qb.addSql("i.status = 'VALIDATED' ");
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with amount and with no account operation", ex);
@@ -5401,7 +5402,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         int rtRounding = appProvider.getRounding();
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
-        Tax taxZero = isExonerated ? taxService.getZeroTax() : null;
+        Tax defaultTax = isExonerated ? taxService.getZeroTax() : null;
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
@@ -5445,8 +5446,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 Object[] changedToTax = taxChangeMap.get(taxChangeKey);
                 if (changedToTax == null) {
-                    taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, taxZero);
+                    defaultTax = isExonerated && defaultTax == null ? tax : defaultTax;
+                    Object[] applicableTax = taxMappingService.checkIfTaxHasChanged(tax, isExonerated, invoice.getSeller(),invoice.getBillingAccount(),invoice.getInvoiceDate(), taxClass, userAccount, defaultTax);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {

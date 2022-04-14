@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderProduct;
@@ -84,7 +81,7 @@ public class OrderProductDto extends BaseEntityDto{
 	@Schema(description = "The delivery date")
     private Date deliveryDate;
     
-    private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
+    private List<OrderAttributeDto> orderAttributes=new ArrayList<>();
 
 	public OrderProductDto() {
     	super();
@@ -113,7 +110,7 @@ public class OrderProductDto extends BaseEntityDto{
 		super();
 		init(orderProduct);
 		if(loadAttributes && orderProduct.getProductVersion() != null) {
-			orderAttributes=new ArrayList<OrderAttributeDto>();
+			orderAttributes=new ArrayList<>();
 			for(OrderAttribute orderAttribute:orderProduct.getOrderAttributes()) {
 				OrderAttributeDto orderAttributeDto = new OrderAttributeDto(orderAttribute);
 				AttributeTypeEnum attributeType = orderAttribute.getAttribute().getAttributeType();
@@ -130,23 +127,23 @@ public class OrderProductDto extends BaseEntityDto{
 	private void resolveDefaultValuesIfNull(OrderAttributeDto orderAttributeDto, AttributeTypeEnum attributeType, ProductVersionAttribute pAttribute) {
 		switch (attributeType) {
 			case BOOLEAN:
-				if(orderAttributeDto.getBooleanValue() == null){
+				if(orderAttributeDto.getBooleanValue() == null && pAttribute.getDefaultValue() != null){
 					orderAttributeDto.setBooleanValue(Boolean.valueOf(pAttribute.getDefaultValue()));
 				}
 				break;
 			case NUMERIC:
 			case INTEGER:
-				if(orderAttributeDto.getDoubleValue() == null){
+				if(orderAttributeDto.getDoubleValue() == null && pAttribute.getDefaultValue() != null){
 					orderAttributeDto.setDoubleValue(Double.valueOf(pAttribute.getDefaultValue()));
 				}
 				break;
 			case DATE:
-				if(orderAttributeDto.getDateValue() == null){
+				if(orderAttributeDto.getDateValue() == null && pAttribute.getDefaultValue() != null){
 					orderAttributeDto.setDateValue(new Date(pAttribute.getDefaultValue()));
 				}
 				break;
 			default:
-				if(StringUtils.isBlank(orderAttributeDto.getStringValue())){
+				if(StringUtils.isBlank(orderAttributeDto.getStringValue()) && pAttribute.getDefaultValue() != null){
 					orderAttributeDto.setStringValue(pAttribute.getDefaultValue());
 				}
 		}

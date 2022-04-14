@@ -40,6 +40,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
@@ -251,7 +252,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-    	if (invoice.getInvoiceType().isInvoiceAccountable()) {
+    	if (invoice.getInvoiceType().isInvoiceAccountable() && InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
     		@SuppressWarnings("unchecked")
             List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
             List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
@@ -345,6 +346,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 create(recordedInvoiceCatAgregate);
             }
             invoice.setRecordedInvoice(recordedInvoice);
+    	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+    		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
