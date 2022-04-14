@@ -4306,7 +4306,10 @@
             <column name="parameter1_el" type="varchar(2000)"/>
             <column name="parameter2_el" type="varchar(2000)"/>
             <column name="parameter3_el" type="varchar(2000)"/>
+            <column name="charge_template_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_charge_template" constraintName="fk_cat_price_plan_matrix_cat_charge_template"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-219">
         <createTable tableName="cat_serv_rec_charge_template">
@@ -11738,7 +11741,7 @@
                              constraintName="open_order_template_articles_pkey"
                              tableName="open_order_template_articles"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-5908-20220330-tbl" author="AmineBENAICHA">
         <createTable tableName="global_settings">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -11768,7 +11771,7 @@
         </createTable>
         <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
     </changeSet>
-    
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -15977,13 +15980,13 @@
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-5804-20220321-fk" author="HatimOUDAD">
     <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbd" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_order_offer" constraintName="fk_dwdlb9d5mlvdddm3yowwa9uembd" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />	
-    </changeSet>	
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
 
     <changeSet id="#INTRD-4702-20220321-fk" author="ZBariki">
         <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
@@ -15999,7 +16002,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
-    
+
 
     <changeSet id="#INTRD-6136-20220406-fk" author="HatimOUDAD">
         <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_order_offer" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdafs" deferrable="false" initiallyDeferred="false"
@@ -16007,12 +16010,12 @@
     </changeSet>
     <changeSet id="rebuild-str-540-5991-fk1" author="Mbarek-Ay">
        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" /> 
-      </changeSet>                     
-    
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+      </changeSet>
+
       <changeSet id="rebuild-str-540-5991-fk2" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
 
     <!-- end fk -->
@@ -17547,6 +17550,7 @@
     <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
 
 
+    <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
