@@ -147,6 +147,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 			try {
 				createAggregatesAndInvoiceWithIl(billingRun, nbRuns, waitingMillis, jobInstance.getId(), isFullAutomatic, billingRun.getBillingCycle(), result, invoicesCount);
 			}catch (Exception e) {
+				log.error(e.getMessage());
+				e.printStackTrace();
 				return false;
 			}
 			billingRun.setStatus(INVOICES_CREATED);
