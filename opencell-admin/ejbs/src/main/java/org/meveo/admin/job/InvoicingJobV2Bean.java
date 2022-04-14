@@ -179,7 +179,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 			return;
 		}
 		log.info("=======INVOICING JOB HAVE TO PROCESS {} BAs for BR {}=========", bAIds.size(), billingRun.getId());
-		int maxBAsPerTransaction = ((Long) this.getParamOrCFValue(result.getJobInstance(), "maxBAsPerTransaction", 1000)).intValue();
+		int maxBAsPerTransaction = ((Long) this.getParamOrCFValue(result.getJobInstance(), "maxBAsPerTransaction", 1000L)).intValue();
 		maxBAsPerTransaction = maxBAsPerTransaction > 0 ? maxBAsPerTransaction : 1000;
 		int itemsPerSplit = (bAIds.size() / maxBAsPerTransaction) > nbRuns ? maxBAsPerTransaction : (int) (bAIds.size() / nbRuns);
 		itemsPerSplit=itemsPerSplit>0?itemsPerSplit:1;
