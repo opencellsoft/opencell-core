@@ -80,6 +80,9 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
+    @Column(name = "criteria_el", length = 500)
+    private String accountingCodeEl;
+
     public AccountingArticle() {
     }
 
@@ -190,7 +193,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
         this.invoiceTypeEl = invoiceTypeEL;
     }
 
-	@Override
+    public String getAccountingCodeEl() {
+        return accountingCodeEl;
+    }
+
+    public void setAccountingCodeEl(String accountingCodeEl) {
+        this.accountingCodeEl = accountingCodeEl;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

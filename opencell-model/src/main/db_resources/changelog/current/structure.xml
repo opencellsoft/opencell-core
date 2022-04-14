@@ -12584,4 +12584,58 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
         <sql>UPDATE cat_price_plan_matrix SET charge_template_id = (SELECT id FROM cat_charge_template WHERE code = event_code)</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-6562_20220414" author="aelmalki">
+        <createSequence sequenceName="accounting_accountingcode_mapping_seq"/>
+        <createTable tableName="accounting_accountingcode_mapping">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_accountingcode_mapping"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+
+            <!-- Dependencies -->
+            <column name="accounting_article_id" type="bigint"/>
+            <column name="billing_country_id" type="bigint"/>
+            <column name="billig_currency_id" type="bigint"/>
+            <column name="seller_country_id" type="bigint"/>
+            <column name="seller_id" type="bigint"/>
+
+            <!-- Simple fields -->
+            <column name="criteria_el" type="varchar(500)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addForeignKeyConstraint baseColumnNames="billing_country_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_billing_country" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+
+        <addForeignKeyConstraint baseColumnNames="billig_currency_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_trading_currency" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_country_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_seller_country" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_seller" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="criteria_el" type="varchar(500)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
