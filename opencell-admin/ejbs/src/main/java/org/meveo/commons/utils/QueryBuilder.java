@@ -17,25 +17,37 @@
  */
 package org.meveo.commons.utils;
 
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.jpa.EntityManagerProvider;
-import org.meveo.model.IdentifiableEnum;
-import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
-import org.meveo.security.keycloak.CurrentUserProvider;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.jpa.EntityManagerProvider;
+import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.keycloak.CurrentUserProvider;
 
 /**
  * Query builder class for building JPA queries.
@@ -68,8 +80,6 @@ public class QueryBuilder {
     private int nbCriteriaInOrClause;
 
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
-
-    private InnerJoin rootInnerJoin;
 
     protected PaginationConfiguration paginationConfiguration;
 
@@ -173,13 +183,17 @@ public class QueryBuilder {
      * @param alias Alias of a main table
      */
     public QueryBuilder(String sql, String alias) {
-        q = new StringBuffer(sql);
+        initQueryBuilder(sql, alias);
+    }
+
+	private void initQueryBuilder(String sql, String alias) {
+		q = new StringBuffer(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
         inOrClause = false;
         nbCriteriaInOrClause = 0;
-    }
+	}
 
     /**
      * Constructor.
@@ -203,9 +217,22 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, fetchFields), alias);
+    	String query = initQuery(clazz, alias, fetchFields);
+    	initQueryBuilder(query, alias);
         this.clazz = clazz;
     }
+
+	private String initQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+		StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        if (fetchFields != null && !fetchFields.isEmpty()) {
+            for (String fetchField : fetchFields) {
+				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
+				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
+            }
+        }
+        addInnerJoinTag(query);
+		return query.toString();
+	}
 
     /**
      * Constructor.
@@ -256,7 +283,7 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
@@ -275,7 +302,7 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+	private String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
 		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
