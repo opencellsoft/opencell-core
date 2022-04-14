@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,7 +90,7 @@ public class QueryBuilder {
 
     public static final String  JOIN_AS = " as ";
     
-    private static Set<String> joinAlias = new TreeSet<String>();
+    private Set<String> joinAlias = new TreeSet<String>();
 
     public Class<?> getEntityClass() {
         return clazz;
@@ -217,22 +216,9 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-    	String query = initQuery(clazz, alias, fetchFields);
-    	initQueryBuilder(query, alias);
+    	initQueryBuilder(getInitQuery(clazz, alias, fetchFields), alias);
         this.clazz = clazz;
     }
-
-	private String initQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-		StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
-        if (fetchFields != null && !fetchFields.isEmpty()) {
-            for (String fetchField : fetchFields) {
-				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
-				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
-            }
-        }
-        addInnerJoinTag(query);
-		return query.toString();
-	}
 
     /**
      * Constructor.

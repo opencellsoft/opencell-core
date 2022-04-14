@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -32,22 +31,13 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 
 	@SuppressWarnings("unchecked")
 	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate) {
-		List resultList=null;
-		final EntityManager entityManager = getEntityManager();
-		Query query=null;
-		try {
 		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product", "chargeTemplate"));
 		if(product != null)
 			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		if(chargeTemplate != null)
 			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
-		 query = queryBuilder.getQuery(entityManager);
-		 resultList = query.getResultList();
-		}catch (Exception e) {
-			log.error("product: {},\n chargeTemplate: {},\n entityManager:{},\n query:{}",product, chargeTemplate, entityManager, query);
-			e.printStackTrace();
-		}
-		return resultList;
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
