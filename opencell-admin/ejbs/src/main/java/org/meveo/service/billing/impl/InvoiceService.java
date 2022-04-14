@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.asList;
+import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
@@ -652,6 +653,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
             }
+            qb.addSql("i.status = 'VALIDATED' ");
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with amount and with no account operation", ex);
@@ -6094,6 +6096,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
+        duplicatedInvoice.setLinkedInvoices(of(invoice));
+        getEntityManager().flush();
 
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             calculateInvoice(duplicatedInvoice);
