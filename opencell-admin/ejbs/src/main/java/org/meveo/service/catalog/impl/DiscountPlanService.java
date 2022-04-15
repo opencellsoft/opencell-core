@@ -257,7 +257,6 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setOfferTemplate(offerTemplate);
 	                discountWalletOperation.setServiceInstance(serviceInstance);
 	                discountWalletOperation.setOperationDate(operationDate);
-	                discountWalletOperation.setSubscription(subscription);
 	                discountWalletOperation.setDescription(discountDescription);
 	                discountWalletOperation.setChargeInstance(chargeInstance);
 	                discountWalletOperation.setInputQuantity(quantity);
@@ -266,9 +265,11 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
 	                discountWalletOperation.setDiscountValue(discountValue);
 	                if(!isVirtual) {
-	                	if(walletOperation != null && walletOperation.getId() != null)
+	                	discountWalletOperation.setSubscription(subscription);
+	                	if(walletOperation != null && walletOperation.getId() != null) {
 	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
-	                	walletOperationService.create(discountWalletOperation);
+	                		walletOperationService.create(discountWalletOperation);
+	                	}
 	                }else if(walletOperation != null) {
 	                	discountWalletOperation.setUuid(walletOperation.getUuid());
 	                }
