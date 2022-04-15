@@ -1329,7 +1329,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_normal" />
            <column name="version" valueNumeric="0" />
-        </insert>        
+        </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" valueNumeric="-1"/>
             <column name="tax_category_id" valueNumeric="-1"/>
@@ -1401,7 +1401,7 @@
            <column name="version" valueNumeric="0" />
         </insert>
     </changeSet>
-    
+
     <changeSet author="AndriusKarpavicius" id="rebuild-data-subscriptionTerminationReasonsDEMO">
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-1" />
@@ -2353,7 +2353,7 @@
             <column name="multiplicator" valueNumeric="1" />
         </insert>
     </changeSet>    
-    
+
    	<changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA">
 		<insert tableName="billing_tax_mapping">
         	<column name="id" value='-20'/>
@@ -2392,7 +2392,7 @@
             <column name="creator" value="applicationInitializer" />
      	</insert>
      </changeSet>
-    
+
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-36" />
@@ -2952,6 +2952,21 @@
 			<column name="creator" value="opencell.admin" />
 		</insert>
         </changeSet>
+
+    <changeSet id="#INTRD-6341_20220406" author="aelmalki">
+        <update tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+            <where> code IN ('INV_STD', 'INV_CRN')</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-6597_20220415" author="aelmalki">
+        <update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where> code LIKE ('PAY_%')</where>
+        </update>
+    </changeSet>
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
