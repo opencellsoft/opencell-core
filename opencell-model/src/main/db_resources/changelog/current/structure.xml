@@ -12603,7 +12603,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <!-- Dependencies -->
             <column name="accounting_article_id" type="bigint"/>
             <column name="billing_country_id" type="bigint"/>
-            <column name="billig_currency_id" type="bigint"/>
+            <column name="billing_currency_id" type="bigint"/>
             <column name="seller_country_id" type="bigint"/>
             <column name="seller_id" type="bigint"/>
 
@@ -12619,7 +12619,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="fk_accountingcode_mapping_billing_country" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
 
-        <addForeignKeyConstraint baseColumnNames="billig_currency_id" baseTableName="accounting_accountingcode_mapping"
+        <addForeignKeyConstraint baseColumnNames="billing_currency_id" baseTableName="accounting_accountingcode_mapping"
                                  constraintName="fk_accountingcode_mapping_trading_currency" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
 
