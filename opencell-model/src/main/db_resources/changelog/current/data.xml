@@ -10007,5 +10007,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="#INTRD-6056_20220415" author="HatimOUDAD">
+		<update tableName="cpq_quote_product">
+			<column name="product_action_type" value="CREATE" />
+			<where> product_action_type is null</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
