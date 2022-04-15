@@ -160,6 +160,9 @@ public class QuotePrice extends AuditableEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")
     private Boolean applyDiscountsOnOverridenPrice;
+    
+    @Column(name = "overcharged_unit_amount_without_tax")
+	private BigDecimal overchargedUnitAmountWithoutTax;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
@@ -351,6 +354,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
 		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+
+	public BigDecimal getOverchargedUnitAmountWithoutTax() {
+		return overchargedUnitAmountWithoutTax;
+	}
+
+	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
+		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
 	}
 
 
