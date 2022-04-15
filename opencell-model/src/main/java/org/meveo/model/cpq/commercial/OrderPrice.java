@@ -129,7 +129,7 @@ public class OrderPrice extends BusinessEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")
-    private Boolean applyDiscountsOnOverridenPrice=Boolean.FALSE;
+    private Boolean applyDiscountsOnOverridenPrice;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;

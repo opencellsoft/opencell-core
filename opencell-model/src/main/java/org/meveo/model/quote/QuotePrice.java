@@ -159,7 +159,7 @@ public class QuotePrice extends AuditableEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")
-    private Boolean applyDiscountsOnOverridenPrice=Boolean.FALSE;
+    private Boolean applyDiscountsOnOverridenPrice;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
