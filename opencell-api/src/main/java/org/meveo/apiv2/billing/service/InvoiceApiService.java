@@ -296,6 +296,23 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        List<String> idsInvoiceLineNotFound = new ArrayList<String>();
+        for(Long lineId : invoiceLineIds) {
+            org.meveo.model.cpq.commercial.InvoiceLine invoiceLine = invoiceLinesService.findById(lineId);
+            if (invoiceLine == null) {                
+                idsInvoiceLineNotFound.add("" + lineId);
+            }
+        }
+
+        String idsInvoiceLineNotFoundStr = "";
+        if (idsInvoiceLineNotFound.size() > 0) {
+            for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
+                idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
+            }
+            idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
+            throw new MeveoApiException("Invoice Line ids does not exist: [" + idsInvoiceLineNotFoundStr + "]."); 
+        }
+        
         return invoiceService.duplicateInvoiceLines(invoice, invoiceLineIds);        
     }
     
