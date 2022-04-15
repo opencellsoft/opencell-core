@@ -54,6 +54,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -111,12 +112,12 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param jobInstanceId
 	 * @param lastCurrentUser
 	 * @param isFullAutomatic
-	 * @param invoicesCount 
+	 * @param result 
 	 */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Future<String> createAgregatesAndInvoiceForJob(List<Long> baIds, BillingRun billingRun, BillingCycle billingCycle,  Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, AtomicInteger invoicesCount) {
-		return processInvoicingItems(billingRun, billingCycle, readInvoicingItems(billingRun, baIds), jobInstanceId, lastCurrentUser, isFullAutomatic, invoicesCount);
+	public Future<String> createAgregatesAndInvoiceForJob(List<Long> baIds, BillingRun billingRun, BillingCycle billingCycle,  Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
+		return processInvoicingItems(billingRun, billingCycle, readInvoicingItems(billingRun, baIds), jobInstanceId, lastCurrentUser, isFullAutomatic, result);
 	}
 	
 	private List<BillingAccountDetailsItem> readInvoicingItems(BillingRun billingRun, List<Long> baIDs) {
@@ -141,9 +142,9 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		return billingAccountDetailsMap.values().stream().collect(Collectors.toList());
 	}
     
-	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, AtomicInteger invoicesCount) {
+	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, invoicesCount);
+        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
         if(!CollectionUtils.isEmpty(invoicesbyBA)) {
         	validateInvoices(invoicesbyBA);
             writeInvoicingData(billingRun, isFullAutomatic, invoicesbyBA, billingCycle);
@@ -155,18 +156,19 @@ public class InvoicingService extends PersistenceService<Invoice> {
 		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true));
 	}
 
-	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, AtomicInteger invoicesCount) {
+	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
         List<List<Invoice>> invoicesByBA = new ArrayList<List<Invoice>>();
         List<Invoice> invoices;
         for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
         	invoices = new ArrayList<Invoice>();
             BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, billingAccountDetailsItem.getBillingAccountId());
-            invoicesByBA.add(invoices);
             try {
                 createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, billingRun, invoices, billingCycle, billingAccount,isFullAutomatic);
-                invoicesCount.addAndGet(invoices.size());
+                invoicesByBA.add(invoices);
+                result.addNbItemsCorrectlyProcessed(invoices.size());
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccount.getId(), e);
+                result.addErrorReport("BA: "+billingAccount.getId()+" error: "+e.getMessage());
                 rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage().toString());
             }
         }

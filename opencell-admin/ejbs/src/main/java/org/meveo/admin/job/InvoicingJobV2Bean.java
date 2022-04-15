@@ -18,7 +18,6 @@ import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
@@ -77,7 +76,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 	@TransactionAttribute(REQUIRES_NEW)
 	public JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running InvoicingV2Job with parameter={}", jobInstance.getParametres());
-		AtomicInteger invoicesCount=new AtomicInteger();
 		try {
 			List<BillingRun> billingRuns = readValidBillingRunsToProcess(jobInstance, result);
 			if (billingRuns.isEmpty()) {
@@ -85,12 +83,11 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 				result.setErrors(errors);
 			} else {
 				for (BillingRun billingRun : billingRuns) {
-					boolean updateBillingRun = executeBillingRun(billingRun, jobInstance, result, invoicesCount);
+					boolean updateBillingRun = executeBillingRun(billingRun, jobInstance, result);
 					if (updateBillingRun) {
 						billingRunService.update(billingRun);
 					}
 				}
-				result.setNbItemsCorrectlyProcessed(invoicesCount.intValue());
 			}
 		} catch (Exception exception) {
 			result.registerError(exception.getMessage());
@@ -130,7 +127,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 		billingRuns.removeAll(excludedBRs);
 	}
 
-	private boolean executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, AtomicInteger invoicesCount) {
+	private boolean executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
 		boolean billingRunUpdated = false;
 		final boolean isFullAutomatic = billingRun.getProcessType() == FULL_AUTOMATIC;
 		if (billingRun.getStatus() == INVOICE_LINES_CREATED
@@ -145,7 +142,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 			}
 			Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 			try {
-				createAggregatesAndInvoiceWithIl(billingRun, nbRuns, waitingMillis, jobInstance.getId(), isFullAutomatic, billingRun.getBillingCycle(), result, invoicesCount);
+				createAggregatesAndInvoiceWithIl(billingRun, nbRuns, waitingMillis, jobInstance.getId(), isFullAutomatic, billingRun.getBillingCycle(), result);
 			}catch (Exception e) {
 				log.error(e.getMessage());
 				e.printStackTrace();
@@ -172,7 +169,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 	}
 	
 	private void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
-			boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result, AtomicInteger invoicesCount) throws BusinessException {
+			boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) throws BusinessException {
 		List<Long> bAIds = billingRunService.getBAsHavingOpenILs(billingRun);
 		if(bAIds.isEmpty()) {
 			log.info("=======NO INVOICE LINES TO PROCESS for BR {}=========", billingRun.getId());
@@ -184,8 +181,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 		int itemsPerSplit = (bAIds.size() / maxBAsPerTransaction) > nbRuns ? maxBAsPerTransaction : (int) (bAIds.size() / nbRuns);
 		itemsPerSplit=itemsPerSplit>0?itemsPerSplit:1;
 		MeveoUser lastCurrentUser = currentUser.unProxy();
-		BiConsumer<List<Long>, JobExecutionResultImpl> task = (item, jobResult) -> {invoicingService.createAgregatesAndInvoiceForJob(item, billingRun, billingCycle, jobInstanceId, lastCurrentUser, isFullAutomatic, invoicesCount);};
-		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>(ListUtils.partition(bAIds, itemsPerSplit)), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+		BiConsumer<List<Long>, JobExecutionResultImpl> task = (item, jobResult) -> {invoicingService.createAgregatesAndInvoiceForJob(item, billingRun, billingCycle, jobInstanceId, lastCurrentUser, isFullAutomatic, result);};
+		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>(ListUtils.partition(bAIds, itemsPerSplit)), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, true);
 	}
 
     /**
