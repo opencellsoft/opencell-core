@@ -289,6 +289,7 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setDiscountPlanItem(price.getDiscountPlanItem());
 			orderPrice.setDiscountPlanType(price.getDiscountPlanType());
 			orderPrice.setDiscountValue(price.getDiscountValue());
+			orderPrice.setApplyDiscountsOnOverridenPrice(price.getApplyDiscountsOnOverridenPrice());
 			
 			if(price.getDiscountedQuotePrice() != null && price.getDiscountPlan() != null) {
 				orderPrice.setDiscountedOrderPrice(quoteToOrder.get(price.getDiscountedQuotePrice().getId()));

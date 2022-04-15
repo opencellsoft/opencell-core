@@ -34,7 +34,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.cpq.OverrodPricesDto;
+import org.meveo.api.dto.cpq.OverrideChargedPricesDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -400,6 +400,6 @@ public interface CpqQuoteRs {
 
     @PUT
     @Path("/quotePrices/override")
-    Response overridePrices(OverrodPricesDto overrodPricesDto);
+    Response overridePrices(OverrideChargedPricesDto overrodPricesDto);
     
 }

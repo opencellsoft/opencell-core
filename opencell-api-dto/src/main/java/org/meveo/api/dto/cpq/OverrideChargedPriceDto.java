@@ -2,12 +2,13 @@ package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
 
-public class OverridePriceDto {
+public class OverrideChargedPriceDto {
 
     private Long offerId;
     private String accountingArticleCode;
     private BigDecimal unitAmountWithoutTax;
     private Boolean priceOverCharged;
+    private Boolean applyDiscountsOnOverridenPrice;
 
     public Long getOfferId() {
         return offerId;
@@ -40,4 +41,14 @@ public class OverridePriceDto {
     public void setPriceOverCharged(Boolean priceOverCharged) {
         this.priceOverCharged = priceOverCharged;
     }
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+    
+    
 }
