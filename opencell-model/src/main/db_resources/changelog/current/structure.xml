@@ -12063,6 +12063,108 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA.">
+    	<addColumn tableName="billing_discount_plan_instance">
+    		<column name="service_instance_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-5872_20220322" author="TarikFA.">
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="discounted_wallet_operation_id" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_wallet_operation" constraintName="fk_discount_plan_id_wallet_operation" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+                                 
+		<addColumn tableName="billing_rated_transaction">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_rated_transaction" constraintName="fk_discount_plan_id_rated_transaction" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+                                 
+		<addColumn tableName="cpq_quote_price">
+			<column name="uuid" type="varchar(60)"/>
+		</addColumn>
+                                 
+    </changeSet>
+    
+     <changeSet id="#INTRD-5872_20220326" author="R.AITYAAZZA">
+    	<addColumn tableName="cpq_quote_price">
+    		<column name="discount_plan_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote_price" constraintName="fk_discount_plan_id_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+                
+       <addColumn tableName="billing_rated_transaction">
+    		<column name="discounted_ratedtransaction_id" type="bigint" />
+    	</addColumn>                          
+    </changeSet>
+    
+     <changeSet id="#INTRD-6108_20220330" author="TarikFA.">
+    	<addColumn tableName="order_price">
+    		<column name="quantity" type="numeric(19,2)" />
+    		<column name="discounted_order_price" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseColumnNames="discounted_order_price" baseTableName="order_price" constraintName="fk_order_price_discounted_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="order_price" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="order_price" constraintName="fk_order_price_discount_plan" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+    </changeSet>
+     <changeSet id="#20220404_M540_6296" author="Mbarek-Ay">
+	
+		<addColumn tableName="cpq_quote_price">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn>
+	
+		<addColumn tableName="billing_wallet_operation">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn>
+	
+		<addColumn tableName="billing_rated_transaction">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn>
+	
+		<addColumn tableName="cpq_invoice_line">
+			<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+		</addColumn> 
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+        
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+ 
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+      
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+ 
+      </changeSet>
+
+    <changeSet id="#20220407_ADHOC" author="NabilOuachi">
+        <addColumn tableName="cat_discount_plan">
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza">
         <addColumn tableName="cat_price_plan_matrix">
             <column name="charge_template_id" type="bigint" />
