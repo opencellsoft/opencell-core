@@ -9656,12 +9656,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="code" value="Invoice and Credit Note" />
 			<column name="description" value="Invoice accounting scheme"/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
 		</insert>
 		<update tableName="ar_occ_template">
-			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Invoice and Credit Note')" />
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
