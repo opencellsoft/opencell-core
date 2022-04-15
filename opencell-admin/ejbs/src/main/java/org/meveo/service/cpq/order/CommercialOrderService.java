@@ -1,16 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -244,6 +235,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 
+
+		order.getOffers()
+				.stream()
+				.map(offer->offer.getProducts())
+				.flatMap(Collection::stream)
+				.filter(orderProduct -> orderProduct.getDeliveryDate() == null)
+				.forEach(orderProduct -> {
+					orderProduct.setDeliveryDate(new Date());
+				});
 		updateWithoutProgressCheck(order);
 
 		return order;
