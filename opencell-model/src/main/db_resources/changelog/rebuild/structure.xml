@@ -9805,7 +9805,7 @@
             <column name="invoice_type_el" type="varchar(255)" />
             <column name="invoice_type_id" type="bigint" />
             <column name="description_i18n" type="${type.json}"></column>
-            <column name="criteria_el" type="varchar(500)"/>
+            <column name="accountingcode_el" type="varchar(500)"/>
 
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />

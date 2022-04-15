@@ -80,7 +80,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
-    @Column(name = "criteria_el", length = 500)
+    @Column(name = "accountingcode_el", length = 500)
     private String accountingCodeEl;
 
     public AccountingArticle() {

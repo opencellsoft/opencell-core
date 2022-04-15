@@ -12634,7 +12634,7 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki">
         <addColumn tableName="billing_accounting_article">
-            <column name="criteria_el" type="varchar(500)"/>
+            <column name="accountingcode_el" type="varchar(500)"/>
         </addColumn>
     </changeSet>
 
