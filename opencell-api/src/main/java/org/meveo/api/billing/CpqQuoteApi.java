@@ -1374,6 +1374,7 @@ public class CpqQuoteApi extends BaseApi {
                 ChargeInstance chargeInstance = wo.getChargeInstance();
                 quotePrice.setChargeTemplate(chargeInstance != null ? chargeInstance.getChargeTemplate() : null);
                 quotePrice.setApplyDiscountsOnOverridenPrice(chargeInstance != null ? chargeInstance.getApplyDiscountsOnOverridenPrice() : Boolean.FALSE);
+                quotePrice.setOverchargedUnitAmountWithoutTax(chargeInstance != null ? chargeInstance.getOverchargedUnitAmountWithoutTax() : null);
                 
                 if (chargeInstance != null && PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
                     RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
@@ -1546,6 +1547,7 @@ public class CpqQuoteApi extends BaseApi {
                             subscriptionCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
                             subscriptionCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
                             subscriptionCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+                            subscriptionCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
                         }
 
                         RatingResult ratingResult = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
@@ -1574,6 +1576,7 @@ public class CpqQuoteApi extends BaseApi {
                             recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
                             recurringCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
                             recurringCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+                            recurringCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
                         }
                             Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
                             RatingResult ratingResult = recurringChargeInstanceService
@@ -1606,6 +1609,7 @@ public class CpqQuoteApi extends BaseApi {
 								usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
 								usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS,RoundingMode.HALF_UP));
 								usageCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+								usageCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
 								log.info("Usage quotation : usageCharge amountWTax={}",usageCharge.getAmountWithoutTax());
 							}
 							if (!quantityFound && chargetemplate.getUsageQuantityAttribute() != null) {
@@ -2090,6 +2094,7 @@ public class CpqQuoteApi extends BaseApi {
 
                           quotePrices.forEach(quotePrice -> {
                               BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                              quotePrice.setOverchargedUnitAmountWithoutTax(quotePrice.getUnitPriceWithoutTax());
                               quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
                               quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
                               quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));

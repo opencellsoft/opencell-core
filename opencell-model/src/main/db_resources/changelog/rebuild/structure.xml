@@ -2548,6 +2548,7 @@
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
 		    <column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+		    <column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -9403,6 +9404,7 @@
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
 			<column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
+			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -16008,6 +16010,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
     <changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
     <changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
+    <changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
+    
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
