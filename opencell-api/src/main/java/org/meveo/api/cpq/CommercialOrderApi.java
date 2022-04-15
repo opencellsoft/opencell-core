@@ -49,15 +49,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
@@ -1121,7 +1113,8 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setTerminationReason(terminationReason);
 		orderProduct.setTerminationDate(orderProductDto.getTerminationDate());
 		
-    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
+    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date()) &&
+		ProductActionTypeEnum.CREATE.equals(orderProductDto.getActionType())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
