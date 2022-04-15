@@ -46,8 +46,8 @@ public class AccountingCodeMapping extends AuditableEntity {
     private TradingCountry billingCountry;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billig_currency_id")
-    private TradingCurrency billigCurrency;
+    @JoinColumn(name = "billing_currency_id")
+    private TradingCurrency billingCurrency;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_country_id")
@@ -76,12 +76,12 @@ public class AccountingCodeMapping extends AuditableEntity {
         this.billingCountry = billingCountry;
     }
 
-    public TradingCurrency getBilligCurrency() {
-        return billigCurrency;
+    public TradingCurrency getBillingCurrency() {
+        return billingCurrency;
     }
 
-    public void setBilligCurrency(TradingCurrency billigCurrency) {
-        this.billigCurrency = billigCurrency;
+    public void setBillingCurrency(TradingCurrency billingCurrency) {
+        this.billingCurrency = billingCurrency;
     }
 
     public TradingCountry getSellerCountry() {
