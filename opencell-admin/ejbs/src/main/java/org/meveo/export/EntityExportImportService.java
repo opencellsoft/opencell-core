@@ -1139,7 +1139,7 @@ public class EntityExportImportService implements Serializable {
             entityFound = getEntityManagerForImport().find(entityToSave.getClass(), entityToSave.getId());
         }else if( lookupByCode)
         {
-            entityFound = getEntityManagerForImport().find(entityToSave.getClass(), entityToSave.getId());
+            entityFound = findEntityByCode(entityToSave);
         }
         else {
             entityFound = findEntityByAttributes(entityToSave);
@@ -1676,26 +1676,34 @@ public class EntityExportImportService implements Serializable {
     }
 
 
-    private IEntity findEntityByCode(String code, IEntity entityToSave) {
+    private IEntity findEntityByCode(IEntity entityToSave) {
 
-        String sql = String.format("select o from %s o where  code= %s", entityToSave.getClass().getName(), code);
-
-
-        Query query = getEntityManagerForImport().createQuery(sql);
         try {
-            IEntity entity = (IEntity) query.getSingleResult();
-            log.trace("Found entity {} id={} with code {}. Entity will be updated.", entity.getClass().getName(), entity.getId(), code);
-            return entity;
+            String code = (String) getAttributeValue(entityToSave, "code");
+            if (code != null) {
+                String sql = String.format("select o from %s o where  code= '%s'", entityToSave.getClass().getName(), code);
+                Query query = getEntityManagerForImport().createQuery(sql);
+                IEntity entity = (IEntity) query.getSingleResult();
+                log.trace("Found entity {} id={} with code {}. Entity will be updated.", entity.getClass().getName(), entity.getId(), code);
+                return entity;
+            }else {
+                return null;
+            }
+
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            log.debug("Entity {} doesnt have  code attribute ", entityToSave.getClass().getName());
+            return null;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity {} not found with code: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), code, sql,
-                e.getClass().getName());
+            log.debug("Entity {} not found with code: Reason:{} Entity will be inserted.", entityToSave.getClass().getName(),
+                    e.getClass().getName());
             return null;
 
         } catch (Exception e) {
-            log.error("Failed to search for entity {} with code: {}, sql {}", entityToSave.getClass().getName(), code, sql, e);
+            log.error("Failed to search for entity {} with code", entityToSave.getClass().getName(), e);
             throw new RuntimeException(e);
         }
+
     }
 
     /**
