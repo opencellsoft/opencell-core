@@ -31,21 +31,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -96,21 +81,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -161,21 +131,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -226,21 +181,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -290,21 +230,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -354,21 +279,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -418,21 +328,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -482,21 +377,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -546,21 +426,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -610,21 +475,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -674,21 +524,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "opencell.admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "opencell.admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -777,7 +612,7 @@
 							"});\r",
 							"pm.test(\"check the amount\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.billingRunDto.prAmountWithTax).to.eql(48081.793417);\r",
+							"    pm.expect(jsonData.billingRunDto.prAmountWithTax).to.eql(48081.793376000000);\r",
 							"});\r",
 							"pm.test(\"check the number of the invoices\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
@@ -829,12 +664,12 @@
 		"basic": [
 			{
 				"key": "password",
-				"value": "opencell.admin",
+				"value": "{{opencell.password}}",
 				"type": "string"
 			},
 			{
 				"key": "username",
-				"value": "opencell.admin",
+				"value": "{{opencell.username}}",
 				"type": "string"
 			}
 		]
