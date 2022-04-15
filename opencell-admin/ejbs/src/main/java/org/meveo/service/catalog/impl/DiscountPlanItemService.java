@@ -265,7 +265,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	Long lowPriority=null;
         	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
         		isFixedDpItemIncluded=false;
-        		if(chargeTemplate instanceof OneShotChargeTemplate) {
+        		if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
