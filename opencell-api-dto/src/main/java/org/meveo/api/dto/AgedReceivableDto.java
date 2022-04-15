@@ -2,6 +2,7 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -24,6 +25,10 @@ public class AgedReceivableDto extends BaseEntity {
 	private String customerAccountName;
 	private String customerAccountDescription;
 	private Date dueDate;
+	private List<BigDecimal> netAmountByPeriod;
+	private List<BigDecimal> taxAmountByPeriod;
+	private List<BigDecimal> totalAmountByPeriod;
+	private String funcCurrency;
 
 	public AgedReceivableDto() {
 		super();
@@ -129,4 +134,35 @@ public class AgedReceivableDto extends BaseEntity {
 		this.customerAccountDescription = customerAccountDescription;
 	}
 
+	public List<BigDecimal> getNetAmountByPeriod() {
+		return netAmountByPeriod;
+	}
+
+	public void setNetAmountByPeriod(List<BigDecimal> netAmountByPeriod) {
+		this.netAmountByPeriod = netAmountByPeriod;
+	}
+
+	public List<BigDecimal> getTaxAmountByPeriod() {
+		return taxAmountByPeriod;
+	}
+
+	public void setTaxAmountByPeriod(List<BigDecimal> taxAmountByPeriod) {
+		this.taxAmountByPeriod = taxAmountByPeriod;
+	}
+
+	public List<BigDecimal> getTotalAmountByPeriod() {
+		return totalAmountByPeriod;
+	}
+
+	public void setTotalAmountByPeriod(List<BigDecimal> totalAmountByPeriod) {
+		this.totalAmountByPeriod = totalAmountByPeriod;
+	}
+
+	public String getFuncCurrency() {
+		return funcCurrency;
+	}
+
+	public void setFuncCurrency(String funcCurrency) {
+		this.funcCurrency = funcCurrency;
+	}
 }
