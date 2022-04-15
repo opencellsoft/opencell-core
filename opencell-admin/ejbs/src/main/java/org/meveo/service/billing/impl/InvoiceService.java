@@ -6127,4 +6127,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         calculateInvoice(invoice);
         return update(invoice);
     }
+
+    public Invoice findByInvoiceNumber(String invoiceNumber) {
+        return (Invoice) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+                                .setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+                                .getSingleResult();
+    }
 }

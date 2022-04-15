@@ -2,6 +2,7 @@ package org.meveo.apiv2.standardReport.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.math.*;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -28,7 +29,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Produces(APPLICATION_JSON)
 public interface StandardReportResource {
 
-    
     @GET
     @Path("/AgedReceivables")
     @Operation(summary = "Return aged balance", tags = {"AgedReceivables" },
@@ -46,9 +46,13 @@ public interface StandardReportResource {
             @ApiResponse(responseCode = "404", description = "No data found",
                     content = @Content(schema = @Schema(implementation = ApiException.class))) })
     Response getAgedReceivables(@DefaultValue("0") @QueryParam("offset") Long offset,
-                              @DefaultValue("50") @QueryParam("limit") Long limit,
-                              @QueryParam("sortOrder") String sort, @QueryParam("sortBy") String orderBy,
-                              @QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("startDate") Date startDate, @Context Request request);
-
-    
+                                @DefaultValue("50") @QueryParam("limit") Long limit,
+                                @QueryParam("sortOrder") String sort, @QueryParam("sortBy") String orderBy,
+                                @QueryParam("customerAccountCode") String customerAccountCode,
+                                @QueryParam("startDate") Date startDate,
+                                @QueryParam("customerAccountDescription") String customerAccountDescription,
+                                @QueryParam("invoiceNumber") String invoiceNumber,
+                                @QueryParam("stepInDays") Integer stepInDays,
+                                @QueryParam("numberOfPeriods") Integer numberOfPeriods,
+                                @Context Request request);
 }
