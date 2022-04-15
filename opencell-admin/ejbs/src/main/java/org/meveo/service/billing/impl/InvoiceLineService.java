@@ -166,27 +166,29 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     @Override
     public void create(InvoiceLine entity) throws BusinessException {
-    	AccountingArticle accountingArticle=entity.getAccountingArticle();
-    	Invoice invoice=entity.getInvoice();
-    	Date date=new Date();
-    	if(entity.getValueDate()!=null) {
-    		date=entity.getValueDate();
-    	}
-    	BillingAccount billingAccount=entity.getBillingAccount();
-    	Seller seller=null;
-    	if(invoice!=null) {
-       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-       	 billingAccount=invoice.getBillingAccount();
-       	}
-    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-    	if(seller==null) {
-    		 seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
-    	}
-    	 if (accountingArticle != null) {
-             seller = sellerService.refreshOrRetrieve(seller);
-             setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
-         }
-    	super.create(entity);
+		AccountingArticle accountingArticle = entity.getAccountingArticle();
+
+		Invoice invoice = entity.getInvoice();
+		Date date = new Date();
+		if (entity.getValueDate() != null) {
+			date = entity.getValueDate();
+		}
+		BillingAccount billingAccount = entity.getBillingAccount();
+		Seller seller = null;
+		if (invoice != null) {
+			seller = invoice.getSeller() != null ? invoice.getSeller() : seller;
+			billingAccount = invoice.getBillingAccount();
+		}
+		billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+		if (seller == null) {
+			seller = entity.getCommercialOrder() != null ? entity.getCommercialOrder().getSeller()
+					: billingAccount.getCustomerAccount().getCustomer().getSeller();
+		}
+		if (accountingArticle != null && entity.getTax() == null) {
+			seller = sellerService.refreshOrRetrieve(seller);
+			setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
+		}
+		super.create(entity);
     	
 
 //    	if(entity.getDiscountPlan() != null) {

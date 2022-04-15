@@ -4276,7 +4276,10 @@
             <column name="parameter1_el" type="varchar(2000)"/>
             <column name="parameter2_el" type="varchar(2000)"/>
             <column name="parameter3_el" type="varchar(2000)"/>
+            <column name="charge_template_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_price_plan_matrix" constraintName="fk_cat_price_plan_matrix_cat_charge_template"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-219">
         <createTable tableName="cat_serv_rec_charge_template">
@@ -17272,6 +17275,7 @@
     <changeSet id="#INTRD-5872_20220322" author="TarikFA." />
     <changeSet id="#INTRD-5872_20220326" author="R.AITYAAZZA" />
     <changeSet id="#INTRD-6108_20220330" author="TarikFA." />
+    <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
