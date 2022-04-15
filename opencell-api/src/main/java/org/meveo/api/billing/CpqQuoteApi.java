@@ -642,6 +642,9 @@ public class CpqQuoteApi extends BaseApi {
                         }
                         qv.setInvoicingPlan(invoicingPlan);
                     }
+                    if(quoteVersionDto.getDiscountPlanCode()==null) {
+                    	qv.setDiscountPlan(null);
+                    }
                     if(!Strings.isEmpty(quoteVersionDto.getDiscountPlanCode())) {
                         qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
                     }
