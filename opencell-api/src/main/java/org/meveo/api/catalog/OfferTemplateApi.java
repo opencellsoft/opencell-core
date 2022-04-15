@@ -203,9 +203,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException(
-                "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
-                        + ", already exists. Please change the validity dates of an existing offer first.");
+            throw new InvalidParameterException("Offer with the same code already exists on this period." +
+                    " You cannot create offer versions with overlapping validity periods.");
         }
 
         OfferTemplate offerTemplate = populateFromDto(postData, null);
@@ -248,9 +247,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getNewValidFrom(), postData.getNewValidTo(), offerTemplate.getId(),
             true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException(
-                "An offer, valid on " + new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
-                        + ", already exists. Please change the validity dates of an existing offer first.");
+            throw new InvalidParameterException("Offer with the same code already exists on this period." +
+                    " You cannot create offer versions with overlapping validity periods.");
         }
 
         offerTemplate = populateFromDto(postData, offerTemplate);
