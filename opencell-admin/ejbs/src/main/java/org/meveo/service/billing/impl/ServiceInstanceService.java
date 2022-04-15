@@ -508,7 +508,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 
-    	RatingResult ratingResult = null;
+    	RatingResult ratingResult = new RatingResult();
         // apply subscription charges
         if (!serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (SubscriptionChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
@@ -551,7 +551,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 if (applyRecurringCharges) {
                 	RatingResult ratingResultRec = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
                             serviceInstance.getRateUntilDate() == null, false, null);
-                    if(ratingResult != null) {
+                    if(ratingResultRec != null) {
                     	ratingResult.add(ratingResultRec);
                     	eligibleFixedDiscountItems.addAll(ratingResultRec.getEligibleFixedDiscountItems());
                     }

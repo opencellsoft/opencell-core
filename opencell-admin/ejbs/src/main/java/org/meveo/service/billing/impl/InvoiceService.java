@@ -5393,9 +5393,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         for (InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo : invoiceLineGroupToInvoiceMap.values()) {
-           /* if (!allIlsInOneRun) {
+            if (!allIlsInOneRun) {
                 addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values());
-            }*/
+            }
             Set<String> orderNums = invoiceAggregateProcessingInfo.orderNumbers;
             if (entityToInvoice instanceof Order) {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
