@@ -1458,6 +1458,7 @@ public class CpqQuoteApi extends BaseApi {
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer,List<DiscountPlanItem> applicablePercentageDiscountItems) {
     	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
+    	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.PRODUCT);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> fixedDiscountPrices = new ArrayList<>();
@@ -1491,7 +1492,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLine.setQuantity(wo.getQuantity());
                 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
                 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
-                quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+                quoteArticleLine.setQuoteProduct(wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct() : null);
                 wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
                 quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                 quoteArticleLine.setQuoteVersion(quoteOffer.getQuoteVersion());
@@ -1510,7 +1511,6 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setCurrencyCode(wo.getCurrency() != null ? wo.getCurrency().getCurrencyCode() : null);
             quotePrice.setQuoteArticleLine(quoteArticleLine);
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
-            quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setQuantity(wo.getQuantity());
             if(wo.getDiscountPlan() != null) {
@@ -1760,12 +1760,12 @@ public class CpqQuoteApi extends BaseApi {
 
                 }
                 walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
-						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, serviceInstance.getCode(), false, null, null, DiscountPlanTypeEnum.PRODUCT));
+						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), serviceInstance, subscription, serviceInstance.getCode(), isVirtual, null, null, DiscountPlanTypeEnum.PRODUCT));
             }
 
            var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
-            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
-           
+            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), isVirtual, null, null, DiscountPlanTypeEnum.OFFER);
+
            for (WalletOperation wo : offerFixedDiscountWalletOperation) {
         	   QuotePrice discountQuotePrice = new QuotePrice();
                discountQuotePrice.setPriceLevelEnum(PriceLevelEnum.OFFER);

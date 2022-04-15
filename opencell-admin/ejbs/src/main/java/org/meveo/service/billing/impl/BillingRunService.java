@@ -655,7 +655,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run
      * @return the entity objects
      */
-    public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
+    @SuppressWarnings("unchecked")
+	public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
