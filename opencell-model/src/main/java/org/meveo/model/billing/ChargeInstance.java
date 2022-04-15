@@ -266,6 +266,9 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")
     private Boolean applyDiscountsOnOverridenPrice;
+    
+    @Column(name = "overcharged_unit_amount_without_tax")
+   	private BigDecimal overchargedUnitAmountWithoutTax;
 
     /**
      * Resolved taxClass
@@ -628,6 +631,15 @@ public abstract class ChargeInstance extends BusinessCFEntity {
 	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
 		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
 	}
+
+	public BigDecimal getOverchargedUnitAmountWithoutTax() {
+		return overchargedUnitAmountWithoutTax;
+	}
+
+	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
+		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
+	}
     
+	
     
 }
