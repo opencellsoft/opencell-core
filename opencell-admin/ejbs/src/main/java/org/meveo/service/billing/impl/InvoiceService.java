@@ -2569,10 +2569,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
        
        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
            nullifyInvoiceXMLFileNames(br);
+           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
        }
 
        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
            nullifyInvoicePDFFileNames(br);
+           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
        }
    }
 
@@ -2594,7 +2596,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
        getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
    }
 
-    /**
+   /**
+    * Nullify BR XML and PDF execution result Ids.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyBillingRunXMLAndPDFExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLAndPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+
+   /**
      * @param billingRunId
      */
     public void deleteInvoices(Long billingRunId) {
