@@ -9957,9 +9957,7 @@
             <column name="updater" type="varchar(100)" />
             <!-- Auditable End -->
 
-            <column name="order_article_line_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
+            <column name="order_article_line_id" type="bigint" />
             <column name="order_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>

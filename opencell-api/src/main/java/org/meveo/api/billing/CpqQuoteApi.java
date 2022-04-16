@@ -1704,6 +1704,7 @@ public class CpqQuoteApi extends BaseApi {
            discountQuotePrice.setQuoteVersion(quoteVersion);
            discountQuotePrice.setQuoteOffer(quoteOffer);
            discountQuotePrice.setQuantity(wo.getQuantity());
+           discountQuotePrice.setDiscountPlan(wo.getDiscountPlan());
            discountQuotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
            discountQuotePrice.setDiscountPlanType(wo.getDiscountPlanType());
            discountQuotePrice.setDiscountValue(wo.getDiscountValue());

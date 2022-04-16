@@ -9524,5 +9524,11 @@ public class OrderAdvancement extends ModuleScript {
 		<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
 		</addColumn>
       </changeSet>
+
+	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza">
+		<dropNotNullConstraint columnDataType="bigint" columnName="order_article_line_id" tableName="order_price" />
+	</changeSet>
+
+      
     
 </databaseChangeLog>
