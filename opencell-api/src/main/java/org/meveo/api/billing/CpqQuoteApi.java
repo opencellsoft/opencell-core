@@ -1197,7 +1197,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         
         var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(quoteEligibleFixedDiscountItems), quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), new Date(), new BigDecimal(1d), null,
-        		null, null, null, null, null, null, true, null, null, DiscountPlanTypeEnum.OFFER);
+        		null, null, null, null, null, null, true, null, null, DiscountPlanTypeEnum.QUOTE);
         createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteVersion, null,quoteVersion.getQuote().getBillableAccount());
         
 
@@ -1337,7 +1337,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLine.setQuantity(wo.getQuantity());
                 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
                 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
-                quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+                quoteArticleLine.setQuoteProduct(wo.getServiceInstance()!=null?wo.getServiceInstance().getQuoteProduct():null);
                 wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
                 quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                 quoteArticleLine.setQuoteVersion(quoteOffer.getQuoteVersion());
