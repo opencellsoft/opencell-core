@@ -231,10 +231,9 @@ OrderAdvancementScript extends ModuleScript {
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
-        return ((price.getChargeTemplate().getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT
-                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) 
-        		|| (PriceTypeEnum.FIXED_DISCOUNT.equals(price.getPriceTypeEnum()) && PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.OFFER.equals(price.getDiscountPlan().getDiscountPlanType()) ) 
-        		||  (PriceTypeEnum.FIXED_DISCOUNT.equals(price.getPriceTypeEnum()) && PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.QUOTE.equals(price.getDiscountPlan().getDiscountPlanType()) );
+        return (PriceTypeEnum.ONE_SHOT_OTHER.equals(price.getPriceTypeEnum()) && PriceLevelEnum.PRODUCT.equals(price.getPriceLevelEnum())) 
+        		|| (price.getDiscountPlan()!=null && PriceTypeEnum.ONE_SHOT_OTHER.equals(price.getPriceTypeEnum()) && PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.OFFER.equals(price.getDiscountPlan().getDiscountPlanType()) ) 
+        		||  (price.getDiscountPlan()!=null &&  PriceTypeEnum.ONE_SHOT_OTHER.equals(price.getPriceTypeEnum()) && PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.QUOTE.equals(price.getDiscountPlan().getDiscountPlanType()) );
     }
 
 
