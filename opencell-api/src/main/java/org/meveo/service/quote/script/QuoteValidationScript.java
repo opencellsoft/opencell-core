@@ -283,7 +283,7 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setCode(UUID.randomUUID().toString());
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);
-			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
+			orderPrice.setPriceLevelEnum(PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum())?PriceLevelEnum.ORDER:price.getPriceLevelEnum());
 			orderPrice.setAmountWithTax(price.getAmountWithTax());
 			orderPrice.setUnitPriceWithoutTax(price.getUnitPriceWithoutTax());
 			orderPrice.setAmountWithoutTax(price.getAmountWithoutTax());

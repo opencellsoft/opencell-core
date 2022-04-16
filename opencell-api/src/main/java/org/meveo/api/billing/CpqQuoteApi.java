@@ -1314,7 +1314,8 @@ public class CpqQuoteApi extends BaseApi {
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,quoteEligibleFixedDiscountItems, true);
-        List<QuotePrice> accountingPrices = new ArrayList<>();
+        List<QuotePrice> productQuotePrices = new ArrayList<>();
+        List<QuotePrice> offerQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
 //        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
@@ -1391,12 +1392,12 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setTaxRate(wo.getTaxPercent());
                 quotePriceService.create(quotePrice);
                 quoteArticleLine.getQuotePrices().add(quotePrice);
-                accountingPrices.add(quotePrice);
+                productQuotePrices.add(quotePrice);
           
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
         }
         //Calculate totals by offer
-        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
+        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = productQuotePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
@@ -1406,11 +1407,12 @@ public class CpqQuoteApi extends BaseApi {
 			        .map(price -> {
 			            QuotePrice quotePrice = price.get();
 			            quotePriceService.create(quotePrice);
+			            offerQuotePrices.add(quotePrice);
 			            quoteOffer.getQuotePrices().add(quotePrice);
 			            return new PriceDTO(quotePrice);
 			        })
 			        .collect(Collectors.toList());
-        return accountingPrices;
+        return offerQuotePrices;
     }
 
 

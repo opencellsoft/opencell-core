@@ -50,7 +50,6 @@ public class OrderPrice extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_article_line_id", nullable = false)
-    @NotNull
     private OrderArticleLine orderArticleLine;
 
     @ManyToOne(fetch = FetchType.LAZY)

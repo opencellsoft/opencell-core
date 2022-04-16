@@ -20,6 +20,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Attribute;
@@ -231,7 +232,9 @@ OrderAdvancementScript extends ModuleScript {
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
         return ((price.getChargeTemplate().getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT
-                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) || PriceTypeEnum.FIXED_DISCOUNT.equals(price.getPriceTypeEnum()) ;
+                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)) 
+        		|| (PriceTypeEnum.FIXED_DISCOUNT.equals(price.getPriceTypeEnum()) && PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.OFFER.equals(price.getDiscountPlan().getDiscountPlanType()) ) 
+        		||  (PriceTypeEnum.FIXED_DISCOUNT.equals(price.getPriceTypeEnum()) && PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()) && DiscountPlanTypeEnum.QUOTE.equals(price.getDiscountPlan().getDiscountPlanType()) );
     }
 
 
