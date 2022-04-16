@@ -195,6 +195,7 @@ public class QuoteValidationScript extends ModuleScript {
 		quoteOffer.getQuoteAttributes().forEach(quoteAttribute -> {
 			processOrderAttribute(quoteAttribute, order, offer,null);
 		});
+		
 		List<QuotePrice> offerQuotePrices=quoteOffer.getQuotePrices().stream()
 		.filter(qp -> qp.getPriceLevelEnum()==PriceLevelEnum.OFFER).collect(Collectors.toList());
 		processOrderPrice(offerQuotePrices, null, order, quoteOffer.getQuoteVersion(), offer, null);
@@ -264,6 +265,10 @@ public class QuoteValidationScript extends ModuleScript {
 	}
 	
 	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
+		if(quoteArticleLine==null || commercialOrder==null) {
+			return null;
+		}
+		
 		OrderArticleLine articleLine = new OrderArticleLine();
 		articleLine.setCode(UUID.randomUUID().toString());
 		articleLine.setOrder(commercialOrder);
@@ -278,10 +283,18 @@ public class QuoteValidationScript extends ModuleScript {
 	
 	private void processOrderPrice(List<QuotePrice> quotePrices, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
 		
+		
+		
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
 			orderPrice.setCode(UUID.randomUUID().toString());
-			orderPrice.setOrderArticleLine(orderArticleLine);
+			
+			if(orderArticleLine==null) {
+				orderPrice.setOrderArticleLine(processOrderArticleLine(price.getQuoteArticleLine(), commercialOrder, null, null));
+			}else {
+				orderPrice.setOrderArticleLine(orderArticleLine);
+			}
+			
 			orderPrice.setOrder(commercialOrder);
 			orderPrice.setPriceLevelEnum(PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum())?PriceLevelEnum.ORDER:price.getPriceLevelEnum());
 			orderPrice.setAmountWithTax(price.getAmountWithTax());
