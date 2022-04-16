@@ -1198,7 +1198,7 @@ public class CpqQuoteApi extends BaseApi {
         
         var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(quoteEligibleFixedDiscountItems), quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), new Date(), new BigDecimal(1d), null,
         		null, null, null, null, null, null, true, null, null, DiscountPlanTypeEnum.QUOTE);
-        createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteVersion, null,quoteVersion.getQuote().getBillableAccount());
+        createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteVersion, null,quoteVersion.getQuote().getBillableAccount(),PriceLevelEnum.QUOTE);
         
 
         Map<BigDecimal, List<QuotePrice>> pricesPerTaux = accountingArticlePrices.stream()
@@ -1337,8 +1337,11 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLine.setQuantity(wo.getQuantity());
                 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
                 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
-                quoteArticleLine.setQuoteProduct(wo.getServiceInstance()!=null?wo.getServiceInstance().getQuoteProduct():null);
-                wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
+                if(wo.getServiceInstance()!=null) {
+                	  quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+                      wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
+                }
+              
                 quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                 quoteArticleLine.setQuoteVersion(quoteOffer.getQuoteVersion());
                 quoteArticleLineService.create(quoteArticleLine);
@@ -1671,7 +1674,7 @@ public class CpqQuoteApi extends BaseApi {
 
             var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
             		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
-            createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount);
+            createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER);
 
         }
         List<WalletOperation> sortedWalletOperations = walletOperations.stream()
@@ -1682,11 +1685,11 @@ public class CpqQuoteApi extends BaseApi {
         return sortedWalletOperations;
     }
     
-    private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount) {
+    private List<QuotePrice> createFixedDiscountQuotePrices( List<WalletOperation> fixedDiscountWalletOperation,QuoteVersion quoteVersion, QuoteOffer quoteOffer,BillingAccount billingAccount,PriceLevelEnum priceLevelEnum) {
     	List<QuotePrice> discountQuotePrices=new ArrayList<QuotePrice>();
         for (WalletOperation wo : fixedDiscountWalletOperation) {
     	   QuotePrice discountQuotePrice = new QuotePrice();
-           discountQuotePrice.setPriceLevelEnum(PriceLevelEnum.OFFER);
+           discountQuotePrice.setPriceLevelEnum(priceLevelEnum);
            discountQuotePrice.setPriceTypeEnum(PriceTypeEnum.FIXED_DISCOUNT);
            final AccountingArticle accountingArticle = wo.getAccountingArticle();
            if (accountingArticle != null && accountingArticle.getTaxClass() != null) {
