@@ -91,6 +91,7 @@ import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -98,8 +99,6 @@ import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.billing.*;
-import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -107,6 +106,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -132,6 +132,7 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -259,6 +260,9 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private GlobalSettingsService globalSettingsService;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
 
 	public QuoteDTO createQuote(QuoteDTO quoteDto) {
 	    if(StringUtils.isBlank(quoteDto.getApplicantAccountCode())) {
@@ -927,7 +931,25 @@ public class CpqQuoteApi extends BaseApi {
         		throw new MeveoApiException("Delivery date should be in the future");	
         	}
         	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
-            
+        	/**************/
+        	if(quoteOfferDto.getQuoteLineType() == OfferLineTypeEnum.AMEND) {
+            	if (quoteOfferDto.getSubscriptionCode() == null) {
+    				throw new BusinessApiException("Subscription is missing");
+    			}
+            	List<QuoteOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(quoteOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
+            	if(!orderOffers.isEmpty()) {
+            		throw new BusinessApiException("Amendement order line already exists on subscription"+quoteOfferDto.getSubscriptionCode());
+            	}
+            	quoteOffer.setQuoteLineType(OfferLineTypeEnum.AMEND);
+            	Subscription subscription = subscriptionService.findByCode(quoteOfferDto.getSubscriptionCode());
+            	if(subscription == null) {
+            		throw new EntityDoesNotExistsException("Subscription with code "+quoteOfferDto.getSubscriptionCode()+" does not exist");
+            	}
+            	quoteOffer.setSubscription(subscription);
+            }else {
+            	quoteOffer.setQuoteLineType(OfferLineTypeEnum.CREATE);
+            }
+            /*************/
             newPopulateProduct(quoteOfferDto, quoteOffer);
             newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
     
@@ -996,6 +1018,23 @@ public class CpqQuoteApi extends BaseApi {
     	}
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
         quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
+        /**********/
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
+        	if (orderOfferDto.getSubscritptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
+        	if(!orderOffers.isEmpty()) {
+        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        	}
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        	}
+        	orderOffer.setSubscription(subscription);
+        }
+        /************/
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
