@@ -9,8 +9,10 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -180,15 +182,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	super.create(entity);
     	
 
-        if(entity.getDiscountPlan() != null) {
-        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller, entity);
-        }
+//    	if(entity.getDiscountPlan() != null) {
+//         	addDiscountPlanInvoice( entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller);
+//         }
     }
     
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null,null,null, null, invoice.getInvoiceDate(), invoiceLine);
+    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
+    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice.getInvoiceDate() );
     	if(isDiscountApplicable) {
-    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null, null, null, null, accountingArticle, null, null);
+    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, null, invoice.getInvoiceDate());
             BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
             entity.setDiscountAmount(invoiceLineDiscountAmount);
     	}
@@ -209,7 +211,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                         taxPercent = taxInfo.tax.getPercent();
                 }
                 BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
-                if(discountAmount == null || discountAmount == BigDecimal.ZERO) continue;
+                if(discountAmount != null) {
+                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+        	  	}
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                 var quantity = invoiceLine.getQuantity();
                 discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
@@ -219,6 +223,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 discountInvoice.setDiscountedInvoiceLine(invoiceLine);
                 discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
                 discountInvoice.setTaxRate(taxPercent);
+                discountInvoice.setRawAmount(invoiceLineDiscountAmount);
             	super.create(discountInvoice);
             }
         }
@@ -271,12 +276,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-
-
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+       return  createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, null);
+    }	
+    
     public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
                                          ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
                                          OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
-                                         BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+                                         BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -316,7 +323,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
         invoiceLine.setTaxRate(totalTaxRate);
-
+        if(discountedInvoiceLineId!=null) {
+        	InvoiceLine discountedInvoiceLine=findById(discountedInvoiceLineId);
+        	if(discountedInvoiceLine==null) {
+        		throw new EntityDoesNotExistsException(InvoiceLine.class, discountedInvoiceLineId);
+        	}
+        	invoiceLine.setDiscountedInvoiceLine(discountedInvoiceLine);
+        }
         invoiceLine.setValueDate(new Date());
         create(invoiceLine);
         commit();
@@ -636,33 +649,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
-
-		deleteByDiscountedPlan(invoiceLine);
-		if(StringUtils.isNotBlank(invoiceLineResource.getDiscountPlanCode())) {
-			BillingAccount billingAccount=invoiceLine.getBillingAccount();
-	    	Seller seller=null;
-	    	if(invoice!=null) {
-	       	 seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-	       	 billingAccount=invoice.getBillingAccount();
-	       	}
-	    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-	    	if(seller==null) {
-	    		 seller=invoiceLine.getCommercialOrder()!=null?invoiceLine.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
-	    	}
-	    	var accountingArticle = invoiceLine.getAccountingArticle();
-	    	Date date = invoiceLine.getValueDate()!=null ? invoiceLine.getValueDate() : new Date();
-	    	 if (accountingArticle != null) {
-	             seller = sellerService.refreshOrRetrieve(seller);
-	             setApplicableTax(accountingArticle, date, seller, billingAccount, invoiceLine);
-	         }
-	    		 addDiscountPlanInvoice(invoiceLine.getDiscountPlan(), invoiceLine, invoiceLine.getBillingAccount(), invoice, accountingArticle, seller, invoiceLine);
-	    	
-		} else
-   		 	invoiceLine.setDiscountPlan(null);
-		
+		invoiceLine = initInvoiceLineFromResource(invoiceLineRessource, invoiceLine);
 		update(invoiceLine);
 	}
 
@@ -807,11 +796,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
         for (Map<String, Object> record : groupedRTs) {
-            invoiceLine = linesFactory.create(record, configuration, result, appProvider, billingRun);
+            invoiceLine = linesFactory.create(record, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
@@ -820,6 +810,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             basicStatistics.setCount(associatedRtIds.size());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
+            if(record.get("rated_transaction_ids") != null) {
+            	var ratedTransIds = Arrays.asList( ((String) record.get("rated_transaction_ids")).split(","));
+            	for(String id: ratedTransIds) {
+            		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
+            	}
+            }
+            
         }
         return basicStatistics;
     }
