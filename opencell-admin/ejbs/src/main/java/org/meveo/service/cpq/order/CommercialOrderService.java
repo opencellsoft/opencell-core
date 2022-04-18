@@ -1,7 +1,15 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -13,12 +21,12 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -38,12 +46,12 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -71,6 +79,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private OrderLotService orderLotService;
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -196,7 +206,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getDiscountPlan()!=null) {
 						discountPlans.add(product.getDiscountPlan());
 					}
-					processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+					processProductWithDiscount(subscription, product);
 				}
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
@@ -271,7 +281,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
+	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -354,6 +364,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
 			subscription.addServiceInstance(serviceInstance);
+			return serviceInstance;
 	}
 
 	@Override
@@ -386,6 +397,22 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			return order.getDeliveryDate();
 		}else {
 			return new Date();
+		}
+	}
+	
+	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
+		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
+
+		if(orderProduct.getDiscountPlan() != null) {
+			DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+			var discountPlan = orderProduct.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setServiceInstance(serviceInstance);
+			discountPlanInstanceService.create(dpi, discountPlan);
 		}
 	}
 }
