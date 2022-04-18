@@ -1,4 +1,18 @@
 package org.meveo.service.catalog.impl;
+
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.SignStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -23,11 +39,13 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -35,6 +53,10 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -383,5 +405,156 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		auditLog.setAction(action); 
 		auditLog.setParameters("user "+currentUser.getUserName()+" apply "+action+" on "+DateUtils.formatAsDate(date)+" to the price plan version "+origin+". "+ppmv.getStatusChangeLog());
 		auditLogService.create(auditLog);
+	}
+
+	public String export(List<Long> ids, FormatEnum fileType) {
+		Set<PricePlanMatrixVersion> fetchedPricePlanMatrixVersions = (Set<PricePlanMatrixVersion>) this.getEntityManager()
+				.createNamedQuery("PricePlanMatrixVersion.getPricePlanVersionsByIds", entityClass)
+				.setParameter("ids", ids)
+				.getResultStream().collect(Collectors.toSet());
+		if(!fetchedPricePlanMatrixVersions.isEmpty()){
+			CSVPricePlanExportManager csvPricePlanExportManager = new CSVPricePlanExportManager();
+			return csvPricePlanExportManager.export(fetchedPricePlanMatrixVersions);
+		}
+		log.info("No PricePlanMatrixVersions was exported.");
+		return null;
+	}
+
+	class CSVPricePlanExportManager {
+		private final String PATH_STRING_FOLDER  = "exports" + File.separator + "priceplan_versions";
+		private final String saveDirectory;
+
+		public CSVPricePlanExportManager(){
+			saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
+		}
+		public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions){
+			if(pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
+				Set<Path> filePaths = pricePlanMatrixVersions.stream()
+						.map(ppv  -> saveARecord(buildFileName(ppv), ppv))
+						.collect(Collectors.toSet());
+				if(filePaths.size() > 1) {
+					return archiveFiles(filePaths);
+				}
+				return filePaths.iterator().next().toString();
+			}
+			return null;
+		}
+
+		private Map<String, Object> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+			Map<String, Object> CSVLineRecords = new HashMap<>();
+			ppv.getLines().stream()
+				.forEach(line -> {
+					CSVLineRecords.put("id", line.getId());
+					line.getPricePlanMatrixValues().stream()
+						.forEach(pricePlanMatrixValue ->
+							CSVLineRecords.put(pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getCode() + "[" + pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getAttributeType() + "]",
+								pricePlanMatrixValue.getStringValue()));
+				});
+			return CSVLineRecords;
+		}
+
+		private String buildFileName(PricePlanMatrixVersion ppmv) {
+			StringBuilder fileName = new StringBuilder();
+			fileName
+				.append(ppmv.getId());
+			if(ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null){
+				ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
+				fileName
+					.append("_"+ chargeTemplate.getDescription())
+					.append("_"+ chargeTemplate.getCode())
+					.append("_"+ ppmv.getLabel());
+			}
+			fileName
+				.append("_"+ ppmv.getLabel());
+			if(ppmv.getValidity() != null){
+				fileName
+						.append("_"+ ppmv.getValidity().getFrom())
+						.append("_"+ ppmv.getValidity().getTo());
+			}
+			return File.separator + fileName
+				.append(".csv").toString()
+				.replaceAll("null","").replaceAll("[/: ]", "-");
+		}
+
+		private Path saveARecord(String fileName, PricePlanMatrixVersion ppv) {
+			Map<String, Object> record = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : toCSVLineRecords(ppv);
+			CsvMapper csvMapper = new CsvMapper();
+			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(ppv) : buildPricePlanVersionCsvSchema();
+			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
+			try {
+				if(!Files.exists(Path.of(saveDirectory))){
+					Files.createDirectories(Path.of(saveDirectory));
+				}
+				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(record);
+				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
+				return Path.of(saveDirectory, fileName);
+			} catch (IOException e) {
+				log.error("error exporting PricePlanMatrix version " + fileName);
+				throw new RuntimeException("error during file writing : ", e);
+			}
+		}
+
+		private Map<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
+			Map<String, Object> CSVLineRecords = new HashMap<>();
+			CSVLineRecords.put("id", ppv.getId());
+			CSVLineRecords.put("label", ppv.getLabel());
+			CSVLineRecords.put("amount", ppv.getAmountWithoutTax());
+			return CSVLineRecords;
+		}
+
+		private CsvSchema buildPricePlanVersionCsvSchema() {
+			return CsvSchema.builder()
+					.addColumn("id", CsvSchema.ColumnType.STRING)
+					.addColumn("label", CsvSchema.ColumnType.STRING)
+					.addColumn("amount", CsvSchema.ColumnType.NUMBER_OR_STRING)
+					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+		}
+
+		private CsvSchema buildGridPricePlanVersionCsvSchema(PricePlanMatrixVersion ppv) {
+			CsvSchema.Builder builder = CsvSchema.builder().addColumn("id", CsvSchema.ColumnType.STRING);
+			ppv.getColumns().stream()
+					.filter(ppmc -> ppmc.getAttribute() != null)
+					.forEach(ppmc -> builder
+							.addColumn(ppmc.getAttribute().getCode() + "[" + ppmc.getAttribute().getAttributeType() + "]", CsvSchema.ColumnType.STRING));
+			return builder
+					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
+		}
+
+		private String archiveFiles(Set<Path> filesPath){
+			DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+					.appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+					.appendValue(MONTH_OF_YEAR, 2)
+					.appendValue(DAY_OF_MONTH, 2)
+					.toFormatter();
+
+			String zipFileName = saveDirectory + File.separator + LocalDate.now().format(formatter) + "_export.zip";
+			try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(Path.of(zipFileName)))) {
+				filesPath.stream()
+						.map(Path::toFile)
+						.filter(File::exists)
+						.map(file -> {
+							try {
+								FileInputStream fis = new FileInputStream(file);
+								ZipEntry zipEntry = new ZipEntry(file.getName());
+								zs.putNextEntry(zipEntry);
+								byte[] bytes = new byte[1024];
+								int length;
+								while ((length = fis.read(bytes)) >= 0) {
+									zs.write(bytes, 0, length);
+								}
+								fis.close();
+								} catch (IOException e) {
+								log.error("error archiving PricePlanMatrix version files into " + zipFileName);
+							}
+							return file;
+						})
+						.forEach(File::delete);
+				zs.closeEntry();
+				log.info("folder {} was archived", zipFileName);
+			} catch (IOException e) {
+				log.error("folder {} was archived", zipFileName);
+			}
+			return zipFileName;
+		}
 	}
 }

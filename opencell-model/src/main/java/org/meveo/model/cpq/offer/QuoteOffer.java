@@ -28,6 +28,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -146,6 +147,13 @@ public class QuoteOffer extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "quote_line_type", length = 10)
     private OfferLineTypeEnum quoteLineType = OfferLineTypeEnum.CREATE;
+    
+    /**
+     * Subscription
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -365,4 +373,14 @@ public class QuoteOffer extends BusinessCFEntity {
     public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
         this.quoteLineType = quoteLineType;
     }
+
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
 }

@@ -1,5 +1,7 @@
 package org.meveo.apiv2.catalog.resource;
 
+import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -44,4 +46,16 @@ public interface PricePlanMatrixResource {
             })
     Response importPricePlanMatrixVersions(@Parameter(description = "input data", required = true) ImportPricePlanVersionsDto importPricePlanVersionsDto);
 
+	@POST
+    @Path("/pricePlanMatrixVersions/export")
+    @Operation(summary = "Export price plan matrix versions",
+            tags = { "Price Plan Matrix" },
+            description ="Export price plan matrix versions",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "The price plan matrix versions successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error"),
+                    @ApiResponse(responseCode = "404", description = "PricePlanMatrixVersion with provided ids does not exists."),
+                    @ApiResponse(responseCode = "409", description = "A line having similar values already exists!")
+            })
+    Response exportPricePlanMatrixVersions(@Parameter(description = "input data", required = true) Map<String, Object> payload);
 }
