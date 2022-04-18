@@ -111,7 +111,7 @@ public class CurrencyApi extends BaseApi {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
         tradingCurrencyService.create(tradingCurrency);
-        return new CurrencyDto(currency);
+        return new CurrencyDto(tradingCurrency);
     }
 
     public CurrencyDto find(String code) throws MissingParameterException, EntityDoesNotExistsException {
