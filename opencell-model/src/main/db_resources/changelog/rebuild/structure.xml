@@ -322,6 +322,7 @@
         <createSequence sequenceName="accounting_journal_entry_seq" startValue="1"/>
         <createSequence sequenceName="accounting_accountingcode_mapping_seq" startValue="1"/>
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
+      	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
     </changeSet>
 
 
@@ -1995,6 +1996,7 @@
             <column name="payment_deferral_count" type="int4">
                 <constraints nullable="true"/>
             </column>
+            <column name="operation_number" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
