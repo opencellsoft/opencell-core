@@ -243,6 +243,16 @@ public class CurrencyApi extends BaseApi {
         provider.setMulticurrencyFlag(true);
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        if(tradingCurrency == null)
+        {
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
+            tradingCurrency.setPrDescription(currency.getDescription());
+            tradingCurrency.setSymbol(currency.getCurrencyCode());
+            tradingCurrency.setDecimalPlaces(2);
+            tradingCurrencyService.create(tradingCurrency);
+        }
 
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
