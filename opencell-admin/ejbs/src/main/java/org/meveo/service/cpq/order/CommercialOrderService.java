@@ -208,24 +208,30 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);	
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
-						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
-						if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
-							serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
-						}else {
-							serviceInstanceService.serviceActivation(serviceInstanceToActivate);
-						}
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToActivate = services.get(0);
+							if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
+								serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
+							}else {
+								serviceInstanceService.serviceActivation(serviceInstanceToActivate);
+							}
+			            }
 					}				
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
-						ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.ACTIVE);
-						serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToSuspend = services.get(0);
+							serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+			            }
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
-						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
-						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
-					}
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToTerminate = services.get(0);
+							serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
+				            }
+			            }
 				}
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
 				Subscription subscription = offer.getSubscription();
