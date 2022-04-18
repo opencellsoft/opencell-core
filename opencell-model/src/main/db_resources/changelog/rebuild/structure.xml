@@ -3188,6 +3188,11 @@
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
             <column name="invoice_line_id" type="bigint"/>
+			<column name="discount_plan_id" type="bigint"/>
+    		<column name="discounted_ratedtransaction_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
         </createTable>
         <modifySql dbms="postgresql">
@@ -3545,6 +3550,9 @@
             <column name="currency_id" type="bigint" />
             <column name="symbol" type="varchar(255)" />
             <column name="decimal_places" type="int" defaultValueNumeric="2" />
+            <column name="current_rate" type="numeric(23, 12)" />
+            <column name="current_rate_from_date" type="datetime" />
+            <column name="current_rate_updater" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-198">
@@ -3741,9 +3749,14 @@
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
-            <column name="old_wallet_id" type="bigint" />
+    		<column name="discounted_wallet_operation_id" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint"/>
             <column name="user_account_id" type="bigint" />
             <column name="billing_account_id" type="bigint" />
+            <column name="old_wallet_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4050,6 +4063,7 @@
             <column name="application_filter_el" type="varchar(2000)"/>
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -7795,6 +7809,7 @@
             </column>
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
+            <column name="service_instance_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-381">
@@ -9681,8 +9696,13 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
              <column name="quote_offer_id" type="bigint" />
-             <column name="quantity" type="numeric(19,2)"/>
-             <column name="discounted_quote_price" type="bigint"/>
+     		<column name="quantity" type="numeric(19,2)"/>
+     		<column name="discounted_quote_price" type="bigint"/>
+			<column name="uuid" type="varchar(60)"/>
+    		<column name="discount_plan_id" type="bigint" />
+    		<column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10263,7 +10283,10 @@
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
             <column name="order_offer_id" type="bigint"/>
-            
+    		<column name="quantity" type="numeric(19,2)" />
+    		<column name="discounted_order_price" type="bigint" />
+    		<column name="discount_plan_id" type="bigint" />
+
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -10411,14 +10434,17 @@
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
             <column name="product_version_id" type="bigint"/>
+             <column name="cpq_quote_id" type="bigint"/>
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+              <column name="quote_offer_id" type="bigint"/>
+              <column name="order_offer_id" type="bigint"/>
+              <column name="discounted_invoice_line" type="bigint"/>
+              <column name="discount_value" type="numeric(23,12)" />
+			  <column name="discount_plan_type" type="varchar(50)" />
+			  <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
-            <column name="cpq_quote_id" type="bigint"/>
-            <column name="quote_offer_id" type="bigint"/>
-            <column name="order_offer_id" type="bigint"/>
-	     	<column name="discounted_invoice_line" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -15759,6 +15785,25 @@
         <addForeignKeyConstraint baseColumnNames="parent_useraccount_id" baseTableName="billing_user_account" constraintName="fk_user_account_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
+
+     <changeSet id="rebuild-str-fk1-540-6296-fk1" author="Mbarek-Ay">
+      <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                               onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+     </changeSet>
+
+        <changeSet id="rebuild-str-fk2-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+
+         <changeSet id="rebuild-str-fk3-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+       <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16136,6 +16181,32 @@
         <createView viewName="all_sequences_view" replaceIfExists="true">
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
+    </changeSet>
+
+     <changeSet id="#INTRD-5859_20220321_build" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_discount_plan_instance" constraintName="fk_discount_instance_service_instance" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet>
+     <changeSet id="#INTRD-5872_20220322_build" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_wallet_operation" constraintName="fk_discount_plan_id_wallet_operation" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_rated_transaction" constraintName="fk_discount_plan_id_rated_transaction" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+    </changeSet>
+
+    <changeSet id="#INTRD-5872_20220326_build" author="R.AITYAAZZA">
+
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote_price" constraintName="fk_discount_plan_id_quote_price" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6108_20220330_build" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="discounted_order_price" baseTableName="order_price" constraintName="fk_order_price_discounted_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="order_price" />
+
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="order_price" constraintName="fk_order_price_discount_plan" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17203,7 +17274,13 @@
     <changeSet id="#INTRD-4852-18032022" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-5908-20220330" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-5859_20220321" author="TarikFA." />
+    <changeSet id="#INTRD-5872_20220322" author="TarikFA." />
+    <changeSet id="#INTRD-5872_20220326" author="R.AITYAAZZA" />
+    <changeSet id="#INTRD-6108_20220330" author="TarikFA." />
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
