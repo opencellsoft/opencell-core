@@ -1106,6 +1106,9 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
+		if(orderProductDto.getQuantity() == null) {
+			throw new MeveoApiException("The quantity is required");
+		}
 		orderProduct.setQuantity(orderProductDto.getQuantity());
 		orderProduct.setProductActionType(orderProductDto.getActionType());
 		
