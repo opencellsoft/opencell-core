@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.*;
+import java.util.TreeMap;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,18 +18,28 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.cpq.AttributeService;
 
 @Stateless
@@ -171,4 +181,110 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("invoiceSubCategory", invoiceSubCategory)
 				.getResultList();
 	}
+
+	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
+		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
+		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
+			AccountingCode result = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
+					accountingArticle, invoiceLine.getInvoice(), AccountingCode.class);
+
+			if (result == null) {
+				throw new BusinessException(".::TODO FROM US SPEC::.");
+			}
+
+			return result;
+		}
+		// **2** if not, if accountingCodeMapping table contains related lines get the best matched line
+
+		// Find related AccountingCodeMappping
+		List<AccountingCodeMapping> codeMappings = getEntityManager().createNamedQuery("AccountingCodeMapping.findByAccountingArticle")
+				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
+
+		if (codeMappings == null || !codeMappings.isEmpty()) {
+			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
+
+			if (accountingCode == null) {
+				throw new BusinessException(".::TODO FROM US SPEC::.");
+			}
+
+			return accountingCode;
+
+		}
+
+		// **3** if no line is matched, return accounting code single value (accountingArticle.accountingCode field)
+		return accountingArticle.getAccountingCode();
+
+	}
+
+	private <T extends Object> T evaluateAccountingCodeArticleEl(String expression,
+																 AccountingArticle accountingArticle,
+																 Invoice invoice,
+																 Class<T> type) throws InvalidELException {
+		if (StringUtils.isNotBlank(expression)) {
+			// EL will have access to the following variables: article / billingAccount / seller
+			BillingAccount billingAccount = invoice.getBillingAccount();
+			Seller seller = invoice.getSeller();
+
+			Map<Object, Object> contextMap = new HashMap<>();
+			contextMap.put("article", accountingArticle);
+			contextMap.put("billingAccount", billingAccount);
+			contextMap.put("seller", seller);
+			contextMap.put("ratedTransaction", null); // always null in this case
+
+			try {
+				return ValueExpressionWrapper.evaluateExpression(expression, contextMap, type);
+			} catch (Exception e) {
+				log.warn("Error when evaluate accountingCodeEl for AccountingArticle id={}", accountingArticle.getId());
+				return null;
+			}
+		}
+
+		return null;
+	}
+
+	private AccountingCode accountingCodeMappingMatching(List<AccountingCodeMapping> codeMappings, Invoice invoice,
+														 AccountingArticle accountingArticle) {
+		// Prepare vars
+		BillingAccount billingAccount = invoice.getBillingAccount();
+		Seller seller = invoice.getSeller();
+		TradingCountry sellerCurrency = seller.getTradingCountry();
+		TradingCurrency billingCurrency = billingAccount.getTradingCurrency();
+		TradingCountry billingCountry = billingAccount.getTradingCountry();
+		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumCriteriaEL(),
+				accountingArticle, invoice, String.class);
+
+		Map<String, AccountingCodeMapping> map = new HashMap<>(); // TODO exact matching, waiting for Rachid response
+		codeMappings.forEach(acm -> {
+			map.put(buildKey(Optional.ofNullable(acm.getAccountingArticle()).map(BaseEntity::getId),
+					Optional.ofNullable(acm.getBillingCountry()).map(BaseEntity::getId),
+					Optional.ofNullable(acm.getBillingCurrency()).map(BaseEntity::getId),
+					Optional.ofNullable(acm.getSellerCountry()).map(BaseEntity::getId),
+					Optional.ofNullable(acm.getSeller()).map(BaseEntity::getId),
+					acm.getCriteriaElValue()), acm);
+		});
+
+		// Get matched AccountingCodeMapping
+		AccountingCodeMapping matched = map.get(buildKey(Optional.of(accountingArticle).map(BaseEntity::getId),
+				Optional.ofNullable(billingCountry).map(BaseEntity::getId),
+				Optional.ofNullable(billingCurrency).map(BaseEntity::getId),
+				Optional.ofNullable(sellerCurrency).map(BaseEntity::getId),
+				Optional.of(seller).map(BaseEntity::getId),
+				columCriteriaEL));
+
+		if (matched == null) {
+			throw new BusinessException(".::TODO FROM US SPEC::.");
+		}
+
+		return matched.getAccountingCode();
+	}
+
+	private String buildKey(Object... o) {
+		StringBuilder key = new StringBuilder("");
+		for (int i = 0; i < o.length; i++) {
+			key.append(o[i] == null ? "" : o[i].toString());
+		}
+
+		return key.toString();
+	}
+
 }

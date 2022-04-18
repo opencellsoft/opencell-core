@@ -83,6 +83,9 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "accountingcode_el", length = 500)
     private String accountingCodeEl;
 
+    @Column(name = "colum_criteria_el", length = 500)
+    private String columCriteriaEL;
+
     public AccountingArticle() {
     }
 
@@ -201,12 +204,21 @@ public class AccountingArticle extends EnableBusinessCFEntity {
         this.accountingCodeEl = accountingCodeEl;
     }
 
+    public String getColumCriteriaEL() {
+        return columCriteriaEL;
+    }
+
+    public void setColumCriteriaEL(String columCriteriaEL) {
+        this.columCriteriaEL = columCriteriaEL;
+    }
+
     @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(),
+                getInvoiceType(), getInvoiceTypeEl(), getColumCriteriaEL());
 		return result;
 	}
 
