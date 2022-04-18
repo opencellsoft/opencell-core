@@ -1,4 +1,4 @@
-package org.meveo.apiv2.catalog.resource;
+package org.meveo.apiv2.catalog;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
