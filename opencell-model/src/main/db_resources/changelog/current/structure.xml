@@ -12205,4 +12205,10 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
+        <addColumn tableName="billing_billing_account">
+            <column name="trading_currency_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
