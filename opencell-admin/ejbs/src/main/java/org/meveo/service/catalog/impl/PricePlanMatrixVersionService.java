@@ -23,6 +23,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
@@ -42,21 +43,24 @@ import org.meveo.service.cpq.ProductService;
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
 
-
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version is %s, it can not be updated nor removed";
 
     @Inject 
 	private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
+    
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+    
     @Inject
     private ProductService productService;
+    
     @Inject
 	private AuditLogService auditLogService;
+    
     @Inject
-
     private AttributeInstanceService attributeInstanceService;
 
     @Override
@@ -69,11 +73,35 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 	public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
 
             List<PricePlanMatrixVersion> ppmVersions = this.getEntityManager()
-                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", PricePlanMatrixVersion.class)
+                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", entityClass)
                     .setParameter("currentVersion", currentVersion)
                     .setParameter("pricePlanMatrixCode", pricePlanMatrixCode.toLowerCase())
                     .getResultList();
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
+    }
+	
+	public List<PricePlanMatrixVersion> findBeforeFromAndAfterVersion(PricePlanMatrix pricePlanMatrix, Date from, int currentVersion) {
+	    return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findBeforeFromAndAfterVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("from", from)
+            .setParameter("currentVersion", currentVersion)
+            .getResultList();
+	}
+	
+	public List<PricePlanMatrixVersion> findAfterVersion(PricePlanMatrix pricePlanMatrix, int currentVersion) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findAfterVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("currentVersion", currentVersion)
+            .getResultList();
+    }
+	
+	public void delete(List<Long> ids) {
+        this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.deleteByIds")
+            .setParameter("ids", ids)
+            .executeUpdate();
     }
 
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {

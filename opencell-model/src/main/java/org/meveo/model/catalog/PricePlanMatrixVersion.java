@@ -43,11 +43,14 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @Entity
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl  where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ") })
+        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findBeforeFromAndAfterVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.from < :from and p.currentVersion > :currentVersion order by p.currentVersion asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findAfterVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.currentVersion > :currentVersion order by p.currentVersion asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.deleteByIds", query = "delete from PricePlanMatrixVersion p where p.id in (:ids)") })
 public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
