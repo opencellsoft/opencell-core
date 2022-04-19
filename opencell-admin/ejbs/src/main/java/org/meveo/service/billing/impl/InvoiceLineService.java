@@ -550,6 +550,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}else {
 			invoiceLine.setFunctionalUnitPrice(invoiceLine.getUnitPrice().multiply(currentRate));
 		}
+
+		if(resource.getUnitPrice() != null) {
+		    invoiceLine.setUnitPrice(resource.getUnitPrice());
+        }
 		
 		if(invoiceLine.getUnitPrice() == null) {
 			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
