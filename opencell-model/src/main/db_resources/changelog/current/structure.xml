@@ -12072,29 +12072,6 @@ order by date_trunc('month', i.invoice_date) DESC
         </createTable>
     </changeSet>
 
-    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI">
-        <createSequence sequenceName="open_order_threshold_seq" startValue="1" />
-        <createSequence sequenceName="open_order_template_seq" startValue="1" />
-        <createTable tableName="open_order_threshold">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey" />
-			</column>
-			<column name="version" type="int4" />
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="datetime" />
-			<column name="creator" type="varchar(100)" />
-			<column name="updater" type="varchar(100)" />
-			<column name="code" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="description" type="varchar(255)" />
-            <column name="sequence" type="int" />
-            <column name="percentage" type="int" />
-        </createTable>
-    </changeSet>
-    
     <changeSet id="#INTRD-5859_20220321" author="TarikFA.">
     	<addColumn tableName="billing_discount_plan_instance">
     		<column name="service_instance_id" type="bigint" />
@@ -12195,7 +12172,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <addColumn tableName="cat_discount_plan">
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
-	</changeSet>
+    </changeSet>
 
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza">
         <addColumn tableName="cat_price_plan_matrix">
@@ -12216,6 +12193,90 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI">
+       <createSequence sequenceName="open_order_threshold_seq" startValue="1"/>
+       <createSequence sequenceName="open_order_template_seq" startValue="1"/>
+       <createTable tableName="open_order_threshold">
+           <column name="id" type="bigint" autoIncrement="${id.auto}">
+               <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
+           </column>
+           <column name="version" type="int4"/>
+           <column name="created" type="datetime">
+               <constraints nullable="false"/>
+           </column>
+           <column name="updated" type="datetime"/>
+           <column name="creator" type="varchar(100)"/>
+           <column name="updater" type="varchar(100)"/>
+           <column name="code" type="varchar(255)">
+               <constraints nullable="true"/>
+           </column>
+           <column name="description" type="varchar(255)"/>
+           <column name="sequence" type="int"/>
+           <column name="percentage" type="int"/>
+           <column name="open_order_template_id" type="bigint"/>
+       </createTable>
+
+       <createTable tableName="open_order_threshold_recipients">
+           <column name="threshold_id" type="bigint"/>
+           <column name="recipient" type="varchar(100)"/>
+       </createTable>
+
+       <createTable tableName="open_order_template">
+           <column name="id" type="bigint" autoIncrement="${id.auto}">
+               <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_template_pkey"/>
+           </column>
+           <column name="version" type="int4"/>
+           <column name="created" type="datetime">
+               <constraints nullable="false"/>
+           </column>
+           <column name="updated" type="datetime"/>
+           <column name="creator" type="varchar(100)"/>
+           <column name="updater" type="varchar(100)"/>
+           <column name="code" type="varchar(255)">
+               <constraints nullable="true"/>
+           </column>
+           <column name="description" type="varchar(255)"/>
+           <column name="open_order_type" type="varchar(50)"/>
+       </createTable>
+       <createTable tableName="open_order_template_tags">
+           <column name="open_order_template_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+           <column name="tag_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+       </createTable>
+       <createTable tableName="open_order_template_products">
+           <column name="open_order_template_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+           <column name="product_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+       </createTable>
+       <createTable tableName="open_order_template_articles">
+           <column name="open_order_template_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+           <column name="article_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+       </createTable>
+
+       <addPrimaryKey columnNames="threshold_id, recipient" constraintName="open_order_threshold_recipients_pkey"
+                      tableName="open_order_threshold_recipients"/>
+       <addPrimaryKey columnNames="open_order_template_id,tag_id"
+                      constraintName="open_order_template_tags_pkey"
+                            tableName="open_order_template_tags"/>
+        <addPrimaryKey columnNames="open_order_template_id,product_id"
+                            constraintName="open_order_template_products_pkey"
+                            tableName="open_order_template_products"/>
+        <addPrimaryKey columnNames="open_order_template_id,article_id"
+                            constraintName="open_order_template_articles_pkey"
+                            tableName="open_order_template_articles"/>
+
+   </changeSet>
+
     <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
         <addColumn tableName="billing_billing_account">
             <column name="trading_currency_id" type="bigint" />
@@ -12232,6 +12293,40 @@ order by date_trunc('month', i.invoice_date) DESC
 		</sql>
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="billing_billing_account" constraintName="fk_trading_currency_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA">
+        <addColumn tableName="audit_log">
+            <column name="source" type="VARCHAR(200)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-5636-20220318" author="hhanine">
+		<createSequence sequenceName="exchange_rate_seq" startValue="1" />
+		<createTable tableName="exchange_rate">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+			    <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+			    <constraints nullable="false" />
+			</column>
+			<column name="created" type="datetime">
+			    <constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="trading_currency_id" type="bigint" />
+			<column name="exchange_rate" type="numeric(23, 6)" />
+			<column name="from_date" type="datetime" />
+			<column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+	            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
 	</changeSet>
 
 </databaseChangeLog>
