@@ -250,7 +250,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		TradingCountry sellerCurrency = seller.getTradingCountry();
 		TradingCurrency billingCurrency = billingAccount.getTradingCurrency();
 		TradingCountry billingCountry = billingAccount.getTradingCountry();
-		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumCriteriaEL(),
+		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumnCriteriaEL(),
 				accountingArticle, invoice, String.class);
 
 		Map<String, AccountingCodeMapping> map = new HashMap<>(); // TODO exact matching, waiting for Rachid response
@@ -276,6 +276,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 
 		return matched.getAccountingCode();
+	}
+
+	private AccountingCode getBestMatched(List<AccountingCodeMapping> codeMappings, Invoice invoice, AccountingArticle accountingArticle){
+		// Prepare vars
+		TradingCountry sellerCurrency = invoice.getSeller().getTradingCountry();
+		TradingCurrency billingCurrency = invoice.getBillingAccount().getTradingCurrency();
+		TradingCountry billingCountry = invoice.getBillingAccount().getTradingCountry();
+		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumnCriteriaEL(),
+				accountingArticle, invoice, String.class);
+
+
+		return null;
+
 	}
 
 	private String buildKey(Object... o) {

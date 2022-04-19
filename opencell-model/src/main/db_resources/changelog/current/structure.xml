@@ -12625,7 +12625,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="seller_id" type="bigint"/>
 
             <!-- Simple fields -->
-            <column name="criteria_el" type="varchar(500)"/>
+            <column name="criteria_el_value" type="varchar(500)"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="accounting_accountingcode_mapping"
@@ -12653,6 +12653,22 @@ order by date_trunc('month', i.invoice_date) DESC
         <addColumn tableName="billing_accounting_article">
             <column name="accountingcode_el" type="varchar(500)"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="column_criteria_el" type="varchar(500)"/>
+        </addColumn>
+        <addColumn tableName="accounting_accountingcode_mapping">
+            <column name="accounting_code_id" type="bigint"/>
+        </addColumn>
+        <renameColumn tableName="accounting_accountingcode_mapping" newColumnName="criteria_el_value" oldColumnName="criteria_el" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
 </databaseChangeLog>
