@@ -16453,6 +16453,18 @@
             <column name="analytic_code_1" type="varchar(255)" />
             <column name="analytic_code_2" type="varchar(255)" />
             <column name="analytic_code_3" type="varchar(255)" />
+            <column name="operation_number" type="bigint" />
+            <column name="seller_code" type="varchar(255)">
+				<constraints nullable="false" />
+            </column>
+            <column name="client_unique_id" type="varchar(100)">
+				<constraints nullable="false" />
+            </column>
+            <column name="currency" type="varchar(3)">
+				<constraints nullable="false" />
+            </column>
+            <column name="supporting_document_ref" type="bigint" />
+            <column name="supporting_document_type" type="varchar(255)" />
         </createTable>
     </changeSet>
 
