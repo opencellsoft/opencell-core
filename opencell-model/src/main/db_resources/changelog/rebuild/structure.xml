@@ -17627,6 +17627,7 @@
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-6562_20220414" author="aelmalki" />
     <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki" />
+    <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
