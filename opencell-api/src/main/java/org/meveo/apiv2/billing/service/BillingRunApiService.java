@@ -3,12 +3,7 @@ package org.meveo.apiv2.billing.service;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
+import static org.meveo.model.billing.BillingRunStatusEnum.*;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import java.util.HashMap;
@@ -122,7 +117,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 JobInstance invoiceLineJob = jobInstanceService.findByCode(INVOICE_LINES_JOB_CODE);
                 JobInstance invoicingJob = jobInstanceService.findByCode(INVOICING_JOB_CODE);
                 invoiceLineJob.setFollowingJob(jobInstanceService.findByCode(INVOICING_JOB_CODE));
-                if(invoiceLineJob.getCfValues() != null) {
+                if(invoicingJob.getCfValues() != null) {
                     if(invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun") != null
                             && !((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).isEmpty()) {
                         ((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).clear();
@@ -175,21 +170,22 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     }
 
 	public Optional<BillingRun> cancelBillingRun(Long billingRunId) {
-		 BillingRun billingRun = billingRunService.findById(billingRunId);
-	        if (billingRun == null) {
-	            return empty();
-	        }
-	        if (billingRun.getStatus() == POSTVALIDATED || billingRun.getStatus() == BillingRunStatusEnum.VALIDATED
-	        		|| billingRun.getStatus() == BillingRunStatusEnum.CANCELLING || billingRun.getStatus() == BillingRunStatusEnum.CANCELED) {
-	            throw new BadRequestException("The billing run with status "+billingRun.getStatus()+" cannot be cancelled");
-	        }
-	        ratedTransactionService.deleteSupplementalRTs(billingRun);
-	        ratedTransactionService.uninvoiceRTs(billingRun);
-	        invoiceLineService.deleteInvoiceLines(billingRun);
-	        invoiceService.deleteInvoices(billingRun);
-	        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
-	        billingRun.setStatus(BillingRunStatusEnum.CANCELED);
-	        billingRunService.update(billingRun);
-		return of(billingRun);
+        BillingRun billingRun = billingRunService.findById(billingRunId);
+        if (billingRun == null) {
+            return empty();
+        }
+        if (billingRun.getStatus() == POSTVALIDATED || billingRun.getStatus() == VALIDATED
+                || billingRun.getStatus() == CANCELLING || billingRun.getStatus() == CANCELED
+                || billingRun.getStatus() == CREATING_INVOICE_LINES) {
+            throw new BadRequestException("The billing run with status " + billingRun.getStatus() + " cannot be cancelled");
+        }
+        ratedTransactionService.deleteSupplementalRTs(billingRun);
+        ratedTransactionService.uninvoiceRTs(billingRun);
+        invoiceLineService.deleteInvoiceLines(billingRun);
+        invoiceService.deleteInvoices(billingRun);
+        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+        billingRun.setStatus(CANCELED);
+        billingRunService.update(billingRun);
+        return of(billingRun);
 	}
 }

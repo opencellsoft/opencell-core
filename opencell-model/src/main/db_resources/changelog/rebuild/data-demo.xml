@@ -2423,7 +2423,7 @@
 	</changeSet>
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
     <changeSet id="#INTRD-5344_2022-02_25" author="hichamELHALOUI" />
-    
+
     <changeSet id="INTRD-5701_20220215" author="HatimOUDAD">
         <insert tableName="billing_accounting_article">
         	<column name="id" value="-5"/>
@@ -2438,7 +2438,7 @@
             <column name="uuid" value="billing_accounting_article-ADV-STD" />
         </insert>
     </changeSet>
-    
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
