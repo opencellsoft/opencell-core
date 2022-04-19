@@ -114,7 +114,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * @param isFullAutomatic
 	 * @param result 
 	 */
-    @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Future<String> createAgregatesAndInvoiceForJob(List<Long> baIds, BillingRun billingRun, BillingCycle billingCycle,  Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
 		return processInvoicingItems(billingRun, billingCycle, readInvoicingItems(billingRun, baIds), jobInstanceId, lastCurrentUser, isFullAutomatic, result);

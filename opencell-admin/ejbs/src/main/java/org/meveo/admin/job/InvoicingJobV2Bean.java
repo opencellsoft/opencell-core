@@ -182,7 +182,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 		itemsPerSplit=itemsPerSplit>0?itemsPerSplit:1;
 		MeveoUser lastCurrentUser = currentUser.unProxy();
 		BiConsumer<List<Long>, JobExecutionResultImpl> task = (item, jobResult) -> {invoicingService.createAgregatesAndInvoiceForJob(item, billingRun, billingCycle, jobInstanceId, lastCurrentUser, isFullAutomatic, result);};
-		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>(ListUtils.partition(bAIds, itemsPerSplit)), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, true);
+		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>(ListUtils.partition(bAIds, itemsPerSplit)), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
 	}
 
     /**

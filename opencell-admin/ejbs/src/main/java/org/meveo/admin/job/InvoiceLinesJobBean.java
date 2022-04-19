@@ -122,6 +122,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     }
 
     /**
+     * This is a correctif step for customers migrating from old versions, as in new opencell process, all RTs must already contain accountingArticle
+     * 
 	 * @param billingRun
      * @param waitingMillis 
 	 * @param waitingMillis
