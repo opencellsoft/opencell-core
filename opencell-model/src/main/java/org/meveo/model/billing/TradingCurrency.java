@@ -18,18 +18,9 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -90,6 +81,16 @@ public class TradingCurrency extends EnableEntity {
     @Column(name = "decimal_places")
     private Integer decimalPlaces;
 
+    @Column(name = "current_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal currentRate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "current_rate_from_date")
+    private Date currentRateFromDate;
+
+    @Column(name = "current_rate_updater")
+    private String currentRateUpdater;
+
     public BigDecimal getPrCurrencyToThis() {
         return prCurrencyToThis;
     }
@@ -136,6 +137,30 @@ public class TradingCurrency extends EnableEntity {
 
     public void setDecimalPlaces(Integer decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
+    }
+
+    public BigDecimal getCurrentRate() {
+        return currentRate;
+    }
+
+    public void setCurrentRate(BigDecimal currentRate) {
+        this.currentRate = currentRate;
+    }
+
+    public Date getCurrentRateFromDate() {
+        return currentRateFromDate;
+    }
+
+    public void setCurrentRateFromDate(Date currentRateFromDate) {
+        this.currentRateFromDate = currentRateFromDate;
+    }
+
+    public String getCurrentRateUpdater() {
+        return currentRateUpdater;
+    }
+
+    public void setCurrentRateUpdater(String currentRateUpdater) {
+        this.currentRateUpdater = currentRateUpdater;
     }
 
     @Override

@@ -4,6 +4,7 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
@@ -61,7 +62,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     protected Provider appProvider;
     
     @Inject
-    BillingRunExtensionService billingRunExtensionService;
+    private BillingRunExtensionService billingRunExtensionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -90,6 +91,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 } else {
                     AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
                     for(BillingRun billingRun : billingRuns) {
+                        billingRunExtensionService.updateBillingRun(billingRun.getId(),
+                                null, null, CREATING_INVOICE_LINES, null);
                         List<? extends IBillableEntity> billableEntities = billingRunService.getEntitiesToInvoice(billingRun);
                         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
 						if (nbRuns == -1) {
@@ -123,5 +126,4 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         billingRuns.removeAll(excludedBRs);
         return excludedBRs.size();
     }
-
 }

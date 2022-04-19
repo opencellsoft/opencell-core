@@ -338,7 +338,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinTable(name = "cpq_billing_account_tags", joinColumns = @JoinColumn(name = "billing_account_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<>();
 
-
+    /**
+     * Currency of account
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id", nullable = false)
+    private TradingCurrency tradingCurrency;
+    
     @Transient
     private List<InvoiceLine> minInvoiceLines;
 
@@ -756,7 +762,14 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 		this.tags = tags;
 	}
 
-
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+	
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+		
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
