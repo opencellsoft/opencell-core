@@ -9,7 +9,7 @@
 			  RIGHTARG = _text,
 			  RESTRICT = contsel,
 			  JOIN = contjoinsel)</sql>
-		
+
 		<sql>CREATE OPERATOR CLASS jsonb_ops_custom
 			   FOR TYPE jsonb USING gin AS
 			   OPERATOR 10  ^|(jsonb, _text),
@@ -274,7 +274,7 @@
         <createSequence sequenceName="cpq_order_offer_seq" />
         <createSequence sequenceName="order_article_line_seq" />
         <createSequence sequenceName="cpq_order_invoice_seq" />
-        <createSequence sequenceName="cpq_invoice_line_seq" />
+        <createSequence sequenceName="billing_invoice_line_seq" />
         <createSequence sequenceName="cpq_invoicing_plan_seq" />
         <createSequence sequenceName="cpq_invoicing_plan_item_seq" />
         <createSequence sequenceName="order_price_seq" startValue="1" />
@@ -2466,7 +2466,7 @@
             </column>
             <column name="trading_currency_id" type="bigint">
                 <constraints nullable="false" />
-            </column>            
+            </column>
             <column name="invoicing_threshold" type="numeric(23, 12)" />
             <column name="mailing_type" type="varchar(255)" />
             <column name="cced_emails" type="varchar(2000)" />
@@ -2645,7 +2645,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="order_number" type="varchar(100)" />
-            <column name="charge_type" type="varchar(5)" />    
+            <column name="charge_type" type="varchar(5)" />
             <column name="quantity" type="numeric(23, 12)"/>
             <column name="product_instance_id" type="bigint" />
             <column name="next_charge_date" type="datetime" />
@@ -2746,7 +2746,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="calendar" type="bigint" />
-            
+
             <column name="invoicing_threshold" type="numeric(23, 12)" />
             <column name="invoice_type_id" type="bigint" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -3911,7 +3911,7 @@
             <column name="termination_prorata_el" type="varchar(2000)" />
             <column name="apply_in_advance_el" type="varchar(2000)" />
             <column name="duration_term_in_month_el" type="varchar(2000)" />
-            <column name="calendar_code_el" type="varchar(2000)" />             
+            <column name="calendar_code_el" type="varchar(2000)" />
             <column name="immediate_invoicing" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="type" type="varchar(255)" />
             <column name="prorata_on_price_change" type="${type.boolean}" defaultValueNumeric="0" />
@@ -8276,7 +8276,7 @@
             <column name="parent_id" type="bigint" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-402">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-402">
     	<createTable tableName="rating_cdr">
 	         <column name="id" type="bigint" autoIncrement="${id.auto}">
 	             <constraints nullable="false" primaryKey="true" primaryKeyName="rating_cdr_pkey" />
@@ -8324,7 +8324,7 @@
             </column>
     	</createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-403">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-403">
     	<createTable tableName="billing_tax_category">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_category_pkey" />
@@ -8347,7 +8347,7 @@
             <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-404">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-404">
     	<createTable tableName="billing_tax_class">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_class_pkey" />
@@ -8370,7 +8370,7 @@
             <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-405">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-405">
     	<createTable tableName="billing_tax_mapping">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_pkey" />
@@ -8397,7 +8397,7 @@
             <column name="origin_id" type="bigint" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-406">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-406">
         <createTable tableName="cat_serv_usage_counter_template">
             <column name="service_usage_templt_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8411,7 +8411,7 @@
         </createTable>
         <addPrimaryKey columnNames="service_usage_templt_id, indx" constraintName="cat_serv_usage_counter_template_pkey" tableName="cat_serv_usage_counter_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-407">   
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-407">
         <createTable tableName="cat_serv_rec_counter_template">
             <column name="service_rec_templt_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8425,7 +8425,7 @@
         </createTable>
         <addPrimaryKey columnNames="service_rec_templt_id, indx" constraintName="cat_serv_rec_counter_template_pkey" tableName="cat_serv_rec_counter_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-408">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-408">
          <createTable tableName="cat_serv_sub_counter_template">
             <column name="service_sub_templt_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8439,7 +8439,7 @@
         </createTable>
         <addPrimaryKey columnNames="service_sub_templt_id, indx" constraintName="cat_serv_sub_counter_template_pkey" tableName="cat_serv_sub_counter_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-409">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-409">
         <createTable tableName="cat_serv_trm_counter_template">
             <column name="service_trm_templt_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8453,7 +8453,7 @@
         </createTable>
         <addPrimaryKey columnNames="service_trm_templt_id, indx" constraintName="cat_serv_trm_counter_template_pkey" tableName="cat_serv_trm_counter_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-410">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-410">
         <createTable tableName="billing_chrg_inst_counter">
             <column name="chrg_instance_id" type="bigint">
                 <constraints nullable="false"/>
@@ -8467,7 +8467,7 @@
         </createTable>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-411">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-411">
 	    <createTable tableName="billing_counter_period_values">
 	        <column name="counter_key" type="varchar(255)">
 	            <constraints nullable="false"/>
@@ -8478,11 +8478,11 @@
 	        <column name="counterperiod_id" type="bigint">
 	            <constraints nullable="false"/>
 	        </column>
-	
+
 	    </createTable>
 	    <addPrimaryKey tableName="billing_counter_period_values" columnNames="counterperiod_id,counter_key" constraintName="billing_counter_period_values_pkey"/>
     </changeSet>
- 	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-412">           
+ 	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-412">
      	<createTable tableName="cat_fixed_date">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_pkey" />
@@ -8495,11 +8495,11 @@
             </column>
             <column name="cat_calendar_id" type="bigint" >
             	<constraints nullable="false" />
-            </column>           
+            </column>
             <column name="version" type="int4" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-413">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-413">
     	<createTable tableName="wo_aggregation_line">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_line_pkey"/>
@@ -8522,7 +8522,7 @@
             <column name="wo_aggregation_settings_id" type="bigint"/>
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-414">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-414">
         <createTable tableName="wo_aggregation_settings">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_matrix_pkey"/>
@@ -8544,8 +8544,8 @@
             <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
             <column name="additional_order_by" type="varchar(255)"/>
         </createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-415">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-415">
     	<createTable tableName="document" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="document_pk"/>
@@ -8580,8 +8580,8 @@
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
         </createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">
         <createTable tableName="document_category" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="document_category_pk"/>
@@ -8604,20 +8604,20 @@
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
         </createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-417">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-417">
     	<createTable tableName="document_tags">
             <column name="document_id"  type="bigint"/>
             <column name="tags"  type="varchar(60)"/>
         </createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-418">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-418">
     	<createTable tableName="ar_ao_payment_histories">
 			<column name="ao_id" type="bigint" />
 			<column name="history_id" type="bigint" />
 		</createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-419">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-419">
     	<createTable tableName="job_execution_error" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="job_execution_error_pk"/>
@@ -8635,8 +8635,8 @@
 
             <column name="error_reason"  type="varchar(2000)"/>
         </createTable>
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-420">           
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-420">
     	<createTable tableName="cat_offer_allowed_offer_change">
             <column name="offer_tmpl_id" type="bigint">
                 <constraints nullable="false" />
@@ -8647,7 +8647,7 @@
         </createTable>
 		<addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
     </changeSet>
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-421">           
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-421">
     	<createTable tableName="billing_invoice_agr_amount">
             <column name="aggr_id" type="bigint" >
                 <constraints nullable="false" />
@@ -8660,7 +8660,7 @@
             <column name="amountwithtax" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-424">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-424">
     	<createTable tableName="bi_data_collector" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="data_collector_pk"/>
@@ -8687,7 +8687,7 @@
             <column name="parameters" type="${type.json}" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-425">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-425">
     	<createTable tableName="wf_generic_action" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_action_pk"/>
@@ -8707,7 +8707,7 @@
             <column name="transition_id" type="bigint" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-426">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-426">
     	<createTable tableName="generic_sequence" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="generic_sequence_pk"/>
@@ -8727,14 +8727,14 @@
             <column name="sequence_pattern" type="varchar(255)" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-427">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-427">
     	<createTable tableName="ar_accounting_writing_acc_operations">
             <column name="accounting_writing_id" type="bigint" />
             <column name="account_operation_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="accounting_writing_id, account_operation_id" constraintName="ar_accounting_writing_acc_operations_pkey" tableName="ar_accounting_writing_acc_operations" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-428">           
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-428">
     	<createTable tableName="meveo_metrics_config">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_metrics_config_id_pk" />
@@ -10370,10 +10370,10 @@
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-487" author="NabilOUACHI">
-        <createTable tableName="cpq_invoice_line">
+        <createTable tableName="billing_invoice_line">
 
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_invoice_line" />
             </column>
             <!-- BusinessEntity Start -->
             <column name="version" type="int4" />
@@ -11628,7 +11628,7 @@
             	</column>
         	</createTable>
     	</changeSet>
-    	
+
     	<changeSet author="hhanine" id="rebuild-str-tbl-INTRD-5636-20220318">
 	        <createTable tableName="exchange_rate">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -11644,7 +11644,7 @@
 	            <column name="updated" type="datetime" />
 	            <column name="creator" type="varchar(100)" />
 	            <column name="updater" type="varchar(100)" />
-	
+
 	            <column name="trading_currency_id" type="bigint" />
 	            <column name="exchange_rate" type="numeric(23, 6)" />
 	            <column name="from_date" type="datetime" />
@@ -11674,12 +11674,12 @@
 	            <column name="percentage" type="int"/>
 	            <column name="open_order_template_id" type="bigint"/>
 	        </createTable>
-	
+
 	        <createTable tableName="open_order_threshold_recipients">
 	            <column name="threshold_id" type="bigint"/>
 	            <column name="recipient" type="varchar(100)"/>
 	        </createTable>
-	
+
 	        <createTable tableName="open_order_template">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_template_pkey"/>
@@ -11743,7 +11743,7 @@
         <addDefaultValue tableName="billing_invoice" columnName="id" defaultValueSequenceNext="billing_invoice_seq" />
         <addDefaultValue tableName="billing_invoice_agregate" columnName="id" defaultValueSequenceNext="billing_invoice_agregate_seq" />
     </changeSet>
-    
+
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-def-val-2">
         <addDefaultValue tableName="billing_service_instance" columnName="initial_term_type" defaultValue="RECURRING" />
         <addDefaultValue tableName="cat_service_template" columnName="initial_term_type" defaultValue="RECURRING" />
@@ -11751,8 +11751,8 @@
         <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
         <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
     </changeSet>
-    
-    
+
+
     <!-- start views -->
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-view-1" dbms="postgresql">
     	<createView viewName="billing_wallet_operation_period">
@@ -13022,18 +13022,18 @@
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="adm_notif_job" constraintName="fk_job_trigger_notif" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_job_instance" />
     </changeSet>
-    <!-- 
+    <!--
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1020">
         <addForeignKeyConstraint baseColumnNames="header_edr_id" baseTableName="rating_edr" constraintName="fk_headeredrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
     </changeSet>
      -->
-    <!-- 
+    <!--
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1021">
         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_wallet_operation" constraintName="fk_wopedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
     </changeSet>
-    
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1022">
         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_rated_transaction" constraintName="fk_ropedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
@@ -13279,7 +13279,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    	<!-- 
+    	<!--
         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
          -->
@@ -13839,16 +13839,16 @@
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1280">
     	<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
-    </changeSet>    
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1281">    
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1281">
     	<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_offer_template" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
-   	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1282">    
+   	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1282">
 		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1283">    
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1283">
 		<addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_service_instance" constraintName="fk_si_init_active" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
    	</changeSet>
@@ -13886,7 +13886,7 @@
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1292">
         <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
-                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>         
+                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1293">
     	<addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -13917,12 +13917,12 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1299">
-        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="adm_file_format_file_type" 
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="adm_file_format_file_type"
         						 constraintName="fk_4au8lqa3bc46gks4dmpbbari4h4l6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1300">
-        <addForeignKeyConstraint baseColumnNames="file_type_id" baseTableName="adm_file_format_file_type" 
+        <addForeignKeyConstraint baseColumnNames="file_type_id" baseTableName="adm_file_format_file_type"
         						 constraintName="fk_s1wxui3m4sv9x5mbyi8gpbari77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_type" />
     </changeSet>
@@ -13932,167 +13932,167 @@
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1302">
-    	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_subscription" 
+    	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_subscription"
     							 constraintName="fk_billing_subscription_invoice_sub_cat" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1303">
-    	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_offer_template" 
+    	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_offer_template"
     							 constraintName="fk_billing_cat_offer_template_invoice_sub_cat" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
-    </changeSet> 
+    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1304">
-      	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_billing_account" 
+      	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_billing_account"
       							 constraintName="fk_billing_billing_account_invoice_sub_cat" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
-    </changeSet>   
+    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1305">
-       	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_service_instance" 
+       	<addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_service_instance"
        							 constraintName="fk_billing_service_instance_invoice_sub_cat" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
-    </changeSet> 
+    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1306">
-       <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_service_template" 
+       <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_service_template"
        							constraintName="fk_billing_cat_service_template_invoice_sub_cat" deferrable="false"
             					initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
  	</changeSet>
  	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1307">
-       <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_usage_charge_template" 
+       <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_usage_charge_template"
        							constraintName="fk_443th9siwouj4fg746sgyfqtv" deferrable="false" initiallyDeferred="false"
             					onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
  	</changeSet>
  	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1308">
-       <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="cat_charge_template" 
+       <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="cat_charge_template"
        							constraintName="fk_ailcl9mls5y7bjr9yur52767h" deferrable="false" initiallyDeferred="false"
             					onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
  	</changeSet>
  	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1309">
-       <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_rec_charge_template" 
+       <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_rec_charge_template"
        							constraintName="fk_foohp8o0xupxmxcwblexcfqpp" deferrable="false" initiallyDeferred="false"
-            					onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />      
+            					onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
  	</changeSet>
- 	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1312">  
- 		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_offer_template" 
+ 	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1312">
+ 		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_offer_template"
  								 constraintName="fk_cat_off_tpl_prod_chrg_tpl" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1313">  
- 		<addForeignKeyConstraint baseColumnNames="product_charge_template_id" baseTableName="cat_product_templ_charge_templ" 
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1313">
+ 		<addForeignKeyConstraint baseColumnNames="product_charge_template_id" baseTableName="cat_product_templ_charge_templ"
  								 constraintName="fk_prd_templ_ct_pct_id" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
-	</changeSet>        		
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1314">  
- 		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_sub_charge_template" 
+	</changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1314">
+ 		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_sub_charge_template"
  								 constraintName="fk_3yhjbdockv9jvyw9iqmqlha63" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
 	</changeSet>
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1315">  
- 		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_trm_charge_template" 
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1315">
+ 		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_trm_charge_template"
  								 constraintName="fk_5ehn1daxca6x6t7pvdpuo4n6m" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
-	</changeSet>     	
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1316">  
-		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_charge_instance" 
+	</changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1316">
+		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_charge_instance"
 								 constraintName="fk_5q5wxh2nq7gbd9bcds59egh3e" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
 	</changeSet>
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1317">          
-		<addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_charge_instance" 
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1317">
+		<addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_charge_instance"
 								 constraintName="fk_n5h6xvrtm2a2av5jik9vr0cp5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             					 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
 	</changeSet>
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1318">          
-		<addForeignKeyConstraint baseColumnNames="product_instance_id" baseTableName="billing_charge_instance" 
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1318">
+		<addForeignKeyConstraint baseColumnNames="product_instance_id" baseTableName="billing_charge_instance"
 								 constraintName="fk_productci_prodins" deferrable="false" initiallyDeferred="false"
             					 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_product_instance" />
-    </changeSet> 
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1319">          
-    	<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" 
+    </changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1319">
+    	<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template"
     							 constraintName="fk_input_cat_charge_template_cat_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
-    </changeSet> 
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1320">          
-        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template" 
+    </changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1320">
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template"
         						 constraintName="fk_rating_cat_charge_template_cat_unit_of_measure" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />       
-    </changeSet> 
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1321">          
-    	<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_wallet_operation" 
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+    </changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1321">
+    	<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_wallet_operation"
     							 constraintName="fk_input_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
-    </changeSet> 
-	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1322">          
-        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_wallet_operation" 
+    </changeSet>
+	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1322">
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_wallet_operation"
         						 constraintName="fk_rating_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1323">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1323">
         <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_trm_charge_template" constraintName="fk_serv_trm_charge_template_counter_template"
                                  deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1324">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1324">
         <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_sub_charge_template" constraintName="fk_serv_sub_charge_template_counter_template"
                                  deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1325">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1325">
         <addForeignKeyConstraint constraintName="fk_billing_counter_customer_id" referencedTableName="crm_customer"
                                  baseColumnNames="customer_id" baseTableName="billing_counter" referencedColumnNames="id"/>
-    </changeSet>  
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1326">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1326">
         <addForeignKeyConstraint constraintName="fk_billing_counter_customer_account_id" referencedTableName="ar_customer_account"
                                  baseColumnNames="customer_account_id" baseTableName="billing_counter" referencedColumnNames="id"/>
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1327">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1327">
      	<addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_category_id"
             					 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1328">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1328">
         <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_class_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1329">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1329">
         <addForeignKeyConstraint baseColumnNames="seller_country_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_seller_country_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1330">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1330">
         <addForeignKeyConstraint baseColumnNames="buyer_country_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_buyer_country_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1331">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1331">
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1332">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1332">
         <addForeignKeyConstraint baseColumnNames="tax_script_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_script_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1333">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1333">
         <addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="crm_customer_category" constraintName="fk_crm_customer_category_tax_category_id"
             					 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1334">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1334">
         <addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="billing_billing_account" constraintName="fk_billing_account_tax_category_id"
             					 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1335">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1335">
         <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="cat_charge_template" constraintName="fk_cat_charge_template_tax_class_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1336">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1336">
         <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_tax_class_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1337">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1337">
         <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_tax_class_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
-    </changeSet> 
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1338">          
+    </changeSet>
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1338">
         <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1339">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1339">
 	    <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="crm_customer"
                                  constraintName="fk_customer_minimum_target_account_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14100,7 +14100,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="billing_billing_account"/>
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1340">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1340">
         <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="ar_customer_account"
                                  constraintName="fk_ca_minimum_target_account_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14108,7 +14108,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="billing_billing_account"/>
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1341">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1341">
         <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="crm_seller"
             constraintName="fk_seller_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
@@ -14125,7 +14125,7 @@
             constraintName="fk_ua_minimum_charge_template_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
             referencedTableName="cat_charge_template" />
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1342">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1342">
         <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_subscription"
                                  constraintName="fk_su_minimum_charge_template_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14133,7 +14133,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1343">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1343">
         <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_service_instance"
                                  constraintName="fk_si_minimum_charge_template_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14141,7 +14141,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1344">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1344">
         <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_offer_template"
                                  constraintName="fk_ot_minimum_charge_template_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14149,7 +14149,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
 	</changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1345">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1345">
 		<addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_service_template"
                                  constraintName="fk_st_minimum_charge_template_id" deferrable="false"
                                  initiallyDeferred="false"
@@ -14157,129 +14157,129 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1346">          
-		<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_rated_transaction" 
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1346">
+		<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_rated_transaction"
     	 						  constraintName="fk_input_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
                                   initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1347">          
-        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rated_transaction" 
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1347">
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rated_transaction"
         						 constraintName="fk_rating_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1348">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1348">
         <addForeignKeyConstraint baseTableName="billing_counter_period_values" baseColumnNames="counterperiod_id"
                                  constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1349">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1349">
 		<addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_accounting_code" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1350">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1350">
         <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_accounting_code" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1351">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1351">
     	 <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            					  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />  
+            					  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1352">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1352">
     	 <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_tax_class_pst" deferrable="false" initiallyDeferred="false"
             					  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1353">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1353">
 	    <addForeignKeyConstraint baseTableName="wo_aggregation_settings" baseColumnNames="wallet_operation_filter_id"
                                  constraintName="wallet_operation_filter_id_fk" referencedTableName="meveo_filter"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1354">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1354">
         <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="wo_aggregation_settings_id"
                                  constraintName="wo_aggregation_settings_id_fk" referencedTableName="wo_aggregation_settings"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1356">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1356">
         <addForeignKeyConstraint baseTableName="document" baseColumnNames="document_category_id"
                                  constraintName="document_category_id_fk" referencedTableName="document_category"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1359">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1359">
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_subscription"
                                  constraintName="fk_subscription_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1360">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1360">
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_billing_account"
                                  constraintName="fk_billing_account_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1361">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1361">
         <addForeignKeyConstraint baseTableName="ar_payment_token" baseColumnNames="document_id"
                                  constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1362">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1362">
         <addForeignKeyConstraint baseTableName="job_execution_error" baseColumnNames="job_instance_id"
                                  constraintName="job_execution_error_job_instance_fk" referencedTableName="meveo_job_instance"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1363">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1363">
         <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
                                  constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1364">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1364">
         <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
                                  constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1365">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1365">
         <addForeignKeyConstraint baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
 				               	 constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
 				               	 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
 				               	 referencedTableName="ar_account_operation"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1366">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1366">
         <addForeignKeyConstraint baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
 				                 constraintName="fk_histo_id" deferrable="false"
 				                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 				                 referencedColumnNames="id" referencedTableName="ar_payment_history"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1367">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1367">
         <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_transition_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="wf_generic_transition" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1368">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1368">
         <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="wf_generic_action"
                                  constraintName="fk_wf_generic_action_notification_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1369">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1369">
         <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_script_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1370">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1370">
         <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1371">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1371">
         <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
               					 referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1372">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1372">
         <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
               					 referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1373">          
+    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1373">
         <addForeignKeyConstraint baseColumnNames="sequence_id" baseTableName="adm_custom_generic_entity_code"
                                  constraintName="fk_dm_custom_generic_entity_code_sequence_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="generic_sequence" />
     </changeSet>
     <changeSet author="ZBariki" id="rebuild-str-fk-1374">
-        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="cpq_invoice_line"
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_invoice_line"
                                  constraintName="fk_il_aggregate_id_f" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
@@ -14806,37 +14806,37 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1493">
-        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line"
-                                 constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_line"
+                                 constraintName="fk_billing_invoice_line_invoice_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1494">
-        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_accounting_article_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_accounting_article_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1495">
-        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_offer_service_template_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_offer_service_template_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_serv_templates" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1496">
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_product_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_product_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1497">
-        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_service_template_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_service_template_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1498">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_discount_plan_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_discount_plan_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1499">
-        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_tax_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_tax_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1500">
-        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_commercial_order_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_commercial_order_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1501">
@@ -14981,38 +14981,38 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1538">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="billing_run_id"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="billing_run_id"
                                  constraintName="billing_invoice_line_billing_run_id_fk"
                                  referencedTableName="billing_billing_run" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1539">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="billing_account_id"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="billing_account_id"
                                  constraintName="billing_billing_account_id_fk"
                                  referencedTableName="billing_billing_account" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1540">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="service_instance_id"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="service_instance_id"
                                  constraintName="billing_service_instance_id_fk"
                                  referencedTableName="billing_service_instance" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1541">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="subscription_id"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="subscription_id"
                                  constraintName="billing_subscription_id_fk"
                                  referencedTableName="billing_subscription" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1542">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="offer_template_id"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="offer_template_id"
                                  constraintName="billing_offer_template_id_fk"
                                  referencedTableName="cat_offer_template" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1543">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="order_lot_id"
-                                 constraintName="cpq_invoice_line__order_lot__fk"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="order_lot_id"
+                                 constraintName="billing_invoice_line__order_lot__fk"
                                  referencedTableName="cpq_order_lot" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1544">
-        <addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="product_version_id"
-                                 constraintName="cpq_invoice_line__product_version__fk"
+        <addForeignKeyConstraint baseTableName="billing_invoice_line" baseColumnNames="product_version_id"
+                                 constraintName="billing_invoice_line__product_version__fk"
                                  referencedTableName="cpq_product_version" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1545">
@@ -15049,7 +15049,7 @@
         <addForeignKeyConstraint baseColumnNames="invoice_line_id" baseTableName="billing_rated_transaction"
                                  constraintName="fk_billing_rated_transaction_invoice_line_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+                                 referencedColumnNames="id" referencedTableName="billing_invoice_line" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1552">
         <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product"
@@ -15428,7 +15428,7 @@
         <addForeignKeyConstraint baseColumnNames="ppm_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
     </changeSet>
-    
+
     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1624">
       <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
@@ -15439,28 +15439,28 @@
      </changeSet>
       <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1626">
        <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" /> 
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
      </changeSet>
     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1627">
         <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
-    
+
     <changeSet author="TarikFA." id="rebuild-str-fk-1628">
       <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />   
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
     </changeSet>
-    
+
       <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1629">
        <addForeignKeyConstraint
 			baseColumnNames="quote_offer_id" baseTableName="cpq_quote_price" constraintName="fk_cpq_quote_price_quote_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-			referencedColumnNames="id" referencedTableName="quote_offer" />  
+			referencedColumnNames="id" referencedTableName="quote_offer" />
      </changeSet>
-    
+
      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1630">
         <addForeignKeyConstraint
 			 baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
+			 referencedColumnNames="id" referencedTableName="cpq_order_offer" />
     </changeSet>
     <changeSet id="rebuild-str-fk-1631" author="Rachid.Aityaazza">
         <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_discount_plan_id" deferrable="false"
@@ -15472,7 +15472,7 @@
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
-    
+
     <changeSet id="rebuild-str-fk-1633" author="MohammedELAZZOUZI">
     	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="billing_billing_run" constraintName="fk__billing_billing_run__invoice_type" deferrable="false"
             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
@@ -15498,17 +15498,17 @@
     </changeSet>
 
     <changeSet id="rebuild-str-fk-1637" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
 
     <changeSet id="rebuild-str-fk-540-1639" author="Mbarek-Ay">
-     	<addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
+     	<addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
     </changeSet>
 
     <changeSet id="rebuild-str-fk-540-1640" author="Mbarek-Ay">
-     	<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
+     	<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_order_offer_id" deferrable="false" initiallyDeferred="false"
            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
     </changeSet>
 	<changeSet author="hhanine" id="rebuild-str-fk-1650-1418">
@@ -15913,10 +15913,10 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
        <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-       
+
        <changeSet id="#INTRD-5636-20220318-fk" author="hhannine">
        	  <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
@@ -15926,34 +15926,34 @@
 	                               constraintName="open_order_threshold_open_order_template_id_fk"
 	                               referencedTableName="open_order_template"
 	                               referencedColumnNames="id"/>
-	
-	
+
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
 	                                 constraintName="open_order_template_tags_open_order_template_id_fk"
 	                                 referencedTableName="open_order_template"
 	                                 referencedColumnNames="id"/>
-	
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="tag_id"
 	                                 constraintName="open_order_template_tags_tag_id_fk" referencedTableName="cpq_tag"
 	                                 referencedColumnNames="id"/>
-	
-	
+
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_order_template_id"
 	                                 constraintName="open_order_template_products_open_order_template_id_fk"
 	                                 referencedTableName="open_order_template"
 	                                 referencedColumnNames="id"/>
-	
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
 	                                 constraintName="open_order_template_products_product_id_fk"
 	                                 referencedTableName="cpq_product"
 	                                 referencedColumnNames="id"/>
-	
-	
+
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
 	                                 constraintName="open_order_template_articles_open_order_template_id_fk"
 	                                 referencedTableName="open_order_template"
 	                                 referencedColumnNames="id"/>
-	
+
 	        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
 	                                 constraintName="open_order_template_articles_article_id_fk"
 	                                 referencedTableName="billing_accounting_article"
@@ -16071,7 +16071,7 @@
         <sql>CREATE INDEX rating_cdr_index ON ${db.schema.adapted}rating_cdr(origin_batch, origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>     
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
         <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
         <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
         <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
@@ -16309,8 +16309,8 @@
     </changeSet>
 
       <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
-	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
-	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="billing_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
+	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_line" />
       </changeSet>
     <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
         <createView viewName="all_sequences_view" replaceIfExists="true">
@@ -17448,6 +17448,7 @@
 	<changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
 	<changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
+    <changeSet id="#INTRD-4675_20220419" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
