@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -49,12 +48,10 @@ import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -363,7 +360,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
-        for(org.meveo.model.cpq.commercial.InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+        for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }
         int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();
