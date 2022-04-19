@@ -1,5 +1,11 @@
 package org.meveo.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,15 +19,11 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.crm.impl.*;
+import org.meveo.util.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrencyApiTest {
@@ -36,15 +38,17 @@ public class CurrencyApiTest {
     private TradingCurrencyService tradingCurrencyService;
 
     @Mock
-    private Provider provider;
+    private ProviderService providerService;
 
+    @Mock
+    @ApplicationProvider
+    private Provider appProvider;
 
 
     @Before
     public void setUp() {
-
         when(currencyService.findByCode("MAD")).thenReturn(new Currency());
-
+        when(appProvider.getId()).thenReturn(1L);
     }
 
     @Test
@@ -73,13 +77,12 @@ public class CurrencyApiTest {
 
     @Test
     public void addFunctionalCurrency() {
-            CurrencyDto currencyDto = new CurrencyDto();
-            currencyDto.setCode("MAD");
-             ActionStatus actionStatus = currencyApi.addFunctionalCurrency(currencyDto);
+        CurrencyDto currencyDto = new CurrencyDto();
+        currencyDto.setCode("MAD");
+        when(providerService.findById(1L)).thenReturn(new Provider());
+        ActionStatus actionStatus = currencyApi.addFunctionalCurrency(currencyDto);
 
-            assertEquals(ActionStatusEnum.SUCCESS, actionStatus.getStatus());
-
-
+        assertEquals(ActionStatusEnum.SUCCESS, actionStatus.getStatus());
     }
 
 
@@ -92,8 +95,6 @@ public class CurrencyApiTest {
             currencyApi.create(currencyDto);
 
             verify(tradingCurrencyService).create(any());
-
-
     }
 
     @Test
@@ -107,9 +108,5 @@ public class CurrencyApiTest {
 
             verify(tradingCurrencyService).update(any());
             verify(currencyService).update(any());
-
-
     }
-
-
 }
