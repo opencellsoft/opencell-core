@@ -99,7 +99,7 @@ public class RefundResourceImpl implements RefundResource{
         payByCardDto.setCustomerAccountCode(cardRefund.getCustomerAccountCode());
         payByCardDto.setOwnerName(cardRefund.getOwnerName());
         payByCardDto.setCvv(cardRefund.getCvv());
-        payByCardDto.setExpiryDate(cardRefund.getExpiryDate() == null? null :cardRefund.getExpiryDate().getTime()+"");
+        payByCardDto.setExpiryDate(cardRefund.getExpiryDate());
         if(Objects.nonNull(cardRefund.getCardType())){
             payByCardDto.setCardType(CreditCardTypeEnum.valueOf(cardRefund.getCardType()));
         }
