@@ -82,8 +82,8 @@ public class BillingAccountDto extends AccountDto {
 
     /** The currency. */
     @XmlElement(required = true)
-    @Schema(description = "The currency")
-    private String currency;
+    @Schema(description = "The trading currency")
+    private String tradingCurrency;
     
     
     /** The language. */
@@ -302,7 +302,7 @@ public class BillingAccountDto extends AccountDto {
             setCountry(e.getTradingCountry().getCountryCode());
         }
         if (e.getTradingCurrency() != null) {
-            setCurrency(e.getTradingCurrency().getCurrencyCode());
+            setTradingCurrency(e.getTradingCurrency().getCurrencyCode());
         } 
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
@@ -423,21 +423,21 @@ public class BillingAccountDto extends AccountDto {
     }
 
     
-    /** Gets the currency.
+    /** Gets the tradingCurrency.
      *
-     * @return the currency
+     * @return the tradingCurrency
      */
-    public String getCurrency() {
-        return currency;
+    public String getTradingCurrency() {
+    	return tradingCurrency;
     }
 
     /**
-     * Sets the currency.
+     * Sets the tradingCurrency.
      *
-     * @param currency the currency to set
+     * @param tradingCurrency the tradingCurrency to set
      */
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setTradingCurrency(String tradingCurrency) {
+    	this.tradingCurrency = tradingCurrency;
     }
     
     /**
