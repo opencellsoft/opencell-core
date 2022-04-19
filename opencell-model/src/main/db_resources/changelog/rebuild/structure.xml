@@ -17441,7 +17441,10 @@
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
     <changeSet id="#INTRD-5841-21032022" author="TarikRabeh" />
-	<changeSet author="TarikRabeh" id="#INTRD-5846-24032022" />    
+	<changeSet author="TarikRabeh" id="#INTRD-5846-24032022" />
+	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
+	<changeSet id="#20220404_M540_6296" author="Mbarek-Ay" />
+	<changeSet id="#20220407_ADHOC" author="NabilOuachi" />
 	<changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
 	<changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
