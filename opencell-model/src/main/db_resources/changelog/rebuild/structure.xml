@@ -16155,9 +16155,9 @@
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
-    
+
       <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
-	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false" 
+	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="cpq_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
       </changeSet>
     <changeSet id="#INTRD-5777_2022-03-17_PG" author="MohammedSTITANE" dbms="postgresql">
