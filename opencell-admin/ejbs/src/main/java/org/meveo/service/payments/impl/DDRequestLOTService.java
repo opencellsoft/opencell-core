@@ -51,7 +51,6 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
-import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -403,3 +402,4 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 }
+
