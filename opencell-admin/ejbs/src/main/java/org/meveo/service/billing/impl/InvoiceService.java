@@ -2569,10 +2569,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
        
        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
            nullifyInvoiceXMLFileNames(br);
+           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
        }
 
        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
            nullifyInvoicePDFFileNames(br);
+           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
        }
    }
 
@@ -2594,7 +2596,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
        getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
    }
 
-    /**
+   /**
+    * Nullify BR XML and PDF execution result Ids.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyBillingRunXMLAndPDFExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLAndPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+
+   /**
      * @param billingRunId
      */
     public void deleteInvoices(Long billingRunId) {
@@ -6111,20 +6123,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
         invoice = refreshOrRetrieve(invoice);
-        var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
-        
-        if (invoiceLines != null) {
-            for (InvoiceLine invoiceLine : invoiceLines) {
-                if (invoiceLineIds.contains(invoiceLine.getId())) {
-                    invoiceLinesService.detach(invoiceLine);
-                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
-                    invoiceLinesService.create(duplicateInvoiceLine);
-                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
-                }                
-            }
+        for (Long idInvoiceLine : invoiceLineIds) {
+            InvoiceLine iLine = invoiceLinesService.findById(idInvoiceLine);  
+            invoiceLinesService.detach(iLine);
+            var duplicateInvoiceLine = new InvoiceLine(iLine, invoice);
+            invoiceLinesService.create(duplicateInvoiceLine);
+            invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
-        
+
         calculateInvoice(invoice);
         return update(invoice);
+    }
+
+    public Invoice findByInvoiceNumber(String invoiceNumber) {
+        return (Invoice) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+                                .setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+                                .getSingleResult();
     }
 }

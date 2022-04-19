@@ -45,24 +45,8 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
-	}
-	
-   public org.meveo.apiv2.billing.Invoice toResourceInvoiceLine(Invoice entity) {
-        try {
-            ImmutableInvoice resource = (ImmutableInvoice) initResource(ImmutableInvoice.class, entity);
-            return ImmutableInvoice.builder().from(resource).id(entity.getId())
-                    .invoiceLines(entity.getInvoiceLines() == null ? null : entity.getInvoiceLines().stream().map(il -> {
-                        return ImmutableInvoiceLine.builder()
-                        .id(il.getId())
-                        .accountingArticleCode(il.getAccountingArticle().getCode())
-                        .build();
-                    }).collect(Collectors.toList()))
-                    .build();
-        } catch (Exception e) {
-            throw new BusinessException(e);
-        }
-    }
-	   
+	}	
+
 	public List<org.meveo.apiv2.billing.Invoice> toResources(List<Invoice> invoices) {
 		if(CollectionUtils.isEmpty(invoices)) {
 			return null;

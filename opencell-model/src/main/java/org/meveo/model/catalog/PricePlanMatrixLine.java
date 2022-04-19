@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -29,8 +30,11 @@ import java.util.Set;
 @ExportIdentifier({"code"})
 @Table(name = "cpq_price_plan_matrix_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq"),})
-@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion")
+        @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
+@NamedQueries({
+    @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
+    @NamedQuery(name = "PricePlanMatrixLine.deleteByPricePlanMatrixVersion", query = "delete from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion")
+})
 public class PricePlanMatrixLine extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )

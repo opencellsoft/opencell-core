@@ -320,6 +320,7 @@
         <createSequence sequenceName="open_order_threshold_seq" startValue="1"/>
         <createSequence sequenceName="open_order_template_seq" startValue="1"/>
         <createSequence sequenceName="accounting_journal_entry_seq" startValue="1"/>
+        <createSequence sequenceName="accounting_accountingcode_mapping_seq" startValue="1"/>
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
     </changeSet>
 
@@ -9181,6 +9182,9 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="delivery_date" type="datetime" />
+            <column name="product_action_type" type="varchar(10)" />
+	        <column name="termination_date" type="datetime" />
+	        <column name="sub_termin_reason_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9510,6 +9514,7 @@
             <column name="delivery_date" type="datetime" />
             <column name="user_account_id" type="bigint" />
             <column name ="quote_line_type" type="varchar(10)" />
+            <column name="subscription_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-457" author="NabilOUACHI">
@@ -9804,6 +9809,7 @@
             <column name="invoice_type_el" type="varchar(255)" />
             <column name="invoice_type_id" type="bigint" />
             <column name="description_i18n" type="${type.json}"></column>
+            <column name="accountingcode_el" type="varchar(500)"/>
 
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
@@ -16017,6 +16023,13 @@
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
+      
+      <changeSet id="#INTRD-6056_20220413-fk" author="HatimOUDAD">
+      <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_quote_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdcc" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+	  <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="quote_offer" constraintName="fk_dwdlb9d5mlvdddm3yowwa9uembdcc" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+	  </changeSet>
 
     <!-- end fk -->
 
@@ -16463,6 +16476,54 @@
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6562_20220414-rebuild" author="aelmalki">
+        <createTable tableName="accounting_accountingcode_mapping">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_accountingcode_mapping"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+
+            <!-- Dependencies -->
+            <column name="accounting_article_id" type="bigint"/>
+            <column name="billing_country_id" type="bigint"/>
+            <column name="billing_currency_id" type="bigint"/>
+            <column name="seller_country_id" type="bigint"/>
+            <column name="seller_id" type="bigint"/>
+
+            <!-- Simple fields -->
+            <column name="criteria_el" type="varchar(500)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-6562_20220414-rebuild-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addForeignKeyConstraint baseColumnNames="billing_country_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_billing_country" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+
+        <addForeignKeyConstraint baseColumnNames="billing_currency_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_trading_currency" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_country_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_seller_country" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_seller" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17548,9 +17609,13 @@
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
+    <changeSet id="#INTRD-6056_20220413" author="HatimOUDAD" />
 
 
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-6562_20220414" author="aelmalki" />
+    <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

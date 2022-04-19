@@ -49,15 +49,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
@@ -770,7 +762,7 @@ public class CommercialOrderApi extends BaseApi {
     	if(orderOfferDto.getDeliveryDate()!=null && orderOfferDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
-        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate() != null ? orderOfferDto.getDeliveryDate(): commercialOrder.getDeliveryDate() );
+        orderOffer.setDeliveryDate(orderOfferDto.getDeliveryDate());
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
         	if (orderOfferDto.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
@@ -1062,12 +1054,7 @@ public class CommercialOrderApi extends BaseApi {
         }else {
         	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
         }
-        	processOrderProduct( orderProductDTO, orderProduct);
-
-		if(orderProduct.getDeliveryDate() == null && orderOffer.getOrder()!= null)
-		{
-			orderProduct.setDeliveryDate(orderOffer.getOrder().getDeliveryDate());
-		}
+        	processOrderProduct( orderProductDTO, orderProduct); 
         
         return orderProduct;
         
@@ -1111,6 +1098,9 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
+		if(orderProductDto.getQuantity() == null) {
+			throw new MeveoApiException("The quantity is required");
+		}
 		orderProduct.setQuantity(orderProductDto.getQuantity());
 		orderProduct.setProductActionType(orderProductDto.getActionType());
 		
@@ -1123,7 +1113,8 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setTerminationReason(terminationReason);
 		orderProduct.setTerminationDate(orderProductDto.getTerminationDate());
 		
-    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
+    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date()) &&
+		ProductActionTypeEnum.CREATE.equals(orderProductDto.getActionType())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
@@ -1198,6 +1189,7 @@ public class CommercialOrderApi extends BaseApi {
         orderAttribute.setStringValue(orderAttributeDTO.getStringValue());
         orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
         orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
+		orderAttributeDTO.setAttributeType(attribute.getAttributeType());
         orderAttribute.updateAudit(currentUser);
         if(orderProduct != null) {
             orderProduct.getOrderAttributes().add(orderAttribute);

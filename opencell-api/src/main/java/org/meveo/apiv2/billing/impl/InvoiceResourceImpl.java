@@ -363,19 +363,12 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
-        List<String> idsInvoiceLineNotFound = new ArrayList<String>();
         for(org.meveo.model.cpq.commercial.InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }
         int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();
         if(sizeInvoiceLineIds == 0){
             throw new MissingParameterException("The following parameters are required or contain invalid values: invoiceLineIds");
-        }
-        
-        for(Long lineId : invoiceLinesToDuplicate.getInvoiceLineIds()) {
-            if (!idsInvoiceLineForInvoice.contains(lineId)) {                
-                idsInvoiceLineNotFound.add(""+lineId);
-            }
         }
 
         if(!InvoiceStatusEnum.NEW.equals(invoice.getStatus()) 
@@ -384,16 +377,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())){
             throw new MeveoApiException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
         }
-        
-        String idsInvoiceLineNotFoundStr = "";
-        if (idsInvoiceLineNotFound.size() > 0) {
-            for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
-                idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
-            }
-            idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(idsInvoiceLineNotFound.size()-1);
-            throw new MeveoApiException("Invoice Line ids:[" + idsInvoiceLineNotFoundStr + "] does not exist."); 
-        }
-        
-        return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResourceInvoiceLine(invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds())))).build();
+        invoice = invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds());
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("invoice", invoice);
+        return Response.ok(response).build();
     }
 }

@@ -1,16 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -217,24 +208,30 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);	
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.ACTIVATE) {
-						ServiceInstance serviceInstanceToActivate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
-						if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
-							serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
-						}else {
-							serviceInstanceService.serviceActivation(serviceInstanceToActivate);
-						}
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToActivate = services.get(0);
+							if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
+								serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
+							}else {
+								serviceInstanceService.serviceActivation(serviceInstanceToActivate);
+							}
+			            }
 					}				
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
-						ServiceInstance serviceInstanceToSuspend = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.ACTIVE);
-						serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToSuspend = services.get(0);
+							serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
+			            }
 					}
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
-						ServiceInstance serviceInstanceToTerminate = serviceInstanceService.getSingleServiceInstance(null, product.getProductVersion().getProduct().getCode(), offer.getSubscription(),
-		                        InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
-						serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
-					}
+						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
+			            if (services.size() > 0) {
+			            	ServiceInstance serviceInstanceToTerminate = services.get(0);
+							serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
+				            }
+			            }
 				}
 			}else if (offer.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
 				Subscription subscription = offer.getSubscription();
@@ -244,6 +241,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 
+
+		order.getOffers()
+				.stream()
+				.map(offer->offer.getProducts())
+				.flatMap(Collection::stream)
+				.filter(orderProduct -> orderProduct.getDeliveryDate() == null)
+				.forEach(orderProduct -> {
+					orderProduct.setDeliveryDate(new Date());
+				});
 		updateWithoutProgressCheck(order);
 
 		return order;
