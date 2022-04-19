@@ -86,15 +86,6 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public DiscountPlanItem create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            String generatedCode = getGenericCode(DiscountPlanItem.class.getName());
-            if (generatedCode != null) {
-                postData.setCode(generatedCode);
-            } else {
-                missingParameters.add("discountPlanItemCode");
-            }
-        }
-
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
@@ -111,7 +102,7 @@ public class DiscountPlanItemApi extends BaseApi {
         handleMissingParameters();
 
         DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(postData.getCode());
-        if (discountPlanItem != null) {
+        if (discountPlanItem != null && postData.getCode() != null) {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, null);
@@ -128,6 +119,8 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         
         discountPlanItemService.create(discountPlanItem);
+        discountPlanItem.setCode(discountPlanItem.getId().toString());
+        discountPlanItemService.update(discountPlanItem);
         return discountPlanItem;
     }
 
@@ -282,7 +275,7 @@ public class DiscountPlanItemApi extends BaseApi {
         DiscountPlanItem discountPlanItem = target;
         if (discountPlanItem == null) {
             discountPlanItem = new DiscountPlanItem();
-            discountPlanItem.setCode(source.getCode());
+            discountPlanItem.setCode("");
             if (source.isDisabled() != null) {
                 discountPlanItem.setDisabled(source.isDisabled());
             }
