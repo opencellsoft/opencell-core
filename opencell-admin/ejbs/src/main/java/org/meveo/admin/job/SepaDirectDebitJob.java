@@ -156,6 +156,7 @@ public class SepaDirectDebitJob extends Job {
         ddRequestStateOpCF.setFieldType(CustomFieldTypeEnum.LIST);
         ddRequestStateOpCF.setValueRequired(false);
         ddRequestStateOpCF.setListValues(lisValueStateOps);
+        ddRequestStateOpCF.setGuiPosition("tab:Configuration:0;field:6");
         result.put("SepaJob_ddRequestStateOp", ddRequestStateOpCF);
         return result;
     }

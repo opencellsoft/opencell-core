@@ -224,10 +224,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		Integer nbItemsKo = 0;
-		if (ddRequestLOT.isPaymentCreated()) {
-			throw new BusinessException("Payment Already created.");
-		}
-
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<Map<String, Object>>> futures = new ArrayList<>();
 		while (subListCreator.isHasNext()) {
