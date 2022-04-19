@@ -315,6 +315,9 @@
         <createSequence sequenceName="security_deposit_transaction_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_scheme_seq" startValue="1" />
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
+        <createSequence sequenceName="exchange_rate_seq" startValue="1" />
+        <createSequence sequenceName="open_order_template_seq" startValue="1"/>
+        <createSequence sequenceName="open_order_threshold_seq" startValue="1"/>
     </changeSet>
 
 
@@ -7092,6 +7095,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="parameters" type="${type.text}" />
+            <column name="source" type="VARCHAR(200)" />
         </createTable>
     </changeSet>
 
@@ -11620,10 +11624,115 @@
             	<column name="creator" type="varchar(100)"/>
             	<column name="updater" type="varchar(100)"/>
             	<column name="quote_default_validity_delay" type="int">
-+            		<constraints nullable="false" />
-+            	</column>
+            		<constraints nullable="false" />
+            	</column>
         	</createTable>
     	</changeSet>
+    	
+    	<changeSet author="hhanine" id="rebuild-str-tbl-INTRD-5636-20220318">
+	        <createTable tableName="exchange_rate">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey" />
+	            </column>
+	            <column name="version" type="int4" />
+	            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	
+	            <column name="trading_currency_id" type="bigint" />
+	            <column name="exchange_rate" type="numeric(23, 6)" />
+	            <column name="from_date" type="datetime" />
+	            <column name="current_rate" type="${type.boolean}" defaultValueNumeric="0">
+				    <constraints nullable="false" />
+				</column>
+	        </createTable>
+    	</changeSet>
+
+    	<changeSet id="#INTRD-5310-20220310-tbl" author="HichamELHALOUI">
+	        <createTable tableName="open_order_threshold">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
+	            </column>
+	            <column name="version" type="int4"/>
+	            <column name="created" type="datetime">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="updated" type="datetime"/>
+	            <column name="creator" type="varchar(100)"/>
+	            <column name="updater" type="varchar(100)"/>
+	            <column name="code" type="varchar(255)">
+	                <constraints nullable="true"/>
+	            </column>
+	            <column name="description" type="varchar(255)"/>
+	            <column name="sequence" type="int"/>
+	            <column name="percentage" type="int"/>
+	            <column name="open_order_template_id" type="bigint"/>
+	        </createTable>
+	
+	        <createTable tableName="open_order_threshold_recipients">
+	            <column name="threshold_id" type="bigint"/>
+	            <column name="recipient" type="varchar(100)"/>
+	        </createTable>
+	
+	        <createTable tableName="open_order_template">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_template_pkey"/>
+	            </column>
+	            <column name="version" type="int4"/>
+	            <column name="created" type="datetime">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="updated" type="datetime"/>
+	            <column name="creator" type="varchar(100)"/>
+	            <column name="updater" type="varchar(100)"/>
+	            <column name="code" type="varchar(255)">
+	                <constraints nullable="true"/>
+	            </column>
+	            <column name="description" type="varchar(255)"/>
+	            <column name="open_order_type" type="varchar(50)"/>
+	        </createTable>
+	        <createTable tableName="open_order_template_tags">
+	            <column name="open_order_template_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="tag_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        <createTable tableName="open_order_template_products">
+	            <column name="open_order_template_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="product_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        <createTable tableName="open_order_template_articles">
+	            <column name="open_order_template_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="article_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        <addPrimaryKey columnNames="threshold_id, recipient" constraintName="open_order_threshold_recipients_pkey"
+	                       tableName="open_order_threshold_recipients"/>
+	        <addPrimaryKey columnNames="open_order_template_id,tag_id"
+	                       constraintName="open_order_template_tags_pkey"
+	                             tableName="open_order_template_tags"/>
+	         <addPrimaryKey columnNames="open_order_template_id,product_id"
+	                             constraintName="open_order_template_products_pkey"
+	                             tableName="open_order_template_products"/>
+	         <addPrimaryKey columnNames="open_order_template_id,article_id"
+	                             constraintName="open_order_template_articles_pkey"
+	                             tableName="open_order_template_articles"/>
+	    </changeSet>
 
     <!-- end tables -->
 
@@ -15807,6 +15916,49 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
+       
+       <changeSet id="#INTRD-5636-20220318-fk" author="hhannine">
+       	  <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+   	   </changeSet>
+   	   <changeSet id="#INTRD-5310-20220310-fk" author="HichamELHALOUI">
+	       <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
+	                               constraintName="open_order_threshold_open_order_template_id_fk"
+	                               referencedTableName="open_order_template"
+	                               referencedColumnNames="id"/>
+	
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
+	                                 constraintName="open_order_template_tags_open_order_template_id_fk"
+	                                 referencedTableName="open_order_template"
+	                                 referencedColumnNames="id"/>
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="tag_id"
+	                                 constraintName="open_order_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+	                                 referencedColumnNames="id"/>
+	
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_order_template_id"
+	                                 constraintName="open_order_template_products_open_order_template_id_fk"
+	                                 referencedTableName="open_order_template"
+	                                 referencedColumnNames="id"/>
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
+	                                 constraintName="open_order_template_products_product_id_fk"
+	                                 referencedTableName="cpq_product"
+	                                 referencedColumnNames="id"/>
+	
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
+	                                 constraintName="open_order_template_articles_open_order_template_id_fk"
+	                                 referencedTableName="open_order_template"
+	                                 referencedColumnNames="id"/>
+	
+	        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
+	                                 constraintName="open_order_template_articles_article_id_fk"
+	                                 referencedTableName="billing_accounting_article"
+	                                 referencedColumnNames="id"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17290,6 +17442,9 @@
     <changeSet id="#INTRD-5628_2022-03_11" author="hichamELHALOUI"/>
     <changeSet id="#INTRD-5841-21032022" author="TarikRabeh" />
 	<changeSet author="TarikRabeh" id="#INTRD-5846-24032022" />    
+	<changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
+	<changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
