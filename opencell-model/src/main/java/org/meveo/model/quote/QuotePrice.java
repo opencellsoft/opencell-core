@@ -71,6 +71,7 @@ public class QuotePrice extends AuditableEntity {
 		this.discountPlanType=copy.discountPlanType;
 		this.discountValue=copy.discountValue;
 		this.applyDiscountsOnOverridenPrice=copy.getApplyDiscountsOnOverridenPrice();
+		this.overchargedUnitAmountWithoutTax=copy.getOverchargedUnitAmountWithoutTax();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
