@@ -2615,6 +2615,7 @@ public class SubscriptionApi extends BaseApi {
         activateServicesRequestDto.setSubscriptionValidityDate(postData.getValidityDate());
 
         this.create(postData);
+        subscriptionService.getEntityManager().flush();
         this.activateServices(activateServicesRequestDto);
     }
 
