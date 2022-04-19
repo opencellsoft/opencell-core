@@ -12093,6 +12093,8 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="sequence" type="int" />
             <column name="percentage" type="int" />
         </createTable>
+    </changeSet>
+    
     <changeSet id="#INTRD-5859_20220321" author="TarikFA.">
     	<addColumn tableName="billing_discount_plan_instance">
     		<column name="service_instance_id" type="bigint" />
@@ -12193,6 +12195,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <addColumn tableName="cat_discount_plan">
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
+	</changeSet>
 
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza">
         <addColumn tableName="cat_price_plan_matrix">
@@ -12211,34 +12214,6 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="current_rate_from_date" type="datetime" />
             <column name="current_rate_updater" type="varchar(255)" />
         </addColumn>
-    </changeSet>
-
-
-    <changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI">
-        <createSequence sequenceName="open_order_Threshold_seq" startValue="1" />
-        <createTable tableName="open_order_Threshold">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="open_order_setting_pkey" />
-			</column>
-			<column name="version" type="int4" />
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="datetime" />
-			<column name="creator" type="varchar(100)" />
-			<column name="updater" type="varchar(100)" />
-			<column name="code" type="varchar(255)">
-				<constraints nullable="true" />
-			</column>
-			<column name="description" type="varchar(255)" />
-            <column name="sequence" type="int" />
-            <column name="percentage" type="int" />
-        </createTable>
-
-        <createTable tableName="open_order_threshold_recipients">
-            <column name="threshold_id" type="int" />
-            <column name="recipient" type="varchar(100)" />
-        </createTable>
     </changeSet>
 
     <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
