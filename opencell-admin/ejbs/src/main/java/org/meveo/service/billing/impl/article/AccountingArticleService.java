@@ -216,10 +216,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	}
 
-	private <T extends Object> T evaluateAccountingCodeArticleEl(String expression,
-																 AccountingArticle accountingArticle,
-																 Invoice invoice,
-																 Class<T> type) throws InvalidELException {
+	private <T> T evaluateAccountingCodeArticleEl(String expression,
+												  AccountingArticle accountingArticle,
+												  Invoice invoice,
+												  Class<T> type) throws InvalidELException {
 		if (StringUtils.isNotBlank(expression)) {
 			// EL will have access to the following variables: article / billingAccount / seller
 			BillingAccount billingAccount = invoice.getBillingAccount();
@@ -279,9 +279,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	private String buildKey(Object... o) {
-		StringBuilder key = new StringBuilder("");
-		for (int i = 0; i < o.length; i++) {
-			key.append(o[i] == null ? "" : o[i].toString());
+		StringBuilder key = new StringBuilder();
+		for (Object value : o) {
+			key.append(value == null ? "" : value.toString());
 		}
 
 		return key.toString();
