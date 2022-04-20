@@ -34,6 +34,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.payments.DDRequestBuilder;
+import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.job.Job;
 
@@ -141,6 +142,23 @@ public class SepaDirectDebitJob extends Job {
         creditOrDebitCF.setListValues(lisValuesCreditDebit);
         creditOrDebitCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put("SepaJob_paymentOrRefund", creditOrDebitCF);
+        
+        Map<String, String> lisValueStateOps = new HashMap<String, String>();
+        lisValueStateOps.put(DDRequestOpEnum.CREATE.name(), DDRequestOpEnum.CREATE.name());
+        lisValueStateOps.put(DDRequestOpEnum.PAYMENT.name(), DDRequestOpEnum.PAYMENT.name());
+        lisValueStateOps.put(DDRequestOpEnum.FILE.name(), DDRequestOpEnum.FILE.name());
+        
+        CustomFieldTemplate ddRequestStateOpCF = new CustomFieldTemplate();
+        ddRequestStateOpCF.setCode("SepaJob_ddRequestStateOp");
+        ddRequestStateOpCF.setAppliesTo(APPLIES_TO_NAME);
+        ddRequestStateOpCF.setActive(true);
+        ddRequestStateOpCF.setDefaultValue(DDRequestOpEnum.CREATE.name());
+        ddRequestStateOpCF.setDescription("DDRequest State");
+        ddRequestStateOpCF.setFieldType(CustomFieldTypeEnum.LIST);
+        ddRequestStateOpCF.setValueRequired(false);
+        ddRequestStateOpCF.setListValues(lisValueStateOps);
+        ddRequestStateOpCF.setGuiPosition("tab:Configuration:0;field:6");
+        result.put("SepaJob_ddRequestStateOp", ddRequestStateOpCF);
         return result;
     }
 }
