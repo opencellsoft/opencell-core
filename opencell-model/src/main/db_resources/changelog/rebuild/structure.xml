@@ -17621,6 +17621,7 @@
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-6562_20220414" author="aelmalki" />
     <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki" />
+    <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
     <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki" />
     <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki" />
 
