@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.commercial;
+package org.meveo.model.billing;
 
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
@@ -36,15 +36,9 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -55,6 +49,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
@@ -64,9 +59,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  */
 @Entity
 @ObservableEntity
-@Table(name = "cpq_invoice_line")
+@Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
+        @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
 @NamedQueries({
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndIDs", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND id in (:listOfIds) "),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice.id =:invoiceId"),

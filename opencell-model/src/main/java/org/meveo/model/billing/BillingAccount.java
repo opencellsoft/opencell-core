@@ -63,7 +63,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;

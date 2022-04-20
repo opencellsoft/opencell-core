@@ -30,7 +30,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;

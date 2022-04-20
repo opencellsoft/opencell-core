@@ -77,7 +77,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
