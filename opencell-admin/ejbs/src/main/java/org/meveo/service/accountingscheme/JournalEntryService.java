@@ -170,9 +170,11 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         Provider provider = providerService.getProvider();
         firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode():"");
         
-        firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
-        firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
-        		? ((RecordedInvoice) ao).getInvoice().getInvoiceType():null);
+        if(ao instanceof RecordedInvoice) {
+            firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
+            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
+            		? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode():null);
+        }
         
         return firstEntry;
     }

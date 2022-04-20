@@ -118,7 +118,7 @@ public class JournalEntry extends AuditableEntity {
     /**
      * Client unique id
      */
-    @Column(name = "client_unique_id", nullable = false)
+    @Column(name = "client_unique_id")
     private String clientUniqueId; 
 
     /**
@@ -137,9 +137,8 @@ public class JournalEntry extends AuditableEntity {
     /**
      * Invoice type
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supporting_document_type")
-    private InvoiceType supportingDocumentType;
+    @Column(name = "supporting_document_type")
+    private String supportingDocumentType;
 
     
     public AccountOperation getAccountOperation() {
@@ -262,11 +261,11 @@ public class JournalEntry extends AuditableEntity {
 		this.supportingDocumentRef = supportingDocumentRef;
 	}
 
-	public InvoiceType getSupportingDocumentType() {
+	public String getSupportingDocumentType() {
 		return supportingDocumentType;
 	}
 
-	public void setSupportingDocumentType(InvoiceType supportingDocumentType) {
+	public void setSupportingDocumentType(String supportingDocumentType) {
 		this.supportingDocumentType = supportingDocumentType;
 	}
 }
