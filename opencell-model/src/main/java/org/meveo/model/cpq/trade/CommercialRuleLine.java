@@ -11,6 +11,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.tags.Tag;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +33,7 @@ import java.util.Objects;
  *	@version 10.0
  */
 @Entity
+@Cacheable
 @Table(name = "cpq_commercial_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq")})
