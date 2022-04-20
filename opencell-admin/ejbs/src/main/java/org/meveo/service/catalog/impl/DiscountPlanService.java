@@ -36,7 +36,7 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
