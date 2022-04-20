@@ -59,17 +59,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		if(!StringUtils.isBlank(param1)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine ->param1.equals(articleMappingLine.getParameter1()))
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1()) || param1.equals(articleMappingLine.getParameter1()))
 					.collect(toList());
 		}
 		if(!StringUtils.isBlank(param2)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine ->param2.equals(articleMappingLine.getParameter2()))
+					.filter(articleMappingLine ->StringUtils.isBlank(articleMappingLine.getParameter2()) ||param2.equals(articleMappingLine.getParameter2()))
 					.collect(toList());
 		}
 		if(!StringUtils.isBlank(param3)) {
 			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine ->param3.equals(articleMappingLine.getParameter3()))
+					.filter(articleMappingLine ->StringUtils.isBlank(articleMappingLine.getParameter3()) ||param3.equals(articleMappingLine.getParameter3()))
 					.collect(toList());
 		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
