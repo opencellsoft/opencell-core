@@ -549,6 +549,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		} else {
 			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
 		}
+		
+		if(accountOperation.getAccountingDate() == null) {
+			if (accountOperation.getDueDate() != null) {
+				accountOperation.setAccountingDate(accountOperation.getDueDate());
+			}else {
+				accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+			}
+		}
 
 //		Si aucune AP n'est définie dans le système, le système doit considérer toute l'année comme une AP open
 		long count = accountingPeriodService.count();

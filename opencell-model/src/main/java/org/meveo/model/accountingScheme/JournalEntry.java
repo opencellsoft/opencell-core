@@ -21,9 +21,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+
+import org.meveo.model.billing.InvoiceType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -100,6 +103,45 @@ public class JournalEntry extends AuditableEntity {
     @Column(name = "analytic_code_3")
     private String analyticCode3;
 
+    /**
+     * Operation number
+     */
+    @Column(name = "operation_number")
+    private Long operationNumber; 
+    
+    /**
+     * Seller code
+     */
+    @Column(name = "seller_code", nullable = false)
+    private String sellerCode; 
+    
+    /**
+     * Client unique id
+     */
+    @Column(name = "client_unique_id", nullable = false)
+    private String clientUniqueId; 
+
+    /**
+     * Code currency
+     */
+    @Column(name = "currency", nullable = false)
+    private String currency; 
+    
+    /**
+     * Invoice
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supporting_document_ref")
+    private Invoice supportingDocumentRef;
+    
+    /**
+     * Invoice type
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supporting_document_type")
+    private InvoiceType supportingDocumentType;
+
+    
     public AccountOperation getAccountOperation() {
         return accountOperation;
     }
@@ -179,4 +221,52 @@ public class JournalEntry extends AuditableEntity {
     public void setAnalyticCode3(String analyticCode3) {
         this.analyticCode3 = analyticCode3;
     }
+
+	public Long getOperationNumber() {
+		return operationNumber;
+	}
+
+	public void setOperationNumber(Long operationNumber) {
+		this.operationNumber = operationNumber;
+	}
+
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
+
+	public String getClientUniqueId() {
+		return clientUniqueId;
+	}
+
+	public void setClientUniqueId(String clientUniqueId) {
+		this.clientUniqueId = clientUniqueId;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public Invoice getSupportingDocumentRef() {
+		return supportingDocumentRef;
+	}
+
+	public void setSupportingDocumentRef(Invoice supportingDocumentRef) {
+		this.supportingDocumentRef = supportingDocumentRef;
+	}
+
+	public InvoiceType getSupportingDocumentType() {
+		return supportingDocumentType;
+	}
+
+	public void setSupportingDocumentType(InvoiceType supportingDocumentType) {
+		this.supportingDocumentType = supportingDocumentType;
+	}
 }

@@ -143,8 +143,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }    
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
-    		OperationCategoryEnum categoryEnum, BigDecimal amount, 
-    		Tax tax) {        JournalEntry firstEntry = new JournalEntry();
+            OperationCategoryEnum categoryEnum, BigDecimal amount,
+            Tax tax) {
+        JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
         firstEntry.setAmount(amount);
@@ -152,10 +153,21 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
         firstEntry.setSeller(getSeller(ao));
         firstEntry.setTax(tax);
-
+        
+        //firstEntry.setOperationNumber(null);
+        firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode():"");
+        firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo():"");
+        
+        Provider provider = providerService.getProvider();
+        firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode():"");
+        
+        firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
+        firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
+        ? ((RecordedInvoice) ao).getInvoice().getInvoiceType():null);
+        
         return firstEntry;
     }
-
+    
     private Seller getSeller(AccountOperation ao) {
         return ao.getSeller() != null ? ao.getSeller() :
                 ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
