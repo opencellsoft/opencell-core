@@ -16471,9 +16471,7 @@
             <column name="seller_code" type="varchar(255)">
 				<constraints nullable="false" />
             </column>
-            <column name="client_unique_id" type="varchar(100)">
-				<constraints nullable="false" />
-            </column>
+            <column name="client_unique_id" type="varchar(100)" />
             <column name="currency" type="varchar(3)">
 				<constraints nullable="false" />
             </column>
@@ -17609,6 +17607,7 @@
     <changeSet id="INTRD-6024-13052022" author="Abdelkader.Bouazza"/>
     <changeSet id="#INTRD-6779_2022_04_28" author="ZBariki" />
     <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
+    <changeSet id="#INTRD-6632_20220419-See_Comment_In_The_Ticket" author="TarikRabeh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

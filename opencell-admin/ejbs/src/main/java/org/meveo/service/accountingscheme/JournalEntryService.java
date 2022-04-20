@@ -24,14 +24,17 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -43,9 +46,8 @@ import java.util.Map;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
-	
-	private static final String PARAM_ID_INV = "ID_INV";
 
+    private static final String PARAM_ID_INV = "ID_INV";
     private static final String REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related accounting articles have an accounting code or that the default revenue accounting code" +
             " is set in the account operation type (contra accounting code)";
@@ -53,27 +55,33 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     private static final String TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related taxes have an accounting code or that the default tax accounting code" +
             " is set in the account operation type (contra accounting code 2)";
-			
+
+    @Inject
+    private ProviderService providerService;
+
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
         // INTRD-4702
         // First JournalEntry
-    	JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
+        JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-    			null);
+                null);
+
         // Second JournalEntry
         JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+                null);
+
         create(firstEntry);
         create(secondEntry);
 
         return Arrays.asList(firstEntry, secondEntry);
 
     }
-    
+
     @Transactional
     public List<JournalEntry> createFromInvoice(RecordedInvoice recordedInvoice, OCCTemplate occT) {
         List<JournalEntry> saved = new ArrayList<>();
@@ -85,10 +93,11 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                         occT.getAccountingCode(),
                 occT.getOccCategory(),
                 recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                null);        
-        log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
+                null);
 
         saved.add(customerAccountEntry);
+
+        log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
 
         // 2- produce the revenue accounting entries
         buildRevenusJournalEntries(recordedInvoice, occT, saved);
@@ -98,7 +107,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // Persist all
         saved.forEach(this::create);
-        
+
         log.info("{} JournalEntries created for AO={}", saved.size(), recordedInvoice.getId());
 
         return saved;
@@ -140,11 +149,11 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
 
-    }    
+    }
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
-            OperationCategoryEnum categoryEnum, BigDecimal amount,
-            Tax tax) {
+                                           OperationCategoryEnum categoryEnum, BigDecimal amount,
+                                           Tax tax) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
@@ -153,27 +162,29 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
         firstEntry.setSeller(getSeller(ao));
         firstEntry.setTax(tax);
-        
+
         //firstEntry.setOperationNumber(null);
         firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode():"");
         firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo():"");
-        
+
         Provider provider = providerService.getProvider();
         firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode():"");
         
-        firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
-        firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
-        ? ((RecordedInvoice) ao).getInvoice().getInvoiceType():null);
+        if(ao instanceof RecordedInvoice) {
+            firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
+            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
+                    ? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode():null);
+        }
         
         return firstEntry;
     }
-    
+
     private Seller getSeller(AccountOperation ao) {
         return ao.getSeller() != null ? ao.getSeller() :
                 ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
                         ao.getCustomerAccount().getCustomer().getSeller() : null;
     }
-    
+
     private void buildTaxesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
         Query queryTax = getEntityManager().createQuery(
                         "SELECT taxAg" + // amountTax
@@ -279,5 +290,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
         return revenuEntry;
-    }    
+    }
+
 }
