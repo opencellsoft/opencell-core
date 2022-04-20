@@ -9828,4 +9828,18 @@ public class OrderAdvancement extends ModuleScript {
             select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
         </createView>
     </changeSet>
+    
+    <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim">
+    	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_wallet_operation"/>
+    	<addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="varchar(4000)"/>
+        </addColumn>
+         <sql>
+            update billing_wallet_operation
+            set parameter_extra = parameter_extra_old
+            where parameter_extra_old is not null;
+        </sql>
+        <dropColumn columnName="parameter_extra_old" tableName="billing_wallet_operation" />
+    </changeSet>
+    
 </databaseChangeLog>
