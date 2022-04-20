@@ -23,7 +23,7 @@ import java.util.List;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 
 public interface IBillableEntity extends IEntity {
 

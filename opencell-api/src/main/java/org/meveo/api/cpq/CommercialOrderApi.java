@@ -1189,6 +1189,7 @@ public class CommercialOrderApi extends BaseApi {
         orderAttribute.setStringValue(orderAttributeDTO.getStringValue());
         orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
         orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
+		orderAttributeDTO.setAttributeType(attribute.getAttributeType());
         orderAttribute.updateAudit(currentUser);
         if(orderProduct != null) {
             orderProduct.getOrderAttributes().add(orderAttribute);
