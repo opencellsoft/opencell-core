@@ -3156,7 +3156,7 @@
             <column name="adjusted_rated_tx" type="bigint" />
             <column name="order_number" type="varchar(100)" />
             <column name="rating_unit_description" type="varchar(20)" />
-            <column name="parameter_extra" type="${type.text}" />
+            <column name="parameter_extra" type="varchar(4000)" />
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
             <column name="subscription_id" type="bigint" />
@@ -3729,7 +3729,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="order_number" type="varchar(100)" />
-            <column name="parameter_extra" type="${type.text}" />
+            <column name="parameter_extra" type="varchar(4000)" />
             <column name="raw_amount_without_tax" type="numeric(23, 12)" />
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
             <column name="invoice_sub_category_id" type="bigint" />
@@ -17449,6 +17449,7 @@
 	<changeSet id="#INTRD-5636-20220318" author="hhanine" />
 	<changeSet id="#INTRD-5310-20220310" author="HichamELHALOUI"/>
     <changeSet id="#INTRD-4675_20220419" author="ZBariki" />
+    <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

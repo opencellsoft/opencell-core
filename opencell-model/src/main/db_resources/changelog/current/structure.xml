@@ -12395,5 +12395,34 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
 
     </changeSet>
+    
+     <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim">
+    	<dropView viewName="billing_wallet_operation_period"/>
+    	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_wallet_operation"/>
+    	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_rated_transaction"/>
+    	<addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="varchar(4000)"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="varchar(4000)"/>
+        </addColumn>
+        <sql>
+            update billing_wallet_operation
+            set parameter_extra = parameter_extra_old
+            where parameter_extra_old is not null;
+        </sql>
+        <sql>
+            update billing_rated_transaction
+            set parameter_extra = parameter_extra_old
+            where parameter_extra_old is not null;
+        </sql>
+        <dropColumn columnName="parameter_extra_old" tableName="billing_wallet_operation" />
+        <dropColumn columnName="parameter_extra_old" tableName="billing_rated_transaction" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
 
 </databaseChangeLog>
