@@ -12654,7 +12654,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="accountingcode_el" type="varchar(500)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6631_20220419" author="TarikRabeh">
         <addColumn tableName="accounting_journal_entry">
             <column name="operation_number" type="bigint" />
@@ -12681,5 +12681,12 @@ order by date_trunc('month', i.invoice_date) DESC
 		</sql>
     </changeSet>
 
+
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA">
+    	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
+        <addColumn tableName="ar_account_operation">
+            <column name="operation_number" type="bigint" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
