@@ -5,6 +5,7 @@ import static java.lang.Enum.valueOf;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.BusinessEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,15 @@ public class FilterConverter {
             if(fieldName.equalsIgnoreCase("id")) {
                 return Long.valueOf(filterEntry.getValue());
             }
+            final int index = fieldName.indexOf(".");
+			if(index>0) {
+            	final Field field = from(fieldName.substring(0, index), entity);
+				if(field!=null && BusinessEntity.class.isAssignableFrom(field.getType())) {
+        			return convert(field.getType(), filterEntry, fieldName.substring(index+1));
+        		}
+            }
             Field field = ofNullable(from(fieldName, entity))
-                    .orElseThrow(() -> new BusinessException("No such field " + fieldName));
+                    .orElseThrow(() -> new BusinessException("No such field " + fieldName+" on entity "+entity));
             if (Number.class.isAssignableFrom(field.getType())) {
                 return toNumber(entity, fieldName, filterEntry.getValue());
             }
