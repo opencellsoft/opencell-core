@@ -324,8 +324,8 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new NotFoundException("Seller with code " + resource.getSellerCode() + " does not exits");
             }
         }
-        entity.setCriteriaEl(resource.getCriteriaElValue());
-        entity.setAccountingCode(resource.getAccountingCode());
+        entity.setCriteriaElValue(resource.getCriteriaElValue());
+        //entity.setAccountingCode(resource.getAccountingCode()); TODO change to AccountingCode
         try {
             accountingCodeMappingService.create(entity);
         } catch (Exception exception) {

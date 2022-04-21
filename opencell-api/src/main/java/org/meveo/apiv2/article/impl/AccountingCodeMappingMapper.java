@@ -11,7 +11,7 @@ public class AccountingCodeMappingMapper
         return ImmutableAccountingCodeMapping
                         .builder()
                         .id(entity.getId())
-                        .accountingCode(entity.getAccountingCode())
+                        // .accountingCode(entity.getAccountingCode()) TODO change to AccountingCode
                         .build();
     }
 
