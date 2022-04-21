@@ -6,12 +6,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CUST;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SE;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SU;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
@@ -86,7 +80,6 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -141,9 +134,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
-    @Inject
-    private DiscountPlanService discountPlanService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -186,15 +176,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 //    	if(entity.getDiscountPlan() != null) {
 //         	addDiscountPlanInvoice( entity.getDiscountPlan(), entity, billingAccount, invoice, accountingArticle, seller);
 //         }
-    }
-    
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice.getInvoiceDate() );
-    	if(isDiscountApplicable) {
-    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, null, invoice.getInvoiceDate());
-            BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
-            entity.setDiscountAmount(invoiceLineDiscountAmount);
-    	}
     }
     
     public BigDecimal addDiscountPlanInvoiceLine(List<DiscountPlanItem> discountItems,InvoiceLine invoiceLine, Invoice invoice, BillingAccount billingAccount, Seller seller) {
@@ -471,31 +452,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (accountingArticle == null)
             throw new EntityDoesNotExistsException(AccountingArticle.class, INVOICE_MINIMUM_COMPLEMENT_CODE);
         return accountingArticle;
-    }
-
-    private String getMinAmountInvoiceLineCode(BusinessEntity entity, Class accountClass) {
-        StringBuilder prefix = new StringBuilder("");
-        if (accountClass.equals(ServiceInstance.class)) {
-            prefix.append(IL_MIN_AMOUNT_SE.getCode());
-        }
-        if (accountClass.equals(Subscription.class)) {
-            prefix.append(IL_MIN_AMOUNT_SU.getCode());
-        }
-        if (accountClass.equals(UserAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_UA.getCode());
-        }
-        if (accountClass.equals(BillingAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_BA.getCode());
-        }
-        if (accountClass.equals(CustomerAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_CA.getCode());
-        }
-        if (accountClass.equals(Customer.class)) {
-            prefix.append(IL_MIN_AMOUNT_CUST.getCode());
-        }
-        return prefix.append("_")
-                .append(entity.getCode())
-                .toString();
     }
 
     private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
@@ -882,5 +838,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .collect(toSet());
             remove(ids);
         }
+    }
+	
+	public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
+                .setParameter("invoice", invoice)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
     }
 }
