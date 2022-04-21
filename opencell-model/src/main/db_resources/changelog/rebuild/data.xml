@@ -440,6 +440,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.004" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="EUR" />
+            <column name="symbol" value="€" />
             <column name="description_en" value="Euro" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -792,6 +793,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
+            <column name="symbol" value="$US"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -9923,6 +9925,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
+	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
