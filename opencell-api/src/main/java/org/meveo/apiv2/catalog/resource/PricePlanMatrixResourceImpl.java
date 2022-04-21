@@ -68,11 +68,11 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
         String filePath = pricePlanMatrixVersionService.export(ids, FormatEnum.CSV);
         if(StringUtils.isBlank(filePath)) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\": there was a problem during export operation}}")
+                    .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\": \"there was a problem during export operation\"}}")
                     .build();
         }
         return Response.ok()
-                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":" + filePath + "}}")
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
                 .build();
     }
 

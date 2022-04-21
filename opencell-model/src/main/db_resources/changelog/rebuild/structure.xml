@@ -17636,6 +17636,8 @@
     <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
     <changeSet id="#INTRD-6632_20220419-See_Comment_In_The_Ticket" author="TarikRabeh" />
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6664_20220420" author="aelmalki" />
+    <changeSet id="#INTRD-6633_20220420" author="TarikRabeh" />
     <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki" />
     <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki" />
 
