@@ -49,7 +49,7 @@ public class PriceDTO extends BaseEntityDto {
 	@XmlAttribute
 	private PriceTypeEnum priceType;
 
-    private BigDecimal amountWithtax;
+    private BigDecimal amountWithTax;
     
     private BigDecimal unitPriceWithoutTax;
 
@@ -88,7 +88,7 @@ public class PriceDTO extends BaseEntityDto {
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
 	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
-	    amountWithtax=quotePrice.getAmountWithTax();
+		amountWithTax=quotePrice.getAmountWithTax();
 		amountWithoutTax=quotePrice.getAmountWithoutTax();
 		amountWithoutTaxWithoutDiscount=quotePrice.getAmountWithoutTaxWithoutDiscount();
 		
@@ -124,12 +124,8 @@ public class PriceDTO extends BaseEntityDto {
 	public void setPriceType(PriceTypeEnum priceType) {
 		this.priceType = priceType;
 	}
-	public BigDecimal getAmountWithtax() {
-		return amountWithtax;
-	}
-	public void setAmountWithtax(BigDecimal amountWithtax) {
-		this.amountWithtax = amountWithtax;
-	}
+	public BigDecimal getAmountWithTax() { return amountWithTax; }
+	public void setAmountWithTax(BigDecimal amountWithTax) { this.amountWithTax = amountWithTax; }
 	public BigDecimal getAmountWithoutTax() {
 		return amountWithoutTax;
 	}
