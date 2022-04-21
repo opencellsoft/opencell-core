@@ -12665,6 +12665,22 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="supporting_document_type" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-6633_20220420" author="TarikRabeh">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        seller_code = (select code from crm_seller cs where cs.id = seller_id),
+		        client_unique_id = (select acc.registration_no from ar_customer_account acc where acc.id = customer_account_id),
+		        currency = (select ac.currency_code from adm_currency ac, crm_provider pr where ac.id = pr.currency_id),
+		        supporting_document_ref = (select aco.invoice_id from ar_account_operation aco where aco.id = accounting_operation_id),
+		        supporting_document_type = (select bt.code from billing_invoice_type bt, billing_invoice inv,ar_account_operation aco where bt.id = inv.invoice_type_id and inv.id = aco.invoice_id and aco.id = accounting_operation_id)        
+        </sql>
+        <sql>
+			ALTER TABLE public.accounting_journal_entry ALTER COLUMN seller_code SET NOT NULL;
+			ALTER TABLE public.accounting_journal_entry ALTER COLUMN currency SET NOT NULL;
+		</sql>
+    </changeSet>
+
 
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA">
     	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
@@ -12675,6 +12691,12 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="#INTRD-6664_20220420" author="aelmalki">
         <dropNotNullConstraint tableName="accounting_journal_entry" columnName="seller_id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-6564_20222004" author="ZBariki">
+        <addColumn tableName="accounting_accountingcode_mapping">
+            <column name="accounting_code" type="varchar(100)" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#INTRD-6668_20220421" author="TarikRabeh">
