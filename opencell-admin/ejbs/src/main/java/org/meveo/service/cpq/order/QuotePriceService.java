@@ -57,6 +57,14 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 	}
 
 	
+	public List<QuotePrice> loadByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel){
+		return getEntityManager().createNamedQuery("QuotePrice.loadByQuoteVersionAndPriceLevel", QuotePrice.class)
+				.setParameter("quoteVersion", quoteVersion)
+				.setParameter("priceLevelEnum", priceLevel)
+				.getResultList();
+	}
+	
+	
 	public QuotePrice findByUuid(String uuid) {
 		if(uuid == null) return null;
 		try {

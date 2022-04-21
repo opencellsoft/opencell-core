@@ -2140,7 +2140,9 @@ public class CpqQuoteApi extends BaseApi {
     	}
     
 	private List<TaxPricesDto> calculateTotalsPerQuote(QuoteVersion quoteVersion) {
-		List<QuotePrice> quotePrices = quoteVersion.getQuotePrices();
+		log.debug("calculateTotalsPerQuote1 quotePrices size={}",quoteVersion.getQuotePrices().size());
+		List<QuotePrice> quotePrices =quotePriceService.loadByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
+		log.debug("calculateTotalsPerQuote quotePrices size={}",quotePrices.size());
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
 				.filter(price -> PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()))
@@ -2150,7 +2152,7 @@ public class CpqQuoteApi extends BaseApi {
 		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
 			
 			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
-
+			log.debug("calculateTotalsPerQuote taxRate={}, quotePricesPerTax size={}",taxRate,quotePricesPerTax.size());
 			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
 					.map(price -> new PriceDTO(price))
 					.collect(Collectors.toList());
