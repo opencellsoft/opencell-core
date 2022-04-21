@@ -25,7 +25,7 @@ public class InvoiceAccountingSchemeScript extends Script {
 
         RecordedInvoice recordedInvoice = (RecordedInvoice) ao;
 
-        log.info("Process RecordedInvoice {}", recordedInvoice);
+        log.info("Process RecordedInvoice {}", recordedInvoice.getId());
 
         OCCTemplate occT = occTemplateService.findByCode(recordedInvoice.getCode());
         journalEntryService.validateOccTForAccountingScheme(recordedInvoice, occT, false);

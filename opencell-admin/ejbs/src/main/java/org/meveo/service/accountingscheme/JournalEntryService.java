@@ -113,6 +113,45 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         return saved;
     }
 
+    @Transactional
+    public List<JournalEntry> createFromPayment(AccountOperation ao, OCCTemplate occT) {
+        // INTRD-5613
+        List<JournalEntry> saved = new ArrayList<>();
+
+        boolean isOrphan = false; // TODO to add
+
+
+        // 1- produce a first accounting entry
+        JournalEntry firstAccountingEntry = buildJournalEntry(ao,
+                isOrphan && ao.getCustomerAccount() != null ? occT.getContraAccountingCode2() : occT.getContraAccountingCode(),
+                occT.getOccCategory(),
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+                null);
+
+        saved.add(firstAccountingEntry);
+
+        log.info("First accounting entry successfully created for AO={} [{}]", ao.getId(), firstAccountingEntry);
+
+        // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
+        JournalEntry secondAccountingEntry = buildJournalEntry(ao,
+                ao.getCustomerAccount() != null ? occT.getContraAccountingCode() : occT.getContraAccountingCode2(),
+                // The opposite of Occtemplate.occCategory { DEBIT, CREDIT } : if occCategory == DEBIT then direction= CREDIT and vice versa
+                occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+                null);
+
+        saved.add(secondAccountingEntry);
+
+        log.info("Second accounting entry successfully created for AO={} [{}]", ao.getId(), secondAccountingEntry);
+
+        // Persist all
+        saved.forEach(this::create);
+
+        log.info("{} Payments JournalEntries created for AO={}", saved.size(), ao.getId());
+
+        return saved;
+    }
+
     public void validateAOForInvoiceScheme(AccountOperation ao) {
         if (ao == null) {
             log.warn("No AccountOperation passed as CONTEXT_ENTITY");
@@ -164,18 +203,18 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setTax(tax);
 
         //firstEntry.setOperationNumber(null);
-        firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode():"");
-        firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo():"");
+        firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode() : "");
+        firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
 
         Provider provider = providerService.getProvider();
-        firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode():"");
-        
-        if(ao instanceof RecordedInvoice) {
+        firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode() : "");
+
+        if (ao instanceof RecordedInvoice) {
             firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
-            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
-            		? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode():null);
+            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType() != null
+                    ? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode() : null);
         }
-        
+
         return firstEntry;
     }
 
