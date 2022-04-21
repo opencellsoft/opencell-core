@@ -237,7 +237,6 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     /**
      * Additional rating parameter
      */
-    @Type(type = "longText")
     @Column(name = "parameter_extra")
     private String parameterExtra;
 
