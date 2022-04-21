@@ -452,7 +452,10 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
-		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+		if(applicableOnOverriddenPrice!=null) {
+			this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+		}
+		
 	}
 
 	/**
