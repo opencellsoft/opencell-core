@@ -2145,7 +2145,6 @@ public class CpqQuoteApi extends BaseApi {
 		log.debug("calculateTotalsPerQuote quotePrices size={}",quotePrices.size());
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
-				.filter(price -> PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()))
 				.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 
 
