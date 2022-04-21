@@ -419,7 +419,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                 // Handle a case of infinite loop when chargeToDate is null (regular charging), but period was shortened (e.g. rating up to the termination/end aggreement date only
                 // for terminated charges)
-                if (effectiveChargeToDate.compareTo(currentPeriodToDate) != 0) {
+                if (effectiveChargeToDate.compareTo(currentPeriodToDate) != 0 || currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
                     break;
                 }
             }
