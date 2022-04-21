@@ -1225,7 +1225,8 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(updatedQuoteVersion, true, true, true,true);
         response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(updatedQuoteVersion));
-        response.setPrices(pricesPerTaxDTO);
+        response.setPrices(calculateTotalsPerQuote(updatedQuoteVersion));
+        
         return response;
     }
     private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType,
@@ -1475,7 +1476,8 @@ public class CpqQuoteApi extends BaseApi {
     public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, Set<DiscountPlanItem> quoteEligibleFixedDiscountItems,List<QuotePrice> offerQuotePrices,boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
-        Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
+        Set<DiscountPlanItem> productEligibleFixedDiscountItems =null;
+        Set<DiscountPlanItem> offerEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
         BillingAccount billingAccount = null;
         AccountingArticle usageArticle =null;
 
@@ -1491,6 +1493,9 @@ public class CpqQuoteApi extends BaseApi {
             // Add Service charges
             Double edrQuantity = 0d;
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+            	
+            	productEligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
+            	
             	Set<AttributeValue> attributeValues = serviceInstance.getAttributeInstances()
                         .stream()
                         .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance,serviceInstance, subscription))
@@ -1522,7 +1527,7 @@ public class CpqQuoteApi extends BaseApi {
                         if (ratingResult != null) {
                             walletOperations.addAll(ratingResult.getWalletOperations());
                             walletOperations.add(ratingResult.getWalletOperation());
-                            eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
+                            productEligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
                         }
 
 
@@ -1551,7 +1556,6 @@ public class CpqQuoteApi extends BaseApi {
                                     .applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
                             if (ratingResult != null && !ratingResult.getWalletOperations().isEmpty()) {
                                 walletOperations.addAll(ratingResult.getWalletOperations());
-                                eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
                             }
 
                     } catch (RatingException e) {
@@ -1608,9 +1612,11 @@ public class CpqQuoteApi extends BaseApi {
 				
 				
 				
-
-                walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
+				//applicable only for oneshot other	
+                walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(productEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null,
 						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), serviceInstance, subscription, serviceInstance.getCode(), false, null, null, DiscountPlanTypeEnum.PRODUCT));
+            
+                offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
             }
             
 
@@ -1663,7 +1669,7 @@ public class CpqQuoteApi extends BaseApi {
 			}
 
 
-            var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
+            var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(offerEligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null,
             		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), true, null, null, DiscountPlanTypeEnum.OFFER);
             offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
 
@@ -1672,7 +1678,7 @@ public class CpqQuoteApi extends BaseApi {
         		  .sorted(Comparator.comparing(WalletOperation::getUnitAmountWithoutTax).reversed())
         		  .collect(Collectors.toList());
         
-        quoteEligibleFixedDiscountItems.addAll(eligibleFixedDiscountItems);
+        quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
         return sortedWalletOperations;
     }
     
@@ -2132,4 +2138,25 @@ public class CpqQuoteApi extends BaseApi {
 
 
     	}
+    
+	private List<TaxPricesDto> calculateTotalsPerQuote(QuoteVersion quoteVersion) {
+		List<QuotePrice> quotePrices = quoteVersion.getQuotePrices();
+		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
+		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
+				.filter(price -> PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum()))
+				.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
+
+
+		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
+			
+			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
+
+			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
+					.map(price -> new PriceDTO(price))
+					.collect(Collectors.toList());
+
+			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));
+		}
+		return taxPricesDtos;
+	}
 }
