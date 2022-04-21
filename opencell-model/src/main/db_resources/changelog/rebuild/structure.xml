@@ -16437,9 +16437,7 @@
             <column name="accounting_code_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="seller_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="seller_id" type="bigint" />
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -16513,6 +16511,7 @@
 
             <!-- Simple fields -->
             <column name="criteria_el" type="varchar(500)"/>
+            <column name="accounting_code" type="varchar(100)"/>
         </createTable>
     </changeSet>
 
@@ -17630,7 +17629,9 @@
     <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
     <changeSet id="#INTRD-6632_20220419-See_Comment_In_The_Ticket" author="TarikRabeh" />
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6664_20220420" author="aelmalki" />
     <changeSet id="#INTRD-6633_20220420" author="TarikRabeh" />
+    <changeSet id="#INTRD-6564_20222004" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -60,6 +60,9 @@ public class AccountingCodeMapping extends AuditableEntity {
     @Column(name = "criteria_el", length = 500)
     private String criteriaEl;
 
+    @Column(name = "accounting_code")
+    private String accountingCode;
+
     public AccountingArticle getAccountingArticle() {
         return accountingArticle;
     }
@@ -106,5 +109,13 @@ public class AccountingCodeMapping extends AuditableEntity {
 
     public void setCriteriaEl(String criteriaEl) {
         this.criteriaEl = criteriaEl;
+    }
+
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
     }
 }
