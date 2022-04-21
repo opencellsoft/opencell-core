@@ -768,4 +768,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         return (List<AccountOperation>) query.getResultList();
 
     }
+
+    public void resetOperationNumberSequence() {
+        getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
+    }
 }

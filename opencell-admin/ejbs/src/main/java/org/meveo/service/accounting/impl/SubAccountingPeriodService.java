@@ -24,6 +24,7 @@ import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 
 @Stateless
 public class SubAccountingPeriodService extends PersistenceService<SubAccountingPeriod> {
@@ -32,6 +33,9 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	
 	@Inject
 	private AuditLogService auditLogService;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
 
     public SubAccountingPeriod findByAccountingPeriod(AccountingPeriod accountingPeriod, Date accountingDate) {
         TypedQuery<SubAccountingPeriod> query = getEntityManager()
@@ -167,6 +171,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.CLOSED.toString())) {
 			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.CLOSED);
 			subAccountingPeriod.setRegularUsersClosedDate(new Date());
+			
+			List<Long> ids = new ArrayList<>();
+			ids.add(subAccountingPeriod.getId());
+			resetSequenceIfIsTheLastPeriode(subAccountingPeriod.getAccountingPeriod(), ids);
 		}
 	}
 	
@@ -256,5 +264,20 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
         .createNamedQuery("SubAccountingPeriod.closeSubAccountingPeriods")
         .setParameter("ids", ids)
         .executeUpdate();
+    }
+
+    public void resetSequenceIfIsTheLastPeriode(AccountingPeriod accountingPeriod, List<Long> ids) {
+        boolean  isTheLastPeriodToClose = isTheLastPeriodToClose(accountingPeriod, ids);
+        if (isTheLastPeriodToClose) {
+            accountOperationService.resetOperationNumberSequence();
+        }
+    }
+
+    public boolean isTheLastPeriodToClose(AccountingPeriod accountingPeriod, List<Long> ids) {
+        return getEntityManager()
+                .createNamedQuery("SubAccountingPeriod.isTheLastPeriodToClose", Long.class)
+                .setParameter("accountingPeriod", accountingPeriod)
+                .setParameter("ids", ids)
+                .getSingleResult() == 0;
     }
 }
