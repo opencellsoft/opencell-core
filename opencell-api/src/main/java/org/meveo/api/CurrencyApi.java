@@ -297,6 +297,8 @@ public class CurrencyApi extends BaseApi {
         
         ExchangeRate exchangeRate = exchangeRateService.createCurrentRateWithPostData(postData, tradingCurrency);
 
+        auditLogCreateExchangeRate(exchangeRate);
+
         return exchangeRate.getId();
     }
 
@@ -393,6 +395,18 @@ public class CurrencyApi extends BaseApi {
         if (ratesAreChanged || datesAreChanged) {            
             auditLogService.trackOperation("UPDATE", new Date(), exchangeRate, "API", parameters.toString());
         }
+    }
+
+    private void auditLogCreateExchangeRate(ExchangeRate exchangeRate) {
+
+        String message = new StringBuilder("User ")
+                .append(auditLogService.getActor())
+                .append(" has created the Exchange rate for ")
+                .append(exchangeRate.getTradingCurrency().getCurrencyCode())
+                .append(" with rate  ")
+                .append(exchangeRate.getExchangeRate()).toString();
+            auditLogService.trackOperation("CREATE", new Date(), exchangeRate, "API", message);
+
     }
     
     public void removeExchangeRateById(Long id) {
