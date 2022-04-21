@@ -68,7 +68,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
@@ -550,6 +550,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}else {
 			invoiceLine.setFunctionalUnitPrice(invoiceLine.getUnitPrice().multiply(currentRate));
 		}
+
+		if(resource.getUnitPrice() != null) {
+		    invoiceLine.setUnitPrice(resource.getUnitPrice());
+        }
 		
 		if(invoiceLine.getUnitPrice() == null) {
 			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());

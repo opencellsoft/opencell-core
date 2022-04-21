@@ -29,6 +29,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
+import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.base.PersistenceService;
@@ -36,46 +37,44 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
-    @SuppressWarnings("unchecked")
-    public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller,PaymentOrRefundEnum paymentOrRefundEnum) {
-        List<DDRequestLotOp> ddrequestOps = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller, PaymentOrRefundEnum paymentOrRefundEnum, DDRequestOpEnum ddRequestOpEnum) {
+		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
+		if (ddRequestOpEnum == null) {
+			ddRequestOpEnum = DDRequestOpEnum.CREATE;
+		}
+		StringBuilder selectQuery = new StringBuilder("from ").append(DDRequestLotOp.class.getSimpleName())
+				.append(" as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and ")
+				.append(" p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN ").append(seller == null ? "" : " and  p.seller =:sellerIN")
+				.append(" and  p.ddrequestOp =:ddrequestOpIN");
+		try {
+			Query query = getEntityManager().createQuery(selectQuery.toString()).setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder)
+					.setParameter("paymentOrRefundEnumIN", paymentOrRefundEnum).setParameter("ddrequestOpIN", ddRequestOpEnum);
+			if (seller != null) {
+				query = query.setParameter("sellerIN", seller);
+			}
+			ddrequestOps = (List<DDRequestLotOp>) query.getResultList();
+		} catch (Exception e) {
+			log.error("failed to get DDRequestOps", e);
+		}
+		return ddrequestOps;
+	}
 
-        StringBuilder selectQuery = new StringBuilder("from ")
-                .append(DDRequestLotOp.class.getSimpleName())
-                .append(" as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and ")
-                .append("p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN ")
-                .append(seller == null ? "" : " and  p.seller =:sellerIN");
-        try {
-            Query query = getEntityManager()
-                .createQuery(selectQuery.toString())
-                .setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder)
-                .setParameter("paymentOrRefundEnumIN", paymentOrRefundEnum);
-            if (seller != null) {
-                query = query.setParameter("sellerIN", seller);
-            }
+	@SuppressWarnings("unchecked")
+	public List<DDRequestLotOp> findByDateStatus(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
+		QueryBuilder query = new QueryBuilder(DDRequestLotOp.class, "o");
 
-            ddrequestOps = (List<DDRequestLotOp>) query.getResultList();
-        } catch (Exception e) {
-            log.error("failed to get DDRequestOps", e);
-        }
-        return ddrequestOps;
-    }
+		if (!StringUtils.isBlank(status)) {
+			query.addCriterionEnum("o.status", status);
+		}
+		if (!StringUtils.isBlank(fromDueDate)) {
+			query.addCriterionDateRangeFromTruncatedToDay("o.fromDueDate", fromDueDate);
+		}
+		if (!StringUtils.isBlank(toDueDate)) {
+			query.addCriterionDateRangeToTruncatedToDay("o.toDueDate", toDueDate, false, false);
+		}
 
-    @SuppressWarnings("unchecked")
-    public List<DDRequestLotOp> findByDateStatus(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
-        QueryBuilder query = new QueryBuilder(DDRequestLotOp.class, "o");
-
-        if (!StringUtils.isBlank(status)) {
-            query.addCriterionEnum("o.status", status);
-        }
-        if (!StringUtils.isBlank(fromDueDate)) {
-            query.addCriterionDateRangeFromTruncatedToDay("o.fromDueDate", fromDueDate);
-        }
-        if (!StringUtils.isBlank(toDueDate)) {
-            query.addCriterionDateRangeToTruncatedToDay("o.toDueDate", toDueDate, false, false);
-        }
-
-        return query.getQuery(getEntityManager()).getResultList();
-    }
+		return query.getQuery(getEntityManager()).getResultList();
+	}
 
 }

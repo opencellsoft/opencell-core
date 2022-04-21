@@ -1,7 +1,6 @@
 package org.meveo.model.billing;
 
 import org.meveo.model.admin.Seller;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.payments.PaymentMethod;
 
 import java.io.Serializable;

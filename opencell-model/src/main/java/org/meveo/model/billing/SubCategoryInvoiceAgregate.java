@@ -45,7 +45,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 
 /**
  * The Class SubCategoryInvoiceAgregate.

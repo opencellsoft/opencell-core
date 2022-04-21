@@ -81,7 +81,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -174,7 +173,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
@@ -2569,12 +2568,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
        
        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
            nullifyInvoiceXMLFileNames(br);
-           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
+           nullifyBillingRunXMLExecutionResultIds(br);
        }
 
        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
            nullifyInvoicePDFFileNames(br);
-           nullifyBillingRunXMLAndPDFExecutionResultIds(br);
+           nullifyBillingRunPDFExecutionResultIds(br);
        }
    }
 
@@ -2597,12 +2596,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
    }
 
    /**
-    * Nullify BR XML and PDF execution result Ids.
+    * Nullify BR XML execution result Id.
     *
     * @param billingRun the billing run
     */
-   public void nullifyBillingRunXMLAndPDFExecutionResultIds(BillingRun billingRun) {
-       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLAndPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   public void nullifyBillingRunXMLExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+   /**
+    * Nullify BR PDF execution result Id.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyBillingRunPDFExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
    }
    
 
