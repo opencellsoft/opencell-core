@@ -5929,6 +5929,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
+            toUpdate.getLinkedInvoices().clear();
             for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
