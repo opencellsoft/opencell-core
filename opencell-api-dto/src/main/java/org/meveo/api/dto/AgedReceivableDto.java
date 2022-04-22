@@ -29,6 +29,8 @@ public class AgedReceivableDto extends BaseEntity {
 	private List<BigDecimal> taxAmountByPeriod;
 	private List<BigDecimal> totalAmountByPeriod;
 	private String funcCurrency;
+	private Long invoiceId;
+	private String invoiceNumber;
 
 	public AgedReceivableDto() {
 		super();
@@ -164,5 +166,21 @@ public class AgedReceivableDto extends BaseEntity {
 
 	public void setFuncCurrency(String funcCurrency) {
 		this.funcCurrency = funcCurrency;
+	}
+
+	public Long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
 	}
 }
