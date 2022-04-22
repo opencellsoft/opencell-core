@@ -233,10 +233,15 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			throw new EntityDoesNotExistsException("One or more AccountOperations passed for unmatching are not found");
 		}
 
-		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AOs of type SecurityDeposit
-		if (securityDepositTransactionService.checkExistanceByAoIds(aoIds)) {
-			throw new BusinessApiException("UnMatching action is failed : Can not unMatch AOs of type SecurityDeposit");
-		}
+		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AO used by the SecurityDeposit
+		// Unitary check
+		aoIds.forEach(id -> {
+			List<String> securityDepositCodes = securityDepositTransactionService.getSecurityDepositCodesByAoIds(id);
+			if (securityDepositCodes != null && !securityDepositCodes.isEmpty()) {
+				throw new BusinessApiException("Unmatching action is failed : Cannot unmatch AO used by the SecurityDeposit codes: "
+						+ new HashSet<>(securityDepositCodes));
+			}
+		});
 
 		List<UnMatchingOperationRequestDto> toUnmatch = new ArrayList<>(aos.size());
 

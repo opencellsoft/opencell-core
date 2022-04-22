@@ -13,8 +13,8 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class SecurityDepositTransactionService extends BusinessService<SecurityDepositTransaction> {
 
-    private static final String NAMEDQUERY_COUNT_EXISTENCE_BY_AO_IDS = "SecurityDepositTransaction.countExistenceByAoIds";
-    private static final String PARAM_AO_IDS = "aoIds";
+    private static final String NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID = "SecurityDepositTransaction.getSecurityDepositCodesByAoId";
+    private static final String PARAM_AO_ID = "aoId";
 
     /**
      * Gets the payment methods.
@@ -34,9 +34,9 @@ public class SecurityDepositTransactionService extends BusinessService<SecurityD
         }
     }
 
-    public boolean checkExistanceByAoIds(List<Long> aoIds) {
-        return (Long) this.getEntityManager().createNamedQuery(NAMEDQUERY_COUNT_EXISTENCE_BY_AO_IDS)
-                .setParameter(PARAM_AO_IDS, aoIds).getSingleResult() > 0;
+    public List<String> getSecurityDepositCodesByAoIds(Long aoId) {
+        return this.getEntityManager().createNamedQuery(NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID)
+                .setParameter(PARAM_AO_ID, aoId).getResultList();
     }
     
 }
