@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -42,7 +43,7 @@ public class RefundResourceImpl implements RefundResource{
         PayByCardDto payByCardDto = toPayByCardDto(cardRefund);
         try {
             refundApi.refundByCard(payByCardDto);
-            return Response.ok().build();
+            return Response.ok(new ActionStatus()).build();
         } catch (NoAllOperationUnmatchedException | UnbalanceAmountException e) {
             throw new ClientErrorException(e.getMessage(), Response.Status.PRECONDITION_FAILED);
         }
@@ -76,7 +77,7 @@ public class RefundResourceImpl implements RefundResource{
                         accountOperationService.update(accountOperation);
                     });
         }
-        return Response.ok().build();
+        return Response.ok(new ActionStatus()).build();
     }
 
 	private void validateIban(String iban) {
