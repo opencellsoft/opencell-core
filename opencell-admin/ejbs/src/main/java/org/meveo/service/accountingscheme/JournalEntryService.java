@@ -29,6 +29,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -55,6 +56,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     private static final String TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related taxes have an accounting code or that the default tax accounting code" +
             " is set in the account operation type (contra accounting code 2)";
+    public static final String NAMED_QUERY_JOURNAL_ENTRY_CHECK_EXISTENCE_WITH_ACCOUNTING_CODE = "JournalEntry.checkExistenceWithAccountingCode";
+    public static final String PARAM_ID_AO = "ID_AO";
+    public static final String PARAM_ID_ACCOUNTING_CODE = "ID_ACCOUNTING_CODE";
 
     @Inject
     private ProviderService providerService;
@@ -114,11 +118,14 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     @Transactional
-    public List<JournalEntry> createFromPayment(AccountOperation ao, OCCTemplate occT) {
+    public List<JournalEntry> createFromPayment(Payment ao, OCCTemplate occT) {
         // INTRD-5613
         List<JournalEntry> saved = new ArrayList<>();
 
-        boolean isOrphan = false; // TODO to add
+        boolean isOrphan = (Long) getEntityManager().createNamedQuery(NAMED_QUERY_JOURNAL_ENTRY_CHECK_EXISTENCE_WITH_ACCOUNTING_CODE)
+                .setParameter(PARAM_ID_AO, ao.getId())
+                .setParameter(PARAM_ID_ACCOUNTING_CODE, occT.getContraAccountingCode2().getId())
+                .getSingleResult() > 0;
 
 
         // 1- produce a first accounting entry
