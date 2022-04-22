@@ -322,6 +322,7 @@
         <createSequence sequenceName="accounting_journal_entry_seq" startValue="1"/>
         <createSequence sequenceName="accounting_accountingcode_mapping_seq" startValue="1"/>
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
+      	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
     </changeSet>
 
 
@@ -1477,6 +1478,7 @@
             <column name="currency_code" type="varchar(3)">
                 <constraints nullable="false" />
             </column>
+            <column name="symbol" type="varchar(255)" />
             <column name="description_en" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1995,6 +1997,7 @@
             <column name="payment_deferral_count" type="int4">
                 <constraints nullable="true"/>
             </column>
+            <column name="operation_number" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -9810,6 +9813,7 @@
             <column name="invoice_type_id" type="bigint" />
             <column name="description_i18n" type="${type.json}"></column>
             <column name="accountingcode_el" type="varchar(500)"/>
+            <column name="column_criteria_el" type="varchar(500)"/>
 
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
@@ -16435,9 +16439,7 @@
             <column name="accounting_code_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="seller_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="seller_id" type="bigint" />
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -16453,6 +16455,16 @@
             <column name="analytic_code_1" type="varchar(255)" />
             <column name="analytic_code_2" type="varchar(255)" />
             <column name="analytic_code_3" type="varchar(255)" />
+            <column name="operation_number" type="bigint" />
+            <column name="seller_code" type="varchar(255)">
+				<constraints nullable="false" />
+            </column>
+            <column name="client_unique_id" type="varchar(100)" />
+            <column name="currency" type="varchar(3)">
+				<constraints nullable="false" />
+            </column>
+            <column name="supporting_document_ref" type="bigint" />
+            <column name="supporting_document_type" type="varchar(255)" />
         </createTable>
     </changeSet>
 
@@ -16500,7 +16512,8 @@
             <column name="seller_id" type="bigint"/>
 
             <!-- Simple fields -->
-            <column name="criteria_el" type="varchar(500)"/>
+            <column name="criteria_el_value" type="varchar(500)"/>
+            <column name="accounting_code_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -16524,6 +16537,10 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accountingcode_mapping"
                                  constraintName="fk_accountingcode_mapping_seller" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17615,6 +17632,14 @@
     <changeSet id="INTRD-6474-13042022" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-6562_20220414" author="aelmalki" />
     <changeSet id="#INTRD-6562_20220414-new-field" author="aelmalki" />
+    <changeSet id="#INTRD-6631_20220419" author="TarikRabeh" />
+    <changeSet id="#INTRD-6632_20220419-See_Comment_In_The_Ticket" author="TarikRabeh" />
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6664_20220420" author="aelmalki" />
+    <changeSet id="#INTRD-6633_20220420" author="TarikRabeh" />
+    <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki" />
+    <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki" />
+    <changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

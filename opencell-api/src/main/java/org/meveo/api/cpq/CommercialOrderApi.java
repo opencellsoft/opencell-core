@@ -54,6 +54,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -788,8 +789,12 @@ public class CommercialOrderApi extends BaseApi {
         	if(subscription == null) {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
-        	if(orderOfferDto.getTerminationDate()!=null && orderOfferDto.getTerminationDate().before(subscription.getSubscriptionDate())) {
-        		throw new MeveoApiException("Termination date can not be before the subscription date");	
+        	Date terminationDateTime = DateUtils.setDateToEndOfDay(orderOfferDto.getTerminationDate());
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("The termination date must not be before the subscription date");	
+        	}
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.compareTo(new Date()) < 0) {
+        		throw new MeveoApiException("The termination date must not be in the past");	
         	}
         	orderOffer.setSubscription(subscription);
         	SubscriptionTerminationReason terminationReason = null;
@@ -1189,6 +1194,7 @@ public class CommercialOrderApi extends BaseApi {
         orderAttribute.setStringValue(orderAttributeDTO.getStringValue());
         orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
         orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
+		orderAttributeDTO.setAttributeType(attribute.getAttributeType());
         orderAttribute.updateAudit(currentUser);
         if(orderProduct != null) {
             orderProduct.getOrderAttributes().add(orderAttribute);

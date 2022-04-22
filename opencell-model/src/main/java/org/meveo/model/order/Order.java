@@ -67,7 +67,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;

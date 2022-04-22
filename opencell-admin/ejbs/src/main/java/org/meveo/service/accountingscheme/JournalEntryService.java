@@ -24,14 +24,18 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -52,6 +56,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     private static final String TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related taxes have an accounting code or that the default tax accounting code" +
             " is set in the account operation type (contra accounting code 2)";
+
+    @Inject
+    private ProviderService providerService;
+
+    @Inject
+    private AccountingArticleService accountingArticleService;
 
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
@@ -157,6 +167,19 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setSeller(getSeller(ao));
         firstEntry.setTax(tax);
 
+        //firstEntry.setOperationNumber(null);
+        firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode():"");
+        firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo():"");
+
+        Provider provider = providerService.getProvider();
+        firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode():"");
+        
+        if(ao instanceof RecordedInvoice) {
+            firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
+            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType()!= null 
+            		? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode():null);
+        }
+        
         return firstEntry;
     }
 
@@ -230,8 +253,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
-                AccountingCode revenuACC = invoiceLine.getAccountingArticle().getAccountingCode() != null ?
-                        invoiceLine.getAccountingArticle().getAccountingCode() : occT.getContraAccountingCode();
+                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
 
                 if (revenuACC == null) {
                     throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
