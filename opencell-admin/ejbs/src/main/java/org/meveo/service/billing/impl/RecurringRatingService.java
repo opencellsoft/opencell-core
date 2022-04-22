@@ -52,6 +52,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
@@ -324,6 +325,15 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 // Take care of the last charge period that termination date falls into
                 // Check if prorating is needed on last period (this really should happen in Apply end agreement mode)
                 Date currentPeriodToDate = getRecurringPeriodEndDate(chargeInstance, currentPeriodFromDate);
+                // Handle date not in banking calendar period to avoid infinite loop
+                Calendar cal = resolveRecurrenceCalendar(chargeInstance);
+                if (cal == null) {
+                    throw new IncorrectChargeTemplateException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
+                }
+                if(cal.getCalendarType() != null && cal.getCalendarType().equals("BANKING") && currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
+                	throw new IllegalStateException("The given date: " +currentPeriodFromDate +" is not in period [startDate,endDate] of banking Calendar: "+ cal.getCode());
+                }
+                
                 effectiveChargeToDate = currentPeriodToDate;
                 if (prorateLastPeriodToDate != null && currentPeriodToDate.after(prorateLastPeriodToDate)) {
                     effectiveChargeToDate = prorateLastPeriodToDate;
@@ -419,7 +429,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                 // Handle a case of infinite loop when chargeToDate is null (regular charging), but period was shortened (e.g. rating up to the termination/end aggreement date only
                 // for terminated charges)
-                if (effectiveChargeToDate.compareTo(currentPeriodToDate) != 0 || currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
+                if (effectiveChargeToDate.compareTo(currentPeriodToDate) != 0) {
                     break;
                 }
             }
