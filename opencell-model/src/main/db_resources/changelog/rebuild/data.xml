@@ -9924,8 +9924,36 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-6638_20220422" author="aelmalki">
+		<!-- Add Payment Script -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Payment Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SamplePaymentAccountingSchemeScript extends PaymentAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+
+		<!-- Add Scheme -->
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Payment entry scheme" />
+			<column name="description" value="Payment Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
+		</insert>
+	</changeSet>
+
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
+	<changeSet id="#INTRD-6638_20220422-LinkToOccT" author="aelmalki" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
