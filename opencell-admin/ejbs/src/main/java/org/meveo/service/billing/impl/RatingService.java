@@ -1460,6 +1460,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
     	if (walletOperation.getSubscription() != null) {
     		discountPlanInstances.addAll(walletOperation.getSubscription().getAllDiscountPlanInstances());
     	}
+    	if (walletOperation.getSubscription() != null) {
+    		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
+    	}
         if(discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
      	   for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
      		  ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), isVirtual));
