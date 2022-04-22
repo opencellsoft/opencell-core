@@ -2535,7 +2535,7 @@
 			<column name="accounting_code_id" valueNumeric="-20" />
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_WIRE" />
-			<column name="description" value="WIRETRANSFER" />
+			<column name="description" value="Payment - wiretransfer" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
@@ -2554,6 +2554,7 @@
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
     <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
+    <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
     
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
