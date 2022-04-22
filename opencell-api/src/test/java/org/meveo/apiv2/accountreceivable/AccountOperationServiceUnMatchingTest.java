@@ -120,7 +120,7 @@ public class AccountOperationServiceUnMatchingTest {
             accountOperationApiService.validateAndGetAOForUnmatching(request);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Unmatching action is failed : Can not unmatch AO used by the SecurityDeposit codes: [A, B, C]");
+            Assert.assertEquals(e.getMessage(), "Unmatching action is failed : Cannot unmatch AO used by the SecurityDeposit codes: [A, B, C]");
         }
 
     }
