@@ -456,8 +456,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		private String buildFileName(PricePlanMatrixVersion ppmv) {
 			final String fileNameSeparator = "_-_";
 			StringBuilder fileName = new StringBuilder();
-			fileName
-				.append(ppmv.getId());
+			fileName.append(ppmv.getId());
 			if(ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null){
 				ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
 				fileName
@@ -465,16 +464,19 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.append(fileNameSeparator + chargeTemplate.getCode())
 					.append(fileNameSeparator + ppmv.getLabel());
 			}
-			fileName
-				.append(fileNameSeparator+ ppmv.getLabel());
+			fileName.append(fileNameSeparator+ ppmv.getLabel());
+			fileName.append(fileNameSeparator);
 			if(ppmv.getValidity() != null){
+				fileName.append(ppmv.getStatus());
+			}
+			if(ppmv.getValidity() != null){
+				fileName.append(fileNameSeparator);
 				if(ppmv.getValidity().getFrom() != null){
-					fileName
-							.append(fileNameSeparator+ ppmv.getValidity().getFrom().getTime());
+					fileName.append(ppmv.getValidity().getFrom().getTime());
 				}
+				fileName.append(fileNameSeparator);
 				if(ppmv.getValidity().getTo() != null){
-					fileName
-							.append(fileNameSeparator+ ppmv.getValidity().getTo().getTime());
+					fileName.append(ppmv.getValidity().getTo().getTime());
 				}
 			}
 			return File.separator + fileName
