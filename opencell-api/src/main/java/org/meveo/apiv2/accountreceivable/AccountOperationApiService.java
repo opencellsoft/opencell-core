@@ -238,7 +238,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		aoIds.forEach(id -> {
 			List<String> securityDepositCodes = securityDepositTransactionService.getSecurityDepositCodesByAoIds(id);
 			if (securityDepositCodes != null && !securityDepositCodes.isEmpty()) {
-				throw new BusinessApiException("Unmatching action is failed : Can not unmatch AO used by the SecurityDeposit codes: "
+				throw new BusinessApiException("Unmatching action is failed : Cannot unmatch AO used by the SecurityDeposit codes: "
 						+ new HashSet<>(securityDepositCodes));
 			}
 		});
