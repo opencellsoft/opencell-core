@@ -1493,24 +1493,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds) {
+    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds, AggregationConfiguration aggregationConfiguration) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
-
+        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usage_date ");
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_amount_without_tax,"
                 + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
-                + "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, "
-                + "              EXTRACT(MONTH FROM rt.usage_date) as usage_date, min(rt.start_date) as start_date, "
+                + "              rt.offer_id, rt.service_instance_id, "
+                + 				 usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
-                + "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, "
-                + "             rt.end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id order by unit_amount_without_tax desc ";
+                + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
+                + "             rt.order_number, rt.tax_percent, rt.tax_id, "
+                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id ";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1562,7 +1562,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
 			List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
 			if (!ratedTransactionIds.isEmpty()) {
-			    return getGroupedRTsWithAggregation(ratedTransactionIds);
+			    return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
 			}
         }
 		
@@ -1604,7 +1604,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
     private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration) {
-        String usageDateColumn = " rt.usageDate ";
+    	return getUsageDateAggregation(aggregationConfiguration, " rt.usageDate ");
+    }
+    
+    private String getUsageDateAggregation(AggregationConfiguration aggregationConfiguration, String usageDateColumn) {
         switch (aggregationConfiguration.getDateAggregationOption()) {
         case MONTH_OF_USAGE_DATE:
             return " TO_CHAR(" + usageDateColumn + ", 'YYYY-MM') ";
