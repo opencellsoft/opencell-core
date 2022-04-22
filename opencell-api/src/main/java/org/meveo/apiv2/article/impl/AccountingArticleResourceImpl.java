@@ -20,7 +20,6 @@ import org.meveo.apiv2.article.resource.AccountingArticleResource;
 import org.meveo.apiv2.article.service.AccountingArticleApiService;
 import org.meveo.apiv2.article.service.AccountingArticleBaseApi;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.apiv2.report.query.resource.*;
 import org.meveo.model.article.AccountingArticle;
 
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
@@ -29,9 +28,6 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
     private AccountingArticleApiService accountingArticleApiService;
     @Inject private AccountingArticleBaseApi accountingArticleBaseApi;
     private AccountingArticleMapper mapper = new AccountingArticleMapper();
-
-    private final AccountingCodeMappingMapper accountingCodeMappingMapper = new AccountingCodeMappingMapper();
-
 
     @Override
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
@@ -151,12 +147,22 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	}
 
 	@Override
-	public Response createAccountingCodeMapping(AccountingCodeMapping accountingCodeMapping) {
-		org.meveo.model.accountingScheme.AccountingCodeMapping entity
-				= accountingArticleApiService.createAccountingCodeMapping(accountingCodeMapping);
+	public Response createAccountingCodeMapping(AccountingCodeMappingInput accountingCodeMapping) {
+		accountingArticleApiService.createAccountingCodeMappings(accountingCodeMapping);
 		return Response
-				.ok(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, entity.getId()).build())
-				.entity(accountingCodeMappingMapper.toResource(entity))
+				.ok()
+				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Accounting code mapping successfully created\"}}")
+				.build();
+	}
+
+	@Override
+	public Response updateAccountingCodeMapping(String accountingArticleCode,
+												AccountingCodeMappingInput accountingCodeMappingInput) {
+		AccountingArticle accountingArticle =
+				accountingArticleApiService.updateAccountingCodeMapping(accountingArticleCode, accountingCodeMappingInput);
+		return Response
+				.ok(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticle.getId()).build())
+				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Accounting code mapping successfully updated\"}}")
 				.build();
 	}
 }
