@@ -22,7 +22,7 @@ import org.meveo.service.script.Script;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
-public class V11Migration extends Script {
+public class V11MigrationScript extends Script {
 	public static final String ARTICLE_MAPPING_ID = "mainArticleMapping";
 	public static final String SERVICE_TEMPLATE_SUFFIX = "_OLD";
 	private static final Integer PAGE_COUNT = 100;
