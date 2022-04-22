@@ -328,7 +328,7 @@ public class PaymentService extends PersistenceService<Payment> {
             GatewayPaymentInterface gatewayPaymentInterface = null;
             PaymentGateway matchedPaymentGatewayForTheCA = null;
             if(isNewCard) {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,null,paymentGateway != null ? paymentGateway.getCode(): null);
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,null,paymentGateway.getCode());
             	
             }else {
             	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod ,cardType,null,paymentGateway.getCode());
