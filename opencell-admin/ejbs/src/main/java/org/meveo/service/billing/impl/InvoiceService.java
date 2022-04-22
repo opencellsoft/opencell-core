@@ -6137,7 +6137,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Invoice invoiceSource = invoiceLineSource.getInvoice();
             invoiceLinesService.detach(invoiceLineSource);
             var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
-            duplicateInvoiceLine.setStatus(invoiceLineSource.getStatus());
+            duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoiceSource);
             invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
