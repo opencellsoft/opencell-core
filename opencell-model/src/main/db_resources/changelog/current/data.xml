@@ -10010,4 +10010,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI">
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - wiretransfer"/>
+			<where>id=-61</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>

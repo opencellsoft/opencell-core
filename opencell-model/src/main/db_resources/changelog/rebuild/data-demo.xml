@@ -1258,7 +1258,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_normal" />
            <column name="version" valueNumeric="0" />
-        </insert>        
+        </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" valueNumeric="-1"/>
             <column name="tax_category_id" valueNumeric="-1"/>
@@ -1330,7 +1330,7 @@
            <column name="version" valueNumeric="0" />
         </insert>
     </changeSet>
-    
+
     <changeSet author="AndriusKarpavicius" id="rebuild-data-subscriptionTerminationReasonsDEMO">
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-1" />
@@ -2282,7 +2282,7 @@
             <column name="multiplicator" valueNumeric="1" />
         </insert>
     </changeSet>    
-    
+
    	<changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA">
 		<insert tableName="billing_tax_mapping">
         	<column name="id" value='-20'/>
@@ -2321,7 +2321,7 @@
             <column name="creator" value="applicationInitializer" />
      	</insert>
      </changeSet>
-    
+
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-36" />
@@ -2699,7 +2699,7 @@
 			<column name="accounting_code_id" valueNumeric="-20" />
 			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_WIRE" />
-			<column name="description" value="WIRETRANSFER" />
+			<column name="description" value="Payment - wiretransfer" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
@@ -2717,6 +2717,9 @@
     </changeSet>
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
+    <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
+    <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
+    <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
