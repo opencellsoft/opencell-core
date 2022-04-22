@@ -346,7 +346,7 @@ public class Contact extends AccountEntity implements ISearchable {
     }
 
     public String toString() {
-        return this.getName().toString() + " code:" + this.getCode();
+        return "code:" + this.getCode();
     }
 
     public List<CustomerContact> getCustomers() {
