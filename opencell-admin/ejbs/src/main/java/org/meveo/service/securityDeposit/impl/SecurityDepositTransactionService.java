@@ -35,8 +35,8 @@ public class SecurityDepositTransactionService extends BusinessService<SecurityD
     }
 
     public List<String> getSecurityDepositCodesByAoIds(Long aoId) {
-        return (List<String>) this.getEntityManager().createNamedQuery(NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID)
-                .setParameter(PARAM_AO_ID, aoId).getSingleResult();
+        return this.getEntityManager().createNamedQuery(NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID)
+                .setParameter(PARAM_AO_ID, aoId).getResultList();
     }
     
 }
