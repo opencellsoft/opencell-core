@@ -9813,6 +9813,7 @@
             <column name="invoice_type_id" type="bigint" />
             <column name="description_i18n" type="${type.json}"></column>
             <column name="accountingcode_el" type="varchar(500)"/>
+            <column name="column_criteria_el" type="varchar(500)"/>
 
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
@@ -16511,8 +16512,8 @@
             <column name="seller_id" type="bigint"/>
 
             <!-- Simple fields -->
-            <column name="criteria_el" type="varchar(500)"/>
-            <column name="accounting_code" type="varchar(100)"/>
+            <column name="criteria_el_value" type="varchar(500)"/>
+            <column name="accounting_code_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -16536,6 +16537,10 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_accountingcode_mapping"
                                  constraintName="fk_accountingcode_mapping_seller" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17632,7 +17637,8 @@
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6664_20220420" author="aelmalki" />
     <changeSet id="#INTRD-6633_20220420" author="TarikRabeh" />
-    <changeSet id="#INTRD-6564_20222004" author="ZBariki" />
+    <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki" />
+    <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki" />
     <changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

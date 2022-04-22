@@ -5929,6 +5929,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
+            toUpdate.getLinkedInvoices().clear();
             for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
@@ -6132,10 +6133,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
         invoice = refreshOrRetrieve(invoice);
         for (Long idInvoiceLine : invoiceLineIds) {
-            InvoiceLine iLine = invoiceLinesService.findById(idInvoiceLine);  
-            invoiceLinesService.detach(iLine);
-            var duplicateInvoiceLine = new InvoiceLine(iLine, invoice);
-            invoiceLinesService.create(duplicateInvoiceLine);
+            InvoiceLine invoiceLineSource = invoiceLinesService.findById(idInvoiceLine);  
+            Invoice invoiceSource = invoiceLineSource.getInvoice();
+            invoiceLinesService.detach(invoiceLineSource);
+            var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
+            duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoiceSource);
             invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
