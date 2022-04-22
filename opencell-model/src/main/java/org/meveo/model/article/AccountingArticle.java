@@ -3,27 +3,19 @@ package org.meveo.model.article;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.accountingScheme.*;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.payments.*;
 import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
@@ -85,6 +77,9 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     @Column(name = "column_criteria_el", length = 500)
     private String columnCriteriaEL;
+
+    @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountingCodeMapping> accountingCodeMappings;
 
     public AccountingArticle() {
     }
@@ -237,4 +232,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		return true;
 	}
+
+    public List<AccountingCodeMapping> getAccountingCodeMappings() {
+        return accountingCodeMappings;
+    }
+
+    public void setAccountingCodeMappings(List<AccountingCodeMapping> accountingCodeMappings) {
+        this.accountingCodeMappings = accountingCodeMappings;
+    }
 }
