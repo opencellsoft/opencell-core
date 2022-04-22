@@ -139,8 +139,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 					.stream()
 					.reduce(ZERO, BigDecimal::add);
 			agedReceivableDto.setGeneralTotal(generalTotal);
-			agedReceivableDto.setInvoiceId((Long) agedReceivable[22]);
-			agedReceivableDto.setInvoiceNumber((String) agedReceivable[23]);
+			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;
