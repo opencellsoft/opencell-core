@@ -43,7 +43,39 @@ public class AccountOperationServiceUnMatchingTest {
         Mockito.when(customerAccountService.findById(1L)).thenReturn(ao1.getCustomerAccount());
         Mockito.when(customerAccountService.findById(2L)).thenReturn(ao2.getCustomerAccount());
         Mockito.when(accountOperationService.findByIds(any())).thenReturn(Arrays.asList(ao1, ao2));
-        Mockito.when(securityDepositTransactionService.checkExistanceByAoIds(any())).thenReturn(false);
+        Mockito.when(securityDepositTransactionService.getSecurityDepositCodesByAoIds(any())).thenReturn(null);
+
+        List<UnMatchingAccountOperationDetail> request = buildRequest(Arrays.asList(1L, 2L));
+        List<UnMatchingOperationRequestDto> results = accountOperationApiService.validateAndGetAOForUnmatching(request);
+
+        Assert.assertEquals(results.size(), 2);
+
+        List<Long> expectedAoId = Arrays.asList(1L, 2L);
+        List<String> expectedCustomerCode = Arrays.asList("CODE-1", "CODE-2");
+
+        List<Long> resultAoIds = results.stream()
+                .map(UnMatchingOperationRequestDto::getAccountOperationId)
+                .sorted()
+                .collect(Collectors.toList());
+
+        List<String> resultCustomerCodes = results.stream()
+                .map(UnMatchingOperationRequestDto::getCustomerAccountCode)
+                .sorted()
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(expectedAoId, resultAoIds);
+        Assert.assertEquals(expectedCustomerCode, resultCustomerCodes);
+
+    }
+
+    @Test
+    public void validateAndGetAOForUnmatchingNominalEmptyDepositList() throws Exception {
+        AccountOperation ao1 = buildAo("CODE-1", 1L, 1L);
+        AccountOperation ao2 = buildAo("CODE-2", 2L, 2L);
+        Mockito.when(customerAccountService.findById(1L)).thenReturn(ao1.getCustomerAccount());
+        Mockito.when(customerAccountService.findById(2L)).thenReturn(ao2.getCustomerAccount());
+        Mockito.when(accountOperationService.findByIds(any())).thenReturn(Arrays.asList(ao1, ao2));
+        Mockito.when(securityDepositTransactionService.getSecurityDepositCodesByAoIds(any())).thenReturn(new ArrayList<>());
 
         List<UnMatchingAccountOperationDetail> request = buildRequest(Arrays.asList(1L, 2L));
         List<UnMatchingOperationRequestDto> results = accountOperationApiService.validateAndGetAOForUnmatching(request);
@@ -81,14 +113,14 @@ public class AccountOperationServiceUnMatchingTest {
     public void validateAndGetAOForUnmatchingExceptionAoSecurityDeposit() {
         AccountOperation ao1 = buildAo("ABC", 1L, 1L);
         Mockito.when(accountOperationService.findByIds(any())).thenReturn(List.of(ao1));
-        Mockito.when(securityDepositTransactionService.checkExistanceByAoIds(any())).thenReturn(true);
+        Mockito.when(securityDepositTransactionService.getSecurityDepositCodesByAoIds(any())).thenReturn(List.of("A, B, C"));
 
         try {
             List<UnMatchingAccountOperationDetail> request = buildRequest(List.of(1L));
             accountOperationApiService.validateAndGetAOForUnmatching(request);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "UnMatching action is failed : Can not unMatch AOs of type SecurityDeposit");
+            Assert.assertEquals(e.getMessage(), "Unmatching action is failed : Can not unmatch AO used by the SecurityDeposit codes: [A, B, C]");
         }
 
     }
