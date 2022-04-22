@@ -22,9 +22,9 @@ import org.meveo.service.script.Script;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
-public class V11MigrationScript extends Script {
-	public static final String DEFAULT_TAX_CLASS_CODE = "CMP_DATA";
+public class V11Migration extends Script {
 	public static final String ARTICLE_MAPPING_ID = "mainArticleMapping";
+	public static final String SERVICE_TEMPLATE_SUFFIX = "_OLD";
 	private static final Integer PAGE_COUNT = 100;
 	private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
 			ServiceInstanceService.class.getSimpleName());
@@ -103,6 +103,7 @@ public class V11MigrationScript extends Script {
 			serviceInstance.setServiceTemplate(null);
 			serviceInstanceService.update(serviceInstance);
 		});
+		
 		return product;
 	}
 	
@@ -111,7 +112,8 @@ public class V11MigrationScript extends Script {
 		Product product=null;
 		for(OfferServiceTemplate offerServiceTemplate:offerTemplate.getOfferServiceTemplates()) {
 			OfferComponent offerComponent = new OfferComponent();
-			product=productService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
+			String productCode=offerServiceTemplate.getServiceTemplate().getCode().replaceAll("_OLD$", "");
+			product=productService.findByCode(productCode);
 			if(product!=null) {
 				offerComponent.setProduct(product);
 				offerComponent.setOfferTemplate(offerTemplate);
@@ -138,9 +140,8 @@ public class V11MigrationScript extends Script {
 			List<AccountingArticle> accountingArticles = accountingArticleService
 					.findByTaxClassAndSubCategory(chargeTemplate.getTaxClass(), chargeTemplate.getInvoiceSubCategory());
 			if (accountingArticles.isEmpty()) {
-				TaxClass taxClass = taxClassService.findByCode(DEFAULT_TAX_CLASS_CODE);
 				accountingArticle = new AccountingArticle(UUID.randomUUID().toString(), "Migration Accounting article",
-						taxClass, chargeTemplate.getInvoiceSubCategory());
+						chargeTemplate.getTaxClass(), chargeTemplate.getInvoiceSubCategory());
 				accountingArticleService.create(accountingArticle);
 			} else {
 				accountingArticle = accountingArticles.get(0);
@@ -162,17 +163,28 @@ public class V11MigrationScript extends Script {
 	}
 
 	private Product createProduct(ServiceTemplate serviceTemplate) {
-		Product product = new Product();
-		product.setCode(serviceTemplate.getCode());
-		product.setDescription(serviceTemplate.getDescription());
-		List<ProductChargeTemplateMapping> productCharges = getProductCharges(product,serviceTemplate);
-		product.setProductCharges(productCharges);
-		product.setCfValues(serviceTemplate.getCfValues());
-		product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues());
-		product.setDisabled(serviceTemplate.isDisabled());
-		productService.create(product);
-		product.setStatus(ProductStatusEnum.ACTIVE);
-		productService.update(product);
+		Product product=productService.findByCode(serviceTemplate.getCode());
+		if(product==null) {
+			product = new Product();
+			product.setCode(serviceTemplate.getCode());
+			product.setDescription(serviceTemplate.getDescription());
+			product.setAuditable(serviceTemplate.getAuditable());
+			List<ProductChargeTemplateMapping> productCharges = getProductCharges(product,serviceTemplate);
+			product.setProductCharges(productCharges);
+			product.setCfValues(serviceTemplate.getCfValues());
+			product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues());
+			product.setDisabled(serviceTemplate.isDisabled());
+			productService.create(product);
+			product.setStatus(ProductStatusEnum.ACTIVE);
+			productService.update(product);
+			
+			serviceTemplate.setCode(serviceTemplate.getCode()+"_OLD");
+			
+			serviceTemplateService.update(serviceTemplate);
+		}else {
+			log.warn("Product with code {} already exists",serviceTemplate.getCode());
+		}
+		
 		return product;
 	}
 
@@ -181,8 +193,14 @@ public class V11MigrationScript extends Script {
 		productVersion.setProduct(product);
 		productVersion.setShortDescription(product.getDescription());
 		productVersion.setStatus(VersionStatusEnum.PUBLISHED);
+		DatePeriod validity=new DatePeriod(product.getAuditable().getCreated(),null);
+		productVersion.setValidity(validity);
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		productVersionService.create(productVersion);
+		
+		product.setCurrentVersion(productVersion);
+		productService.update(product);
+		
 		return productVersion;
 	}
 	
@@ -198,18 +216,39 @@ public class V11MigrationScript extends Script {
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
 		ppmv.setStatusDate(Calendar.getInstance().getTime());
 		ppmv.setVersion(1);
-		DatePeriod validity=new DatePeriod(new Date(),null);
+		DatePeriod validity=new DatePeriod(ppm.getAuditable().getCreated(),null);
 		ppmv.setValidity(validity);
 		pricePlanMatrixVersionService.create(ppmv);
 		return ppmv;
 	}
 
 	private ProductChargeTemplateMapping<ChargeTemplate> mapToProductChargeTemplate(Product product,ServiceChargeTemplate serviceCharge) {
+		ChargeTemplate chargeTemplate=serviceCharge.getChargeTemplate();
 		ProductChargeTemplateMapping<ChargeTemplate> productChargeTemplateMapping = new ProductChargeTemplateMapping<ChargeTemplate>();
-		productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
+		productChargeTemplateMapping.setChargeTemplate(chargeTemplate);
 		productChargeTemplateMapping.setCounterTemplate(serviceCharge.getCounterTemplate());
 		productChargeTemplateMapping.setProduct(product);
 		//productChargeTemplateMapping.setAccumulatorCounterTemplates(serviceCharge.getAccumulatorCounterTemplates());
+	    switch (chargeTemplate.getChargeMainType()) {
+	    case RECURRING :
+	    	chargeTemplateService.removeServiceLinkChargeRecurring(chargeTemplate.getId());
+	    	break;
+	    case ONESHOT :
+	    	if(((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()==OneShotChargeTemplateTypeEnum.TERMINATION) {
+	    		chargeTemplateService.removeServiceLinkChargeTermination(chargeTemplate.getId());
+	    	}else {
+	    		chargeTemplateService.removeServiceLinkChargeSubscription(chargeTemplate.getId());
+	    	}
+	    	break;
+	    case USAGE :
+	    	chargeTemplateService.removeServiceLinkChargeUsage(chargeTemplate.getId());
+		default:
+			break;	
+	    }
+	   
+	    
+		
+		
 		return productChargeTemplateMapping;
 	}
 
