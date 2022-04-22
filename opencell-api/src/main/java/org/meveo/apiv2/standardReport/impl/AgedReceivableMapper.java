@@ -53,6 +53,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.netAmountByPeriod(agedReceivableDto.getNetAmountByPeriod())
 				.taxAmountByPeriod(agedReceivableDto.getTaxAmountByPeriod())
 				.totalAmountByPeriod(agedReceivableDto.getTotalAmountByPeriod())
+				.invoiceId(agedReceivableDto.getInvoiceId())
+				.invoiceNumber(agedReceivableDto.getInvoiceNumber())
 				.build();
     }
 
@@ -93,6 +95,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 					(BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4],
 					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[12]));
+			agedReceivableDto.setInvoiceId((Long) agedList[19]);
+			agedReceivableDto.setInvoiceNumber((String) agedList[20]);
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
@@ -135,6 +139,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 					.stream()
 					.reduce(ZERO, BigDecimal::add);
 			agedReceivableDto.setGeneralTotal(generalTotal);
+			agedReceivableDto.setInvoiceId((Long) agedReceivable[22]);
+			agedReceivableDto.setInvoiceNumber((String) agedReceivable[23]);
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;
