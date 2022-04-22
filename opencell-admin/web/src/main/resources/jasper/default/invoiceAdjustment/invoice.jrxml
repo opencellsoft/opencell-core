@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="162"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -255,6 +255,12 @@
 	<field name="adjustedInvoiceNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[@adjustedInvoiceNumber]]></fieldDescription>
 	</field>
+	<field name="label_offer" class="java.lang.String">
+		<fieldDescription><![CDATA[detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line/label]]></fieldDescription>
+	</field>
+	<field name="seller_country" class="java.lang.String">
+		<fieldDescription><![CDATA[header/seller/address/countryName]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupHeader>
 			<band height="366">
@@ -397,7 +403,7 @@
 					</graphicElement>
 				</rectangle>
 				<rectangle radius="10">
-					<reportElement mode="Transparent" x="13" y="146" width="240" height="95" forecolor="#999999" uuid="09020303-c751-41cc-9448-f96db9d82511"/>
+					<reportElement mode="Transparent" x="9" y="146" width="244" height="100" forecolor="#999999" uuid="09020303-c751-41cc-9448-f96db9d82511"/>
 					<graphicElement>
 						<pen lineWidth="0.5" lineStyle="Dotted"/>
 					</graphicElement>
@@ -407,10 +413,11 @@
 					<textElement markup="html">
 						<font fontName="DejaVu Sans" size="11"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{baAddrZip}!=null?$F{baAddrZip}:"" +" "+ $F{baAddrCity}!=null?$F{baAddrCity}:""+" "+$F{BA_countryName}!=null?$F{BA_countryName}:""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{baAddrZip}!=null?$F{baAddrZip}:"") +" "
++ ($F{baAddrCity}!=null?$F{baAddrCity}:"")]]></textFieldExpression>
 				</textField>
 				<rectangle radius="10">
-					<reportElement mode="Transparent" x="276" y="147" width="300" height="94" forecolor="#999999" uuid="7c230216-a9db-4fdc-84bd-e7a88a613af9"/>
+					<reportElement mode="Transparent" x="276" y="147" width="300" height="99" forecolor="#999999" uuid="7c230216-a9db-4fdc-84bd-e7a88a613af9"/>
 					<graphicElement>
 						<pen lineWidth="0.5" lineStyle="Dotted"/>
 					</graphicElement>
@@ -422,12 +429,13 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{seller_address1}!=null?$F{seller_address1}:""]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="31" y="199" width="189" height="16" uuid="db381ea5-8e99-4faf-8931-2398c8aa18f5"/>
-					<textElement>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement stretchType="RelativeToBandHeight" x="31" y="199" width="216" height="16" uuid="db381ea5-8e99-4faf-8931-2398c8aa18f5"/>
+					<textElement markup="html">
 						<font fontName="DejaVu Sans" size="11" isItalic="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{seller_zipCode}!=null?$F{seller_zipCode}:"" +"  " + $F{seller_city}!=null?$F{seller_city}:""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{seller_zipCode}!=null?$F{seller_zipCode}:"")
++" " + ($F{seller_city}!=null?$F{seller_city}:"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="304" y="162" width="237" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="15a02322-21a4-45af-9bfd-8bc556ab2984"/>
@@ -451,7 +459,7 @@
 					<textFieldExpression><![CDATA[$F{baAddrLine1}!=null?$F{baAddrLine1}:""]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="32" y="215" width="189" height="16" uuid="5ee2d1a5-24a3-451d-a8b8-3696e66a9703"/>
+					<reportElement x="32" y="227" width="189" height="16" uuid="5ee2d1a5-24a3-451d-a8b8-3696e66a9703"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="10" isItalic="true"/>
 					</textElement>
@@ -481,7 +489,7 @@
 					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Code service: "+$F{offer_description}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Code service: "+$F{label_offer}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="30" y="286" width="507" height="20" uuid="6270dc84-8ad7-4621-823d-4fc27b51c978"/>
@@ -496,6 +504,20 @@
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["N° de TVA Intracommunautaire: "+$F{Ba_vatNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement stretchType="RelativeToBandHeight" x="31" y="214" width="216" height="16" uuid="074a3c1b-f741-4c7b-957b-08d6ad08bab2"/>
+					<textElement markup="html">
+						<font fontName="DejaVu Sans" size="11" isItalic="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{seller_country}!=null?$F{seller_country}:""]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="304" y="215" width="237" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="861b4552-d2b2-4263-b237-151ce8ee5a1f"/>
+					<textElement markup="html">
+						<font fontName="DejaVu Sans" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BA_countryName}!=null?$F{BA_countryName}:""]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
