@@ -234,4 +234,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     	builder.addCriterion("ppml.pricePlanMatrixVersion.currentVersion", "=", currentVersion, false);
     	return builder.getQuery(this.getEntityManager()).getResultList();
     }
+
+    public void deleteByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        this.getEntityManager()
+        .createNamedQuery("PricePlanMatrixLine.deleteByPricePlanMatrixVersion")
+        .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
+        .executeUpdate();
+    }
 }

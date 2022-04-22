@@ -11,6 +11,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,10 +29,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
@@ -100,6 +104,21 @@ public class QuoteProduct extends AuditableCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "delivery_date")
     private Date deliveryDate;
+    
+    /**production action type */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_action_type", length = 10)
+   	private ProductActionTypeEnum productActionType;
+    
+    /** termination timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "termination_date")
+    private Date terminationDate;
+    
+    /** Termination reason. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_termin_reason_id")
+    private SubscriptionTerminationReason terminationReason;
 
 	public QuoteProduct() {
 	}
@@ -114,6 +133,9 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.quoteOffer = copy.quoteOffer;
 		this.quoteAttributes = copy.quoteAttributes;
 		this.deliveryDate = copy.deliveryDate;
+		this.productActionType = copy.productActionType;
+		this.terminationDate = copy.terminationDate;
+		this.terminationReason = copy.terminationReason;
 	}
 	
 	public void update(QuoteProduct other) {
@@ -126,6 +148,9 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.quoteOffer = other.quoteOffer;
 		this.quoteAttributes = other.quoteAttributes;
 		this.deliveryDate = other.deliveryDate;
+		this.productActionType = other.productActionType;
+		this.terminationDate = other.terminationDate;
+		this.terminationReason = other.terminationReason;
     }
 
 	public DiscountPlan getDiscountPlan() {
@@ -270,6 +295,36 @@ public class QuoteProduct extends AuditableCFEntity {
 	 */
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+
+	public ProductActionTypeEnum getProductActionType() {
+		return productActionType;
+	}
+
+
+	public void setProductActionType(ProductActionTypeEnum productActionType) {
+		this.productActionType = productActionType;
+	}
+
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+
+	public SubscriptionTerminationReason getTerminationReason() {
+		return terminationReason;
+	}
+
+
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+		this.terminationReason = terminationReason;
 	}
 
 }

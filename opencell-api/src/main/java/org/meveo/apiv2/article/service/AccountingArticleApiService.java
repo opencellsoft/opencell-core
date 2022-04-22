@@ -8,22 +8,25 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.FlushModeType;
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.*;
 
+import org.meveo.admin.exception.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.accountingScheme.*;
+import org.meveo.model.admin.*;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.*;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
-import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.accountingscheme.*;
+import org.meveo.service.admin.impl.*;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxClassService;
@@ -45,6 +48,18 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private AccountingCodeMappingService accountingCodeMappingService;
+
+    @Inject
+    private TradingCountryService tradingCountryService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    private SellerService sellerService;
 
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -270,5 +285,61 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             throw new BadRequestException("No Product found with code: " + productCode);
         Optional<AccountingArticle> article = accountingArticleService.getAccountingArticle(product, attributes);
         return article;
+    }
+
+    public AccountingCodeMapping createAccountingCodeMapping(org.meveo.apiv2.article.AccountingCodeMapping resource) {
+        AccountingCodeMapping entity = new AccountingCodeMapping();
+        if(resource.getAccountingArticleCode() != null
+                && !resource.getAccountingArticleCode().isBlank()) {
+            AccountingArticle accountingArticle
+                    = accountingArticleService.findByCode(resource.getAccountingArticleCode());
+            if(accountingArticle != null) {
+                entity.setAccountingArticle(accountingArticle);
+            } else {
+                throw new NotFoundException("Accounting article with code " + resource.getAccountingArticleCode() + " does not exits");
+            }
+        }
+        if(resource.getBillingCountryCode() != null
+                && !resource.getBillingCountryCode().isBlank()) {
+            entity.setBillingCountry(getTradingCountry(resource.getBillingCountryCode(), "Billing"));
+        }
+        if(resource.getBillingCurrencyCode() != null && !resource.getBillingCurrencyCode().isBlank()) {
+            TradingCurrency billingCurrency =
+                    tradingCurrencyService.findByTradingCurrencyCode(resource.getBillingCurrencyCode());
+            if(billingCurrency != null) {
+                entity.setBillingCurrency(billingCurrency);
+            } else {
+                throw new NotFoundException("Trading currency with code " + resource.getBillingCurrencyCode() + " does not exits");
+            }
+        }
+        if(resource.getSellerCountryCode() != null
+                && !resource.getSellerCountryCode().isBlank()) {
+            entity.setSellerCountry(getTradingCountry(resource.getSellerCountryCode(), "Seller"));
+        }
+        if(resource.getSellerCode() != null && !resource.getSellerCode().isBlank()) {
+            Seller seller = sellerService.findByCode(resource.getSellerCode());
+            if(seller != null) {
+                entity.setSeller(seller);
+            } else {
+                throw new NotFoundException("Seller with code " + resource.getSellerCode() + " does not exits");
+            }
+        }
+        entity.setCriteriaElValue(resource.getCriteriaElValue());
+        //entity.setAccountingCode(resource.getAccountingCode()); TODO change to AccountingCode
+        try {
+            accountingCodeMappingService.create(entity);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+        return entity;
+    }
+
+    private TradingCountry getTradingCountry(String countryCode, String prefix) {
+        TradingCountry country = tradingCountryService.findByCode(countryCode);
+        if(country == null) {
+            throw new NotFoundException(prefix + " country with code " + countryCode + " does not exits");
+        } else {
+            return country;
+        }
     }
 }

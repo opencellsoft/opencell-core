@@ -549,6 +549,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		} else {
 			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
 		}
+		
+		if(accountOperation.getAccountingDate() == null) {
+			if (accountOperation.getDueDate() != null) {
+				accountOperation.setAccountingDate(accountOperation.getDueDate());
+			}else {
+				accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+			}
+		}
 
 //		Si aucune AP n'est définie dans le système, le système doit considérer toute l'année comme une AP open
 		long count = accountingPeriodService.count();
@@ -759,5 +767,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         return (List<AccountOperation>) query.getResultList();
 
+    }
+
+    public void resetOperationNumberSequence() {
+        getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
     }
 }

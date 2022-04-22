@@ -80,6 +80,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
+    @Column(name = "accountingcode_el", length = 500)
+    private String accountingCodeEl;
+
+    @Column(name = "column_criteria_el", length = 500)
+    private String columnCriteriaEL;
+
     public AccountingArticle() {
     }
 
@@ -190,12 +196,28 @@ public class AccountingArticle extends EnableBusinessCFEntity {
         this.invoiceTypeEl = invoiceTypeEL;
     }
 
-	@Override
+    public String getAccountingCodeEl() {
+        return accountingCodeEl;
+    }
+
+    public void setAccountingCodeEl(String accountingCodeEl) {
+        this.accountingCodeEl = accountingCodeEl;
+    }
+
+    public String getColumnCriteriaEL() {
+        return columnCriteriaEL;
+    }
+
+    public void setColumnCriteriaEL(String columCriteriaEL) {
+        this.columnCriteriaEL = columCriteriaEL;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
 		return result;
 	}
 

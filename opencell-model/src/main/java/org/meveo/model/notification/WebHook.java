@@ -31,6 +31,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
@@ -39,6 +40,7 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.model.ModuleItem;
 
 /**
@@ -97,7 +99,17 @@ public class WebHook extends Notification {
      */
     @Column(name = "pswd", length = 255)
     @Size(max = 255)
-    private String password;
+    private String passwordDB;
+
+    /**
+     * transient password
+     */
+    transient private String password;
+
+    /**
+     * transient password in Keystore
+     */
+    transient private String passwordKS;
 
     /**
      * Expression to compose a request body
@@ -183,12 +195,51 @@ public class WebHook extends Notification {
         this.username = username;
     }
 
+    public String getPasswordDB() {
+        return passwordDB;
+    }
+
+    public void setPasswordDB(String passwordDB) {
+        this.passwordDB = passwordDB;
+    }
+
     public String getPassword() {
-        return password;
+        if (KeystoreManager.existKeystore()) {
+            return getPasswordKS();
+        }
+        else {
+            return getPasswordDB();
+        }
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (KeystoreManager.existKeystore()) {
+            passwordDB = "";
+            this.passwordKS = password;
+            setPasswordKS();
+        }
+        else
+            setPasswordDB(password);
+    }
+
+    public String getPasswordKS() {
+        if (KeystoreManager.existCredential(getClass().getSimpleName() + "." + getId())) {
+            return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getId());
+        }
+        else {
+            return "";
+        }
+    }
+
+    @PostPersist
+    public void setPasswordKS() {
+        if (this.passwordKS == null) {
+            this.passwordKS = "";
+        }
+
+        if (getId() != null &&! this.passwordKS.equals(getPasswordKS())) {
+            KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.passwordKS);
+        }
     }
 
     public Map<String, String> getHeaders() {

@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -63,7 +64,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -790,5 +790,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Override
     public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
         this.minInvoiceLines = invoiceLines;
+    }
+
+    public List<UserAccount> getParentUserAccounts() {
+        return getUsersAccounts()
+                .stream()
+                .filter(userAccount -> userAccount.getParentUserAccount() == null)
+                .collect(toList());
     }
 }

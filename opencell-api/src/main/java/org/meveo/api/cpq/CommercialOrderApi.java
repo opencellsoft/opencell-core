@@ -49,19 +49,12 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -777,7 +770,7 @@ public class CommercialOrderApi extends BaseApi {
 			}
         	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscriptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException(String.format("Amendment order line already exists on subscription %s",orderOfferDto.getSubscriptionCode()));
         	}
         	orderOffer.setOrderLineType(OfferLineTypeEnum.AMEND);
         	
@@ -786,6 +779,32 @@ public class CommercialOrderApi extends BaseApi {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
+        }else if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.TERMINATE);
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	Date terminationDateTime = DateUtils.setDateToEndOfDay(orderOfferDto.getTerminationDate());
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("The termination date must not be before the subscription date");	
+        	}
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.compareTo(new Date()) < 0) {
+        		throw new MeveoApiException("The termination date must not be in the past");	
+        	}
+        	orderOffer.setSubscription(subscription);
+        	SubscriptionTerminationReason terminationReason = null;
+        	if(!StringUtils.isBlank(orderOfferDto.getTerminationReasonCode())) {
+    			terminationReason = terminationReasonService.findByCode(orderOfferDto.getTerminationReasonCode());
+    			if (terminationReason == null)
+    				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, orderOfferDto.getTerminationReasonCode());	
+    		}
+        	orderOffer.setTerminationReason(terminationReason);
+    		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
@@ -861,6 +880,30 @@ public class CommercialOrderApi extends BaseApi {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
         	orderOffer.setSubscription(subscription);
+        }
+        
+        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.TERMINATE) {
+        	if (orderOfferDto.getSubscriptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	orderOffer.setOrderLineType(OfferLineTypeEnum.TERMINATE);
+        	
+        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
+        	}
+        	if(orderOfferDto.getTerminationDate()!=null && orderOfferDto.getTerminationDate().before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("Termination date can not be before the subscription date");	
+        	}
+        	orderOffer.setSubscription(subscription);
+        	SubscriptionTerminationReason terminationReason = null;
+        	if(!StringUtils.isBlank(orderOfferDto.getTerminationReasonCode())) {
+    			terminationReason = terminationReasonService.findByCode(orderOfferDto.getTerminationReasonCode());
+    			if (terminationReason == null)
+    				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, orderOfferDto.getTerminationReasonCode());	
+    		}
+        	orderOffer.setTerminationReason(terminationReason);
+    		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
@@ -1060,6 +1103,9 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
+		if(orderProductDto.getQuantity() == null) {
+			throw new MeveoApiException("The quantity is required");
+		}
 		orderProduct.setQuantity(orderProductDto.getQuantity());
 		orderProduct.setProductActionType(orderProductDto.getActionType());
 		
@@ -1072,7 +1118,8 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setTerminationReason(terminationReason);
 		orderProduct.setTerminationDate(orderProductDto.getTerminationDate());
 		
-    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date())) {
+    	if(orderProductDto.getDeliveryDate()!=null && orderProductDto.getDeliveryDate().before(new Date()) &&
+		ProductActionTypeEnum.CREATE.equals(orderProductDto.getActionType())) {
     		throw new MeveoApiException("Delivery date should be in the future");	
     	}
     	orderProduct.setDeliveryDate(orderProductDto.getDeliveryDate());
@@ -1147,6 +1194,7 @@ public class CommercialOrderApi extends BaseApi {
         orderAttribute.setStringValue(orderAttributeDTO.getStringValue());
         orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
         orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
+		orderAttributeDTO.setAttributeType(attribute.getAttributeType());
         orderAttribute.updateAudit(currentUser);
         if(orderProduct != null) {
             orderProduct.getOrderAttributes().add(orderAttribute);

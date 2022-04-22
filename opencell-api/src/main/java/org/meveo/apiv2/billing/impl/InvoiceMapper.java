@@ -45,8 +45,8 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
-	}
-	
+	}	
+
 	public List<org.meveo.apiv2.billing.Invoice> toResources(List<Invoice> invoices) {
 		if(CollectionUtils.isEmpty(invoices)) {
 			return null;

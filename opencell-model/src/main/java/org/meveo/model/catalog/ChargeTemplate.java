@@ -617,4 +617,28 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 		}
 		this.status = status;
 	}
+
+    public List<ProductChargeTemplateMapping> getProductCharges() {
+        return productCharges;
+    }
+
+    public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
+        this.productCharges = productCharges;
+    }
+
+    public boolean isRoundingValuesComputed() {
+        return roundingValuesComputed;
+    }
+
+    public void setRoundingValuesComputed(boolean roundingValuesComputed) {
+        this.roundingValuesComputed = roundingValuesComputed;
+    }
+
+    public void setRoundingUnityNbDecimal(int roundingUnityNbDecimal) {
+        this.roundingUnityNbDecimal = roundingUnityNbDecimal;
+    }
+
+    public void setRoundingEdrNbDecimal(int roundingEdrNbDecimal) {
+        this.roundingEdrNbDecimal = roundingEdrNbDecimal;
+    }
 }

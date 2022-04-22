@@ -187,6 +187,14 @@ public class AccountOperationApi extends BaseApi {
         if(aoSubclassObject instanceof Payment) {
             accountOperation.setAccountingDate(postData.getCollectionDate());
         }
+        
+        if(accountOperation.getAccountingDate() == null) {
+        	if(postData.getDueDate() != null) {
+        		accountOperation.setAccountingDate(postData.getDueDate());
+        	} else {
+        		accountOperation.setAccountingDate(postData.getTransactionDate());
+        	}
+        }
 
         accountOperation.setDueDate(postData.getDueDate());
         accountOperation.setType(postData.getType());

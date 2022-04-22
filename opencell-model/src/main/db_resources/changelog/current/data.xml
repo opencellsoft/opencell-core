@@ -9656,12 +9656,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="code" value="Invoice and Credit Note" />
 			<column name="description" value="Invoice accounting scheme"/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
 		</insert>
 		<update tableName="ar_occ_template">
-			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Invoice and Credit Note')" />
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
@@ -9900,7 +9900,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid">
 		 <update tableName="ar_occ_template">
 			<column name="version" valueNumeric="1" />
@@ -9909,7 +9909,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="contra_accounting_code_id" valueNumeric="-42" />
             <where>id=-1</where>
 		</update>
-		
+
 		<update tableName="ar_occ_template">
 			<column name="version" valueNumeric="1" />
 			<column name="updated" valueDate="${db.current.time}" />
@@ -9967,11 +9967,63 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="occ_category" value="CREDIT" />
             <where>id=-61</where>
 		</update>
-		
-		<delete tableName="ar_occ_template">  
-	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>  
-	    </delete>  
+
+		<delete tableName="ar_occ_template">
+	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>
+	    </delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+		<sql>
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = (select current_rate from cte where cte.id = bil.id) * bil.unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is not null);
+
+
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
+		</sql>
 	</changeSet>
 	
+	<changeSet id="#INTRD-6056_20220415" author="HatimOUDAD">
+		<update tableName="cpq_quote_product">
+			<column name="product_action_type" value="CREATE" />
+			<where> product_action_type is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh">
+		<update tableName="adm_currency">
+			<column name="symbol" value="€" />
+			<where> currency_code = 'EUR'</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="symbol" value="$US" />
+			<where> currency_code = 'USD'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
