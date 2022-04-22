@@ -58,18 +58,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, String param1, String param2, String param3) throws InvalidELException, ValidationException {
-		List<ChargeTemplate> productCharges=new ArrayList<ChargeTemplate>();
+		List<ChargeTemplate> productCharges=new ArrayList<>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
 		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
-			articleMappingLines=articleMappingLineService.findByProductAndCharge(product, null);
-		}else if(chargeTemplate==null) {
-			productCharges.addAll(product.getProductCharges().stream()
-					.map(pc -> pc.getChargeTemplate())
-					.collect(toList()));
-			articleMappingLines = articleMappingLines.stream()
-					.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
-					.collect(toList());;
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate);
+		}else if(articleMappingLines.isEmpty() && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null);
 		}
 		if(!StringUtils.isBlank(param1)) {
 			articleMappingLines = articleMappingLines.stream()
