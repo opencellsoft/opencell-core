@@ -185,9 +185,20 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     public Optional<DunningPolicy> delete(Long id) {
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
-            dunningPolicyService.remove(id);
-            auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
-            return of(dunningPolicy);
+        	try {
+                dunningPolicyService.remove(id);
+                auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
+                return of(dunningPolicy);
+        	} catch (Exception exception) {
+                Throwable throwable = exception.getCause();
+                while (throwable != null) {
+                    if (throwable instanceof ConstraintViolationException) {
+                        throw new BusinessException("The dunning policy with id "+ id + " is referenced");
+                    }
+                    throwable = throwable.getCause();
+                }
+                throw new BusinessException(exception.getMessage());
+            }
         } else {
             return empty();
         }

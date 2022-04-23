@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 
@@ -29,13 +30,23 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "accounting_accountingcode_mapping")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_accountingcode_mapping_seq")})
+@NamedQueries({
+        @NamedQuery(name = "AccountingCodeMapping.findByAccountingArticle",
+                query = "SELECT accMap FROM AccountingCodeMapping accMap WHERE accMap.accountingArticle.id =:ACCOUNTING_ARTICLE_ID")
+})
 public class AccountingCodeMapping extends AuditableEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id")
@@ -57,11 +68,8 @@ public class AccountingCodeMapping extends AuditableEntity {
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
-    @Column(name = "criteria_el", length = 500)
-    private String criteriaEl;
-
-    @Column(name = "accounting_code")
-    private String accountingCode;
+    @Column(name = "criteria_el_value", length = 500)
+    private String criteriaElValue;
 
     public AccountingArticle getAccountingArticle() {
         return accountingArticle;
@@ -103,19 +111,20 @@ public class AccountingCodeMapping extends AuditableEntity {
         this.seller = seller;
     }
 
-    public String getCriteriaEl() {
-        return criteriaEl;
-    }
-
-    public void setCriteriaEl(String criteriaEl) {
-        this.criteriaEl = criteriaEl;
-    }
-
-    public String getAccountingCode() {
+    public AccountingCode getAccountingCode() {
         return accountingCode;
     }
 
-    public void setAccountingCode(String accountingCode) {
+    public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
+
+    public String getCriteriaElValue() {
+        return criteriaElValue;
+    }
+
+    public void setCriteriaElValue(String criteriaElValue) {
+        this.criteriaElValue = criteriaElValue;
+    }
+
 }
