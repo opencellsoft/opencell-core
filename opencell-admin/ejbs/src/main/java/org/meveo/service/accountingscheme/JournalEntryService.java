@@ -131,7 +131,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .setParameter(PARAM_ID_ACCOUNTING_CODE, occT.getContraAccountingCode2().getId())
                 .getSingleResult() > 0;
 
-
         // 1- produce a first accounting entry
         JournalEntry firstAccountingEntry = buildJournalEntry(ao,
                 isOrphan && ao.getCustomerAccount() != null ? occT.getContraAccountingCode2() : occT.getContraAccountingCode(),
@@ -141,7 +140,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         saved.add(firstAccountingEntry);
 
-        log.info("First accounting entry successfully created for AO={} [{}]", ao.getId(), firstAccountingEntry);
+        log.info("First accounting entry successfully created for AO={}", ao.getId());
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
         JournalEntry secondAccountingEntry = buildJournalEntry(ao,
@@ -153,7 +152,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         saved.add(secondAccountingEntry);
 
-        log.info("Second accounting entry successfully created for AO={} [{}]", ao.getId(), secondAccountingEntry);
+        log.info("Second accounting entry successfully created for AO={}", ao.getId());
 
         // Persist all
         saved.forEach(this::create);
@@ -210,11 +209,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setAmount(amount);
         firstEntry.setCustomerAccount(ao.getCustomerAccount());
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
-        firstEntry.setSeller(getSeller(ao));
         firstEntry.setTax(tax);
 
+        Seller seller = getSeller(ao);
+        firstEntry.setSeller(seller);
         //firstEntry.setOperationNumber(null);
-        firstEntry.setSellerCode(getSeller(ao) != null ? getSeller(ao).getCode() : "");
+        firstEntry.setSellerCode(seller != null ? seller.getCode() : "");
         firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
 
         Provider provider = providerService.getProvider();
