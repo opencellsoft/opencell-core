@@ -109,10 +109,9 @@ public class AccountOperationApi extends BaseApi {
         if (StringUtils.isBlank(postData.getType())) {
             missingParameters.add("Type");
             handleMissingParameters();
-        }
-
+        }        
         Object aoSubclassObject = getSubclassObjectByDiscriminatorValue(AccountOperation.class, postData.getType());
-        AccountOperation accountOperation = null;
+        AccountOperation accountOperation = null;       
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
         OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
         if (customerAccount == null) {
@@ -148,15 +147,18 @@ public class AccountOperationApi extends BaseApi {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
-        } else {
-            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
-        }
+        } 
 
         if(aoSubclassObject instanceof RecordedInvoice) {
+        	accountOperation = new RecordedInvoice();
             accountOperation.setAccountingDate(postData.getTransactionDate());
+        }
+        if(aoSubclassObject instanceof Refund) {
+        	accountOperation = new Refund();
         }
 
         if(aoSubclassObject instanceof Payment) {
+        	accountOperation = new Payment();
             accountOperation.setAccountingDate(postData.getCollectionDate());
         }
 
