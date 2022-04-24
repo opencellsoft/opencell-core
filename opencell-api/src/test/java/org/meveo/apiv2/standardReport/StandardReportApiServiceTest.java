@@ -2,24 +2,32 @@ package org.meveo.apiv2.standardReport;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.*;
-import org.junit.rules.*;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.api.rest.exception.NotAuthorizedException;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
-import org.meveo.model.billing.*;
-import org.meveo.model.payments.*;
-import org.meveo.model.shared.*;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.ws.rs.NotFoundException;
-import java.math.*;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardReportApiServiceTest {
@@ -62,10 +70,10 @@ public class StandardReportApiServiceTest {
                 "CA_DESCRIPTION", new Date(), "EUR"};
         result.add(agedReceivable);
 
-        Assert.assertEquals(1, result.size());
+        assertEquals(1, result.size());
         Object[] agedReceivableResult = result.get(0);
-        Assert.assertEquals("EUR", agedReceivableResult[12]);
-        Assert.assertEquals(DunningLevelEnum.R1, agedReceivableResult[8]);
+        assertEquals("EUR", agedReceivableResult[12]);
+        assertEquals(DunningLevelEnum.R1, agedReceivableResult[8]);
     }
 
     @Test(expected = NotAuthorizedException.class)

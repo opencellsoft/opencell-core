@@ -474,13 +474,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + "_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
             for (int iteration = 1; iteration < numberOfPeriods; iteration++) {
-                step = (iteration + 1) * stepInDays;
+                step = iteration * stepInDays;
                 alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + step;
-                query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then  ao.unMatchingAmount else 0 end ) ")
+                query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.unMatchingAmount else 0 end ) ")
                         .append(alias).append(" , ")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then  ao.amountWithoutTax else 0 end ) ")
+                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.amountWithoutTax else 0 end ) ")
                         .append(alias).append("_awt, ")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then  ao.taxAmount else 0 end ) ")
+                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.taxAmount else 0 end ) ")
                         .append(alias).append("_tax, ");
             }
             step = stepInDays * numberOfPeriods;
@@ -501,7 +501,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_90_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -510,7 +510,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         	qb.addCriterionEntity("customerAccount", customerAccount);
         }
         qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') and ao.dueDate <= '"+DateUtils.formatDateWithPattern(startDate, datePattern)+"'");
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber");
         qb.addPaginationConfiguration(paginationConfiguration);
         
         return qb.getQuery(getEntityManager()).getResultList();
