@@ -131,28 +131,46 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .setParameter(PARAM_ID_ACCOUNTING_CODE, occT.getContraAccountingCode2().getId())
                 .getSingleResult() > 0;
 
+        AccountingCode firstAccountingCode = null;
+        OperationCategoryEnum firstCategory = OperationCategoryEnum.CREDIT;
+
+        AccountingCode secondAccountingCode = null;
+        OperationCategoryEnum secondCategory = OperationCategoryEnum.DEBIT;
+
+        if (ao.getCustomerAccount() == null && !isOrphan) {
+            firstCategory = OperationCategoryEnum.DEBIT;
+            firstAccountingCode = occT.getContraAccountingCode();
+
+            secondCategory = OperationCategoryEnum.CREDIT;
+            secondAccountingCode = occT.getContraAccountingCode2();
+
+        } else if (ao.getCustomerAccount() != null && isOrphan) {
+            firstAccountingCode = occT.getAccountingCode();
+            secondAccountingCode = occT.getContraAccountingCode2();
+
+        } else if (ao.getCustomerAccount() != null && !isOrphan) {
+            firstAccountingCode = occT.getAccountingCode();
+            secondAccountingCode = occT.getContraAccountingCode();
+
+        }
+
         // 1- produce a first accounting entry
-        JournalEntry firstAccountingEntry = buildJournalEntry(ao,
-                isOrphan && ao.getCustomerAccount() != null ? occT.getContraAccountingCode2() : occT.getAccountingCode(),
-                occT.getOccCategory(),
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+        JournalEntry firstAccountingEntry = buildJournalEntry(ao, firstAccountingCode, firstCategory,
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(firstAccountingEntry);
 
-        log.info("First accounting entry successfully created for AO={}", ao.getId());
+        log.info("First accounting entry successfully created for AO={} [category={}, accountingCode={}]",
+                ao.getId(), firstCategory, firstAccountingCode);
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
-        JournalEntry secondAccountingEntry = buildJournalEntry(ao,
-                ao.getCustomerAccount() != null ? occT.getContraAccountingCode() : occT.getContraAccountingCode2(),
-                // The opposite of Occtemplate.occCategory { DEBIT, CREDIT } : if occCategory == DEBIT then direction= CREDIT and vice versa
-                occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+        JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(secondAccountingEntry);
 
-        log.info("Second accounting entry successfully created for AO={}", ao.getId());
+        log.info("Second accounting entry successfully created for AO={} [category={}, accountingCode={}]",
+                ao.getId(), secondCategory, secondAccountingCode);
 
         // Persist all
         saved.forEach(this::create);
