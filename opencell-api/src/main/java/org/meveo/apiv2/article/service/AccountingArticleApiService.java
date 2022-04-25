@@ -211,6 +211,14 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             accountingArticle.setInvoiceTypeEl(baseEntity.getInvoiceTypeEl());
         }
 
+        if(baseEntity.getAccountingCodeEl() != null) {
+            accountingArticle.setAccountingCodeEl(baseEntity.getAccountingCodeEl());
+        }
+
+        if(baseEntity.getColumnCriteriaEL() != null) {
+            accountingArticle.setColumnCriteriaEL(baseEntity.getColumnCriteriaEL());
+        }
+
         accountingArticleService.update(accountingArticle);
 
         return ofNullable(accountingArticle);
