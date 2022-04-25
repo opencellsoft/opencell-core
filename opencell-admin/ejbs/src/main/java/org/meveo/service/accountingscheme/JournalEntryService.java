@@ -133,7 +133,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 1- produce a first accounting entry
         JournalEntry firstAccountingEntry = buildJournalEntry(ao,
-                isOrphan && ao.getCustomerAccount() != null ? occT.getContraAccountingCode2() : occT.getContraAccountingCode(),
+                isOrphan && ao.getCustomerAccount() != null ? occT.getContraAccountingCode2() : occT.getAccountingCode(),
                 occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
                 null);
@@ -182,7 +182,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
      * @param isDefaultCheck for Default Script we must check accountinfCode and contraAccountingCode,
      *                       for Invoice one for exemple, we must on check accountinfode
      */
-    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck) {
+    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck, boolean isPaymentCheck) {
         if (occT == null) {
             log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
             throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
@@ -195,7 +195,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         if (isDefaultCheck && occT.getContraAccountingCode() == null) {
             log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+            throw new BusinessException("Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
+        }
+
+        if (isPaymentCheck && occT.getContraAccountingCode2() == null) {
+            log.warn("Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory ContraAccountingCode2 not found for OCCTemplate id=" + occT.getId());
         }
 
     }

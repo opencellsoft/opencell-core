@@ -31,7 +31,7 @@ public class PaymentAccountingSchemeScript extends Script {
         log.info("Process Payment {}", paymentAo.getId());
 
         OCCTemplate occT = occTemplateService.findByCode(ao.getCode());
-        journalEntryService.validateOccTForAccountingScheme(ao, occT, false);
+        journalEntryService.validateOccTForAccountingScheme(ao, occT, false, true);
 
         context.put(Script.RESULT_VALUE, journalEntryService.createFromPayment(paymentAo, occT));
 
