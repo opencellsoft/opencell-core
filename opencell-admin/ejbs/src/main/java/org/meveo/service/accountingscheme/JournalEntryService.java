@@ -152,6 +152,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstAccountingCode = occT.getAccountingCode();
             secondAccountingCode = occT.getContraAccountingCode();
 
+        } else if (ao.getCustomerAccount() == null && isOrphan) {
+            throw new BusinessException("Not managed case : customerAccount cannot be null, it have already JournalEntries creation (isOrpahn = true)");
         }
 
         // 1- produce a first accounting entry
@@ -211,7 +213,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
 
-        if (isDefaultCheck && occT.getContraAccountingCode() == null) {
+        if ((isDefaultCheck || isPaymentCheck) && occT.getContraAccountingCode() == null) {
             log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
             throw new BusinessException("Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
         }
