@@ -209,7 +209,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
 				subscriptionService.activateInstantiatedService(subscription);
-				
+				offer.setSubscription(subscription);
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
 					//Create Action type
