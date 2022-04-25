@@ -12424,5 +12424,9 @@ order by date_trunc('month', i.invoice_date) DESC
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
-
+    <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza">
+        <addColumn tableName="global_settings">
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
