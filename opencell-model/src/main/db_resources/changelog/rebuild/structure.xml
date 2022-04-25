@@ -3168,7 +3168,7 @@
             <column name="adjusted_rated_tx" type="bigint" />
             <column name="order_number" type="varchar(100)" />
             <column name="rating_unit_description" type="varchar(20)" />
-            <column name="parameter_extra" type="${type.text}" />
+            <column name="parameter_extra" type="varchar(4000)" />
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
             <column name="subscription_id" type="bigint" />
@@ -3760,7 +3760,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="order_number" type="varchar(100)" />
-            <column name="parameter_extra" type="${type.text}" />
+            <column name="parameter_extra" type="varchar(4000)" />
             <column name="raw_amount_without_tax" type="numeric(23, 12)" />
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
             <column name="invoice_sub_category_id" type="bigint" />
@@ -11767,6 +11767,7 @@
             <column name="quote_default_validity_delay" type="int">
             	<constraints nullable="false" />
             </column>
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -16027,7 +16028,7 @@
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
-      
+
       <changeSet id="#INTRD-6056_20220413-fk" author="HatimOUDAD">
       <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_quote_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdcc" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
@@ -17625,6 +17626,7 @@
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
+    <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
     <changeSet id="#INTRD-6056_20220413" author="HatimOUDAD" />
 
@@ -17640,6 +17642,8 @@
     <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki" />
     <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki" />
     <changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
+    <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" />
+    <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

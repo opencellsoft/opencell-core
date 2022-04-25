@@ -32,6 +32,8 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
                 .invoiceType(entity.getInvoiceType() != null ? ImmutableResource.builder().id(entity.getInvoiceType().getId()).code(entity.getInvoiceType().getCode()).build(): null)
                 .invoiceTypeEl(entity.getInvoiceTypeEl())
+                .accountingCodeEl(entity.getAccountingCodeEl())
+                .columCriteriaEL(entity.getColumnCriteriaEL())
                 .build();
     }
 
@@ -71,6 +73,8 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
             invoiceType.setCode(resource.getInvoiceType().getCode());
             accountingArticleEntity.setInvoiceType(invoiceType);
         }
+        accountingArticleEntity.setColumnCriteriaEL(resource.getColumCriteriaEL());
+        accountingArticleEntity.setAccountingCodeEl(resource.getAccountingCodeEl());
         accountingArticleEntity.setInvoiceTypeEl(resource.getInvoiceTypeEl());
         return accountingArticleEntity;
     }

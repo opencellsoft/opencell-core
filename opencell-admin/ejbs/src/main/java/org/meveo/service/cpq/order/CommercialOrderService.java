@@ -209,7 +209,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
 				subscriptionService.activateInstantiatedService(subscription);
-				
+				offer.setSubscription(subscription);
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
 					//Create Action type
@@ -417,6 +417,37 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				attributeInstance.setSubscription(offer.getSubscription());
 				instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
 				}
+			}
+			//add missing attribute instances
+			AttributeInstance attributeInstance=null;
+			for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+				Attribute attribute=productVersionAttribute.getAttribute();
+				if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+					attributeInstance = new AttributeInstance(currentUser);
+					attributeInstance.setAttribute(attribute);
+					attributeInstance.setServiceInstance(serviceInstance);
+					attributeInstance.setSubscription(offer.getSubscription());
+				
+				}else {
+					attributeInstance=instantiatedAttributes.get(attribute.getCode());
+				}
+				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+					switch (attribute.getAttributeType()) {
+					case BOOLEAN:
+						if(attributeInstance.getBooleanValue()==null)
+							attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					case NUMERIC:
+						if(attributeInstance.getDoubleValue()==null)
+							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					default:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
+					}
+				}
+				serviceInstance.addAttributeInstance(attributeInstance);	
 			}
 		}
 	}
