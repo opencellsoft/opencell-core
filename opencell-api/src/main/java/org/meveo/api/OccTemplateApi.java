@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -95,6 +96,13 @@ public class OccTemplateApi extends BaseApi {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
         }
+        if(postData.getContractAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContractAccountingCode());
+            if(contractAccountingCode == null) {
+                throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setContraAccountingCode(contractAccountingCode);
+        }
         occTemplateService.create(occTemplate);
     }
 
@@ -136,6 +144,15 @@ public class OccTemplateApi extends BaseApi {
         } else {
             AccountingScheme accountingScheme = createOrUpdateAccountingScheme(postData);
             occTemplate.setAccountingScheme(accountingScheme);
+        }
+        if(postData.getContractAccountingCode() != null) {
+            AccountingCode contractAccountingCode = accountingCodeService.findByCode(postData.getContractAccountingCode());
+            if(contractAccountingCode == null) {
+                throw new NotFoundException("Contract accounting code does not exist in the chart of accounts");
+            }
+            occTemplate.setContraAccountingCode(contractAccountingCode);
+        } else {
+            occTemplate.setContraAccountingCode(null); // if no contraAccountingCode send for update, we must clear the old one.
         }
         occTemplateService.update(occTemplate);
     }
@@ -239,7 +256,7 @@ public class OccTemplateApi extends BaseApi {
             } else {
                 updateTheAccountingScheme(accSchemeDto, scriptInstance, accountingScheme);
             }
-        } else if (StringUtils.isNotBlank(accSchemeDto.getLongDescription())) {
+        } else if (accSchemeDto.getLongDescriptionsTranslated()!=null && !accSchemeDto.getLongDescriptionsTranslated().isEmpty()) {
             accountingScheme = createNewAccountingScheme(accSchemeDto, scriptInstance, null, dto);
         } else
             throw new MissingParameterException("code or longDescription");
@@ -249,6 +266,7 @@ public class OccTemplateApi extends BaseApi {
     private void updateTheAccountingScheme(AccountingSchemeDto accSchemeDto, ScriptInstance scriptInstance, AccountingScheme accountingScheme) {
         accountingScheme.setDescription(accSchemeDto.getDescription());
         accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(accSchemeDto.getLongDescriptionsTranslated(), accountingScheme.getLongDescriptionI18n()));
         accountingScheme.setScriptInstance(scriptInstance);
         accountingSchemeService.update(accountingScheme);
     }
@@ -261,6 +279,7 @@ public class OccTemplateApi extends BaseApi {
         accountingScheme.setCode(code);
         accountingScheme.setDescription(accSchemeDto.getDescription());
         accountingScheme.setLongDescription(accSchemeDto.getLongDescription());
+        accountingScheme.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(accSchemeDto.getLongDescriptionsTranslated(), null));
         accountingScheme.setScriptInstance(scriptInstance);
         accountingSchemeService.create(accountingScheme);
         return accountingScheme;
@@ -308,7 +327,7 @@ public class OccTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptCode);
         else {
             ScriptInstanceCategory category = PersistenceUtils.initializeAndUnproxy(scriptInstance.getScriptInstanceCategory());
-            if (category == null || !"FILE_ACCOUNTING_SCHEMES".equals(category.getCode())) {
+            if (category == null || !"ACCOUNTING_SCHEMES".equals(category.getCode())) {
                 throw new MissingParameterException("the script with code=" + scriptCode + " does not belong to category ‘File accounting schemes’");
             }
         }

@@ -25,15 +25,17 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
-import org.meveo.model.datawarehouse.JournalEntry;
+import org.meveo.model.datawarehouse.DwhJournalEntry;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * Sales Transformation service implementation.
- * 
+ *
+ * @deprecated since 13
  */
+@Deprecated
 @Stateless
-public class JournalEntryService extends PersistenceService<JournalEntry> {
+public class DwhJournalEntryService extends PersistenceService<DwhJournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

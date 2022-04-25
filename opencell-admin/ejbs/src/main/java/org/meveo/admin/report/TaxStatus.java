@@ -32,7 +32,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.reporting.impl.JournalEntryService;
+import org.meveo.service.reporting.impl.DwhJournalEntryService;
 
 /**
  * @author Wassim Drira
@@ -43,7 +43,7 @@ import org.meveo.service.reporting.impl.JournalEntryService;
 public class TaxStatus extends FileProducer implements Reporting {
 
     @Inject
-    private JournalEntryService salesTransformationService;
+    private DwhJournalEntryService salesTransformationService;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
