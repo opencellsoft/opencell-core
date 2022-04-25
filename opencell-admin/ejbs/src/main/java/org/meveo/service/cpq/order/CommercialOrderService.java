@@ -205,6 +205,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			instanciateDiscountPlans(subscription, discountPlans);
 			subscriptionService.update(subscription);
 			subscriptionService.activateInstantiatedService(subscription);
+			offer.setSubscription(subscription);
 		}
 
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
