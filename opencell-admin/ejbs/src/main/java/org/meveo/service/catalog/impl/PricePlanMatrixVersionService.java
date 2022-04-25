@@ -13,14 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -440,15 +433,21 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return null;
 		}
 
-		private Map<String, Object> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-			Map<String, Object> CSVLineRecords = new HashMap<>();
+		private Set<Map<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+			Set<Map<String, Object>> CSVLineRecords = new HashSet<>();
 			ppv.getLines().stream()
 				.forEach(line -> {
-					CSVLineRecords.put("id", line.getId());
-					line.getPricePlanMatrixValues().stream()
-						.forEach(pricePlanMatrixValue ->
-							CSVLineRecords.put(pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getCode() + "[" + pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getAttributeType() + "]",
-								pricePlanMatrixValue.getStringValue()));
+					Map<String, Object> CSVLineRecord = new HashMap<>();
+					CSVLineRecord.put("id", line.getId());
+					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					line.getPricePlanMatrixValues().iterator()
+							.forEachRemaining(ppmv -> {
+								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType()+']',
+										ppmv.getStringValue());
+								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
+
+							});
+					CSVLineRecords.add(CSVLineRecord);
 				});
 			return CSVLineRecords;
 		}
@@ -461,8 +460,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
 				fileName
 					.append(fileNameSeparator + chargeTemplate.getDescription())
-					.append(fileNameSeparator + chargeTemplate.getCode())
-					.append(fileNameSeparator + ppmv.getLabel());
+					.append(fileNameSeparator + chargeTemplate.getCode());
 			}
 			fileName.append(fileNameSeparator+ ppmv.getLabel());
 			fileName.append(fileNameSeparator);
@@ -485,15 +483,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private Path saveARecord(String fileName, PricePlanMatrixVersion ppv) {
-			Map<String, Object> record = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : toCSVLineRecords(ppv);
+			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(ppv) : buildPricePlanVersionCsvSchema();
+			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records.iterator().next().keySet()) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
 			try {
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(record);
+				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
@@ -518,13 +516,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(PricePlanMatrixVersion ppv) {
-			CsvSchema.Builder builder = CsvSchema.builder().addColumn("id", CsvSchema.ColumnType.STRING);
-			ppv.getColumns().stream()
-					.filter(ppmc -> ppmc.getAttribute() != null)
-					.forEach(ppmc -> builder
-							.addColumn(ppmc.getAttribute().getCode() + "[" + ppmc.getAttribute().getAttributeType() + "]", CsvSchema.ColumnType.STRING));
-			return builder
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<String> columns) {
+			Set<String> dynamicColumns = columns.stream()
+					.filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+			return CsvSchema.builder()
+					.addColumn(new CsvSchema.Column(0, "id"))
+					.addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
+					.addColumn("description[text]", CsvSchema.ColumnType.STRING)
+					.addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING)
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
