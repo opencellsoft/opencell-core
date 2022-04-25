@@ -418,6 +418,37 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
 				}
 			}
+			//add missing attribute instances
+			AttributeInstance attributeInstance=null;
+			for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+				Attribute attribute=productVersionAttribute.getAttribute();
+				if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+					attributeInstance = new AttributeInstance(currentUser);
+					attributeInstance.setAttribute(attribute);
+					attributeInstance.setServiceInstance(serviceInstance);
+					attributeInstance.setSubscription(offer.getSubscription());
+				
+				}else {
+					attributeInstance=instantiatedAttributes.get(attribute.getCode());
+				}
+				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+					switch (attribute.getAttributeType()) {
+					case BOOLEAN:
+						if(attributeInstance.getBooleanValue()==null)
+							attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					case NUMERIC:
+						if(attributeInstance.getDoubleValue()==null)
+							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					default:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
+					}
+				}
+				serviceInstance.addAttributeInstance(attributeInstance);	
+			}
 		}
 	}
 
