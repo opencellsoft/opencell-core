@@ -419,8 +419,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
 				fileName
 					.append(fileNameSeparator + chargeTemplate.getDescription())
-					.append(fileNameSeparator + chargeTemplate.getCode())
-					.append(fileNameSeparator + ppmv.getLabel());
+					.append(fileNameSeparator + chargeTemplate.getCode());
 			}
 			fileName.append(fileNameSeparator+ ppmv.getLabel());
 			fileName.append(fileNameSeparator);
