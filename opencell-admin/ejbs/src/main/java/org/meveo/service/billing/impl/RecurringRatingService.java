@@ -330,7 +330,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if (cal == null) {
                     throw new IncorrectChargeTemplateException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
                 }
-                if(cal.getCalendarType() != null && cal.getCalendarType().equals("BANKING") && currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
+                if(cal.getCalendarType() != null && cal.getCalendarType().equals("BANKING") && currentPeriodToDate != null && currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
                 	throw new IllegalStateException("The given date: " +currentPeriodFromDate +" is not in period [startDate,endDate] of banking Calendar: "+ cal.getCode());
                 }
                 
