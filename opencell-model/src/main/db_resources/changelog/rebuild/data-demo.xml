@@ -467,42 +467,45 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.046" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CHK" />
             <column name="description" value="Payment - check" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-           	<column name="contra_accounting_code_id" valueNumeric="-42" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+           	<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511200000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.067" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_TIP" />
             <column name="description" value="Payment - TIP" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-			<column name="contra_accounting_code_id" valueNumeric="-40" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511000610')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.088" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_DDT" />
             <column name="description" value="Payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="contra_accounting_code_id" valueNumeric="-20" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='512000000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
@@ -801,14 +804,15 @@
             <column name="id" valueNumeric="-43" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CRD" />
             <column name="description" value="Payment - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="contra_accounting_code_id" valueNumeric="-37" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511011000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>        
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-44" />
@@ -836,27 +840,29 @@
             <column name="id" valueNumeric="-46" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_PAL" />
             <column name="description" value="Payment Paypal" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="contra_accounting_code_id" valueNumeric="-38" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511002000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>        
        <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-47" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_STP" />
             <column name="description" value="Payment Stripe" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="contra_accounting_code_id" valueNumeric="-39" />
-           <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+           <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+           <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511003000')" />
+           <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+           <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>    
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-50" />
@@ -2519,27 +2525,29 @@
 			<column name="id" valueNumeric="-60" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="accounting_code_id" valueNumeric="-41" />
-			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_CASH" />
 			<column name="description" value="Payment - cash" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
-             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
+             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
 		</insert>
          <insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-61" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="accounting_code_id" valueNumeric="-20" />
-			<column name="contra_accounting_code_id" valueNumeric="-6" />
 			<column name="code" value="PAY_WIRE" />
 			<column name="description" value="WIRETRANSFER" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
-             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='512000000')" />
+             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
 		</insert>
 	</changeSet>
         

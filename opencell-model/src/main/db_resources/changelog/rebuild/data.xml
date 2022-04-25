@@ -9949,11 +9949,24 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="description" value="Payment Accounting Scheme"/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
 		</insert>
+
+		<!-- Add New 419100000 AccountinCode -->
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-45" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="419100000" />
+			<column name="description" value="Client non renconnu" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>
 	</changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
-	<changeSet id="#INTRD-6638_20220422-LinkToOccT" author="aelmalki" />
+	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
