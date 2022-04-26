@@ -18,8 +18,6 @@
 
 package org.meveo.model.billing;
 
-import org.meveo.model.cpq.commercial.InvoiceLine;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

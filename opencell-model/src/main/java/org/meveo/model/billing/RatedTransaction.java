@@ -56,7 +56,6 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
@@ -350,7 +349,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Additional parameter used in rating
      */
-    @Type(type = "longText")
+    @Size(max = 4000)
     @Column(name = "parameter_extra")
     private String parameterExtra;
 

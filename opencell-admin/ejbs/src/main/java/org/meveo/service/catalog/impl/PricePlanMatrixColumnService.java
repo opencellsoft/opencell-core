@@ -70,8 +70,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         deleteById(ppmColumn.getId());
     }
     
-    @SuppressWarnings("unchecked")
-	public void deleteById(Long id) {
+    public void deleteById(Long id) {
 			this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.deleteById")
 																			.setParameter("id", id).executeUpdate();
 	}

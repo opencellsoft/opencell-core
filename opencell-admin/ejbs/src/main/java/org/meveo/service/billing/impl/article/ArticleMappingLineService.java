@@ -36,6 +36,12 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		if(chargeTemplate != null)
 			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
+		if(product == null) {
+			queryBuilder.addSql("am.product is null ");
+		}
+		if(chargeTemplate == null) {
+			queryBuilder.addSql("am.chargeTemplate is null ");
+		}
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
@@ -47,7 +53,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		Query query = queryBuilder.getQuery(getEntityManager());
 		List<ArticleMappingLine> lists = query.getResultList();
 		Set<Long> idsMapping = lists.stream().map(aml -> aml.getAttributesMapping()).flatMap(Collection::stream).map(AttributeMapping::getId).collect(Collectors.toSet());
-		Set<Long> ids =  new HashSet<ArticleMappingLine>(lists).stream().map(ArticleMappingLine::getId).collect(Collectors.toSet());
+		Set<Long> ids =  new HashSet<>(lists).stream().map(ArticleMappingLine::getId).collect(Collectors.toSet());
 		if(!idsMapping.isEmpty())
 			articleMappingLineService.remove(idsMapping);
 		if(!ids.isEmpty())
@@ -76,6 +82,10 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
 	        articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
+	        
+	        articleMappingLineUpdated.setOfferTemplate(articleMappingLine.getOfferTemplate());
+	        articleMappingLineUpdated.setChargeTemplate(articleMappingLine.getChargeTemplate());
+	        articleMappingLineUpdated.setProduct(articleMappingLine.getProduct());
 	        
 	        articleMappingLineUpdated.getAttributesMapping().clear();
 	        if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){

@@ -27,8 +27,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "security_deposit_transaction_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "SecurityDepositTransaction.countExistenceByAoIds",
-                query = "SELECT COUNT(sd) FROM SecurityDepositTransaction sd WHERE sd.accountOperation.id IN (:aoIds)")
+        @NamedQuery(name = "SecurityDepositTransaction.getSecurityDepositCodesByAoId",
+                query = "SELECT sd.securityDeposit.code FROM SecurityDepositTransaction sd WHERE sd.accountOperation.id = :aoId")
 })
 public class SecurityDepositTransaction extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;

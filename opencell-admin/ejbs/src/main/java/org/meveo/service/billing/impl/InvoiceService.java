@@ -81,7 +81,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.poi.util.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
@@ -174,7 +173,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
@@ -2569,10 +2568,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
        
        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
            nullifyInvoiceXMLFileNames(br);
+           nullifyBillingRunXMLExecutionResultIds(br);
        }
 
        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
            nullifyInvoicePDFFileNames(br);
+           nullifyBillingRunPDFExecutionResultIds(br);
        }
    }
 
@@ -2594,7 +2595,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
        getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
    }
 
-    /**
+   /**
+    * Nullify BR XML execution result Id.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyBillingRunXMLExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+   /**
+    * Nullify BR PDF execution result Id.
+    *
+    * @param billingRun the billing run
+    */
+   public void nullifyBillingRunPDFExecutionResultIds(BillingRun billingRun) {
+       getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+   }
+   
+
+   /**
      * @param billingRunId
      */
     public void deleteInvoices(Long billingRunId) {
@@ -5909,6 +5929,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
+            toUpdate.getLinkedInvoices().clear();
             for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
@@ -6111,20 +6132,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
         invoice = refreshOrRetrieve(invoice);
-        var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
-        
-        if (invoiceLines != null) {
-            for (InvoiceLine invoiceLine : invoiceLines) {
-                if (invoiceLineIds.contains(invoiceLine.getId())) {
-                    invoiceLinesService.detach(invoiceLine);
-                    var duplicateInvoiceLine = new InvoiceLine(invoiceLine, invoice);
-                    invoiceLinesService.create(duplicateInvoiceLine);
-                    invoice.getInvoiceLines().add(duplicateInvoiceLine);
-                }                
-            }
+        for (Long idInvoiceLine : invoiceLineIds) {
+            InvoiceLine invoiceLineSource = invoiceLinesService.findById(idInvoiceLine);  
+            Invoice invoiceSource = invoiceLineSource.getInvoice();
+            invoiceLinesService.detach(invoiceLineSource);
+            var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
+            duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoiceSource);
+            invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
-        
+
         calculateInvoice(invoice);
         return update(invoice);
+    }
+
+    public Invoice findByInvoiceNumber(String invoiceNumber) {
+        return (Invoice) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+                                .setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+                                .getSingleResult();
     }
 }
