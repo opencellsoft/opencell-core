@@ -8312,7 +8312,7 @@
 			<column name="version" valueNumeric="1" />
 			<column name="max_dunning_levels" valueNumeric="5" />
 			<column name="max_days_outstanding" valueNumeric="3" />
-			<column name="dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="dunning_mode" value="INVOICE_LEVEL" />
 		</insert>
 		<insert tableName="dunning_pause_reasons">
 			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
@@ -9967,6 +9967,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
+
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
