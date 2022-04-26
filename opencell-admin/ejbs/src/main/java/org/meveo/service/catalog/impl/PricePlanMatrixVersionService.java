@@ -423,7 +423,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions){
 			if(pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
 				Set<Path> filePaths = pricePlanMatrixVersions.stream()
-						.map(ppv  -> saveARecord(buildFileName(ppv), ppv))
+						.map(ppv  -> saveAsRecord(buildFileName(ppv), ppv))
 						.collect(Collectors.toSet());
 				if(filePaths.size() > 1) {
 					return archiveFiles(filePaths);
@@ -482,10 +482,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				.replaceAll("null","").replaceAll("[/: ]", "-");
 		}
 
-		private Path saveARecord(String fileName, PricePlanMatrixVersion ppv) {
+		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv) {
 			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records.iterator().next().keySet()) : buildPricePlanVersionCsvSchema();
+			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
 			try {
 				if(!Files.exists(Path.of(saveDirectory))){
@@ -516,9 +516,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<String> columns) {
-			Set<String> dynamicColumns = columns.stream()
-					.filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<Map<String, Object>> records) {
+		    
+		    Set<String> dynamicColumns = new HashSet<>();
+		    if (!records.isEmpty()) {
+		        Set<String> columns = records.iterator().next().keySet();
+	            dynamicColumns = columns.stream()
+	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+            }
 			return CsvSchema.builder()
 					.addColumn(new CsvSchema.Column(0, "id"))
 					.addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
