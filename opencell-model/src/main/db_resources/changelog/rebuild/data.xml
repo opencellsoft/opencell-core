@@ -9803,6 +9803,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza"/>
+
 
 	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
 		<insert tableName="meveo_script_instance">
@@ -9840,10 +9842,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 
 	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
-	
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
-    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+	<changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-    
 </databaseChangeLog>
