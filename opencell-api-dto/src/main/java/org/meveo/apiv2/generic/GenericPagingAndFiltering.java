@@ -37,4 +37,12 @@ public interface GenericPagingAndFiltering {
     @Value.Default default String getSortOrder(){ return PagingAndFiltering.SortOrder.ASCENDING.name();}
     @Nullable
     @Value.Default default Set<String> getExcluding(){ return Collections.emptySet();}
+    @Nullable
+    @Value.Default default Set<String> getGroupBy(){
+        return Collections.emptySet();
+    }
+    @Nullable
+    @Value.Default default Set<String> getHaving(){
+        return Collections.emptySet();
+    }
 }
