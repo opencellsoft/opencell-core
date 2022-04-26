@@ -12048,6 +12048,16 @@ order by date_trunc('month', i.invoice_date) DESC
         </createView>
     </changeSet>
 
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addColumn tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
      <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="${type.boolean}"/>
@@ -12424,6 +12434,78 @@ order by date_trunc('month', i.invoice_date) DESC
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
+
+    <changeSet id="#INTRD-5881_20220322" author="aelmalki">
+        <createSequence sequenceName="accounting_journal_entry_seq"/>
+        <createTable tableName="accounting_journal_entry">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounting_journal_entry" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <!-- Dependencies -->
+            <column name="accounting_operation_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="accounting_code_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tax_id" type="bigint" />
+
+            <!-- Simple fields -->
+            <column name="direction" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="analytic_code_1" type="varchar(255)" />
+            <column name="analytic_code_2" type="varchar(255)" />
+            <column name="analytic_code_3" type="varchar(255)" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="accounting_operation_id" baseTableName="accounting_journal_entry"
+                                 constraintName="fk_accounting_entry_account_operation" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_journal_entry"
+                                 constraintName="fk_accounting_entry_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="accounting_journal_entry"
+                                 constraintName="fk_accounting_entry_seller" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="accounting_journal_entry"
+                                 constraintName="fk_accounting_entry_customer_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
+                                 constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6298_20220405" author="aelmalki">
+        <addColumn tableName="ar_accounting_scheme">
+            <column name="long_description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza">
         <addColumn tableName="global_settings">
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />

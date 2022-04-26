@@ -17,6 +17,7 @@
  */
 package org.meveo.model.payments;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -31,6 +32,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -49,11 +51,18 @@ public class AccountingScheme extends BusinessEntity {
     private static final long serialVersionUID = -4989724064567423956L;
 
     /**
-     * Description
+     * Long Description
      */
     @Column(name = "long_description")
     @Size(max = 2000)
     private String longDescription;
+
+    /**
+     * i18n Long Description
+     */
+    @Type(type = "json")
+    @Column(name = "long_description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> longDescriptionI18n;
 
     /**
      * The script instance.
@@ -98,6 +107,14 @@ public class AccountingScheme extends BusinessEntity {
         this.scriptInstance = scriptInstance;
     }
 
+    public Map<String, String> getLongDescriptionI18n() {
+        return longDescriptionI18n;
+    }
+
+    public void setLongDescriptionI18n(Map<String, String> longDescriptionI18n) {
+        this.longDescriptionI18n = longDescriptionI18n;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -112,13 +129,17 @@ public class AccountingScheme extends BusinessEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getLongDescription(), getScriptInstance());
+        return Objects.hash(super.hashCode(), getLongDescriptionI18n(), getScriptInstance());
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AccountingScheme.class.getSimpleName() + "[", "]").add("code='" + code + "'").add("description='" + description + "'")
-                .add("longDescription='" + longDescription + "'").add("scriptInstance=" + scriptInstance).toString();
+        return new StringJoiner(", ", AccountingScheme.class.getSimpleName() + "[", "]")
+                .add("code='" + code + "'")
+                .add("description='" + description + "'")
+                .add("longDescription='" + longDescription + "'")
+                .add("longDescriptionI18n='" + longDescriptionI18n + "'")
+                .add("scriptInstance=" + scriptInstance).toString();
     }
 
 }
