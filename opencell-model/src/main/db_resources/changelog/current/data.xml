@@ -10033,4 +10033,54 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-6638_20220422" author="aelmalki">
+		<!-- Add Payment Script -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Payment Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SamplePaymentAccountingSchemeScript extends PaymentAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+
+		<!-- Add Scheme -->
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Payment entry scheme" />
+			<column name="description" value="Payment Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
+		</insert>
+
+		<!-- Add New 419100000 AccountinCode -->
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-45" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="419100000" />
+			<column name="description" value="Client non renconnu" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki">
+		<!-- Link to OCCTemplate Payment -->
+		<update tableName="ar_occ_template">
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Payment entry scheme')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+			<column name="occ_category" value="CREDIT" />
+			<where> code IN ('PAY_CHK','PAY_CRD','PAY_DDT','PAY_PAL','PAY_STP','PAY_TIP','PAY_CASH','PAY_WIRE')</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
