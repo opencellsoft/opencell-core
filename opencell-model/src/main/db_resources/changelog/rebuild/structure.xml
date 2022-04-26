@@ -16401,7 +16401,9 @@
             <column name="accounting_code_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="seller_id" type="bigint" />
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
             <column name="customer_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>

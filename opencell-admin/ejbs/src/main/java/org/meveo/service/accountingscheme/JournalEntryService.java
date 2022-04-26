@@ -62,8 +62,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setAmount(ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount());
         firstEntry.setCustomerAccount(ao.getCustomerAccount());
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
-        firstEntry.setSeller(ao.getSeller());
-        // Those value should have value : see technical specification INTRD-4702
+        // when AccountOperation doesnot have a seller, get it from ao.customerAccount.customer.seller
+        firstEntry.setSeller(ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller());
         firstEntry.setTax(null);
         firstEntry.setAnalyticCode1(null);
         firstEntry.setAnalyticCode2(null);

@@ -7,8 +7,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.accountingscheme.JournalEntryService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.Script;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -35,8 +33,8 @@ public class DefaultAccountingSchemeScript extends Script {
         OCCTemplate occT = occTemplateService.findByCode(ao.getCode());
 
         if (occT == null) {
-            log.warn("No OCCTemplate found for AccountingOperation [id={}]", ao.getId());
-            throw new BusinessException("No OCCTemplate found for AccountingOperation id=" + ao.getId());
+            log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
+            throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
         }
 
         if (occT.getAccountingCode() == null) {
