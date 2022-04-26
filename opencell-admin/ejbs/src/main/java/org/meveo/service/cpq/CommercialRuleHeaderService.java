@@ -496,6 +496,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     				}else {
     					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
     							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) &&  
+    									quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute) !=null &&
     									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
     											String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
     							.findFirst();
