@@ -2,6 +2,7 @@ package org.meveo.apiv2.settings.globalSettings.impl;
 
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.settings.GlobalSettingsInput;
+import org.meveo.apiv2.settings.ImmutableDunning;
 import org.meveo.apiv2.settings.ImmutableGlobalSettingsInput;
 import org.meveo.apiv2.settings.ImmutableQuoteSettings;
 import org.meveo.model.settings.GlobalSettings;
@@ -13,6 +14,7 @@ public class GlobalSettingsMapper extends ResourceMapper<GlobalSettingsInput, Gl
         return ImmutableGlobalSettingsInput
                 .builder()
                 .id(entity.getId())
+                .dunning(ImmutableDunning.builder().activateDunning(entity.getActivateDunning()).build())
                 .quoteSettings(ImmutableQuoteSettings
                                 .builder()
                                 .quoteDefaultValidityDelay(entity.getQuoteDefaultValidityDelay())
@@ -27,6 +29,9 @@ public class GlobalSettingsMapper extends ResourceMapper<GlobalSettingsInput, Gl
 
     protected GlobalSettings toEntity(GlobalSettings entity, GlobalSettingsInput resource) {
         entity.setQuoteDefaultValidityDelay(resource.getQuoteSettings().getQuoteDefaultValidityDelay());
+        if(resource.getDunning() != null) {
+            entity.setActivateDunning(resource.getDunning().getActivateDunning());
+        }
         return entity;
     }
 }
