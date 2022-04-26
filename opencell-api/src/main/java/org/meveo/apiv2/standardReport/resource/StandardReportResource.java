@@ -2,7 +2,6 @@ package org.meveo.apiv2.standardReport.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.math.*;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;

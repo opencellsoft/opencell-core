@@ -36,7 +36,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.quote.QuoteStatusEnum;
 
 

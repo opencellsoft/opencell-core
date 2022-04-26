@@ -161,8 +161,8 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                     throw new BusinessApiException("The file: '" + pathName + "' does not exist");
                 }
 
-                // File name pattern: [Price plan version identifier]_[Charge name]_[Charge code]_[Label of the price version]_[Status of price version]_[start date]_[end date]
-                Long pricePlanVersionId = Long.parseLong(importItem.getFileName().split("_")[0]);
+                // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start date]_-_[end date]
+                Long pricePlanVersionId = Long.parseLong(importItem.getFileName().split("_-_")[0]);
                 PricePlanMatrixVersion ppmvToUpdate = pricePlanMatrixVersionService.findById(pricePlanVersionId);
                 if (ppmvToUpdate == null) {
                     throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanVersionId);
