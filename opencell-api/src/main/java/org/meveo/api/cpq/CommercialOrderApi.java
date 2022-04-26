@@ -892,8 +892,12 @@ public class CommercialOrderApi extends BaseApi {
         	if(subscription == null) {
         		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscriptionCode()+" does not exist");
         	}
-        	if(orderOfferDto.getTerminationDate()!=null && orderOfferDto.getTerminationDate().before(subscription.getSubscriptionDate())) {
-        		throw new MeveoApiException("Termination date can not be before the subscription date");	
+        	Date terminationDateTime = DateUtils.setDateToEndOfDay(orderOfferDto.getTerminationDate());
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.before(subscription.getSubscriptionDate())) {
+        		throw new MeveoApiException("The termination date must not be before the subscription date");	
+        	}
+        	if(orderOfferDto.getTerminationDate()!=null && terminationDateTime.compareTo(new Date()) < 0) {
+        		throw new MeveoApiException("The termination date must not be in the past");	
         	}
         	orderOffer.setSubscription(subscription);
         	SubscriptionTerminationReason terminationReason = null;
