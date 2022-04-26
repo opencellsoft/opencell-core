@@ -11629,6 +11629,7 @@
             	<column name="quote_default_validity_delay" type="int">
             		<constraints nullable="false" />
             	</column>
+                <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         	</createTable>
     	</changeSet>
 
@@ -17525,6 +17526,7 @@
     <changeSet id="#INTRD-4702-20220321" author="ZBariki"/>
     <changeSet id="#INTRD-5881_20220322" author="aelmalki" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
+    <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
