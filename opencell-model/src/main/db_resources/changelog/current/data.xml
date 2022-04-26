@@ -9599,6 +9599,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="child_role_id" valueNumeric="-121" />
         </insert>
 	</changeSet>
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza">
+		<update tableName="dunning_settings">
+			<column name="dunning_mode">INVOICE_LEVEL</column>
+			<where>code='DUN_DEF'</where>
+		</update>
+	</changeSet>
 
 	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
 		<insert tableName="billing_accounting_code">
