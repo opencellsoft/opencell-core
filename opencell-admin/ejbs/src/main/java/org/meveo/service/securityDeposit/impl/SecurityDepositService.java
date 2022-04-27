@@ -314,7 +314,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
 
         securityDeposit.setStatus(SecurityDepositStatusEnum.UNLOCKED);
-        securityDeposit.setAmount(securityDeposit.getAmount().subtract(amount));
+        securityDeposit.setCurrentBalance(securityDeposit.getCurrentBalance().subtract(amount));
         update(securityDeposit);
     }
 

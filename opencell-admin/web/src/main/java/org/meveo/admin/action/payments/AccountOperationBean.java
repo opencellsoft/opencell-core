@@ -236,6 +236,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
         if (!ca.isTransient()) {
+            filters.put("not-inList code", List.of("CRD_SD", "DEB_SD", "REF_SD"));
             filters.put("customerAccount", ca);
             return getLazyDataModel();
         } else {
