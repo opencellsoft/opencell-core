@@ -35,6 +35,10 @@ public class AccountingPeriod extends AuditableEntity {
     private String accountingPeriodYear;
     
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date", unique = true, nullable = false)
+    private Date startDate = new Date();
+    
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date", unique = true, nullable = false)
     private Date endDate;
     
@@ -233,4 +237,17 @@ public class AccountingPeriod extends AuditableEntity {
 	public boolean isClosed() {
 		return this.accountingPeriodStatus == AccountingPeriodStatusEnum.CLOSED;
 	}
+	
+	/**
+     * @return the startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 }

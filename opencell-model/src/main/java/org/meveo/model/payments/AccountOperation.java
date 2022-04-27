@@ -33,8 +33,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Inheritance;
+import javax.persistence.GenerationType;import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -88,7 +87,7 @@ import org.meveo.model.finance.AccountingEntry;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @GenericGenerator(name = "OPERATION_NUMBER_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "account_operation_number_seq") })
+        @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
@@ -430,6 +429,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Operation number
      */
+
     @Column(name = "operation_number")
     private Long operationNumber;
 
