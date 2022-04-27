@@ -42,7 +42,6 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
@@ -55,7 +54,6 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     }
 
 	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
 			String externalPaymentId, PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {
