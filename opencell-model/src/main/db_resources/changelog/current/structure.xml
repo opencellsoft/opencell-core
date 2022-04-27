@@ -9807,6 +9807,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle">
         <createProcedure>
           create or replace type listagg_clob_t as object
@@ -10093,4 +10094,25 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+
+    <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA">
+		<sql>
+			ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
+
+			UPDATE ar_account_operation
+			SET operation_number = null;
+
+			UPDATE ar_account_operation
+			SET operation_number = nextval('account_operation_number_seq')
+			FROM (select ap.start_date, ap.end_date
+					 from accounting_period ap
+					 where accounting_period_year='2022-2023') as current_ap
+			WHERE accounting_date between current_ap.start_date and current_ap.end_date;
+
+			ALTER TABLE ar_account_operation ALTER COLUMN operation_number SET DEFAULT nextval('account_operation_number_seq');
+			ALTER SEQUENCE account_operation_number_seq OWNED BY ar_account_operation.operation_number;
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>

@@ -72,6 +72,9 @@ public class PaymentDto extends BaseEntityDto {
     /** The bank collection date. */
     private Date bankCollectionDate;
     
+    /** Collection date */
+    private Date collectionDate;
+    
     /** The due date. */
     private Date dueDate;
     
@@ -544,5 +547,13 @@ public class PaymentDto extends BaseEntityDto {
                 + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate=" + depositDate + ", bankCollectionDate="
                 + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching=" + listOCCReferenceforMatching
                 + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
+    }
+    
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
     }
 }

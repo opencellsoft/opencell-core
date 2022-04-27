@@ -429,7 +429,6 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Operation number
      */
-    @GeneratedValue(generator = "OPERATION_NUMBER_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "operation_number")
     private Long operationNumber;
 
