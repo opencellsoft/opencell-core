@@ -7235,7 +7235,7 @@
             <column name="multilanguage_flag" valueNumeric="1" />
             <column name="prepaid_resrv_delay_ms" valueNumeric="60000" />
             <column name="country_id" valueNumeric="1" />
-            <column name="currency_id" valueNumeric="1" />
+            <column name="currency_id"/>
             <column name="language_id" valueNumeric="1" />
             <column name="uuid" value="DEMO" />
             <column name="rounding_mode" value="NEAREST" />
