@@ -15992,7 +15992,7 @@
        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
-    
+
       <changeSet id="rebuild-str-fk-540-1640-fk2" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
@@ -17593,7 +17593,8 @@
 	<changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
 	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
 	<changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
-	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza" />
+    <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

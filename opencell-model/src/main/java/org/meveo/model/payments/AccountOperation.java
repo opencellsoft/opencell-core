@@ -444,6 +444,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     private Set<JournalEntry> accountingSchemeEntries = new HashSet<>();
 
+    /**
+     * Operation number
+     */
+    @Column(name = "operation_number", insertable = false)
+    private Long operationNumber;
+
     public Date getDueDate() {
         return dueDate;
     }
