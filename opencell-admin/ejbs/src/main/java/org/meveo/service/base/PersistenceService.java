@@ -46,6 +46,7 @@ import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -676,7 +677,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
             queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
             Query query = queryBuilder.getQuery(getEntityManager());
-            return query.getResultList();
+            return query.setFlushMode(FlushModeType.AUTO).getResultList();
         } else {
             QueryBuilder queryBuilder = getQuery(config);
             Query query = queryBuilder.getQuery(getEntityManager());
