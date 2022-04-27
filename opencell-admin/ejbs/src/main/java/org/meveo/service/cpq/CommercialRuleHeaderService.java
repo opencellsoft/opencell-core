@@ -4,6 +4,7 @@ import static java.util.Collections.singletonList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -287,43 +288,55 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return isSelectedAttribute;
     }
     
-    private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
-    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null && !"null".equals(convertedValue) && !"null".equals(sourceAttributeValue) ) {
+    private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,Object convertedValue) {
+    	if(convertedValue==null && StringUtils.isBlank(sourceAttributeValue)) {
+    		return true;
+    	}
+    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null) {
+    		String convertedValueStr=String.valueOf(convertedValue);
     		switch(operator) {
     		case EQUAL:
-    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))==0) {
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))==0) {
     					 return true;
     				 }
     			}
-    			if (convertedValue.equals(sourceAttributeValue))
+    			if (convertedValueStr.equals(sourceAttributeValue))
     				return true;
     			break;
     		case NOT_EQUAL:
-    			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-   				 if(Double.valueOf(convertedValue).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+   				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
    					 return true;
    				 }
    			    }
-    			if (!convertedValue.equals(sourceAttributeValue))
+    			if (!convertedValueStr.equals(sourceAttributeValue))
     				return true;
     			break;
     		case LESS_THAN:
-    			if (Double.valueOf(convertedValue)<Double.valueOf(sourceAttributeValue))
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if (Double.valueOf(convertedValueStr)<Double.valueOf(sourceAttributeValue))
     				return true;
+    			}
     			break;
     		case LESS_THAN_OR_EQUAL:
-    			if (Double.valueOf(convertedValue)<=Double.valueOf(sourceAttributeValue))
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if (Double.valueOf(convertedValueStr)<=Double.valueOf(sourceAttributeValue))
     				return true;
+    			}
     			break;
     		case GREATER_THAN:
-    			if (Double.valueOf(convertedValue)>Double.valueOf(sourceAttributeValue))
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if (Double.valueOf(convertedValueStr)>Double.valueOf(sourceAttributeValue))
     				return true;	
+    			}
     			break;
 
     		case GREATER_THAN_OR_EQUAL:
-    			if (Double.valueOf(convertedValue)>=Double.valueOf(sourceAttributeValue))
-    				return true;	 
+    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
+    				return true;	
+    			}
     		}
     	}
     	return false;
@@ -337,12 +350,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     		for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
     			String attributeCode = entry.getKey();
     			Object attributeValue = entry.getValue();
-    			String convertedValue = String.valueOf(attributeValue);
-    			if (attributeCode.equals(line.getSourceAttribute().getCode()) && !convertedValue.isEmpty()) {
+    			if (attributeCode.equals(line.getSourceAttribute().getCode())) {
     				switch (line.getSourceAttribute().getAttributeType()) {
     				case LIST_MULTIPLE_TEXT:
     				case LIST_MULTIPLE_NUMERIC:
-    					List<String> values = Arrays.asList(convertedValue.split(";"));
+    					List<String> values = attributeValue!=null?Arrays.asList(String.valueOf(attributeValue).split(";")):new ArrayList<String>();
     					if ((isPreRequisite && !values.contains(line.getSourceAttributeValue()))
     							|| !isPreRequisite && values.contains(line.getSourceAttributeValue())) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, values.contains(line.getSourceAttributeValue())));
@@ -354,7 +366,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					break;
     				case EXPRESSION_LANGUAGE:
     					OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
-    					String result = attributeService.evaluateElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
+    					String result =attributeValue!=null? attributeService.evaluateElExpressionAttribute(String.valueOf(attributeValue), null, offerTemplate, null, String.class):null;
     					if(result!=null) {
     					boolean resultCompareEl=valueCompare(line.getOperator(), line.getSourceAttributeValue(), result);
     					if (isPreRequisite && !resultCompareEl || !isPreRequisite && resultCompareEl) {
@@ -367,7 +379,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					}
     					break;
     				default:
-    					boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), convertedValue);
+    					boolean resultCompare=valueCompare(line.getOperator(), line.getSourceAttributeValue(), attributeValue);
     					if (isPreRequisite && !resultCompare || !isPreRequisite && resultCompare) {
     						continueProcess.setValue(checkOperator(line.getCommercialRuleItem().getOperator(), isLastLine, resultCompare));
     						return false;
@@ -466,7 +478,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     			Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
     					.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) 
     							&& valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
-    									String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    									quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute)))
     					.findFirst();
     			if (sourceOfferAttribute.isPresent()) {
     				if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
@@ -497,7 +509,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
     							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode())&&
     									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
-    											String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    											quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute)))
     							.findFirst();
     					if (quoteAttributes.isPresent()) {
     						if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
