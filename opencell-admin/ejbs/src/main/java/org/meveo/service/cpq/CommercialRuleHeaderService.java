@@ -288,7 +288,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
-    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null) {
+    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null && !"null".equals(convertedValue) && !"null".equals(sourceAttributeValue) ) {
     		switch(operator) {
     		case EQUAL:
     			if(NumberUtils.isCreatable(convertedValue.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
@@ -495,8 +495,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     					} 
     				}else {
     					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
-    							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) &&  
-    									quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute) !=null &&
+    							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode())&&
     									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
     											String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
     							.findFirst();
