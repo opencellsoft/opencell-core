@@ -58,7 +58,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, String param1, String param2, String param3) throws InvalidELException, ValidationException {
-		List<ChargeTemplate> productCharges=new ArrayList<>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
 		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
@@ -148,7 +147,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 	
-	@SuppressWarnings("rawtypes")
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) throws InvalidELException, ValidationException {
 		return getAccountingArticleByChargeInstance(chargeInstance,null,null,null);
 	}
@@ -322,7 +320,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						.collect(Collectors.toSet()).contains(billingCountry.getId());
 
 		boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency().getId())
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency() != null
+				            ? accountingCodeMapping.getBillingCurrency().getId() : null)
 						.collect(Collectors.toSet()).contains(billingCurrency.getId());
 
 		boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
