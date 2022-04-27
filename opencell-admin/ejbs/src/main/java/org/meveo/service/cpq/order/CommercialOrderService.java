@@ -181,7 +181,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setUserAccount(userAccount);
 			}else {
 				subscription.setUserAccount(offer.getUserAccount());
-			}			
+			}
 			subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
 			subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
@@ -195,6 +195,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 			subscription.setOrder(order);
 			subscription.setOrderOffer(offer);
+				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
 			subscriptionService.create(subscription);
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
@@ -206,7 +207,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscriptionService.update(subscription);
 			RatingResult ratingResult = subscriptionService.activateInstantiatedService(subscription);
 
-            discountPlanService.calculateDiscountplanItems(new ArrayList<>(ratingResult.getEligibleFixedDiscountItems()), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            discountPlanService.calculateDiscountplanItems(new ArrayList<>(ratingResult.getEligibleFixedDiscountItems()), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null ,
             		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), false, null, null,DiscountPlanTypeEnum.OFFER);
 		}
 
@@ -239,7 +240,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
             }
         
 	}
-	
+
 	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
 		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
 		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
@@ -318,7 +319,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
-		
+
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()

@@ -22,6 +22,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -746,5 +747,17 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         
         update(accountOperation);
         log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
-    }      
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> findAoByStatus(boolean onlyClosedPeriods, AccountOperationStatus... statuses) {
+        String namedQueryName = onlyClosedPeriods ? "AccountOperation.findAoClosedSubPeriodByStatus"
+                : "AccountOperation.findAoByStatus";
+
+        Query query = getEntityManager().createNamedQuery(namedQueryName);
+        query.setParameter("AO_STATUS", Arrays.asList(statuses));
+
+        return (List<AccountOperation>) query.getResultList();
+
+    }
 }

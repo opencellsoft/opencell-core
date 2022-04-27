@@ -55,16 +55,20 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Inject 
 	private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
+    
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+    
     @Inject
     private ProductService productService;
+    
     @Inject
 	private AuditLogService auditLogService;
+    
     @Inject
-
     private AttributeInstanceService attributeInstanceService;
 
     @Override
@@ -398,36 +402,49 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return null;
 		}
 
-		private Map<String, Object> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-			Map<String, Object> CSVLineRecords = new HashMap<>();
+		private Set<Map<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+			Set<Map<String, Object>> CSVLineRecords = new HashSet<>();
 			ppv.getLines().stream()
 				.forEach(line -> {
-					CSVLineRecords.put("id", line.getId());
-					line.getPricePlanMatrixValues().stream()
-						.forEach(pricePlanMatrixValue ->
-							CSVLineRecords.put(pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getCode() + "[" + pricePlanMatrixValue.getPricePlanMatrixColumn().getAttribute().getAttributeType() + "]",
-								pricePlanMatrixValue.getStringValue()));
+					Map<String, Object> CSVLineRecord = new HashMap<>();
+					CSVLineRecord.put("id", line.getId());
+					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					line.getPricePlanMatrixValues().iterator()
+							.forEachRemaining(ppmv -> {
+								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType()+']',
+										ppmv.getStringValue());
+								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
+
+							});
+					CSVLineRecords.add(CSVLineRecord);
 				});
 			return CSVLineRecords;
 		}
 
 		private String buildFileName(PricePlanMatrixVersion ppmv) {
+			final String fileNameSeparator = "_-_";
 			StringBuilder fileName = new StringBuilder();
-			fileName
-				.append(ppmv.getId());
+			fileName.append(ppmv.getId());
 			if(ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null){
 				ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
 				fileName
-					.append("_"+ chargeTemplate.getDescription())
-					.append("_"+ chargeTemplate.getCode())
-					.append("_"+ ppmv.getLabel());
+					.append(fileNameSeparator + chargeTemplate.getDescription())
+					.append(fileNameSeparator + chargeTemplate.getCode());
 			}
-			fileName
-				.append("_"+ ppmv.getLabel());
+			fileName.append(fileNameSeparator+ ppmv.getLabel());
+			fileName.append(fileNameSeparator);
 			if(ppmv.getValidity() != null){
-				fileName
-						.append("_"+ ppmv.getValidity().getFrom())
-						.append("_"+ ppmv.getValidity().getTo());
+				fileName.append(ppmv.getStatus());
+			}
+			if(ppmv.getValidity() != null){
+				fileName.append(fileNameSeparator);
+				if(ppmv.getValidity().getFrom() != null){
+					fileName.append(ppmv.getValidity().getFrom().getTime());
+				}
+				fileName.append(fileNameSeparator);
+				if(ppmv.getValidity().getTo() != null){
+					fileName.append(ppmv.getValidity().getTo().getTime());
+				}
 			}
 			return File.separator + fileName
 				.append(".csv").toString()
@@ -435,15 +452,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private Path saveARecord(String fileName, PricePlanMatrixVersion ppv) {
-			Map<String, Object> record = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : toCSVLineRecords(ppv);
+			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(ppv) : buildPricePlanVersionCsvSchema();
+			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records.iterator().next().keySet()) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
 			try {
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(record);
+				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
@@ -468,13 +485,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(PricePlanMatrixVersion ppv) {
-			CsvSchema.Builder builder = CsvSchema.builder().addColumn("id", CsvSchema.ColumnType.STRING);
-			ppv.getColumns().stream()
-					.filter(ppmc -> ppmc.getAttribute() != null)
-					.forEach(ppmc -> builder
-							.addColumn(ppmc.getAttribute().getCode() + "[" + ppmc.getAttribute().getAttributeType() + "]", CsvSchema.ColumnType.STRING));
-			return builder
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<String> columns) {
+			Set<String> dynamicColumns = columns.stream()
+					.filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+			return CsvSchema.builder()
+					.addColumn(new CsvSchema.Column(0, "id"))
+					.addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
+					.addColumn("description[text]", CsvSchema.ColumnType.STRING)
+					.addColumn("priceWithoutTax[number]", CsvSchema.ColumnType.NUMBER_OR_STRING)
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 

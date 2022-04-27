@@ -3,38 +3,51 @@
  */
 package org.meveo.apiv2.billing.service;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.billing.*;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.GenerateInvoiceResult;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLine;
+import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.filter.FilterService;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
 	
@@ -195,7 +208,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public InvoiceLinesInput createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
 		ImmutableInvoiceLinesInput.Builder result = ImmutableInvoiceLinesInput.builder();
 		for(InvoiceLine invoiceLineResource : invoiceLinesInput.getInvoiceLines()) {
-			org.meveo.model.cpq.commercial.InvoiceLine invoiceLine = invoiceLinesService.create(invoice, invoiceLineResource);
+			org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.create(invoice, invoiceLineResource);
 			invoiceLineResource = ImmutableInvoiceLine.copyOf(invoiceLineResource)
 					.withId(invoiceLine.getId())
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
@@ -342,4 +355,42 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		}
 		return filter;
 	}
+	
+	public Invoice createAdjustment(Invoice invoice, InvoiceLinesToReplicate invoiceLinesToReplicate) {
+        Invoice adjInvoice = null;
+
+        invoice = invoiceService.findById(invoice.getId(), asList("invoiceLines", "invoiceType", "invoiceType.occTemplate", "linkedInvoices"));
+
+        if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
+            throw new ForbiddenException("Invoice should be Validated");
+        }
+
+        if (invoice.getInvoiceType().getOccTemplate().getOccCategory() != OperationCategoryEnum.DEBIT) {
+            throw new ForbiddenException("occCategory must equal DEBIT as invoice type");
+        }
+
+        if (invoiceLinesToReplicate.getGlobalAdjustment() == null) {
+            throw new MissingParameterException("globalAdjustment");
+        }
+
+        try {
+            adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
+
+            if (invoice.getLinkedInvoices() != null) {
+                invoice.getLinkedInvoices().size();
+            }
+
+            else {
+                invoice.setLinkedInvoices(new HashSet<>());
+            }
+
+            invoice.getLinkedInvoices().add(adjInvoice);
+            invoiceService.update(invoice);
+        }
+        catch (Exception e) {
+            throw new BusinessApiException("Error when creating adjustment");
+        }
+
+        return adjInvoice;
+    }
 }

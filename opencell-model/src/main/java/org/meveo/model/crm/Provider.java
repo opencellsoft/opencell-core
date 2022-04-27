@@ -84,8 +84,6 @@ import org.meveo.model.shared.InterBankTitle;
 @Entity
 @ObservableEntity
 @Cacheable
-@DynamicInsert
-@DynamicUpdate
 @CustomFieldEntity(cftCodePrefix = "Provider")
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))

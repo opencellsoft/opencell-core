@@ -96,7 +96,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="org.meveo.model.cpq.commercial.InvoiceLine" project="opencell-model" 
+  <class id="11" language="java" name="org.meveo.model.billing.InvoiceLine" project="opencell-model"
     file="/opencell-model/src/main/java/org/meveo/model/cpq/commercial/InvoiceLine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="190" y="12"/>    

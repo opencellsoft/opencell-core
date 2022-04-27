@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
+import static java.util.Collections.emptyMap;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -30,7 +30,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -149,16 +149,7 @@ public class InvoiceLinesFactoryTest {
         when(instanceService.getEntityManager()).thenReturn(entityManager);
         when(commercialOrderService.getEntityManager()).thenReturn(entityManager);
         when(productVersionService.getEntityManager()).thenReturn(entityManager);
-        
 
-        when(entityManager.getReference(Subscription.class,1L)).thenReturn(subscription);
-        when(entityManager.getReference(BillingAccount.class,1L)).thenReturn(billingAccount);
-        when(entityManager.getReference(BillingRun.class,1L)).thenReturn(billingRun);
-        when(entityManager.getReference(OfferTemplate.class,1L)).thenReturn(offerTemplate);
-        when(entityManager.getReference(OrderLot.class,1L)).thenReturn(orderLot);
-        when(entityManager.getReference(ServiceInstance.class,1L)).thenReturn(serviceInstance);
-        when(entityManager.getReference(CommercialOrder.class,1L)).thenReturn(commercialOrder);
-        when(entityManager.getReference(ProductVersion.class,1L)).thenReturn(productVersion);
         when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
         when(appProvider.getRounding()).thenReturn(3);
     }
@@ -170,7 +161,7 @@ public class InvoiceLinesFactoryTest {
         BillingRun billingRun = new BillingRun();
         billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, emptyMap(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -190,7 +181,7 @@ public class InvoiceLinesFactoryTest {
         BillingRun billingRun = new BillingRun();
         billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, emptyMap(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -204,7 +195,7 @@ public class InvoiceLinesFactoryTest {
         Map<String, Object> record = buildRecord();
         when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, emptyMap(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -217,7 +208,7 @@ public class InvoiceLinesFactoryTest {
         Map<String, Object> record = new HashMap<>();
         record.put("billing_account__id", BigInteger.valueOf(1));
         record.put("billing_run_id", BigInteger.valueOf(1));
-        record.put("article_id", BigInteger.valueOf(1));
+        record.put("article_id", 1L);
         record.put("service_instance_id", BigInteger.valueOf(1));
         record.put("service_instance_id", BigInteger.valueOf(1));
         record.put("offer_id", BigInteger.valueOf(1));

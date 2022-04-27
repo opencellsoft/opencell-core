@@ -46,7 +46,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		if(dunningSettingsService.findByCode(baseEntity.getCode()) != null)
 			throw new EntityAlreadyExistsException(DunningSettings.class, baseEntity.getCode());
 		if(baseEntity.getDunningMode() == null)
-			baseEntity.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
+			baseEntity.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
 		if(baseEntity.getMaxDunningLevels() == null)
 			baseEntity.setMaxDunningLevels(15);
 		if(baseEntity.getAccountingArticle() != null && baseEntity.getAccountingArticle().getId() != null) {

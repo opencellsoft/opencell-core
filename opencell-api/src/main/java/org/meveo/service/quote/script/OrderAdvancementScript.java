@@ -20,7 +20,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.model.cpq.commercial.OrderOffer;
