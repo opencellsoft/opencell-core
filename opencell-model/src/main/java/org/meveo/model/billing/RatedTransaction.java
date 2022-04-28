@@ -555,7 +555,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     private String uuid;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 
     @Embedded

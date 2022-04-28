@@ -3200,9 +3200,8 @@
             <column name="cf_values" type="${type.json}"/>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="type" type="VARCHAR(25)"/>
-            <column name="article_id" type="bigint"/>
+            <column name="accounting_article_id" type="bigint"/>
             <column name="order_id" type="bigint" />
-            <column name="accounting_article_id" type="bigint" />
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
             <column name="invoice_line_id" type="bigint"/>
@@ -14664,8 +14663,8 @@
                                  referencedColumnNames="id" referencedTableName="cpq_product" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1446">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="article_id"
-                                 constraintName="rated_transaction_article_fk" referencedTableName="billing_accounting_article"
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="accounting_article_id"
+                                 constraintName="fk_billing_rated_transaction_accounting_article_id" referencedTableName="billing_accounting_article"
                                  referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1447">
@@ -17645,6 +17644,7 @@
     <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" />
     <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim" />
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6779_2022_04_28" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
