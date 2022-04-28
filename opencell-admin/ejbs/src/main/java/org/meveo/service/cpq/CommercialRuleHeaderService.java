@@ -428,8 +428,23 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         }
 
                                         List<QuoteOffer> quoteOffers = isOfferScope(commercialRuleHeader.getScopeType()) ? singletonList(quoteProduct.getQuoteOffer()) : quoteVersion.getQuoteOffers();
+                                    
+                                        Optional<QuoteAttribute> quoteAttributes=Optional.empty();
                                         for (CommercialRuleLine commercialLine : commercialRuleLines) {
-                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialLine, commercialRuleHeader.getCode());
+                                        	quoteAttributes=processReplacement(quoteOffers, attributeToReplace.get(), commercialLine, commercialRuleHeader.getCode());
+                                        	if(quoteAttributes.isPresent() && OperatorEnum.OR.equals(commercialRuleItem.getOperator())) {
+                                        		break;
+                                        	}else if(quoteAttributes.isEmpty() && OperatorEnum.AND.equals(commercialRuleItem.getOperator())) {
+                                        		break;
+                                        	}
+                                        }
+                                        if(quoteAttributes.isPresent()) {
+                                        	if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+                                        		overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleItem.getCommercialRuleHeader().getCode());
+                                        	}
+                                        	else {
+                                        		updateQuoteAttribute(attributeToReplace.get(), quoteAttributes);
+                                        	}
                                         }
                                     }
 
@@ -468,26 +483,20 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         .findAny();
     }
 
-    private void processReplacement(List<QuoteOffer> quoteOffers, QuoteAttribute attributeToReplace, CommercialRuleLine commercialRuleLine, String commercialRuleHeaderCode) {
+    private Optional<QuoteAttribute> processReplacement(List<QuoteOffer> quoteOffers, QuoteAttribute attributeToReplace, CommercialRuleLine commercialRuleLine, String commercialRuleHeaderCode) {
     	CommercialRuleHeader commercialRuleHeader = commercialRuleLine.getCommercialRuleItem().getCommercialRuleHeader();
+    	Optional<QuoteAttribute> quoteAttributes=Optional.empty();
     	if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() == null) {
     		Optional<QuoteOffer> sourceOffer = quoteOffers.stream()
     				.filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
     				.findFirst();
     		if (sourceOffer.isPresent()) {
-    			Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
+    			quoteAttributes = sourceOffer.get().getQuoteAttributes().stream()
     					.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) 
     							&& valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
     									quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute)))
     					.findFirst();
-    			if (sourceOfferAttribute.isPresent()) {
-    				if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
-    					overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
-    				}
-    				else {
-    					updateQuoteAttribute(attributeToReplace, sourceOfferAttribute);
-    				}
-    			}	
+    		
     		}
     	} else if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() != null){
     		Optional<QuoteOffer> sourceOffer = quoteOffers
@@ -506,25 +515,19 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     						overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
     					} 
     				}else {
-    					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
+    					quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
     							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode())&&
     									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
     											quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute)))
     							.findFirst();
-    					if (quoteAttributes.isPresent()) {
-    						if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
-    							overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
-    						}
-    						else {
-    							updateQuoteAttribute(attributeToReplace, quoteAttributes);
-    						}
-    					}   
+    					  
     				}
     			}
 
     		} 
 
     	}
+    	return quoteAttributes;
     }
 
     private void overrideBySourceAttributeValue(QuoteAttribute quoteAttributeToUpdate, String sourceAttributeValue, String commercialRuleCode) {
