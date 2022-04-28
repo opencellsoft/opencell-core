@@ -264,12 +264,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription()); 
-        invoiceLine.setProduct(productVersion.getProduct());
+        invoiceLine.setProduct(productVersion!=null?productVersion.getProduct():null);
         invoiceLine.setProductVersion(productVersion);
         invoiceLine.setOrderLot(orderLot);
         invoiceLine.setOfferTemplate(offerTemplate);
         invoiceLine.setOrderOffer(orderOffer);
-        invoiceLine.setQuoteOffer(orderOffer.getQuoteOffer());
+        invoiceLine.setQuoteOffer(orderOffer!=null?orderOffer.getQuoteOffer():null);
         if (entityToInvoice instanceof CpqQuote) {
         entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
         CpqQuote quote =((CpqQuote) entityToInvoice);

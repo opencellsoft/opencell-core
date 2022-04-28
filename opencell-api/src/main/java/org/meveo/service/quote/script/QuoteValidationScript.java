@@ -198,6 +198,7 @@ public class QuoteValidationScript extends ModuleScript {
 		
 		List<QuotePrice> offerQuotePrices=quoteOffer.getQuotePrices().stream()
 		.filter(qp -> qp.getPriceLevelEnum()==PriceLevelEnum.OFFER).collect(Collectors.toList());
+		log.debug("processOrderOffer quoteprices size={}",offerQuotePrices.size());
 		processOrderPrice(offerQuotePrices, null, order, quoteOffer.getQuoteVersion(), offer, null);
 		
 		return offer;
@@ -265,6 +266,8 @@ public class QuoteValidationScript extends ModuleScript {
 	}
 	
 	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
+		
+		log.info("processOrderArticleLine quoteArticleLine={}",quoteArticleLine!=null?quoteArticleLine.getId():null);
 		if(quoteArticleLine==null || commercialOrder==null) {
 			return null;
 		}
