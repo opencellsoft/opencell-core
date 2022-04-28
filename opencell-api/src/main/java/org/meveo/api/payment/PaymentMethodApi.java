@@ -45,6 +45,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -111,6 +112,17 @@ public class PaymentMethodApi extends BaseApi {
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
         	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
+		// populate customFields
+		try {
+			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, true, true);
+
+		} catch (MissingParameterException | InvalidParameterException e) {
+			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw e;
+		}        	
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
@@ -151,6 +163,17 @@ public class PaymentMethodApi extends BaseApi {
                 paymentMethod.setReferenceDocument(document);
             }
         }
+		// populate customFields
+		try {
+			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, false, true);
+
+		} catch (MissingParameterException | InvalidParameterException e) {
+			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw e;
+		}
         paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
     }
 
@@ -216,8 +239,8 @@ public class PaymentMethodApi extends BaseApi {
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         if (totalCount > 0) {
             List<PaymentMethod> PaymentMethods = paymentMethodService.list(paginationConfig);
-            for (PaymentMethod paymentMethod : PaymentMethods) {
-                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            for (PaymentMethod paymentMethod : PaymentMethods) {               
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod, entityToDtoConverter.getCustomFieldsDTO(paymentMethod, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
         return result;
@@ -286,7 +309,7 @@ public class PaymentMethodApi extends BaseApi {
         if (paymentMethod == null) {
             throw new EntityDoesNotExistsException(PaymentMethod.class, id);
         }
-        return new PaymentMethodDto(paymentMethod);
+        return new PaymentMethodDto(paymentMethod, entityToDtoConverter.getCustomFieldsDTO(paymentMethod, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
     }
 
