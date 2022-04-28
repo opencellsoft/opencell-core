@@ -9,6 +9,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.api.dto.AgedReceivableDto;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -20,11 +22,15 @@ import java.util.List;
 
 public class AgedReceivableMapperTest {
 
-    private AgedReceivableMapper mapper;
+    private AgedReceivableMapper mapper = new AgedReceivableMapper();
 
     @Before
     public void setUp() {
-        mapper = new AgedReceivableMapper();
+        Provider provider = new Provider();
+        Currency currency = new Currency();
+        currency.setCurrencyCode("USD");
+        provider.setCurrency(currency);
+        mapper.setAppProvider(provider);
     }
 
     @Test
@@ -34,9 +40,8 @@ public class AgedReceivableMapperTest {
         Object[] agedReceivable = new Object[] {"CA_CODE", ONE,
                 new BigDecimal(100), new BigDecimal(80), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
-                ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000"};
+                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100)};
         input.add(agedReceivable);
         List<AgedReceivableDto> response = mapper.buildDynamicResponse(input, 2);
 
@@ -44,9 +49,10 @@ public class AgedReceivableMapperTest {
         assertEquals(responseDtoSize, response.size());
         assertEquals(new BigDecimal(100), response.get(0).getGeneralTotal());
         assertEquals(DunningLevelEnum.R1, response.get(0).getDunningLevel());
-        assertEquals(List.of(new BigDecimal(20), ZERO, ZERO), response.get(0).getTaxAmountByPeriod());
-        assertEquals(List.of(new BigDecimal(80), ZERO, ZERO), response.get(0).getTotalAmountByPeriod());
-        assertEquals(List.of(new BigDecimal(100), ZERO, ZERO), response.get(0).getNetAmountByPeriod());
+        assertEquals("EUR", response.get(0).getTradingCurrency());
+        assertEquals(List.of(new BigDecimal(20), ZERO), response.get(0).getTaxAmountByPeriod());
+        assertEquals(List.of(new BigDecimal(80), ZERO), response.get(0).getTotalAmountByPeriod());
+        assertEquals(List.of(new BigDecimal(100), ZERO), response.get(0).getNetAmountByPeriod());
     }
 
     @Test
@@ -59,14 +65,14 @@ public class AgedReceivableMapperTest {
                 new BigDecimal(300), new BigDecimal(280), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000"};
+                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100)};
         input.add(agedReceivable);
 
         List<AgedReceivableDto> response = mapper.toEntityList(input);
 
         assertTrue(nonNull(response));
         assertEquals(responseDtoSize, response.size());
-        assertEquals("EUR", response.get(0).getFuncCurrency());
+        assertEquals("EUR", response.get(0).getTradingCurrency());
         assertEquals(new BigDecimal(100), response.get(0).getSum1To30());
         assertEquals(new BigDecimal(600), response.get(0).getGeneralTotal());
     }

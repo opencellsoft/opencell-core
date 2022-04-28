@@ -19,6 +19,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 
 @Stateless
 public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
@@ -30,6 +31,9 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private InvoiceService invoiceService;
+
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
     
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -62,10 +66,11 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
         }
         
         if (billingRunId != null) {
-            BillingRun br = billingRunService.findById(billingRunId);
-            if (br != null) {
-                br.setXmlJobExecutionResultId(jobExecutionResult.getId());
-                billingRunService.update(br);
+            BillingRun billingRun = billingRunService.findById(billingRunId);
+            if (billingRun != null) {
+                billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId,
+                        jobExecutionResult.getId(), null);
+                billingRunService.refreshOrRetrieve(billingRun);
             }
         }
 

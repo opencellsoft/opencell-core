@@ -6,7 +6,6 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
-import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
 import static org.meveo.model.report.query.QueryVisibilityEnum.PROTECTED;
 
@@ -33,24 +32,22 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryVisibilityEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
@@ -131,9 +128,10 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private String generateQuery(ReportQuery entity, Class<?> targetEntity) {
         PersistenceService persistenceService =
-                (PersistenceService) getServiceInterface(targetEntity.getSimpleName() + "Service");
+                (PersistenceService) getServiceInterface(targetEntity.getSimpleName());
         QueryBuilder queryBuilder;
         if (entity.getFilters() != null) {
             Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
@@ -156,6 +154,21 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "") + sortOptions;
         }
         return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "");
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private PersistenceService getServiceInterface(String targetEntityName) {
+        if ("EDR".equals(targetEntityName)) {
+            targetEntityName = "Edr";
+        }
+        PersistenceService persistenceService =
+                (PersistenceService) EjbUtils.getServiceInterface(targetEntityName + "Service");
+        
+        if (persistenceService == null) {
+            throw new BusinessApiException("Failed to obtain service interface for" + targetEntityName + "Service");
+        }
+
+        return persistenceService;
     }
 
     private String addFields(String query, List<String> fields, String sortBy) {

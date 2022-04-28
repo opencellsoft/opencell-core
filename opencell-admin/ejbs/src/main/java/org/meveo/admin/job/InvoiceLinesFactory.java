@@ -68,14 +68,14 @@ public class InvoiceLinesFactory {
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, id)));
-        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, id)));
-        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, id)));
-        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, id)));
-        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, id)));
-        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, id)));
-        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, id)));
-        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, id)));
+        ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
+        ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
+        ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
+        ofNullable(record.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((Number)id).longValue())));
+        ofNullable(record.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number)id).longValue())));
+        ofNullable(record.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, ((Number)id).longValue())));
+        ofNullable(record.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
+        ofNullable(record.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
 
         Date usageDate = getUsageDate(record.get("usage_date"), configuration.getDateAggregationOption());
         invoiceLine.setValueDate(usageDate);
@@ -121,7 +121,7 @@ public class InvoiceLinesFactory {
             String param1 = (String) record.get("parameter_1");
             String param2 = (String) record.get("parameter_2");
             String param3 = (String) record.get("parameter_3");
-        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
+        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);

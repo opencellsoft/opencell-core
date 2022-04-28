@@ -902,6 +902,13 @@ public class QueryBuilder {
     }
 
     /**
+     * @param havingColumn the name column used in having filter
+     */
+    public void addHavingCriterion(String havingColumn) {
+        q.append(" HAVING " + havingColumn);
+    }
+
+    /**
      * Append an ORDER BY clause for multiple fields
      * 
      * @param orderRules An array of column name and order direction combinations. Order direction is expressed as a boolean with True for ascending order. E.g. "NAME,
