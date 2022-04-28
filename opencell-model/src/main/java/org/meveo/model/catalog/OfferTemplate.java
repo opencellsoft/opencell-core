@@ -19,10 +19,9 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -44,6 +43,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ISearchable;
@@ -64,6 +65,7 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "OfferTemplate")
 @DiscriminatorValue("OFFER")
@@ -85,10 +87,12 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SELECT)
     @OrderBy("id")
     private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>();
 
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SELECT)
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
 
@@ -96,6 +100,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
      * offer component
      */
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SELECT)
     private List<OfferComponent> offerComponents = new ArrayList<>();
 
 

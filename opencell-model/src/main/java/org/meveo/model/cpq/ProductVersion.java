@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -45,6 +46,7 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
+@Cacheable
 @Table(name = "cpq_product_version",uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
