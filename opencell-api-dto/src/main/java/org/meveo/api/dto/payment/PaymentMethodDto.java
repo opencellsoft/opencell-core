@@ -249,13 +249,17 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         this.mandateIdentification = mandateIdentification;
         this.mandateDate = mandateDate;
     }
+    
+    public PaymentMethodDto(PaymentMethod paymentMethod) {
+    	this(paymentMethod,null);
+    }
 
     /**
      * Convert payment method entity to DTO
      *
      * @param paymentMethod Entity to convert
      */
-    public PaymentMethodDto(PaymentMethod paymentMethod) {
+    public PaymentMethodDto(PaymentMethod paymentMethod,CustomFieldsDto customFieldInstances) {
         this.id = paymentMethod.getId();
         this.disabled = paymentMethod.isDisabled();
         this.alias = paymentMethod.getAlias();
@@ -267,6 +271,7 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         this.info4 = paymentMethod.getInfo4();
         this.info5 = paymentMethod.getInfo5();
         this.paymentMethodType = paymentMethod.getPaymentType();
+        this.customFields = customFieldInstances;
         if (paymentMethod.getCustomerAccount() != null) {
             this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
         }
