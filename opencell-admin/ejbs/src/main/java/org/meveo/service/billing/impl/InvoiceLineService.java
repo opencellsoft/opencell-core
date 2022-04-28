@@ -645,8 +645,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 				rate = tradingCurrency.getCurrentRate();
 			}
 
-            TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
-            return  invoice.getTradingCurrency().getId() == providerTradingCurrency.getId() ? BigDecimal.ONE : rate;
+            if(null != appProvider.getCurrency())
+            {
+                TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+                 return  invoice.getTradingCurrency().getId() == providerTradingCurrency.getId() ? BigDecimal.ONE : rate;
+            }
+
+            return rate;
+
 		}
 
         return BigDecimal.ONE;
