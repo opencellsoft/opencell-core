@@ -539,15 +539,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
 		
-		BigDecimal currentRate = BigDecimal.ONE;
-		
-		if(invoiceLine.getInvoice().getTradingCurrency() != null) {
-			TradingCurrency tradingCurrency = tradingCurrencyService.findById(invoiceLine.getInvoice().getTradingCurrency().getId());
-			if (tradingCurrency.getCurrentRate() != null && tradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
-				currentRate = tradingCurrency.getCurrentRate();
-			}
-		}
-		
+		BigDecimal currentRate = getRateForInvoice(invoiceLine.getInvoice());
+
 		if(invoiceLine.getUnitPrice() == null || isFunctionalUnitPriceModified) {
 			if(invoiceLine.getFunctionalUnitPrice() == null && accountingArticle != null) {
 				invoiceLine.setFunctionalUnitPrice(accountingArticle.getUnitPrice());
@@ -641,6 +634,28 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setBillingRun((BillingRun) tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
 
         return invoiceLine;
+    }
+
+    private BigDecimal getRateForInvoice(Invoice invoice)
+    {
+       BigDecimal rate = BigDecimal.ONE;
+		if(invoice.getTradingCurrency() != null) {
+			TradingCurrency tradingCurrency = tradingCurrencyService.findById(invoice.getTradingCurrency().getId());
+			if (tradingCurrency.getCurrentRate() != null && tradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+				rate = tradingCurrency.getCurrentRate();
+			}
+
+            if(null != appProvider.getCurrency())
+            {
+                TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+                 return  invoice.getTradingCurrency().getId() == providerTradingCurrency.getId() ? BigDecimal.ONE : rate;
+            }
+
+            return rate;
+
+		}
+
+        return BigDecimal.ONE;
     }
 
 	/**
