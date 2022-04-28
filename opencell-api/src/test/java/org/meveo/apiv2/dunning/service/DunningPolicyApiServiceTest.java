@@ -5,6 +5,7 @@ import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -44,6 +45,9 @@ public class DunningPolicyApiServiceTest {
     private AuditLogService auditLogService;
 
     private DunningPolicy dunningPolicy = new DunningPolicy();
+
+    @Mock
+    private GlobalSettingsVerifier globalSettingsVerifier;
 
     @Before
     public void setUp() {
@@ -88,6 +92,7 @@ public class DunningPolicyApiServiceTest {
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
         when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
+        doNothing().when(globalSettingsVerifier).checkActivateDunning();
     }
 
     @Test
