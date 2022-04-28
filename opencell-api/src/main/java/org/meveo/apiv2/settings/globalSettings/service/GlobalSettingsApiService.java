@@ -41,6 +41,7 @@ public class GlobalSettingsApiService implements ApiService<GlobalSettings> {
         GlobalSettings entityToUpdate = findById(id).orElseThrow(() -> new NotFoundException("The QuotesSettings does not exist"));
 
         entityToUpdate.setQuoteDefaultValidityDelay(baseEntity.getQuoteDefaultValidityDelay());
+        entityToUpdate.setActivateDunning(baseEntity.getActivateDunning());
 
         return Optional.of(globalSettingsService.update(entityToUpdate));
     }
