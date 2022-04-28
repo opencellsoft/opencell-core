@@ -4,16 +4,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.export.EntityExportImportService;
-import org.meveo.export.ExportImportStatistics;
-import org.meveo.export.ExportTemplate;
-import org.meveo.export.RemoteAuthenticationException;
+import org.meveo.export.*;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
@@ -78,6 +77,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
             checkPermissionsForImportingData();
             cleanupOldImportResults();
             InputPart inputPart = extractFileInputPart(input);
+            boolean checkForStatus = extractCheckStatusFlag(input);
             String fileName = getFileName(inputPart.getHeaders());
             if (fileName == null) {
                 throw new MissingParameterException("Missing a file name");
@@ -89,9 +89,16 @@ public class ImportExportResourceImpl implements ImportExportResource {
             String executionId = generateExecutionId(fileName);
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-          ExportImportStatistics exportImport= entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true);
+        ExportImportStatistics exportImport= null;
+        try {
+            exportImport = entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true, checkForStatus);
+        } catch (StatusChangeViolationException e) {
+            ImportExportResponseDto responseDto = new ImportExportResponseDto(executionId);
+            responseDto.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, e.getMessage()));
+            return responseDto;
+        }
 
-           // executionResults.put(executionId, exportImport);
+        // executionResults.put(executionId, exportImport);
             return importStatisticsToDto(executionId, exportImport);
 
 
@@ -134,6 +141,18 @@ public class ImportExportResourceImpl implements ImportExportResource {
             throw new MissingParameterException("Missing a file. File is expected as part name 'uploadedFile'");
         }
         return inputParts.get(0);
+
+    }
+
+    private boolean extractCheckStatusFlag(MultipartFormDataInput input) {
+        List<InputPart> inputParts = input.getFormDataMap().get("checkStatus");
+        if (inputParts == null) {
+            return false;
+        }
+        try {
+             return Boolean.valueOf(inputParts.get(0).getBodyAsString());
+        }catch (IOException e) { throw new RuntimeException(e);}
+
 
     }
 
