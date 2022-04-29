@@ -83,7 +83,7 @@ public class CommercialRuleItem extends BaseEntity {
 	private String ruleItemEl;
 	
 	
-	@OneToMany(mappedBy = "commercialRuleItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "commercialRuleItem", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleLine> commercialRuleLines = new ArrayList<>();
 

@@ -1,15 +1,6 @@
 package org.meveo.model.cpq.trade;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.GroupedAttributes;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.enums.RuleOperatorEnum;
-import org.meveo.model.cpq.tags.Tag;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -21,10 +12,21 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
-import java.util.Objects;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
+import org.meveo.model.cpq.tags.Tag;
 
 /**
  *  @author Tarik FAKHOURI.
@@ -39,11 +41,11 @@ import java.util.Objects;
 @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq")})
 @NamedQueries({  
 	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceProductRulesWithOffer", query = "select c.id from CommercialRuleLine c where c.sourceOfferTemplate.code=:offerCode and c.sourceProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleLine.getSourceGroupedAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceGroupedAttributes.code=:groupedAttributeCode and c.sourceProduct.code=:productCode")
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceProductRulesWithOffer", query = "select c.id from CommercialRuleLine c where c.sourceOfferTemplate.code=:offerCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "CommercialRuleLine.getSourceGroupedAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceGroupedAttributes.code=:groupedAttributeCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 })
 public class CommercialRuleLine extends BaseEntity {
 
@@ -73,14 +75,14 @@ public class CommercialRuleLine extends BaseEntity {
 	/**
 	 * Trade rule header
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "commercial_rule_item_id", referencedColumnName = "id")
 	private CommercialRuleItem commercialRuleItem;
 	
 	/**
 	 * 
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "offer_template_id", referencedColumnName = "id")
 	private OfferTemplate sourceOfferTemplate;
 	
@@ -96,14 +98,14 @@ public class CommercialRuleLine extends BaseEntity {
 	/**
 	 * version of the product
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion sourceProductVersion;
 
 	/**
 	 * attribute name
 	 */
-	@ManyToOne(fetch = FetchType.LAZY) 
+	@ManyToOne(fetch = FetchType.EAGER) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
 	private Attribute sourceAttribute;
 	
@@ -111,14 +113,14 @@ public class CommercialRuleLine extends BaseEntity {
      * grouped service
      */
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes sourceGroupedAttributes;
 	
 	/**
 	 * tag source
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "tag_id", referencedColumnName = "id")
 	private Tag sourceTag;
 	

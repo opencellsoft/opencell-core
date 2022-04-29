@@ -11,7 +11,6 @@ import java.util.Set;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -24,7 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -53,8 +52,8 @@ import org.meveo.model.cpq.tags.Tag;
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
 	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)"),
-	@NamedQuery(name = "ProductVersion.getProductVerionsByStatusAndProduct", query = "SELECT pv FROM ProductVersion pv  left join pv.product as p where pv.status=:status and p.code=:productCode"),
-	@NamedQuery(name = "ProductVersion.findTagsByTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)") ,
+	@NamedQuery(name = "ProductVersion.getProductVerionsByStatusAndProduct", query = "SELECT pv FROM ProductVersion pv  left join pv.product as p where pv.status=:status and p.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+	@NamedQuery(name = "ProductVersion.findTagsByTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	@NamedQuery(name = "ProductVersion.findByCode", query = "select pv from ProductVersion pv LEFT JOIN pv.product pp where pp.code=:code order by pv.currentVersion desc") 
 })
 public class ProductVersion extends AuditableEntity{
@@ -134,7 +133,7 @@ public class ProductVersion extends AuditableEntity{
 
 	
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 				name = "cpq_product_version_attributes",
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
