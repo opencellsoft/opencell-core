@@ -99,7 +99,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.*;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -1489,7 +1489,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, "
                 + "         rt.unitAmountWithoutTax, rt.unitAmountWithTax, rt.offerTemplate.id, rt.serviceInstance.id, rt.usageDate, rt.startDate,"
                 + "         rt.endDate, rt.orderNumber, rt.subscription.id, rt.taxPercent, rt.tax.id, "
-                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter1, rt.parameter2, rt.parameter3, rt.accountingArticle.id, rt.discountedRatedTransaction.id";
+                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter1, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction.id";
         return getSelectQueryAsMap(query, params);
     }
 
