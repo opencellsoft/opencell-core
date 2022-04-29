@@ -217,6 +217,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(DiscountLineAmount, DiscountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     var quantity = entity.getQuantity();
                     discountInvoice.setUnitPrice(DiscountLineAmount);
+                    discountInvoice.setFunctionalUnitPrice(calculateFunctionalUnitPrice(DiscountLineAmount, invoice));
                     discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                     discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
                     totalDiscountAmount = totalDiscountAmount.add(discountInvoice.getAmountWithoutTax().abs());
@@ -232,6 +233,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     ? totalDiscountAmount : (totalDiscountAmount.multiply(entity.getQuantity())).abs());
         }
     }
+
+        public BigDecimal calculateFunctionalUnitPrice(BigDecimal unitPrice, Invoice invoice) {
+            TradingCurrency tradingCurrency = invoice.getTradingCurrency() != null ? invoice.getTradingCurrency() : invoice.getBillingAccount().getTradingCurrency();
+
+            if (!appProvider.getCurrency().equals(tradingCurrency.getCurrency()) && tradingCurrency.getCurrentRate() != null) {
+                    return unitPrice.multiply(tradingCurrency.getCurrentRate());
+
+            } else if (!tradingCurrency.getCurrentRate().equals(BigDecimal.ONE)) {
+                tradingCurrency.setCurrentRate(BigDecimal.ONE);
+                tradingCurrencyService.update(tradingCurrency);
+            }
+            return unitPrice;
+        }
 
     public List<InvoiceLine> listInvoiceLinesToInvoice(BillingRun billingRun, IBillableEntity entityToInvoice, Date firstTransactionDate,
                                                        Date lastTransactionDate, Filter filter,Map<String, Object> filterParams, int pageSize) throws BusinessException {

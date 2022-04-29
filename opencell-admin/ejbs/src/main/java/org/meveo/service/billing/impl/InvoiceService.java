@@ -4919,6 +4919,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         line.setAmountWithoutTax(amountWithTax);
         line.setAmountTax(BigDecimal.ZERO);
         line.setUnitPrice(amountWithTax);
+        line.setFunctionalUnitPrice(invoiceLinesService.calculateFunctionalUnitPrice(line.getUnitPrice(), invoice));
         line.setDiscountAmount(BigDecimal.ZERO);
         line.setLabel(resource.getLabel());
         return line;
