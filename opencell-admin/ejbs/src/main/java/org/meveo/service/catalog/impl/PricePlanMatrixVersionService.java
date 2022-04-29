@@ -11,6 +11,7 @@ import java.time.format.SignStyle;
 import java.util.*;
 import java.util.Calendar;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,6 +23,8 @@ import javax.transaction.Transactional.TxType;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -371,7 +374,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 	public String export(List<Long> ids, FormatEnum fileType) {
 		Set<PricePlanMatrixVersion> fetchedPricePlanMatrixVersions = (Set<PricePlanMatrixVersion>) this.getEntityManager()
-				.createNamedQuery("PricePlanMatrixVersion.getPricePlanVersionsByIds")
+				.createNamedQuery("PricePlanMatrixVersion.getPricePlanVersionsByIds", entityClass)
 				.setParameter("ids", ids)
 				.getResultStream().collect(Collectors.toSet());
 		if(!fetchedPricePlanMatrixVersions.isEmpty()){
@@ -392,7 +395,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions){
 			if(pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
 				Set<Path> filePaths = pricePlanMatrixVersions.stream()
-						.map(ppv  -> saveARecord(buildFileName(ppv), ppv))
+						.map(ppv  -> saveAsRecord(buildFileName(ppv), ppv))
 						.collect(Collectors.toSet());
 				if(filePaths.size() > 1) {
 					return archiveFiles(filePaths);
@@ -411,14 +414,32 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
-								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType()+']',
-										ppmv.getStringValue());
+								ColumnTypeEnum type = ppmv.getPricePlanMatrixColumn().getType();
+								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
+										resolveValue(ppmv, type));
 								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
 
 							});
 					CSVLineRecords.add(CSVLineRecord);
 				});
 			return CSVLineRecords;
+		}
+
+		private String resolveValue(PricePlanMatrixValue ppmv, ColumnTypeEnum type) {
+			switch (type){
+				case Long:
+					return ppmv.getLongValue() == null ? ppmv.getStringValue() : ppmv.getLongValue().toString();
+				case Double:
+					return ppmv.getDoubleValue() == null ? ppmv.getStringValue() : ppmv.getDoubleValue().toString();
+				case Boolean:
+					return ppmv.getBooleanValue() == null ? ppmv.getStringValue() : ppmv.getBooleanValue().toString();
+				case Range_Date:
+					return (DateUtils.formatDateWithPattern(ppmv.getFromDateValue(), "yyyy-MM-dd") + "|" + DateUtils.formatDateWithPattern(ppmv.getToDateValue(), "yyyy-MM-dd")).replaceAll("null", "");
+				case Range_Numeric:
+					return  (ppmv.getFromDoubleValue() + "|" + ppmv.getToDoubleValue()).replaceAll("null", "");
+				default:
+					return ppmv.getStringValue();
+			}
 		}
 
 		private String buildFileName(PricePlanMatrixVersion ppmv) {
@@ -451,10 +472,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				.replaceAll("null","").replaceAll("[/: ]", "-");
 		}
 
-		private Path saveARecord(String fileName, PricePlanMatrixVersion ppv) {
+		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv) {
 			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records.iterator().next().keySet()) : buildPricePlanVersionCsvSchema();
+			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
 			try {
 				if(!Files.exists(Path.of(saveDirectory))){
@@ -485,9 +506,17 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<String> columns) {
-			Set<String> dynamicColumns = columns.stream()
-					.filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<Map<String, Object>> records) {
+
+		    Set<String> dynamicColumns = new HashSet<>();
+		    if (!records.isEmpty()) {
+		        Set<String> columns = records.stream()
+						.map(record -> record.keySet())
+						.flatMap(Collection::stream)
+						.collect(Collectors.toSet());
+	            dynamicColumns = columns.stream()
+	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+            }
 			return CsvSchema.builder()
 					.addColumn(new CsvSchema.Column(0, "id"))
 					.addColumns(dynamicColumns, CsvSchema.ColumnType.NUMBER_OR_STRING)
