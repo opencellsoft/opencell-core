@@ -931,7 +931,7 @@ public class CpqQuoteApi extends BaseApi {
         		throw new MeveoApiException("Delivery date should be in the future");	
         	}
         	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
-        	/**************/
+        	
         	if(quoteOfferDto.getQuoteLineType() == OfferLineTypeEnum.AMEND) {
             	if (quoteOfferDto.getSubscriptionCode() == null) {
     				throw new BusinessApiException("Subscription is missing");
@@ -949,7 +949,7 @@ public class CpqQuoteApi extends BaseApi {
             }else {
             	quoteOffer.setQuoteLineType(OfferLineTypeEnum.CREATE);
             }
-            /*************/
+            
             newPopulateProduct(quoteOfferDto, quoteOffer);
             newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
     
@@ -1018,7 +1018,7 @@ public class CpqQuoteApi extends BaseApi {
     	}
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
         quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
-        /**********/
+        
         if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
         	if (orderOfferDto.getSubscritptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
@@ -1034,7 +1034,7 @@ public class CpqQuoteApi extends BaseApi {
         	}
         	orderOffer.setSubscription(subscription);
         }
-        /************/
+       
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
