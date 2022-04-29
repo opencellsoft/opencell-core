@@ -936,8 +936,8 @@ public class CpqQuoteApi extends BaseApi {
             	if (quoteOfferDto.getSubscriptionCode() == null) {
     				throw new BusinessApiException("Subscription is missing");
     			}
-            	List<QuoteOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(quoteOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
-            	if(!orderOffers.isEmpty()) {
+            	List<QuoteOffer> quoteOffers = quoteOfferService.findBySubscriptionAndStatus(quoteOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
+            	if(!quoteOffers.isEmpty()) {
             		throw new BusinessApiException("Amendement order line already exists on subscription"+quoteOfferDto.getSubscriptionCode());
             	}
             	quoteOffer.setQuoteLineType(OfferLineTypeEnum.AMEND);
@@ -1019,20 +1019,20 @@ public class CpqQuoteApi extends BaseApi {
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
         quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
         
-        if(orderOfferDto.getOrderLineType() == OfferLineTypeEnum.AMEND) {
-        	if (orderOfferDto.getSubscritptionCode() == null) {
+        if(quoteOfferDTO.getQuoteLineType() == OfferLineTypeEnum.AMEND) {
+        	if (quoteOfferDTO.getSubscriptionCode() == null) {
 				throw new BusinessApiException("Subscription is missing");
 			}
-        	List<OrderOffer> orderOffers = orderOfferService.findBySubscriptionAndStatus(orderOfferDto.getSubscritptionCode(), OfferLineTypeEnum.AMEND);
+        	List<QuoteOffer> orderOffers = quoteOfferService.findBySubscriptionAndStatus(quoteOfferDTO.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
         	if(!orderOffers.isEmpty()) {
-        		throw new BusinessApiException("Amendement order line already exists on subscription"+orderOfferDto.getSubscritptionCode()+", the order line code is: "+orderOffers.get(0));
+        		throw new BusinessApiException("Amendement quote line already exists on subscription"+quoteOfferDTO.getSubscriptionCode());
         	}
         	
-        	Subscription subscription = subscriptionService.findByCode(orderOfferDto.getSubscritptionCode());
+        	Subscription subscription = subscriptionService.findByCode(quoteOfferDTO.getSubscriptionCode());
         	if(subscription == null) {
-        		throw new EntityDoesNotExistsException("Subscription with code "+orderOfferDto.getSubscritptionCode()+" does not exist");
+        		throw new EntityDoesNotExistsException("Subscription with code "+quoteOfferDTO.getSubscriptionCode()+" does not exist");
         	}
-        	orderOffer.setSubscription(subscription);
+        	quoteOffer.setSubscription(subscription);
         }
        
         processQuoteProduct(quoteOfferDTO, quoteOffer);
