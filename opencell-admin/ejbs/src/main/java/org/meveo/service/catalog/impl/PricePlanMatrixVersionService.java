@@ -11,7 +11,6 @@ import java.time.format.SignStyle;
 import java.util.*;
 import java.util.Calendar;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,9 +19,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
@@ -37,12 +33,17 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.*;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import static java.time.temporal.ChronoField.*;
 
@@ -414,15 +415,38 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
-								ColumnTypeEnum type = ppmv.getPricePlanMatrixColumn().getType();
+								String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
+								String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
 								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
-										resolveValue(ppmv, type));
+										value);
 								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
 
 							});
 					CSVLineRecords.add(CSVLineRecord);
 				});
 			return CSVLineRecords;
+		}
+
+		private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
+			switch (attributeType){
+				case DATE:
+					return isRange ? "range-date": "date";
+				case NUMERIC:
+				case INTEGER:
+					return isRange ? "range-number": "number";
+				case LIST_TEXT:
+					return "list_of_text_values";
+				case LIST_MULTIPLE_TEXT:
+					return "multiple_list_of_text_values";
+				case LIST_NUMERIC:
+					return "list_of_numeric_values";
+				case LIST_MULTIPLE_NUMERIC:
+					return "multiple_list_of_numeric_values";
+				case BOOLEAN:
+					return "boolean";
+				default:
+					return "text";
+			}
 		}
 
 		private String resolveValue(PricePlanMatrixValue ppmv, ColumnTypeEnum type) {
@@ -434,8 +458,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				case Boolean:
 					return ppmv.getBooleanValue() == null ? ppmv.getStringValue() : ppmv.getBooleanValue().toString();
 				case Range_Date:
+					if(ppmv.getFromDateValue() == null && ppmv.getToDateValue() == null) {
+						return "";
+					}
 					return (DateUtils.formatDateWithPattern(ppmv.getFromDateValue(), "yyyy-MM-dd") + "|" + DateUtils.formatDateWithPattern(ppmv.getToDateValue(), "yyyy-MM-dd")).replaceAll("null", "");
 				case Range_Numeric:
+					if(ppmv.getFromDoubleValue() == null && ppmv.getToDoubleValue() == null) {
+						return "";
+					}
 					return  (ppmv.getFromDoubleValue() + "|" + ppmv.getToDoubleValue()).replaceAll("null", "");
 				default:
 					return ppmv.getStringValue();
