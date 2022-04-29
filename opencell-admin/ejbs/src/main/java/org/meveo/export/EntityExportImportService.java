@@ -952,7 +952,7 @@ public class EntityExportImportService implements Serializable {
 
         if(importStatsTotal.getException() != null && ! (importStatsTotal.getException() instanceof StatusChangeViolationException))
         {
-            throw new BusinessException("Une erreur s’est produite lors de l’import. Merci de vérifier votre fichier et d’essayer à nouveau");
+            throw new BusinessException("An error occur during import, please check your file and try again");
         }
         else if(importStatsTotal.getException() != null && importStatsTotal.getException() instanceof StatusChangeViolationException)
         {
