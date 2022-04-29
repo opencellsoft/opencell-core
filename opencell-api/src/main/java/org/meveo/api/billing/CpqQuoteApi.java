@@ -2093,14 +2093,15 @@ public class CpqQuoteApi extends BaseApi {
                     	  BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
                           quotePrices.forEach(quotePrice -> {
-                              BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                        	  if( quotePrice.getOverchargedUnitAmountWithoutTax()==null) {
+                            	  quotePrice.setOverchargedUnitAmountWithoutTax(quotePrice.getUnitPriceWithoutTax());
+                              }
+                        	  BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                               quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
                               quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
                               quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
                               quotePrice.setAmountWithTax(quotePrice.getAmountWithoutTax().add(quotePrice.getTaxAmount()));
-                              if( quotePrice.getOverchargedUnitAmountWithoutTax()==null) {
-                            	  quotePrice.setOverchargedUnitAmountWithoutTax(overrodePrice.getUnitAmountWithoutTax());
-                              }
+                             
                               quotePrice.setApplyDiscountsOnOverridenPrice(overrodePrice.getApplyDiscountsOnOverridenPrice());
                               if (overrodePrice.getPriceOverCharged() == null)
                                   quotePrice.setPriceOverCharged(true);
