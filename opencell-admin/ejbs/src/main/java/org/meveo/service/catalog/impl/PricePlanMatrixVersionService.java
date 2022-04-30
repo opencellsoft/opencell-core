@@ -94,20 +94,21 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 	
-	public List<PricePlanMatrixVersion> findBeforeFromAndAfterVersion(PricePlanMatrix pricePlanMatrix, Date from, int currentVersion) {
-	    return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findBeforeFromAndAfterVersion", entityClass)
-            .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("from", from)
-            .setParameter("currentVersion", currentVersion)
-            .getResultList();
-	}
-	
-	public List<PricePlanMatrixVersion> findAfterVersion(PricePlanMatrix pricePlanMatrix, int currentVersion) {
+	public List<PricePlanMatrixVersion> findToDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
         return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findAfterVersion", entityClass)
+            .createNamedQuery("PricePlanMatrixVersion.findToDateAfterDateAndVersion", entityClass)
             .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("currentVersion", currentVersion)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
+    }
+	
+	public List<PricePlanMatrixVersion> findFromDateBeforeDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
             .getResultList();
     }
 	
