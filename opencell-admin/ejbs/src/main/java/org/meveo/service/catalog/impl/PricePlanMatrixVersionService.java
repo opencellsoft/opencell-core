@@ -1,4 +1,9 @@
 package org.meveo.service.catalog.impl;
+
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,8 +13,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
-import java.util.*;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -19,11 +32,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -33,7 +41,13 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -44,7 +58,9 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 
-import static java.time.temporal.ChronoField.*;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -52,7 +68,6 @@ import static java.time.temporal.ChronoField.*;
  */
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
-
 
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version is %s, it can not be updated nor removed";
 
@@ -90,24 +105,25 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     .getResultList();
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
-
-	public List<PricePlanMatrixVersion> findBeforeFromAndAfterVersion(PricePlanMatrix pricePlanMatrix, Date from, int currentVersion) {
-	    return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findBeforeFromAndAfterVersion", entityClass)
-            .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("from", from)
-            .setParameter("currentVersion", currentVersion)
-            .getResultList();
-	}
-
-	public List<PricePlanMatrixVersion> findAfterVersion(PricePlanMatrix pricePlanMatrix, int currentVersion) {
+	
+	public List<PricePlanMatrixVersion> findToDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
         return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findAfterVersion", entityClass)
+            .createNamedQuery("PricePlanMatrixVersion.findToDateAfterDateAndVersion", entityClass)
             .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("currentVersion", currentVersion)
+            .setParameter("date", date)
+            .setParameter("version", version)
             .getResultList();
     }
-
+	
+	public List<PricePlanMatrixVersion> findFromDateBeforeDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
+    }
+	
 	public void delete(List<Long> ids) {
         this.getEntityManager()
             .createNamedQuery("PricePlanMatrixVersion.deleteByIds")
@@ -560,7 +576,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<Map<String, Object>> records) {
-
+		    
 		    Set<String> dynamicColumns = new HashSet<>();
 		    if (!records.isEmpty()) {
 		        Set<String> columns = records.stream()
