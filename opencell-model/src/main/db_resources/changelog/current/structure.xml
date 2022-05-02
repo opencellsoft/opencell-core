@@ -12797,4 +12797,52 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius">
+        <addColumn tableName="dwh_chart">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_chart set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="dwh_chart" columnName="role_id"/>
+        
+        <addColumn tableName="adm_script_exec_role">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_script_exec_role set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="adm_script_exec_role" columnName="role_id"/>
+        
+        <addColumn tableName="adm_script_sourc_role">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_script_sourc_role set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="adm_script_sourc_role" columnName="role_id"/>
+                                
+        <dropTable tableName="adm_secured_entity"/>
+        <dropTable tableName="adm_role_secured_entity"/>
+        <dropTable tableName="adm_user_role"/>
+        <dropTable tableName="adm_role_permission"/>
+        <dropTable tableName="adm_permission"/>
+        <dropTable tableName="adm_role_role"/>
+        <dropTable tableName="adm_role"/>
+        
+        <addColumn tableName="ord_order">
+            <column name="routed_to_user_group" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_order set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
+        <dropColumn tableName="ord_order" columnName="routed_to_user_group_id"/>
+        
+        <addColumn tableName="ord_quote">
+            <column name="routed_to_user_group" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_quote set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
+        <dropColumn tableName="ord_quote" columnName="routed_to_user_group_id"/>
+        
+        <dropColumn tableName="adm_user" columnName="email"/>
+        <dropColumn tableName="adm_user" columnName="firstname"/>
+        <dropColumn tableName="adm_user" columnName="lastname"/>
+        <dropColumn tableName="adm_user" columnName="title_id"/>
+        <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
+        <dropColumn tableName="adm_user" columnName="last_login_date"/>
+        <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
+        
+    </changeSet>
 </databaseChangeLog>

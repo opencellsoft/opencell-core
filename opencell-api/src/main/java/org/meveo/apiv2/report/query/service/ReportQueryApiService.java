@@ -32,7 +32,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;

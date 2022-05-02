@@ -16,40 +16,54 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.admin.web.listener;
+package org.meveo.security.client;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+/**
+ * @author Edward P. Legaspi
+ * @since 10 Nov 2017
+ **/
+public class KeycloakAdminClientConfig {
 
-import org.meveo.api.dto.job.JobInstanceInfoDto;
-import org.meveo.api.job.JobApi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+    private String serverUrl;
+    private String realm;
+    private String clientId;
+    private String clientSecret;
 
-//@WebListener
-public class GenericAPIPermissionListener implements ServletContextListener {
+    public String getServerUrl() {
+        return serverUrl;
+    }
 
-    @Inject
-    private JobApi jobApi;
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
 
-    private static final String jobInstanceCode = "APIv2PermissionsSyncJob";
-    
-    private static final Logger logger = LoggerFactory.getLogger(GenericAPIPermissionListener.class);
+    public String getRealm() {
+        return realm;
+    }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
-        // do nothing
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent contextEvent) {
-        logger.info("Launching APIv2PermissionsSyncJob.");
-        
-        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
-        jobInstanceInfoDto.setCode(jobInstanceCode); 
-        jobApi.executeJob(jobInstanceInfoDto);
+    public String toString() {
+        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret=" + clientSecret + "]";
     }
 
 }

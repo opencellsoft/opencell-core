@@ -9,7 +9,7 @@
  
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{userBean.init}" />
+			<f:event type="preRenderView" listener="#{filesBean.init}" />
 		</f:metadata>
 	</ui:define>
 
@@ -33,29 +33,29 @@
 			
 			<h:form>
  				<p:growl id="messages" showDetail="true" />
-				<p:dataTable var="file" value="#{userBean.fileList}" sortBy="#{file.name}" resizableColumns="true">
+				<p:dataTable var="file" value="#{filesBean.fileList}" sortBy="#{file.name}" resizableColumns="true">
 				    <f:facet name="header">
 				    	<p:spacer width="8" />
 				    	<p:commandButton icon="fa fa-level-up" value="Up"
-				    		rendered="#{userBean.hasSelectedFolder()}" 
-				    		action="#{userBean.setSelectedFolder('..')}" 
+				    		rendered="#{filesBean.hasSelectedFolder()}" 
+				    		action="#{filesBean.setSelectedFolder('..')}" 
 				    		update=":fileExplorer" process="@this"/>
 			    		<p:spacer width="8" />
-				    	<h:outputText value="#{messages['fileExplorer.currentDirectory']}: #{userBean.selectedFolder}" 
-				    		rendered="#{userBean.hasSelectedFolder()}"/>
+				    	<h:outputText value="#{messages['fileExplorer.currentDirectory']}: #{filesBean.selectedFolder}" 
+				    		rendered="#{filesBean.hasSelectedFolder()}"/>
 				    </f:facet>
 				    <p:column headerText="#{messages['fileExplorer.fileName']}" sortBy="#{file.name}">
-						<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
+						<p:commandLink action="#{filesBean.setSelectedFolder(file.name)}"
 							rendered="#{file.isDirectory()}"
 							update=":fileExplorer" process="@this">
 							<i class="fa fa-folder-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
 						</p:commandLink>
-						<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
+						<p:commandLink action="#{filesBean.setSelectedFileName(file.name)}"
 							rendered="#{!file.isDirectory()}"
 							update=":fileExplorer" process="@this">
-							<i class="fa fa-file-#{userBean.getFileType(file.name)}-o fa-2x"></i>
+							<i class="fa fa-file-#{filesBean.getFileType(file.name)}-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
 						</p:commandLink>
@@ -67,18 +67,18 @@
 				        </h:outputText>
 				    </p:column>
 				</p:dataTable>
-				<p:panel rendered="#{userBean.selectedFileName!=null}" id="fileManageForm">
-         			#{userBean.selectedFileName}
+				<p:panel rendered="#{filesBean.selectedFileName!=null}" id="fileManageForm">
+         			#{filesBean.selectedFileName}
 					<p:commandButton value="#{messages['fileExplorer.download']}"
 						icon="ui-icon-arrowthick-1-s" ajax="false">
-						<p:fileDownload value="#{userBean.selectedFile}" />
+						<p:fileDownload value="#{filesBean.selectedFile}" />
 						<f:param name="cid"
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
 					<p:commandButton value="#{messages['fileExplorer.delete']}"
-						icon="ui-icon-trash" action="#{userBean.deleteSelectedFile()}"
+						icon="ui-icon-trash" action="#{filesBean.deleteSelectedFile()}"
 						update=":fileExplorer" process="@this"
-						rendered="#{userBean.canUserUpdateEntity()}">
+						rendered="#{filesBean.canUserDeleteEntity()}">
 						<p:confirm header="#{messages['commons.confirmationHeader']}"
 							message="#{messages['fileExplorer.deleteConfirm']}"
 							icon="ui-icon-alert"/>
@@ -86,38 +86,38 @@
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
 				</p:panel>
-				<p:panel id="downloadZipfile" rendered="#{userBean.selectedFileName==null}">
+				<p:panel id="downloadZipfile" rendered="#{filesBean.selectedFileName==null}">
 					<p:commandButton value="#{messages['fileExplore.downloadZipfile']}" icon="ui-icon-arrowthick-1-s" ajax="false">
-                  		<p:fileDownload value="#{userBean.downloadZipFile}"/>
+                  		<p:fileDownload value="#{filesBean.downloadZipFile}"/>
 						<f:param name="cid"
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
 				</p:panel>
 			</h:form>
 			
-			<h:form rendered="#{userBean.selectedFileName!=null and userBean.canUserUpdateEntity()}">
-                 <p:inputText id="newFilename" value="#{userBean.newFilename}"/>
+			<h:form rendered="#{filesBean.selectedFileName!=null and filesBean.canUserUpdateEntity()}">
+                 <p:inputText id="newFilename" value="#{filesBean.newFilename}"/>
                  <p:commandButton value="#{messages['fileExplorer.renameFile']}"
-                         action="#{userBean.renameFile()}"
+                         action="#{filesBean.renameFile()}"
                          update=":fileExplorer">
                          <f:param name="cid"
                              value="#{javax.enterprise.context.conversation.id}" />
                      </p:commandButton>
              </h:form>
              
-             <h:form rendered="#{userBean.selectedFileName==null and userBean.canUserUpdateEntity()}">
-                 <p:inputText id="dirName" value="#{userBean.directoryName}"/>
+             <h:form rendered="#{filesBean.selectedFileName==null and filesBean.canUserUpdateEntity()}">
+                 <p:inputText id="dirName" value="#{filesBean.directoryName}"/>
                  <p:commandButton value="#{messages['fileExplorer.createDirectory']}"
-                         action="#{userBean.createDirectory()}"
+                         action="#{filesBean.createDirectory()}"
                          update=":fileExplorer" process="@form">
                          <f:param name="cid"
                              value="#{javax.enterprise.context.conversation.id}" />
                      </p:commandButton>
              </h:form>
              
-             <h:form rendered="#{userBean.currentDirEmpty and userBean.canUserUpdateEntity()}">
+             <h:form rendered="#{filesBean.currentDirEmpty and filesBean.canUserUpdateEntity()}">
                  <p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
-                         action="#{userBean.deleteDirectory()}"
+                         action="#{filesBean.deleteDirectory()}"
                          update=":fileExplorer" process="@form">
                          <p:confirm header="Confirmation"
                              message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
@@ -127,20 +127,20 @@
                      </p:commandButton>
              </h:form>
              
-             <h:form rendered="#{userBean.selectedFileName==null and userBean.canUserUpdateEntity()}">
-				<p:selectBooleanCheckbox id="autoUnzip" value="#{userBean.autoUnzipped}"  itemLabel="#{messages['fileExplore.unzipAutomately']}" styleClass="Padding10">
+             <h:form rendered="#{filesBean.selectedFileName==null and filesBean.canUserUpdateEntity()}">
+				<p:selectBooleanCheckbox id="autoUnzip" value="#{filesBean.autoUnzipped}"  itemLabel="#{messages['fileExplore.unzipAutomately']}" styleClass="Padding10">
 					<p:ajax/>
 				</p:selectBooleanCheckbox>
 				 <p:panel>
 				<hftl:decorateFormField fieldId="fileFormat" label="#{messages['fileExplorer.fileFormat']}">
-					<p:selectOneMenu id="fileFormat" value="#{userBean.fileFormat}" onchange="submit()" valueChangeListener="#{userBean.handleFileFormatChange}">
+					<p:selectOneMenu id="fileFormat" value="#{filesBean.fileFormat}" onchange="submit()" valueChangeListener="#{filesBean.handleFileFormatChange}">
 						<hftl:objectConverter />
 						<f:selectItem itemLabel="#{messages['commons.select']}" />
-						<f:selectItems value="#{userBean.getFileFormatList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+						<f:selectItems value="#{filesBean.getFileFormatList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
 					 </p:selectOneMenu>
 				</hftl:decorateFormField>
 				 </p:panel>
-                <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
+                <p:fileUpload fileUploadListener="#{filesBean.handleFileUpload}"
                      multiple="true" mode="advanced" dragDropSupport="true"
                      fileLimit="5" update=":fileExplorer" styleClass="TexAlCenter"/>
              </h:form>

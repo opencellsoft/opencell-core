@@ -15,14 +15,18 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.admin.action.admin;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+package org.meveo.security.client;
 
-@Named
-@ConversationScoped
-public class UserRoleListBean extends UserRoleBean {
+import com.google.common.collect.ImmutableList;
 
-    private static final long serialVersionUID = 3202016025277911165L;
+/**
+ * @author Edward P. Legaspi
+ * @since 10 Nov 2017
+ **/
+public class KeycloakConstants {
+
+    public static final String ROLE_ADMINISTRATEUR = "administrateur";
+    public static final String ROLE_USER_MANAGEMENT = "userManagement";
+    public static final ImmutableList<String> ROLE_KEYCLOAK_DEFAULT_EXCLUDED = ImmutableList.of("uma_authorization", "offline_access");
 }

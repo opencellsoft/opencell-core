@@ -87,7 +87,7 @@
                     </p:pickList>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
-                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}"
+                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{valueLabelField==null?elem:elem[valueLabelField]}" itemValue="#{elem}"
                                 converter="org.jboss.seam.faces.conversion.ObjectConverter">
                     </p:pickList>
                 </c:if>
@@ -111,7 +111,7 @@
                                 #{elem[valueLabelField]} #{elem[valueLabelField2]}
                     </c:if>
                         <c:if test="#{empty(valueLabelField2)}">
-                                #{elem[valueLabelField]}
+                                #{valueLabelField==null?elem:elem[valueLabelField]}
                     </c:if>
                         <h:outputText value="#{!loop.last ? ', ' : ''}" />
                     </ui:repeat>

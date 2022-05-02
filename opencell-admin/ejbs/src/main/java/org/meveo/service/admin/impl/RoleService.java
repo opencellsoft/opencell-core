@@ -17,75 +17,41 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.io.Serializable;
 import java.util.List;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
-import org.meveo.event.monitoring.ClusterEventPublisher;
-import org.meveo.model.security.Role;
-import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.security.client.KeycloakAdminClientService;
 
 /**
  * User Role service implementation.
  */
-@Stateless
-public class RoleService extends PersistenceService<Role> {
+public class RoleService implements Serializable {
+
+    private static final long serialVersionUID = 6949512629862768876L;
 
     @Inject
-    private CurrentUserProvider currentUserProvider;
+    private KeycloakAdminClientService keycloakAdminClientService;
 
-    @Inject
-    private ClusterEventPublisher clusterEventPublisher;
-
-    @SuppressWarnings("unchecked")
-    public List<Role> getAllRoles() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
+    /**
+     * List/Search the <b>realm</b> roles
+     * 
+     * @param paginationConfig An optional search and pagination criteria. A filter criteria "name" is used to filter by role name.
+     * @return List of roles
+     */
+    public List<String> list(PaginationConfiguration paginationConfig) {
+        return keycloakAdminClientService.listRoles(paginationConfig);
     }
 
-    public Role findByName(String role) {
-        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
-
-        try {
-            qb.addCriterion("name", "=", role, true);
-            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
-            return null;
-        }
-    }
-
-    @Override
-    public void create(Role role) throws BusinessException {
-        super.create(role);
-        currentUserProvider.invalidateRoleToPermissionMapping();
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.create);
-    }
-
-    @Override
-    public Role update(Role role) throws BusinessException {
-        role = super.update(role);
-        currentUserProvider.invalidateRoleToPermissionMapping();
-
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.update);
-        return role;
-    }
-
-    @Override
-    public void remove(Role role) throws BusinessException {
-        super.remove(role);
-
-        currentUserProvider.invalidateRoleToPermissionMapping();
-
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.remove);
+    /**
+     * Create a <b>client</b> role as a child of a parent role if provided. An attempt to create a role again will be ignored.
+     * 
+     * @param name Role name
+     * @param parentRole Parent role name. Role will be created if does not exist yet.
+     */
+    public void createIfAbsent(String name, String parentRole) {
+        keycloakAdminClientService.createClientRole(name, parentRole);
     }
 }

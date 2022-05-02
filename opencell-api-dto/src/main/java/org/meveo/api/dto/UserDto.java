@@ -18,8 +18,6 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -31,12 +29,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.security.Permission;
-import org.meveo.model.security.Role;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -87,21 +80,11 @@ public class UserDto extends AuditableEntityDto {
     @Schema(description = "list of role associated to user")
     private List<String> roles;
 
-    /** The external roles. */
-    @XmlElementWrapper(name = "externalRoles")
-    @XmlElement(name = "externalRole")
-    @Schema(description = "list of external role")
-    private List<RoleDto> externalRoles;
-
     /** The secured entities. */
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
     @Schema(description = "list of secured entities associated to the user")
     private List<SecuredEntityDto> securedEntities;
-
-    /** The role. */
-    @Deprecated // use roles field
-    private String role;
 
     /** The user level. */
     @XmlElement()
@@ -116,23 +99,8 @@ public class UserDto extends AuditableEntityDto {
     @Schema(description = "the last login date")
     private Date lastLoginDate;
 
-    /** The roles. */
-    @XmlElementWrapper(name = "permissions")
-    @XmlElement(name = "permission")
-    @Schema(description = "list of the permission")
-    private List<String> permissions;
-
     /** The custom fields. */
     private CustomFieldsDto customFields;
-
-    /** Is required roles. */
-    @Schema(description = "Is required roles")
-    private boolean isRequiredRoles = true;
-
-    /** The user external email. */
-    @XmlElement()
-    @Schema(description = "the user external email")
-    private String externalEmail;
 
     /**
      * Instantiates a new user dto.
@@ -146,51 +114,16 @@ public class UserDto extends AuditableEntityDto {
      * @param user the user
      * @param includeSecuredEntities the include secured entities
      */
-    public UserDto(User user, boolean includeSecuredEntities) {
-    	super(user);
-        if (user.getName() != null) {
-            firstName = user.getName().getFirstName();
-            lastName = user.getName().getLastName();
-        }
+    public UserDto(User user) {
+        super(user);
         username = user.getUserName();
+        firstName = user.getName().getFirstName();
+        lastName = user.getName().getLastName();
         email = user.getEmail();
+        userLevel = user.getUserLevel();
+        roles = new ArrayList<String>(user.getRoles());
         if (user.getAuditable() != null) {
             createdAt = user.getAuditable().getCreated();
-        }
-        lastLoginDate = user.getLastLoginDate();
-
-        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-            roles = new ArrayList<String>();
-            permissions = new ArrayList<String>();
-            for (Role r : user.getRoles()) {
-                roles.add(r.getName());
-                for (Permission permission : r.getPermissions()) {
-                    permissions.add(permission.getPermission());
-                }
-
-                role = r.getName();
-            }
-
-            Collections.sort(this.roles);
-            role = roles.get(roles.size() - 1);
-        }
-
-        if (this.permissions != null) {
-            Collections.sort(this.permissions);
-        }
-
-        if (user.getUserLevel() != null) {
-            userLevel = user.getUserLevel().getCode();
-        }
-
-        if (includeSecuredEntities && user.getSecuredEntities() != null) {
-            this.securedEntities = new ArrayList<>();
-            SecuredEntityDto securedEntityDto = null;
-            for (SecuredEntity securedEntity : user.getSecuredEntities()) {
-                securedEntityDto = new SecuredEntityDto(securedEntity);
-                this.securedEntities.add(securedEntityDto);
-            }
-            Collections.sort(this.securedEntities, Comparator.comparing(SecuredEntityDto::getCode));
         }
     }
 
@@ -285,24 +218,6 @@ public class UserDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the role.
-     *
-     * @return the role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * Sets the role.
-     *
-     * @param role the role to set
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    /**
      * Gets the user level.
      *
      * @return the user level
@@ -392,38 +307,6 @@ public class UserDto extends AuditableEntityDto {
         this.lastLoginDate = lastLoginDate;
     }
 
-    /**
-     * Gets the external roles.
-     *
-     * @return the external roles
-     */
-    public List<RoleDto> getExternalRoles() {
-        return externalRoles;
-    }
-
-    /**
-     * Sets the external roles.
-     *
-     * @param externalRoles the new external roles
-     */
-    public void setExternalRoles(List<RoleDto> externalRoles) {
-        this.externalRoles = externalRoles;
-    }
-
-    /**
-     * @return the permissions
-     */
-    public List<String> getPermissions() {
-        return permissions;
-    }
-
-    /**
-     * @param permissions the permissions to set
-     */
-    public void setPermissions(List<String> permissions) {
-        this.permissions = permissions;
-    }
-
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
@@ -431,26 +314,10 @@ public class UserDto extends AuditableEntityDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
-    
-    public boolean isRequiredRoles() {
-		return isRequiredRoles;
-	}
 
-	public void setRequiredRoles(boolean isRequiredRoles) {
-		this.isRequiredRoles = isRequiredRoles;
-	}
-
-	public String getExternalEmail() {
-		return externalEmail;
-	}
-
-	public void setExternalEmail(String externalEmail) {
-		this.externalEmail = externalEmail;
-	}
-
-	@Override
+    @Override
     public String toString() {
-        return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
-                + userLevel + ", securedEntities=" + securedEntities + ", externalEmail=" + externalEmail + " ]";
+        return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", userLevel=" + userLevel + ", securedEntities=" + securedEntities
+                + " ]";
     }
 }

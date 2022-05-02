@@ -48,9 +48,6 @@ public class FullTextSearchApi extends BaseApi {
 
     public void cleanAndReindex() throws AccessDeniedException, BusinessException {
 
-        if (!currentUser.hasRole("superAdminManagement")) {
-            throw new AccessDeniedException("Super administrator permission is required to clean and reindex full text search");
-        }
         try {
             Future<ReindexingStatistics> future = elasticClient.cleanAndReindex(currentUser.unProxy(), true);
             future.get();

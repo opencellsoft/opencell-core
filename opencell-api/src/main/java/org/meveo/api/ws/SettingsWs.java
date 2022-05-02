@@ -37,8 +37,6 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.RoleDto;
-import org.meveo.api.dto.RolesDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
@@ -69,7 +67,6 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
@@ -82,7 +79,6 @@ import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.dto.response.UserHierarchyLevelResponseDto;
@@ -493,50 +489,6 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
-    // permission
-
-    @WebMethod
-    PermissionResponseDto listPermissions();
-
-    // role
-
-    @WebMethod
-    ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
-
-    @WebMethod
-    ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
-
-    @WebMethod
-    ActionStatus removeRole(@WebParam(name = "role") String name);
-
-    /**
-     * Finds a role
-     * @param name name of role
-     * @param includeSecuredEntities if true include the secured entities
-     */
-    @WebMethod
-    GetRoleResponse findRole(@WebParam(name = "roleName") String name, @WebParam(name = "includeSecuredEntities") boolean includeSecuredEntities);
-
-    @WebMethod
-    ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
-
-    /**
-     * List roles matching a given criteria
-     * 
-     * @param pagingAndFiltering Pagination and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
-     * @return A list of roles
-     */
-    @WebMethod
-    RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
-
-    /**
-     * List external source such as from keycloak.
-     * 
-     * @return list of external roles
-     */
-    @WebMethod
-    RolesDto listExternalRoles();
-
     // Multi Language field value translations
 
     /**
@@ -869,60 +821,6 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     ActionStatus createOrUpdateMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
-
-    /**
-     * create userHierarchyLevel by dto
-     * 
-     * @param userHierarchyLevelDto userHierarchyLevelDto
-     * @return action status.
-     */
-    @WebMethod
-    ActionStatus createUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
-
-    /**
-     * update userHierarchyLevel by dto
-     * 
-     * @param userHierarchyLevelDto userHierarchyLevelDto
-     * @return action status.
-     */
-    @WebMethod
-    ActionStatus updateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
-
-    /**
-     * remove a userHierarchyCode by code
-     * 
-     * @param hierarchyLevelCode hierarchyLevelCode
-     * @return action status.
-     */
-    @WebMethod
-    ActionStatus removeUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
-
-    /**
-     * find a userHierarchyCode by code
-     * 
-     * @param hierarchyLevelCode hierarchyLevelCode
-     * @return action status.
-     */
-    @WebMethod
-    UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
-
-    /**
-     * createOrUpdate userHierarchyLevel by dto
-     * 
-     * @param userHierarchyLevelDto The user hierarchy level dto
-     * @return action status.
-     */
-    @WebMethod
-    ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
-
-    /**
-     * List user hierarchy levels matching a given criteria
-     * 
-     * @param pagingAndFiltering Pagination and filtering criteria. Specify "childLevels" in fields to include the child levels of user hierarchy level.
-     * @return A list of user hierarchy levels
-     */
-    @WebMethod
-    UserHierarchyLevelsDto listUserHierarchyLevels(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
      * Set configuration (stored in opencell-admin.properties file) property

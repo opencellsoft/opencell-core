@@ -32,4 +32,8 @@ public class ElementAlreadyExistsException extends ValidationException {
     public ElementAlreadyExistsException(Number id, String elementName) {
         super(elementName + " with id=" + id + " already exist");
     }
+
+    public ElementAlreadyExistsException(String message) {
+        super(message);
+    }
 }

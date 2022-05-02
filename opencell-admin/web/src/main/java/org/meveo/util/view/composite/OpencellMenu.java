@@ -102,4 +102,8 @@ public class OpencellMenu extends AbstractMenu implements org.primefaces.compone
             return "widget_" + getClientId(context).replaceAll("-|" + UINamingContainer.getSeparatorChar(context), "_");
         }
     }
+    @Override
+    public boolean isRendered() {
+        return true;
+    }
 }

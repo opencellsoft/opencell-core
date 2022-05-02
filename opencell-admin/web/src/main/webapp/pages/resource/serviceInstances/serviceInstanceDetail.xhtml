@@ -159,7 +159,7 @@
  								<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/> 
  								<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/> 
 
- 								<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId" 
+ 								<hftl:actionsColumn  backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId" 
  								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/> 
  						</hftl:dataList> 
  					</c:if> 

@@ -18,21 +18,35 @@
 
 package org.meveo.service.security;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.ws.rs.NotFoundException;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.meveo.admin.exception.InvalidParameterException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.security.SecuredEntity;
+import org.meveo.security.client.KeycloakAdminClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SecuredBusinessEntity Service base class.
@@ -40,8 +54,20 @@ import org.meveo.service.base.PersistenceService;
  * @author Tony Alejandro
  */
 @Stateless
-public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity> {
-    
+public class SecuredBusinessEntityService implements Serializable {
+
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
+
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
+
     public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code) {
         if (entityClass == null) {
             return null;
@@ -51,29 +77,26 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 
     public BusinessEntity getEntityByCode(String entityClassName, String code) {
         try {
-            Class<?> businessEntityClass = Class.forName(ReflectionUtils.getCleanClassName(entityClassName));
-            QueryBuilder qb = new QueryBuilder(businessEntityClass, "e", null);
+            QueryBuilder qb = new QueryBuilder("from " + entityClassName + " e", "e");
             qb.addCriterion("e.code", "=", code, true);
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code, e);
+            log.debug("No {} of code {} found", entityClassName, code, e);
         } catch (NonUniqueResultException e) {
-            log.error("More than one entity of type {} with code {} found", entityClass, code, e);
-        } catch (ClassNotFoundException e) {
-            log.error("Unable to create entity class for query", e);
+            log.error("More than one entity of type {} with code {} found", entityClassName, code, e);
         }
         return null;
     }
 
-    public boolean isEntityAllowed(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
+    public boolean isEntityAllowed(BusinessEntity entity, Map<String, Set<SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
         Set<SecuredEntity> securedEntities = null;
-        //this because if the current entity is got as parent of a another fisrt entity by
+        // this because if the current entity is got as parent of a another first entity by
         // fisrtEntity.getParentEntity() then the real class of entity can be an hibernate proxy
         if (entity != null) {
             Class<?> entityClass = getEntityRealClass(entity);
-            securedEntities = allSecuredEntitiesMap.get(entityClass);
+            securedEntities = allSecuredEntitiesMap.get(entityClass.getSimpleName());
         }
-        
+
         // Doing this check first allows verification without going to DB.
         if (entityFoundInSecuredEntities(entity, securedEntities)) {
             // Match was found authorization successful
@@ -85,8 +108,8 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
             boolean isSameTypeAsParent = getClassForHibernateObject(entity) == entity.getParentEntityType();
-            if(isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
-            	return false;
+            if (isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
+                return false;
             }
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
@@ -115,19 +138,18 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             return false;
         }
     }
-    
-	public static Class<?> getClassForHibernateObject(Object object) {
-		return object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass()
-				: object.getClass();
-	}
+
+    public static Class<?> getClassForHibernateObject(Object object) {
+        return object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+    }
 
     private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
-    	if (entity == null || securedEntities == null) {
+        if (entity == null || securedEntities == null) {
             return false;
         }
         boolean found = false;
         for (SecuredEntity securedEntity : securedEntities) {
-            if (securedEntity.equals(entity)) {
+            if (isSecuredEntityEqualBusinessEntity(securedEntity, entity)) {
                 found = true;
                 break;
             }
@@ -135,12 +157,89 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         return found;
     }
 
+    private static boolean isSecuredEntityEqualBusinessEntity(SecuredEntity securedEntity, BusinessEntity entity) {
+
+        if (entity == null) {
+            return false;
+        }
+
+        String thatCode = ((BusinessEntity) entity).getCode();
+        String thatClass = ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
+
+        thatCode = thatClass + "-_-" + thatCode;
+        String thisCode = securedEntity.getEntityClass() + "-_-" + securedEntity.getCode();
+
+        if (!thisCode.equals(thatCode)) {
+            return false;
+        }
+        return true;
+    }
+
     public static Class<?> getEntityRealClass(Object entity) {
         if (entity instanceof HibernateProxy) {
-			LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();
-			return lazyInitializer.getPersistentClass();
-		} else {
-			return entity.getClass();
-		}
-	}
+            LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();
+            return lazyInitializer.getPersistentClass();
+        } else {
+            return entity.getClass();
+        }
+    }
+
+    /**
+     * Get a list of secured entities applied to a given user.
+     * 
+     * @param username Username of a user to retrieve
+     * @return A list of secured entities
+     */
+    public List<SecuredEntity> getSecuredEntities(String username) {
+        return keycloakAdminClientService.getSecuredEntities(username);
+    }
+
+    /**
+     * Synchronize secured entities with what a user currently has assigned
+     * 
+     * @param securedEntities A final list of secured entities that user should have
+     * @param username Username of a user to assign secured entities to
+     */
+    public void syncSecuredEntities(List<SecuredEntity> securedEntities, String username) {
+
+        // Determine new secured entities to add or remove
+        List<SecuredEntity> seToAdd = new ArrayList<>(securedEntities);
+        List<SecuredEntity> seToDelete = new ArrayList<>();
+
+        List<SecuredEntity> seCurrent = keycloakAdminClientService.getSecuredEntities(username);
+        seToDelete.addAll(seCurrent);
+        seToDelete.removeAll(seToAdd);
+        seToAdd.removeAll(seCurrent);
+
+        if (!seToAdd.isEmpty()) {
+            keycloakAdminClientService.addSecuredEntity(seToAdd, username);
+        }
+        if (!seToDelete.isEmpty()) {
+            keycloakAdminClientService.deleteSecuredEntities(seToDelete, username);
+        }
+    }
+
+    /**
+     * Add a secured entity
+     * 
+     * @param securedEntity
+     * @param username
+     */
+    public void addSecuredEntity(SecuredEntity securedEntity, String username) {
+        keycloakAdminClientService.addSecuredEntity(securedEntity, username);
+    }
+
+    /**
+     * Delete a secured entity configuration
+     * 
+     * @param securedEntity
+     * @param username
+     */
+    public void deleteSecuredEntity(SecuredEntity securedEntity, String username) {
+        keycloakAdminClientService.deleteSecuredEntity(securedEntity, username);
+    }
+
+    public EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
+    }
 }

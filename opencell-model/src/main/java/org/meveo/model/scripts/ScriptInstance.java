@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,7 +45,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.security.Role;
 
 /**
  * Custom script
@@ -112,16 +111,18 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * A list of roles that can execute a script
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> executionRoles = new HashSet<Role>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "role")
+    @CollectionTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))
+    private Set<String> executionRoles = new HashSet<String>();
 
     /**
      * A list of roles that can view/modify the script
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> sourcingRoles = new HashSet<Role>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "role")
+    @CollectionTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id", referencedColumnName = "id"))   
+    private Set<String> sourcingRoles = new HashSet<String>();
 
     public ScriptInstance() {
 
@@ -214,28 +215,28 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * @return the executionRoles
      */
-    public Set<Role> getExecutionRoles() {
+    public Set<String> getExecutionRoles() {
         return executionRoles;
     }
 
     /**
      * @param executionRoles the executionRoles to set
      */
-    public void setExecutionRoles(Set<Role> executionRoles) {
+    public void setExecutionRoles(Set<String> executionRoles) {
         this.executionRoles = executionRoles;
     }
 
     /**
      * @return the sourcingRoles
      */
-    public Set<Role> getSourcingRoles() {
+    public Set<String> getSourcingRoles() {
         return sourcingRoles;
     }
 
     /**
      * @param sourcingRoles the sourcingRoles to set
      */
-    public void setSourcingRoles(Set<Role> sourcingRoles) {
+    public void setSourcingRoles(Set<String> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
 

@@ -18,6 +18,14 @@
 
 package org.meveo.api.security.filter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.response.SearchResponse;
 import org.meveo.api.exception.InvalidParameterException;
@@ -28,12 +36,9 @@ import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.SecuredEntity;
 import org.meveo.service.security.SecuredBusinessEntityService;
-
-import javax.inject.Inject;
-import java.util.*;
 
 public class ListFilter extends SecureMethodResultFilter {
 
@@ -42,7 +47,7 @@ public class ListFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
+    public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<String, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");

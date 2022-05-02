@@ -23,7 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.admin.SecuredEntity;
+import org.meveo.security.SecuredEntity;
+import org.meveo.security.SecuredEntity.SecuredEntityPermissionEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -46,12 +47,15 @@ public class SecuredEntityDto extends BaseEntityDto {
 
     /** The entity class. */
     @XmlAttribute(required = true)
-    @Schema(description = "The entity class", required = true)
+    @Schema(description = "The entity class (a simple name)", required = true)
     private String entityClass;
 
-    @XmlAttribute(required = true)
-    @Schema(description = "indicate of the entity is disabled", required = true, defaultValue = "false")
-    private boolean disabled;
+    /**
+     * Allowed action to perform on the entity
+     */
+    @XmlAttribute
+    @Schema(description = "Allowed action to perform on the entity")
+    private SecuredEntityPermissionEnum permission;
 
     /**
      * Instantiates a new secured entity dto.
@@ -67,7 +71,7 @@ public class SecuredEntityDto extends BaseEntityDto {
     public SecuredEntityDto(SecuredEntity entity) {
         this.code = entity.getCode();
         this.entityClass = entity.getEntityClass();
-        this.disabled = entity.getDisabledAsBoolean();
+        this.permission = entity.getPermission();
     }
 
     /**
@@ -106,18 +110,19 @@ public class SecuredEntityDto extends BaseEntityDto {
         this.entityClass = entityClass;
     }
 
-	/**
-	 * @return the disabled
-	 */
-	public boolean isDisabled() {
-		return disabled;
-	}
+    /**
+     * 
+     * @return Allowed action to perform on the entity
+     */
+    public SecuredEntityPermissionEnum getPermission() {
+        return permission;
+    }
 
-	/**
-	 * @param disabled the disabled to set
-	 */
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    /**
+     * @param permission Allowed action to perform on the entity
+     */
+    public void setPermission(SecuredEntityPermissionEnum permission) {
+        this.permission = permission;
+    }
 
 }

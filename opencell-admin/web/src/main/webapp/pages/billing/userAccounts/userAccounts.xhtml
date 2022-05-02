@@ -43,7 +43,7 @@
             <hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true" />
             <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('billingManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" />
         </hftl:dataList>
 
     </ui:define>

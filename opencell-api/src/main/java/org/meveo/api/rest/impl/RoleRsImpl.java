@@ -49,7 +49,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus create(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.create(postData);
+            roleApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -61,7 +61,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus update(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.update(postData);
+            roleApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -72,11 +72,11 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     @Override
     public ActionStatus remove(String roleName) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            roleApi.remove(roleName);
-        } catch (Exception e) {
-            processException(e, result);
-        }
+//        try {
+//            roleApi.remove(roleName);
+//        } catch (Exception e) {
+//            processException(e, result);
+//        }
 
         return result;
     }
@@ -150,15 +150,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
 
     @Override
     public RolesDto listExternalRoles() {
-        RolesDto result = new RolesDto();
-
-        try {
-            result.setRoles(roleApi.listExternalRoles(httpServletRequest));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
+       return null;
     }
 
     @Override

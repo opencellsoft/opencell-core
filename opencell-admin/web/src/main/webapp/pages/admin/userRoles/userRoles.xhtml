@@ -1,16 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml">
-
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{userRoleListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 	<ui:define name="body">
 		<h:form id="crumbmenuForm">
@@ -20,26 +10,74 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:searchPanel label="#{messages['role.search']}"
-			backingBean="#{userRoleListBean}">
-			<hftl:searchField label="#{messages['role.name']}" field="name" />
-			<hftl:searchField label="#{messages['role.description']}"
-				field="description" />
-		</hftl:searchPanel>
+		<h:form id="form">
+			<p:panel>
+				<h:panelGroup layout="block" styleClass="search-panel">
 
-		<hftl:dataList label="#{messages['role.title']}"
-			backingBean="#{userRoleListBean}" sortBy="name">
-			<hftl:column label="#{messages['role.name']}" field="name"
-				entityView="roleDetail" valueIdField="id" />
-			<hftl:column label="#{messages['role.description']}"
-				field="description" />
-			<hftl:column label="#{messages['role.permissions']}"
-				field="permissions" valueLabelField="name" isList="true" />
+					<p:messages id="messages" autoUpdate="true" redisplay="false" />
 
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('administrationManagement')}" />
 
-		</hftl:dataList>
+					<hftl:decorateFormField fieldId="readLevel" label="#{messages['roles.genApiReadLevel']}" componentWidth="15">
+						<p:selectOneMenu id="readLevel" value="#{roleBean.readLevel}">
+							<f:selectItem itemLabel="" />
+							<f:selectItems value="#{roleBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+							<f:converter converterId="enumConverter" />
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+
+
+					<hftl:decorateFormField fieldId="createLevel" label="#{messages['roles.genApiCreateLevel']}" componentWidth="15">
+						<p:selectOneMenu id="createLevel" value="#{roleBean.createLevel}">
+							<f:selectItem itemLabel="" />
+							<f:selectItems value="#{roleBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+							<f:converter converterId="enumConverter" />
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+
+
+					<hftl:decorateFormField fieldId="updateLevel" label="#{messages['roles.genApiUpdateLevel']}" componentWidth="15">
+						<p:selectOneMenu id="updateLevel" value="#{roleBean.updateLevel}">
+							<f:selectItem itemLabel="" />
+							<f:selectItems value="#{roleBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+							<f:converter converterId="enumConverter" />
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+
+
+					<hftl:decorateFormField fieldId="deleteLevel" label="#{messages['roles.genApiDeleteLevel']}" componentWidth="15">
+						<p:selectOneMenu id="deleteLevel" value="#{roleBean.deleteLevel}">
+							<f:selectItem itemLabel="" />
+							<f:selectItems value="#{roleBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+							<f:converter converterId="enumConverter" />
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+
+
+					<!-- 					<hftl:decorateFormField fieldId="fullLevel" label="#{messages['roles.fullAccessLevel']}" componentWidth="15"> -->
+					<!-- 						<p:selectManyMenu id="fullLevel" value="#{roleBean.fullLevel}" showCheckbox="true"> -->
+					<!-- 							<f:selectItems value="#{roleBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
+					<!-- 							<f:converter converterId="enumConverter" /> -->
+					<!-- 						</p:selectManyMenu> -->
+					<!-- 					</hftl:decorateFormField> -->
+
+					<!-- 					<hftl:decorateFormField fieldId="themeLevel" label="#{messages['roles.themeAccessLevel']}" componentWidth="15"> -->
+					<!-- 						<p:selectManyMenu id="themeLevel" value="#{roleBean.themeLevel}" showCheckbox="true"> -->
+					<!-- 							<f:selectItems value="#{roleBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
+					<!-- 							<f:converter converterId="enumConverter" /> -->
+					<!-- 						</p:selectManyMenu> -->
+					<!-- 					</hftl:decorateFormField> -->
+
+					<!-- 					<hftl:decorateFormField fieldId="entityLevel" label="#{messages['roles.entityAccessLevel']}" componentWidth="15"> -->
+					<!-- 						<p:selectManyMenu id="entityLevel" value="#{roleBean.entityLevel}" showCheckbox="true"> -->
+					<!-- 							<f:selectItems value="#{roleBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
+					<!-- 							<f:converter converterId="enumConverter" /> -->
+					<!-- 						</p:selectManyMenu> -->
+					<!-- 					</hftl:decorateFormField> -->
+
+					<p:commandButton action="#{roleBean.syncApiRoles()}" value="#{messages['roles.syncApiRoles']}" update="form:messages" process="@form" />
+				</h:panelGroup>
+			</p:panel>
+		</h:form>
 
 	</ui:define>
 

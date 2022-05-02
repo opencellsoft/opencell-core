@@ -36,7 +36,6 @@ import org.meveo.service.admin.impl.CurrencyService;
  */
 @Named
 @SessionScoped
-// TODO: @Restrict("#{s:hasRole('meveo.admin')}")
 public class SystemCurrencyBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;

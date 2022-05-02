@@ -38,7 +38,7 @@
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
 
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('catalogManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" />
         </hftl:dataList>
 
     </ui:define>

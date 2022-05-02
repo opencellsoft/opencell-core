@@ -20,6 +20,7 @@ package org.meveo.security.keycloak;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -48,6 +49,11 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * Field in token containing provider code
      */
     private static String CLAIM_PROVIDER = "provider";
+    
+    /**
+     * Field in token containing group membership
+     */
+    private static String CLAIM_GROUP_MEMBERSHIP = "groups";
 
     /**
      * JAAS security context
@@ -74,7 +80,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            
+
             AccessToken accessToken = keycloakSecurityContext.getToken();
 
             // log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", accessToken.getSubject(),
@@ -104,6 +110,11 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             String clientName = System.getProperty("opencell.keycloak.client");
             if (accessToken.getResourceAccess(clientName) != null) {
                 this.roles.addAll(accessToken.getResourceAccess(clientName).getRoles());
+            }
+
+            // Get group that user belongs to - only the first group is considered
+            if (accessToken.getOtherClaims().get(CLAIM_GROUP_MEMBERSHIP) != null && !((List<String>) accessToken.getOtherClaims().get(CLAIM_GROUP_MEMBERSHIP)).isEmpty()) {
+                this.userGroup = ((List<String>) accessToken.getOtherClaims().get(CLAIM_GROUP_MEMBERSHIP)).get(0);
             }
 
             this.locale = accessToken.getLocale();

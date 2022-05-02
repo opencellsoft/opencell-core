@@ -20,13 +20,13 @@ package org.meveo.admin.action.order;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -46,7 +46,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ProductInstance;
@@ -62,7 +61,6 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -84,7 +82,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
-import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -131,9 +128,6 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private ProductOfferingService productOfferingService;
-
-    @Inject
-    private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject
     private UserService userService;
@@ -1004,9 +998,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         boolean editable = entity.getStatus() != OrderStatusEnum.CANCELLED && entity.getStatus() != OrderStatusEnum.COMPLETED && entity.getStatus() != OrderStatusEnum.REJECTED;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
-            User user = userService.findByUsername(currentUser.getUserName());
-            editable = userGroup.isUserBelongsHereOrHigher(user);
+            editable = userService.isUserBelongsGroup(entity.getRoutedToUserGroup());
         }
 
         return editable;
