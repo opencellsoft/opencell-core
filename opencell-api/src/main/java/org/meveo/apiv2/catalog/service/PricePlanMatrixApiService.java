@@ -173,9 +173,9 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                 // Check if the charge is changed
                 if (StringUtils.isNotBlank(newChargeCode) && !newChargeCode.equals(pricePlanMatrix.getEventCode())) {
 
-                    validateChargeName(newChargeCode);
-
+                    ChargeTemplate chargeTemplate = findChargeTemplate(newChargeCode);
                     pricePlanMatrix.setEventCode(newChargeCode);
+                    pricePlanMatrix.setChargeTemplate(chargeTemplate);
                     pricePlanMatrixService.update(pricePlanMatrix);
                 }
                 
@@ -254,7 +254,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         return resultDtos;
     }
 
-    private void validateChargeName(String chargeName) {
+    private ChargeTemplate findChargeTemplate(String chargeName) {
         ChargeTemplate chargeTemplate = null;
         try {
             chargeTemplate = emWrapper.getEntityManager().createQuery("from ChargeTemplate c where c.code=:chargeName", ChargeTemplate.class).setParameter("chargeName", chargeName)
@@ -264,6 +264,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeName);
         }
+        return chargeTemplate;
     }
 
     private void unzipFile(String fileToImport) {
