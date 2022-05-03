@@ -252,7 +252,7 @@ public class CalendarApi extends BaseApi {
         }
         else {
             try {
-                throw new InvalidParameterException("calendar type must not be null");
+                throw new MissingParameterException("calendarType");
             } finally {
                 missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
             }
