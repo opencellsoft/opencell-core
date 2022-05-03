@@ -12815,7 +12815,20 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <sql>update ${db.schema.adapted}adm_script_sourc_role set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
         <dropColumn tableName="adm_script_sourc_role" columnName="role_id"/>
-                                
+        
+         <createTable tableName="adm_secured_entity_migr">
+            <column name="username" type="varchar(50)"/>
+            <column name="rolename" type="varchar(50)"/> 
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_secured_entity_migr (username, code, entity_class) (select u.username, se.code, se.entity_class from ${db.schema.adapted}adm_user u join ${db.schema.adapted}adm_secured_entity se on u.id=se.user_id)</sql>
+        <sql>insert into ${db.schema.adapted}adm_secured_entity_migr (rolename, code, entity_class) (select r.username, se.code, se.entity_class from ${db.schema.adapted}adm_role u join ${db.schema.adapted}adm_role_secured_entity se on r.id=se.role_id)</sql>
+                
         <dropTable tableName="adm_secured_entity"/>
         <dropTable tableName="adm_role_secured_entity"/>
         <dropTable tableName="adm_user_role"/>
