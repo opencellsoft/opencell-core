@@ -6082,8 +6082,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
-            var duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
-            invoiceLinesService.create(duplicateInvoiceLine);
+            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
