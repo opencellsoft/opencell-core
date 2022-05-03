@@ -125,7 +125,7 @@ public class LanguageIsoApi extends BaseApi {
 
     public void createOrUpdate(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
-        if(StringUtils.isBlank(postData.getCode()) && languageService.findByCode(postData.getCode()) != null) {
+        if(!StringUtils.isBlank(postData.getCode()) && languageService.findByCode(postData.getCode()) != null) {
             update(postData);
         } else {
             create(postData);
