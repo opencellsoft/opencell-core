@@ -10251,4 +10251,36 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	</changeSet>
 
 
+	<changeSet id="INTRD-6908_20220503" author="HichamELHALOUI">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Payment Card to collect"></column>
+			<where>id=-37</where>
+		</update>
+
+        <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Paypal to collect"></column>
+			<where>id=-38</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Stripe to collect"></column>
+			<where>id=-39</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Payment - TIP to collect"></column>
+			<where>id=-40</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Cash in local currency"></column>
+			<where>id=-41</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Checks to collect"></column>
+			<where>id=-42</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
