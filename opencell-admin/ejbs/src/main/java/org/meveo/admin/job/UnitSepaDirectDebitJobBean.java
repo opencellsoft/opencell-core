@@ -227,6 +227,7 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setBankLot(bankLot);
 		automatedPayment.setDepositDate(depositDate);
 		automatedPayment.setBankCollectionDate(bankCollectionDate);
+		automatedPayment.setCollectionDate(bankCollectionDate);
 		automatedPayment.setDueDate(dueDate);
 		automatedPayment.setTransactionDate(transactionDate);
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
