@@ -106,6 +106,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 	
+	public List<PricePlanMatrixVersion> findFromDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateAfterDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
+    }
+	
 	public List<PricePlanMatrixVersion> findToDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
         return this.getEntityManager()
             .createNamedQuery("PricePlanMatrixVersion.findToDateAfterDateAndVersion", entityClass)
