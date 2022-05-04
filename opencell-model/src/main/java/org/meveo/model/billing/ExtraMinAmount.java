@@ -1,10 +1,9 @@
 package org.meveo.model.billing;
 
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 /**
  * A class to store extra amount generated to achieve the min amount billable for an account
  * @author khalid HORRI
@@ -19,9 +18,9 @@ public class ExtraMinAmount implements Serializable{
     /**
      * The Entity generating the amounts
      */
-    private BusinessEntity entity;
+    private IInvoicingMinimumApplicable entity;
 
-    public ExtraMinAmount(BusinessEntity entity, Map<String, Amounts> createdAmount) {
+    public ExtraMinAmount(IInvoicingMinimumApplicable entity, Map<String, Amounts> createdAmount) {
         this.createdAmount = createdAmount;
         this.entity = entity;
     }
@@ -34,11 +33,11 @@ public class ExtraMinAmount implements Serializable{
         this.createdAmount = createdAmount;
     }
 
-    public BusinessEntity getEntity() {
+    public IInvoicingMinimumApplicable getEntity() {
         return entity;
     }
 
-    public void setEntity(BusinessEntity entity) {
+    public void setEntity(IInvoicingMinimumApplicable entity) {
         this.entity = entity;
     }
 }
