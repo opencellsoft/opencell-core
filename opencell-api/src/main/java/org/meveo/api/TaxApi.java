@@ -64,6 +64,10 @@ public class TaxApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
+        if (StringUtils.isBlank(postData.getPercent())) {
+            throw new MissingParameterException("percent");
+        }
+
         ActionStatus result = new ActionStatus();
 
         // check if tax exists
