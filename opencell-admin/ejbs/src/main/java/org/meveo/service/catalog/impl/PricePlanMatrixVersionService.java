@@ -1,7 +1,5 @@
 package org.meveo.service.catalog.impl;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -481,7 +479,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
+				File csvFile = new File(saveDirectory + fileName);
+				OutputStream fileOutputStream = new FileOutputStream(csvFile);
+				fileOutputStream.write('\ufeef');
+				fileOutputStream.write('\ufebb');
+				fileOutputStream.write('\ufebf');
+				csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
