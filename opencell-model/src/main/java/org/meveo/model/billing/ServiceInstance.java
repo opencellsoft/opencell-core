@@ -63,6 +63,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
@@ -72,11 +73,11 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -106,7 +107,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
         @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
-public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity,IInvoicingMinimumApplicable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -1260,5 +1261,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 		}
 		return null;
 	}
+	
+    public Seller getSeller() {
+    	if(subscription==null) {
+    		return null;
+    	}
+    	return subscription.getSeller();
+    }
     
 }

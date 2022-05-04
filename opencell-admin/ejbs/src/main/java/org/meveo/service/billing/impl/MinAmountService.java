@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
@@ -29,6 +30,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -57,7 +59,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         for (Object[] amounts : amountsList) {
             BigDecimal amountWithoutTax = (BigDecimal) amounts[0];
             BigDecimal amountWithTax = (BigDecimal) amounts[1];
-            BusinessEntity entity = (BusinessEntity) getEntityManager().find(accountClass, amounts[2]);
+            IInvoicingMinimumApplicable entity = (IInvoicingMinimumApplicable) getEntityManager().find(accountClass, amounts[2]);
             Seller seller = getSeller(billingAccount, entity);
             MinAmountData minAmountDataInfo = accountToMinAmount.get(entity.getId());
             if (minAmountDataInfo == null) {
@@ -316,7 +318,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return query.getResultList();
     }
 
-    private Seller getSeller(BillingAccount billingAccount, BusinessEntity entity) {
+    private Seller getSeller(BillingAccount billingAccount, IInvoicingMinimumApplicable entity) {
         if (entity instanceof ServiceInstance) {
             return ((ServiceInstance) entity).getSubscription().getSeller();
         }
@@ -326,7 +328,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return billingAccount.getCustomerAccount().getCustomer().getSeller();
     }
 
-    private String getMinimumAmountElInfo(BusinessEntity entity, String method) {
+    private String getMinimumAmountElInfo(IInvoicingMinimumApplicable entity, String method) {
         try {
             Method getMinimumAmountElMethod = entity.getClass().getMethod(method);
             if (getMinimumAmountElMethod != null) {
@@ -348,9 +350,12 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         }
     }
 
-    private BigDecimal evaluateMinAmountExpression(String expression, BusinessEntity entity) throws BusinessException {
+    public BigDecimal evaluateMinAmountExpression(String expression, IInvoicingMinimumApplicable entity) throws BusinessException {
         if (isBlank(expression)) {
             return null;
+        }
+        if(NumberUtils.isCreatable(expression)) {
+        	return new BigDecimal(expression);
         }
         Map<Object, Object> userMap = new HashMap<>();
         if (entity instanceof BillingAccount) {
@@ -419,7 +424,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return contextMap;
     }
 
-    private String evaluateMinAmountLabelExpression(String expression, BusinessEntity entity) throws BusinessException {
+    public String evaluateMinAmountLabelExpression(String expression, IInvoicingMinimumApplicable entity) throws BusinessException {
         if (isBlank(expression)) {
             return null;
         }
@@ -439,10 +444,10 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return evaluateExpression(expression, userMap, String.class);
     }
 
-    private Map<Long, MinAmountData> appendExtraAmount(List<ExtraMinAmount> extraMinAmounts, Map<Long, MinAmountData> accountToMinAmount, BusinessEntity entity) {
+    private Map<Long, MinAmountData> appendExtraAmount(List<ExtraMinAmount> extraMinAmounts, Map<Long, MinAmountData> accountToMinAmount, IInvoicingMinimumApplicable entity) {
         MinAmountData minAmountDataInfo = accountToMinAmount.get(entity.getId());
         extraMinAmounts.forEach(extraMinAmount -> {
-            BusinessEntity extraMinAmountEntity = extraMinAmount.getEntity();
+            IInvoicingMinimumApplicable extraMinAmountEntity = extraMinAmount.getEntity();
             if (isExtraMinAmountEntityChildOfEntity(extraMinAmountEntity, entity)) {
                 Map<String, Amounts> extraAmounts = extraMinAmount.getCreatedAmount();
                 for (Map.Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
@@ -454,7 +459,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return accountToMinAmount;
     }
 
-    private boolean isExtraMinAmountEntityChildOfEntity(BusinessEntity child, BusinessEntity parent) {
+    private boolean isExtraMinAmountEntityChildOfEntity(IInvoicingMinimumApplicable child, IInvoicingMinimumApplicable parent) {
         if (parent instanceof Subscription && child instanceof ServiceInstance) {
             return ((ServiceInstance) child).getSubscription().equals(parent);
         }
@@ -516,8 +521,8 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     public Map<Long, MinAmountData> prepareAccountsWithMinAmount(IBillableEntity billableEntity, BillingAccount billingAccount,
                                                                  List<ExtraMinAmount> extraMinAmounts, Class accountClass,
                                                                  Map<Long, MinAmountData> accountToMinAmount) {
-        List<BusinessEntity> accountsWithMinAmount = getAccountsWithMinAmountElNotNull(billableEntity, accountClass);
-        for (BusinessEntity entity : accountsWithMinAmount) {
+        List<IInvoicingMinimumApplicable> accountsWithMinAmount = getAccountsWithMinAmountElNotNull(billableEntity, accountClass);
+        for (IInvoicingMinimumApplicable entity : accountsWithMinAmount) {
             MinAmountData minAmountInfo = accountToMinAmount.get(entity.getId());
             if (minAmountInfo == null) {
                 String minAmountEL = getMinimumAmountElInfo(entity, "getMinimumAmountEl");
@@ -540,7 +545,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return accountToMinAmount;
     }
 
-    private List<? extends BusinessEntity> getAccountsWithMinAmountElNotNull(IBillableEntity billableEntity, Class<? extends BusinessEntity> accountClass) {
+    private List<? extends IInvoicingMinimumApplicable> getAccountsWithMinAmountElNotNull(IBillableEntity billableEntity, Class<? extends IInvoicingMinimumApplicable> accountClass) {
         if (accountClass.equals(ServiceInstance.class)) {
             return getServicesWithMinAmount(billableEntity);
         }
@@ -562,7 +567,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return new ArrayList<>();
     }
 
-    private List<BusinessEntity> getServicesWithMinAmount(IBillableEntity billableEntity) {
+    private List<IInvoicingMinimumApplicable> getServicesWithMinAmount(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
@@ -575,7 +580,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return emptyList();
     }
 
-    private List<? extends BusinessEntity> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
+    private List<? extends IInvoicingMinimumApplicable> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription", Subscription.class)
                     .setParameter("subscription", billableEntity)
@@ -588,7 +593,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return emptyList();
     }
 
-    private List<BusinessEntity> getUserAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+    private List<IInvoicingMinimumApplicable> getUserAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             return getEntityManager().createNamedQuery("UserAccount.getUserAccountsWithMinAmountELNotNullByUA")
                     .setParameter("userAccount", ((Subscription) billableEntity).getUserAccount())
@@ -599,7 +604,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .getResultList();
     }
 
-    private List<BusinessEntity> getBillingAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+    private List<IInvoicingMinimumApplicable> getBillingAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
         }
@@ -608,7 +613,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .getResultList();
     }
 
-    private List<BusinessEntity> getCustomerAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+    private List<IInvoicingMinimumApplicable> getCustomerAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
         }
@@ -617,7 +622,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .getResultList();
     }
 
-    private List<BusinessEntity> getCustomersWithMinAmountELNotNull(IBillableEntity billableEntity) {
+    private List<IInvoicingMinimumApplicable> getCustomersWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
         }
@@ -748,4 +753,5 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         }
         return new boolean[]{servMin, subMin, uaMin, baMin, caMin, custMin};
     }
+    
 }

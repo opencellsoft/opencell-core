@@ -8,10 +8,8 @@ import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
@@ -19,20 +17,15 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.hibernate.ScrollMode;
-import org.hibernate.Session;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration.DateAggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -42,7 +35,6 @@ import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.job.Job;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 

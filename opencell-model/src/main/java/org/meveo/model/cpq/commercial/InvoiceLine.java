@@ -303,6 +303,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.valueDate = valueDate;
 		this.quantity = quantity;
 		this.amountWithoutTax = amountWithoutTax;
+		this.unitPrice = quantity!=null && !BigDecimal.ZERO.equals(quantity)?amountWithoutTax.divide(quantity):amountWithoutTax;
 		this.amountWithTax = amountWithTax;
 		this.amountTax = amountTax;
 		this.status = status;
