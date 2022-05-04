@@ -174,6 +174,9 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                 if (StringUtils.isNotBlank(newChargeCode) && !newChargeCode.equals(pricePlanMatrix.getEventCode())) {
 
                     List<PricePlanMatrix> pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+                    if (pricePlanMatrixs.size() == 0) {
+                        throw new BusinessApiException("No PricePlanMatrix related to the charge '" + newChargeCode + "'");
+                    }
                     if (pricePlanMatrixs.size() > 1) {
                         throw new BusinessApiException("There are several PricePlanMatrix related to this charge");
                     }
