@@ -16440,9 +16440,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="seller_id" type="bigint" />
-            <column name="customer_account_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="customer_account_id" type="bigint" />
             <column name="tax_id" type="bigint" />
 
             <!-- Simple fields -->
