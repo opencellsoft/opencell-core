@@ -173,10 +173,15 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                 // Check if the charge is changed
                 if (StringUtils.isNotBlank(newChargeCode) && !newChargeCode.equals(pricePlanMatrix.getEventCode())) {
 
-                    ChargeTemplate chargeTemplate = findChargeTemplate(newChargeCode);
-                    pricePlanMatrix.setEventCode(newChargeCode);
-                    pricePlanMatrix.setChargeTemplate(chargeTemplate);
-                    pricePlanMatrixService.update(pricePlanMatrix);
+                    List<PricePlanMatrix> pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+                    if (pricePlanMatrixs.size() > 1) {
+                        throw new BusinessApiException("There are several PricePlanMatrix related to this charge");
+                    }
+
+                    pricePlanMatrix = pricePlanMatrixs.get(0);
+                    ppmvToUpdate.setPricePlanMatrix(pricePlanMatrix);
+                    ppmvToUpdate.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrix.getCode()) + 1);
+                    pricePlanMatrixVersionService.update(ppmvToUpdate);
                 }
 
                 if (newTo != null) {
@@ -239,19 +244,6 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         }
 
         return resultDtos;
-    }
-
-    private ChargeTemplate findChargeTemplate(String chargeName) {
-        ChargeTemplate chargeTemplate = null;
-        try {
-            chargeTemplate = emWrapper.getEntityManager().createQuery("from ChargeTemplate c where c.code=:chargeName", ChargeTemplate.class).setParameter("chargeName", chargeName)
-                .setMaxResults(1).getSingleResult();
-        } catch (NoResultException e) {
-        }
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeName);
-        }
-        return chargeTemplate;
     }
 
     private void unzipFile(String fileToImport) {
