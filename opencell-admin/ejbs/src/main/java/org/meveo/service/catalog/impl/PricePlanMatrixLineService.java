@@ -241,4 +241,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
         .executeUpdate();
     }
+    
+    public void deleteByPricePlanMatrixVersionIds(List<Long> ppmvIds) {
+        this.getEntityManager()
+        .createNamedQuery("PricePlanMatrixLine.deleteByPricePlanMatrixVersionIds")
+        .setParameter("ppmvIds", ppmvIds)
+        .executeUpdate();
+    }
 }

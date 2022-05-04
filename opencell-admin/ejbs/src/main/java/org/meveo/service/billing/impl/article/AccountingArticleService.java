@@ -311,32 +311,31 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	private static boolean hasAllData(List<AccountingCodeMapping> mappings, AccountingArticle accountingArticle,
 									  TradingCountry billingCountry, TradingCurrency billingCurrency,
 									  TradingCountry sellerCountry, Seller seller, String columCriteriaEL) {
-		boolean articleMatched = accountingArticle != null && accountingArticle.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getAccountingArticle().getId())
-						.collect(Collectors.toSet()).contains(accountingArticle.getId());
+	    boolean articleMatched = accountingArticle != null && accountingArticle.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getAccountingArticle() == null ? false : accountingCodeMapping.getAccountingArticle().getId())
+                        .collect(Collectors.toSet()).contains(accountingArticle.getId());
 
-		boolean billingCountryMatched = billingCountry != null && billingCountry.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCountry().getId())
-						.collect(Collectors.toSet()).contains(billingCountry.getId());
+        boolean billingCountryMatched = billingCountry != null && billingCountry.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCountry() == null ? false : accountingCodeMapping.getBillingCountry().getId())
+                        .collect(Collectors.toSet()).contains(billingCountry.getId());
 
-		boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency() != null
-				            ? accountingCodeMapping.getBillingCurrency().getId() : null)
-						.collect(Collectors.toSet()).contains(billingCurrency.getId());
+        boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency() == null ? false : accountingCodeMapping.getBillingCurrency().getId())
+                    .collect(Collectors.toSet()).contains(billingCurrency.getId());    
+          
+        boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSellerCountry() == null ? false : accountingCodeMapping.getSellerCountry().getId())
+                        .collect(Collectors.toSet()).contains(sellerCountry.getId());
 
-		boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSellerCountry().getId())
-						.collect(Collectors.toSet()).contains(sellerCountry.getId());
+        boolean sellerIdMatched = seller != null && seller.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSeller() == null ? false : accountingCodeMapping.getSeller().getId())
+                        .collect(Collectors.toSet()).contains(seller.getId());
 
-		boolean sellerIdMatched = seller != null && seller.getId() != null &&
-				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSeller().getId())
-						.collect(Collectors.toSet()).contains(seller.getId());
+        boolean valueMatched = StringUtils.isNotBlank(columCriteriaEL) &&
+                !mappings.stream().map(AccountingCodeMapping::getCriteriaElValue)
+                        .collect(Collectors.toSet()).contains(columCriteriaEL);
 
-		boolean valueMatched = StringUtils.isNotBlank(columCriteriaEL) &&
-				!mappings.stream().map(AccountingCodeMapping::getCriteriaElValue)
-						.collect(Collectors.toSet()).contains(columCriteriaEL);
-
-		return articleMatched || billingCountryMatched || billingCurrencyMatched
+        return articleMatched || billingCountryMatched || billingCurrencyMatched
 				|| sellerCountryMatched || sellerIdMatched || valueMatched;
 	}
 }

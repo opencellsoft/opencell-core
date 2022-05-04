@@ -4,19 +4,24 @@ import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
-import java.util.*;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,8 +30,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -36,9 +39,16 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -94,20 +104,30 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 	
-	public List<PricePlanMatrixVersion> findBeforeFromAndAfterVersion(PricePlanMatrix pricePlanMatrix, Date from, int currentVersion) {
-	    return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findBeforeFromAndAfterVersion", entityClass)
-            .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("from", from)
-            .setParameter("currentVersion", currentVersion)
-            .getResultList();
-	}
-	
-	public List<PricePlanMatrixVersion> findAfterVersion(PricePlanMatrix pricePlanMatrix, int currentVersion) {
+	public List<PricePlanMatrixVersion> findFromDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
         return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findAfterVersion", entityClass)
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateAfterDateAndVersion", entityClass)
             .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("currentVersion", currentVersion)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
+    }
+	
+	public List<PricePlanMatrixVersion> findToDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findToDateAfterDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
+    }
+	
+	public List<PricePlanMatrixVersion> findFromDateBeforeDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
             .getResultList();
     }
 	
@@ -441,15 +461,38 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
-								ColumnTypeEnum type = ppmv.getPricePlanMatrixColumn().getType();
+								String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
+								String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
 								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
-										resolveValue(ppmv, type));
+										value);
 								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
 
 							});
 					CSVLineRecords.add(CSVLineRecord);
 				});
 			return CSVLineRecords;
+		}
+
+		private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
+			switch (attributeType){
+				case DATE:
+					return isRange ? "range-date": "date";
+				case NUMERIC:
+				case INTEGER:
+					return isRange ? "range-number": "number";
+				case LIST_TEXT:
+					return "list_of_text_values";
+				case LIST_MULTIPLE_TEXT:
+					return "multiple_list_of_text_values";
+				case LIST_NUMERIC:
+					return "list_of_numeric_values";
+				case LIST_MULTIPLE_NUMERIC:
+					return "multiple_list_of_numeric_values";
+				case BOOLEAN:
+					return "boolean";
+				default:
+					return "text";
+			}
 		}
 
 		private String resolveValue(PricePlanMatrixValue ppmv, ColumnTypeEnum type) {
@@ -461,8 +504,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				case Boolean:
 					return ppmv.getBooleanValue() == null ? ppmv.getStringValue() : ppmv.getBooleanValue().toString();
 				case Range_Date:
+					if(ppmv.getFromDateValue() == null && ppmv.getToDateValue() == null) {
+						return "";
+					}
 					return (DateUtils.formatDateWithPattern(ppmv.getFromDateValue(), "yyyy-MM-dd") + "|" + DateUtils.formatDateWithPattern(ppmv.getToDateValue(), "yyyy-MM-dd")).replaceAll("null", "");
 				case Range_Numeric:
+					if(ppmv.getFromDoubleValue() == null && ppmv.getToDoubleValue() == null) {
+						return "";
+					}
 					return  (ppmv.getFromDoubleValue() + "|" + ppmv.getToDoubleValue()).replaceAll("null", "");
 				default:
 					return ppmv.getStringValue();
@@ -508,7 +557,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
+				File csvFile = new File(saveDirectory + fileName);
+				OutputStream fileOutputStream = new FileOutputStream(csvFile);
+				fileOutputStream.write('\ufeef');
+				fileOutputStream.write('\ufebb');
+				fileOutputStream.write('\ufebf');
+				csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
