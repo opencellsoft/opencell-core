@@ -193,8 +193,8 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                     }
                 }
 
-                List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
                 if (newTo != null) {
+                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
                     for (PricePlanMatrixVersion nextPV : nextPVs) {
                         if (nextPV.getId() != pricePlanVersionId &&
                                 nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
@@ -207,6 +207,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                         }
                     }
                 } else {
+                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom, ppmvToUpdate.getCurrentVersion());
                     if (!nextPVs.isEmpty()) {
                         List<Long> ppmvIds = nextPVs.stream().map(PricePlanMatrixVersion::getId).collect(Collectors.toList());
                         pricePlanMatrixLineService.deleteByPricePlanMatrixVersionIds(ppmvIds);
