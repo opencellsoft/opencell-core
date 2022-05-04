@@ -2096,7 +2096,8 @@ public class CpqQuoteApi extends BaseApi {
                         	  if( quotePrice.getOverchargedUnitAmountWithoutTax()==null) {
                             	  quotePrice.setOverchargedUnitAmountWithoutTax(quotePrice.getUnitPriceWithoutTax());
                               }
-                        	  BigDecimal quantity = quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                        	  BigDecimal quantity = quotePrice.getUnitPriceWithoutTax().compareTo(BigDecimal.ZERO)!=0? 
+                        			  quotePrice.getAmountWithoutTax().divide(quotePrice.getUnitPriceWithoutTax(),appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()):BigDecimal.ZERO;
                               quotePrice.setUnitPriceWithoutTax(unitPriceWithoutTax);
                               quotePrice.setAmountWithoutTax(unitPriceWithoutTax.multiply(quantity));
                               quotePrice.setTaxAmount(quotePrice.getAmountWithoutTax().multiply(quotePrice.getTaxRate().divide(BigDecimal.valueOf(100))));
