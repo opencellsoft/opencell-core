@@ -5,10 +5,17 @@ import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
+
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -100,6 +107,75 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		return buildInvoiceResponse(request, invoice);
+	}
+
+	@Override
+	public Response getInvoiceMatchedOperations(Long invoiceTypeId, String invoiceNumber, Request request) {
+		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
+				.orElseThrow(NotFoundException::new);
+		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
+		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
+				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
+				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
+						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
+						.map(matchingCode -> matchingCode.getMatchingAmounts())
+						.flatMap(Collection::stream)
+						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
+						.collect(Collectors.toSet())
+				)
+				.flatMap(Collection::stream)
+				.distinct()
+				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
+				.collect(Collectors.toSet());*/
+
+		// Quick & (may be) dirty fix : above flatMap cause wrong behavoir, i replace it by nested loop (no time to investigate why ! malheureusement)
+		Set<InvoiceMatchedOperation> result = new HashSet<>();
+
+		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+				.forEach(accountOperation -> {
+					AccountOperation invoiceAo = accountOperationService.findById(accountOperation.getId(), List.of("matchingAmounts"));
+
+					Optional.ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
+							.forEach(matchingAmount -> {
+								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
+								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+										.forEach(matchingAmountAo -> {
+											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											}
+										});
+							});
+
+				});
+
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(result)).build();
+	}
+
+	private Map<String, Object> buildResponse(Set<InvoiceMatchedOperation> collect) {
+		Map<String, Object> response = new HashMap<>();
+		response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
+		response.put("invoiceMatchedOperations", collect);
+		return response;
+	}
+
+	private InvoiceMatchedOperation toResponse(AccountOperation accountOperation, MatchingAmount matchingAmountPrimary, Invoice invoice){
+		MatchingCode matchingCode = matchingAmountPrimary.getMatchingCode();
+		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
+		return builder
+				.paymentId(accountOperation.getId())
+				.paymentCode(accountOperation.getCode())
+				.paymentDescription(accountOperation.getDescription())
+				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
+				.paymentDate(accountOperation.getTransactionDate())
+				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
+				.paymentRef(ofNullable(accountOperation.getReference()).orElse(""))
+				.amount(accountOperation.getMatchingAmount())
+				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
+				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
+				.matchingDate(matchingCode.getMatchingDate())
+				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
+				.rejectedDescription(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedDescription() : "")
+				.build();
 	}
 
 	@Override
