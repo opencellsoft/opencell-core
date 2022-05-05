@@ -776,8 +776,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     public void fillOperationNumber(AccountOperation accountOperation)
     {
-        BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
-        accountOperation.setOperationNumber(operationNumber.longValue());
+        if(accountOperation.getOperationNumber() == null){
+            BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
+            accountOperation.setOperationNumber(operationNumber.longValue());
+        }
     }
 
     @Override
