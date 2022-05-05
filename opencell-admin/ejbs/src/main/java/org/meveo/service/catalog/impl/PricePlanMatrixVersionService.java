@@ -4,7 +4,11 @@ import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -17,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +31,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -35,6 +42,7 @@ import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
@@ -130,12 +138,17 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             .setParameter("version", version)
             .getResultList();
     }
-	
-	public void delete(List<Long> ids) {
-        this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.deleteByIds")
-            .setParameter("ids", ids)
-            .executeUpdate();
+
+	public void remove(PricePlanMatrixVersion pricePlanMatrixVersion) {
+	    List<PricePlanMatrixLine> pricePlanMatrixLines = pricePlanMatrixLineService.findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+	    for (PricePlanMatrixLine pricePlanMatrixLine : pricePlanMatrixLines) {
+	        pricePlanMatrixLineService.remove(pricePlanMatrixLine);
+        }
+//	    List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+//        for (PricePlanMatrixColumn pricePlanMatrixColumn : pricePlanMatrixColumns) {
+//            pricePlanMatrixColumnService.removePricePlanColumn(pricePlanMatrixColumn.getId());
+//        }
+        super.remove(pricePlanMatrixVersion);
     }
 
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
