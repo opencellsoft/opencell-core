@@ -217,24 +217,25 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                         InputStreamReader isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
                         LineNumberReader lnr = new LineNumberReader(isr)) {
 
-                    DatePeriod validity = new DatePeriod(newFrom, newTo);
-                    ppmvToUpdate.setValidity(validity);
-                    ppmvToUpdate.setStatus(importItem.getStatus());
-
                     String header = eliminateBOM(lnr.readLine());
+
                     if ("id;label;amount".equals(header)) {
                         String firstLine = lnr.readLine();
                         String[] split = firstLine.split(";");
                         ppmvToUpdate.setMatrix(false);
                         ppmvToUpdate.setLabel(split[1]);
                         ppmvToUpdate.setAmountWithoutTax(new BigDecimal(split[2]));
-                        pricePlanMatrixVersionService.update(ppmvToUpdate);
-                    } else {
+                    } else if (StringUtils.isNotBlank(header)) {
                         String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                         ppmvToUpdate.setMatrix(true);
                         PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.populateLinesAndValues(pricePlanMatrix.getCode(), data, ppmvToUpdate);
-                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto);
+                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto, false);
                     }
+
+                    DatePeriod validity = new DatePeriod(newFrom, newTo);
+                    ppmvToUpdate.setValidity(validity);
+                    ppmvToUpdate.setStatus(importItem.getStatus());
+                    pricePlanMatrixVersionService.update(ppmvToUpdate);
                 } catch (Exception e) {
                     throw e;
                 }
