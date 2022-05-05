@@ -356,6 +356,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     @Override
     public void create(RecordedInvoice entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
+        accountOperationService.fillOperationNumber(entity);
         super.create(entity);
     }
 

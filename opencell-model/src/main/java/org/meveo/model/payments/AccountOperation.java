@@ -87,7 +87,7 @@ import org.meveo.model.finance.AccountingEntry;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
+        @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
@@ -106,7 +106,7 @@ import org.meveo.model.finance.AccountingEntry;
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao,MatchingAmount ma where :invoice MEMBER OF ao.invoices"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
         @NamedQuery(name = "AccountOperation.findAoClosedSubPeriodByStatus", query = "SELECT ao FROM AccountOperation ao" +
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
@@ -441,8 +441,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * Associated accountingScheme.AccountingEntry
      */
     @OneToMany(mappedBy = "accountOperation", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-
     private Set<JournalEntry> accountingSchemeEntries = new HashSet<>();
+    
+    /**
+     * Operation number
+     */
+    @Column(name = "operation_number")
+    private Long operationNumber;
 
     public Date getDueDate() {
         return dueDate;
@@ -598,14 +603,14 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     @PrePersist
     public void setUUIDIfNull() {
-    	if (uuid == null) {
-    		uuid = UUID.randomUUID().toString();
-    	}
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
 
     @Override
     public String getUuid() {
-    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -705,17 +710,17 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     @Deprecated
     public List<AccountingEntry> getAccountingEntries() {
-		return accountingEntries;
-	}
+        return accountingEntries;
+    }
 
     /**
      * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      * @param accountingEntries AccountingEntries
      */
     @Deprecated
-	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
-		this.accountingEntries = accountingEntries;
-	}
+    public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
+        this.accountingEntries = accountingEntries;
+    }
 
     /**
      * @return the amountWithoutTax
@@ -955,7 +960,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.collectionDate = collectionDate;
     }
     public AccountOperationStatus getStatus() {
-		return status;
+        return status;
     }
 
     public void setStatus(AccountOperationStatus status) {
@@ -977,14 +982,14 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setAccountingExportFile(String accountingExportFile) {
         this.accountingExportFile = accountingExportFile;
     }
-	
-	public Journal getJournal() {
-		return journal;
-	}
+    
+    public Journal getJournal() {
+        return journal;
+    }
 
-	public void setJournal(Journal journal) {
-		this.journal = journal;
-	}
+    public void setJournal(Journal journal) {
+        this.journal = journal;
+    }
 
     /**
      * @return the accountingDate
@@ -1022,5 +1027,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setAccountingSchemeEntries(Set<JournalEntry> accountingSchemeEntries) {
         this.accountingSchemeEntries = accountingSchemeEntries;
+    }
+
+    public Long getOperationNumber() {
+        return operationNumber;
+    }
+
+    public void setOperationNumber(Long operationNumber) {
+        this.operationNumber = operationNumber;
     }
 }

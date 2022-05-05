@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -103,8 +104,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         LocalDate paymentLocalDate = LocalDate.ofInstant(paymentDate.toInstant(), ZoneId.systemDefault());
         
         LocalDate collectionDate = accountOperation.getCollectionDate() != null
-        		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
-        				:LocalDate.now();
+                ?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
+                        :LocalDate.now();
         
         if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
             throw new BusinessException("the paymentDate should be greated than the current collection date");
@@ -233,7 +234,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop);
+        create(aop);
         return aop.getId();
 
     }
@@ -534,130 +535,130 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
-	 * Step 1 : verify if the account operation is on open period.<br>
-	 * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
-	 * 
-	 * @param accountOperation
-	 */
-	public void handleAccountingPeriods(AccountOperation accountOperation) {
+     * Step 1 : verify if the account operation is on open period.<br>
+     * Step 2 : Step 1’s condition is KO, AO_Job looks at the rule configured in accounting cycle.
+     * 
+     * @param accountOperation
+     */
+    public void handleAccountingPeriods(AccountOperation accountOperation) {
 
-		accountOperation.setStatus(AccountOperationStatus.POSTED);
-		if (accountOperation instanceof Refund || 
-				accountOperation instanceof Payment || 
-				accountOperation instanceof RejectedPayment) {
-			accountOperation.setAccountingDate(accountOperation.getCollectionDate());
-		} else {
-			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
-		}
-		
-		if(accountOperation.getAccountingDate() == null) {
-			if (accountOperation.getDueDate() != null) {
-				accountOperation.setAccountingDate(accountOperation.getDueDate());
-			}else {
-				accountOperation.setAccountingDate(accountOperation.getTransactionDate());
-			}
-		}
+        accountOperation.setStatus(AccountOperationStatus.POSTED);
+        if (accountOperation instanceof Refund || 
+                accountOperation instanceof Payment || 
+                accountOperation instanceof RejectedPayment) {
+            accountOperation.setAccountingDate(accountOperation.getCollectionDate());
+        } else {
+            accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+        }
+        
+        if(accountOperation.getAccountingDate() == null) {
+            if (accountOperation.getDueDate() != null) {
+                accountOperation.setAccountingDate(accountOperation.getDueDate());
+            }else {
+                accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+            }
+        }
 
-//		Si aucune AP n'est définie dans le système, le système doit considérer toute l'année comme une AP open
-		long count = accountingPeriodService.count();
-		if (count == 0) {
-			accountOperation.setStatus(AccountOperationStatus.POSTED);
-			log.warn("No accounting period has been defined on this system");
-			return;
-		}
-		
-		String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
-		AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
-		if (accountingPeriod == null) {
-			rejectAccountOperation(accountOperation);
-			log.warn("No accounting period has been defined for this year : {}", fiscalYear);
-		} else {
-			AccountingOperationAction action = accountingPeriod.getAccountingOperationAction();
-			// NO SUB ACCOUTING PERIOD USED 
-			if (Boolean.FALSE.equals(accountingPeriod.isUseSubAccountingCycles())) {
-				if (accountingPeriod.isOpen()) {
-					accountOperation.setStatus(AccountOperationStatus.POSTED);
-				} else {
-					if (action == AccountingOperationAction.FORCE) {
-						forceAccountOperation(accountOperation, accountingPeriod);
-					} else {
-						rejectAccountOperation(accountOperation);
-					}
-				}
-			// SUB ACCOUTING PERIOD ARE USED	
-			} else {
-				SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
-				if (subAccountingPeriod == null) {
-					log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
-					rejectAccountOperation(accountOperation);
-				} else {
-					if (subAccountingPeriod.isOpen()) {
-						accountOperation.setStatus(AccountOperationStatus.POSTED);
-					} else {
-						if (action == AccountingOperationAction.FORCE) {
-							forceAccountOperation(accountOperation, accountingPeriod);
-						} else {
-							rejectAccountOperation(accountOperation);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private void rejectAccountOperation(AccountOperation accountOperation) {
-		accountOperation.setAccountingDate(null);
-		accountOperation.setStatus(AccountOperationStatus.REJECTED);
-		accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
-	}
+//      Si aucune AP n'est définie dans le système, le système doit considérer toute l'année comme une AP open
+        long count = accountingPeriodService.count();
+        if (count == 0) {
+            accountOperation.setStatus(AccountOperationStatus.POSTED);
+            log.warn("No accounting period has been defined on this system");
+            return;
+        }
+        
+        String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
+        AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+        if (accountingPeriod == null) {
+            rejectAccountOperation(accountOperation);
+            log.warn("No accounting period has been defined for this year : {}", fiscalYear);
+        } else {
+            AccountingOperationAction action = accountingPeriod.getAccountingOperationAction();
+            // NO SUB ACCOUTING PERIOD USED 
+            if (Boolean.FALSE.equals(accountingPeriod.isUseSubAccountingCycles())) {
+                if (accountingPeriod.isOpen()) {
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                } else {
+                    if (action == AccountingOperationAction.FORCE) {
+                        forceAccountOperation(accountOperation, accountingPeriod);
+                    } else {
+                        rejectAccountOperation(accountOperation);
+                    }
+                }
+            // SUB ACCOUTING PERIOD ARE USED    
+            } else {
+                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+                if (subAccountingPeriod == null) {
+                    log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
+                    rejectAccountOperation(accountOperation);
+                } else {
+                    if (subAccountingPeriod.isOpen()) {
+                        accountOperation.setStatus(AccountOperationStatus.POSTED);
+                    } else {
+                        if (action == AccountingOperationAction.FORCE) {
+                            forceAccountOperation(accountOperation, accountingPeriod);
+                        } else {
+                            rejectAccountOperation(accountOperation);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void rejectAccountOperation(AccountOperation accountOperation) {
+        accountOperation.setAccountingDate(null);
+        accountOperation.setStatus(AccountOperationStatus.REJECTED);
+        accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+    }
 
-	public void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
-		accountOperation.setStatus(AccountOperationStatus.POSTED);
-		accountOperation.setReason(AccountOperationRejectionReason.FORCED);
-		// setting the accoutingDate
-		SubAccountingPeriod nextOpenSubAccountingPeriod = subAccountingPeriodService.findNextOpenSubAccountingPeriod(accountOperation.getAccountingDate());
-		if (nextOpenSubAccountingPeriod != null && nextOpenSubAccountingPeriod.getStartDate() != null) {
-			setAccountingDate(accountOperation, accountingPeriod, nextOpenSubAccountingPeriod.getStartDate());
-		} else {
-			rejectAccountOperation(accountOperation);
-			log.warn("No open sub accounting period found");
-		}
-	}
+    public void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
+        accountOperation.setStatus(AccountOperationStatus.POSTED);
+        accountOperation.setReason(AccountOperationRejectionReason.FORCED);
+        // setting the accoutingDate
+        SubAccountingPeriod nextOpenSubAccountingPeriod = subAccountingPeriodService.findNextOpenSubAccountingPeriod(accountOperation.getAccountingDate());
+        if (nextOpenSubAccountingPeriod != null && nextOpenSubAccountingPeriod.getStartDate() != null) {
+            setAccountingDate(accountOperation, accountingPeriod, nextOpenSubAccountingPeriod.getStartDate());
+        } else {
+            rejectAccountOperation(accountOperation);
+            log.warn("No open sub accounting period found");
+        }
+    }
 
-	private void setAccountingDate(AccountOperation accountOperation, AccountingPeriod accountingPeriod, Date dateReference) {
+    private void setAccountingDate(AccountOperation accountOperation, AccountingPeriod accountingPeriod, Date dateReference) {
 
-		Date accoutingOperationDate = null;
-		int customDay = Optional.ofNullable(accountingPeriod.getForceCustomDay()).orElse(0);
-		
-		AccountingPeriodForceEnum option = accountingPeriod.getForceOption();
-		switch (option) {
-		case FIRST_DAY:
-			accoutingOperationDate = DateUtils.setDayToDate(dateReference, 1);
-			break;
-			
-		case FIRST_SUNDAY:
-			accoutingOperationDate = DateUtils.setDayOfWeekToDate(dateReference, Calendar.SUNDAY);
-			break;
-			
-		case CUSTOM_DAY:
-			Integer lastDayOfMonth = DateUtils.getActualMaximumDayForDate(dateReference);
-			Integer firstDayOfMonth = DateUtils.getActualMinimumDayForDate(dateReference);
-			if (customDay > lastDayOfMonth) {
-				accoutingOperationDate = DateUtils.setDayToDate(dateReference, lastDayOfMonth);
-			} else if (customDay < firstDayOfMonth) {
-				accoutingOperationDate = DateUtils.setDayToDate(dateReference, firstDayOfMonth);
-			} else {
-				accoutingOperationDate = DateUtils.setDayToDate(dateReference, customDay);
-			}
-			break;
-			
-		default:
-			break;
-		} 
-		
-		accountOperation.setAccountingDate(accoutingOperationDate);
-	}
-	
+        Date accoutingOperationDate = null;
+        int customDay = Optional.ofNullable(accountingPeriod.getForceCustomDay()).orElse(0);
+        
+        AccountingPeriodForceEnum option = accountingPeriod.getForceOption();
+        switch (option) {
+        case FIRST_DAY:
+            accoutingOperationDate = DateUtils.setDayToDate(dateReference, 1);
+            break;
+            
+        case FIRST_SUNDAY:
+            accoutingOperationDate = DateUtils.setDayOfWeekToDate(dateReference, Calendar.SUNDAY);
+            break;
+            
+        case CUSTOM_DAY:
+            Integer lastDayOfMonth = DateUtils.getActualMaximumDayForDate(dateReference);
+            Integer firstDayOfMonth = DateUtils.getActualMinimumDayForDate(dateReference);
+            if (customDay > lastDayOfMonth) {
+                accoutingOperationDate = DateUtils.setDayToDate(dateReference, lastDayOfMonth);
+            } else if (customDay < firstDayOfMonth) {
+                accoutingOperationDate = DateUtils.setDayToDate(dateReference, firstDayOfMonth);
+            } else {
+                accoutingOperationDate = DateUtils.setDayToDate(dateReference, customDay);
+            }
+            break;
+            
+        default:
+            break;
+        } 
+        
+        accountOperation.setAccountingDate(accoutingOperationDate);
+    }
+    
     public int updateAOOperationActionToNone(List<Long> AOIds) throws BusinessException {
         String strQuery = "UPDATE AccountOperation o SET o.operationAction=org.meveo.model.payments.OperationActionEnum.NONE " + " WHERE o.id in (:AOIds) ";
         Query query = getEntityManager().createQuery(strQuery);
@@ -667,17 +668,17 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         return affectedRecords;
     }
 
-	/**
-	 * @param status 
-	 * @param list
-	 */
+    /**
+     * @param status 
+     * @param list
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateStatusInNewTransaction(List<AccountOperation> accountOperations, AccountOperationStatus status) {
-    	accountOperations.stream().forEach(ao -> {
-			ao.setStatus(status);
-			update(ao);});
-	}
+    public void updateStatusInNewTransaction(List<AccountOperation> accountOperations, AccountOperationStatus status) {
+        accountOperations.stream().forEach(ao -> {
+            ao.setStatus(status);
+            update(ao);});
+    }
 
     public List<AccountOperation> listByInvoice(Invoice invoice) {
         if(invoice == null){
@@ -745,12 +746,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             throw new BusinessException("accountOperation is not on Litigation");
         }
         if(accountOperation.getAmount().compareTo(accountOperation.getMatchingAmount()) == 0) {
-        	accountOperation.setMatchingStatus(MatchingStatusEnum.L);
+            accountOperation.setMatchingStatus(MatchingStatusEnum.L);
         }else
         if(accountOperation.getAmount().compareTo(accountOperation.getUnMatchingAmount()) == 0) {
-        	accountOperation.setMatchingStatus(MatchingStatusEnum.O);
+            accountOperation.setMatchingStatus(MatchingStatusEnum.O);
         }else {
-        	accountOperation.setMatchingStatus(MatchingStatusEnum.P);
+            accountOperation.setMatchingStatus(MatchingStatusEnum.P);
         }
         
         update(accountOperation);
@@ -767,5 +768,21 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         return (List<AccountOperation>) query.getResultList();
 
+    }
+
+    public void resetOperationNumberSequence() {
+        getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
+    }
+
+    public void fillOperationNumber(AccountOperation accountOperation)
+    {
+        BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
+        accountOperation.setOperationNumber(operationNumber.longValue());
+    }
+
+    @Override
+    public void create(AccountOperation entity) {
+        fillOperationNumber(entity);
+        super.create(entity);
     }
 }
