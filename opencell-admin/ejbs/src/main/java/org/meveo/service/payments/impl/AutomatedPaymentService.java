@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.service.base.PersistenceService;
@@ -27,4 +28,12 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class AutomatedPaymentService extends PersistenceService<AutomatedPayment> {
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Override
+    public void create(AutomatedPayment entity) {
+        accountOperationService.fillOperationNumber(entity);
+        super.create(entity);
+    }
 }
