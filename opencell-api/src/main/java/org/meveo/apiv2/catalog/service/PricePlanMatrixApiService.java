@@ -1,12 +1,13 @@
 
 package org.meveo.apiv2.catalog.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.commons.codec.binary.Hex;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
@@ -36,7 +38,6 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
-import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
@@ -54,9 +55,6 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-
-    @Inject
-    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
@@ -208,29 +206,31 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                         }
                     }
                 } else {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom, ppmvToUpdate.getCurrentVersion());
+                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom,
+                        ppmvToUpdate.getCurrentVersion());
                     for (PricePlanMatrixVersion nextPV : nextPVs) {
                         pricePlanMatrixVersionService.remove(nextPV);
                     }
                 }
 
-                try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
+                try (FileInputStream fs = new FileInputStream(pathName);
+                        InputStreamReader isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
+                        LineNumberReader lnr = new LineNumberReader(isr)) {
 
                     DatePeriod validity = new DatePeriod(newFrom, newTo);
                     ppmvToUpdate.setValidity(validity);
                     ppmvToUpdate.setStatus(importItem.getStatus());
 
-                    String header = br.readLine();
-                    String firstLine = br.readLine();
-
+                    String header = eliminateBOM(lnr.readLine());
                     if ("id;label;amount".equals(header)) {
+                        String firstLine = lnr.readLine();
                         String[] split = firstLine.split(";");
                         ppmvToUpdate.setMatrix(false);
                         ppmvToUpdate.setLabel(split[1]);
                         ppmvToUpdate.setAmountWithoutTax(new BigDecimal(split[2]));
                         pricePlanMatrixVersionService.update(ppmvToUpdate);
                     } else {
-                        String data = FileUtils.getFileAsString(pathName);
+                        String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                         ppmvToUpdate.setMatrix(true);
                         PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.populateLinesAndValues(pricePlanMatrix.getCode(), data, ppmvToUpdate);
                         pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto);
@@ -252,6 +252,29 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         }
 
         return resultDtos;
+    }
+
+    private String readAllLines(LineNumberReader lnr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String lineRead;
+        while ((lineRead = lnr.readLine()) != null) {
+            sb.append(lineRead).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String eliminateBOM(String row) {
+        if (StringUtils.isNotBlank(row)) {
+            // Get the first character
+            String bom = row.substring(0, 1);
+            // Convert first character to byte to character(Use Apache Commons Codec Hex class)
+            String bomByte = new String(Hex.encodeHex(bom.getBytes()));
+            if ("efbbbf".equals(bomByte)) {
+                // Eliminate BOM
+                row = row.substring(1);
+            }
+        }
+        return row;
     }
 
     private void unzipFile(String fileToImport) {
