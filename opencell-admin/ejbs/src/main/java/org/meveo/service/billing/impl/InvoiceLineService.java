@@ -289,6 +289,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                                          ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
                                          OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
                                          BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    	return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, BigDecimal.ONE);
+    }
+    
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
+                    ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+                    OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
+                    BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, BigDecimal quantity) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -321,9 +328,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setBillingAccount(billingAccount);
 
         }
-        invoiceLine.setQuantity(BigDecimal.valueOf(1));
+        invoiceLine.setQuantity(quantity == null || BigDecimal.ZERO.equals(quantity) ? BigDecimal.ONE : quantity);
         amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null) ? amountWithoutTaxToBeInvoiced : accountingArticle.getUnitPrice();
-        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
+        invoiceLine.setUnitPrice(BigDecimal.ZERO.equals(quantity) ? amountWithoutTaxToBeInvoiced : amountWithoutTaxToBeInvoiced.divide(quantity));
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
