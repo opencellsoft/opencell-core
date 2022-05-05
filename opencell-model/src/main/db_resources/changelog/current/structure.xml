@@ -12817,4 +12817,8 @@ order by date_trunc('month', i.invoice_date) DESC
             ]]>			
 		</sql>
 	</changeSet>
+	
+	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
+        <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
+    </changeSet>
 </databaseChangeLog>
