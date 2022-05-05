@@ -446,7 +446,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Operation number
      */
-    @Column(name = "operation_number", insertable = false)
+    @Column(name = "operation_number")
     private Long operationNumber;
 
     public Date getDueDate() {
