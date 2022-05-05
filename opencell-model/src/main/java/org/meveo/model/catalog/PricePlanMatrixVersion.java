@@ -51,8 +51,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids)"),
         @NamedQuery(name = "PricePlanMatrixVersion.findFromDateAfterDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.from >= :date and p.currentVersion > :version order by p.currentVersion"),
         @NamedQuery(name = "PricePlanMatrixVersion.findToDateAfterDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.to >= :date and p.currentVersion < :version order by p.currentVersion"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.from <= :date and p.currentVersion > :version order by p.currentVersion"),
-        @NamedQuery(name = "PricePlanMatrixVersion.deleteByIds", query = "delete from PricePlanMatrixVersion p where p.id in (:ids)") })
+        @NamedQuery(name = "PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.from <= :date and p.currentVersion > :version order by p.currentVersion")
+    })
 public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
