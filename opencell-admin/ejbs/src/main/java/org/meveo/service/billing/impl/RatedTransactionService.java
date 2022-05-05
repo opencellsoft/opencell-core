@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,15 +26,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -60,6 +55,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.*;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -86,8 +82,8 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.*;
+import org.meveo.model.cpq.*;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -261,7 +257,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Create Rated transaction from wallet operation.
      *
-     * @param walletOperation Wallet operation
+     * @param walletOperations Wallet operations
      * @return Rated transaction
      * @throws BusinessException business exception
      */
@@ -285,6 +281,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.clear();
             }
             RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+            if(ratedTransaction.getAccountingArticle() == null) {
+                getAccountingArticle(walletOperation).ifPresent(ratedTransaction::setAccountingArticle);
+            }
 
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
@@ -340,6 +339,35 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
+    }
+
+    private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
+        ServiceInstance serviceInstance = walletOperation.getServiceInstance() != null
+                ? serviceInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
+        ChargeInstance chargeInstance = walletOperation.getServiceInstance() != null
+                ? chargeInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
+        Product product = serviceInstance != null
+                ? serviceInstance.getProductVersion() != null
+                ? serviceInstance.getProductVersion().getProduct() : null : null;
+        ChargeTemplate charge = chargeInstance != null ? chargeInstance.getChargeTemplate() : null;
+        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+        Map<String, Object> attributes = fromAttributeValue(attributeValues);
+        return accountingArticleService.getAccountingArticle(product, charge, attributes, walletOperation);
+    }
+
+    private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+        if (serviceInstance == null) {
+            return Collections.emptyList();
+        }
+        return serviceInstance.getAttributeInstances().stream().map(attributeInstance -> (AttributeValue) attributeInstance).collect(toList());
+    }
+
+    private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {
+        return attributeValues
+                .stream()
+                .filter(attributeValue -> attributeValue.getAttribute().getAttributeType().getValue(attributeValue) != null)
+                .collect(toMap(key -> key.getAttribute().getCode(),
+                        value -> value.getAttribute().getAttributeType().getValue(value)));
     }
 
     /**
