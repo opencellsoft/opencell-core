@@ -48,6 +48,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -68,7 +69,6 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
@@ -162,6 +162,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice) throws BusinessException {
+        createInvoiceLineWithInvoice(entity, invoice, false);
+    }
+
+    public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
         AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
@@ -184,7 +188,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         super.create(entity);
         
 
-        if(entity.getDiscountPlan() != null) {
+        if(!isDuplicated && entity.getDiscountPlan() != null) {
             addDiscountPlanInvoiceWithInvoiceSource(entity.getDiscountPlan(), entity, billingAccount, entity.getInvoice(),invoice, accountingArticle, seller, entity);
         }
     }

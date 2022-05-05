@@ -50,6 +50,7 @@ public class InvoiceLinesFactory {
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+    private WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(WalletOperationService.class.getSimpleName());
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -111,22 +112,20 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        if(record.get("parameter_2") != null) {
-            String accountingArticleCode = (String) record.get("parameter_2");
-            if(!accountingArticleCode.isBlank()) {
-                invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
-            }
-        }
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-            String param1 = (String) record.get("parameter_1");
-            String param2 = (String) record.get("parameter_2");
-            String param3 = (String) record.get("parameter_3");
-        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
             Map<String, Object> attributes = fromAttributeValue(attributeValues);
-            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, param1, param2, param3)
+            ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
+            String[] rtIds = ofNullable((String) record.get("rated_transaction_ids"))
+                    .map(ids -> ids.split(","))
+                    .orElse(null);
+            WalletOperation walletOperation = null;
+            if(rtIds != null && rtIds.length == 1) {
+                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
+            }
+            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }

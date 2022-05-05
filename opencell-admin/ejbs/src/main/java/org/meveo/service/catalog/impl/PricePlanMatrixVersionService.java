@@ -4,9 +4,7 @@ import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -104,6 +102,15 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     .setParameter("pricePlanMatrixCode", pricePlanMatrixCode.toLowerCase())
                     .getResultList();
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
+    }
+	
+	public List<PricePlanMatrixVersion> findFromDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
+        return this.getEntityManager()
+            .createNamedQuery("PricePlanMatrixVersion.findFromDateAfterDateAndVersion", entityClass)
+            .setParameter("pricePlanMatrix", pricePlanMatrix)
+            .setParameter("date", date)
+            .setParameter("version", version)
+            .getResultList();
     }
 	
 	public List<PricePlanMatrixVersion> findToDateAfterDateAndVersion(PricePlanMatrix pricePlanMatrix, Date date, int version) {
@@ -550,7 +557,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
+				File csvFile = new File(saveDirectory + fileName);
+				OutputStream fileOutputStream = new FileOutputStream(csvFile);
+				fileOutputStream.write('\ufeef');
+				fileOutputStream.write('\ufebb');
+				fileOutputStream.write('\ufebf');
+				csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
