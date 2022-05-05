@@ -99,7 +99,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     /**
      * offer component
      */
-    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OfferComponent> offerComponents = new ArrayList<>();
 
 

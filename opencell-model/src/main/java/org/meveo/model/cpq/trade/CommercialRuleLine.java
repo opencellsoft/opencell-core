@@ -75,14 +75,14 @@ public class CommercialRuleLine extends BaseEntity {
 	/**
 	 * Trade rule header
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "commercial_rule_item_id", referencedColumnName = "id")
 	private CommercialRuleItem commercialRuleItem;
 	
 	/**
 	 * 
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_template_id", referencedColumnName = "id")
 	private OfferTemplate sourceOfferTemplate;
 	
@@ -98,14 +98,14 @@ public class CommercialRuleLine extends BaseEntity {
 	/**
 	 * version of the product
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion sourceProductVersion;
 
 	/**
 	 * attribute name
 	 */
-	@ManyToOne(fetch = FetchType.EAGER) 
+	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
 	private Attribute sourceAttribute;
 	
@@ -113,14 +113,14 @@ public class CommercialRuleLine extends BaseEntity {
      * grouped service
      */
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes sourceGroupedAttributes;
 	
 	/**
 	 * tag source
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id", referencedColumnName = "id")
 	private Tag sourceTag;
 	

@@ -133,7 +133,7 @@ public class ProductVersion extends AuditableEntity{
 
 	
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_attributes",
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),

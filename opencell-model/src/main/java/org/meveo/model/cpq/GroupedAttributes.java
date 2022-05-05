@@ -79,7 +79,7 @@ public class GroupedAttributes extends EnableBusinessCFEntity {
     @Column(name = "sequence")
     private Integer sequence;
 
-    @OneToMany(mappedBy = "targetGroupedAttributes", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetGroupedAttributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     

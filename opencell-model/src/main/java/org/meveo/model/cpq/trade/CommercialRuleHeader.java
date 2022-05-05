@@ -94,21 +94,21 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * offer code
 	 */
-	@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name = "offer_template_id", referencedColumnName = "id")
 	private OfferTemplate targetOfferTemplate;
 
 	/**
 	 * product code
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product targetProduct;
 
 	/**
 	 * version of the product
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion targetProductVersion;
 
@@ -117,7 +117,7 @@ public class CommercialRuleHeader extends BusinessEntity {
      * grouped service
      */
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes targetGroupedAttributes;
 	
@@ -125,7 +125,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * attribute id
 	 */
-	@ManyToOne(fetch = FetchType.EAGER) 
+	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
 	private Attribute targetAttribute;
 	
@@ -140,7 +140,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * tag target
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id", referencedColumnName = "id")
 	private Tag targetTag;
 
@@ -152,7 +152,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	private String ruleEl;
 	
 	
-	@OneToMany(mappedBy = "commercialRuleHeader", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "commercialRuleHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleItem> commercialRuleItems = new ArrayList<>();
 	
