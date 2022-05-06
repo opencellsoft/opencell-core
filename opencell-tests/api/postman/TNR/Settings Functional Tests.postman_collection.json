@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c8570327-aa33-43eb-9440-e37b702f0132",
+		"_postman_id": "48028527-e6dc-4441-a943-c96598cd506c",
 		"name": "Settings Functional Tests",
 		"description": "# Portal APIs\r\n\r\nHere are all portal APIs. Are tested the CRUD processes when available as well as exceptions that might occure, to assure that everything works as intended.\r\n\r\n### Typical execution\r\n\r\nThe typical test consists of:\r\n1. A successful createOrUpdate (POST) - remplace with create when createOrUpdateis unavailable\r\n2. A successful read (GET) - check if entity created in point 1 is retreived\r\n3. A failed Create (POST) - due to entity already created\r\n4. A failed update (PUT) - due to a non existant entity\r\n5. A succesfull update (PUT) - update entity created in point 1\r\n6. A succesfull createOrUpdate(POST) - update entity created in point 1 - skip this if createOrUpdateis unavailable\r\n7. A successful read (GET) - check if updated entity from point 5 and 6 have been correctly updated\r\n8. Any extra failed tests such as MISSING_PARAMETER or INVALID_PARAMETER\r\n\r\nPlease ensure that tests are correctly asserted in the Tests tab.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -370,8 +370,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"//pm.variables.set(\"message\",\"code must not be null\");\r",
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -1339,8 +1340,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"//pm.variables.set(\"message\",\"code must not be null\");\r",
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -1836,8 +1838,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList<org.meveo.api.dto.LanguageDescriptionDto>` out of VALUE_STRING token\");\r",
-											""
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList` out of VALUE_STRING token\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2300,7 +2301,8 @@
 									"script": {
 										"exec": [
 											"// pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - size must be between 0 and 3;\");\r",
-											"pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - la taille doit être comprise entre 0 et 3;\");"
+											"\r",
+											"pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - size must be between 0 and 3\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2703,7 +2705,7 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate|Language|TST|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"name": "CreateOrUpdate|Language|TST|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
@@ -2718,9 +2720,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"code\",409);\r",
-											"pm.variables.set(\"errorCode\",\"ENTITY_ALREADY_EXISTS_EXCEPTION\");\r",
-											"pm.variables.set(\"message\",\"Language with code=TST already exists.\");"
+											"//pm.variables.set(\"code\",409);\r",
+											"//pm.variables.set(\"errorCode\",\"ENTITY_ALREADY_EXISTS_EXCEPTION\");\r",
+											"//pm.variables.set(\"message\",\"Language with code=TST already exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2825,7 +2827,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Invalid values passed:     Language.languageCode: value 'TOO_LONG_NAME' - la taille doit être comprise entre 0 et 3;\");"
+											"pm.variables.set(\"message\", \"Invalid values passed:     Language.languageCode: value 'TOO_LONG_NAME' - size must be between 0 and 3\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2863,7 +2865,7 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate|Language|TST|INVALID_PARAMETER",
+							"name": "CreateOrUpdate|Language|TST|MISSING_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
@@ -2879,9 +2881,9 @@
 									"script": {
 										"exec": [
 											"//pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");\r",
-											"pm.variables.set(\"code\",409);\r",
-											"pm.variables.set(\"errorCode\",\"ENTITY_ALREADY_EXISTS_EXCEPTION\");\r",
-											"pm.variables.set(\"message\",\"Language with code=TST already exists.\");"
+											"//pm.variables.set(\"code\",409);\r",
+											"//pm.variables.set(\"errorCode\",\"ENTITY_ALREADY_EXISTS_EXCEPTION\");\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: description.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -3710,7 +3712,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList<org.meveo.api.dto.PermissionDto>` out of VALUE_STRING token\");"
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList` out of VALUE_STRING token\");"
 										],
 										"type": "text/javascript"
 									}
@@ -4827,8 +4829,8 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -5421,59 +5423,6 @@
 											"key": "billingCycleCode",
 											"value": "{{entityCode}}"
 										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|BillingCycle|BC|MISSING_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: calendar.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}_MISSING\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"dueDateDelay\": \"30\"\r\n}\r\n  "
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"createOrUpdate"
 									]
 								}
 							},
@@ -6198,8 +6147,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"//pm.variables.set(\"message\",\"code ne peut pas être nul\");\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -6305,7 +6255,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\",\r\n    \"accountingCode\": \"165000000\",\r\n  \"taxCategoryEl\": \"\",\r\n  \"languageDescriptions\": [\r\n    {\r\n      \"languageCode\": \"FRA\"\r\n    }\r\n  ]\r\n\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\",\r\n    \"accountingCode\": \"165000000\",\r\n    \"taxCategoryEl\": \"\",\r\n    \"languageDescriptions\": [\r\n        {\r\n            \"languageCode\": \"FRA\"\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -6543,7 +6493,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -6624,7 +6574,8 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: Exonerated from taxes or tax category code.\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: Exonerated from taxes or tax category code.\");\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -6646,7 +6597,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{    \"code\": \"{{entityCode}}_MISSING\"\r\n}\r\n\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}_MISSING\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -6700,7 +6651,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"accountingCode\": \"NOT_EXIST\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n\r\n    \r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"exoneratedFromTaxes\": \"true\",\r\n    \"exonerationTaxEl\": \"exoneration Tax El\",\r\n    \"exonerationReason\": \"exoneration Reason\",\r\n    \"accountingCode\": \"NOT_EXIST\",\r\n    \"taxCategoryCode\": \"REGULAR\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -7141,7 +7092,11 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList<org.meveo.api.dto.LanguageDescriptionDto>` out of VALUE_STRING token\");"
+											"//pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList<org.meveo.api.dto.LanguageDescriptionDto>` out of VALUE_STRING token\");\r",
+											"\r",
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList`\");\r",
+											"\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -7918,7 +7873,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: accountCode / accountingCode.\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: accountCode / accountingCode, occCategory.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -7940,7 +7895,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}_Missing\",\r\n  \"description\": \"{{testDescription}} - missing\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}"
+									"raw": "{\r\n  \"code\": \"{{entityCode}}_Missing\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/occTemplate/createOrUpdate",
@@ -8477,7 +8432,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}_MISSING\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\t\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n    \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerBrand\": \"{{customerBrandCode}}\",\r\n    \"seller\": \"{{sellerCode}}\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}_MISSING\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerBrand\": \"{{customerBrandCode}}\",\r\n    \"seller\": \"{{sellerCode}}\",\r\n    \"mandateIdentification\": \"\"\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customer/createOrUpdate",
@@ -8718,7 +8673,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\":\"{{currency}}\",\r\n    \"language\":\"{{language}}\",\r\n    \"name\": {\r\n       \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}"
+									"raw": "{\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/customerAccount/createOrUpdate",
@@ -10077,7 +10032,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: billingAccount.\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: billingAccount.\");\r",
+											"\r",
+											"//pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: billingAccount\");"
 										],
 										"type": "text/javascript"
 									}
@@ -10647,7 +10604,8 @@
 									"script": {
 										"exec": [
 											"pm.variables.set(\"statusCode\", 500);\r",
-											"pm.variables.set(\"message\", \"At least 1 of the field in Contact Information tab is required [email, genericEmail, phone, mobile].\");"
+											"pm.variables.set(\"message\", \"At least 1 of the field in Contact Information tab is required [email, genericEmail, phone, mobile].\");\r",
+											"pm.variables.set(\"errorCode\", undefined);"
 										],
 										"type": "text/javascript"
 									}
@@ -10966,6 +10924,11 @@
 										"name": "Content-Type",
 										"type": "text",
 										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{auth}}",
+										"type": "text"
 									}
 								],
 								"body": {
@@ -11835,7 +11798,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"jobTemplate\": \"{{job_template}}\",\r\n    \"jobCategory\": \"{{job_category}}\"\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"jobTemplate\": \"{{job_template}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
@@ -11931,7 +11894,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"jobTemplate\": \"{{job_template}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"jobTemplate\": \"{{job_template}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/jobInstance/create",
@@ -12620,8 +12583,8 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"calendar ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: calendar\");"
 										],
 										"type": "text/javascript"
 									}
@@ -13480,7 +13443,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"newValidFrom\": \"{{valid_from}}\",\r\n    \"newValidTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate",
@@ -14623,7 +14586,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Unrecognized token 'NOT_EXIST': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\\n at [Source: (io.undertow.servlet.spec.ServletInputStreamImpl);\");"
+											"pm.variables.set(\"message\", \"Unrecognized token 'NOT_EXIST': was expecting 'null', 'true', 'false'\");"
 										],
 										"type": "text/javascript"
 									}
@@ -15937,8 +15900,9 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"//pm.variables.set(\"message\",\"code ne peut pas être nul\");\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -16913,8 +16877,10 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"//pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
+											"//pm.variables.set(\"message\",\"code ne peut pas être nul\");\r",
+											"\r",
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -17232,7 +17198,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{opencell.url}}/billing/wallet/operation/list?fields=",
+									"raw": "{{opencell.url}}/billing/wallet/operation/list",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -17245,7 +17211,8 @@
 									"query": [
 										{
 											"key": "fields",
-											"value": ""
+											"value": "",
+											"disabled": true
 										}
 									]
 								}
@@ -19949,13 +19916,22 @@
 							"response": []
 						},
 						{
-							"name": "Delete|Tax|TAX|SUCCESS",
+							"name": "Delete|Tax|TAX|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Tax with code=TEST_TAX is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -20003,6 +19979,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Tax with code=TEST_TAX_NOT_EXIST does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -20024,13 +20009,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/tax/{{entityCode}}",
+									"raw": "{{opencell.url}}/tax/{{entityCode}}_NOT_EXIST",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"tax",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXIST"
 									]
 								}
 							},
@@ -20125,13 +20110,22 @@
 							"response": []
 						},
 						{
-							"name": "Delete|BillingCycle|BC|SUCCESS",
+							"name": "Delete|BillingCycle|BC|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"BillingCycle with code=TEST_BC is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -20169,13 +20163,22 @@
 							"response": []
 						},
 						{
-							"name": "Delete|BillingCycle|BC|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"name": "Delete|BillingCycle|BC|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"BillingCycle with code=TEST_BC is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -20197,7 +20200,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
+									"raw": ""
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
@@ -20213,13 +20216,22 @@
 							"response": []
 						},
 						{
-							"name": "Delete|Seller|SELLER|SUCCESS",
+							"name": "Delete|Seller|SELLER|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Seller with code=TEST_SELLER is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -20241,7 +20253,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
+									"raw": "{}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/seller/{{entityCode}}",
@@ -20257,7 +20269,7 @@
 							"response": []
 						},
 						{
-							"name": "Delete|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -20267,47 +20279,12 @@
 										],
 										"type": "text/javascript"
 									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
 								},
-								"url": {
-									"raw": "{{opencell.url}}/seller/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"seller",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|CustomerBrand|CB|SUCCESS",
-							"event": [
 								{
-									"listen": "test",
+									"listen": "prerequest",
 									"script": {
 										"exec": [
-											""
+											"pm.variables.set(\"message\", \"CustomerBrand with code=TEST_CB is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -20362,7 +20339,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" does not exists.\")"
+											"pm.variables.set(\"message\", \"CustomerBrand with code=TEST_CB_NOT_EXISTS does not exists.\")"
 										],
 										"type": "text/javascript"
 									}
@@ -20387,7 +20364,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -20395,62 +20372,7 @@
 										"account",
 										"customer",
 										"removeBrand",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" is referenced.\")"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"removeBrand",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
@@ -21172,13 +21094,22 @@
 					"name": "Accounts",
 					"item": [
 						{
-							"name": "Delete|UserAccount|UA|SUCCESS",
+							"name": "Delete|UserAccount|UA|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"UserAccount with code=TEST_UA is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21227,6 +21158,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"UserAccount with code=TEST_UA_NOT_EXIST does not exists.\")"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -21248,27 +21188,36 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/userAccount/{{entityCode}}_NOT_EXIST",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"userAccount",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXIST"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Delete|BillingAccount|BA|SUCCESS",
+							"name": "Delete|BillingAccount|BA|BUSINESS_API_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Cannot delete entity\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21317,6 +21266,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"BillingAccount with code=TEST_BA_NOT_EXISTS does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -21338,27 +21296,36 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/billingAccount/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/billingAccount/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"billingAccount",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Delete|CustomerAccount|CA|SUCCESS",
+							"name": "Delete|CustomerAccount|CA|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"CustomerAccount with code=TEST_CA is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21407,6 +21374,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"CustomerAccount with code=TEST_CA_NOT_EXISTS does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -21428,27 +21404,36 @@
 									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customerAccount/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/customerAccount/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"customerAccount",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Delete|Customer|C|SUCCESS",
+							"name": "Delete|Customer|C|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Customer with code=TEST_C is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21497,6 +21482,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Customer with code=TEST_C_NOT_EXISTS does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -21515,17 +21509,17 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n"
+									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/customer/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"customer",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
@@ -21622,13 +21616,22 @@
 							"response": []
 						},
 						{
-							"name": "Delete|AccountHierarchy|AH|SUCCESS",
+							"name": "Delete|AccountHierarchy|AH|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Customer with code=TEST_AH is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21682,7 +21685,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Customer with code=\"+pm.variables.get(\"entityCode\")+\" does not exists.\");"
+											"pm.variables.set(\"message\", \"Customer with code=TEST_AH_NOT_EXISTS does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21707,14 +21710,14 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
+									"raw": "{{opencell.url}}/account/customer/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"customer",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
@@ -21746,13 +21749,22 @@
 					"name": "Accounting",
 					"item": [
 						{
-							"name": "Delete|AccountingCode|AC|SUCCESS",
+							"name": "Delete|AccountingCode|AC|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"AccountingCode with code=TEST_AC is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -21774,7 +21786,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\t\"description\": \"123\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULARXX\"\r\n}"
+									"raw": "{}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/accountingCode/{{entityCode}}",
@@ -21801,6 +21813,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"AccountingCode with code=TEST_AC_NOT_EXISTS does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -21822,14 +21843,14 @@
 									"raw": "{\r\n\t\"description\": \"123\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULARXX\"\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/accountingCode/{{entityCode}}",
+									"raw": "{{opencell.url}}/billing/accountingCode/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"billing",
 										"accountingCode",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
@@ -21929,7 +21950,7 @@
 					"name": "Catalog",
 					"item": [
 						{
-							"name": "Delete|RecurringChargeTemplate|RCT|INVALID_PARAMETER",
+							"name": "Delete|RecurringChargeTemplate|RCT|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
@@ -21944,7 +21965,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: update or delete on table \\\"cat_charge_template\\\" violates foreign key constraint\");"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -21983,7 +22004,7 @@
 							"response": []
 						},
 						{
-							"name": "Delete|TaxClass|TC|INVALID_PARAMETER",
+							"name": "Delete|ServiceTemplate|ST|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -21998,51 +22019,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: update or delete on table \\\"billing_tax_class\\\" violates foreign key constraint\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{opencell.url}}/taxClass/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"taxClass",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
+											"pm.variables.set(\"message\", \"ServiceTemplate with code=TEST_ST is referenced.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -22091,6 +22068,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"ServiceTemplate with code=TEST_ST_NOT_EXISTS does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -22112,21 +22098,21 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate/{{entityCode}}",
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/{{entityCode}}_NOT_EXISTS",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"serviceTemplate",
-										"{{entityCode}}"
+										"{{entityCode}}_NOT_EXISTS"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Delete|RecurringChargeTemplate|RCT|SUCCESS",
+							"name": "Delete|RecurringChargeTemplate|RCT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -22220,6 +22206,15 @@
 							"event": [
 								{
 									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
 									"script": {
 										"exec": [
 											""
@@ -22335,14 +22330,24 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}",
+									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}_1?validFrom=2020-01-01 00:00:00&validTo=2020-12-01 00:00:00",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"offerTemplate",
-										"{{entityCode}}"
+										"{{entityCode}}_1"
+									],
+									"query": [
+										{
+											"key": "validFrom",
+											"value": "2020-01-01 00:00:00"
+										},
+										{
+											"key": "validTo",
+											"value": "2020-12-01 00:00:00"
+										}
 									]
 								}
 							},
@@ -22364,7 +22369,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"OfferTemplate with code=TEST4_OT /  /  does not exists.\");"
+											"pm.variables.set(\"message\", \"OfferTemplate with code=TEST_OT_1 / 01/01/2020 00:00 / 01/12/2020 00:00 does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -22389,14 +22394,24 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}",
+									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}_1?validFrom=2020-01-01 00:00:00&validTo=2020-12-01 00:00:00",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"offerTemplate",
-										"{{entityCode}}"
+										"{{entityCode}}_1"
+									],
+									"query": [
+										{
+											"key": "validFrom",
+											"value": "2020-01-01 00:00:00"
+										},
+										{
+											"key": "validTo",
+											"value": "2020-12-01 00:00:00"
+										}
 									]
 								}
 							},
@@ -22410,36 +22425,6 @@
 	"auth": {
 		"type": "oauth2",
 		"oauth2": [
-			{
-				"key": "clientSecret",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "clientId",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "authUrl",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "accessTokenUrl",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "tokenType",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "accessToken",
-				"value": "{{access_token}}",
-				"type": "string"
-			},
 			{
 				"key": "addTokenTo",
 				"value": "header",
@@ -22561,14 +22546,12 @@
 					"    case \"INTERNAL_SERVER_ERROR\":{",
 					"        pm.variables.set(\"code\", 500);",
 					"        pm.variables.set(\"status\", \"FAIL\");",
-					"        pm.variables.set(\"errorCode\", );",
-					"        pm.variables.set(\"errorCode\", );",
+					"        pm.variables.set(\"errorCode\", status);",
 					"        break;",
 					"    }",
 					"    case \"GENERIC_API_EXCEPTION\":{",
 					"        pm.variables.set(\"code\", 500);",
 					"        pm.variables.set(\"status\", \"FAIL\");",
-					"        pm.variables.set(\"errorCode\", );",
 					"        pm.variables.set(\"errorCode\", status);",
 					"        break;",
 					"    }",
@@ -22603,6 +22586,7 @@
 					"    var client_id = pm.environment.get(\"client.id\");",
 					"    var client_secret = pm.environment.get(\"client.secret\");",
 					"    var opencell_url = pm.environment.get(\"opencell.base\");",
+					"    console.log(\"opencell_url here: \"+ opencell_url);",
 					"    //can use an external token url",
 					"    ",
 					"    var keycloak_token_url = pm.environment.get(\"keycloak.token.url\");",
@@ -22614,7 +22598,6 @@
 					"        console.log(\"new keycloak_token_url: \"+ keycloak_token_url);",
 					"    }",
 					"    ",
-					"",
 					"",
 					"    var username = pm.environment.get(\"opencell.username\");",
 					"    var password = pm.environment.get(\"opencell.password\");",
