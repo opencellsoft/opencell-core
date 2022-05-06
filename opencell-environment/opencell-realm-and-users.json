@@ -2053,14 +2053,6 @@
             ]
           },
           {
-            "name": "SE:Seller:-3:SELLER_FR",
-            "type": "SE",
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "394fe813-37ac-4454-8878-3d160a8c9f76",
-            "uris": []
-          },
-          {
             "name": "Page Providers",
             "ownerManagedAccess": false,
             "attributes": {},
@@ -2955,16 +2947,6 @@
             ]
           },
           {
-            "name": "SE:Seller:-3:SELLER_FR:READ",
-            "owner": {
-              "name": "opencell.admin"
-            },
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "32f7c8e9-8613-4097-88db-dce05257f70c",
-            "uris": []
-          },
-          {
             "name": "Api V1 Account - Models",
             "ownerManagedAccess": false,
             "attributes": {},
@@ -3457,36 +3439,6 @@
                 "name": "PUT"
               }
             ]
-          },
-          {
-            "name": "SE:Seller:-1:main_seller:DELETE",
-            "owner": {
-              "name": "opencell.superadmin"
-            },
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "cd2c35d1-24c8-4f1b-93ee-1cc9bb1195c4",
-            "uris": []
-          },
-          {
-            "name": "SE:Customer:1:ok:DELETE",
-            "owner": {
-              "name": "opencell.superadmin"
-            },
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "dd8062f8-6801-4e82-986c-0745d5b6e832",
-            "uris": []
-          },
-          {
-            "name": "SE:CustomerAccount:2:ca:READ",
-            "owner": {
-              "name": "opencell.superadmin"
-            },
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "21892b74-1ef7-4f29-adbd-436b4c98e1fe",
-            "uris": []
           },
           {
             "name": "Api V1 Accounts - read via post",
@@ -4981,26 +4933,6 @@
             }
           },
           {
-            "id": "906d8316-72b0-4e80-b20d-bd73bf203481",
-            "name": "User energy.admin",
-            "type": "user",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "users": "[\"energy.admin\"]"
-            }
-          },
-          {
-            "id": "35a9113a-8e72-4673-8a39-515fc6501949",
-            "name": "User opencell.admin",
-            "type": "user",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "users": "[\"opencell.admin\"]"
-            }
-          },
-          {
             "id": "6aecea12-8a4d-4af1-97f3-aa374d5ccb76",
             "name": "Role apiFinanceVisualization",
             "type": "role",
@@ -6050,17 +5982,6 @@
               "resources": "[\"Page ProviderSelfDetail\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Role administrationManagement\",\"Role administrationVisualization\"]"
-            }
-          },
-          {
-            "id": "ee7e3399-2d13-4c20-bdb9-f6c8472564e7",
-            "name": "SE:Seller:-3:SELLER_FR:READ",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "resources": "[\"SE:Seller:-3:SELLER_FR:READ\"]",
-              "applyPolicies": "[\"User energy.admin\"]"
             }
           },
           {
