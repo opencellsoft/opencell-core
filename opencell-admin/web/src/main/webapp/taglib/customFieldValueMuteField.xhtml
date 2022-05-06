@@ -57,7 +57,7 @@
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <c:if test="#{! edit}">
             <h:outputText value="#{field}">
-                <f:convertNumber pattern="#0.00"/>
+                <f:convertNumber pattern="#0.00###"/>
             </h:outputText>
         </c:if>
         <c:if test="#{edit}">
