@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -64,7 +63,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -78,14 +76,12 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -98,8 +94,6 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
-
-import com.google.common.base.Strings;
 
 
 @Stateless
@@ -283,11 +277,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
 
-
     public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
                                          ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
                                          OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
                                          BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    	return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, BigDecimal.ONE);
+    }
+    
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+            OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, BigDecimal quantity) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -320,9 +318,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setBillingAccount(billingAccount);
 
         }
-        invoiceLine.setQuantity(BigDecimal.valueOf(1));
+		quantity = (quantity == null || BigDecimal.ZERO.equals(quantity)) ? BigDecimal.ONE : quantity;
+        invoiceLine.setQuantity(quantity);
         amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null) ? amountWithoutTaxToBeInvoiced : accountingArticle.getUnitPrice();
-        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
+        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced.divide(quantity));
+
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
