@@ -195,10 +195,29 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
-			MatchingReturnObject matchingResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-					aoIds, aoIds.get(aoIds.size() - 1));
+			Long creditAoId = aoIds.get(0); // First AO is Credit, and shall be add with DEBIT to do unitary matching
 
-			if (matchingResult.getPartialMatchingOcc() == null || matchingResult.getPartialMatchingOcc().isEmpty()) {
+			MatchingReturnObject matchingResult = new MatchingReturnObject();
+			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
+			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
+
+			for (Long aoId : aoIds) {
+				if (aoId.equals(creditAoId)) {
+					// process only DEBIT AO
+					continue;
+				}
+				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+						List.of(creditAoId, aoId), aoId);
+
+				if (matchingResult.getPartialMatchingOcc() != null) {
+					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+				}
+
+				matchingResult.setOk(unitaryResult.isOk());
+
+			}
+
+			if (partialMatchingOcc.isEmpty()) {
 				// Reload AO to get updated MatchingStatus
 				List<AccountOperation> aoPartially = accountOperationService.findByIds(aoIds).stream()
 						.filter(accountOperation -> accountOperation.getMatchingStatus() == MatchingStatusEnum.P)
