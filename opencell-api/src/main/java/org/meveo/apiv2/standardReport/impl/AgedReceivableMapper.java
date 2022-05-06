@@ -79,7 +79,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (var i = 0; i < resource.size(); i++) {
 			Object[] agedList = resource.get(i);
 			var agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setCustomerAccountCode(agedList[0].toString());
+			agedReceivableDto.setCustomerAccountCode((String) agedList[22]);
 			agedReceivableDto.setNotYetDue((BigDecimal)agedList[1]);
 			agedReceivableDto.setSum1To30((BigDecimal)agedList[2]);
 			agedReceivableDto.setSum31To60((BigDecimal) agedList[5]);
@@ -124,7 +124,6 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (int index = 0; index < agedReceivables.size(); index++) {
 			Object[] agedReceivable = agedReceivables.get(index);
 			AgedReceivableDto agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setCustomerAccountCode(agedReceivable[0].toString());
 			agedReceivableDto.setNotYetDue((BigDecimal) agedReceivable[1]);
 			int sumIndex;
 			int startingSumIndex = 2;
@@ -150,6 +149,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
+			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;

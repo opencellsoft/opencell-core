@@ -20,6 +20,8 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
 
+import static java.lang.Long.valueOf;
+
 public class StandardReportResourceImpl implements StandardReportResource {
 
     @Inject

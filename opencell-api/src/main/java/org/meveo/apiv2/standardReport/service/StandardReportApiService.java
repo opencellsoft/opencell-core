@@ -5,7 +5,6 @@ import static java.util.Arrays.asList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -15,8 +14,6 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -53,7 +50,8 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 			throw new BadRequestException("numberOfPeriods parameter is mandatory when stepInDays is provided");
 		}
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccount, startDate, paginationConfiguration, stepInDays, numberOfPeriods);
+			return recordedInvoiceService.getAgedReceivables(customerAccount,
+					startDate, paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report");
 		}
