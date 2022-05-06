@@ -9842,6 +9842,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 
 	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
+	<changeSet id="INTRD-5691-20220315" author="ZBariki"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
 	<changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

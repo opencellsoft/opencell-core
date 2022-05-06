@@ -114,7 +114,11 @@
         <insert tableName="crm_provider_pay_methods">
             <column name="provider_id" valueNumeric="1" />
             <column name="payment_method" value="STRIPE" />
-        </insert>      
+        </insert>
+        <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="CHECK" />
+        </insert>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-payment-gateway">
