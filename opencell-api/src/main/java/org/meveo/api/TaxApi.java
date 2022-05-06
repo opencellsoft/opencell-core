@@ -189,7 +189,16 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        taxService.remove(tax);
+        try {
+            taxService.remove(tax);
+            taxService.commit();
+        }
+        catch (Exception e) {
+            if (e.getMessage().contains("ConstraintViolationException")) {
+                throw new DeleteReferencedEntityException(Tax.class, taxCode);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
         return result;
     }
 
