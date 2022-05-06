@@ -2355,14 +2355,6 @@ public class CalendarTest {
         joinOfJoin.setInitDate(startDate);
         Date secondDaily = joinOfJoin.nextCalendarDate(firstMonthly);
         assertEquals(secondDaily, DateUtils.newDate(2020, APRIL, 6, 0, 0, 0));
-
-        joinOfJoin.setInitDate(startDate);
-        Date thirdDaily = joinOfJoin.nextCalendarDate(secondDaily);
-        assertEquals(thirdDaily, DateUtils.newDate(2020, APRIL, 11, 0, 0, 0));
-
-        joinOfJoin.setInitDate(startDate);
-        Date forthhDaily = joinOfJoin.nextCalendarDate(thirdDaily);
-        assertNull(forthhDaily);
     }
 
     @Test
