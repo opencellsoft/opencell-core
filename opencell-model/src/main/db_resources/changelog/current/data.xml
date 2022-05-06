@@ -9611,7 +9611,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	<changeSet id="#INTRD-5960_20220328" author="HichamHANINE">
     	<sql>Update  cpq_order_offer o set subscription_id = (select id from billing_subscription s where s.order_offer_id = o.id) where o.subscription_id is null</sql>
     </changeSet>
-    
+
 	<changeSet id="#INTRD-5955_20220324" author="aelmalki">
 		<insert tableName="ar_accounting_scheme">
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
@@ -9840,7 +9840,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 
         </changeSet>
-        
+
     <changeSet id="#INTRD-4666_20220331" author="HatimOUDAD">
 		<update tableName="cpq_order_product">
 			<column name="production_action_type" value="CREATE" />
@@ -9869,9 +9869,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
 		</insert>
 	</changeSet>
-	
-	
-	
+
+
+
 	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
 		<update tableName="ar_occ_template">
 			<column name="description" value="WIRETRANSFER" />
@@ -9980,6 +9980,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza">
+		<update tableName="dunning_settings">
+			<column name="dunning_mode">INVOICE_LEVEL</column>
+			<where>code='DUN_DEF'</where>
+		</update>
+	</changeSet>
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui">
 		<sql>
@@ -10080,6 +10086,38 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
 			<column name="occ_category" value="CREDIT" />
 			<where> code IN ('PAY_CHK','PAY_CRD','PAY_DDT','PAY_PAL','PAY_STP','PAY_TIP','PAY_CASH','PAY_WIRE')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-6908_20220503" author="HichamELHALOUI">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Payment Card to collect"></column>
+			<where>id=-37</where>
+		</update>
+
+        <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Paypal to collect"></column>
+			<where>id=-38</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Stripe to collect"></column>
+			<where>id=-39</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Payment - TIP to collect"></column>
+			<where>id=-40</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Cash in local currency"></column>
+			<where>id=-41</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Checks to collect"></column>
+			<where>id=-42</where>
 		</update>
 	</changeSet>
 

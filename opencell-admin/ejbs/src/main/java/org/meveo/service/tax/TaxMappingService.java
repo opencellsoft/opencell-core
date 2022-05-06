@@ -263,7 +263,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         try {
             if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
-                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance,walletOperation.getParameter1(),walletOperation.getParameter2(),walletOperation.getParameter3());
+                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
                     chargeInstance.setTaxClassResolved(taxClass);

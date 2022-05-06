@@ -311,7 +311,7 @@
 			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
 		</field>
 		<field name="quantity" class="java.lang.Integer">
-			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
+			<fieldDescription><![CDATA[quantity]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
