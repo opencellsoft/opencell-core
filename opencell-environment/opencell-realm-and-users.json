@@ -4477,7 +4477,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/useJob\",\"required\":false},{\"id\":\"opencell-web/administrationVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/administrationVisualization\",\"required\":false},{\"id\":\"opencell-web/useJob\",\"required\":false}]"
             }
           },
           {
@@ -4488,17 +4488,6 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "roles": "[{\"id\":\"opencell-web/accountVisualization\",\"required\":false}]"
-            }
-          },
-          {
-            "id": "c9cc1fcd-eeda-4b0e-ab35-64cde9cc066c",
-            "name": "Default Policy",
-            "description": "A policy that grants access only for users within this realm",
-            "type": "js",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
             }
           },
           {
@@ -4808,7 +4797,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiReportingManagement\",\"required\":false},{\"id\":\"opencell-web/apiUseReport\",\"required\":false},{\"id\":\"opencell-web/reportingVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/reportingVisualization\",\"required\":false},{\"id\":\"opencell-web/apiReportingManagement\",\"required\":false},{\"id\":\"opencell-web/apiUseReport\",\"required\":false}]"
             }
           },
           {
@@ -4818,7 +4807,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiBillingVisualization\",\"required\":false},{\"id\":\"opencell-web/apiBillingManagement\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiBillingManagement\",\"required\":false},{\"id\":\"opencell-web/apiBillingVisualization\",\"required\":false}]"
             }
           },
           {
@@ -4838,7 +4827,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiCatalogVisualization\",\"required\":false},{\"id\":\"opencell-web/apiCatalogManagement\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiCatalogManagement\",\"required\":false},{\"id\":\"opencell-web/apiCatalogVisualization\",\"required\":false}]"
             }
           },
           {
@@ -4868,7 +4857,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiAdministrationManagement\",\"required\":false},{\"id\":\"opencell-web/apiAdministrationVisualization\",\"required\":false},{\"id\":\"opencell-web/apiUseScript\",\"required\":false},{\"id\":\"opencell-web/apiUseJob\",\"required\":false},{\"id\":\"opencell-web/apiUseWorkflow\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiAdministrationVisualization\",\"required\":false},{\"id\":\"opencell-web/apiUseWorkflow\",\"required\":false},{\"id\":\"opencell-web/apiAdministrationManagement\",\"required\":false},{\"id\":\"opencell-web/apiUseScript\",\"required\":false},{\"id\":\"opencell-web/apiUseJob\",\"required\":false}]"
             }
           },
           {
@@ -4898,7 +4887,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiUserManagement\",\"required\":false},{\"id\":\"opencell-web/apiUserVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiUserVisualization\",\"required\":false},{\"id\":\"opencell-web/apiUserManagement\",\"required\":false}]"
             }
           },
           {
@@ -4978,7 +4967,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiAccountManagement\",\"required\":false},{\"id\":\"opencell-web/apiAccountVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiAccountVisualization\",\"required\":false},{\"id\":\"opencell-web/apiAccountManagement\",\"required\":false}]"
             }
           },
           {
@@ -4988,7 +4977,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiUseReport\",\"required\":false},{\"id\":\"opencell-web/apiReportingManagement\",\"required\":false},{\"id\":\"opencell-web/apiReportingVisualization\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiReportingVisualization\",\"required\":false},{\"id\":\"opencell-web/apiUseReport\",\"required\":false},{\"id\":\"opencell-web/apiReportingManagement\",\"required\":false}]"
             }
           },
           {
@@ -5018,7 +5007,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiFinanceVisualization\",\"required\":false},{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiFinanceManagement\",\"required\":false},{\"id\":\"opencell-web/apiFinanceVisualization\",\"required\":false}]"
             }
           },
           {
@@ -5038,7 +5027,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiCustomEntityVisualization\",\"required\":false},{\"id\":\"opencell-web/apiCustomEntityManagement\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiCustomEntityManagement\",\"required\":false},{\"id\":\"opencell-web/apiCustomEntityVisualization\",\"required\":false}]"
             }
           },
           {
@@ -5108,7 +5097,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"opencell-web/apiCpqVisualization\",\"required\":false},{\"id\":\"opencell-web/apiCpqManagement\",\"required\":false}]"
+              "roles": "[{\"id\":\"opencell-web/apiCpqManagement\",\"required\":false},{\"id\":\"opencell-web/apiCpqVisualization\",\"required\":false}]"
             }
           },
           {
@@ -5142,6 +5131,16 @@
             }
           },
           {
+            "id": "5de96917-42c4-4ff6-a098-6183cb25ae17",
+            "name": "Default policy",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"opencell-web\"]"
+            }
+          },
+          {
             "id": "80367501-00a0-4f7e-9600-ca07b5977f0a",
             "name": "Page Properties - all",
             "type": "scope",
@@ -5163,18 +5162,6 @@
               "resources": "[\"Page Cache\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role administrationManagement\"]"
-            }
-          },
-          {
-            "id": "d710d689-eed0-4b2c-9de6-ae0cdadc1083",
-            "name": "Default Permission",
-            "description": "A permission that applies to the default resource type",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "defaultResourceType": "urn:opencell-web:resources:default",
-              "applyPolicies": "[\"Default Policy\"]"
             }
           },
           {
@@ -5919,18 +5906,6 @@
               "resources": "[\"Page Finance (Default)\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Role reportExtractManagement\",\"Role billingManagement\",\"Role billingVisualization\"]"
-            }
-          },
-          {
-            "id": "a4739419-4c13-4cc9-9591-6f4bae250ff3",
-            "name": "Page Full text index search - read",
-            "type": "scope",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "resources": "[\"Page Full text index search\"]",
-              "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Default Policy\"]"
             }
           },
           {
@@ -7173,6 +7148,30 @@
             "config": {
               "resources": "[\"Api V1 Files - upload\"]",
               "applyPolicies": "[\"Role apiIntegration\"]"
+            }
+          },
+          {
+            "id": "a9e417e5-53d2-46ec-a120-ef11d68082e6",
+            "name": "Default permission",
+            "type": "resource",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "defaultResourceType": "urn:opencell-web:resources:default",
+              "resources": "[\"Default Resource\"]",
+              "applyPolicies": "[\"Default policy\"]"
+            }
+          },
+          {
+            "id": "d4fe8248-bda7-4d7b-936e-06121be4edbd",
+            "name": "Page Full text index search",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Page Full text index search\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role catalogVisualization\",\"Role administrationVisualization\",\"Role accountVisualization\",\"Role billingVisualization\"]"
             }
           }
         ],
