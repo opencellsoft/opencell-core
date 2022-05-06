@@ -33,6 +33,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.response.GenericSearchResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -186,7 +187,16 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
             throw new EntityDoesNotExistsException(entityClass, code);
         }
 
-        ps.remove(entity);
+        try {
+            ps.remove(entity);
+            ps.commit();
+        }
+        catch (Exception e) {
+            if (e.getMessage().contains("ConstraintViolationException")) {
+                throw new DeleteReferencedEntityException(entity.getClass(), code);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
     }
 
     @Override
