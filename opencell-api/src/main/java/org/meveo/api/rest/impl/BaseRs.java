@@ -19,9 +19,11 @@
 package org.meveo.api.rest.impl;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -101,11 +103,15 @@ public abstract class BaseRs implements IBaseRs {
         Response.ResponseBuilder responseBuilder = null;
 
         if (e instanceof EntityDoesNotExistsException) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
             responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(result);
         } else if (e instanceof EntityAlreadyExistsException) {
             responseBuilder = Response.status(Response.Status.FOUND).entity(result);
         } else if (e instanceof MissingParameterException) {
             responseBuilder = Response.status(Response.Status.PRECONDITION_FAILED).entity(result);
+        } else if (e instanceof DeleteReferencedEntityException) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
+            responseBuilder = Response.status(Response.Status.FORBIDDEN).entity(result);
         } else {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
         }
