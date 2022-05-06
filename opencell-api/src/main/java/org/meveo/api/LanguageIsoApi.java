@@ -78,6 +78,9 @@ public class LanguageIsoApi extends BaseApi {
             missingParameters.add("code");
         }
 
+        if (StringUtils.isBlank(postData.getDescription())) {
+            missingParameters.add("description");
+        }
         handleMissingParameters();
 
         Language language = languageService.findByCode(postData.getCode());
