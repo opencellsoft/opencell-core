@@ -205,6 +205,39 @@ public class CalendarPeriod extends Calendar {
 
     @Override
     public Date previousPeriodEndDate(Date date) {
+        if (periodLength == null || periodUnit == null || getInitDate() == null || date.before(getInitDate())) {
+            return null;
+        }
+        if (nbPeriods == null) {
+            nbPeriods = 0;
+        }
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(getInitDate());
+
+        int i = 1;
+        GregorianCalendar previousPeriodEndCal = new GregorianCalendar();
+        while (date.compareTo(calendar.getTime()) >= 0) {
+            calendar.setTime(getInitDate());
+            calendar.add(periodUnit, i * periodLength);
+
+            if (date.compareTo(calendar.getTime()) < 0) {
+                if (i == 1) {
+                    return null;
+                } else {
+                    truncateDateTime(previousPeriodEndCal);
+                    return previousPeriodEndCal.getTime();
+                }
+            }
+            if (nbPeriods > 0 && i == nbPeriods) {
+                truncateDateTime(calendar);
+                return calendar.getTime();
+            }
+
+            i++;
+            previousPeriodEndCal.setTime(calendar.getTime());
+        }
+
         return null;
     }
 
