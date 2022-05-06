@@ -1523,7 +1523,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "dfe2a076-8c6f-4be2-b46c-b034e4095023",
       "redirectUris": [
         "/realms/opencell/account/*"
       ],
@@ -1714,7 +1714,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "7fa6e44f-bcb9-41fa-9337-ff6ca0b9a11d",
       "redirectUris": [
         "*"
       ],
@@ -1769,12 +1769,11 @@
     {
       "id": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
       "clientId": "opencell-web",
-      "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "afe07e5a-68cb-4fb0-8b75-5b6053b07dc3",
       "redirectUris": [
         "*"
       ],
