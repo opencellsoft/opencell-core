@@ -33,7 +33,6 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductOfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
-import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
@@ -173,11 +172,14 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
             offerTemplateApi.remove(offerTemplateCode, validFrom, validTo); 
         } catch (Exception e) {
         	if (e.getCause() != null && e.getCause().getCause() != null) {
-			if (e.getCause().getCause().getMessage().indexOf("ConstraintViolationException") > -1) {
-				throw new DeleteReferencedEntityException(OfferTemplate.class, offerTemplateCode);
-			}
+                if (e.getCause().getCause().getMessage().contains("ConstraintViolationException")) {
+                    throw new DeleteReferencedEntityException(OfferTemplate.class, offerTemplateCode);
+                }
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
         	}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+            else {
+                processException(e, result);
+            }
 		}
 
         return result;
