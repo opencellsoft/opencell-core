@@ -22,6 +22,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.cpq.OfferContextDTO;
@@ -568,7 +569,16 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         setAllWalletTemplatesToNull(serviceTemplate);
 
-        serviceTemplateService.remove(serviceTemplate);
+        try {
+            serviceTemplateService.remove(serviceTemplate);
+            serviceTemplateService.commit();
+        }
+        catch (Exception e) {
+            if (e.getMessage().contains("ConstraintViolationException")) {
+                throw new DeleteReferencedEntityException(ServiceTemplate.class, serviceTemplateCode);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
     }
 
     public GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
