@@ -41,7 +41,7 @@ public class AccountOperationServiceMatchingTest {
         MatchingReturnObject matchingResult = new MatchingReturnObject();
         Mockito.when(customerAccountService.findById(any())).thenReturn(ao.getCustomerAccount());
         Mockito.when(accountOperationService.findByIds(any())).thenReturn(List.of(ao));
-        Mockito.when(matchingCodeService.matchOperations(any(), any(), any(), any())).thenReturn(matchingResult);
+        Mockito.lenient().when(matchingCodeService.matchOperations(any(), any(), any(), any())).thenReturn(matchingResult);
 
         List<AccountOperationAndSequence> request = buildRequest(List.of(1L), List.of(0));
         accountOperationApiService.matchOperations(request); // no need to validate content, MatchingResult is mocked
