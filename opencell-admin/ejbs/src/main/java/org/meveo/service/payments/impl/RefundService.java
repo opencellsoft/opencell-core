@@ -57,6 +57,7 @@ public class RefundService extends PersistenceService<Refund> {
     @Override
     public void create(Refund entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
+        accountOperationService.fillOperationNumber(entity);
         super.create(entity);
     }
 

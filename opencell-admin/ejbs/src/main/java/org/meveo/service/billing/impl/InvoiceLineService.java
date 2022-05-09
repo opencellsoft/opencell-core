@@ -126,6 +126,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private TaxService taxService;
 
     @Inject
+
+    private InvoiceService invoiceService;
+
+    @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
@@ -289,6 +293,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                                          ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
                                          OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
                                          BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    	return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, BigDecimal.ONE);
+    }
+    
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
+                    ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+                    OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
+                    BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, BigDecimal quantity) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -321,9 +332,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setBillingAccount(billingAccount);
 
         }
-        invoiceLine.setQuantity(BigDecimal.valueOf(1));
+        invoiceLine.setQuantity(quantity == null || BigDecimal.ZERO.equals(quantity) ? BigDecimal.ONE : quantity);
         amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null) ? amountWithoutTaxToBeInvoiced : accountingArticle.getUnitPrice();
-        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
+        invoiceLine.setUnitPrice(BigDecimal.ZERO.equals(quantity) ? amountWithoutTaxToBeInvoiced : amountWithoutTaxToBeInvoiced.divide(quantity));
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
@@ -543,7 +554,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
 		
-		BigDecimal currentRate = getRateForInvoice(invoiceLine.getInvoice());
+		BigDecimal currentRate = getRateForInvoice(invoiceLine);
 
 		if(invoiceLine.getUnitPrice() == null || isFunctionalUnitPriceModified) {
 			if(invoiceLine.getFunctionalUnitPrice() == null && accountingArticle != null) {
@@ -640,26 +651,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return invoiceLine;
     }
 
-    private BigDecimal getRateForInvoice(Invoice invoice)
-    {
-       BigDecimal rate = BigDecimal.ONE;
-		if(invoice.getTradingCurrency() != null) {
-			TradingCurrency tradingCurrency = tradingCurrencyService.findById(invoice.getTradingCurrency().getId());
-			if (tradingCurrency.getCurrentRate() != null && tradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
-				rate = tradingCurrency.getCurrentRate();
-			}
+    private BigDecimal getRateForInvoice(InvoiceLine invoiceLine) {
+        if (null != appProvider.getCurrency()) {
+            TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
 
-            if(null != appProvider.getCurrency())
-            {
-                TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
-                 return  invoice.getTradingCurrency().getId() == providerTradingCurrency.getId() ? BigDecimal.ONE : rate;
+            Invoice invoice = invoiceService.findById(invoiceLine.getInvoice().getId());
+            if (invoice.getTradingCurrency() != null) {
+                TradingCurrency invoiceTradingCurrency = tradingCurrencyService.findById(invoice.getTradingCurrency().getId());
+                if (invoiceTradingCurrency.getCurrentRate() != null
+                        && invoiceTradingCurrency.getId() != providerTradingCurrency.getId()
+                        && invoiceTradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+                    return invoiceTradingCurrency.getCurrentRate();
+                }
+
             }
 
-            return rate;
+            if (invoice.getBillingAccount() != null && invoice.getBillingAccount().getTradingCurrency() != null  ) {
 
-		}
+                    TradingCurrency billingAccountTradingCurrency = tradingCurrencyService.findById(invoice.getBillingAccount().getTradingCurrency().getId());
+                    if (billingAccountTradingCurrency.getCurrentRate() != null
+                            && billingAccountTradingCurrency.getId() != providerTradingCurrency.getId()
+                            && billingAccountTradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+                        return billingAccountTradingCurrency.getCurrentRate();
+                    }
+
+
+                }
+
+        }
 
         return BigDecimal.ONE;
+
     }
 
 	/**

@@ -9994,9 +9994,7 @@
             <column name="customer_service_duration" type="int" />
             <column name="external_reference" type="varchar(50)" />
             <column name="order_parent_id" type="bigint" />
-            <column name="order_type_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
+            <column name="order_type_id" type="bigint" />
             <column name="invoicing_plan_id" type="bigint" />
             <column name="invoice_type_id" type="bigint">
                 <constraints nullable="false"/>
@@ -16463,6 +16461,8 @@
             </column>
             <column name="supporting_document_ref" type="bigint" />
             <column name="supporting_document_type" type="varchar(255)" />
+            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="trading_currency" type="varchar(3)" />
         </createTable>
     </changeSet>
 
@@ -17644,7 +17644,9 @@
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6779_2022_04_28" author="ZBariki" />
     <changeSet id="#INTRD-6899_20220502" author="aelmalki" />
-
+	<changeSet id="#INTRD-6895_20220504" author="HichamHANINE" />
+	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD"/>
+	<changeSet id="INTRD-7006_09052022" author="TarikRabeh" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
