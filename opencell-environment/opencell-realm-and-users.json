@@ -6423,7 +6423,7 @@
             "config": {
               "resources": "[\"Api V1 Billing - Rating\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Role createInvoice\",\"Role apiBillingVisualization\"]"
+              "applyPolicies": "[\"Role apiCreateInvoice\",\"Role apiBillingVisualization\"]"
             }
           },
           {
