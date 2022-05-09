@@ -56,7 +56,7 @@ public class ArticleMappingLineMapperTest {
         articleMappingLine.setAccountingArticle(accountingArticle);
 
         articleMappingLine.setArticleMapping(articleMapping);
-        articleMappingLine.setMappingKelEL("Mapping EL");
+        articleMappingLine.setMappingKeyEL("Mapping EL");
 
         OfferTemplate offerTemplate = new OfferTemplate();
         offerTemplate.setId(1L);
@@ -79,7 +79,7 @@ public class ArticleMappingLineMapperTest {
         assertTrue(articleMappingLineEntity instanceof ArticleMappingLine);
         assertEquals(articleMappingLineEntity.getParameter2(), "param02");
         assertEquals(articleMappingLineEntity.getParameter3(), "param03");
-        assertEquals(articleMappingLineEntity.getMappingKelEL(), "Mapping EL");
+        assertEquals(articleMappingLineEntity.getMappingKeyEL(), "Mapping EL");
     }
 
     private org.meveo.apiv2.article.ArticleMappingLine buildArticleMappingLineResource() {

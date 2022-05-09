@@ -79,7 +79,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if(articleMappingLines != null) {
 			articleMappingLines = articleMappingLines
 					.stream()
-					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKelEL()))
+					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
 					.collect(toList());
 		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
