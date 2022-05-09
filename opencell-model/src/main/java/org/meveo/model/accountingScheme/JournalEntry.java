@@ -140,6 +140,17 @@ public class JournalEntry extends AuditableEntity {
     @Column(name = "supporting_document_type")
     private String supportingDocumentType;
 
+    /**
+     * Code trading currency
+     */
+    @Column(name = "trading_currency")
+    private String tradingCurrency; 
+    
+	/**
+	 * trading amount
+	 */
+	@Column(name = "trading_amount")
+	private BigDecimal tradingAmount;
     
     public AccountOperation getAccountOperation() {
         return accountOperation;
@@ -268,4 +279,21 @@ public class JournalEntry extends AuditableEntity {
 	public void setSupportingDocumentType(String supportingDocumentType) {
 		this.supportingDocumentType = supportingDocumentType;
 	}
+
+	public String getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(String tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public BigDecimal getTradingAmount() {
+		return tradingAmount;
+	}
+
+	public void setTradingAmount(BigDecimal tradingAmount) {
+		this.tradingAmount = tradingAmount;
+	}
+	
 }
