@@ -696,7 +696,7 @@ public abstract class BaseApi {
                     throw new MissingParameterException(sb.substring(0, sb.indexOf(" must not be null")));
                 }
                 else if (sb.indexOf(" ne peut pas être nul") != -1) {
-                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" must not be null")));
+                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" ne peut pas être nul")));
                 }
                 else {
                     throw new InvalidParameterException(sb.toString());
