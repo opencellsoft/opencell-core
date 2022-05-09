@@ -249,6 +249,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
             firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType() != null
                     ? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode() : null);
+            
+            firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
+                    ? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
+
+            firstEntry.setTradingAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getAmountWithTax() : null);            
+            
         }
 
         return firstEntry;
