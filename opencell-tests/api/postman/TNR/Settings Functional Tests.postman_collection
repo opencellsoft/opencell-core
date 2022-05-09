@@ -16,15 +16,6 @@
 							"name": "CreateOrUpdate|Title|TITLE|SUCCESS",
 							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
 									"listen": "prerequest",
 									"script": {
 										"exec": [
@@ -39,18 +30,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
+										"value": "{{auth}}",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"languageDescriptions\": [\r\n        {\r\n            \"languageCode\": \"{{language}}\",\r\n            \"description\": \"{{testDescription}}\"\r\n        }\r\n    ],\r\n    \"isCompany\": \"false\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"languageDescriptions\": [\r\n        {\r\n            \"languageCode\": \"{{language}}\",\r\n            \"description\": \"{{testDescription}}\"\r\n        }\r\n    ],\r\n    \"isCompany\": \"false\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -13647,7 +13633,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"An offer, valid on 01/01/2020 - , already exists. Please change the validity dates of an existing offer first.\");"
+											"pm.variables.set(\"message\", \"Offer with the same code already exists on this period. You cannot create offer versions with overlapping validity periods.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -22426,6 +22412,21 @@
 		"type": "oauth2",
 		"oauth2": [
 			{
+				"key": "tokenType",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "{{access_token}}",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
 				"key": "addTokenTo",
 				"value": "header",
 				"type": "string"
@@ -22546,12 +22547,14 @@
 					"    case \"INTERNAL_SERVER_ERROR\":{",
 					"        pm.variables.set(\"code\", 500);",
 					"        pm.variables.set(\"status\", \"FAIL\");",
-					"        pm.variables.set(\"errorCode\", status);",
+					"        pm.variables.set(\"errorCode\", );",
+					"        pm.variables.set(\"errorCode\", );",
 					"        break;",
 					"    }",
 					"    case \"GENERIC_API_EXCEPTION\":{",
 					"        pm.variables.set(\"code\", 500);",
 					"        pm.variables.set(\"status\", \"FAIL\");",
+					"        pm.variables.set(\"errorCode\", );",
 					"        pm.variables.set(\"errorCode\", status);",
 					"        break;",
 					"    }",
@@ -22586,7 +22589,6 @@
 					"    var client_id = pm.environment.get(\"client.id\");",
 					"    var client_secret = pm.environment.get(\"client.secret\");",
 					"    var opencell_url = pm.environment.get(\"opencell.base\");",
-					"    console.log(\"opencell_url here: \"+ opencell_url);",
 					"    //can use an external token url",
 					"    ",
 					"    var keycloak_token_url = pm.environment.get(\"keycloak.token.url\");",
@@ -22598,6 +22600,7 @@
 					"        console.log(\"new keycloak_token_url: \"+ keycloak_token_url);",
 					"    }",
 					"    ",
+					"",
 					"",
 					"    var username = pm.environment.get(\"opencell.username\");",
 					"    var password = pm.environment.get(\"opencell.password\");",
