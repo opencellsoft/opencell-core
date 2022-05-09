@@ -12653,6 +12653,13 @@ order by date_trunc('month', i.invoice_date) DESC
 			ALTER TABLE public.accounting_journal_entry ALTER COLUMN currency SET NOT NULL;
 		</sql>
     </changeSet>
+    
+    <changeSet id="INTRD-7006_09052022" author="TarikRabeh">
+        <addColumn tableName="accounting_journal_entry">
+            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="trading_currency" type="varchar(3)" />
+        </addColumn>
+    </changeSet>
 
 
 </databaseChangeLog>
