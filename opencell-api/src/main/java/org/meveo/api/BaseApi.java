@@ -207,13 +207,10 @@ public abstract class BaseApi {
         if (dto instanceof BusinessEntityDto) {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
-            try {
                 if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
+                    missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
                     throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
                 }
-            } finally {
-                missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
-            }
         }
         handleMissingParameters();
     }
@@ -695,7 +692,15 @@ public abstract class BaseApi {
             sb.delete(sb.length() - 1, sb.length());
 
             try {
-                throw new InvalidParameterException(sb.toString());
+                if (sb.indexOf(" must not be null") != -1) {
+                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" must not be null")));
+                }
+                else if (sb.indexOf(" ne peut pas être nul") != -1) {
+                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" ne peut pas être nul")));
+                }
+                else {
+                    throw new InvalidParameterException(sb.toString());
+                }
             } finally {
                 missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
             }
@@ -1240,6 +1245,8 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
+<<<<<<< HEAD
+=======
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1266,6 +1273,7 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
+>>>>>>> integration
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1691,10 +1699,11 @@ public abstract class BaseApi {
                     Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
                     for (String key : mapVal.keySet()) {
                         Object cfValue = mapVal.get(key);
-                        ExpressionParser fieldInfo = new ExpressionParser(key.split(" "));
+                        String[] fieldInfo = key.split(" ");
+                        String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                         Class dataClass = null;
                         CustomFieldStorageTypeEnum storageType = null;
-                        for (String f : fieldInfo.getAllFields()) {
+                        for (String f : fields) {
                             CustomFieldTemplate customFieldTemplate = cfts.get(f);
                             if (customFieldTemplate == null) {
                                 throw new BusinessException("No custom field found with name :" + f);
@@ -1709,8 +1718,7 @@ public abstract class BaseApi {
                                 }
                             }
                         }
-                        String condition = fieldInfo.getCondition();
-                        Object valueConverted = castFilterValue(cfValue, dataClass, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts, true);
+                        Object valueConverted = castFilterValue(cfValue, dataClass, expectedList, cfts, true);
                         if (valueConverted == null) {
                             if (!CustomFieldStorageTypeEnum.SINGLE.equals(storageType)) {
                                 throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '" + key + "'");
