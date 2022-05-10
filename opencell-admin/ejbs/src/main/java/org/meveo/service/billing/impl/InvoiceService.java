@@ -121,6 +121,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
@@ -1086,7 +1087,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         em.flush(); // Need to flush, so RTs can be updated in mass
 
         // Mass update RTs with status and invoice info
-        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
+        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("RatedTransaction.deletePendingTable").executeUpdate();
 
         // Finalize invoices
@@ -2548,6 +2549,62 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (Invoice invoice : invoices) {
             validateInvoice(invoice, true);
         }
+    }
+    
+    /**
+     * @param billingRunId
+     * @param invalidateXMLInvoices
+     * @param invalidatePDFInvoices
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void invalidateInvoiceDocuments(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+    	BillingRun br = getBrById(billingRunId);
+        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
+        	nullifyInvoiceXMLFileNames(br);
+        	nullifyBillingRunXMLExecutionResultIds(br);
+        }
+        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
+        	nullifyInvoicePDFFileNames(br);
+        	nullifyBillingRunPDFExecutionResultIds(br);
+        }
+    }
+
+    /**
+     * Nullify BR's invoices xml file names.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoiceXMLFileNames(BillingRun billingRun) {
+    	getEntityManager().createNamedQuery("Invoice.nullifyInvoiceXMLFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    /**
+     * Nullify BR's invoices pdf file names.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoicePDFFileNames(BillingRun billingRun) {
+    	getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
+    
+    /**
+     * Nullify BR XML execution result Id.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyBillingRunXMLExecutionResultIds(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    
+    /**
+     * Nullify BR PDF execution result Id.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyBillingRunPDFExecutionResultIds(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
     }
 
     /**
