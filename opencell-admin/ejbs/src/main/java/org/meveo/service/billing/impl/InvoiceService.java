@@ -2550,6 +2550,62 @@ public class InvoiceService extends PersistenceService<Invoice> {
             validateInvoice(invoice, true);
         }
     }
+    
+    /**
+     * @param billingRunId
+     * @param invalidateXMLInvoices
+     * @param invalidatePDFInvoices
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void invalidateInvoiceDocuments(Long billingRunId, Boolean invalidateXMLInvoices, Boolean invalidatePDFInvoices) {
+    	BillingRun br = getBrById(billingRunId);
+        if (Boolean.TRUE.equals(invalidateXMLInvoices)) {
+        	nullifyInvoiceXMLFileNames(br);
+        	nullifyBillingRunXMLExecutionResultIds(br);
+        }
+        if (Boolean.TRUE.equals(invalidatePDFInvoices)) {
+        	nullifyInvoicePDFFileNames(br);
+        	nullifyBillingRunPDFExecutionResultIds(br);
+        }
+    }
+
+    /**
+     * Nullify BR's invoices xml file names.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoiceXMLFileNames(BillingRun billingRun) {
+    	getEntityManager().createNamedQuery("Invoice.nullifyInvoiceXMLFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    /**
+     * Nullify BR's invoices pdf file names.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoicePDFFileNames(BillingRun billingRun) {
+    	getEntityManager().createNamedQuery("Invoice.nullifyInvoicePDFFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
+    
+    /**
+     * Nullify BR XML execution result Id.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyBillingRunXMLExecutionResultIds(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunXMLExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    
+    /**
+     * Nullify BR PDF execution result Id.
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyBillingRunPDFExecutionResultIds(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("BillingRun.nullifyBillingRunPDFExecutionResultIds").setParameter("billingRun", billingRun).executeUpdate();
+    }
 
     /**
      * @param billingRunId
