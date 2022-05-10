@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -233,7 +234,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop);
+        create(aop);
         return aop.getId();
 
     }
@@ -767,5 +768,21 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         return (List<AccountOperation>) query.getResultList();
 
+    }
+
+    public void resetOperationNumberSequence() {
+        getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
+    }
+
+    public void fillOperationNumber(AccountOperation accountOperation)
+    {
+        BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
+        accountOperation.setOperationNumber(operationNumber.longValue());
+    }
+
+    @Override
+    public void create(AccountOperation entity) {
+        fillOperationNumber(entity);
+        super.create(entity);
     }
 }

@@ -34,6 +34,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
 
 /**
@@ -51,6 +52,9 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private InvoiceService invoiceService;
+
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -81,17 +85,17 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
         }
         
         if (billingRunId != null) {
-            BillingRun br = billingRunService.findById(billingRunId);
-            if (br != null) {
-                br.setPdfJobExecutionResultId(jobExecutionResult.getId());
-                billingRunService.update(br);
+            BillingRun billingRun = billingRunService.findById(billingRunId);
+            if (billingRun != null) {
+                billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId, null, jobExecutionResult.getId());
+                billingRunService.refreshOrRetrieve(billingRun);
             }
 
         }
 
         List<Long> ids = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return Optional.of(new SynchronizedIterator<>(ids));
     }
 
     /**

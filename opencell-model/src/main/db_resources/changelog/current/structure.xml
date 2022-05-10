@@ -11962,18 +11962,18 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
         <sql>
-            create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
-            create index cpq_tag_seller_id_index on cpq_tag (seller_id);
-            create index cpq_tag_tag_type_id_index on cpq_tag (tag_type_id);
-            create index cpq_tag_type_seller_id_index on cpq_tag_type (seller_id);
-            create index cpq_commercial_rule_header_attribute_id_index on cpq_commercial_rule_header (attribute_id);
-            create index cpq_commercial_rule_header_grouped_attributes_id_index on cpq_commercial_rule_header (grouped_attributes_id);
-            create index cpq_commercial_rule_header_grouped_service_id_index on cpq_commercial_rule_header (grouped_service_id);
-            create index cpq_commercial_rule_header_offer_template_id_index on cpq_commercial_rule_header (offer_template_id);
-            create index cpq_commercial_rule_header_product_id_index on cpq_commercial_rule_header (product_id);
-            create index cpq_commercial_rule_header_product_version_id_index on cpq_commercial_rule_header (product_version_id);
-            create index cpq_commercial_rule_header_service_template_id_index on cpq_commercial_rule_header (service_template_id);
-            create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
+            create index cpq_commercial_rule_item_header_id_index on ${db.schema.adapted}cpq_commercial_rule_item (commercial_rule_header_id);
+            create index cpq_tag_seller_id_index on ${db.schema.adapted}cpq_tag (seller_id);
+            create index cpq_tag_tag_type_id_index on ${db.schema.adapted}cpq_tag (tag_type_id);
+            create index cpq_tag_type_seller_id_index on ${db.schema.adapted}cpq_tag_type (seller_id);
+            create index cpq_commercial_rule_header_attribute_id_index on ${db.schema.adapted}cpq_commercial_rule_header (attribute_id);
+            create index cpq_commercial_rule_header_grouped_attributes_id_index on ${db.schema.adapted}cpq_commercial_rule_header (grouped_attributes_id);
+            create index cpq_commercial_rule_header_grouped_service_id_index on ${db.schema.adapted}cpq_commercial_rule_header (grouped_service_id);
+            create index cpq_commercial_rule_header_offer_template_id_index on ${db.schema.adapted}cpq_commercial_rule_header (offer_template_id);
+            create index cpq_commercial_rule_header_product_id_index on ${db.schema.adapted}cpq_commercial_rule_header (product_id);
+            create index cpq_commercial_rule_header_product_version_id_index on ${db.schema.adapted}cpq_commercial_rule_header (product_version_id);
+            create index cpq_commercial_rule_header_service_template_id_index on ${db.schema.adapted}cpq_commercial_rule_header (service_template_id);
+            create index cpq_commercial_rule_header_tag_id_index on ${db.schema.adapted}cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
 
@@ -12015,7 +12015,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="description" type="varchar(4000)"/>
         </addColumn>
         <sql>
-            update billing_rated_transaction
+            update ${db.schema.adapted}billing_rated_transaction
             set description = DBMS_LOB.SUBSTR(long_description, 4000, 1)
             where long_description is not null ;
         </sql>
@@ -12238,7 +12238,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
         <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
 
-        <sql>ALTER TABLE billing_invoice_line RENAME CONSTRAINT pk_cpq_invoice_line TO pk_billing_invoice_line;</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_invoice_line RENAME CONSTRAINT pk_cpq_invoice_line TO pk_billing_invoice_line;</sql>
 
         <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id"/>
         <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_cpq_invoice_line_cpq_quote_id"/>
@@ -12324,7 +12324,7 @@ order by date_trunc('month', i.invoice_date) DESC
             /
         </sql>
         <createView viewName="all_sequences_view" replaceIfExists="true">
-            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM user_sequences s
+            select get_next_val(SEQUENCE_NAME) as seq_val, lower(SEQUENCE_NAME) as seq_code FROM ${db.schema.adapted}user_sequences s
         </createView>
     </changeSet>
 
@@ -12406,13 +12406,11 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 	<changeSet author="TarikRabeh" id="#INTRD-5846-24032022">
-    	<sql>update billing_billing_account bba
-    		set trading_currency_id = (select aca.trading_currency_id from ar_customer_account aca where aca.id = bba.customer_account_id )
+    	<sql>update ${db.schema.adapted}billing_billing_account bba
+    		set trading_currency_id = (select aca.trading_currency_id from ${db.schema.adapted}ar_customer_account aca where aca.id = bba.customer_account_id )
     		where bba.trading_currency_id is null
     	</sql>
-    	<sql>
-			ALTER TABLE public.billing_billing_account ALTER COLUMN trading_currency_id SET NOT NULL
-		</sql>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_currency_id"/>
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="billing_billing_account" constraintName="fk_trading_currency_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
 	</changeSet>
@@ -12573,17 +12571,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="functional_unit_price" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6056_20220413" author="HatimOUDAD">
 	    <addColumn tableName="cpq_quote_product">
 	            <column name="product_action_type" type="varchar(10)" />
 	            <column name="termination_date" type="datetime" />
 	            <column name="sub_termin_reason_id" type="bigint" />
 	    </addColumn>
-	
+
 	        <addForeignKeyConstraint baseColumnNames="sub_termin_reason_id" baseTableName="cpq_quote_product" constraintName="fk_q6d91d7b6bc2ypdbx4tjbr0acbdcc" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
-	
+
 	        <addColumn tableName="quote_offer">
 	            <column name="subscription_id" type="bigint" />
 	        </addColumn>
@@ -12599,7 +12597,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="fk_cat_price_plan_matrix_cat_charge_template"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
-        <sql>UPDATE cat_price_plan_matrix SET charge_template_id = (SELECT id FROM cat_charge_template WHERE code = event_code)</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_price_plan_matrix SET charge_template_id = (SELECT id FROM ${db.schema.adapted}cat_charge_template WHERE code = event_code)</sql>
     </changeSet>
 
     <changeSet id="#INTRD-6562_20220414" author="aelmalki">
@@ -12665,20 +12663,18 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="supporting_document_type" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6633_20220420" author="TarikRabeh">
         <sql>
-	        update public.accounting_journal_entry set 
+	        update ${db.schema.adapted}accounting_journal_entry set
 		        seller_code = (select code from crm_seller cs where cs.id = seller_id),
 		        client_unique_id = (select acc.registration_no from ar_customer_account acc where acc.id = customer_account_id),
 		        currency = (select ac.currency_code from adm_currency ac, crm_provider pr where ac.id = pr.currency_id),
 		        supporting_document_ref = (select aco.invoice_id from ar_account_operation aco where aco.id = accounting_operation_id),
-		        supporting_document_type = (select bt.code from billing_invoice_type bt, billing_invoice inv,ar_account_operation aco where bt.id = inv.invoice_type_id and inv.id = aco.invoice_id and aco.id = accounting_operation_id)        
+		        supporting_document_type = (select bt.code from billing_invoice_type bt, billing_invoice inv,ar_account_operation aco where bt.id = inv.invoice_type_id and inv.id = aco.invoice_id and aco.id = accounting_operation_id)
         </sql>
-        <sql>
-			ALTER TABLE public.accounting_journal_entry ALTER COLUMN seller_code SET NOT NULL;
-			ALTER TABLE public.accounting_journal_entry ALTER COLUMN currency SET NOT NULL;
-		</sql>
+        <addNotNullConstraint tableName="accounting_journal_entry" columnName="seller_code"/>
+        <addNotNullConstraint tableName="accounting_journal_entry" columnName="currency"/>
     </changeSet>
 
 
@@ -12693,10 +12689,20 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropNotNullConstraint tableName="accounting_journal_entry" columnName="seller_id"/>
     </changeSet>
 
-    <changeSet id="#INTRD-6564_20222004" author="ZBariki">
-        <addColumn tableName="accounting_accountingcode_mapping">
-            <column name="accounting_code" type="varchar(100)" />
+    <changeSet id="#INTRD-6536_20220419-change-on-field" author="aelmalki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="column_criteria_el" type="varchar(500)"/>
         </addColumn>
+        <addColumn tableName="accounting_accountingcode_mapping">
+            <column name="accounting_code_id" type="bigint"/>
+        </addColumn>
+        <renameColumn tableName="accounting_accountingcode_mapping" newColumnName="criteria_el_value" oldColumnName="criteria_el" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6536_20220419-new-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="accounting_accountingcode_mapping"
+                                 constraintName="fk_accountingcode_mapping_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
     <changeSet id="#INTRD-6668_20220421" author="TarikRabeh">
@@ -12705,4 +12711,129 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" dbms="postgres">
+		<sql>
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
+
+			update ${db.schema.adapted}ar_account_operation
+			set operation_number = nextval('account_operation_number_seq')
+			from (select ap.start_date, ap.end_date
+					 from accounting_period ap
+					 where accounting_period_year='2022-2023') as current_ap
+			where accounting_date between current_ap.start_date and current_ap.end_date;
+
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
+		</sql>
+	</changeSet>
+
+	<changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim">
+    	<dropView viewName="billing_wallet_operation_period"/>
+    	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_wallet_operation"/>
+    	<renameColumn newColumnName="parameter_extra_old" oldColumnName="parameter_extra" tableName="billing_rated_transaction"/>
+    	<addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="varchar(4000)"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="varchar(4000)"/>
+        </addColumn>
+        <sql>
+            update ${db.schema.adapted}billing_wallet_operation
+            set parameter_extra = parameter_extra_old
+            where parameter_extra_old is not null;
+        </sql>
+        <sql>
+            update ${db.schema.adapted}billing_rated_transaction
+            set parameter_extra = parameter_extra_old
+            where parameter_extra_old is not null;
+        </sql>
+        <dropColumn columnName="parameter_extra_old" tableName="billing_wallet_operation" />
+        <dropColumn columnName="parameter_extra_old" tableName="billing_rated_transaction" />
+    </changeSet>
+        
+    <changeSet id="INTRD-6608_20220420_pg" author="AkadidAbdelmounaim" dbms="postgres">
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    <changeSet id="INTRD-6608_20220420_oracle" author="AkadidAbdelmounaim" dbms="oracle">
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (trunc(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id)) = trunc(o.start_date)) then 0 else 1 end) as flag
+            FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
+        </createView>
+    </changeSet>
+
+    <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza">
+        <addColumn tableName="global_settings">
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
+		<sql>
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = null;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = nextval('account_operation_number_seq')
+			FROM (select ap.start_date, ap.end_date
+					 from accounting_period ap
+					 where accounting_period_year='2022-2023') as current_ap
+			WHERE accounting_date between current_ap.start_date and current_ap.end_date;
+
+			ALTER TABLE ${db.schema.adapted}ar_account_operation ALTER COLUMN operation_number SET DEFAULT nextval('account_operation_number_seq');
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq OWNED BY ar_account_operation.operation_number;
+		</sql>
+	</changeSet>
+
+    <changeSet id="#INTRD-6779_2022_04_28" author="ZBariki">
+        <dropColumn tableName="billing_rated_transaction" columnName="accounting_article_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction"
+                                  constraintName="rated_transaction_article_fk"/>
+        <renameColumn columnDataType="bigint" newColumnName="accounting_article_id"
+                      oldColumnName="article_id" tableName="billing_rated_transaction"/>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="accounting_article_id"
+                                 constraintName="fk_billing_rated_transaction_accounting_article_id"
+                                 referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-6899_20220502" author="aelmalki">
+        <dropNotNullConstraint tableName="accounting_journal_entry" columnName="customer_account_id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-6895_20220504" author="HichamHANINE">
+		<sql>
+			<![CDATA[
+				ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
+				update ar_account_operation as t
+				set operation_number = nextval('account_operation_number_seq')
+				from (select * 
+						from ar_account_operation
+						where accounting_date >= (select ap.start_date from accounting_period ap where accounting_period_year='2022-2023')
+						and accounting_date <= (select ap.end_date from accounting_period ap where accounting_period_year='2022-2023')
+						order by created) as s
+				where s.id = t.id;
+				ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
+            ]]>			
+		</sql>
+	</changeSet>
+
+	
+	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
+        <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
+    </changeSet>
+
+
+    <changeSet id="INTRD-7006_09052022" author="TarikRabeh">
+        <addColumn tableName="accounting_journal_entry">
+            <column name="trading_amount" type="numeric(23, 12)" />
+            <column name="trading_currency" type="varchar(3)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

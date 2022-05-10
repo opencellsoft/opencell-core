@@ -121,6 +121,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
@@ -1083,7 +1084,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         em.flush(); // Need to flush, so RTs can be updated in mass
 
         // Mass update RTs with status and invoice info
-        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
+        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("RatedTransaction.deletePendingTable").executeUpdate();
 
         // Finalize invoices
@@ -5929,6 +5930,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
+            toUpdate.getLinkedInvoices().clear();
             for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
@@ -6081,8 +6083,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
-            var duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
-            invoiceLinesService.create(duplicateInvoiceLine);
+            InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
@@ -6132,10 +6134,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
         invoice = refreshOrRetrieve(invoice);
         for (Long idInvoiceLine : invoiceLineIds) {
-            InvoiceLine iLine = invoiceLinesService.findById(idInvoiceLine);  
-            invoiceLinesService.detach(iLine);
-            var duplicateInvoiceLine = new InvoiceLine(iLine, invoice);
-            invoiceLinesService.create(duplicateInvoiceLine);
+            InvoiceLine invoiceLineSource = invoiceLinesService.findById(idInvoiceLine);  
+            Invoice invoiceSource = invoiceLineSource.getInvoice();
+            invoiceLinesService.detach(invoiceLineSource);
+            var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
+            duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoiceSource);
             invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
 
@@ -6144,8 +6148,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public Invoice findByInvoiceNumber(String invoiceNumber) {
-        return (Invoice) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
-                                .setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
-                                .getSingleResult();
+        try {
+            return (Invoice) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+                    .setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException noResultException) {
+            return null;
+        }
     }
 }

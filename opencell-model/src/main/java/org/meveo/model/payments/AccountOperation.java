@@ -34,8 +34,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -90,8 +88,6 @@ import org.meveo.model.finance.AccountingEntry;
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
-@GenericGenerator(name = "OPERATION_NUMBER_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "account_operation_number_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
@@ -110,7 +106,7 @@ import org.meveo.model.finance.AccountingEntry;
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao,MatchingAmount ma where :invoice MEMBER OF ao.invoices"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
         @NamedQuery(name = "AccountOperation.findAoClosedSubPeriodByStatus", query = "SELECT ao FROM AccountOperation ao" +
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
@@ -450,7 +446,6 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Operation number
      */
-    @GeneratedValue(generator = "OPERATION_NUMBER_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "operation_number")
     private Long operationNumber;
 

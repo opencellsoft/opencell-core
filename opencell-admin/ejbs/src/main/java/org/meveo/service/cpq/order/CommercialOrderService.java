@@ -130,7 +130,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @SuppressWarnings("rawtypes")
 	public List<OrderOffer> validateOffers(List<OrderOffer> validOffers) {
     	return validOffers.stream().filter(o -> {
-			if(o.getOrderLineType() == OfferLineTypeEnum.AMEND) return true;
+    		if(o.getOrderLineType() == OfferLineTypeEnum.AMEND  || o.getOrderLineType() == OfferLineTypeEnum.TERMINATE) return true;
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
@@ -194,6 +194,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
+				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
@@ -208,7 +209,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
 				subscriptionService.activateInstantiatedService(subscription);
-				
+				offer.setSubscription(subscription);
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
 					//Create Action type
@@ -416,6 +417,37 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				attributeInstance.setSubscription(offer.getSubscription());
 				instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
 				}
+			}
+			//add missing attribute instances
+			AttributeInstance attributeInstance=null;
+			for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+				Attribute attribute=productVersionAttribute.getAttribute();
+				if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+					attributeInstance = new AttributeInstance(currentUser);
+					attributeInstance.setAttribute(attribute);
+					attributeInstance.setServiceInstance(serviceInstance);
+					attributeInstance.setSubscription(offer.getSubscription());
+				
+				}else {
+					attributeInstance=instantiatedAttributes.get(attribute.getCode());
+				}
+				if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
+					switch (attribute.getAttributeType()) {
+					case BOOLEAN:
+						if(attributeInstance.getBooleanValue()==null)
+							attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					case NUMERIC:
+						if(attributeInstance.getDoubleValue()==null)
+							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					default:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
+					}
+				}
+				serviceInstance.addAttributeInstance(attributeInstance);	
 			}
 		}
 	}

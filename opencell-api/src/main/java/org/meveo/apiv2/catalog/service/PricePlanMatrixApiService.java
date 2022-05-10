@@ -1,22 +1,22 @@
 
 package org.meveo.apiv2.catalog.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
+import org.apache.commons.codec.binary.Hex;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
@@ -34,12 +34,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
-import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.slf4j.Logger;
@@ -57,9 +55,6 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-
-    @Inject
-    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
@@ -161,7 +156,8 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                     throw new BusinessApiException("The file: '" + pathName + "' does not exist");
                 }
 
-                // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start date]_-_[end date]
+                // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
+                // date]_-_[end date]
                 Long pricePlanVersionId = Long.parseLong(importItem.getFileName().split("_-_")[0]);
                 PricePlanMatrixVersion ppmvToUpdate = pricePlanMatrixVersionService.findById(pricePlanVersionId);
                 if (ppmvToUpdate == null) {
@@ -172,55 +168,74 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                 // Check if the charge is changed
                 if (StringUtils.isNotBlank(newChargeCode) && !newChargeCode.equals(pricePlanMatrix.getEventCode())) {
 
-                    validateChargeName(newChargeCode);
+                    List<PricePlanMatrix> pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+                    if (pricePlanMatrixs.size() == 0) {
+                        throw new BusinessApiException("No PricePlanMatrix related to the charge '" + newChargeCode + "'");
+                    }
+                    if (pricePlanMatrixs.size() > 1) {
+                        throw new BusinessApiException("There are several PricePlanMatrix related to this charge");
+                    }
 
-                    pricePlanMatrix.setEventCode(newChargeCode);
-                    pricePlanMatrixService.update(pricePlanMatrix);
+                    pricePlanMatrix = pricePlanMatrixs.get(0);
+                    ppmvToUpdate.setPricePlanMatrix(pricePlanMatrix);
+                    ppmvToUpdate.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrix.getCode()) + 1);
+                    pricePlanMatrixVersionService.update(ppmvToUpdate);
+                }
+
+                List<PricePlanMatrixVersion> previousPVs = pricePlanMatrixVersionService.findToDateAfterDateAndVersion(pricePlanMatrix, newFrom, ppmvToUpdate.getCurrentVersion());
+                for (PricePlanMatrixVersion previousPV : previousPVs) {
+                    if (previousPV.getId() != pricePlanVersionId && previousPV.getValidity().getFrom() != null && previousPV.getValidity().getFrom().compareTo(newFrom) > 0
+                            && previousPV.getValidity().getTo() != null && previousPV.getValidity().getTo().compareTo(newFrom) > 0) {
+                        pricePlanMatrixVersionService.remove(previousPV);
+                    } else {
+                        previousPV.setValidity(new DatePeriod(previousPV.getValidity().getFrom(), newFrom));
+                        pricePlanMatrixVersionService.update(previousPV);
+                        break;
+                    }
                 }
 
                 if (newTo != null) {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findBeforeFromAndAfterVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
+                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
                     for (PricePlanMatrixVersion nextPV : nextPVs) {
-                        if (nextPV.getValidity() != null && nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
+                        if (nextPV.getId() != pricePlanVersionId && nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
                             pricePlanMatrixVersionService.remove(nextPV);
-                        } else if (nextPV.getValidity() != null) {
+                        } else {
                             nextPV.setValidity(new DatePeriod(newTo, nextPV.getValidity().getTo()));
                             pricePlanMatrixVersionService.update(nextPV);
+                            break;
                         }
                     }
                 } else {
-                    List<PricePlanMatrixVersion> pVersions = pricePlanMatrixVersionService.findAfterVersion(pricePlanMatrix, ppmvToUpdate.getCurrentVersion());
-                    for (PricePlanMatrixVersion pv : pVersions) {
-                        pricePlanMatrixLineService.deleteByPricePlanMatrixVersion(pv);
-                    }
-
-                    List<Long> pVersionIds = pVersions.stream().map(PricePlanMatrixVersion::getId).collect(Collectors.toList());
-                    if (!pVersionIds.isEmpty()) {
-                        pricePlanMatrixVersionService.delete(pVersionIds);
+                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom,
+                        ppmvToUpdate.getCurrentVersion());
+                    for (PricePlanMatrixVersion nextPV : nextPVs) {
+                        pricePlanMatrixVersionService.remove(nextPV);
                     }
                 }
 
-                try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
+                try (FileInputStream fs = new FileInputStream(pathName);
+                        InputStreamReader isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
+                        LineNumberReader lnr = new LineNumberReader(isr)) {
 
-                    DatePeriod validity = new DatePeriod(newFrom, newTo);
-                    ppmvToUpdate.setValidity(validity);
-                    ppmvToUpdate.setStatus(importItem.getStatus());
-
-                    String header = br.readLine();
-                    String firstLine = br.readLine();
+                    String header = eliminateBOM(lnr.readLine());
 
                     if ("id;label;amount".equals(header)) {
+                        String firstLine = lnr.readLine();
                         String[] split = firstLine.split(";");
                         ppmvToUpdate.setMatrix(false);
                         ppmvToUpdate.setLabel(split[1]);
                         ppmvToUpdate.setAmountWithoutTax(new BigDecimal(split[2]));
-                        pricePlanMatrixVersionService.update(ppmvToUpdate);
-                    } else {
-                        String data = FileUtils.getFileAsString(pathName);
+                    } else if (StringUtils.isNotBlank(header)) {
+                        String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                         ppmvToUpdate.setMatrix(true);
                         PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.populateLinesAndValues(pricePlanMatrix.getCode(), data, ppmvToUpdate);
-                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto);
+                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto, false);
                     }
+
+                    DatePeriod validity = new DatePeriod(newFrom, newTo);
+                    ppmvToUpdate.setValidity(validity);
+                    ppmvToUpdate.setStatus(importItem.getStatus());
+                    pricePlanMatrixVersionService.update(ppmvToUpdate);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -240,16 +255,27 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         return resultDtos;
     }
 
-    private void validateChargeName(String chargeName) {
-        ChargeTemplate chargeTemplate = null;
-        try {
-            chargeTemplate = emWrapper.getEntityManager().createQuery("from ChargeTemplate c where c.code=:chargeName", ChargeTemplate.class).setParameter("chargeName", chargeName)
-                .setMaxResults(1).getSingleResult();
-        } catch (NoResultException e) {
+    private String readAllLines(LineNumberReader lnr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String lineRead;
+        while ((lineRead = lnr.readLine()) != null) {
+            sb.append(lineRead).append("\n");
         }
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeName);
+        return sb.toString();
+    }
+
+    private String eliminateBOM(String row) {
+        if (StringUtils.isNotBlank(row)) {
+            // Get the first character
+            String bom = row.substring(0, 1);
+            // Convert first character to byte to character(Use Apache Commons Codec Hex class)
+            String bomByte = new String(Hex.encodeHex(bom.getBytes()));
+            if ("efbbbf".equals(bomByte)) {
+                // Eliminate BOM
+                row = row.substring(1);
+            }
         }
+        return row;
     }
 
     private void unzipFile(String fileToImport) {

@@ -16,13 +16,23 @@ import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivables;
 import org.meveo.apiv2.standardReport.resource.StandardReportResource;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.util.ApplicationProvider;
+
+import static java.lang.Long.valueOf;
 
 public class StandardReportResourceImpl implements StandardReportResource {
 
     @Inject
     private StandardReportApiService standardReportApiService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
     private AgedReceivableMapper agedReceivableMapper = new AgedReceivableMapper();
+
     
     @Override
     public Response getAgedReceivables(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
@@ -34,6 +44,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
     	List<Object[]> agedBalanceList =
                 standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate,
                         customerAccountDescription, invoiceNumber, stepInDays, numberOfPeriods);
+        agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
                 ? agedReceivableMapper.toEntityList(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, numberOfPeriods);
     	EntityTag etag = new EntityTag(Integer.toString(agedReceivablesList.hashCode()));

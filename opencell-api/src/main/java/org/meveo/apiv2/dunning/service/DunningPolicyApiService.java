@@ -34,6 +34,9 @@ import org.meveo.service.payments.impl.DunningPolicyService;
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
+    @Inject
     private DunningPolicyService dunningPolicyService;
 
     @Inject
@@ -82,6 +85,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             if(dunningPolicy.getMinBalanceTriggerCurrency() != null) {
                 Currency currency = currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode());
@@ -101,6 +105,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> update(Long id, DunningPolicy dunningPolicy) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             int countReminderLevels = 0;
             int countEndOfDunningLevel = 0;
@@ -183,11 +188,23 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> delete(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
-            dunningPolicyService.remove(id);
-            auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
-            return of(dunningPolicy);
+        	try {
+                dunningPolicyService.remove(id);
+                auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
+                return of(dunningPolicy);
+        	} catch (Exception exception) {
+                Throwable throwable = exception.getCause();
+                while (throwable != null) {
+                    if (throwable instanceof ConstraintViolationException) {
+                        throw new BusinessException("The dunning policy with id "+ id + " is referenced");
+                    }
+                    throwable = throwable.getCause();
+                }
+                throw new BusinessException(exception.getMessage());
+            }
         } else {
             return empty();
         }
@@ -218,12 +235,14 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
+        globalSettingsVerifier.checkActivateDunning();
         dunningPolicy.setIsActivePolicy(FALSE);
         auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
 
     public Optional<DunningPolicyRule> removePolicyRule(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicyRule dunningPolicyRule = dunningPolicyRuleService.findById(id);
         if(dunningPolicyRule == null) {
             return empty();
@@ -250,6 +269,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public Optional<DunningPolicyRule> addPolicyRule(DunningPolicyRule dunningPolicyRule,
                                                      List<org.meveo.apiv2.dunning.DunningPolicyRuleLine> policyRuleLines) {
+        globalSettingsVerifier.checkActivateDunning();
         dunningPolicyRuleService.create(dunningPolicyRule);
         for (org.meveo.apiv2.dunning.DunningPolicyRuleLine line : policyRuleLines) {
             org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine =
