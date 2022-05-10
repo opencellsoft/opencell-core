@@ -2329,6 +2329,7 @@
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
+            <column name="contra_accounting_code2_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -16445,6 +16446,13 @@
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
+    
+    <changeSet id="#INTRD-6160-20220401-fk" author="HichamELHALOUI">
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -17531,6 +17539,7 @@
     <changeSet id="#INTRD-5881_20220322" author="aelmalki" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
     <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
 

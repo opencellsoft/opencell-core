@@ -17,59 +17,255 @@
  */
 package org.meveo.service.accountingscheme;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
+	
+	private static final String PARAM_ID_INV = "ID_INV";
 
+    private static final String REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+            " make sure that all related accounting articles have an accounting code or that the default revenue accounting code" +
+            " is set in the account operation type (contra accounting code)";
+
+    private static final String TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+            " make sure that all related taxes have an accounting code or that the default tax accounting code" +
+            " is set in the account operation type (contra accounting code 2)";
+			
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
         // INTRD-4702
         // First JournalEntry
-        JournalEntry firstEntry = buildJournalEntry(
-                ao, occT.getAccountingCode(), occT.getOccCategory());
-
+    	JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
+    			null);
         // Second JournalEntry
-        JournalEntry secondEntry = buildJournalEntry(
-                ao, occT.getContraAccountingCode(),
+        JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
-                        OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT);
-
+                        OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
         create(firstEntry);
         create(secondEntry);
 
         return Arrays.asList(firstEntry, secondEntry);
 
     }
+    
+    @Transactional
+    public List<JournalEntry> createFromInvoice(RecordedInvoice recordedInvoice, OCCTemplate occT) {
+        List<JournalEntry> saved = new ArrayList<>();
 
-    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code, OperationCategoryEnum categoryEnum) {
-        JournalEntry firstEntry = new JournalEntry();
+        // 1- produce a Customer account entry line
+        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice,
+                recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() != null ?
+                        recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() :
+                        occT.getAccountingCode(),
+                occT.getOccCategory(),
+                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
+                null);        
+        log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
+
+        saved.add(customerAccountEntry);
+
+        // 2- produce the revenue accounting entries
+        buildRevenusJournalEntries(recordedInvoice, occT, saved);
+
+        // 3- produce the taxes accounting entries
+        buildTaxesJournalEntries(recordedInvoice, occT, saved);
+
+        // Persist all
+        saved.forEach(this::create);
+        
+        log.info("{} JournalEntries created for AO={}", saved.size(), recordedInvoice.getId());
+
+        return saved;
+    }
+
+    public void validateAOForInvoiceScheme(AccountOperation ao) {
+        if (ao == null) {
+            log.warn("No AccountOperation passed as CONTEXT_ENTITY");
+            throw new BusinessException("No AccountOperation passed as CONTEXT_ENTITY");
+        }
+
+        if (!(ao instanceof RecordedInvoice)) {
+            log.warn("AccountOperation with id={} is not RecordedInvoice type", ao.getId());
+            throw new BusinessException("AccountOperation with id=" + ao.getId() + " is not RecordedInvoice type");
+        }
+    }
+
+    /**
+     * Check OCCTemplate fields
+     *
+     * @param ao             account operation
+     * @param occT           occt.code = ao.code
+     * @param isDefaultCheck for Default Script we must check accountinfCode and contraAccountingCode,
+     *                       for Invoice one for exemple, we must on check accountinfode
+     */
+    public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck) {
+        if (occT == null) {
+            log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
+            throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
+        }
+
+        if (occT.getAccountingCode() == null) {
+            log.warn("Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+        }
+
+        if (isDefaultCheck && occT.getContraAccountingCode() == null) {
+            log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+        }
+
+    }    
+
+    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
+    		OperationCategoryEnum categoryEnum, BigDecimal amount, 
+    		Tax tax) {        JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
-        firstEntry.setAmount(ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount());
+        firstEntry.setAmount(amount);
         firstEntry.setCustomerAccount(ao.getCustomerAccount());
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
-        // when AccountOperation doesnot have a seller, get it from ao.customerAccount.customer.seller
-        firstEntry.setSeller(ao.getSeller() != null ? ao.getSeller() : ao.getCustomerAccount().getCustomer().getSeller());
-        firstEntry.setTax(null);
-        firstEntry.setAnalyticCode1(null);
-        firstEntry.setAnalyticCode2(null);
-        firstEntry.setAnalyticCode3(null);
+        firstEntry.setSeller(getSeller(ao));
+        firstEntry.setTax(tax);
 
         return firstEntry;
     }
 
+    private Seller getSeller(AccountOperation ao) {
+        return ao.getSeller() != null ? ao.getSeller() :
+                ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
+                        ao.getCustomerAccount().getCustomer().getSeller() : null;
+    }
+    
+    private void buildTaxesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
+        Query queryTax = getEntityManager().createQuery(
+                        "SELECT taxAg" + // amountTax
+                                " FROM TaxInvoiceAgregate taxAg LEFT JOIN AccountingCode ac ON taxAg.accountingCode = ac" +
+                                " WHERE taxAg.invoice.id = :" + PARAM_ID_INV)
+                .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
+
+        List<TaxInvoiceAgregate> taxResult = queryTax.getResultList();
+
+        if (taxResult != null && !taxResult.isEmpty()) {
+            log.info("Start creating taxes accounting entries for AO={} | INV_ID={} : {} invoice line to process",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId(), taxResult.size());
+
+            // INTRD-6292 : if the acounting code related to an article is null then use occT.contraAccountingCode before grouping,
+            // otherwise the default accounting code should be assigned before grouping
+            Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
+            taxResult.forEach(taxAgr -> {
+                AccountingCode taxACC = taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
+                if (taxACC == null) {
+                    throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                            TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                }
+
+                String groupKey = taxACC.getCode() + (taxAgr.getTax() == null ? "" : taxAgr.getTax().getCode());
+                BigDecimal amoutTax = taxAgr.getAmountTax() == null ? BigDecimal.ZERO : taxAgr.getAmountTax();
+
+                if (accountingCodeJournal.get(groupKey) == null) {
+                    JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
+                            occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                            amoutTax,
+                            taxAgr.getTax());
+                    accountingCodeJournal.put(groupKey, taxEntry);
+                } else {
+                    JournalEntry entry = accountingCodeJournal.get(groupKey);
+                    entry.setAmount(entry.getAmount().add(amoutTax));
+                }
+            });
+
+            saved.addAll(accountingCodeJournal.values());
+
+        } else {
+            log.info("No taxes accounting entries to create for AO={} | INV_ID={}",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId());
+        }
+    }
+
+    private void buildRevenusJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
+        Query query = getEntityManager().createQuery(
+                        "SELECT ivl" + // amountWithoutTax
+                                " FROM InvoiceLine ivL LEFT JOIN AccountingCode ac ON ivL.accountingArticle.accountingCode = ac" +
+                                " WHERE ivL.invoice.id = :" + PARAM_ID_INV)
+                .setParameter(PARAM_ID_INV, recordedInvoice.getInvoice().getId());
+
+        List<InvoiceLine> ivlResults = query.getResultList();
+
+        if (ivlResults != null && !ivlResults.isEmpty()) {
+            log.info("Start creating revenue accounting entries for AO={} | INV_ID={} : {} invoice line to process",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId(), ivlResults.size());
+
+            // INTRD-6292 : if the acounting code related to an article is null then use occT.contraAccountingCode before grouping,
+            // otherwise the default accounting code should be assigned before grouping
+            Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
+            ivlResults.forEach(invoiceLine -> {
+                // find default accounting code
+                AccountingCode revenuACC = invoiceLine.getAccountingArticle().getAccountingCode() != null ?
+                        invoiceLine.getAccountingArticle().getAccountingCode() : occT.getContraAccountingCode();
+
+                if (revenuACC == null) {
+                    throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                            REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                }
+
+                String groupKey = revenuACC.getCode() +
+                        (invoiceLine.getAccountingArticle().getAnalyticCode1() == null ? "" : invoiceLine.getAccountingArticle().getAnalyticCode1())
+                        + (invoiceLine.getAccountingArticle().getAnalyticCode2() == null ? "" : invoiceLine.getAccountingArticle().getAnalyticCode2())
+                        + (invoiceLine.getAccountingArticle().getAnalyticCode3() == null ? "" : invoiceLine.getAccountingArticle().getAnalyticCode3());
+
+                if (accountingCodeJournal.get(groupKey) == null) {
+                    accountingCodeJournal.put(groupKey,
+                            buildJournalEntryForRevenu(recordedInvoice, revenuACC, occT, invoiceLine));
+                } else {
+                    JournalEntry entry = accountingCodeJournal.get(groupKey);
+                    entry.setAmount(entry.getAmount().add(invoiceLine.getAmountWithoutTax()));
+                }
+
+            });
+
+            saved.addAll(accountingCodeJournal.values());
+
+        } else {
+            log.info("No revenue accounting entries to create for AO={} | INV_ID={}",
+                    recordedInvoice.getId(), recordedInvoice.getInvoice().getId());
+        }
+    }
+
+    private JournalEntry buildJournalEntryForRevenu(RecordedInvoice recordedInvoice, AccountingCode revenuACC,
+                                                    OCCTemplate occT, InvoiceLine invoiceLine) {
+        JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC,
+                occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+                invoiceLine.getAmountWithoutTax() == null ? BigDecimal.ZERO : invoiceLine.getAmountWithoutTax(),
+                null);
+        revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
+        revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
+        revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
+        return revenuEntry;
+    }    
 }
