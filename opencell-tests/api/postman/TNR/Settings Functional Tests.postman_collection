@@ -1824,7 +1824,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList` out of VALUE_STRING token\");"
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2288,7 +2288,7 @@
 										"exec": [
 											"// pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - size must be between 0 and 3;\");\r",
 											"\r",
-											"pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - size must be between 0 and 3\");"
+											"pm.variables.set(\"message\", \"Invalid values passed:     Currency.currencyCode: value 'TOO_LONG_NAME' - la taille doit être comprise entre 0 et 3\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2341,7 +2341,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");"
+											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\"\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2813,7 +2813,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Invalid values passed:     Language.languageCode: value 'TOO_LONG_NAME' - size must be between 0 and 3\");"
+											"pm.variables.set(\"message\", \"Invalid values passed:     Language.languageCode: value 'TOO_LONG_NAME' - la taille doit être comprise entre 0 et 3\");"
 										],
 										"type": "text/javascript"
 									}
@@ -3698,7 +3698,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList` out of VALUE_STRING token\");"
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList\");"
 										],
 										"type": "text/javascript"
 									}
@@ -7080,7 +7080,7 @@
 										"exec": [
 											"//pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList<org.meveo.api.dto.LanguageDescriptionDto>` out of VALUE_STRING token\");\r",
 											"\r",
-											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList`\");\r",
+											"pm.variables.set(\"message\", \"Cannot deserialize instance of `java.util.ArrayList\");\r",
 											"\r",
 											""
 										],
@@ -22411,21 +22411,6 @@
 	"auth": {
 		"type": "oauth2",
 		"oauth2": [
-			{
-				"key": "tokenType",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "accessToken",
-				"value": "{{access_token}}",
-				"type": "string"
-			},
-			{
-				"key": "client_authentication",
-				"value": "header",
-				"type": "string"
-			},
 			{
 				"key": "addTokenTo",
 				"value": "header",
