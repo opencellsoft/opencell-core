@@ -11771,7 +11771,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Custom field template with code SepaJob_ddRequestBuilder not found\");"
+											"pm.variables.set(\"message\", \"Custom field template with code SepaJob_ddRequestBuilder not found.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -11809,7 +11809,7 @@
 							"response": []
 						},
 						{
-							"name": "Read|JobInstance|JI|SUCCESS",
+							"name": "Read|JobInstance|JI|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -11861,13 +11861,22 @@
 							"response": []
 						},
 						{
-							"name": "Create|JobInstance|JI|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"name": "Create|JobInstance|JI|INVALID_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Custom field template with code SepaJob_ddRequestBuilder not found.\");"
 										],
 										"type": "text/javascript"
 									}
