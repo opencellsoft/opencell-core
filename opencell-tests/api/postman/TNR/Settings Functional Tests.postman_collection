@@ -11756,13 +11756,22 @@
 					"name": "Job Instance",
 					"item": [
 						{
-							"name": "CreateOrUpdate|JobInstance|JI|SUCCESS",
+							"name": "CreateOrUpdate|JobInstance|JI|INVALID_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"Custom field template with code SepaJob_ddRequestBuilder not found\");"
 										],
 										"type": "text/javascript"
 									}
@@ -14572,7 +14581,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"Unrecognized token 'NOT_EXIST': was expecting 'null', 'true', 'false'\");"
+											"pm.variables.set(\"message\", \"Unrecognized token 'NOT_EXIST'\");"
 										],
 										"type": "text/javascript"
 									}
