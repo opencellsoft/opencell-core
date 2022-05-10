@@ -11819,6 +11819,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"JobInstance with code=TEST_JI does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"protocolProfileBehavior": {
@@ -11915,59 +11924,6 @@
 						},
 						{
 							"name": "Update|JobInstance|JI|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.variables.set(\"message\",\"JobTemplate with code 'NOT_EXIST' doesn't exist.\")"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"jobTemplate\": \"{{not_exist}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}\r\n"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/jobInstance/update",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"jobInstance",
-										"update"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|JobInstance|JI|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
@@ -17825,7 +17781,7 @@
 					"name": "Payment Gateway",
 					"item": [
 						{
-							"name": "CreateOrUpdate|PaymentGateway|PG|SUCCESS",
+							"name": "CreateOrUpdate|PaymentGateway|PG|GENERIC_API_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -17840,7 +17796,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", );"
+											"pm.variables.set(\"message\", \"javax.transaction.RollbackException: ARJUNA016053: Could not commit transaction.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -17879,7 +17835,7 @@
 							"response": []
 						},
 						{
-							"name": "Read|PaymentGateway|PG|SUCCESS",
+							"name": "Read|PaymentGateway|PG|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -17894,8 +17850,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"haveDescription\", false);\r",
-											"pm.variables.set(\"haveCode\", false);"
+											"pm.variables.set(\"message\", \"PaymentGateway with code=TEST_PG does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -17942,13 +17897,22 @@
 							"response": []
 						},
 						{
-							"name": "Create|PaymentGateway|PG|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"name": "Create|PaymentGateway|PG|GENERIC_API_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"javax.transaction.RollbackException: ARJUNA016053: Could not commit transaction.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -18030,13 +17994,22 @@
 							"response": []
 						},
 						{
-							"name": "Update|PaymentGateway|PG|SUCCESS",
+							"name": "Update|PaymentGateway|PG|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"PaymentGateway with code=TEST_PG does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -18074,7 +18047,7 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate|PaymentGateway|PG|SUCCESS",
+							"name": "CreateOrUpdate|PaymentGateway|PG|MISSING_PARAMETER",
 							"event": [
 								{
 									"listen": "test",
@@ -18089,7 +18062,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", );"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: type, paymentMethodType, sellerCode.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -18128,7 +18101,7 @@
 							"response": []
 						},
 						{
-							"name": "Read updated|PaymentGateway|PG|SUCCESS",
+							"name": "Read updated|PaymentGateway|PG|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
@@ -18143,8 +18116,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"haveDescription\", false);\r",
-											"pm.variables.set(\"haveCode\", false);"
+											"pm.variables.set(\"message\", \"PaymentGateway with code=TEST_PG does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
