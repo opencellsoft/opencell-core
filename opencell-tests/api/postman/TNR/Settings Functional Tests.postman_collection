@@ -22412,6 +22412,16 @@
 		"type": "oauth2",
 		"oauth2": [
 			{
+				"key": "tokenType",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "{{access_token}}",
+				"type": "string"
+			},
+			{
 				"key": "addTokenTo",
 				"value": "header",
 				"type": "string"
