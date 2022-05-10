@@ -163,6 +163,8 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     @Schema(description = "accounting article code")
     private String accountingArticleCode;
     
+    @Schema(description = "Apply by article")
+    private Boolean applyByArticle;
     
     /**
      * Instantiates a new discount plan item dto.
@@ -196,6 +198,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.description = discountPlanItem.getDescription();
         this.priority=discountPlanItem.getPriority();
         this.accountingArticleCode= discountPlanItem.getAccountingArticle() != null ? discountPlanItem.getAccountingArticle().getCode() : null;
+        this.applyByArticle=discountPlanItem.isApplyByArticle();
     }
 
     /**
@@ -446,6 +449,14 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
 	public void setAccountingArticleCode(String accountingArticleCode) {
 		this.accountingArticleCode = accountingArticleCode;
+	}
+
+	public Boolean getApplyByArticle() {
+		return applyByArticle;
+	}
+
+	public void setApplyByArticle(Boolean applyByArticle) {
+		this.applyByArticle = applyByArticle;
 	}
 	
 	

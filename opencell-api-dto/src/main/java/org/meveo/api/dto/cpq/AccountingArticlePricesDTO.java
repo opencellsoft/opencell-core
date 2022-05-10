@@ -76,12 +76,6 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
     
     
     /**
-     * Discount item type
-     */
-    
-    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-    
-    /**
      * Discount value
      */
     private String discountValue;
@@ -160,14 +154,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	public void setDiscountPlanItemCode(String discountPlanItemCode) {
 		this.discountPlanItemCode = discountPlanItemCode;
 	}
-
-	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
-		return discountPlanItemType;
-	}
-
-	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
-		this.discountPlanItemType = discountPlanItemType;
-	}
+ 
 
 	public String getDiscountValue() {
 		return discountValue;

@@ -45,14 +45,16 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Discount plan
@@ -213,6 +215,10 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "discount_plan_id")
 	private List<DiscountPlan> incompatibleDiscountPlans;
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private Boolean applicableOnOverriddenPrice;
 
 	public enum DurationPeriodUnitEnum {
 		/**
@@ -466,6 +472,17 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
 
+    
+    public Boolean isApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		if(applicableOnOverriddenPrice!=null) {
+			this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+		}
+		
+	}
 
 
 }
