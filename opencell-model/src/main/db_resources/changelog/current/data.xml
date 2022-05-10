@@ -9987,7 +9987,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+	<changeSet id="#INTRD-6484" author="hichamElHaloui" dbms="postgres">
 		<sql>
 			with cte as
 					 (
