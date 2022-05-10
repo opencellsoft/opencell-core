@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.payment;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.payments.AccountingScheme;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -46,6 +48,12 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     private String longDescription;
 
     /**
+     * The longDescription I18N.
+     */
+    @Schema(description = "i18n a long description")
+    private List<LanguageDescriptionDto> longDescriptionsTranslated;
+
+    /**
      * The scriptCode.
      */
     @Schema(description = "the script code", required = true)
@@ -56,8 +64,8 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     public AccountingSchemeDto(AccountingScheme accountingScheme) {
         code = accountingScheme.getCode();
         description = accountingScheme.getDescription();
-        longDescription = accountingScheme.getLongDescription();
         scriptCode = Optional.ofNullable(accountingScheme.getScriptInstance()).map(ScriptInstance::getCode).orElse(null);
+        longDescriptionsTranslated = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(accountingScheme.getLongDescriptionI18n());
     }
 
     public String getLongDescription() {
@@ -75,4 +83,13 @@ public class AccountingSchemeDto extends BusinessEntityDto {
     public void setScriptCode(String scriptCode) {
         this.scriptCode = scriptCode;
     }
+
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
+    }
+
 }

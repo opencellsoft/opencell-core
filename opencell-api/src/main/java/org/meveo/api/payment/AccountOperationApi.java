@@ -68,6 +68,7 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.security.CurrentUser;
@@ -176,15 +177,19 @@ public class AccountOperationApi extends BaseApi {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
-        } else {
-            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         if(aoSubclassObject instanceof RecordedInvoice) {
+        	accountOperation = new RecordedInvoice();
             accountOperation.setAccountingDate(postData.getTransactionDate());
         }
 
+        if(aoSubclassObject instanceof Refund) {
+        	accountOperation = new Refund();
+        }
+
         if(aoSubclassObject instanceof Payment) {
+        	accountOperation = new Payment();
             accountOperation.setAccountingDate(postData.getCollectionDate());
         }
 
@@ -231,7 +236,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
-        accountOperation.setCollectionDate(postData.getCollectionDate());
+        accountOperation.setCollectionDate(postData.getCollectionDate() == null ? postData.getBankCollectionDate() : postData.getCollectionDate());
         
         if (!StringUtils.isBlank(postData.getJournalCode())) {
         	Journal journal = journalService.findByCode(postData.getJournalCode());

@@ -158,7 +158,7 @@ public class InvoiceLinesFactory {
             String param1 = (String) record.get("parameter_1");
             String param2 = (String) record.get("parameter_2");
             String param3 = (String) record.get("parameter_3");
-        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
+        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);

@@ -18,6 +18,15 @@
 
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
@@ -29,23 +38,35 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -54,14 +75,6 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -374,6 +387,16 @@ public class CustomerAccountApi extends AccountEntityApi {
 					isFirst = false;
 				}
 				PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
+				try {
+					populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethodFromDto, false, true);
+
+				} catch (MissingParameterException | InvalidParameterException e) {
+					log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+					throw e;
+				} catch (Exception e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw e;
+				}
 
 				int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
 				if (index < 0) {
