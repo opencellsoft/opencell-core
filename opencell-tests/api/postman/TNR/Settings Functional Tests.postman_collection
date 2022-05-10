@@ -11933,6 +11933,15 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"message\", \"JobInstance with code=TEST_JI does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
