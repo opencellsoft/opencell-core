@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,6 +26,10 @@ import org.meveo.model.payments.OperationCategoryEnum;
 @Table(name = "security_deposit_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "security_deposit_transaction_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "SecurityDepositTransaction.getSecurityDepositCodesByAoId",
+                query = "SELECT sd.securityDeposit.code FROM SecurityDepositTransaction sd WHERE sd.accountOperation.id = :aoId")
+})
 public class SecurityDepositTransaction extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
     
