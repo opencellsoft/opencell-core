@@ -110,7 +110,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         if (billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
                 || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED) {
             if (billingRun.getStatus() == NEW && executeInvoicingJob) {
-                Map<String, Object> invoiceLineJobParams = new HashMap();
+            	Map<String, Object> invoiceLineJobParams = new HashMap<>();
                 invoiceLineJobParams.put(INVOICE_LIENS_JOB_PARAMETERS,
                         asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                 null, billingRun.getReferenceCode())));
@@ -143,6 +143,8 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     }
                 }
                 if (initialStatus != billingRun.getStatus()) {
+                	billingRun.setXmlJobExecutionResultId(null);
+                    billingRun.setPdfJobExecutionResultId(null);
                     billingRun = billingRunService.update(billingRun);
                 }
                 if (executeInvoicingJob) {
@@ -159,7 +161,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     private long executeJob(JobInstance jobInstance, Map<String, Object> jobParams) {
         try {
             if (jobInstance == null) {
-                throw new BusinessException("Job with code " +  jobInstance.getCode() + " not found");
+            	throw new BusinessException("Cannot execute job");
             }
             jobInstance.setRunTimeValues(jobParams);
             return jobExecutionService.executeJob(jobInstance, jobParams, API);

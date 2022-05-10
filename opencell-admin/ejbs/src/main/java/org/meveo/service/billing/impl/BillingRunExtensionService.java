@@ -18,6 +18,8 @@
 
 package org.meveo.service.billing.impl;
 
+import static java.util.Optional.ofNullable;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -98,4 +100,16 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         updateNoCheck(billingRun);
         return billingRun;
     }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun updateBillingRunWithXMLPDFExecutionResult(Long billingRunId, Long xmlExecutionResultId,
+                                                                Long pdfExecutionResultId) throws BusinessException {
+        BillingRun billingRun = findById(billingRunId);
+        ofNullable(xmlExecutionResultId).ifPresent(xmlExecutionId -> billingRun.setXmlJobExecutionResultId(xmlExecutionId));
+        ofNullable(pdfExecutionResultId).ifPresent(pdfExecutionId -> billingRun.setPdfJobExecutionResultId(pdfExecutionId));
+        return updateNoCheck(billingRun);
+
+    }
+
 }
