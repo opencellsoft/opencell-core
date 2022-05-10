@@ -457,8 +457,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
-            if(userAccount.getId() == subscription.getUserAccount().getId()
-                    && userAccount.getCode().equals(subscription.getUserAccount().getCode())) {
+            if(userAccount == null
+                    || (userAccount.getId() == subscription.getUserAccount().getId()
+                    && userAccount.getCode().equals(subscription.getUserAccount().getCode()))) {
                 Element subscriptionTag = doc.createElement("subscription");
                 subscriptionTag.setAttribute("id", subscription.getId() + "");
                 subscriptionTag.setAttribute("code", subscription.getCode());
