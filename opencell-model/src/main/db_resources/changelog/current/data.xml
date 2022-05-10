@@ -9788,6 +9788,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="timerentity_id" valueNumeric="-1" />
 			<column name="uuid" value="AccountingSchemesJob" />
+			<column name="cf_values" value='{"nbRuns": [{"long": 1}], "waitingMillis": [{"long": 0}], "onlyClosedPeriods": [{"boolean": false}]}'/>
 		</insert>
 	</changeSet>
 
@@ -9988,5 +9989,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>

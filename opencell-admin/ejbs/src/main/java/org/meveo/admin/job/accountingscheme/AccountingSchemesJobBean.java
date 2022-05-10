@@ -61,9 +61,10 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
         Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
                 .forEach(accountOperation -> {
+                	OCCTemplate occT = null;
                     try {
                         // Find OOC Template
-                        OCCTemplate occT = occTemplateService.findByCode(accountOperation.getCode());
+                        occT = occTemplateService.findByCode(accountOperation.getCode());
 
                         if (occT == null) {
                             log.warn("No OCCTemplate found for AccountOperation [id={}]...skip AccountingSchemesJob process for this instance", accountOperation.getId());
@@ -73,12 +74,11 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         if (occT.getAccountingScheme() == null) {
                             log.warn("Ignored account operation (id={}, type={}, code={}): no scheme set",
                                     accountOperation.getId(), accountOperation.getType(), accountOperation.getCode());
-                            accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
                             throw new BusinessException("Ignored account operation (id=" + accountOperation.getId() + ", type=" + accountOperation.getType() + ")" +
-                                    ": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
+                            		": no scheme set for account operation type (id=" + occT.getId() + ", code=" + occT.getCode() + ")");
                         }
 
-                        ScriptInterface script = findScript(accountOperation, occT.getAccountingScheme(), jobExecutionResult);
+                        ScriptInterface script = findScript(accountOperation, occT.getAccountingScheme());
 
                         Map<String, Object> methodContext = new HashMap<>();
                         methodContext.put(Script.CONTEXT_ENTITY, accountOperation);
@@ -89,12 +89,10 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
                         List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
                         log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                                createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
-                        if (!createdEntries.isEmpty()) {
-                            accountOperation.setStatus(AccountOperationStatus.EXPORTED);
-                        } else {
-                            accountOperation.setStatus(AccountOperationStatus.EXPORT_FAILED);
-                        }
+                                createdEntries == null ? 0 : createdEntries.size(),
+                                accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
+                        		 
+                        accountOperation.setStatus(AccountOperationStatus.EXPORTED);
 
                         accountOperationService.update(accountOperation);
 
@@ -104,7 +102,9 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                     } catch (Exception e) {
                         log.error("Error during process AO={} - {}", accountOperation.getId(), e.getMessage());
                         log.debug("Error during process AO={} - {}", accountOperation.getId(), e.getMessage(), e);
-                        jobExecutionResult.registerError("Error in Account operation (id=" + accountOperation.getId() + ") : " + e.getMessage());
+                        jobExecutionResult.registerError(buildTechnicalError(accountOperation,
+                                (occT == null ? "UNDEFINED" : occT.getAccountingScheme().getScriptInstance().getCode()), e));
+                        accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED);
                         throw new BusinessException(e);
                     }
 
@@ -112,16 +112,20 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
     }
 
-    private ScriptInterface findScript(AccountOperation ao, AccountingScheme as, JobExecutionResultImpl jobExecutionResult) {
+    private ScriptInterface findScript(AccountOperation ao, AccountingScheme as) {
         try {
             return scriptInstanceService.getScriptInstance(as.getScriptInstance().getCode());
         } catch (BusinessException e) {
             log.error("Error during loading script by code={} | {}", as.getScriptInstance().getCode(), e.getMessage(), e);
             accountOperationService.updateStatusInNewTransaction(List.of(ao), AccountOperationStatus.EXPORT_FAILED);
-            throw new BusinessException("Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
-                    " couldn't be processed by accounting scheme (code=" + as.getScriptInstance().getCode() + "): " + e.getMessage());
+            throw new BusinessException(buildTechnicalError(ao, as.getScriptInstance().getCode(), e));
         }
 
     }
+    
+    private String buildTechnicalError(AccountOperation ao, String scriptCode, Exception e) {
+        return "Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
+                " couldn't be processed by accounting scheme (code=" + scriptCode + "): " + e.getMessage();
+    }    
 
 }

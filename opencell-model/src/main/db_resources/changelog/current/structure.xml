@@ -12511,4 +12511,14 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+	<changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI">
+        <addColumn tableName="ar_occ_template">
+            <column name="contra_accounting_code2_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+	</changeSet>
+    
 </databaseChangeLog>
