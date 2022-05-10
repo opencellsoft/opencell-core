@@ -29,9 +29,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 
 /**
@@ -46,6 +48,10 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private InvoiceService invoiceService;
+    
+    @Inject
+
+    private BillingRunService billingRunService;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -73,6 +79,14 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
                 log.error("Can not extract billing run ID from a parameter {}", parameter, e);
                 jobExecutionResult.addErrorReport(e.getMessage());
             }
+        }
+        
+        if (billingRunId != null) {
+        	BillingRun br = billingRunService.findById(billingRunId);
+        	if (br != null) {
+        		br.setPdfJobExecutionResultId(jobExecutionResult.getId());
+        		billingRunService.update(br);
+        	}
         }
 
         List<Long> ids = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);

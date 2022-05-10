@@ -2583,6 +2583,7 @@
             <column name="filters" type="${type.json}" />
             <column name="invoice_type_id" type="bigint" />
             <column name="run_type" type="varchar(255)" />
+            <column name="pdf_job_execution_result_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -17529,6 +17530,7 @@
     <changeSet id="#INTRD-5881_20220322" author="aelmalki" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
     <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
