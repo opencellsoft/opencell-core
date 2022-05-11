@@ -18,19 +18,20 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * DTO to create or update a quote
@@ -108,10 +109,16 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
 
 	public String getStringValue() {
+		if(StringUtils.isBlank(stringValue))
+			stringValue=null;
+		
 		return stringValue;
 	}
 
 	public void setStringValue(String stringValue) {
+		if(StringUtils.isBlank(stringValue))
+			stringValue=null;
+		
 		this.stringValue = stringValue;
 	}
 

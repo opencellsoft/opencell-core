@@ -267,6 +267,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @OrderColumn(name = "INDX")
     protected List<CounterInstance> accumulatorCounterInstances = new ArrayList<>();
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_discounts_on_overriden_price")
+    private Boolean applyDiscountsOnOverridenPrice;
+    
+    @Column(name = "overcharged_unit_amount_without_tax")
+   	private BigDecimal overchargedUnitAmountWithoutTax;
+    
+    
     /**
      * Resolved taxClass
      */
@@ -638,4 +646,22 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public void setChargeType(String chargeType) {
         this.chargeType = chargeType;
     }
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+
+	public BigDecimal getOverchargedUnitAmountWithoutTax() {
+		return overchargedUnitAmountWithoutTax;
+	}
+
+	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
+		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
+	}
+    
+    
 }

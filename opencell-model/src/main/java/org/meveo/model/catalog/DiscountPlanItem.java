@@ -197,6 +197,10 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@Column(name = "description", length = 255)
 	private String description;
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "apply_by_article")
+	private boolean applyByArticle=false;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -438,6 +442,16 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public boolean isApplyByArticle() {
+		return applyByArticle;
+	}
+
+	public void setApplyByArticle(boolean applyByArticle) {
+		this.applyByArticle = applyByArticle;
+	}
+	
+	
 
 	
 
