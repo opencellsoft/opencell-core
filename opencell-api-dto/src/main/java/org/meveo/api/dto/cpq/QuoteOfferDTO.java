@@ -152,7 +152,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
     
     /** Subscription */
 	@Schema(description = "The code of the subscription")
-	private String SubscriptionCode;
+	private String subscriptionCode;
    
 	public QuoteOfferDTO() {
         super();
@@ -455,11 +455,11 @@ public class QuoteOfferDTO extends BusinessEntityDto {
     }
 
 	public String getSubscriptionCode() {
-		return SubscriptionCode;
+		return subscriptionCode;
 	}
 
 	public void setSubscriptionCode(String subscriptionCode) {
-		SubscriptionCode = subscriptionCode;
+		this.subscriptionCode = subscriptionCode;
 	}
     
 }
