@@ -91,14 +91,6 @@ public class OCCTemplate extends BusinessEntity {
     @JoinColumn(name = "contra_accounting_code2_id")
     private AccountingCode contraAccountingCode2;
 
-    /**
-     * contra accounting code 2
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contra_accounting_code2_id")
-    private AccountingCode contraAccountingCode2;
-
-
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
     }
@@ -153,12 +145,12 @@ public class OCCTemplate extends BusinessEntity {
     }
     
     public Journal getJournal() {
-		return journal;
-	}
+        return journal;
+    }
 
-	public void setJournal(Journal journal) {
-		this.journal = journal;
-	}
+    public void setJournal(Journal journal) {
+        this.journal = journal;
+    }
 
     public AccountingScheme getAccountingScheme() {
         return accountingScheme;
@@ -178,15 +170,6 @@ public class OCCTemplate extends BusinessEntity {
 
     public AccountingCode getContraAccountingCode2() {
         return contraAccountingCode2;
-
-
-	public void setContraAccountingCode2(AccountingCode contraAccountingCode2) {
-		this.contraAccountingCode2 = contraAccountingCode2;
-	}
-
-
-    public AccountingCode getCommissionAccountingCode() {
-        return commissionAccountingCode;
     }
 
     public void setContraAccountingCode2(AccountingCode commissionAccountingCode) {

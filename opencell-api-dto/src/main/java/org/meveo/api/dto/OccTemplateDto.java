@@ -72,14 +72,9 @@ public class OccTemplateDto extends BusinessEntityDto {
     /** contract accounting code */
     @Schema(description = "contract accounting code")
     @XmlElement(name = "contraAccountingCode")
-    private String contractAccountingCode ;
+    private String contractAccountingCode;
 
     /** commission accounting code */
-    @Schema(description = "contra Accounting Code 2")
-    @XmlElement(name = "contraAccountingCode2")
-    private String contraAccountingCode2;
-
-    /** contract accounting code 2 */
     @Schema(description = "contra Accounting Code 2")
     @XmlElement(name = "contraAccountingCode2")
     private String contraAccountingCode2;
@@ -108,9 +103,6 @@ public class OccTemplateDto extends BusinessEntityDto {
             contractAccountingCode = occTemplate.getContraAccountingCode().getCode();
         }
 
-        if(occTemplate.getContraAccountingCode2() != null) {
-            contraAccountingCode2 = occTemplate.getContraAccountingCode2().getCode();
-        }
         if(occTemplate.getContraAccountingCode2() != null) {
             contraAccountingCode2 = occTemplate.getContraAccountingCode2().getCode();
         }
@@ -202,8 +194,8 @@ public class OccTemplateDto extends BusinessEntityDto {
      * @return the journal code
      */
     public String getJournalCode() {
-		return journalCode;
-	}
+        return journalCode;
+    }
 
     /**
      * Sets journal code.
@@ -211,8 +203,8 @@ public class OccTemplateDto extends BusinessEntityDto {
      * @param journalCode the journal code
      */
     public void setJournalCode(String journalCode) {
-		this.journalCode = journalCode;
-	}
+        this.journalCode = journalCode;
+    }
 
     /**
      * Gets accounting scheme.
@@ -247,13 +239,4 @@ public class OccTemplateDto extends BusinessEntityDto {
     public void setContraAccountingCode2(String contraAccountingCode2) {
         this.contraAccountingCode2 = contraAccountingCode2;
     }
-
-	public String getContraAccountingCode2() {
-		return contraAccountingCode2;
-	}
-
-	public void setContraAccountingCode2(String contraAccountingCode2) {
-		this.contraAccountingCode2 = contraAccountingCode2;
-	}
-
 }
