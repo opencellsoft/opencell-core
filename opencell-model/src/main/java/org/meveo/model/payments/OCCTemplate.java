@@ -178,7 +178,7 @@ public class OCCTemplate extends BusinessEntity {
 
     public AccountingCode getContraAccountingCode2() {
         return contraAccountingCode2;
-
+    }
 
 	public void setContraAccountingCode2(AccountingCode contraAccountingCode2) {
 		this.contraAccountingCode2 = contraAccountingCode2;
