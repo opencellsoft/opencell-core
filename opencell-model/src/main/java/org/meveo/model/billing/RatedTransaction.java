@@ -182,8 +182,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids") })
 
 @NamedNativeQueries({
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
-        @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from billing_rated_transaction_pending") })
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "update {h-schema}billing_rated_transaction rt set (status, updated, aggregate_id_f, billing_run_id, invoice_id) =  (select 'BILLED', now(), pending.aggregate_id_f, pending.billing_run_id, pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id) where status='OPEN' and rt.id in (select id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id)"),
+        @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from {h-schema}billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
