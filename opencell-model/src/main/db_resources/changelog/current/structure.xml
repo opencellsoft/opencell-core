@@ -12729,7 +12729,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="discount_plan_item_id" type="bigint" />
 		</addColumn>
 	
-		<addColumn tableName="cpq_invoice_line">
+		<addColumn tableName="billing_invoice_line">
 			<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
@@ -12744,7 +12744,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
       
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
  
       </changeSet>
