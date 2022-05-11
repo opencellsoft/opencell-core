@@ -358,8 +358,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
         ServiceInstance serviceInstance = walletOperation.getServiceInstance() != null
                 ? serviceInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
-        ChargeInstance chargeInstance = walletOperation.getServiceInstance() != null
-                ? chargeInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
+        ChargeInstance chargeInstance = walletOperation.getChargeInstance() != null
+                ? chargeInstanceService.findById(walletOperation.getChargeInstance().getId()) : null;
         Product product = serviceInstance != null
                 ? serviceInstance.getProductVersion() != null
                 ? serviceInstance.getProductVersion().getProduct() : null : null;
