@@ -37,11 +37,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
@@ -50,17 +47,13 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
@@ -71,22 +64,16 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
@@ -135,13 +122,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @Inject
     private FilterService filterService;
 
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-    
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-     
-    
+
     /**
      *
      * @param ids
@@ -862,38 +843,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         return refundWo;
     }
-    public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
-    	if(chargeInstance.getServiceInstance()!=null) {
-  		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-      	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-              .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
-  	        if(anyFalseAttribute) return false;
-  	}
-     
 
-      if (StringUtils.isBlank(filterExpression)) {
-          return true;
-      }
-
-      return ValueExpressionWrapper.evaluateToBooleanOneVariable(filterExpression, "ci", chargeInstance);
-    }
-    
-    
-    public boolean ignoreChargeTemplate(ChargeInstance chargeInstance){
-        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        if(serviceInstance != null && serviceInstance.getProductVersion() != null){
-            boolean dontApplyCharge = serviceInstance.getAttributeInstances()
-                    .stream()
-                    .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                    .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-                    .anyMatch(attributeInstance -> !Boolean.valueOf(attributeInstance.getStringValue()));
-            if(dontApplyCharge){
-                log.debug(String.format("charge %s will be ignored, cause it was ignored by an attribute", chargeInstance.getChargeTemplate().getCode()));
-                return true;
-            }
-        }
-        return false;
-    }
     /**
      * Detach WOs From subscription.
      *
@@ -914,36 +864,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public List<WalletOperation> getDiscountWalletOperation(List<Long> woIds) {
         return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
     }
-    /**
-     * Determine recurring period end date
-     *
-     * @param chargeInstance Charge instance
-     * @param date Date to calculate period for
-     * @return Recurring period end date
-     */
-    private Calendar resolveCalendar(RecurringChargeInstance chargeInstance) {
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
-        Calendar cal = chargeInstance.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate, chargeInstance);
-        }
-        return cal;
-    }
     
-    
-
-    public Date getRecurringPeriodEndDate(RecurringChargeInstance chargeInstance, Date date) {
-
-        Calendar cal = resolveCalendar(chargeInstance);
-        if (cal == null) {
-            throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
-        }
-
-        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
-
-        Date nextChargeDate = cal.nextCalendarDate(cal.truncateDateTime(date));
-        return nextChargeDate;
-    }
 //    @Override
 //    public void create(WalletOperation entity) throws BusinessException {
 //    	if(entity.getId() == null)

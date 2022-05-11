@@ -113,8 +113,8 @@ public class Attribute extends EnableBusinessCFEntity{
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "cpq_assigned_attributes", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "assigned_attribute_id"))
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
     @Column(name = "unit_nb_decimal")
@@ -351,7 +351,4 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setElValue(String elValue) {
 		this.elValue = elValue;
 	}
- 
-	
-	
 }

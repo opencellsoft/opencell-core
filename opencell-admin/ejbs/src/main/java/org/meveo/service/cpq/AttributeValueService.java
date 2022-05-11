@@ -10,10 +10,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -150,12 +148,15 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 
         		}
 
-    	} catch (Exception e) {
+		} catch (Exception e) {
+
 			log.error("Error when trying to get AttributeValue : ", e);
+
 			throw new BusinessException(e.getMessage());
+
 		}
-    	AttributeValue attributeValue=(AttributeValue)attributeInstance; 
-    	return attributeValue;
+
+    	return (AttributeValue)attributeInstance;
+
     	}
-     
 }

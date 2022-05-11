@@ -74,7 +74,7 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
     /**
      * quote
      */
-	@ManyToOne(fetch = LAZY)
+    @ManyToOne
 	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private CpqQuote quote;
@@ -167,11 +167,6 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "cpq_quote_version_media", joinColumns = @JoinColumn(name = "cpq_quote_version_id"), inverseJoinColumns = @JoinColumn(name = "cpq_media_id"))
 	private List<Media> medias = new ArrayList<Media>();
-	
-	
-	@OneToMany(mappedBy = "quoteVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("id")
-	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
     
 	/**
 	 * @return the quoteVersion
@@ -380,14 +375,6 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
-	}
-
-	public List<QuotePrice> getQuotePrices() {
-		return quotePrices;
-	}
-
-	public void setQuotePrices(List<QuotePrice> quotePrices) {
-		this.quotePrices = quotePrices;
 	}
 	
 	

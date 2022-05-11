@@ -971,7 +971,7 @@ public class ProductApi extends BaseApi {
                     }
                     offerProduct.setCommercialRules(commercialRuleDtoList);
                     boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> rule.getTargetAttribute() == null);
-                
+                    //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), null);
                     offerProduct.setSelectable(isSelectable);
                 }
 
@@ -991,7 +991,7 @@ public class ProductApi extends BaseApi {
                         }
                         attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
-                       
+                        //processReplacementRules(attributeCommercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                         attributeDto.setSelectable(isSelectable);
                     }
                     List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
@@ -1010,7 +1010,7 @@ public class ProductApi extends BaseApi {
                         }
                         groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
-                         
+                        //processReplacementRules(groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(), null);
                         groupedAttributeDTO.setSelectable(isSelectable);
                     }
                     List<Long> sourceGroupedAttributeRules = commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
@@ -1030,7 +1030,7 @@ public class ProductApi extends BaseApi {
                 }
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                 boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), rule -> true);
-                
+                //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                 attributeDto.setSelectable(isSelectable);
             }
             List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);

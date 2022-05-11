@@ -41,6 +41,6 @@ public enum PriceTypeEnum {
 		}else if(chargeInstance instanceof UsageChargeInstance) {
 			return USAGE;
 		}
-		return ONE_SHOT_OTHER; //FIXED Discount with applyByArticle=false
+		return FIXED_DISCOUNT;
 	}
 }

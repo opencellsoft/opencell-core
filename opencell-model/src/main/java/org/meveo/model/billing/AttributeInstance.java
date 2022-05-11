@@ -30,8 +30,7 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
     @ManyToOne
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
-    
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 

@@ -1,39 +1,24 @@
 package org.meveo.service.catalog.impl;
-import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.FlushModeType;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -43,12 +28,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.catalog.PricePlanMatrixColumn;
-import org.meveo.model.catalog.PricePlanMatrixLine;
-import org.meveo.model.catalog.PricePlanMatrixValue;
-import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -62,6 +42,8 @@ import org.meveo.service.cpq.ProductService;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import static java.time.temporal.ChronoField.*;
 
 /**
  * @author Tarik FA.
@@ -193,7 +175,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @SuppressWarnings("unchecked")
 	public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
-                    .setParameter("pricePlanMatrixCode", ppmCode).setFlushMode(FlushModeType.COMMIT)
+                    .setParameter("pricePlanMatrixCode", ppmCode)
                     .getResultList();
         
         return result.isEmpty()?null:result.get(0);

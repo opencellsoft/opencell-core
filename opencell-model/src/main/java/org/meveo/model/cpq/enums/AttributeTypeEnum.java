@@ -133,8 +133,13 @@ public enum AttributeTypeEnum {
 
 		@Override
 		public Object getValue(AttributeValue attributeValue) {
-			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
+			List<Double> values = (List<Double>) attributeValue.getAssignedAttributeValue()
+					.stream()
+					.map(att -> ((AttributeValue) att).getAttribute().getAttributeType().getValue((AttributeValue) att))
+					.collect(Collectors.toList());
+			return values.stream().reduce(0.0, Double::sum);
 		}
+
 	},
 
     COUNT {

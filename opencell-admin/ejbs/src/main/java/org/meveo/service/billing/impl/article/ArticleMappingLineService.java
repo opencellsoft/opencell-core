@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -38,7 +37,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		if(chargeTemplate != null)
 			queryBuilder.addCriterionEntity("am.chargeTemplate.code", chargeTemplate.getCode());
 		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.setFlushMode(FlushModeType.COMMIT).getResultList();
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
