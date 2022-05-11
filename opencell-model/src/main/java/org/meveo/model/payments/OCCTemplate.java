@@ -94,6 +94,7 @@ public class OCCTemplate extends BusinessEntity {
     /**
      * contra accounting code 2
      */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contra_accounting_code2_id")
     private AccountingCode contraAccountingCode2;
 
