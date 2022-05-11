@@ -72,7 +72,9 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @NamedQueries({
         @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
         @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids order by br.id asc"),        
-        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
+        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
+        @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
+        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
@@ -385,6 +387,12 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(value = EnumType.STRING)
     @Column(name = "run_type")
     private BillingRunTypeEnum runType;
+    
+    @Column(name = "pdf_job_execution_result_id")
+    private Long pdfJobExecutionResultId;
+    
+    @Column(name = "xml_job_execution_result_id")
+    private Long xmlJobExecutionResultId;
 
 
 
@@ -905,5 +913,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
 	public void setRunType(BillingRunTypeEnum runType) {
 		this.runType = runType;
+	}
+
+	public Long getXmlJobExecutionResultId() {
+		return xmlJobExecutionResultId;
+	}
+
+	public void setXmlJobExecutionResultId(Long xmlJobExecutionResultId) {
+		this.xmlJobExecutionResultId = xmlJobExecutionResultId;
+	}
+
+	public Long getPdfJobExecutionResultId() {
+		return pdfJobExecutionResultId;
+	}
+
+	public void setPdfJobExecutionResultId(Long pdfJobExecutionResultId) {
+		this.pdfJobExecutionResultId = pdfJobExecutionResultId;
 	}
 }

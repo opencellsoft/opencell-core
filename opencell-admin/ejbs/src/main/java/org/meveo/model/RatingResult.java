@@ -48,6 +48,11 @@ public class RatingResult {
     private boolean fullyRated;
 
     /**
+     * Wallet operation as result of rating an EDR
+     */
+    private WalletOperation walletOperation;
+    
+    /**
      * Wallet operations as result of rating an EDR
      */
     private List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
@@ -256,4 +261,14 @@ public class RatingResult {
 	public void setEligibleFixedDiscountItems(Set<DiscountPlanItem> eligibleFixedDiscountItems) {
 		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
 	}
+
+	public WalletOperation getWalletOperation() {
+		return walletOperation;
+	}
+
+	public void setWalletOperation(WalletOperation walletOperation) {
+		this.walletOperation = walletOperation;
+	}
+	
+	
 }

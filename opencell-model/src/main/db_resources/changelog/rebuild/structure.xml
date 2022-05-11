@@ -2329,6 +2329,8 @@
             <column name="journal_id" type="bigint" />
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
+            <column name="commission_accounting_code_id" type="bigint"/>
+            <column name="contra_accounting_code2_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -2583,6 +2585,8 @@
             <column name="filters" type="${type.json}" />
             <column name="invoice_type_id" type="bigint" />
             <column name="run_type" type="varchar(255)" />
+            <column name="pdf_job_execution_result_id" type="bigint" />
+            <column name="xml_job_execution_result_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2664,6 +2668,8 @@
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
 			<column name="reactivation_date" type="datetime" />
+			<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+		    <column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -4117,6 +4123,7 @@
             <column name="accounting_article_id" type="bigint"></column>
             <column name="priorty" type="bigint"></column>
             <column name="price_plan_matrix_id" type="bigint" />
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -9713,6 +9720,8 @@
     		<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
+			<column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
+			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10296,7 +10305,10 @@
     		<column name="quantity" type="numeric(19,2)" />
     		<column name="discounted_order_price" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
-
+            <column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+    		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -11737,6 +11749,19 @@
 	                             constraintName="open_order_template_articles_pkey"
 	                             tableName="open_order_template_articles"/>
 	    </changeSet>
+	<changeSet id="rebuild-str-tbl-504" author="Mbarek-Ay">
+		<createTable tableName="cpq_assigned_attributes">
+			<column name="attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="assigned_attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey
+			columnNames="attribute_id,assigned_attribute_id"
+			tableName="cpq_assigned_attributes" />
+	</changeSet>
 
     <!-- end tables -->
 
@@ -15963,6 +15988,30 @@
 	                                 referencedTableName="billing_accounting_article"
 	                                 referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="rebuild-str-fk-540-1640-fk1" author="Mbarek-Ay">
+       <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+      </changeSet>
+    
+      <changeSet id="rebuild-str-fk-540-1640-fk2" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+      </changeSet>
+
+	      <changeSet id="rebuild-str-fk5-540-6296" author="Mbarek-Ay">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
+       </changeSet>
+
+
+    <changeSet id="#INTRD-5994-20220328-fk" author="HichamELHALOUI">
+        <addForeignKeyConstraint baseColumnNames="commission_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_commission_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16442,6 +16491,13 @@
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="accounting_journal_entry"
                                  constraintName="fk_accounting_entry_tax" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+
+    <changeSet id="#INTRD-6160-20220401-fk" author="HichamELHALOUI">
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code2_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code2_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17527,8 +17583,20 @@
     <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim"/>
     <changeSet id="#INTRD-4702-20220321" author="ZBariki"/>
     <changeSet id="#INTRD-5881_20220322" author="aelmalki" />
+    <changeSet id="#INTRD-5921-20220324" author="AmineBENAICHA" />
+	<changeSet author="TarikRabeh" id="#INTRD-5846-24032022" />
+    <changeSet id="#INTRD-5994-20220328" author="HichamELHALOUI" />
     <changeSet id="#INTRD-6298_20220405" author="aelmalki" />
     <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-6160-20220401" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA" />
+    <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
+	<changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
+	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

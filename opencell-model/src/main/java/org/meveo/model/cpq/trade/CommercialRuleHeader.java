@@ -3,6 +3,7 @@ package org.meveo.model.cpq.trade;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
+@Cacheable
 @Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
  @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
@@ -49,8 +51,8 @@ import org.meveo.model.cpq.tags.Tag;
 	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode")
+	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null"),
+	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null")
 })
 public class CommercialRuleHeader extends BusinessEntity {
 

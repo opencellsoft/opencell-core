@@ -74,6 +74,16 @@ public class OccTemplateDto extends BusinessEntityDto {
     @XmlElement(name = "contraAccountingCode")
     private String contractAccountingCode ;
 
+    /** commission accounting code */
+    @Schema(description = "commission accounting code")
+    @XmlElement(name = "commissionAccountingCode")
+    private String commissionAccountingCode;
+
+    /** contract accounting code 2 */
+    @Schema(description = "contra Accounting Code 2")
+    @XmlElement(name = "contraAccountingCode2")
+    private String contraAccountingCode2;
+
     /**
      * Instantiates a new occ template dto.
      */
@@ -96,6 +106,13 @@ public class OccTemplateDto extends BusinessEntityDto {
         }
         if(occTemplate.getContraAccountingCode() != null) {
             contractAccountingCode = occTemplate.getContraAccountingCode().getCode();
+        }
+
+        if(occTemplate.getCommissionAccountingCode() != null) {
+            commissionAccountingCode = occTemplate.getCommissionAccountingCode().getCode();
+        }
+        if(occTemplate.getContraAccountingCode2() != null) {
+            contraAccountingCode2 = occTemplate.getContraAccountingCode2().getCode();
         }
     }
 
@@ -222,5 +239,21 @@ public class OccTemplateDto extends BusinessEntityDto {
     public void setContractAccountingCode(String contractAccountingCode) {
         this.contractAccountingCode = contractAccountingCode;
     }
+
+    public String getCommissionAccountingCode() {
+        return commissionAccountingCode;
+    }
+
+    public void setCommissionAccountingCode(String commissionAccountingCode) {
+        this.commissionAccountingCode = commissionAccountingCode;
+    }
+
+	public String getContraAccountingCode2() {
+		return contraAccountingCode2;
+	}
+
+	public void setContraAccountingCode2(String contraAccountingCode2) {
+		this.contraAccountingCode2 = contraAccountingCode2;
+	}
 
 }
