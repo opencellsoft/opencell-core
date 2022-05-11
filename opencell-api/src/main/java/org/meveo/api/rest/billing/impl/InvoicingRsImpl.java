@@ -18,11 +18,16 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -32,10 +37,6 @@ import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -211,6 +212,21 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.debug("validateInvoice Response={}", result);
         return result;
 	}
+	
+	@Override
+
+    public ActionStatus invalidateInvoiceDocuments(Long billingRunId, InvalidateInvoiceDocumentsDto invalidateInvoiceDocumentsDto) {
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("invalidateInvoiceDocuments request={}", billingRunId);
+        try {
+            invoicingApi.invalidateInvoiceDocuments(billingRunId, invalidateInvoiceDocumentsDto.getInvalidateXMLInvoices(), invalidateInvoiceDocumentsDto.getInvalidatePDFInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("invalidateInvoiceDocuments Response={}", result);
+        return result;
+    }
 
 	@Override
 	public ActionStatus moveInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {

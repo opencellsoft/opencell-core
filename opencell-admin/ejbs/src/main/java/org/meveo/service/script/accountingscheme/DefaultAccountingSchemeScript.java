@@ -32,20 +32,7 @@ public class DefaultAccountingSchemeScript extends Script {
         // Get OCCTemplate by AccountOperation code
         OCCTemplate occT = occTemplateService.findByCode(ao.getCode());
 
-        if (occT == null) {
-            log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
-            throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
-        }
-
-        if (occT.getAccountingCode() == null) {
-            log.warn("Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
-        }
-
-        if (occT.getContraAccountingCode() == null) {
-            log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
-        }
+        journalEntryService.validateOccTForAccountingScheme(ao, occT, true);
 
         List<JournalEntry> journalEntries = journalEntryService.createFromAccountOperation(ao, occT);
 

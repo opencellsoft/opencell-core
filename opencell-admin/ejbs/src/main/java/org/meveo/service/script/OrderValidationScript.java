@@ -1,8 +1,10 @@
 package org.meveo.service.script;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
@@ -15,6 +17,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Product;
@@ -61,7 +64,10 @@ public class OrderValidationScript extends Script {
         }
 
         List<OrderOffer> validOffers = commercialOrderService.validateOffers(order.getOffers());
-
+        Set<DiscountPlan> discountPlans=new HashSet<DiscountPlan>();
+		if(order.getDiscountPlan()!=null) {
+			discountPlans.add(order.getDiscountPlan());
+		}
         if(order.getOrderNumber() == null)
             order = serviceSingleton.assignCommercialOrderNumber(order);
 
@@ -74,28 +80,28 @@ public class OrderValidationScript extends Script {
             subscription.setSubscriptionDate(order.getOrderDate());
             subscription.setEndAgreementDate(null);
             subscription.setRenewed(true);
-            
-            if(offer.getUserAccount() == null) {
-                subscription.setUserAccount(order.getUserAccount());
-            }else {
-                subscription.setUserAccount(offer.getUserAccount());
-            }
-            
+            subscription.setUserAccount(order.getUserAccount());
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);
+            commercialOrderService.processSubscriptionAttributes(subscription, offer.getOfferTemplate(), offer.getOrderAttributes());
             subscriptionService.create(subscription);
 
-            for (OrderProduct product : offer.getProducts()){
-            	processProductWithDiscount(subscription, product, currentUser);
-            }
+            if(offer.getDiscountPlan()!=null) {
+				discountPlans.add(offer.getDiscountPlan());
+			}
 
-            subscriptionService.update(subscription);
-            subscriptionService.activateInstantiatedService(subscription);
+			for (OrderProduct product : offer.getProducts()){
+				commercialOrderService.processProductWithDiscount(subscription, product);
+			}
+			commercialOrderService.instanciateDiscountPlans(subscription, discountPlans);
+			subscriptionService.update(subscription);
+			subscriptionService.activateInstantiatedService(subscription);
         }
 
         order.setStatus(CommercialOrderEnum.VALIDATED.toString());
         order.setStatusDate(new Date());
+        order.setOrderProgressTmp(order.getOrderProgress());
         order = commercialOrderService.update(order);
         context.put(Script.RESULT_VALUE, order);
     }

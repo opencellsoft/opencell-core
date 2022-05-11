@@ -290,7 +290,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,String convertedValue) { 
-    	if(!sourceAttributeValue.isEmpty() && !convertedValue.isEmpty() && operator!=null) {
+    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null) {
     		
     		switch(operator) {
     		case EQUAL:
@@ -420,19 +420,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                                         }
 
                                         List<QuoteOffer> quoteOffers = isOfferScope(commercialRuleHeader.getScopeType()) ? singletonList(quoteProduct.getQuoteOffer()) : quoteVersion.getQuoteOffers();
-                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialRuleLines.get(0), commercialRuleHeader.getCode());
-                                    } else if(commercialRuleHeader.getTargetAttributeValue() != null){
-                                        overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeader.getCode());
+                                        for (CommercialRuleLine commercialLine : commercialRuleLines) {
+                                        processReplacement(quoteOffers, attributeToReplace.get(), commercialLine, commercialRuleHeader.getCode());
+                                        }
                                     }
 
-                                }else if(commercialRuleHeader.getTargetAttributeValue() != null){
-                                    overrideBySourceAttributeValue(attributeToReplace.get(), commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeader.getCode());
                                 }
                             }
                         }
                 );
     }
-
+    
     private boolean isOfferScope(ScopeTypeEnum scopeType) {
         return scopeType == null || scopeType == ScopeTypeEnum.QUOTE_OFFER;
     }
@@ -463,48 +461,63 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     private void processReplacement(List<QuoteOffer> quoteOffers, QuoteAttribute attributeToReplace, CommercialRuleLine commercialRuleLine, String commercialRuleHeaderCode) {
-        if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() == null) {
-            Optional<QuoteOffer> sourceOffer = quoteOffers.stream()
-                    .filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
-                    .findFirst();
-            if (sourceOffer.isPresent()) {
-                Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
-                        .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()))
-                        .findFirst();
-                if (sourceOfferAttribute.isPresent()) {
-                    updateQuoteAttribute(attributeToReplace, sourceOfferAttribute);
-                }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                    overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-                }
-            }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-            }
-        } else if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() != null){
-            Optional<QuoteOffer> sourceOffer = quoteOffers
-                    .stream()
-                    .filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
-                    .findFirst();
-            if(sourceOffer.isPresent()){
-                sourceOffer.get().getQuoteProduct()
-                        .stream()
-                        .filter(product -> product.getProductVersion().getProduct().getId().equals(commercialRuleLine.getSourceProduct().getId()))
-                        .forEach(
-                                product -> {
-                                    Optional<QuoteAttribute> sourceProductAttribute = product.getQuoteAttributes().stream()
-                                            .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()))
-                                            .findFirst();
-                                    if (sourceProductAttribute.isPresent()){
-                                        updateQuoteAttribute(attributeToReplace, sourceProductAttribute);
-                                    }else if(commercialRuleLine.getSourceAttributeValue() != null){
-                                        overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-                                    }
-                                }
-                        );
-            } else if(commercialRuleLine.getSourceAttributeValue() != null){
-                overrideBySourceAttributeValue(attributeToReplace, commercialRuleLine.getSourceAttributeValue(), commercialRuleHeaderCode);
-            }
+    	CommercialRuleHeader commercialRuleHeader = commercialRuleLine.getCommercialRuleItem().getCommercialRuleHeader();
+    	if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() == null) {
+    		Optional<QuoteOffer> sourceOffer = quoteOffers.stream()
+    				.filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
+    				.findFirst();
+    		if (sourceOffer.isPresent()) {
+    			Optional<QuoteAttribute> sourceOfferAttribute = sourceOffer.get().getQuoteAttributes().stream()
+    					.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) 
+    							&& valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
+    									String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    					.findFirst();
+    			if (sourceOfferAttribute.isPresent()) {
+    				if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    					overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    				}
+    				else {
+    					updateQuoteAttribute(attributeToReplace, sourceOfferAttribute);
+    				}
+    			}	
+    		}
+    	} else if (commercialRuleLine.getSourceOfferTemplate() != null && commercialRuleLine.getSourceProduct() != null){
+    		Optional<QuoteOffer> sourceOffer = quoteOffers
+    				.stream()
+    				.filter(offer -> offer.getOfferTemplate().getId().equals(commercialRuleLine.getSourceOfferTemplate().getId()))
+    				.findFirst();
+    		if(sourceOffer.isPresent()){
+    			Optional<QuoteProduct> quoteProduct=
+    					sourceOffer.get().getQuoteProduct()
+    					.stream()
+    					.filter(product -> product.getProductVersion().getProduct().getId().equals(commercialRuleLine.getSourceProduct().getId()))
+    					.findFirst();
+    			if(quoteProduct.isPresent()) {
+    				if(commercialRuleLine.getSourceAttribute()==null) {
+    					if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    						overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    					} 
+    				}else {
+    					Optional<QuoteAttribute> quoteAttributes= quoteProduct.get().getQuoteAttributes().stream()
+    							.filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleLine.getSourceAttribute().getCode()) &&  
+    									quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute) !=null &&
+    									valueCompare(commercialRuleLine.getOperator(), commercialRuleLine.getSourceAttributeValue(),
+    											String.valueOf(quoteAttribute.getAttribute().getAttributeType().getValue(quoteAttribute))))
+    							.findFirst();
+    					if (quoteAttributes.isPresent()) {
+    						if(!StringUtils.isBlank(commercialRuleHeader.getTargetAttributeValue())) {
+    							overrideBySourceAttributeValue(attributeToReplace, commercialRuleHeader.getTargetAttributeValue(), commercialRuleHeaderCode);
+    						}
+    						else {
+    							updateQuoteAttribute(attributeToReplace, quoteAttributes);
+    						}
+    					}   
+    				}
+    			}
 
-        }
+    		} 
+
+    	}
     }
 
     private void overrideBySourceAttributeValue(QuoteAttribute quoteAttributeToUpdate, String sourceAttributeValue, String commercialRuleCode) {

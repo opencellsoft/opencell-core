@@ -12,7 +12,10 @@ import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class SecurityDepositTransactionService extends BusinessService<SecurityDepositTransaction> {
-  
+
+    private static final String NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID = "SecurityDepositTransaction.getSecurityDepositCodesByAoId";
+    private static final String PARAM_AO_ID = "aoId";
+
     /**
      * Gets the payment methods.
      *
@@ -29,6 +32,11 @@ public class SecurityDepositTransactionService extends BusinessService<SecurityD
             log.warn("error while getting 'Security Deposit Transaction' list by 'Security Deposit'", e);
             return new ArrayList<>();
         }
+    }
+
+    public List<String> getSecurityDepositCodesByAoIds(Long aoId) {
+        return this.getEntityManager().createNamedQuery(NAMEDQUERY_GET_SECURITYDEPOSIT_CODE_BY_AO_ID)
+                .setParameter(PARAM_AO_ID, aoId).getResultList();
     }
     
 }
