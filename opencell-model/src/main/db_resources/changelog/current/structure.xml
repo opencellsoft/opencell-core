@@ -12836,4 +12836,11 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
+    <changeSet id="INTRD-7038_11052022" author="TarikRabeh">
+        <addColumn tableName="billing_billing_run">
+            <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
