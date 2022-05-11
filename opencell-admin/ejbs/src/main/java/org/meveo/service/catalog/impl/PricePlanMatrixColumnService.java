@@ -1,5 +1,23 @@
 package org.meveo.service.catalog.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.ws.rs.NotFoundException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -15,14 +33,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.ws.rs.NotFoundException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Stateless
 public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatrixColumn> {
@@ -67,23 +77,20 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         Set<Long> valuesId = ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet());
         if(!valuesId.isEmpty())
             pricePlanMatrixValueService.remove(valuesId);
-        deleteById(ppmColumn.getId());
+        remove(ppmColumn);
     }
-    
-    @SuppressWarnings("unchecked")
-	public void deleteById(Long id) {
-			this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.deleteById")
-																			.setParameter("id", id).executeUpdate();
-	}
-    
 
-	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrixColumn> findByCodeAndPlanMaptrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
-			return this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.findByVersion")
+	public List<PricePlanMatrixColumn> findByCodeAndPricePlanMatrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
+			return this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.findByCodeAndVersion", entityClass)
 																			.setParameter("code", code)
 																			.setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId()).getResultList();
 	}
-	
+
+    public List<PricePlanMatrixColumn> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+            return this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.findByVersion", entityClass)
+                                                                            .setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId()).getResultList();
+    }
+
 	public PricePlanMatrixLinesDto populateLinesAndValues(String pricePlanMatrixCode, String data,
 			PricePlanMatrixVersion pricePlanMatrixVersion) {
 		Scanner scanner = new Scanner(data);
@@ -117,7 +124,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 			String column = firstLine[i].split("\\[")[0];
 			boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
 			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("priceWithoutTax"))) {
-				List<PricePlanMatrixColumn> pricePlanMatrixColumnList = findByCodeAndPlanMaptrixVersion(column, pricePlanMatrixVersion);
+				List<PricePlanMatrixColumn> pricePlanMatrixColumnList = findByCodeAndPricePlanMatrixVersion(column, pricePlanMatrixVersion);
 				if (pricePlanMatrixColumnList.isEmpty()) {
 					throw new NotFoundException("PricePlanMatrixColumn with code= " + column + " does not exists");
 				}

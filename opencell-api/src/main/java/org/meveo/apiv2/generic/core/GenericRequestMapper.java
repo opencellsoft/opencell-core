@@ -38,8 +38,8 @@ public class GenericRequestMapper {
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
-                computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getSortBy(),
-                PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
+                computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(),
+                genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))

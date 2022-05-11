@@ -28,6 +28,7 @@ import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.standardReport.AgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
 
@@ -36,7 +37,9 @@ import com.google.common.annotations.VisibleForTesting;
 @VisibleForTesting
 public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedReceivableDto> {
 
-    @Override
+	private Provider appProvider;
+
+	@Override
     public AgedReceivable toResource(AgedReceivableDto agedReceivableDto) {
         return ImmutableAgedReceivable.builder().customerAccountCode(agedReceivableDto.getCustomerAccountCode())
 				.customerAccountName(agedReceivableDto.getCustomerAccountName())
@@ -49,10 +52,14 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.sum_90_up(agedReceivableDto.getSum90Up())
 				.general_total(agedReceivableDto.getGeneralTotal())
 				.dueDate(agedReceivableDto.getDueDate())
-				.funcCurrency(agedReceivableDto.getFuncCurrency())
+				.funcCurrency(appProvider.getCurrency().getCurrencyCode())
 				.netAmountByPeriod(agedReceivableDto.getNetAmountByPeriod())
 				.taxAmountByPeriod(agedReceivableDto.getTaxAmountByPeriod())
 				.totalAmountByPeriod(agedReceivableDto.getTotalAmountByPeriod())
+				.invoiceId(agedReceivableDto.getInvoiceId())
+				.invoiceNumber(agedReceivableDto.getInvoiceNumber())
+				.tradingCurrency(agedReceivableDto.getTradingCurrency())
+				.billedAmount(agedReceivableDto.getBilledAmount())
 				.build();
     }
 
@@ -72,7 +79,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (var i = 0; i < resource.size(); i++) {
 			Object[] agedList = resource.get(i);
 			var agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setCustomerAccountCode(agedList[0].toString());
+			agedReceivableDto.setCustomerAccountCode((String) agedList[22]);
 			agedReceivableDto.setNotYetDue((BigDecimal)agedList[1]);
 			agedReceivableDto.setSum1To30((BigDecimal)agedList[2]);
 			agedReceivableDto.setSum31To60((BigDecimal) agedList[5]);
@@ -86,13 +93,17 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setCustomerAccountName(agedList[15] == null ? null : getName((Name) agedList[15]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedList[16]);
 			agedReceivableDto.setDueDate(agedList[17] == null ? null : ((Date) agedList[17]));
-			agedReceivableDto.setFuncCurrency((String) agedList[18]);
+			agedReceivableDto.setTradingCurrency((String) agedList[18]);
 			agedReceivableDto.setNetAmountByPeriod(asList((BigDecimal) agedList[2],
 					(BigDecimal) agedList[5], (BigDecimal) agedList[8], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTotalAmountByPeriod(asList((BigDecimal) agedList[3],
 					(BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4],
 					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[12]));
+			agedReceivableDto.setInvoiceId((Long) agedList[19]);
+			agedReceivableDto.setInvoiceNumber((String) agedList[20]);
+			agedReceivableDto.setBilledAmount((BigDecimal) agedList[21]);
+			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
@@ -113,14 +124,13 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 		for (int index = 0; index < agedReceivables.size(); index++) {
 			Object[] agedReceivable = agedReceivables.get(index);
 			AgedReceivableDto agedReceivableDto = new AgedReceivableDto();
-			agedReceivableDto.setCustomerAccountCode(agedReceivable[0].toString());
 			agedReceivableDto.setNotYetDue((BigDecimal) agedReceivable[1]);
 			int sumIndex;
 			int startingSumIndex = 2;
 			agedReceivableDto.setNetAmountByPeriod(new ArrayList<>());
 			agedReceivableDto.setTotalAmountByPeriod(new ArrayList<>());
 			agedReceivableDto.setTaxAmountByPeriod(new ArrayList<>());
-			for (sumIndex = 0; sumIndex <= numberOfPeriods; sumIndex++) {
+			for (sumIndex = 0; sumIndex < numberOfPeriods; sumIndex++) {
 				agedReceivableDto.getNetAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex]);
 				agedReceivableDto.getTotalAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 1]);
 				agedReceivableDto.getTaxAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 2]);
@@ -130,14 +140,23 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setDueDate(agedReceivable[++startingSumIndex] == null ? null : ((Date) agedReceivable[startingSumIndex]));
-			agedReceivableDto.setFuncCurrency((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setTradingCurrency((String) agedReceivable[++startingSumIndex]);
 			BigDecimal generalTotal = agedReceivableDto.getNetAmountByPeriod()
 					.stream()
 					.reduce(ZERO, BigDecimal::add);
 			agedReceivableDto.setGeneralTotal(generalTotal);
+			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
+			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;
+	}
+
+	public void setAppProvider(Provider appProvider) {
+		this.appProvider = appProvider;
 	}
    
 }

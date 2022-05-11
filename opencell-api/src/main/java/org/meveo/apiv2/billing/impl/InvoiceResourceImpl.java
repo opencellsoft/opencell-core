@@ -8,14 +8,13 @@ import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -28,7 +27,6 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -49,12 +47,10 @@ import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -133,20 +129,41 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
-		Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
+		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
 				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
 				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
 						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
 						.map(matchingCode -> matchingCode.getMatchingAmounts())
 						.flatMap(Collection::stream)
-						.filter(matchingAmount -> accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
+						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
 						.collect(Collectors.toSet())
 				)
 				.flatMap(Collection::stream)
 				.distinct()
 				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
-				.collect(Collectors.toSet());
-		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();
+				.collect(Collectors.toSet());*/
+
+		// Quick & (may be) dirty fix : above flatMap cause wrong behavoir, i replace it by nested loop (no time to investigate why ! malheureusement)
+		Set<InvoiceMatchedOperation> result = new HashSet<>();
+
+		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+				.forEach(accountOperation -> {
+					AccountOperation invoiceAo = accountOperationService.findById(accountOperation.getId(), List.of("matchingAmounts"));
+
+					Optional.ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
+							.forEach(matchingAmount -> {
+								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
+								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+										.forEach(matchingAmountAo -> {
+											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											}
+										});
+							});
+
+				});
+
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(result)).build();
 	}
 
 	private Map<String, Object> buildResponse(Set<InvoiceMatchedOperation> collect) {
@@ -363,7 +380,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
-        for(org.meveo.model.cpq.commercial.InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+        for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }
         int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();

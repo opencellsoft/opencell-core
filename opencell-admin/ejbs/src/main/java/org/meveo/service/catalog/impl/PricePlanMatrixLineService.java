@@ -48,8 +48,18 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
         try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", PricePlanMatrixLine.class)
+            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
                     .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
+                    .getResultList();
+        } catch (NoResultException exp) {
+            return new ArrayList<>();
+        }
+    }
+    
+    public List<PricePlanMatrixLine> findByPricePlanMatrixVersionIds(List<Long> ppmvIds) {
+        try {
+            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
+                    .setParameter("ppmvIds", ppmvIds)
                     .getResultList();
         } catch (NoResultException exp) {
             return new ArrayList<>();
@@ -133,7 +143,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
-                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
+                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
                     if (pricePlanMatrixColumns.isEmpty())
                         throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
                     pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumns.get(0));

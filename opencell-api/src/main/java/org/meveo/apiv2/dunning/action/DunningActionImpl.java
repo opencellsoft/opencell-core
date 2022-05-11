@@ -10,6 +10,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningAction;
 import org.meveo.apiv2.dunning.ImmutableDunningAction;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.service.payments.impl.DunningActionService;
@@ -18,6 +19,9 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Inject
     private DunningActionService dunningActionService;
+
+    @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
 
     @Override
     public Response getDunningAction(String code) {
@@ -31,6 +35,7 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response createDunningAction(DunningAction dunningAction) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningAction dunningActionToCreate = dunningAction.toEntity();
         dunningActionService.create(dunningActionToCreate);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Action successfully created\"},\"id\":"+dunningActionToCreate.getId()+"} ").build();
@@ -38,6 +43,7 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response updateDunningAction(Long dunningActionId, DunningAction dunningAction) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningAction dunningActionToUpdate = dunningActionService.findById(dunningActionId, Arrays.asList("relatedLevels"));
         if(dunningActionToUpdate == null) {
             throw new EntityDoesNotExistsException("dunning action with id "+dunningActionId+" does not exist.");
@@ -68,6 +74,7 @@ public class DunningActionImpl implements DunningActionResource{
 
     @Override
     public Response deleteDunningAction(Long dunningActionId) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningAction dunningActionToDelete = dunningActionService.findById(dunningActionId);
         if(dunningActionToDelete == null) {
             throw new EntityDoesNotExistsException("dunning action with id "+dunningActionId+" does not exist.");

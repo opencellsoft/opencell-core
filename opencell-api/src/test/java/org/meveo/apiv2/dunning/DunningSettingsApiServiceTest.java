@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.apiv2.dunning.service.DunningSettingsApiService;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningModeEnum;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.mockito.InjectMocks;
@@ -38,6 +39,9 @@ public class DunningSettingsApiServiceTest {
 
 	org.meveo.model.dunning.DunningSettings dunningSettings;
 
+	@Mock
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
     @Before
     public void setup() {
     	dunningSettings = new org.meveo.model.dunning.DunningSettings();
@@ -46,7 +50,8 @@ public class DunningSettingsApiServiceTest {
     	dunningSettings.setApplyDunningChargeFxExchangeRate(true);
     	dunningSettings.setCode("CODD");
     	dunningSettings.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
-    }
+		doNothing().when(globalSettingsVerifier).checkActivateDunning();
+	}
     
     @Test
     public void shouldCreateNewDunningSettings() {

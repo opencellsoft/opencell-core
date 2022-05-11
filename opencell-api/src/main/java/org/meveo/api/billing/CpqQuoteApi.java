@@ -1663,7 +1663,7 @@ public class CpqQuoteApi extends BaseApi {
                         	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes,null,null,null)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes, wo)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
@@ -1687,7 +1687,7 @@ public class CpqQuoteApi extends BaseApi {
                         if(localRatingResult != null)
                         	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null,null,null)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,wo)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
                          }
 
@@ -1737,7 +1737,7 @@ public class CpqQuoteApi extends BaseApi {
 		                			ratingResult.add(localRatingResult);
 		                			if (localRatingResult != null) {
 		                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
-		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes,edr.getParameter1(),edr.getParameter2(),edr.getParameter3())
+		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes, walletOperation)
 		                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
 		                				}
 		

@@ -74,6 +74,9 @@ import org.meveo.service.payments.impl.DunningStopReasonsService;
 public class DunningCollectionPlanApiService implements ApiService<DunningCollectionPlan> {
 
     @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
+    @Inject
     private ResourceBundle resourceMessages;
 
     @Inject
@@ -161,6 +164,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningCollectionPlan oldCollectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
         if (oldCollectionPlan == null) {
             throw new EntityDoesNotExistsException("Dunning collection plan with id " + collectionPlanId + " does not exits");
@@ -181,6 +185,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massSwitchCollectionPlan(MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicy policy = dunningPolicyService.findById(massSwitchDunningCollectionPlan.getDunningPolicy().getId());
         if (policy == null) {
             throw new EntityDoesNotExistsException("Policy with id " + massSwitchDunningCollectionPlan.getDunningPolicy().getId() + " does not exits");
@@ -267,6 +272,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlanPause, Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToPause = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         DunningPauseReason dunningPauseReason = dunningPauseReasonService.findById(dunningCollectionPlanPause.getDunningPauseReason().getId());
         if (dunningPauseReason == null) {
@@ -281,6 +287,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massPauseCollectionPlan(MassPauseDunningCollectionPlan massPauseDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPauseReason pauseReason = dunningPauseReasonService.findById(massPauseDunningCollectionPlan.getDunningPauseReason().getId());
         if (pauseReason == null) {
             throw new EntityDoesNotExistsException("Dunning Pause Reason with id " + massPauseDunningCollectionPlan.getDunningPauseReason().getId() + " does not exits");
@@ -302,6 +309,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanStop, Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToStop = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanStop.getDunningStopReason().getId());
         if (dunningStopReason == null) {
@@ -316,6 +324,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massStopCollectionPlan(MassStopDunningCollectionPlan massStopDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningStopReason stopReason = dunningStopReasonService.findById(massStopDunningCollectionPlan.getDunningStopReason().getId());
         if (stopReason == null) {
             throw new EntityDoesNotExistsException("Dunning Stop Reason with id " + massStopDunningCollectionPlan.getDunningStopReason().getId() + " does not exits");
@@ -335,6 +344,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToResume = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
 
@@ -345,6 +355,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void removeDunningLevelInstance(RemoveLevelInstanceInput removeLevelInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             List<Resource> levelInstanceResources = removeLevelInstanceInput.getLevels();
 
@@ -424,7 +435,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void removeDunningActionInstance(RemoveActionInstanceInput removeActionInstanceInput) {
-
+        globalSettingsVerifier.checkActivateDunning();
         try {
             List<Resource> actionInstanceResources = removeActionInstanceInput.getActions();
 
@@ -480,6 +491,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningLevelInstance> addDunningLevelInstance(DunningLevelInstanceInput dunningLevelInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             DunningLevelInstance newDunningLevelInstance = new DunningLevelInstance();
 
@@ -540,6 +552,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningLevelInstance> updateDunningLevelInstance(UpdateLevelInstanceInput updateLevelInstanceInput, Long levelInstanceId) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             DunningLevelInstance levelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
             if (levelInstanceToUpdate == null) {
@@ -616,6 +629,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
 
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
@@ -683,7 +697,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningActionInstance> updateDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput, Long actionInstanceId) {
-
+        globalSettingsVerifier.checkActivateDunning();
         try {
             DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
             if (dunningActionInstanceToUpdate == null) {

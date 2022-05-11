@@ -166,7 +166,7 @@ public class EncryptionFactory {
             if (encryptedText != null) {
                 // this if is for migration from data encrypted by AES in client database
                 if (encryptedText.startsWith(ENCRYPTION_CHECK_STRING)) {
-                    encryptedText = encryptedText.replace(ENCRYPTION_CHECK_STRING, "");
+                    encryptedText = encryptedText.replaceFirst(ENCRYPTION_CHECK_STRING, "");
                     SecretKeySpec secretKey = buildSecretKey();
                     cipher = Cipher.getInstance(OLD_AES_ENCRYPTION_ALGORITHM);
                     cipher.init(Cipher.DECRYPT_MODE, secretKey);

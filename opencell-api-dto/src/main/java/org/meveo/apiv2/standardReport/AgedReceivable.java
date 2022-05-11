@@ -79,4 +79,16 @@ public interface AgedReceivable extends Resource {
 
     @Nullable
     List<BigDecimal> getTotalAmountByPeriod();
+
+    @Nullable
+    String getInvoiceNumber();
+
+    @Nullable
+    Long getInvoiceId();
+
+    @Nullable
+    String getTradingCurrency();
+
+    @Nullable
+    BigDecimal getBilledAmount();
 }
