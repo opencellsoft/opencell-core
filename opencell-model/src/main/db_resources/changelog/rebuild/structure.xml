@@ -16071,7 +16071,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
        <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cpq_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
     <!-- end fk -->
