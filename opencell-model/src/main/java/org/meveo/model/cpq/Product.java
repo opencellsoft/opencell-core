@@ -69,7 +69,6 @@ import org.meveo.model.crm.CustomerBrand;
  *
  */
 @Entity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "Product")
 @Table(name = "cpq_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

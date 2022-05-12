@@ -42,10 +42,9 @@ import org.meveo.model.cpq.tags.Tag;
 /**
  * @author Tarik FAKHOURI.
  * @author Mbarek-Ay.
- * @version 10.0
+ * @version 11.0
  */
 @Entity
-@Cacheable
 @Table(name = "cpq_product_version",uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
