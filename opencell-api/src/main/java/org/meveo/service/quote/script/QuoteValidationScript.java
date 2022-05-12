@@ -185,6 +185,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setDeliveryDate(quoteOffer.getDeliveryDate());
 		offer.setUserAccount(quoteOffer.getUserAccount());
 		offer.setOrderLineType(OfferLineTypeEnum.CREATE);
+		offer.setSubscription(quoteOffer.getSubscription());
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -199,6 +200,9 @@ public class QuoteValidationScript extends ModuleScript {
 		orderProduct.setOrderOffer(orderOffer);  
 		orderProduct.setQuoteProduct(product); 
 		orderProduct.setDeliveryDate(product.getDeliveryDate());
+		orderProduct.setProductActionType(product.getProductActionType());
+		orderProduct.setTerminationDate(product.getTerminationDate());
+		orderProduct.setTerminationReason(product.getTerminationReason());
 		
 		orderProductService.create(orderProduct);
 		
