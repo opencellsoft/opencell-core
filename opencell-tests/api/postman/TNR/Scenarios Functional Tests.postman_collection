@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3fa905de-cf15-469d-b33e-b92c442da70f",
+		"_postman_id": "d5e744d5-3b35-46c9-9cb2-b997f095bb99",
 		"name": "Scenarios Functional Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -49,6 +49,12 @@
 										"name": "Content-Type",
 										"type": "text",
 										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{auth}}",
+										"type": "text",
+										"disabled": true
 									}
 								],
 								"body": {
@@ -12738,22 +12744,22 @@
 									"script": {
 										"exec": [
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.status(404);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql();",
+											"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql();",
+											"    pm.expect(jsonData.message).to.contains(\"does not exists.\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -12802,24 +12808,16 @@
 										"exec": [
 											"let jsonData = pm.response.json();",
 											"",
-											"//pm.test(request.name + \" - Check Code\", function () {",
-											"//    pm.response.to.have.status(400);",
-											"//});",
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(500);",
-											"});",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"//pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"//   pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-											"//});",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    pm.expect(jsonData.errorCode).to.eql();",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
 											"});",
+											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    pm.expect(jsonData.message).to.eql(\"Cannot subscribe to disabled offer\");",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -12866,22 +12864,22 @@
 									"script": {
 										"exec": [
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.status(404);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql();",
+											"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql();",
+											"    pm.expect(jsonData.message).to.contains(\"does not exists.\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -52948,21 +52946,6 @@
 		"type": "oauth2",
 		"oauth2": [
 			{
-				"key": "clientSecret",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "clientId",
-				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "authUrl",
-				"value": "",
-				"type": "string"
-			},
-			{
 				"key": "tokenType",
 				"value": "",
 				"type": "string"
@@ -52985,7 +52968,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.globals.set(\"inc\",1);",
+					"//pm.globals.set(\"inc\",1);",
 					"// Initialize variables",
 					"var now=new Date();",
 					"var now_addXXdays=new Date();",
@@ -52995,6 +52978,7 @@
 					" ",
 					"if (requestName.startsWith(\"SKIP\")){",
 					"   requestName = requestName.slice(n);",
+					"   pm.globals.set(\"request.label\", requestName);",
 					"}",
 					"pm.globals.set(\"timestamp.iso\", now.toISOString());",
 					"pm.globals.set(\"request.label\", requestName);",
@@ -53033,6 +53017,7 @@
 					"    var client_id = pm.environment.get(\"client.id\");",
 					"    var client_secret = pm.environment.get(\"client.secret\");",
 					"    var opencell_url = pm.environment.get(\"opencell.base\");",
+					"    console.log(\"opencell_url here: \"+ opencell_url);",
 					"    //can use an external token url",
 					"    ",
 					"    var keycloak_token_url = pm.environment.get(\"keycloak.token.url\");",
