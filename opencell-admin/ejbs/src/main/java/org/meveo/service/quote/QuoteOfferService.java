@@ -1,5 +1,6 @@
 package org.meveo.service.quote;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class QuoteOfferService extends PersistenceService<QuoteOffer> {
 		try {
 			return (List<QuoteOffer>) query.getResultList();
 		}catch(NoResultException e ) {
-			return null;
+			return new ArrayList<QuoteOffer>();
 		}
 	}
 }
