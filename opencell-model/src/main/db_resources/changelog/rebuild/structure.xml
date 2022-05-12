@@ -16465,6 +16465,8 @@
             <column name="supporting_document_type" type="varchar(255)" />
             <column name="trading_amount" type="numeric(23, 12)" />
             <column name="trading_currency" type="varchar(3)" />
+            <column name="auxiliary_account_code" type="varchar(255)" />
+            <column name="auxiliary_account_label" type="varchar(255)" />
         </createTable>
     </changeSet>
 
@@ -17651,7 +17653,8 @@
 	<changeSet id="INTRD-7006_09052022" author="TarikRabeh" />
 	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
 	<changeSet id="INTRD-7038_11052022" author="TarikRabeh" />
-	
+    <changeSet id="#INTRD-7149_20220511" author="ZBariki" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
