@@ -31,7 +31,6 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  *
  */
 @Entity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "GroupedAttributes")
 @Table(name = "cpq_grouped_attributes", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

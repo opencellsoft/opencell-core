@@ -65,7 +65,6 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  * @lastModifiedVersion 7.0
  */
 @Entity
-@Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "OfferTemplate")
 @DiscriminatorValue("OFFER")
@@ -87,12 +86,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
     @OrderBy("id")
     private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>();
 
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(FetchMode.SELECT)
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
 
