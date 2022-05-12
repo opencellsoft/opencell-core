@@ -2481,6 +2481,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoice(Invoice invoice, boolean remove) {
+        checkNonValidateInvoice(invoice);
         cancelInvoiceAndRts(invoice);
         List<Long> invoicesIds = new ArrayList<Long>();
         invoicesIds.add(invoice.getId());
@@ -2494,12 +2495,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void cancelInvoiceAndRts(Invoice invoice) {
+        checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
+    }
+    
+    private void checkNonValidateInvoice(Invoice invoice) {
+        if (invoice.getStatus() == InvoiceStatusEnum.VALIDATED) {
+            throw new BusinessException("You can't cancel a validated invoice");
+        }
     }
 
     public void validateInvoice(Invoice invoice, boolean save) {
