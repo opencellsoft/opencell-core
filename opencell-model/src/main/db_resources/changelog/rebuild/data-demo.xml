@@ -280,7 +280,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="code" value="512000000"></column>
-            <column name="description" value="Cash"></column>
+            <column name="description" value="Banks"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
             <column name="chart_of_account_view_type" value="VIEW"></column>
         </insert>
