@@ -35,7 +35,7 @@ public class GlobalSettingsService extends PersistenceService<GlobalSettings> {
     }
 
     private void checkParameters(GlobalSettings entity) {
-        if (entity.getQuoteDefaultValidityDelay() <= 0)
+        if (entity.getQuoteDefaultValidityDelay() != null && entity.getQuoteDefaultValidityDelay() <= 0)
             throw new InvalidParameterException("QuoteDefaultValidityDelay must be greater than 0");
     }
 }
