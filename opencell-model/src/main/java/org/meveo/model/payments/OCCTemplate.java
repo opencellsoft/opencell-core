@@ -91,6 +91,8 @@ public class OCCTemplate extends BusinessEntity {
     @JoinColumn(name = "contra_accounting_code2_id")
     private AccountingCode contraAccountingCode2;
 
+
+
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
     }
@@ -175,4 +177,6 @@ public class OCCTemplate extends BusinessEntity {
     public void setContraAccountingCode2(AccountingCode commissionAccountingCode) {
         this.contraAccountingCode2 = commissionAccountingCode;
     }
+
+
 }

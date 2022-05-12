@@ -9521,31 +9521,31 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="script" >
             	<![CDATA[
 			package org.meveo.service.script;
-			
+
 			import java.util.List;
 			import java.util.Map;
-			
+
 			import org.meveo.admin.exception.BusinessException;
 			import org.meveo.model.billing.BillingRun;
 			import org.meveo.model.billing.BillingRunStatusEnum;
 			import org.meveo.service.billing.impl.BillingRunExtensionService;
 			import org.meveo.service.billing.impl.BillingRunService;
-			
+
 			public class ValidateBRScript extends Script {
-			
+
 				@Override
 				public void execute(Map<String, Object> methodContext) throws BusinessException {
-			
+
 					BillingRunService billingRunService = (BillingRunService) getServiceInterface("BillingRunService");
-			
+
 					BillingRunExtensionService billingRunExtensionService = (BillingRunExtensionService) getServiceInterface(
 							"BillingRunExtensionService");
-			
+
 					if (billingRunService != null) {
 						List<BillingRun> billingRuns = billingRunService.getBillingRuns(BillingRunStatusEnum.PREINVOICED,  BillingRunStatusEnum.POSTINVOICED);
-			
+
 						for (BillingRun billingRun : billingRuns) {
-			
+
 							try {
 								billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
 										BillingRunStatusEnum.POSTVALIDATED, null);
@@ -9553,9 +9553,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								System.err.println("Error " + e.getMessage());
 							}
 						}
-			
+
 					}
-			
+
 				}
 			}
 					]]>
@@ -9704,7 +9704,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 		</insert>
 	</changeSet>
-	
+
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh">
         <update tableName="billing_accounting_article">
 			<column name="accounting_code_id" value="-36"/>
@@ -9979,12 +9979,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="code" value="Invoice and Credit Note" />
 			<column name="description" value="Invoice accounting scheme"/>
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
 		</insert>
 		<update tableName="ar_occ_template">
-			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Invoice and Credit Note')" />
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
@@ -9994,6 +9994,292 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
 			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
+
+    	<changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-37" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511011000" />
+			<column name="description" value="CB à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-38" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511002000" />
+			<column name="description" value="Paypal à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-39" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511003000" />
+			<column name="description" value="Stripe à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511000610" />
+			<column name="description" value="TIP à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-41" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="531100000" />
+			<column name="description" value="Caisse en monnaie nationale"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-42" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511200000" />
+			<column name="description" value="check à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+
+        <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-54" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-42" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CHECK" />
+			<column name="description" value="Payment - check" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-55" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-37" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CB" />
+			<column name="description" value="Payment - card" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-56" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_DIRECT_DEBIT" />
+			<column name="description" value="Payment - direct debit (prélèvement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-57" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-38" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_PAYPAL" />
+			<column name="description" value="Payment Paypal" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-58" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-39" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_STRIPE" />
+			<column name="description" value="Payment Stripe" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-59" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-40" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_TIP_DEBIT" />
+			<column name="description" value="Payment - TIP" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-41" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CASH" />
+			<column name="description" value="Payment - cash" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-61" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_WIRE" />
+			<column name="description" value="WIRETRANSFER (virement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+
+
+        </changeSet>
+
+
+
+	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
+		<update tableName="ar_occ_template">
+			<column name="description" value="WIRETRANSFER" />
+			<where>id=-61</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - direct debit" />
+			<where>id=-56</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid">
+		 <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-42" />
+            <where>id=-1</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-37" />
+            <where>id=-43</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+            <where>id=-3</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-38" />
+            <where>id=-46</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-39" />
+            <where>id=-47</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-40" />
+            <where>id=-2</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-41" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-60</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-61</where>
+		</update>
+
+		<delete tableName="ar_occ_template">
+	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>
+	    </delete>
+	</changeSet>
+
+
+	<changeSet id="INTRD-6908_20220503" author="HichamELHALOUI">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Payment Card to collect"></column>
+			<where>id=-37</where>
+		</update>
+
+        <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Paypal to collect"></column>
+			<where>id=-38</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Stripe to collect"></column>
+			<where>id=-39</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Payment - TIP to collect"></column>
+			<where>id=-40</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Cash in local currency"></column>
+			<where>id=-41</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Checks to collect"></column>
+			<where>id=-42</where>
 		</update>
 	</changeSet>
 
