@@ -36,6 +36,7 @@ import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -278,4 +279,16 @@ public interface CurrencyRs extends IBaseRs {
             }
     )
     ActionStatus updateExchangeRate(@PathParam("id") Long id, ExchangeRateDto postData);
+    
+    @DELETE
+    @Path("/exchangeRate/{id}")
+    @Operation(summary = "API to delete an exchange Rate",
+    tags = { "ExchangeRate" },
+    description ="delete an existing exchange rate",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the exchange rate successfully deleted"),
+            @ApiResponse(responseCode = "400", description = "bad request when exchange rate is not found")
+    })
+    ActionStatus removeExchangeRateById(@Parameter(description = "id of the exchange rate", required = true) @PathParam("id") Long id);
+
 }
