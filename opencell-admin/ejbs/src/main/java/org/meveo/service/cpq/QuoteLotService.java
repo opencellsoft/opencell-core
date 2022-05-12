@@ -1,5 +1,6 @@
 package org.meveo.service.cpq;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -74,9 +75,9 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 		query.setParameter("subscriptionCode", subscriptionCode)
 			  .setParameter("status", quoteLineType);
 		try {
-			return (List<OrderOffer>) query.getResultList();
+			return query.getResultList();
 		}catch(NoResultException e ) {
-			return null;
+			return Collections.emptyList();
 		}
 	}
 	
