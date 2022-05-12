@@ -9528,6 +9528,45 @@ public class OrderAdvancement extends ModuleScript {
 	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza">
 		<dropNotNullConstraint columnDataType="bigint" columnName="order_article_line_id" tableName="order_price" />
 	</changeSet>
+	
+	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay">
+		<addColumn tableName="cat_discount_plan">
+		<column name="applicable_on_discounted_price" type="${type.boolean}"/>
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+	   <addColumn tableName="crm_provider">
+		<column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/> 
+		</addColumn>
+		
+		<addColumn tableName="cat_discount_plan_item">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		<addColumn tableName="billing_wallet_operation">
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_price">
+		<column name="sequence" type="int4"/>
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		</addColumn>
+		
+		<addColumn tableName="order_price">
+		<column name="sequence" type="int4"/>
+		<column name="discounted_amount" type="numeric(23,12)"/>
+		</addColumn>
+		
+		<addColumn tableName="billing_rated_transaction">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		<addColumn tableName="cpq_invoice_line">
+		<column name="sequence" type="int4"/>
+		</addColumn>
+		
+		
+      </changeSet>
 
       
     
