@@ -21,6 +21,8 @@
 			<hftl:searchField label="#{messages['name.firstName']}" field="name.firstName" />
 			<hftl:searchField label="#{messages['name.lastName']}" field="name.lastName" />
 			<hftl:searchField label="#{messages['contactInformation.email']}" field="email" />
+
+			<p:commandButton action="#{userListBean.createTestAuthorizationData()}" update="@form" process="@this" value="Create test data" />
 		</hftl:searchPanel>
 
 		<p:panel id="results_panel" width="100">

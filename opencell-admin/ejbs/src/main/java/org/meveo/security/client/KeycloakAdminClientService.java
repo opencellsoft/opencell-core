@@ -188,7 +188,7 @@ public class KeycloakAdminClientService implements Serializable {
         KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
             .clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(session.getTokenString());
 
-        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(20).build());
+        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(200).maxPooledPerRoute(200).build());
 
         return keycloakBuilder.build();
     }
@@ -1448,4 +1448,147 @@ public class KeycloakAdminClientService implements Serializable {
         }
         return null;
     }
+
+    public void createTestAuthorizationData() {
+
+        String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
+        AuthzClient authzClient = AuthzClient.create();
+        ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
+
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+
+        // Get realm and a client's internal id
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+
+        AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
+        PoliciesResource resourcePolicies = authResource.policies();
+
+        // Map role name to ID
+        Map<String, RoleRepresentation> roleMap = new HashMap<String, RoleRepresentation>();
+        List<RoleRepresentation> allRoles = realmResource.roles().list(true);
+        for (RoleRepresentation roleRepresentation : allRoles) {
+            roleMap.put(roleRepresentation.getName(), roleRepresentation);
+        }
+
+        // Create a role based policy
+        for (int i = 1; i < 30000; i++) {
+            log.error("Creating policy " + i);
+            RolePolicyRepresentation newPolicy = new RolePolicyRepresentation();
+            newPolicy.setName("Role " + "testRole_" + i);
+            newPolicy.addRole("testRole_" + i);
+            try {
+                resourcePolicies.role().create(newPolicy);
+            } catch (Exception e) {
+                log.error("Failed to create policy " + "Role " + "testRole_" + i + ": " + e.getMessage());
+            }
+        }
+
+        // Map policy name to ID
+        Map<String, String> policyMap = new HashMap<String, String>();
+        for (PolicyRepresentation policy : resourcePolicies.policies(null, "Role testRole_", "role", null, null, null, null, null, null, 60000)) {
+            if (policy.getName().startsWith("Role testRole_")) {
+                policyMap.put(policy.getName(), policy.getId());
+            }
+        }
+
+        for (int i = 1; i < 100000; i++) {
+
+            log.error("Creating resource " + i);
+            String resourceName = "SE:Seller:-" + i + ":SELLER_" + i + ":READ";
+            String permissionName = resourceName;
+
+            // Create/find a resource representing a secured entity
+            ResourceRepresentation resource = new ResourceRepresentation(resourceName);
+            resource = protectedResource.create(resource);
+            String resourceId = resource.getId();
+
+            // Create a resource permission and associate role based policy to it
+            ResourcePermissionRepresentation resourcePermission = new ResourcePermissionRepresentation();
+            resourcePermission.setName(permissionName);
+            resourcePermission.addPolicy(policyMap.get("Role testRole_" + (i > 300000 ? i : 0)));
+            resourcePermission.addResource(resourceId);
+            resourcePermission.setDecisionStrategy(DecisionStrategy.AFFIRMATIVE);
+            authResource.permissions().resource().create(resourcePermission);
+        }
+
+    }
+
+    public void createTestUserAndRoleData() {
+
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+
+        Map<String, RoleRepresentation> roleMap = new HashMap<String, RoleRepresentation>();
+
+        for (int i = 0; i < 30000; i++) {
+            String roleName = "testRole_" + i;
+            RoleRepresentation role = new RoleRepresentation(roleName, null, false);
+            realmResource.roles().create(role);
+        }
+
+        // Map role name to ID
+        List<RoleRepresentation> allRoles = realmResource.roles().list(true);
+        for (RoleRepresentation roleRepresentation : allRoles) {
+            roleMap.put(roleRepresentation.getName(), roleRepresentation);
+        }
+
+        UsersResource usersResource = realmResource.users();
+
+        for (int i = 0; i < 10000; i++) {
+            String userName = "user_" + i;
+
+            UserRepresentation user = new UserRepresentation();
+            user.setEnabled(true);
+            user.setEmailVerified(true);
+            user.setUsername(userName);
+
+            List<RoleRepresentation> rolesToAdd = new ArrayList<>();
+            rolesToAdd.add(roleMap.get("testRole_" + i));
+            if (i > 0) {
+                rolesToAdd.add(roleMap.get("testRole_" + i * 2));
+                rolesToAdd.add(roleMap.get("testRole_" + i * 3));
+            }
+
+            Response response = usersResource.create(user);
+
+            if (response.getStatus() != Status.CREATED.getStatusCode()) {
+                log.error("Keycloak user creation or update with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
+
+                if (response.getStatus() == HttpStatus.SC_CONFLICT) {
+                    try {
+                        UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, userName);
+
+                        log.warn("A user with username {} and id {} already exists in Keycloak", userName, existingUser.getId());
+                        throw new UsernameAlreadyExistsException(userName);
+
+                        // Some other field is causing a conflict
+                    } catch (ElementNotFoundException e) {
+                        throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+
+                    }
+
+                } else {
+                    throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+                }
+            }
+
+            String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+
+            usersResource.get(userId).roles().realmLevel().add(rolesToAdd);
+
+            // ---------- Define password credential
+            CredentialRepresentation credential = new CredentialRepresentation();
+            credential.setTemporary(false);
+            credential.setType(CredentialRepresentation.PASSWORD);
+            credential.setValue("user_" + i);
+
+            // Set password credential
+            usersResource.get(userId).resetPassword(credential);
+        }
+    }
+
 }

@@ -1492,7 +1492,71 @@
       },
       "notBefore": 0,
       "groups": []
-    }
+    },
+{
+    "id" : "5f01869d-bb04-4f4b-842b-80e1c28f836e",
+    "createdTimestamp" : 1652209142935,
+    "username" : "opencell.admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "credentials" : [ {
+      "id" : "858fa5b2-17dd-4465-9fc8-dccce6beef57",
+      "type" : "password",
+      "createdDate" : 1652209158955,
+      "secretData" : "{\"value\":\"jjR328S0BUteo9STe/MnF0PwICUn5+Kqina7HzdAKMA9sATG/mSEvPKm5M5k6hKYOHn5dWe68hIb+/mQwTnPDQ==\",\"salt\":\"QHr+Ck6luedroucaP1zJGA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "administrator", "default-roles-opencell" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "56d6e2bc-fdd8-44de-8720-ab303419610e",
+    "createdTimestamp" : 1652214837847,
+    "username" : "opencell.superadmin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "superAdministrator", "default-roles-opencell" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  },
+		{
+			"id": "cca4d8f2-d446-49e6-a3a6-d9d61b1f4049",
+			"createdTimestamp": 1635845653488,
+			"username": "energy.admin",
+			"enabled": true,
+			"totp": false,
+			"emailVerified": false,
+			"firstName": "Energy",
+			"lastName": "Admin",
+			"credentials": [
+				{
+					"id": "7583679f-e089-4c4c-ba90-2a66d1b0771b",
+					"type": "password",
+					"createdDate": 1635845660338,
+					"secretData": "{\"value\":\"okCfHfKaLLjgdTeFVMZ+UzR375Q32QAv/uY3ELx5XUNlvoJBCLaqy7TVTcNhCYp7g+MVNVKTuL8AlmmygqXV1Q==\",\"salt\":\"JRPhfMSo30r6Avyqr8ZljQ==\"}",
+					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}"
+				}
+			],
+			"disableableCredentialTypes": [],
+			"requiredActions": [],
+                "realmRoles" : [ "administrator", "default-roles-opencell" ],
+			"clientRoles": {
+				"opencell-portal": [
+					"ENERGY",
+					"MACO"
+				]
+			},
+			"notBefore": 0,
+			"groups": []
+		}
+
   ],
   "scopeMappings": [
     {

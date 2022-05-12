@@ -22,10 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.admin.User;
+import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -35,6 +37,9 @@ import org.primefaces.model.SortOrder;
 public class UserListBean extends UserBean {
 
     private static final long serialVersionUID = 5761298784298195322L;
+
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
 
     private LazyDataModel<User> filteredUsers = null;
 
@@ -74,5 +79,10 @@ public class UserListBean extends UserBean {
         }
 
         return filteredUsers;
+    }
+
+    public void createTestAuthorizationData() {
+        keycloakAdminClientService.createTestUserAndRoleData();
+        //keycloakAdminClientService.createTestAuthorizationData();
     }
 }
