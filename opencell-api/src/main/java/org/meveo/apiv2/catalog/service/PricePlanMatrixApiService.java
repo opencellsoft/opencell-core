@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.codec.binary.Hex;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
@@ -274,10 +273,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         if (StringUtils.isNotBlank(row)) {
             // Get the first character
             String bom = row.substring(0, 1);
-            // Convert first character to byte to character(Use Apache Commons Codec Hex class)
-            String bomByte = new String(Hex.encodeHex(bom.getBytes()));
-            if ("efbbbf".equals(bomByte)) {
-                // Eliminate BOM
+            if (!bom.equals("i")) { // i for id;
                 row = row.substring(1);
             }
         }
