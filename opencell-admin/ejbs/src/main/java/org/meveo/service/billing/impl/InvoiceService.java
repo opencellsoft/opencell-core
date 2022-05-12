@@ -186,6 +186,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -360,6 +361,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private CommercialOrderService commercialOrderService;
+
+    @Inject
+    private SellerService sellerService;
 
     /**
      * folder for pdf .
@@ -3600,7 +3604,39 @@ public class InvoiceService extends PersistenceService<Invoice> {
             addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
         }
     }
+    
+    private void applyDiscountPlanItem(Invoice invoice) {
+    	
+    	 Subscription subscription = invoice.getSubscription();
+         BillingAccount billingAccount = invoice.getBillingAccount();
+         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+         
+         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
+         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
+         
+         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+         }
 
+         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
+             if(subscription == null) {
+            	 List<Subscription> subscriptions = subscriptionService.listByBillingAccount(billingAccount);
+            	 Seller seller = invoice.getSeller() != null ? invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+            	 subscriptions.forEach(sub -> {
+                	 if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+                         subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+                         invoice.getInvoiceLines().forEach(invoiceLine -> {
+                        	 invoiceLinesService.addDiscountPlanInvoiceLine(billingAccountApplicableDiscountPlanItems, invoiceLine, invoice, billingAccount, seller);
+                         });
+                        
+                     }
+            	 });
+             }
+         }
+         
+    }
+    
     private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates) throws BusinessException {
 
         Subscription subscription = invoice.getSubscription();
@@ -3679,12 +3715,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), null, null,null,null,invoice.getInvoiceDate(), null)) {
-        	//List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,null,new Date());
-        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(),null, null, null, null,null,new Date(), null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
+        	List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());;
         	subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
-
+        
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
@@ -3968,6 +4003,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return computedDiscount;
     }
 
+    @Deprecated
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
@@ -3983,6 +4019,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         applicableDiscountPlanItems.add(discountPlanItem);
                     }
                 }
+                if (!invoice.getInvoiceType().equals(invoiceType)) {
+                    dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+
+                    if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
+                        dpi.setStatusDate(new Date());
+                        dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
+                    }
+                    if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
+                        dpi.setStatusDate(new Date());
+                        dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
+                    }
+                    discountPlanInstanceService.update(dpi);
+                }
+            }
+        }
+        return applicableDiscountPlanItems;
+    }
+    
+
+    private List<DiscountPlanItem> getApplicableDiscountPlanItemsV11(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
+            throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
+        for (DiscountPlanInstance dpi : discountPlanInstances) {
+            if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
+                continue;
+            }
+            if (dpi.getDiscountPlan().isActive()) {
+            	applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());
                 if (!invoice.getInvoiceType().equals(invoiceType)) {
                     dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
@@ -5207,7 +5272,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else {
                 lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
-
+            
             if (minAmountForAccounts != null && minAmountForAccounts.isMinAmountCalculationActivated()) {
                 invoiceLinesService.calculateAmountsAndCreateMinAmountLines(entityToInvoice, lastTransactionDate, invoiceDate, false, minAmountForAccounts);
                 minAmountInvoiceLines = entityToInvoice.getMinInvoiceLines();
