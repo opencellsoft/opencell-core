@@ -49,12 +49,6 @@
 										"name": "Content-Type",
 										"type": "text",
 										"value": "application/json"
-									},
-									{
-										"key": "Authorization",
-										"value": "{{auth}}",
-										"type": "text",
-										"disabled": true
 									}
 								],
 								"body": {
