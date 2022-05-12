@@ -103,6 +103,7 @@ public class OccTemplateDto extends BusinessEntityDto {
             contractAccountingCode = occTemplate.getContraAccountingCode().getCode();
         }
 
+
         if(occTemplate.getContraAccountingCode2() != null) {
             contraAccountingCode2 = occTemplate.getContraAccountingCode2().getCode();
         }
