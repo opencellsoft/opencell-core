@@ -20,11 +20,14 @@ package org.meveo.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.rating.EDR;
 
 /**
@@ -58,6 +61,9 @@ public class RatingResult {
      * Exception raised during rating
      */
     private Exception ratingException;
+    
+
+    private Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
 
     /**
      * Constructor
@@ -242,4 +248,12 @@ public class RatingResult {
     public void setRatingException(Exception ratingException) {
         this.ratingException = ratingException;
     }
+
+	public Set<DiscountPlanItem> getEligibleFixedDiscountItems() {
+		return eligibleFixedDiscountItems;
+	}
+
+	public void setEligibleFixedDiscountItems(Set<DiscountPlanItem> eligibleFixedDiscountItems) {
+		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
+	}
 }

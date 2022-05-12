@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -23,6 +24,7 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -43,6 +45,7 @@ public class OrderValidationScript extends Script {
     private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
     private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface("ServiceInstanceService");
     private ServiceSingleton serviceSingleton = (ServiceSingleton) getServiceInterface("ServiceSingleton");
+    private DiscountPlanInstanceService discountPlanInstanceService = (DiscountPlanInstanceService) getServiceInterface("DiscountPlanInstanceService");
 
     @Override
     public void execute(Map<String, Object> context) {
@@ -84,7 +87,7 @@ public class OrderValidationScript extends Script {
             subscriptionService.create(subscription);
 
             for (OrderProduct product : offer.getProducts()){
-                processProduct(subscription, product, currentUser);
+            	processProductWithDiscount(subscription, product, currentUser);
             }
 
             subscriptionService.update(subscription);
@@ -111,7 +114,7 @@ public class OrderValidationScript extends Script {
         return seller;
     }
 
-    private void processProduct(Subscription subscription, OrderProduct orderProduct, MeveoUser currentUser) {
+    private ServiceInstance  processProduct(Subscription subscription, OrderProduct orderProduct, MeveoUser currentUser) {
         Product product = orderProduct.getProductVersion().getProduct();
 
         ServiceInstance serviceInstance = new ServiceInstance();
@@ -154,5 +157,23 @@ public class OrderValidationScript extends Script {
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         }
         subscription.addServiceInstance(serviceInstance);
+        return serviceInstance;
     }
+    
+
+	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct, MeveoUser currentUser) {
+		var serviceInstance = processProduct(subscription, orderProduct, currentUser);
+
+		if(orderProduct.getDiscountPlan() != null) {
+			DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+			var discountPlan = orderProduct.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setServiceInstance(serviceInstance);
+			discountPlanInstanceService.create(dpi, discountPlan);
+		}
+	}
 }
