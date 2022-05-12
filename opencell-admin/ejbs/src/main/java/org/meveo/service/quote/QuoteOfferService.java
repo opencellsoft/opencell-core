@@ -12,6 +12,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
@@ -54,5 +56,16 @@ public class QuoteOfferService extends PersistenceService<QuoteOffer> {
 		if(quoteOfferExist != null)
 			throw new EntityAlreadyExistsException("Quote offer already exist with code : " + entity.getCode() + " and quote version id : " + entity.getQuoteVersion().getId());
 		super.create(entity);
+	}
+	
+	public List<QuoteOffer> findBySubscriptionAndStatus(String subscriptionCode, OfferLineTypeEnum quoteLineType) {
+		Query query=getEntityManager().createNamedQuery("OrderOffer.findByStatusAndSubscription");
+		query.setParameter("subscriptionCode", subscriptionCode)
+			  .setParameter("status", quoteLineType);
+		try {
+			return (List<QuoteOffer>) query.getResultList();
+		}catch(NoResultException e ) {
+			return null;
+		}
 	}
 }

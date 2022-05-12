@@ -165,7 +165,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getEntityManager().createNamedQuery("AccountingArticle.findByAccountingCode", AccountingArticle.class)
 				.setParameter("accountingCode", accountingCode)
 				.getResultList();
-	}
+	}	
 	
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) throws InvalidELException, ValidationException {
 		return getAccountingArticleByChargeInstance(chargeInstance, null);

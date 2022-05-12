@@ -553,5 +553,50 @@
         }
       }
     ]
+  },
+  {
+    "entityName": "AccountOperation",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "customerAccount",
+                "entityClass": "org.meveo.model.payments.CustomerAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
   }
 ]

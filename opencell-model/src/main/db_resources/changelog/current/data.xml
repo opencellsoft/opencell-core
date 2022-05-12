@@ -10130,5 +10130,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
         </sql>
     </changeSet>
+
+	<changeSet id="#INTRD-6961_20220511" author="aelmalki">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Unidentified customer" />
+			<where>code='419100000'</where>
+		</update>
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Banks" />
+			<where>code='512000000'</where>
+		</update>
+	</changeSet>
     
 </databaseChangeLog>

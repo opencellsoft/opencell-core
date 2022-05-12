@@ -37,6 +37,8 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -250,6 +252,17 @@ public class InvoiceLine extends AuditableEntity {
 
 	@OneToMany(mappedBy = "invoiceLine", fetch = LAZY)
 	private List<RatedTransaction> ratedTransactions;
+
+	@Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+ 	@Column(name = "discount_plan_type", length = 50)
+ 	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
 
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
@@ -659,6 +672,30 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
 		this.discountedInvoiceLine = discountedInvoiceLine;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
 	}
 	
 	
