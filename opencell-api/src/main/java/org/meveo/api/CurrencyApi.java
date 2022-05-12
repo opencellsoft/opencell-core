@@ -397,8 +397,5 @@ public class CurrencyApi extends BaseApi {
     
     public void removeExchangeRateById(Long id) {
         exchangeRateService.delete(id);
-
-
-
     }
 }
