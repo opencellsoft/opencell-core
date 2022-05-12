@@ -159,13 +159,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Override
     public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
-
         return currencyApi.addFunctionalCurrency(postData);
     }
     
     @Override
     public ActionStatus updateExchangeRate(Long id, ExchangeRateDto postData) {
-
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -176,4 +174,15 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
         return result;
     }
+    
+    public ActionStatus removeExchangeRateById(Long id) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.removeExchangeRateById(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }    
 }
