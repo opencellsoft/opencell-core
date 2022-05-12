@@ -63,7 +63,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
@@ -321,7 +320,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Instance of discount plans.
      */
     @OneToMany(mappedBy = "subscription", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<DiscountPlanInstance> discountPlanInstances;
+    private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<DiscountPlanInstance>();
 
     /**
      * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.

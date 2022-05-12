@@ -115,6 +115,7 @@ public class PaymentService extends PersistenceService<Payment> {
     @Override
     public void create(Payment entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
+        accountOperationService.fillOperationNumber(entity);
         super.create(entity);
     }
    
@@ -327,11 +328,12 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             GatewayPaymentInterface gatewayPaymentInterface = null;
             PaymentGateway matchedPaymentGatewayForTheCA = null;
+            String pgCode = paymentGateway != null ? paymentGateway.getCode() : null;
             if(isNewCard) {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,null,paymentGateway.getCode());
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, null ,cardType,null,pgCode);
             	
             }else {
-            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod ,cardType,null,paymentGateway.getCode());
+            	matchedPaymentGatewayForTheCA = paymentGatewayService.getAndCheckPaymentGateway(customerAccount, preferredMethod ,cardType,null,pgCode);
             }
                         
             if (matchedPaymentGatewayForTheCA == null) {

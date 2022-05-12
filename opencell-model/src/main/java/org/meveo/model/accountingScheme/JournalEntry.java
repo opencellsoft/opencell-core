@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -32,6 +33,10 @@ import java.math.BigDecimal;
 @Table(name = "accounting_journal_entry")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_journal_entry_seq")})
+@NamedQueries({
+        @NamedQuery(name = "JournalEntry.checkExistenceWithAccountingCode",
+                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.accountingCode.id = :ID_ACCOUNTING_CODE")
+})
 public class JournalEntry extends AuditableEntity {
 
     /**
@@ -100,6 +105,67 @@ public class JournalEntry extends AuditableEntity {
     @Column(name = "analytic_code_3")
     private String analyticCode3;
 
+    /**
+     * Operation number
+     */
+    @Column(name = "operation_number")
+    private Long operationNumber; 
+    
+    /**
+     * Seller code
+     */
+    @Column(name = "seller_code", nullable = false)
+    private String sellerCode; 
+    
+    /**
+     * Client unique id
+     */
+    @Column(name = "client_unique_id")
+    private String clientUniqueId; 
+
+    /**
+     * Code currency
+     */
+    @Column(name = "currency", nullable = false)
+    private String currency; 
+    
+    /**
+     * Invoice
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supporting_document_ref")
+    private Invoice supportingDocumentRef;
+    
+    /**
+     * Invoice type
+     */
+    @Column(name = "supporting_document_type")
+    private String supportingDocumentType;
+
+    /**
+     * Code trading currency
+     */
+    @Column(name = "trading_currency")
+    private String tradingCurrency; 
+    
+	/**
+	 * trading amount
+	 */
+	@Column(name = "trading_amount")
+	private BigDecimal tradingAmount;
+
+    /**
+     * Auxiliary account code
+     */
+    @Column(name = "auxiliary_account_code")
+	private String auxiliaryAccountCode;
+
+    /**
+     * Auxiliary account label
+     */
+    @Column(name = "auxiliary_account_label")
+	private String auxiliaryAccountLabel;
+    
     public AccountOperation getAccountOperation() {
         return accountOperation;
     }
@@ -178,5 +244,85 @@ public class JournalEntry extends AuditableEntity {
 
     public void setAnalyticCode3(String analyticCode3) {
         this.analyticCode3 = analyticCode3;
+    }
+
+	public Long getOperationNumber() {
+		return operationNumber;
+	}
+
+	public void setOperationNumber(Long operationNumber) {
+		this.operationNumber = operationNumber;
+	}
+
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
+
+	public String getClientUniqueId() {
+		return clientUniqueId;
+	}
+
+	public void setClientUniqueId(String clientUniqueId) {
+		this.clientUniqueId = clientUniqueId;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public Invoice getSupportingDocumentRef() {
+		return supportingDocumentRef;
+	}
+
+	public void setSupportingDocumentRef(Invoice supportingDocumentRef) {
+		this.supportingDocumentRef = supportingDocumentRef;
+	}
+
+	public String getSupportingDocumentType() {
+		return supportingDocumentType;
+	}
+
+	public void setSupportingDocumentType(String supportingDocumentType) {
+		this.supportingDocumentType = supportingDocumentType;
+	}
+
+	public String getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(String tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public BigDecimal getTradingAmount() {
+		return tradingAmount;
+	}
+
+	public void setTradingAmount(BigDecimal tradingAmount) {
+		this.tradingAmount = tradingAmount;
+	}
+
+    public String getAuxiliaryAccountCode() {
+        return auxiliaryAccountCode;
+    }
+
+    public void setAuxiliaryAccountCode(String auxiliaryAccountCode) {
+        this.auxiliaryAccountCode = auxiliaryAccountCode;
+    }
+
+    public String getAuxiliaryAccountLabel() {
+        return auxiliaryAccountLabel;
+    }
+
+    public void setAuxiliaryAccountLabel(String auxiliaryAccountLabel) {
+        this.auxiliaryAccountLabel = auxiliaryAccountLabel;
     }
 }

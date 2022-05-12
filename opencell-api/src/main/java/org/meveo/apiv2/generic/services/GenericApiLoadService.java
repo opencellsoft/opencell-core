@@ -1,7 +1,6 @@
 package org.meveo.apiv2.generic.services;
 
 import static org.meveo.apiv2.generic.ValidationUtils.checkId;
-import static org.meveo.apiv2.generic.ValidationUtils.checkRecords;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,15 +46,23 @@ public class GenericApiLoadService {
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
         if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
-            List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)
+            List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, id)
                     .find(nativePersistenceService.getEntityManager()).stream()
-                    .map(ObjectArrays -> Arrays.asList(ObjectArrays))
+                    .map(Arrays::asList)
                     .collect(Collectors.toList());
-            return serializeResult(list.stream()
+
+            List<Map<String, Object>> mapResult = list.stream()
                     .map(line -> addResultLine(line, genericFields.iterator()))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+            Map<String, Object> results = new LinkedHashMap<>();
+            results.put("total", list.size());
+            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            results.put("data", mapResult);
+
+            return serializeResults(results);
         }else if(genericFields != null &&  isCustomFieldQuery(genericFields)){
-        	// get specific custom fields with meta data 
+        	// get specific custom fields with meta data
         	SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
             List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, id)

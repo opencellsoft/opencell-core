@@ -21,7 +21,7 @@ public interface CardRefund {
     @Nullable
     String getCvv();
     @Nullable
-    Date getExpiryDate();
+    String getExpiryDate();
     @Nullable
     String getCardType();
     @Nullable

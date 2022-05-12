@@ -135,6 +135,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			}
 			accountOperation.setCustomerAccount(customerAccount);
 			accountOperation.setStatus(POSTED);
+			// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
+			accountOperationService.fillOperationNumber(accountOperation);
 			try {
 				accountOperationService.update(accountOperation);
 			} catch (Exception exception) {
@@ -196,10 +198,29 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
-			MatchingReturnObject matchingResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-					aoIds, aoIds.get(aoIds.size() - 1));
+			Long creditAoId = aoIds.get(0); // First AO is Credit, and shall be add with DEBIT to do unitary matching
 
-			if (matchingResult.getPartialMatchingOcc() == null || matchingResult.getPartialMatchingOcc().isEmpty()) {
+			MatchingReturnObject matchingResult = new MatchingReturnObject();
+			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
+			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
+
+			for (Long aoId : aoIds) {
+				if (aoId.equals(creditAoId)) {
+					// process only DEBIT AO
+					continue;
+				}
+				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+						List.of(creditAoId, aoId), aoId);
+
+				if (matchingResult.getPartialMatchingOcc() != null) {
+					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+				}
+
+				matchingResult.setOk(unitaryResult.isOk());
+
+			}
+
+			if (partialMatchingOcc.isEmpty()) {
 				// Reload AO to get updated MatchingStatus
 				List<AccountOperation> aoPartially = accountOperationService.findByIds(aoIds).stream()
 						.filter(accountOperation -> accountOperation.getMatchingStatus() == MatchingStatusEnum.P)
@@ -233,10 +254,15 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			throw new EntityDoesNotExistsException("One or more AccountOperations passed for unmatching are not found");
 		}
 
-		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AOs of type SecurityDeposit
-		if (securityDepositTransactionService.checkExistanceByAoIds(aoIds)) {
-			throw new BusinessApiException("UnMatching action is failed : Can not unMatch AOs of type SecurityDeposit");
-		}
+		// Check if AO is already used at SecurityDepositTransaction : Can not unMatch AO used by the SecurityDeposit
+		// Unitary check
+		aoIds.forEach(id -> {
+			List<String> securityDepositCodes = securityDepositTransactionService.getSecurityDepositCodesByAoIds(id);
+			if (securityDepositCodes != null && !securityDepositCodes.isEmpty()) {
+				throw new BusinessApiException("Unmatching action is failed : Cannot unmatch AO used by the SecurityDeposit codes: "
+						+ new HashSet<>(securityDepositCodes));
+			}
+		});
 
 		List<UnMatchingOperationRequestDto> toUnmatch = new ArrayList<>(aos.size());
 

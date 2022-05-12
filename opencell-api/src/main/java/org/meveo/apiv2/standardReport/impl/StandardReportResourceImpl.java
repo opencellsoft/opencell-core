@@ -16,26 +16,37 @@ import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivables;
 import org.meveo.apiv2.standardReport.resource.StandardReportResource;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.util.ApplicationProvider;
+
+import static java.lang.Long.valueOf;
 
 public class StandardReportResourceImpl implements StandardReportResource {
 
     @Inject
     private StandardReportApiService standardReportApiService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
     private AgedReceivableMapper agedReceivableMapper = new AgedReceivableMapper();
-
-
 
     
     @Override
     public Response getAgedReceivables(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
-                                     Date startDate, Request request) {
+                                       Date startDate, String customerAccountDescription, String invoiceNumber,
+                                       Integer stepInDays, Integer numberOfPeriods, Request request) {
     	if (startDate == null) {
     		startDate = new Date();
 		}
     	List<Object[]> agedBalanceList =
-                standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate);
-    	List<AgedReceivableDto> agedReceivablesList= agedReceivableMapper.toEntityList(agedBalanceList);
+                standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate,
+                        customerAccountDescription, invoiceNumber, stepInDays, numberOfPeriods);
+        agedReceivableMapper.setAppProvider(appProvider);
+    	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
+                ? agedReceivableMapper.toEntityList(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, numberOfPeriods);
     	EntityTag etag = new EntityTag(Integer.toString(agedReceivablesList.hashCode()));
         CacheControl cc = new CacheControl();
         cc.setMaxAge(1000);
@@ -54,5 +65,4 @@ public class StandardReportResourceImpl implements StandardReportResource {
                         .offset(offset).limit(limit).total(count).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(agedReceivables).build();
     }
-    
 }

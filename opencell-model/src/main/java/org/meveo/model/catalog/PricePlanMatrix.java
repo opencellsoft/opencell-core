@@ -367,6 +367,10 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "parameter3_el")
     @Size(max = 2000)
     private String parameter3El;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "charge_template_id")
+    private ChargeTemplate chargeTemplate;
     
     /**
 	 * Discount plan items
@@ -876,5 +880,13 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         } else {
             return this.description;
         }
+    }
+
+    public ChargeTemplate getChargeTemplate() {
+        return chargeTemplate;
+    }
+
+    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+        this.chargeTemplate = chargeTemplate;
     }
 }

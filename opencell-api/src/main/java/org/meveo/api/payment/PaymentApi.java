@@ -35,8 +35,6 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
@@ -46,13 +44,16 @@ import org.meveo.api.dto.payment.PaymentHistoryDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -65,13 +66,14 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -79,7 +81,6 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentHistoryService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -114,7 +115,10 @@ public class PaymentApi extends BaseApi {
     @Inject
     private PaymentHistoryService paymentHistoryService;
 
-    /**
+	@Inject
+	private JournalService journalService;
+
+	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
      * @throws NoAllOperationUnmatchedException no all operation un matched exception
@@ -146,6 +150,7 @@ public class PaymentApi extends BaseApi {
         }
 
         Payment payment = new Payment();
+		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
         payment.setAmount(paymentDto.getAmount());
         payment.setUnMatchingAmount(paymentDto.getAmount());
@@ -157,8 +162,8 @@ public class PaymentApi extends BaseApi {
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
         payment.setReference(paymentDto.getReference());
-        payment.setDueDate(paymentDto.getDueDate() == null ? new Date()  : paymentDto.getDueDate());
-        payment.setTransactionDate(paymentDto.getTransactionDate() == null ? new Date()  : paymentDto.getTransactionDate());
+        payment.setDueDate(paymentDto.getDueDate() == null ? new Date() : paymentDto.getDueDate());
+        payment.setTransactionDate(paymentDto.getTransactionDate() == null ? new Date() : paymentDto.getTransactionDate());
         payment.setMatchingStatus(MatchingStatusEnum.O);
         payment.setPaymentOrder(paymentDto.getPaymentOrder());
         payment.setFees(paymentDto.getFees());
@@ -171,7 +176,8 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo4(paymentDto.getPaymentInfo4());
         payment.setPaymentInfo5(paymentDto.getPaymentInfo5());
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
-		payment.setCollectionDate(paymentDto.getCollectionDate());
+        payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
+		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
 
         // populate customFields
         try {
@@ -184,6 +190,7 @@ public class PaymentApi extends BaseApi {
             throw e;
         }
 
+		payment.setJournal(journalService.findByCode("BAN"));
         paymentService.create(payment);
 
         if (paymentDto.isToMatching()) {

@@ -116,7 +116,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             String executionId = (new Date()).getTime() + "_" + fileName;
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
+            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false,  false, false, appProvider, false);
 
             executionResults.put(executionId, exportImportFuture);
             return new ImportExportResponseDto(executionId);

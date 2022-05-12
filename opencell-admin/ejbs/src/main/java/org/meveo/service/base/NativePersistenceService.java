@@ -56,6 +56,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -766,7 +767,7 @@ public class NativePersistenceService extends BaseService {
         if(id != null) {
         	queryBuilder.addSql(" a.id ='"+id+"'");
         }
-        	
+
         if (config == null) {
             return queryBuilder;
         }
@@ -794,6 +795,60 @@ public class NativePersistenceService extends BaseService {
 
     }
 
+    public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id) {
+        tableName = addCurrentSchema(tableName);
+        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
+
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), null) : "";
+        if (!fieldsToRetrieve.isEmpty()) {
+            config.getFetchFields().remove("id");
+        }
+
+        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        if (id != null) {
+            queryBuilder.addSql(" a.id ='" + id + "'");
+        }
+
+        if (config == null) {
+            return queryBuilder;
+        }
+        Map<String, Object> filters = config.getFilters();
+
+        if (filters != null && !filters.isEmpty()) {
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+        }
+
+        if (config.getOrderings().length == 2) {
+            if (config.getOrderings()[0].equals("id")
+                    && config.getOrderings()[1].equals(PagingAndFiltering.SortOrder.ASCENDING)) {
+                config.setOrderings(new Object[]{});
+            }
+        }
+
+        queryBuilder.addPaginationConfiguration(config, "a");
+
+        String fieldsToGroupBy = config.getGroupBy() != null ? retrieveFields(new ArrayList<>(config.getGroupBy()), predicate.negate()) : "";
+
+        if (!fieldsToGroupBy.isEmpty()) {
+            queryBuilder.addGroupCriterion(fieldsToGroupBy);
+        }
+
+        String fieldsFilteredByHaving = config.getHaving() != null ? retrieveFields(new ArrayList<>(config.getHaving()), null) : "";
+
+        if (!fieldsFilteredByHaving.isEmpty()) {
+            queryBuilder.addHavingCriterion(fieldsFilteredByHaving);
+        }
+
+        // log.trace("Filters is {}", filters);
+        // log.trace("Query is {}", queryBuilder.getSqlString());
+        // log.trace("Query params are {}", queryBuilder.getParams());
+        return queryBuilder;
+
+    }
+
     private String buildFields(String fieldsToRetrieve, String aggFields) {
         if (!fieldsToRetrieve.isEmpty() && !aggFields.isEmpty()) {
             return String.join("," , fieldsToRetrieve, aggFields);
@@ -805,26 +860,51 @@ public class NativePersistenceService extends BaseService {
     }
 
     private String retrieveFields(List<String> fields, Predicate<String> predicate) {
-        return fields
-                .stream()
-                .filter(predicate)
-                .map(x -> {
-                    if (x.toLowerCase().trim().contains("->>string")) 
-                        return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else if(x.toLowerCase().trim().contains("->>double")) 
-                           return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else if(x.toLowerCase().trim().contains("->>long")) 
-                        return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else if(x.toLowerCase().trim().contains("->>date")) 
-                        return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else if(x.toLowerCase().trim().contains("->>boolean")) 
-                        return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else if(x.toLowerCase().trim().contains("->>entity")) 
-                        return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
-                    else
-                        return "a." + x;
-                      })
-                .collect(joining(","));
+        if (predicate == null) {
+            return fields
+                    .stream()
+                    .map(x -> {
+                        if (x.toLowerCase().trim().contains("->>string"))
+                            return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (x.toLowerCase().trim().contains("->>double"))
+                            return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (x.toLowerCase().trim().contains("->>long"))
+                            return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (x.toLowerCase().trim().contains("->>date"))
+                            return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (x.toLowerCase().trim().contains("->>boolean"))
+                            return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (x.toLowerCase().trim().contains("->>entity"))
+                            return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if (checkAggFunctions(x.toUpperCase().trim()))
+                            return x;
+                        else
+                            return "a." + x;
+                    })
+                    .collect(joining(","));
+        }
+        else {
+            return fields
+                    .stream()
+                    .filter(predicate)
+                    .map(x -> {
+                        if (x.toLowerCase().trim().contains("->>string"))
+                            return "varcharFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if(x.toLowerCase().trim().contains("->>double"))
+                            return "numericFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if(x.toLowerCase().trim().contains("->>long"))
+                            return "bigIntFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if(x.toLowerCase().trim().contains("->>date"))
+                            return "timestampFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if(x.toLowerCase().trim().contains("->>boolean"))
+                            return "booleanFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else if(x.toLowerCase().trim().contains("->>entity"))
+                            return "entityFromJson(a.cfValues,"+x.split("->>")[0]+","+x.split("->>")[1]+")";
+                        else
+                            return "a." + x;
+                    })
+                    .collect(joining(","));
+        }
     }
 
     private String aggregationFields(List<String> fields, Predicate<String> predicate) {

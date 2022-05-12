@@ -9,8 +9,10 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
@@ -47,6 +49,9 @@ public class PaymentApiTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private JournalService journalService;
+
 
 
 
@@ -62,6 +67,7 @@ public class PaymentApiTest {
 
         doReturn(null).when(customerAccountService).findByCode(any());
         doReturn(new OCCTemplate()).when(oCCTemplateService).findByCode(any());
+        doReturn(new Journal()).when(journalService).findByCode(any());
         doNothing().when(paymentService).create(any());
         Long id = paymentApi.createPayment(paymentDto);
         Assert.assertNull(id);

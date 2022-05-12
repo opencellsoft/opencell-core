@@ -213,6 +213,28 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
     }
 
+    public TaxInfo determineTax(ChargeInstance chargeInstance, Date date, AccountingArticle accountingArticle) throws BusinessException {
+
+        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        if (taxClass == null) {
+            if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+                taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
+            }
+            if (taxClass == null) {
+                taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+            }
+            if(taxClass==null) {
+            	if(accountingArticle!=null) {
+            		taxClass=accountingArticle.getTaxClass();
+            	}else {
+            		log.warn("No article found for chargeInstance code={},id{}",chargeInstance.getCode(),chargeInstance.getId());
+            	}
+            }
+            chargeInstance.setTaxClassResolved(taxClass);
+        }
+
+        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, true, false);
+    }
     /**
      * Determine applicable tax for a given charge instance. Considers when Billing Account is exonerated.
      * 
@@ -263,7 +285,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         try {
             if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
-                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance,walletOperation.getParameter1(),walletOperation.getParameter2(),walletOperation.getParameter3());
+                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
                     chargeInstance.setTaxClassResolved(taxClass);
