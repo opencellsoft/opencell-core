@@ -15004,12 +15004,10 @@
 							"pm.globals.set(\"3daysBefore\", days3before.toISOString().slice(0, 10)+\"T\");",
 							"pm.globals.set(\"2daysBefore\", days2before.toISOString().slice(0, 10)+\"T\");",
 							"var inc = pm.globals.get(\"inc\");",
-							"if(inc==null){",
-							"    inc=0;",
-							"}",
 							"if(inc!=null){",
 							"    inc++;",
-							"}"
+							"}",
+							""
 						]
 					}
 				},
@@ -52971,7 +52969,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"//pm.globals.set(\"inc\",1);",
+					"pm.globals.set(\"inc\",1);",
 					"// Initialize variables",
 					"var now=new Date();",
 					"var now_addXXdays=new Date();",
@@ -52981,7 +52979,6 @@
 					" ",
 					"if (requestName.startsWith(\"SKIP\")){",
 					"   requestName = requestName.slice(n);",
-					"   pm.globals.set(\"request.label\", requestName);",
 					"}",
 					"pm.globals.set(\"timestamp.iso\", now.toISOString());",
 					"pm.globals.set(\"request.label\", requestName);",
@@ -53020,7 +53017,6 @@
 					"    var client_id = pm.environment.get(\"client.id\");",
 					"    var client_secret = pm.environment.get(\"client.secret\");",
 					"    var opencell_url = pm.environment.get(\"opencell.base\");",
-					"    console.log(\"opencell_url here: \"+ opencell_url);",
 					"    //can use an external token url",
 					"    ",
 					"    var keycloak_token_url = pm.environment.get(\"keycloak.token.url\");",
