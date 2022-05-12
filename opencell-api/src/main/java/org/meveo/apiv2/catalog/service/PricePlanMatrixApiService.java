@@ -36,6 +36,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -182,34 +183,39 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                     pricePlanMatrixVersionService.update(ppmvToUpdate);
                 }
 
-                List<PricePlanMatrixVersion> previousPVs = pricePlanMatrixVersionService.findToDateAfterDateAndVersion(pricePlanMatrix, newFrom, ppmvToUpdate.getCurrentVersion());
-                for (PricePlanMatrixVersion previousPV : previousPVs) {
-                    if (previousPV.getId() != pricePlanVersionId && previousPV.getValidity().getFrom() != null && previousPV.getValidity().getFrom().compareTo(newFrom) > 0
-                            && previousPV.getValidity().getTo() != null && previousPV.getValidity().getTo().compareTo(newFrom) > 0) {
-                        pricePlanMatrixVersionService.remove(previousPV);
-                    } else {
-                        previousPV.setValidity(new DatePeriod(previousPV.getValidity().getFrom(), newFrom));
-                        pricePlanMatrixVersionService.update(previousPV);
-                        break;
-                    }
-                }
+                if (importItem.getStatus() == VersionStatusEnum.PUBLISHED) {
 
-                if (newTo != null) {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
-                    for (PricePlanMatrixVersion nextPV : nextPVs) {
-                        if (nextPV.getId() != pricePlanVersionId && nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
-                            pricePlanMatrixVersionService.remove(nextPV);
+                    List<PricePlanMatrixVersion> previousPVs = pricePlanMatrixVersionService.findToDateAfterDateAndVersion(pricePlanMatrix, newFrom,
+                        ppmvToUpdate.getCurrentVersion());
+                    for (PricePlanMatrixVersion previousPV : previousPVs) {
+                        if (previousPV.getId() != pricePlanVersionId && previousPV.getValidity().getFrom() != null && previousPV.getValidity().getFrom().compareTo(newFrom) > 0
+                                && previousPV.getValidity().getTo() != null && previousPV.getValidity().getTo().compareTo(newFrom) > 0) {
+                            pricePlanMatrixVersionService.remove(previousPV);
                         } else {
-                            nextPV.setValidity(new DatePeriod(newTo, nextPV.getValidity().getTo()));
-                            pricePlanMatrixVersionService.update(nextPV);
+                            previousPV.setValidity(new DatePeriod(previousPV.getValidity().getFrom(), newFrom));
+                            pricePlanMatrixVersionService.update(previousPV);
                             break;
                         }
                     }
-                } else {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom,
-                        ppmvToUpdate.getCurrentVersion());
-                    for (PricePlanMatrixVersion nextPV : nextPVs) {
-                        pricePlanMatrixVersionService.remove(nextPV);
+
+                    if (newTo != null) {
+                        List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo,
+                            ppmvToUpdate.getCurrentVersion());
+                        for (PricePlanMatrixVersion nextPV : nextPVs) {
+                            if (nextPV.getId() != pricePlanVersionId && nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
+                                pricePlanMatrixVersionService.remove(nextPV);
+                            } else {
+                                nextPV.setValidity(new DatePeriod(newTo, nextPV.getValidity().getTo()));
+                                pricePlanMatrixVersionService.update(nextPV);
+                                break;
+                            }
+                        }
+                    } else {
+                        List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom,
+                            ppmvToUpdate.getCurrentVersion());
+                        for (PricePlanMatrixVersion nextPV : nextPVs) {
+                            pricePlanMatrixVersionService.remove(nextPV);
+                        }
                     }
                 }
 
