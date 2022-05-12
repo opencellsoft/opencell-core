@@ -9987,7 +9987,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+	<changeSet id="#INTRD-6484" author="hichamElHaloui" dbms="postgres">
 		<sql>
 			with cte as
 					 (
@@ -10121,4 +10121,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+    <changeSet id="#INTRD-7049_20220509" author="TarikRabeh">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        trading_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog>

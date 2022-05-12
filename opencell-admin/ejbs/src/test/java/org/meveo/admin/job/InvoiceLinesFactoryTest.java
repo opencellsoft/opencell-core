@@ -170,7 +170,7 @@ public class InvoiceLinesFactoryTest {
         BillingRun billingRun = new BillingRun();
         billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, Map.of(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -190,7 +190,7 @@ public class InvoiceLinesFactoryTest {
         BillingRun billingRun = new BillingRun();
         billingRun.setId(1L);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, Map.of(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
@@ -204,7 +204,7 @@ public class InvoiceLinesFactoryTest {
         Map<String, Object> record = buildRecord();
         when(appProvider.isEntreprise()).thenReturn(Boolean.TRUE);
 
-        InvoiceLine invoiceLine = factory.create(record, configuration, null, appProvider, billingRun);
+        InvoiceLine invoiceLine = factory.create(record, Map.of(), configuration, null, appProvider, billingRun);
 
         Assert.assertEquals(invoiceLine.getStatus(), OPEN);
         Assert.assertEquals(invoiceLine.getOrderNumber(), "1123456");
