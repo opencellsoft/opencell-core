@@ -10141,5 +10141,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='512000000'</where>
 		</update>
 	</changeSet>
-    
+	<changeSet id="#6023_130522" author="AbdelkaderBouazza">
+		<update tableName="crm_seller">
+			<column name="email" value="test@opencell.com" />
+			<where>email is null</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
