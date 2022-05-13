@@ -1,12 +1,9 @@
 package org.meveo.api.catalog;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +23,8 @@ import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
@@ -47,53 +46,59 @@ public class PricePlanMatrixLineApi extends BaseApi {
     }
     
     public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-    	
-    	checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        
+        checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
 
-		for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
-	    	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
-	    }
-		PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
-		return new GetPricePlanVersionResponseDto(ppmVersion);
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+            addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
+        }
+        PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+        return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
-    
     public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-        PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
-        	ppmVersion.getLines().clear();
-        	Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
-        	checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
-            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
-//            	Set<PricePlanMatrixValueDto> target = pricePlanMatrixLineDto.getPricePlanMatrixValues().stream().collect(Collectors.toSet());
-//            	if(target.size() != pricePlanMatrixLineDto.getPricePlanMatrixValues().size())
-//            		throw new MeveoApiException("Error");
-            	PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
-            	pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
-                pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
-                pricePlanMatrixLine.getPricePlanMatrixValues().clear();
-                pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
-                pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
-                pricePlanMatrixLineService.create(pricePlanMatrixLine);
-                Set<PricePlanMatrixValue> pricePlanMatrixValues = pricePlanMatrixLineService.getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
-                pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
-                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
-                lines.add(pricePlanMatrixLine);
-            }
-            ppmVersion.getLines().addAll(lines);
+        return updatePricePlanMatrixLines(pricePlanMatrixCode, pricePlanMatrixVersion, dtoData, true);
+    }
+
+    public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData, boolean saveChanges) throws MeveoApiException, BusinessException {
+        PricePlanMatrixVersion ppmVersion = pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+        ppmVersion.getLines().clear();
+        Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
+        checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+//              Set<PricePlanMatrixValueDto> target = pricePlanMatrixLineDto.getPricePlanMatrixValues().stream().collect(Collectors.toSet());
+//              if(target.size() != pricePlanMatrixLineDto.getPricePlanMatrixValues().size())
+//                  throw new MeveoApiException("Error");
+            PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
+            pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
+            pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
+            pricePlanMatrixLine.getPricePlanMatrixValues().clear();
+            pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
+            pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
+            pricePlanMatrixLineService.create(pricePlanMatrixLine);
+            Set<PricePlanMatrixValue> pricePlanMatrixValues = pricePlanMatrixLineService.getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
+            pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
+            pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+            lines.add(pricePlanMatrixLine);
+        }
+        ppmVersion.getLines().addAll(lines);
+        
+        if (saveChanges) {
             pricePlanMatrixVersionService.updatePricePlanMatrixVersion(ppmVersion);
-          return new GetPricePlanVersionResponseDto(ppmVersion);
+        }
+        return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
     private void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
-    	for (int i = 0; i < list.size(); i++) {
-			var values = list.get(i).getPricePlanMatrixValues(); 
-			for (int k = i + 1; k < list.size(); k++) {
-				var valTobeCompared = list.get(k).getPricePlanMatrixValues();
-				if(!values.isEmpty() 
-						&& !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
-					throw new MeveoApiException("A line having similar values already exists!.");
-			}
-		}
+        for (int i = 0; i < list.size(); i++) {
+            var values = list.get(i).getPricePlanMatrixValues(); 
+            for (int k = i + 1; k < list.size(); k++) {
+                var valTobeCompared = list.get(k).getPricePlanMatrixValues();
+                if(!values.isEmpty() 
+                        && !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
+                    throw new MeveoApiException("A line having similar values already exists!.");
+            }
+        }
     }
     
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto pricePlanMatrixLineDto) {
