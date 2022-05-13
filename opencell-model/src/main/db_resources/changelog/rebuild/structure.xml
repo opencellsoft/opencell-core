@@ -2944,6 +2944,7 @@
             <column name="discount_plan_id" type="bigint"/>
             <column name="cpq_quote_id" type="bigint" />
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
+            <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -15992,7 +15993,7 @@
        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
       </changeSet>
-    
+
       <changeSet id="rebuild-str-fk-540-1640-fk2" author="Mbarek-Ay">
         <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
@@ -17594,6 +17595,7 @@
 	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
 	<changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
 	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza"/>
+    <changeSet id="INTRD-6024-13052022" author="Abdelkader.Bouazza"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -628,6 +628,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTaxBeforeDiscount;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_reminder_level_triggered")
+    private boolean isReminderLevelTriggered;
 
     public Invoice() {
 	}
@@ -678,6 +681,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.paymentStatusDate = null;
 		this.invoiceLines = new ArrayList<InvoiceLine>();
 		this.invoiceAgregates = new ArrayList<InvoiceAgregate>();
+		this.isReminderLevelTriggered = copy.isReminderLevelTriggered;
 	}
 
 
@@ -1611,5 +1615,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setAmountWithoutTaxBeforeDiscount(BigDecimal amountWithoutTaxBeforeDiscount) {
         this.amountWithoutTaxBeforeDiscount = amountWithoutTaxBeforeDiscount;
+    }
+
+    public boolean isReminderLevelTriggered() {
+        return isReminderLevelTriggered;
+    }
+
+    public void setReminderLevelTriggered(boolean reminderLevelTriggered) {
+        isReminderLevelTriggered = reminderLevelTriggered;
     }
 }
