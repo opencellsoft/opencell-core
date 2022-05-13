@@ -8061,7 +8061,7 @@
             <column name="code" value="INV_CRN" />
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
-        </insert>        
+        </insert>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
@@ -9764,7 +9764,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-    
+
     <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
         <insert tableName="crm_custom_field_tmpl_val">
             <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
@@ -9871,6 +9871,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where> code IN ('INV_STD', 'INV_CRN')</where>
 		</update>
 	</changeSet>
+	<changeSet id="#6023_130522" author="AbdelkaderBouazza"/>
 
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
 	<changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
