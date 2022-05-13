@@ -274,4 +274,58 @@ public class QuoteValidationScript extends ModuleScript {
 		});
 	}
 	
+	private OrderProduct processOrderProducts(QuoteProduct product, CommercialOrder commercialOrder, OrderLot orderLot, OrderOffer orderOffer) {
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setOrder(commercialOrder);
+		orderProduct.setOrderServiceCommercial(orderLot);
+		orderProduct.setProductVersion(product.getProductVersion());
+		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setDiscountPlan(product.getDiscountPlan());
+		orderProduct.setOrderOffer(orderOffer);  
+		orderProduct.setQuoteProduct(product); 
+		orderProduct.setDeliveryDate(product.getDeliveryDate());
+		orderProduct.setProductActionType(product.getProductActionType());
+		orderProduct.setTerminationDate(product.getTerminationDate());
+		orderProduct.setTerminationReason(product.getTerminationReason());
+		
+		orderProductService.create(orderProduct);
+		
+		product.getQuoteAttributes().forEach(quoteAttribute -> {
+			processOrderAttribute(quoteAttribute, commercialOrder, orderLot, orderProduct);
+		});
+		
+		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
+			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer);
+		});
+		
+		
+		return orderProduct;
+	}
+	
+	private void processOrderPrices(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
+		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
+		quotePrices.forEach( price -> {
+			OrderPrice orderPrice = new OrderPrice();
+			orderPrice.setCode(UUID.randomUUID().toString());
+			orderPrice.setOrderArticleLine(orderArticleLine);
+			orderPrice.setOrder(commercialOrder);
+			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
+			orderPrice.setAmountWithTax(price.getAmountWithTax());
+			orderPrice.setUnitPriceWithoutTax(price.getUnitPriceWithoutTax());
+			orderPrice.setAmountWithoutTax(price.getAmountWithoutTax());
+			orderPrice.setAmountWithoutTaxWithDiscount(price.getAmountWithoutTaxWithoutDiscount());
+			orderPrice.setTaxAmount(price.getTaxAmount());
+			orderPrice.setTaxRate(price.getTaxRate());
+			orderPrice.setPriceOverCharged(price.getPriceOverCharged());
+			orderPrice.setCurrencyCode(price.getCurrencyCode());
+			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
+			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
+			orderPrice.setChargeTemplate(price.getChargeTemplate());
+			orderPrice.setOrderOffer(orderOffer);
+			orderPrice.setPriceTypeEnum(price.getPriceTypeEnum());
+			orderPriceService.create(orderPrice);
+		});
+	}
+	
 }
