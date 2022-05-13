@@ -12813,6 +12813,14 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-6672_20220511" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="target_tax_id" type="bigint" />
+			<column name="target_tax_rate" type="numeric(23, 12)" />
+        </addColumn>
+		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+    
     <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
