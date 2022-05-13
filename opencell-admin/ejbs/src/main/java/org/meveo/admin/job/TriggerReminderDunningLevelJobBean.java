@@ -97,11 +97,17 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         reminderLevel = levelService.findById(reminderLevel.getId(), asList("dunningActions"));
         for (Invoice invoice : invoices) {
             Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
-            if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today))) {
+            if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
                 launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                markInvoiceAsReminderAlreadySent(invoice);
                 createLevelInstance(policyLevel);
             }
         }
+    }
+
+    private void markInvoiceAsReminderAlreadySent(Invoice invoice) {
+        invoice.setReminderLevelTriggered(true);
+        invoiceService.update(invoice);
     }
 
     private void launchActions(List<DunningAction> actions, Invoice invoice, DunningCollectionPlan dunningCollectionPlan) {
