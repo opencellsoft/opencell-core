@@ -266,6 +266,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     if(discountAmount != null) {
                         DiscountLineAmount = DiscountLineAmount.add(discountAmount);
                     }
+                    if(invoiceLine.getTargetTaxRate() != null)
+                    {
+                        taxPercent = invoiceLine.getTargetTaxRate();
+                    }
+                    else if(invoiceLine.getTargetTax()!= null)
+                    {
+                        taxPercent = invoiceLine.getTargetTax().getPercent();
+                    }
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(DiscountLineAmount, DiscountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     var quantity = entity.getQuantity();
                     discountInvoice.setUnitPrice(DiscountLineAmount);
@@ -419,8 +427,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             	   invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
                    invoiceLine.setTaxRate(tax.getPercent());
             }
-         
-            
+        }
+        
+        if(invoiceLine.getTargetTaxRate() != null)
+        {
+            invoiceLine.setTaxRecalculated(taxRecalculated);
+            invoiceLine.setTaxRate(invoiceLine.getTargetTaxRate());            
+        } 
+        else if(invoiceLine.getTargetTax() != null)
+        {
+            invoiceLine.setTaxRecalculated(taxRecalculated);
+            invoiceLine.setTaxRate(invoiceLine.getTargetTax().getPercent());
+            invoiceLine.setTax(invoiceLine.getTargetTax());
         }
     }
 
@@ -597,6 +615,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+        ofNullable(resource.getTargetTaxRate()).ifPresent(invoiceLine::setTargetTaxRate);
 		AccountingArticle accountingArticle=null;
 		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
@@ -651,6 +670,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			invoiceLine.setTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTaxCode()));
 			invoiceLine.setTaxRate(invoiceLine.getTax().getPercent());
 		}
+		if(resource.getTargetTaxCode()!=null) {
+            invoiceLine.setTargetTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTargetTaxCode()));
+        }
 		if(resource.getOrderLotCode()!=null) {
 			invoiceLine.setOrderLot((OrderLot)tryToFindByEntityClassAndCode(OrderLot.class, resource.getOrderLotCode()));
 		}
