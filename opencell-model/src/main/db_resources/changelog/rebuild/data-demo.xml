@@ -1173,7 +1173,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
-            <column name="description" value="United States" />
+            <column name="code" value="US"></column>
+            <column name="description" value="United States"></column>
+            <column name="uuid" value="Trading_Country_US"></column>
 
             <column name="country_id" valueNumeric="220" />
         </insert>
@@ -1182,7 +1184,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
-            <column name="description" value="France" />
+            <column name="code" value="FR"></column>
+            <column name="description" value="France"></column>
+            <column name="uuid" value="Trading_Country_FR"></column>
 
             <column name="country_id" valueNumeric="70" />
         </insert>
@@ -2556,21 +2560,6 @@
             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
             <where> code IN ('INV_STD', 'INV_CRN')</where>
-        </update>
-    </changeSet>
-    
-    <changeSet id="#7242_20220516" author="HatimOUDAD">
-        <update tableName="billing_trading_country">
-            <column name="code" value="US"></column>
-            <column name="description" value="United States"></column>
-            <column name="uuid" value="Trading_Country_US"></column>
-            <where>id=-1</where>
-        </update>
-        <update tableName="billing_trading_country">
-            <column name="code" value="FR"></column>
-            <column name="description" value="France"></column>
-            <column name="uuid" value="Trading_Country_FR"></column>
-            <where>id=-2</where>
         </update>
     </changeSet>
 
