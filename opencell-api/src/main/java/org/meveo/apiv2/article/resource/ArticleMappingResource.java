@@ -25,6 +25,7 @@ public interface ArticleMappingResource {
                     @ApiResponse(responseCode="200", description = "the article mapping resource successfully created, and the id is returned in the response"),
                     @ApiResponse(responseCode = "400", description = "bad request when article mapping information contains an error")
             })
+    @Deprecated
     Response createArticleMappingLine(@Parameter(description = "the article mapping object", required = true) ArticleMapping articleMapping);
 
     @GET

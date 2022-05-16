@@ -26,7 +26,7 @@ public class ArticleMappingLineApiService{
     }
 
     public ArticleMappingLine create(ArticleMappingLine articleMappingLine) {
-        return articleMappingLineService.valdiateAndCreate(articleMappingLine);
+        return articleMappingLineService.validateAndCreate(articleMappingLine);
     }
     
     public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
