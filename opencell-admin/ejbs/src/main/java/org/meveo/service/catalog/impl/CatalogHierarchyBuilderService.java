@@ -1237,17 +1237,19 @@ public class CatalogHierarchyBuilderService {
     private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
     	quoteVersion.getMedias().size();
     	quoteVersion.getQuoteOffers().size();
-    	quoteVersion.getQuoteOffers().forEach(qo -> {
-    		qo.getQuoteProduct().size();
-    		qo.getQuoteAttributes().size();
-    		qo.getQuoteProduct().forEach(qp -> {
-    			qp.getQuoteAttributes().size();
-    			qp.getQuoteArticleLines().size();
-    			qp.getQuoteArticleLines().forEach(qal -> {
-    				qal.getQuotePrices().size();
-    			});
-    		});
-    	});
+    	quoteVersion.getQuoteOffers().forEach(this::breakLazyLoadForQuoteOffer);
+    }
+
+    private void breakLazyLoadForQuoteOffer(QuoteOffer qo) {
+            qo.getQuoteProduct().size();
+            qo.getQuoteAttributes().size();
+            qo.getQuoteProduct().forEach(qp -> {
+                qp.getQuoteAttributes().size();
+                qp.getQuoteArticleLines().size();
+                qp.getQuoteArticleLines().forEach(qal -> {
+                    qal.getQuotePrices().size();
+                });
+            });
     }
     
     
@@ -1324,7 +1326,7 @@ public class CatalogHierarchyBuilderService {
     
     public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
     	
-
+        breakLazyLoadForQuoteOffer(quoteOffer);
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
 
