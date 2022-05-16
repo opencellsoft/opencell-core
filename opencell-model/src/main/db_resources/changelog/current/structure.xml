@@ -12287,6 +12287,13 @@ order by date_trunc('month', i.invoice_date) DESC
 
    </changeSet>
 
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA">
+    	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
+        <addColumn tableName="ar_account_operation">
+            <column name="operation_number" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
     <changeSet author="TarikRabeh" id="#INTRD-5841-21032022">
         <addColumn tableName="billing_billing_account">
             <column name="trading_currency_id" type="bigint" />
