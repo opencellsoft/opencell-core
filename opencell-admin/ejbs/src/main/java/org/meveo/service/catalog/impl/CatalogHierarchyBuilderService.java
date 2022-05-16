@@ -191,7 +191,7 @@ public class CatalogHierarchyBuilderService {
     @Inject private CommercialRuleItemService commercialRuleItemService;
     
     @Inject private CommercialRuleLineService commercialRuleLineService;
-    
+
     @Inject
     private CpqQuoteService cpqQuoteService;
 
@@ -279,7 +279,7 @@ public class CatalogHierarchyBuilderService {
 
     		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
     		productVersionService.create(newProductVersion);    		
-			duplicateProductVersion(newProductVersion, attributList, tagList, groupedAttribute, newProductVersion.getId() + "_");			
+			duplicateProductVersion(newProductVersion, attributList, tagList, groupedAttribute, newProductVersion.getId() + "_");
 			entity.getProductVersions().add(newProductVersion);
     	}
     	if(discountPlans != null) {
@@ -1238,17 +1238,19 @@ public class CatalogHierarchyBuilderService {
     private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
     	quoteVersion.getMedias().size();
     	quoteVersion.getQuoteOffers().size();
-    	quoteVersion.getQuoteOffers().forEach(qo -> {
-    		qo.getQuoteProduct().size();
-    		qo.getQuoteAttributes().size();
-    		qo.getQuoteProduct().forEach(qp -> {
-    			qp.getQuoteAttributes().size();
-    			qp.getQuoteArticleLines().size();
-    			qp.getQuoteArticleLines().forEach(qal -> {
-    				qal.getQuotePrices().size();
-    			});
-    		});
-    	});
+    	quoteVersion.getQuoteOffers().forEach(this::breakLazyLoadForQuoteOffer);
+    }
+
+    private void breakLazyLoadForQuoteOffer(QuoteOffer qo) {
+            qo.getQuoteProduct().size();
+            qo.getQuoteAttributes().size();
+            qo.getQuoteProduct().forEach(qp -> {
+                qp.getQuoteAttributes().size();
+                qp.getQuoteArticleLines().size();
+                qp.getQuoteArticleLines().forEach(qal -> {
+                    qal.getQuotePrices().size();
+                });
+            });
     }
     
     
@@ -1307,8 +1309,8 @@ public class CatalogHierarchyBuilderService {
     }
     
     
-   
-    
+
+
     private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct, QuoteOffer offer) {
     	for (QuoteAttribute quoteAttribute : attributes) {
 			final var duplicate = new QuoteAttribute(quoteAttribute);
@@ -1323,7 +1325,7 @@ public class CatalogHierarchyBuilderService {
     
     public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
 
-
+        breakLazyLoadForQuoteOffer(quoteOffer);
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
 
@@ -1345,7 +1347,7 @@ public class CatalogHierarchyBuilderService {
 
 			duplicateQuoteProduct(quoteProducts,duplicate );
 			duplicateQuoteAttribute(quoteAttributes,null, duplicate);
-			
+
 		} catch (Exception e) {
 			log.error("Error when trying to cloneBean quoteOffer : ", e);
 		}
