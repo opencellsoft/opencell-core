@@ -1992,6 +1992,7 @@
             <column name="payment_deferral_count" type="int4">
                 <constraints nullable="true"/>
             </column>
+            <column name="operation_number" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -17613,6 +17614,7 @@
     <changeSet id="#INTRD-6633_20220420" author="TarikRabeh" />
     <changeSet id="INTRD-7006_09052022" author="TarikRabeh" />
     <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
