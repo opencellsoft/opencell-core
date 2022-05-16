@@ -10120,7 +10120,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 	
-	<changeSet id="#INTRD-6633_20220420" author="TarikRabeh">
+	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh">
         <sql>
 	        update public.accounting_journal_entry set 
 		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
