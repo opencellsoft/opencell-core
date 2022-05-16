@@ -10418,6 +10418,7 @@
             <column name="unit_price" type="numeric(23, 12)"  >
                 <constraints nullable="false"/>
             </column>
+            <column name="functional_unit_price" type="numeric(23, 12)" />
             <column name="discount_rate" type="numeric(23, 12)"  >
                 <constraints nullable="false"/>
             </column>
@@ -17616,6 +17617,7 @@
     <changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6453_20220411" author="TarikRabeh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

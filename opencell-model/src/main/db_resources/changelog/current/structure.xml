@@ -12536,6 +12536,12 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="pdf_job_execution_result_id" type="bigint" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-6453_20220411" author="TarikRabeh">
+        <addColumn tableName="billing_invoice_line">
+            <column name="functional_unit_price" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-6263_20220406" author="AmineBENAICHA">
         <addColumn tableName="billing_billing_run">

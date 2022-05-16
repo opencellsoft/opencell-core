@@ -36,9 +36,6 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -154,6 +151,9 @@ public class InvoiceLine extends AuditableEntity {
     @Column(name = "unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
     private BigDecimal unitPrice;
+    
+    @Column(name = "functional_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal functionalUnitPrice;
     
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
@@ -304,8 +304,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.taxRate = taxRate;
 		this.accountingArticle = accountingArticle;
 	}
-	
-	
 
 	public InvoiceLine(InvoiceLine copy, Invoice invoice) {
 		this.invoice = invoice;
@@ -317,6 +315,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.validity = copy.validity;
 		this.quantity = copy.quantity;
 		this.unitPrice = copy.unitPrice;
+		this.functionalUnitPrice = copy.functionalUnitPrice;
 		this.discountRate = copy.discountRate;
 		this.amountWithoutTax = copy.amountWithoutTax;
 		this.taxRate = copy.taxRate;
@@ -413,6 +412,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
+	}
+	
+	public BigDecimal getFunctionalUnitPrice() {
+		return functionalUnitPrice;
+	}
+
+	public void setFunctionalUnitPrice(BigDecimal functionalUnitPrice) {
+		this.functionalUnitPrice = functionalUnitPrice;
 	}
 
 	public BigDecimal getDiscountRate() {
