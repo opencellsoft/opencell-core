@@ -1634,7 +1634,7 @@ public class CpqQuoteApi extends BaseApi {
               // Add subscription charges
                 for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                     try {
-                        AccountingArticle subscriptionChargeArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes,null,null,null)
+                        AccountingArticle subscriptionChargeArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes,null)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate()));
                         if (overrodeArticle.keySet().contains(subscriptionChargeArticle)) {
                             QuoteArticleLine quoteArticleLine = overrodeArticle.get(subscriptionChargeArticle).get(0);
@@ -1663,7 +1663,7 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                        AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null,null,null)
+                        AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
                         if (overrodeArticle.keySet().contains(recurringArticle)) {
                             QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);

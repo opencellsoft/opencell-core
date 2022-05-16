@@ -903,7 +903,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
 
-    
     /**
      * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
      * 
@@ -950,4 +949,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 //    		super.create(entity);
 //    	else super.update(entity);
 //    }
+
+    public WalletOperation findWoByRatedTransactionId(Long rtId) {
+        return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
+                .setParameter("rtId", rtId)
+                .setMaxResults(1)
+                .getSingleResult();
+    }
+
 }
