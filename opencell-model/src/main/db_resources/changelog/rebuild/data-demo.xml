@@ -2558,6 +2558,21 @@
             <where> code IN ('INV_STD', 'INV_CRN')</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#7242_20220516" author="HatimOUDAD">
+        <update tableName="billing_trading_country">
+            <column name="code" value="US"></column>
+            <column name="description" value="United States"></column>
+            <column name="uuid" value="Trading_Country_US"></column>
+            <where>id=-1</where>
+        </update>
+        <update tableName="billing_trading_country">
+            <column name="code" value="FR"></column>
+            <column name="description" value="France"></column>
+            <column name="uuid" value="Trading_Country_FR"></column>
+            <where>id=-2</where>
+        </update>
+    </changeSet>
 
     <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
