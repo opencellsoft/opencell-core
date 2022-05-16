@@ -10119,5 +10119,42 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>email is null</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        trading_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+
+	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+		<sql>
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = (select current_rate from cte where cte.id = bil.id) * bil.unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is not null);
+
+
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

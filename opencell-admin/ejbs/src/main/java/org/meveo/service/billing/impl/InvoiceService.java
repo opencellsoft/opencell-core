@@ -6170,4 +6170,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return entity;
     }
+    
+    public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
+        invoice = refreshOrRetrieve(invoice);
+        for (Long idInvoiceLine : invoiceLineIds) {
+            InvoiceLine invoiceLineSource = invoiceLinesService.findById(idInvoiceLine);  
+            Invoice invoiceSource = invoiceLineSource.getInvoice();
+            invoiceLinesService.detach(invoiceLineSource);
+            var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
+            duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
+            invoiceLinesService.create(duplicateInvoiceLine);
+            invoice.getInvoiceLines().add(duplicateInvoiceLine);
+        }
+
+        calculateInvoice(invoice);
+        return update(invoice);
+    }
 }

@@ -7,6 +7,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,8 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -36,6 +39,7 @@ import org.meveo.apiv2.billing.ImmutableInvoices;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
@@ -43,8 +47,7 @@ import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
@@ -371,5 +374,30 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("invoice", invoiceResource);
         return response;
+    }
+    
+    @Override
+    public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+            idsInvoiceLineForInvoice.add(invoiceLine.getId());
+        }
+        int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();
+        if(sizeInvoiceLineIds == 0){
+            throw new MissingParameterException("The following parameters are required or contain invalid values: invoiceLineIds");
+        }
+
+        if(!InvoiceStatusEnum.NEW.equals(invoice.getStatus()) 
+                && !InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())){
+            throw new MeveoApiException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
+        }
+        invoice = invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds());
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("invoice", invoice);
+        return Response.ok(response).build();
     }
 }

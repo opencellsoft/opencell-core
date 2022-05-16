@@ -23,6 +23,7 @@ import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.Invoices;
@@ -323,4 +324,14 @@ public interface InvoiceResource {
             )
     Response createAdjustment(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id,
             @Parameter(description = "InvoiceLines to replicate", required = true) @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate);
+
+	@POST
+    @Path("{id}/invoiceLines/duplicate")
+    @Operation(summary = "Duplicate invoice lines",  description = "Duplicate invoice lines", 
+    responses = {
+    @ApiResponse(responseCode = "200", description = "invoice lines successfully duplicated"),
+    @ApiResponse(responseCode = "403", description = "error when duplicating invoice lines")})
+    Response duplicateInvoiceLines(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+            @Parameter(description = "invoice lines to remove")  InvoiceLinesToDuplicate invoiceLinesToDuplicate);;
+    
 }
