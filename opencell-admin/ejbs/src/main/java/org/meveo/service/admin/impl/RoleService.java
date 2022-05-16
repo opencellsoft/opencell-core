@@ -18,19 +18,16 @@
 package org.meveo.service.admin.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
-import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.security.Role;
-import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -39,53 +36,111 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class RoleService extends PersistenceService<Role> {
 
-    @Inject
-    private CurrentUserProvider currentUserProvider;
+    private static final long serialVersionUID = 6949512629862768876L;
 
     @Inject
-    private ClusterEventPublisher clusterEventPublisher;
+    private KeycloakAdminClientService keycloakAdminClientService;
 
-    @SuppressWarnings("unchecked")
-    public List<Role> getAllRoles() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
+    /**
+     * List/Search the <b>realm</b> roles
+     * 
+     * @param paginationConfig An optional search and pagination criteria. A filter criteria "name" is used to filter by role name.
+     * @return List of roles
+     */
+    @Override
+    public List<Role> list(PaginationConfiguration paginationConfig) {
+        return keycloakAdminClientService.listRoles(paginationConfig);
     }
 
-    public Role findByName(String role) {
-        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
+    /**
+     * List/Search the <b>realm</b> roles. NOTE: return a list of role names only
+     * 
+     * @param paginationConfig An optional search and pagination criteria. A filter criteria "name" is used to filter by role name.
+     * @return List of role names
+     */
+    public List<String> listRoleNames(PaginationConfiguration paginationConfig) {
+        return list(paginationConfig).stream().map(r -> r.getName()).sorted().collect(Collectors.toList());
+    }
 
-        try {
-            qb.addCriterion("name", "=", role, true);
-            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+    /**
+     * Lookup a role by a name. NOTE: Does not create a role record in Opencell if role already exists in Keycloak
+     * 
+     * @param name Name to lookup by
+     * @param extendedInfo Shall child roles be retrieved
+     * @return Role found
+     */
+    public Role findByName(String name, boolean extendedInfo) {
+        return findByName(name, extendedInfo, false);
+    }
+
+    /**
+     * Lookup a role by a name
+     * 
+     * @param name Name to lookup by
+     * @param extendedInfo Shall child roles be retrieved
+     * @param syncWithKC Shall a role record be created in Opencell if a role already exists in Keycloak
+     * @return User found
+     */
+    public Role findByName(String name, boolean extendedInfo, boolean syncWithKC) {
+        Role kcRole = keycloakAdminClientService.findRole(name, extendedInfo, false);
+        if (kcRole == null) {
             return null;
         }
+
+        Role role = null;
+        try {
+            role = getEntityManager().createNamedQuery("Role.getByName", Role.class).setParameter("name", name.toLowerCase()).getSingleResult();
+
+        } catch (NoResultException ex) {
+            role = new Role();
+            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon role creation
+            role.setName(kcRole.getName());
+            role.setRoles(kcRole.getRoles());
+            role.setDescription(kcRole.getDescription());
+            super.create(role);
+        }
+
+        role.setName(kcRole.getName());
+        role.setRoles(kcRole.getRoles());
+        role.setDescription(kcRole.getDescription());
+        return role;
+
     }
 
+    /**
+     * Create a role in Keycloak and then in Opencell.
+     */
     @Override
     public void create(Role role) throws BusinessException {
+
+        if (role.getParentRole() == null) {
+            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
+
+        } else {
+            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
+        }
+
         super.create(role);
-        currentUserProvider.invalidateRoleToPermissionMapping();
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.create);
     }
 
+    /**
+     * Update a role in Keycloak and then in Opencell
+     */
     @Override
     public Role update(Role role) throws BusinessException {
-        role = super.update(role);
-        currentUserProvider.invalidateRoleToPermissionMapping();
 
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.update);
+        keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
+
+        role = super.update(role);
         return role;
     }
 
+    /**
+     * Delete a role in Keycloak and then in Opencell
+     */
     @Override
     public void remove(Role role) throws BusinessException {
+        keycloakAdminClientService.deleteRole(role.getName(), role.isClientRole());
         super.remove(role);
-
-        currentUserProvider.invalidateRoleToPermissionMapping();
-
-        clusterEventPublisher.publishEvent(role, CrudActionEnum.remove);
     }
 }

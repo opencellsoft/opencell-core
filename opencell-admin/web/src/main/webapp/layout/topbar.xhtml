@@ -70,7 +70,7 @@
 				</ul>
 			</div>
 			<c:if
-				test="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }">
+				test="#{currentUser.hasRoles('marketingCatalogVisualization','marketingCatalogManager') }">
 				<div class="search-wrapper">
 					<p:inputText id="globalFullTextSearch"
 						value="#{fullTextSearchBean.filters['fullText']}"

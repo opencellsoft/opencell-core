@@ -17,18 +17,18 @@
  */
 package org.meveo.admin.exception;
 
-// TODO change to checked exception
-public class UsernameAlreadyExistsException extends RuntimeException {
+/**
+ * An exception that username is already taken
+ */
+public class UsernameAlreadyExistsException extends ValidationException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public UsernameAlreadyExistsException(String username) {
-		super(username);
-	}
+    public UsernameAlreadyExistsException(String username) {
+        super(username);
+    }
 
-	public UsernameAlreadyExistsException() {
-	}
-	
-	
+    public UsernameAlreadyExistsException() {
+    }
 
 }

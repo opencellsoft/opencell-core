@@ -39,7 +39,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -47,14 +46,10 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 
 @Stateless
 public class OrderService extends BusinessService<Order> {
-
-    @Inject
-    private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject
     private PaymentMethodService paymentMethodService;
@@ -90,11 +85,7 @@ public class OrderService extends BusinessService<Order> {
     }
 
     public Order routeToUserGroup(Order entity, String userGroupCode) throws BusinessException {
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode);
-        if (userHierarchyLevel == null) {
-            log.trace("No UserHierarchyLevel found {}/{}", entity, userGroupCode);
-        }
-        entity.setRoutedToUserGroup(userHierarchyLevel);
+        entity.setRoutedToUserGroup(userGroupCode);
         return this.update(entity);
     }
 

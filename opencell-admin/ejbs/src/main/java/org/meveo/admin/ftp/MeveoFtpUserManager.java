@@ -21,7 +21,6 @@ package org.meveo.admin.ftp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
@@ -36,8 +35,6 @@ import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.security.Permission;
-import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +94,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     @Override
     public boolean doesExist(String username) throws FtpException {
         log.debug("doesExisted .. " + username);
-        org.meveo.model.admin.User meveoUser = userService.findByUsername(username);
+        org.meveo.model.admin.User meveoUser = userService.findByUsername(username, false);
         return meveoUser != null;
     }
 
@@ -110,8 +107,8 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     @Override
     public User getUserByName(String username) throws FtpException {
         log.debug("getUserByName... " + username);
-        boolean result = userService.isUsernameExists(username);
-        if (!result) {
+        org.meveo.model.admin.User result = userService.findByUsername(username, false);
+        if (result == null) {
             log.error("Ftp user {} doesn't exist!", username);
             throw new FtpException(String.format("Ftp user {} doesn't exist!", username));
         }
@@ -151,34 +148,31 @@ public class MeveoFtpUserManager extends AbstractUserManager {
         user.setHomeDirectory(homeDir);
         List<Authority> authorities = new ArrayList<Authority>();
 
-        Set<Role> roles = meveoUser.getRoles();
-        log.debug("meveo user has roles {}", roles.size());
-        List<Permission> meveoPermissions = new ArrayList<Permission>();
-        boolean hasRole = false;
-        for (Role role : roles) {
-            meveoPermissions.addAll(role.getPermissions());
-            if (role.getName().equalsIgnoreCase(ADMINISTRATOR)) {
-                hasRole = true;
-            }
-        }
-        if (!hasRole) {
-            log.error("ftp user {} don't have administrator role", meveoUser.getUserName());
-            throw new FtpException("no administrator role!");
-        }
-        log.debug("meveo user has permissions {}", meveoPermissions.size());
+//        boolean hasRole = false;
+//        for (Role role : roles) {
+//            meveoPermissions.addAll(role.getPermissions());
+//            if (role.getName().equalsIgnoreCase(ADMINISTRATOR)) {
+//                hasRole = true;
+//            }
+//        }
+//        if (!hasRole) {
+//            log.error("ftp user {} don't have administrator role", meveoUser.getUserName());
+//            throw new FtpException("no administrator role!");
+//        }
+//        log.debug("meveo user has permissions {}", meveoPermissions.size());
         boolean hasRead = false;
         boolean hasWrite = false;
-        for (Permission p : meveoPermissions) {
-            if (FTPREAD.equalsIgnoreCase(p.getPermission())) {
-                hasRead = true;
-            }
-            if (FTPWRITE.equalsIgnoreCase(p.getPermission())) {
-                hasWrite = true;
-            }
-            if (hasRead && hasWrite) {
-                break;
-            }
-        }
+//        for (Permission p : meveoPermissions) {
+//            if (FTPREAD.equalsIgnoreCase(p.getPermission())) {
+//                hasRead = true;
+//            }
+//            if (FTPWRITE.equalsIgnoreCase(p.getPermission())) {
+//                hasWrite = true;
+//            }
+//            if (hasRead && hasWrite) {
+//                break;
+//            }
+//        }
         if (!hasRead) {
             log.error("ftp user {} doesn't have read permission!", meveoUser.getUserName());
             throw new FtpException("no read permission!");

@@ -17,41 +17,23 @@
  */
 package org.meveo.model.admin;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -65,9 +47,6 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
-import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 
 /**
@@ -85,20 +64,15 @@ import org.meveo.model.shared.Name;
 @ReferenceIdentifierDescription("email")
 @Table(name = "adm_user")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_user_seq"), })
-@NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
-        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
-        @NamedQuery(name = "User.updateLastLoginById", query = "update User set lastLoginDate=:lastLoginDate where id=:id"),
-        @NamedQuery(name = "User.updateLastLoginByUsername", query = "update User set lastLoginDate=:lastLoginDate where lower(userName)=:username"),
-        @NamedQuery(name = "User.listUserRoles", query = "SELECT u FROM User u JOIN FETCH u.roles as role WHERE u.userName = :username")})
-
+@NamedQueries({ @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }), })
 public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity, ISearchable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5664880105478197047L;
 
     /**
      * User name
      */
-    @Embedded
+    @Transient
     private Name name;
 
     /**
@@ -109,44 +83,29 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     private String userName;
 
     /**
-     * Address book - list of contacts
-     */
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "crm_address_book_id")
-    private AddressBook addressbook;
-
-    /**
      * Email
      */
-    @Column(name = "email", length = 100)
+    @Transient
     @Size(max = 100)
     private String email;
 
     /**
+     * Password
+     */
+    @Transient
+    private String password;
+
+    /**
      * Roles held by the user
      */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<Role>();
+    @Transient
+    private Set<String> roles = new HashSet<String>();
 
     /**
      * User group
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hierarchy_level_id")
-    private UserHierarchyLevel userLevel;
-
-    /**
-     * Accessible entities
-     */
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "adm_secured_entity", joinColumns = { @JoinColumn(name = "user_id") })
-    @AttributeOverrides(value = { 
-    		@AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
-            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
-            @AttributeOverride(name = "disabled", column = @Column(name = "disabled"))})
-    private List<SecuredEntity> securedEntities = new ArrayList<>();
+    @Transient
+    private String userLevel;
 
     /**
      * Unique identifier - UUID
@@ -172,13 +131,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     private CustomFieldValues cfAccumulatedValues;
 
     /**
-     * Last login timestamp
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_login_date")
-    private Date lastLoginDate;
-
-    /**
      * Code
      */
     @Transient
@@ -193,20 +145,42 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     public User() {
     }
 
-    public AddressBook getAddressbook() {
-        return addressbook;
+    /**
+     * Constructor
+     * 
+     * @param username Username
+     * @param firstName First name
+     * @param lastName last name
+     * @param email Email
+     * @param groups User groups
+     * @param roles Roles
+     */
+    public User(String username, String firstName, String lastName, String email, List<String> groups, List<String> roles) {
+        this.userName = username;
+        this.name = new Name(null, firstName, lastName);
+        this.email = email;
+        if (groups != null && !groups.isEmpty()) {
+            userLevel = groups.get(0);
+        }
+        if (roles != null) {
+            this.roles = new HashSet<String>(roles);
+        }
     }
 
-    public void setAddressbook(AddressBook addressbook) {
-        this.addressbook = addressbook;
-    }
-
-    public Set<Role> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> val) {
+    public void setRoles(Set<String> val) {
         this.roles = val;
+    }
+
+    public String getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(String userLevel) {
+        this.userLevel = userLevel;
     }
 
     public String getUserName() {
@@ -223,30 +197,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     public void setName(Name name) {
         this.name = name;
-    }
-
-    public String getRolesLabel() {
-        StringBuffer sb = new StringBuffer();
-        if (roles != null)
-            for (Role r : roles) {
-                if (sb.length() != 0)
-                    sb.append(", ");
-                sb.append(r.getDescription());
-            }
-        return sb.toString();
-    }
-
-    public boolean hasRole(String role) {
-        boolean result = false;
-        if (role != null && roles != null) {
-            for (Role r : roles) {
-                result = role.equalsIgnoreCase(r.getName());
-                if (result) {
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     @Override
@@ -292,39 +242,12 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         this.email = email;
     }
 
-    public List<SecuredEntity> getSecuredEntities() {
-        return securedEntities;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSecuredEntities(List<SecuredEntity> securedEntities) {
-        this.securedEntities = securedEntities;
-    }
-
-    /**
-     * Returns all the secured entities associated with this user's roles.
-     * 
-     * @return list of secured entities
-     */
-    public List<SecuredEntity> getRoleSecuredEntities() {
-        List<SecuredEntity> result = new ArrayList<>();
-
-        if (getRoles() != null && !getRoles().isEmpty()) {
-            for (Role r : getRoles()) {
-                if (r.getSecuredEntities() != null && !r.getSecuredEntities().isEmpty()) {
-                    result.addAll(r.getSecuredEntities());
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public UserHierarchyLevel getUserLevel() {
-        return userLevel;
-    }
-
-    public void setUserLevel(UserHierarchyLevel userLevel) {
-        this.userLevel = userLevel;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getNameOrUsername() {
@@ -390,14 +313,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         return null;
     }
 
-    public Date getLastLoginDate() {
-        return lastLoginDate;
-    }
-
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-    }
-
     @Override
     public String getReferenceCode() {
         return getUserName();
@@ -410,7 +325,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     @Override
     public String getReferenceDescription() {
-        return getNameOrUsername();
+        return getUserName();
     }
 
     @Override

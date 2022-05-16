@@ -163,9 +163,9 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			mvSeries.set("NO RECORDS", 0);
 			log.info("No measured values found for : " + mq.getCode());
 		}
-		boolean isAdmin = currentUser.hasRole("administrateur");
+		boolean isAdmin = currentUser.hasRoles("administrationVisualization", "administrationManagement");
 		boolean equalUser = chart.getAuditable().isCreator(currentUser) ;
-		boolean sameRoleWithChart = chart.getRole() != null ? currentUser.hasRole(chart.getRole().getDescription()) : false;
+		boolean sameRoleWithChart = chart.getRole() != null ? currentUser.hasRole(chart.getRole()) : false;
 		chart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 		if (chart instanceof BarChart) {
 			BarChartModel chartModel = new BarChartModel();

@@ -16,27 +16,17 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.admin;
+package org.meveo.security.client;
 
-public class DetailedSecuredEntity extends SecuredEntity {
+import com.google.common.collect.ImmutableList;
 
-    private static final long serialVersionUID = 3675734316027065766L;
+/**
+ * @author Edward P. Legaspi
+ * @since 10 Nov 2017
+ **/
+public class KeycloakConstants {
 
-    private String description;
-
-    public DetailedSecuredEntity() {
-    }
-
-    public DetailedSecuredEntity(SecuredEntity entity) {
-        super(entity);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    public static final String ROLE_ADMINISTRATEUR = "administrateur";
+    public static final String ROLE_USER_MANAGEMENT = "userManagement";
+    public static final ImmutableList<String> ROLE_KEYCLOAK_DEFAULT_EXCLUDED = ImmutableList.of("uma_authorization", "offline_access");
 }

@@ -18,18 +18,19 @@
 
 package org.meveo.admin.action.crm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.quote.QuoteVersion;
-import org.meveo.model.security.Role;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -37,10 +38,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.reflections.Reflections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateBeaTest {
@@ -89,7 +86,7 @@ public class CustomFieldTemplateBeaTest {
 		                .map(businessEntity -> new CustomizedEntity(businessEntity))
 		                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
 		                .collect(Collectors.toList());
-        list.addAll(List.of(User.class.getName(), Role.class.getName(), QuoteVersion.class.getName()));
+        list.addAll(List.of(User.class.getName(), QuoteVersion.class.getName()));
         return list;
     }
 

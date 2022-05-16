@@ -27,7 +27,7 @@
             <hftl:column label="#{messages['address.country']}" field="address.country" />
             <hftl:column label="#{messages['crmAccount.name']}" field="name" titleWithMessage="true" />
             
-			<hftl:actionsColumn permission="#{currentUser.hasRole('accountManagement')}" 
+			<hftl:actionsColumn 
 					backingBean="#{crmAccountBean}"
 					editView="#{crmAccountListBean.getView(entity['accountType'])}" renderDeleteLink="false"
 					renderEditLink="true"/>

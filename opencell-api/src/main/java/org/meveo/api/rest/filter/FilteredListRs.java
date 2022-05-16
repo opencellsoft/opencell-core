@@ -145,7 +145,7 @@ public interface FilteredListRs extends IBaseRs {
      *
      * @return Request processing status
      */
-    @GET
+    @POST
     @Path("/reindex")
 	@Operation(
 			summary=" Clean and reindex Elastic Search repository ",

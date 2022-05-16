@@ -83,10 +83,6 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
     public ImportExportResponseDto importData(MultipartFormDataInput input) {
 
         try {
-            // Check user has utilities/remoteImport permission
-            if (!currentUser.hasRole("remoteImport")) {
-                throw new RemoteAuthenticationException("User does not have utilities/remoteImport permission");
-            }
 
             cleanupImportResults();
 

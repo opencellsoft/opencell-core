@@ -88,6 +88,8 @@ public abstract class MeveoUser implements Serializable {
     protected String authenticationTokenId;
 
     protected int authTime;
+    
+    protected String userGroup;
 
     public MeveoUser() {
     }
@@ -164,6 +166,29 @@ public abstract class MeveoUser implements Serializable {
     }
 
     /**
+     * Does user have any of the given roles
+     * 
+     * @param roles Role names to check
+     * @return True if user has any of the given roles
+     */
+    public boolean hasRoles(String... roles) {
+
+        // if (!authenticated) {
+        // return false;
+        // }
+
+        if (this.roles != null) {
+
+            for (String role : roles) {
+                if (this.roles.contains(role)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get all user's associated roles
      *
      * @return user's roles
@@ -212,6 +237,19 @@ public abstract class MeveoUser implements Serializable {
         this.authTime = authTime;
     }
 
+    /**
+     * @return User group that user belongs
+     */
+    public String getUserGroup() {
+        return userGroup;
+    }
+    
+    /**
+     * @param userGroup User group that user belongs
+     */
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
     /**
      * Return unproxied instance of MeveoUser - preserving username and provider code only
      * 

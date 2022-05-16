@@ -136,9 +136,9 @@
 
 
         <p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.delete}" name="#{resultsId}doDelete"
-                         update="@form :searchForm" process="@this" rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}"/>
+                         update="@form :searchForm" process="@this" rendered="#{renderDeleteLink and backingBean.canUserDeleteEntity()}"/>
         <p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()"
-                         rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}">
+                         rendered="#{renderDeleteLink and backingBean.canUserDeleteEntity()}">
             <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
         </p:commandButton>

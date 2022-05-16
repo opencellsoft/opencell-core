@@ -36,7 +36,6 @@ import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessEntityService;
@@ -113,10 +112,8 @@ public class FullTextSearchBean implements Serializable {
                 public String[] getSearchScope() {
 
                     // Limit search scope to offers, product, offer template categories, user groups for marketing manager application
-                    if (FullTextSearchBean.this.getCurrentUser().hasRole("marketingCatalogManager")
-                            || FullTextSearchBean.this.getCurrentUser().hasRole("marketingCatalogVisualization")) {
-                        return new String[] { OfferTemplate.class.getName(), ProductTemplate.class.getName(), BundleTemplate.class.getName(), OfferTemplateCategory.class.getName(),
-                                UserHierarchyLevel.class.getName() };
+                    if (FullTextSearchBean.this.getCurrentUser().hasRoles("marketingCatalogManager","marketingCatalogVisualization")) {
+                        return new String[] { OfferTemplate.class.getName(), ProductTemplate.class.getName(), BundleTemplate.class.getName(), OfferTemplateCategory.class.getName()};
                     }
                     return null;
                 }

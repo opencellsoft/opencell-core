@@ -19,10 +19,7 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,8 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,18 +58,12 @@ public class RoleDto extends BaseEntityDto {
     @Schema(description = "short description of the role")
     private String description;
 
-    /** The permission. */
-    @XmlElementWrapper(name = "permissions")
-    @XmlElement(name = "permission")
-    @Schema(description = "list of the permission associated to the role", example = "permission : [{permission : PERMIS_1, name : NAME_1}]")
-    private List<PermissionDto> permission = new ArrayList<>();
-
     /** The roles. */
     @XmlElementWrapper(name = "roles")
     @XmlElement(name = "role")
     @Schema(description = "roles attached to this role")
     private List<RoleDto> roles = new ArrayList<>();
-    
+
     /** The secured entities. */
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
@@ -97,70 +86,28 @@ public class RoleDto extends BaseEntityDto {
     /**
      * Instantiates a new role dto.
      *
-     * @param name the name
+     * @param role The role name
      */
-    public RoleDto(String name) {
+    public RoleDto(String name, String description) {
         this.name = name;
-    }
-    
-    /**
-     * Instantiates a new role dto.
-     *
-     * @param role the role
-     * @param includeRoles the include roles
-     * @param includePermissions the include permissions
-     */
-    public RoleDto(Role role, boolean includeRoles, boolean includePermissions) {
-    	this(role, includeRoles, includePermissions, false);
     }
 
     /**
-     * Instantiates a new role dto.
+     * 
+     * /** Instantiates a new role dto.
      *
      * @param role the role
-     * @param includeRoles the include roles
-     * @param includePermissions the include permissions
-     * @param includeSecuredEntities include secured entities
      */
-    public RoleDto(Role role, boolean includeRoles, boolean includePermissions, boolean includeSecuredEntities) {
+    public RoleDto(Role role) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
         this.uuid = role.getUuid();
-
-        Set<Permission> permissions = role.getPermissions();
-
-        if (includePermissions && permissions != null && !permissions.isEmpty()) {
-            List<PermissionDto> permissionDtos = new ArrayList<PermissionDto>();
-            for (Permission p : permissions) {
-                PermissionDto pd = new PermissionDto(p);
-                permissionDtos.add(pd);
-            }
-            this.setPermission(permissionDtos);
-
-            Collections.sort(this.permission, Comparator.comparing(PermissionDto::getName));
-        }
-
-        if (includeRoles) {
-            for (Role r : role.getRoles()) {
-                roles.add(new RoleDto(r, includeRoles, includePermissions));
-            }
-            Collections.sort(this.roles, Comparator.comparing(RoleDto::getName));
-        }
-        
-		if (includeSecuredEntities && role.getSecuredEntities() != null) {
-			this.securedEntities = new ArrayList<>();
-			SecuredEntityDto securedEntityDto = null;
-			for (SecuredEntity securedEntity : role.getSecuredEntities()) {
-				securedEntityDto = new SecuredEntityDto(securedEntity);
-				this.securedEntities.add(securedEntityDto);
-			}
-			Collections.sort(this.securedEntities, Comparator.comparing(SecuredEntityDto::getCode));
-		}
     }
 
     /**
+     * 
      * Gets the name.
-     *
+     * 
      * @return the name
      */
     public String getName() {
@@ -194,37 +141,19 @@ public class RoleDto extends BaseEntityDto {
         this.description = description;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        final int maxLen = 10;
-        return String.format("RoleDto [name=%s, description=%s, permission=%s, roles=%s]", name, description,
-            permission != null ? permission.subList(0, Math.min(permission.size(), maxLen)) : null, roles != null ? roles.subList(0, Math.min(roles.size(), maxLen)) : null);
-    }
-
-    /**
-     * Gets the permission.
-     *
-     * @return the permission
-     */
-    public List<PermissionDto> getPermission() {
-        return permission;
-    }
-
-    /**
-     * Sets the permission.
-     *
-     * @param permission the new permission
-     */
-    public void setPermission(List<PermissionDto> permission) {
-        this.permission = permission;
+        return String.format("RoleDto [name=%s]", name);
     }
 
     /**
      * Gets the roles.
-     *
+     * 
      * @return the roles
      */
     public List<RoleDto> getRoles() {
@@ -243,42 +172,42 @@ public class RoleDto extends BaseEntityDto {
     /**
      * Returns a list of secured entities
      */
-	public List<SecuredEntityDto> getSecuredEntities() {
-		return securedEntities;
-	}
+    public List<SecuredEntityDto> getSecuredEntities() {
+        return securedEntities;
+    }
 
-	/**
-	 * Gets a list of secured entities
-	 */
-	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
-		this.securedEntities = securedEntities;
-	}
+    /**
+     * Gets a list of secured entities
+     */
+    public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
+        this.securedEntities = securedEntities;
+    }
 
-	/**
-	 * @return the uuid
-	 */
-	public String getUuid() {
-		return uuid;
-	}
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
 
-	/**
-	 * @param uuid the uuid to set
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

@@ -17,179 +17,130 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
-import org.hibernate.FlushMode;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.admin.User;
-import org.meveo.model.security.Role;
+import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * User service implementation.
  */
 @Stateless
-@DeclareRoles({ "userManagement", "userSelfManagement" })
+@DeclareRoles({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
 public class UserService extends PersistenceService<User> {
 
     static User systemUser = null;
 
-    @Override
-    @RolesAllowed({ "userManagement", "userSelfManagement" })
-    public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
+    @Inject
+    KeycloakAdminClientService keycloakAdminClientService;
 
-        if (findByUsername(user.getUserName()) != null) {
-            throw new UsernameAlreadyExistsException(user.getUserName());
-        }
+    @Override
+    @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
+    public void create(User user) throws UsernameAlreadyExistsException, InvalidParameterException {
 
         user.setUserName(user.getUserName().toUpperCase());
+
+        keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
 
         super.create(user);
     }
 
     @Override
-    @RolesAllowed({ "userManagement", "userSelfManagement" })
-    public User update(User user) throws UsernameAlreadyExistsException, BusinessException {
-        if (isUsernameExists(user.getUserName(), user.getId())) {
-            getEntityManager().refresh(user);
-            throw new UsernameAlreadyExistsException(user.getUserName());
-        }
+    @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
+    public User update(User user) throws ElementNotFoundException, InvalidParameterException {
 
         user.setUserName(user.getUserName().toUpperCase());
+
+        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles());
 
         return super.update(user);
     }
 
     @Override
-    @RolesAllowed({ "userManagement" })
+    @RolesAllowed({ "userManagement", "apiUserManagement" })
     public void remove(User user) throws BusinessException {
+        keycloakAdminClientService.deleteUser(user.getUserName());
         super.remove(user);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<User> findUsersByRoles(String... roles) {
-        String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) ";
-        Query query = getEntityManager().createQuery(queryString);
-        query.setParameter("roles", Arrays.asList(roles));
-        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
-        return query.getResultList();
+    /**
+     * Lookup a user by a username. NOTE: Does not create a user record in Opencell if user already exists in Keycloak
+     * 
+     * @param username Username to lookup by
+     * @param extendedInfo Shall group membership and roles be retrieved
+     * @return User found
+     */
+    public User findByUsername(String username, boolean extendedInfo) {
+        return findByUsername(username, extendedInfo, false);
     }
 
-    public boolean isUsernameExists(String username, Long id) {
-        String stringQuery = "select count(*) from User u where u.userName = :userName and u.id <> :id";
-        Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("userName", username.toUpperCase());
-        query.setParameter("id", id);
-        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
-        return ((Long) query.getSingleResult()).intValue() != 0;
-    }
+    /**
+     * Lookup a user by a username
+     * 
+     * @param username Username to lookup by
+     * @param extendedInfo Shall group membership and roles be retrieved
+     * @param syncWithKC Shall a user record be created in Opencell if a user already exists in Keycloak
+     * @return User found
+     */
+    public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
+        User kcUser = keycloakAdminClientService.findUser(username, extendedInfo);
+        if (kcUser == null) {
+            return null;
+        }
 
-    public boolean isUsernameExists(String username) {
-        String stringQuery = "select count(*) from User u where u.userName = :userName";
-        Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("userName", username.toUpperCase());
-        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
-        return ((Long) query.getSingleResult()).intValue() != 0;
-    }
-
-    public User findByUsername(String username) {
+        User user = null;
         try {
-            return getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
+            user = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
 
         } catch (NoResultException ex) {
-            return null;
-        }
-    }
-
-    @RolesAllowed({ "userManagement", "userSelfManagement" })
-    public User findByUsernameWithFetchRoles(String username) {
-        try {
-            return getEntityManager().createNamedQuery("User.listUserRoles", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
-    }
-
-    public User findByEmail(String email) {
-        try {
-            return (User) getEntityManager().createQuery("from User where email = :email").setParameter("email", email).getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
-        return getEntityManager().createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2").setParameter("name1", rolename1).setParameter("name2", rolename2)
-            .getResultList();
-    }
-
-    public Role getRoleByName(String name) {
-        return (Role) getEntityManager().createQuery("from MeveoRole as r where r.name=:name").setParameter("name", name).getSingleResult();
-    }
-
-    public void saveActivity(User user, String objectId, String action, String uri) {
-        // String sequenceValue = "ADM_USER_LOG_SEQ.nextval";
-        String sequenceValueTest = paramBeanFactory.getInstance().getProperty("sequence.test", "false");
-        if (!sequenceValueTest.equals("true")) {
-
-            String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";
-
-            Query query = getEntityManager().createNativeQuery(stringQuery);
-            query.setParameter(1, user.getUserName());
-            query.setParameter(2, user.getId());
-            query.setParameter(3, new Date());
-            query.setParameter(4, action);
-            query.setParameter(5, uri);
-            query.setParameter(6, objectId);
-            query.executeUpdate();
-        }
-    }
-
-
-    public User findByUsernameWithFetch(String username, List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);
-
-        qb.addCriterion("userName", "=", username, true);
-
-        try {
-            return (User) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<User> listUsersInMM(List<String> roleNames) {
-        List<User> users = null;
-
-        try {
-            users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames).getResultList();
-        } catch (Exception e) {
-            log.error("listUserByPermissionResources error ", e.getMessage());
+            user = new User();
+            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon user creation
+            user.setEmail(kcUser.getEmail());
+            user.setName(kcUser.getName());
+            user.setRoles(kcUser.getRoles());
+            user.setUserLevel(kcUser.getUserLevel());
+            user.setUserName(username);
+            super.create(user);
         }
 
-        return users;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public List<User> findUserByRole(String username, String... roles) {
-        String queryString = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE u.userName = :userName and role.name IN (:roles)";
-        Query query = getEntityManager().createQuery(queryString);
-        query.setParameter("userName", username.toUpperCase());
-        query.setParameter("roles", Arrays.asList(roles));
-        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
-        return query.getResultList();
+        user.setEmail(kcUser.getEmail());
+        user.setName(kcUser.getName());
+        user.setRoles(kcUser.getRoles());
+        user.setUserLevel(kcUser.getUserLevel());
+        return user;
+
     }
 
+    @Override
+    public List<User> list(PaginationConfiguration config) {
+        return keycloakAdminClientService.listUsers(config);
+    }
+
+    @Override
+    public long count(PaginationConfiguration config) {
+        return keycloakAdminClientService.countUsers(config);
+    }
+
+    /**
+     * Check if user belongs to a group or a higher group
+     * 
+     * @param belongsToUserGroup A group to check
+     * @return True if user belongs to a given group of to a parent of the group
+     */
+    public boolean isUserBelongsGroup(String belongsToUserGroup) {
+        // TODO finish checking the hierarchy
+        return belongsToUserGroup.equalsIgnoreCase(currentUser.getUserGroup());
+    }
 }

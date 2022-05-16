@@ -27,7 +27,7 @@
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" valueLabelField="code" valueIdField="id"
 				entityView="serviceTemplateDetail"/>
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-			<hftl:actionsColumn permission="#{currentUser.hasRole('catalogManagement')}"
+			<hftl:actionsColumn 
 				 renderEnableLink="true" renderDuplicateLink="true"/>
 		</hftl:dataList>
 

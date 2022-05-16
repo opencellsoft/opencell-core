@@ -131,7 +131,7 @@
                 </f:facet>
                 <h:outputText value="#{entity.invoice.getInvoiceNumberOrTemporaryNumber()}" />
             </p:column>
-            <hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60" permission="#{currentUser.hasRole('billingVisualization')}" />
+            <hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60" />
         </hftl:dataList>
     </ui:define>
 

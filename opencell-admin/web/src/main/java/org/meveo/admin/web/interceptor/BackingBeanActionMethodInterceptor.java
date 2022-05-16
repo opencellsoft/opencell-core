@@ -99,6 +99,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             String messageKey = null;
+            String[] messageParameters = null;
             boolean validation = false;
             Throwable cause = e;
             while (cause != null) {
@@ -108,6 +109,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     if (cause instanceof ValidationException) {
                         validation = true;
                         messageKey = ((ValidationException) cause).getMessageKey();
+                        messageParameters = ((ValidationException) cause).getMessageParameters();
                     }
                     break;
 
@@ -150,7 +152,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             messages.clear();
 
             if (validation && messageKey != null) {
-                messages.error(new BundleKey("messages", messageKey));
+                messages.error(new BundleKey("messages", messageKey), messageParameters);
             } else if (validation && message != null) {
                 messages.error(message);
 

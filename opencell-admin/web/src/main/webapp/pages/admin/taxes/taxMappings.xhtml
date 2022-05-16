@@ -46,7 +46,7 @@
             <hftl:column label="#{messages['taxMapping.tax']}" field="tax.code" valueIdField="tax.id" entityView="taxDetail" backView="taxMappings" />
             <hftl:column label="#{messages['taxMapping.taxEL']}" field="taxEL" />
             <hftl:column label="#{messages['taxMapping.taxScript']}" field="taxScript.code" valueIdField="taxScript.id" entityView="scriptInstanceDetail" backView="taxMappings" />
-            <hftl:actionsColumn permission="#{currentUser.hasRole('catalogManagement')}" />
+            <hftl:actionsColumn />
         </hftl:dataList>
 
     </ui:define>

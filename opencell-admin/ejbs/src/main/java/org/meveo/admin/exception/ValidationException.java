@@ -29,6 +29,8 @@ public class ValidationException extends BusinessException {
 
     private String messageKey;
 
+    private String[] messageParameters;
+
     public ValidationException() {
         super();
     }
@@ -47,9 +49,10 @@ public class ValidationException extends BusinessException {
      * @param message Message to log or display in GUI if message key is not provided
      * @param messageKey An optional message key to be displayed in GUI
      */
-    public ValidationException(String message, String messageKey) {
+    public ValidationException(String message, String messageKey, String... messageParameters) {
         super(message);
         this.messageKey = messageKey;
+        this.messageParameters = messageParameters;
     }
 
     /**
@@ -59,9 +62,10 @@ public class ValidationException extends BusinessException {
      * @param messageKey An optional message key to be displayed in GUI
      * @param cause Original exception
      */
-    public ValidationException(String message, String messageKey, Throwable cause) {
+    public ValidationException(String message, String messageKey, Throwable cause, String... messageParameters) {
         super(message, cause);
         this.messageKey = messageKey;
+        this.messageParameters = messageParameters;
     }
 
     public ValidationException(Throwable cause) {
@@ -73,10 +77,31 @@ public class ValidationException extends BusinessException {
     }
 
     /**
+     * @param messageKey Message key to be displayed in GUI
+     */
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
+    /**
      * Stacktrace is not of interest here
      */
     @Override
     public synchronized Throwable fillInStackTrace() {
         return null;
+    }
+
+    /**
+     * @param messageParameters Message parameters when message key is provided
+     */
+    public void setMessageParameters(String[] messageParameters) {
+        this.messageParameters = messageParameters;
+    }
+
+    /**
+     * @return Message parameters when message key is provided
+     */
+    public String[] getMessageParameters() {
+        return messageParameters;
     }
 }

@@ -18,44 +18,29 @@
 
 package org.meveo.model.security;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
-import org.meveo.model.admin.SecuredEntity;
 
 /**
  * Application security role
@@ -71,13 +56,8 @@ import org.meveo.model.admin.SecuredEntity;
 @ReferenceIdentifierCode("name")
 @ReferenceIdentifierDescription("description")
 @Table(name = "adm_role")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "adm_role_seq"), })
-@NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p", hints = {
-        @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-//				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r LEFT JOIN r.securedEntities Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
-    @NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r  Where r.name IN (:currentUserRoles) ", hints = {
-    @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_role_seq"), })
+@NamedQueries({ @NamedQuery(name = "Role.getByName", query = "SELECT r FROM Role r WHERE lower(r.name)=:name", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }), })
 public class Role extends AuditableCFEntity implements IReferenceEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
@@ -93,37 +73,54 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
     /**
      * Role description
      */
-    @Column(name = "role_description", nullable = false, length = 255)
-    @Size(max = 255)
-    @NotNull
+    @Transient
     private String description;
 
     /**
-     * Permissions held by a role
+     * Is this a client role
      */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> permissions = new HashSet<>();
+    @Transient
+    private boolean clientRole;
 
     /**
-     * Roles hels by the rolw
+     * Parent role
      */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
+    @Transient
+    private Role parentRole;
+
+    /**
+     * Roles held by the role
+     */
+    @Transient
     private Set<Role> roles = new HashSet<>();
 
+    public Role() {
+        // TODO Auto-generated constructor stub
+    }
+
     /**
-     * Accessible entities
+     * Constructor
+     * 
+     * @param name Role name
+     * @param description Role description
      */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "adm_role_secured_entity", joinColumns = { @JoinColumn(name = "role_id") })
-    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
-            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
-            @AttributeOverride(name = "disabled", column = @Column(name = "disabled") ) })
-    private List<SecuredEntity> securedEntities = new ArrayList<>();
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param name Role name
+     * @param description Role description
+     * @param clientRole Is this a client role
+     */
+    public Role(String name, String description, boolean clientRole, Role parentRole) {
+        this(name, description);
+        this.clientRole = clientRole;
+        this.parentRole = parentRole;
+    }
 
     public String getName() {
         return name;
@@ -141,40 +138,12 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
         this.description = description;
     }
 
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
     public Set<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-
-    /**
-     * Check if role as a following permission.
-     * 
-     * @param permission Permission/action to match
-     * @return true if having permission.
-     */
-    public boolean hasPermission(String permission) {
-        for (Permission permissionObj : getPermissions()) {
-            if (permissionObj.getPermission().equals(permission)) {
-                return true;
-            }
-        }
-        for (Role role : roles) {
-            if (role.hasPermission(permission)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -218,49 +187,46 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
         return String.format("Role [name=%s]", name);
     }
 
-    /**
-     * Get all permission - the direct ones and the ones inherited via child roles.
-     * 
-     * @return A set of permissions
-     */
-    public Set<Permission> getAllPermissions() {
-        Set<Permission> allPermissions = new HashSet<>();
-        allPermissions.addAll(getPermissions());
+    @Override
+    public String getReferenceCode() {
+        return getName();
+    }
 
-        for (Role childRole : getRoles()) {
-            allPermissions.addAll(childRole.getAllPermissions());
-        }
+    @Override
+    public void setReferenceCode(Object value) {
+        setName(value.toString());
+    }
 
-        return allPermissions;
+    @Override
+    public String getReferenceDescription() {
+        return getDescription();
     }
 
     /**
-     * Returns a list of secured entities
+     * @return Is this a client role
      */
-	public List<SecuredEntity> getSecuredEntities() {
-		return securedEntities;
-	}
+    public boolean isClientRole() {
+        return clientRole;
+    }
 
-	/**
-	 * Sets a list of {@link SecuredEntity}
-	 * @param securedEntities list of secured entities
-	 */
-	public void setSecuredEntities(List<SecuredEntity> securedEntities) {
-		this.securedEntities = securedEntities;
-	}
+    /**
+     * @param clientRole Is this a client role
+     */
+    public void setClientRole(boolean clientRole) {
+        this.clientRole = clientRole;
+    }
 
-	@Override
-	public String getReferenceCode() {
-		return getName();
-	}
+    /**
+     * @return Parent role
+     */
+    public Role getParentRole() {
+        return parentRole;
+    }
 
-	@Override
-	public void setReferenceCode(Object value) {
-		setName(value.toString());
-	}
-
-	@Override
-	public String getReferenceDescription() {
-		return getDescription();
-	}
+    /**
+     * @param parentRole Parent role
+     */
+    public void setParentRole(Role parentRole) {
+        this.parentRole = parentRole;
+    }
 }

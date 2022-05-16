@@ -16,34 +16,29 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.rest.impl;
+package org.meveo.admin.action.admin;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import org.meveo.model.admin.SecuredEntity;
 
-import org.meveo.api.PermissionApi;
-import org.meveo.api.dto.response.PermissionResponseDto;
-import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.PermissionRs;
+public class DetailedSecuredEntity extends SecuredEntity {
 
-@RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
-public class PermissionRsImpl extends BaseRs implements PermissionRs {
+    private static final long serialVersionUID = 3675734316027065766L;
 
-    @Inject
-    private PermissionApi permissionApi;
+    private String description;
 
-    @Override
-    public PermissionResponseDto list() {
-        PermissionResponseDto result = new PermissionResponseDto();
-        try {
-            result.setPermissionsDto(permissionApi.list());
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
+    public DetailedSecuredEntity() {
     }
 
+    public DetailedSecuredEntity(SecuredEntity entity) {
+        super(entity.getEntityId(), entity.getEntityCode(), entity.getEntityClass(), entity.getPermission());
+        this.setId(entity.getId());
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

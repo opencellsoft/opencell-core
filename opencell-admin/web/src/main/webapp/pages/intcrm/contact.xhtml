@@ -23,7 +23,7 @@
         
         <hftl:dataList label="#{messages['contact.search']}" sortBy="code" backingBean="#{contactListBean}">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('accountManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true"  />
         </hftl:dataList>
         
 		<div style="margin: 10%">

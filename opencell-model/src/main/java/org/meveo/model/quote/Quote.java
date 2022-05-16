@@ -55,7 +55,6 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
 /**
@@ -167,9 +166,8 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     /**
      * User group that quote processing is routed to
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routed_to_user_group_id")
-    private UserHierarchyLevel routedToUserGroup;
+    @Column(name = "routed_to_user_group")
+    private String routedToUserGroup;
 
     /**
      * Application/source that quote requets was received from
@@ -312,11 +310,11 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
         this.quoteItems.add(quoteItem);
     }
 
-    public UserHierarchyLevel getRoutedToUserGroup() {
+    public String getRoutedToUserGroup() {
         return routedToUserGroup;
     }
 
-    public void setRoutedToUserGroup(UserHierarchyLevel routedToUserGroup) {
+    public void setRoutedToUserGroup(String routedToUserGroup) {
         this.routedToUserGroup = routedToUserGroup;
     }
 

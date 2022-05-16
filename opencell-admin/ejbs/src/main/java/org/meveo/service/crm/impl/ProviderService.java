@@ -31,15 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.BeanUtils;
 import org.keycloak.KeycloakSecurityContext;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.RoleDto;
-import org.meveo.api.dto.UserDto;
 import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
+import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
@@ -220,19 +218,13 @@ public class ProviderService extends PersistenceService<Provider> {
         log.info("Add provider user in {} KC with token: {}", name, session.getTokenString());
 
         // Create user
-        UserDto userDto = new UserDto();
-        userDto.setUsername(name);
-        userDto.setPassword(name);
-        if (!StringUtils.isBlank(provider.getEmail())) {
-            userDto.setEmail(provider.getEmail());
-        } else {
-            userDto.setEmail(name + "@" + provider.getCode().toLowerCase() + ".com");
+        String email = provider.getEmail();
+        if (StringUtils.isBlank(provider.getEmail())) {
+            email = name + "@" + provider.getCode().toLowerCase() + ".com";
         }
-        userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
-        userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
 
         try {
-            kcService.createUser(request, userDto, provider.getCode());
+            kcService.createUser(name, null, null, email, name, null, Arrays.asList("CUSTOMER_CARE_USER", "CC_ADMIN", "superAdministrator"), provider.getCode());
         } catch (BusinessException e) {
             log.error("Failed to create a user in Keycloak", e);
             throw e;

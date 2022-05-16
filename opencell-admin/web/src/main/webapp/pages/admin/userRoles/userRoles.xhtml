@@ -1,14 +1,9 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{userRoleListBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{userRoleListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -20,27 +15,31 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:searchPanel label="#{messages['role.search']}"
-			backingBean="#{userRoleListBean}">
+		<hftl:searchPanel label="#{messages['role.search']}" backingBean="#{userRoleListBean}">
 			<hftl:searchField label="#{messages['role.name']}" field="name" />
-			<hftl:searchField label="#{messages['role.description']}"
-				field="description" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['role.title']}"
-			backingBean="#{userRoleListBean}" sortBy="name">
-			<hftl:column label="#{messages['role.name']}" field="name"
-				entityView="roleDetail" valueIdField="id" />
-			<hftl:column label="#{messages['role.description']}"
-				field="description" />
-			<hftl:column label="#{messages['role.permissions']}"
-				field="permissions" valueLabelField="name" isList="true" />
+		<p:panel id="results_panel" width="100">
+			<h:form>
+				<p:dataTable id="datatable_roles" var="entity" value="#{userRoleListBean.filteredLazyDataModel}" paginator="true" rows="30" resizableColumns="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true"
+					styleClass="custom-grid" rowIndexVar="rowIndex">
 
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('administrationManagement')}" />
 
-		</hftl:dataList>
+					<p:column headerText="#{messages['role.name']}">
 
+						<h:link value="#{entity.name}" outcome="roleDetail" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
+							<f:param name="rolename" value="#{entity.name}" />
+							<f:param name="edit" value="#{userRoleListBean.canUserUpdateEntity()}" />
+							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+						</h:link>
+					</p:column>
+
+					<hftl:column label="#{messages['role.description']}" field="description" />
+					<hftl:actionsColumn />
+				</p:dataTable>
+			</h:form>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

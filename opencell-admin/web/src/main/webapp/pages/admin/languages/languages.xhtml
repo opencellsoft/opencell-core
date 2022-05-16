@@ -37,8 +37,7 @@
             <hftl:column label="#{messages['language.code']}" edit="#{currentUser.hasRole('languageManagement')}" field="languageCode" width="10%" entityView="languageDetail" valueIdField="id"/>
             <hftl:column label="#{messages['language.name']}"
                          field="descriptionEn"/>
-            <hftl:actionsColumn
-                    permission="#{currentUser.hasRole('administrationManagement')}"/>
+            <hftl:actionsColumn />
         </hftl:dataList>
 
     </ui:define>

@@ -17,89 +17,62 @@
  */
 package org.meveo.admin.action.admin;
 
-import org.meveo.model.admin.User;
-import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.util.view.ServiceBasedLazyDataModel;
-import org.meveo.util.view.LazyDataModelWSize;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
-import java.util.*;
+
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.admin.User;
+import org.meveo.util.view.LazyDataModelWSize;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
 public class UserListBean extends UserBean {
 
-	private static final long serialVersionUID = 5761298784298195322L;
+    private static final long serialVersionUID = 5761298784298195322L;
 
-	private LazyDataModel<User> filteredUsers = null;	
+    private LazyDataModel<User> filteredUsers = null;
 
-	public LazyDataModel<User> getFilteredLazyDataModel() {
-		
-		if (filteredUsers == null) {
+    public LazyDataModel<User> getFilteredLazyDataModel() {
 
-			filteredUsers = new ServiceBasedLazyDataModel<User>() {
-				private static final long serialVersionUID = 1L;
-	
-				@Override
-				public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
-					
-					String userName = filters.get("userName") != null ? (String) filters.get("userName") : null;
-					List<User> entities = null;
+        if (filteredUsers == null) {
 
-					if (currentUser.hasRole("marketingManager")) {
-						if(userName != null) {
-							entities = userService.findUserByRole(userName, "marketingManager", "CUSTOMER_CARE_USER");
-						}else {
-							entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
-						}
-					}else {
-						if(userName != null) {
-							User user = userService.findByUsernameWithFetch(userName, null);
-							if(user != null) {
-								entities = new ArrayList<User>();
-								entities.add(user);
-							}else {
-								return new ArrayList<User>();
-							}
-						}else {
-							return super.load(first, pageSize, sortField, sortOrder,  loadingFilters);
+            filteredUsers = new LazyDataModelWSize<User>() {
 
+                private static final long serialVersionUID = 1L;
 
+                @Override
+                @SuppressWarnings("rawtypes")
+                public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
+                    filters.put("firstName", filters.get("name.firstName"));
+                    filters.put("lastName", filters.get("name.lastName"));
 
-						}
-					}
+                    PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, filters, null, null);
+                    setRowCount(Long.valueOf(userService.count(paginationConfig)).intValue());
 
+                    if (getRowCount() > 0) {
+                        return userService.list(paginationConfig);
+                    } else {
+                        return new ArrayList<User>();
+                    }
 
-					setRowCount(entities.size());
-	
-					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
-				}
+                    // TODO What to do with this logic in KC??
+//                    if (currentUser.hasRole("marketingManager")) {
+//                      if (userName != null) {
+//                          entities = userService.findUserByRole(userName, "marketingManager", "CUSTOMER_CARE_USER");
+//                      } else {
+//                          entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
+//                      }
+//                  }
+                }
+            };
+        }
 
-				@Override
-				protected Map<String, Object> getSearchCriteria() {
-					return new HashMap<>();
-				}
-
-				@Override
-				protected IPersistenceService<User> getPersistenceServiceImpl() {
-					return userService;
-				}
-
-				@Override
-				protected ElasticClient getElasticClientImpl() {
-					return null;
-				}
-			};
-			
-		}
-	
-		return filteredUsers;
-		
-		
-	}
-
+        return filteredUsers;
+    }
 }

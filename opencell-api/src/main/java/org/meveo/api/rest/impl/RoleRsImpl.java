@@ -32,9 +32,11 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.RoleRs;
+import org.meveo.model.security.Role;
 
 /**
  * REST API for managing {@link Role}.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 6.0
  */
@@ -150,15 +152,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
 
     @Override
     public RolesDto listExternalRoles() {
-        RolesDto result = new RolesDto();
-
-        try {
-            result.setRoles(roleApi.listExternalRoles(httpServletRequest));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
+        return null;
     }
 
     @Override

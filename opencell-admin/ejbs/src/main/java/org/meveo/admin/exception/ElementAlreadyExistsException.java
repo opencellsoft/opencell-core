@@ -26,10 +26,14 @@ public class ElementAlreadyExistsException extends ValidationException {
     private static final long serialVersionUID = 1L;
 
     public ElementAlreadyExistsException(String code, String elementName) {
-        super(elementName + " with code=" + code + " already exists");
+        super(elementName + " with code=" + code + " already exists", "error.elementAlreadyExists", elementName, code);
     }
 
     public ElementAlreadyExistsException(Number id, String elementName) {
-        super(elementName + " with id=" + id + " already exist");
+        super(elementName + " with id=" + id + " already exist", "error.elementAlreadyExists", elementName, id.toString());
+    }
+
+    public ElementAlreadyExistsException(String message) {
+        super(message);
     }
 }

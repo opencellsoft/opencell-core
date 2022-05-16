@@ -36,7 +36,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.security.Role;
 
 /**
  * General chart configuration
@@ -58,9 +57,8 @@ public class Chart extends EnableBusinessEntity {
     /**
      * Role allowed to see the chart
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Column(name = "role")
+    private String role;
 
     /**
      * Measurable quantity to display in a chart
@@ -111,11 +109,11 @@ public class Chart extends EnableBusinessEntity {
     @Column(name = "visible")
     private Boolean visible = false;
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

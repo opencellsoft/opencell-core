@@ -154,7 +154,7 @@
                 <f:facet name="header">
                     <h:outputText value="Actions" />
                 </f:facet>
-                <hftl:actionsColumn renderEditLink="false" renderDeleteLink="false" permission="#{currentUser.hasRole('billingManagement')}" />
+                <hftl:actionsColumn renderEditLink="false" renderDeleteLink="false" />
                 <p:commandButton id="updateWallet" icon="ui-icon-play" actionListener="#{walletOperationBean.updatedToRerate(entity)}"
                     rendered="#{walletOperationBean.canUserUpdateEntity()}" update="@form messages">
                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['message.confirm.walletOperation.update']}" icon="ui-icon-alert" />

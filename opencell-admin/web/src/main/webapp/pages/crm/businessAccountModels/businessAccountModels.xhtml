@@ -29,7 +29,7 @@
                     rendered="#{entity.downloaded}" />
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('accountManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" />
         </hftl:dataList>
 
     </ui:define>

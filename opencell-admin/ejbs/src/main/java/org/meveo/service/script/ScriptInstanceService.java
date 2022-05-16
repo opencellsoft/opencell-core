@@ -52,7 +52,6 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.model.security.Role;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -107,9 +106,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      */
     public void isUserHasExecutionRole(ScriptInstance scriptInstance) throws InvalidPermissionException {
         if (scriptInstance != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
-            Set<Role> execRoles = scriptInstance.getExecutionRoles();
-            for (Role role : execRoles) {
-                if (currentUser.hasRole(role.getName())) {
+            Set<String> execRoles = scriptInstance.getExecutionRoles();
+            for (String role : execRoles) {
+                if (currentUser.hasRole(role)) {
                     return;
                 }
             }
@@ -123,9 +122,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      */
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
         if (scriptInstance != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
-            Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
-            for (Role role : sourcingRoles) {
-                if (currentUser.hasRole(role.getName())) {
+            Set<String> sourcingRoles = scriptInstance.getSourcingRoles();
+            for (String role : sourcingRoles) {
+                if (currentUser.hasRole(role)) {
                     return true;
                 }
             }
