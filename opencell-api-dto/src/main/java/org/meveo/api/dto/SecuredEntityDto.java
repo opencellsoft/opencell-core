@@ -62,6 +62,10 @@ public class SecuredEntityDto extends BaseEntityDto {
     @Schema(description = "Allowed action to perform on the entity")
     private SecuredEntityPermissionEnum permission;
 
+    @XmlAttribute(required = true)
+    @Schema(description = "indicate of the entity is disabled", required = true, defaultValue = "false")
+    private boolean disabled;
+
     /**
      * Instantiates a new secured entity dto.
      */
@@ -78,6 +82,7 @@ public class SecuredEntityDto extends BaseEntityDto {
         this.entityCode = entity.getEntityCode();
         this.entityClass = entity.getEntityClass();
         this.permission = entity.getPermission();
+        this.disabled = entity.isDisabled();
     }
 
     /**
@@ -145,4 +150,17 @@ public class SecuredEntityDto extends BaseEntityDto {
         this.permission = permission;
     }
 
+    /**
+     * @return the disabled
+     */
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    /**
+     * @param disabled the disabled to set
+     */
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 }

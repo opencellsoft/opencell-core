@@ -32,6 +32,7 @@ public class DetailedSecuredEntity extends SecuredEntity {
     public DetailedSecuredEntity(SecuredEntity entity) {
         super(entity.getEntityId(), entity.getEntityCode(), entity.getEntityClass(), entity.getPermission());
         this.setId(entity.getId());
+        this.setDisabled(entity.isDisabled());
     }
 
     public String getDescription() {

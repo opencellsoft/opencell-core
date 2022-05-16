@@ -76,6 +76,7 @@
 							</p:column>
 							<p:column headerText="#{messages['securedEntity.permission']}">
 								<h:outputText value="#{messages[securedEntity.permission.label]}" styleClass="field-value" />
+								<h:outputText value="#{securedEntity.disabled}" styleClass="field-value" />
 							</p:column>
 							<p:column styleClass="actions-column" rendered="#{userBean.edit}">
 								<f:facet name="header">
@@ -83,6 +84,16 @@
 								</f:facet>
 								<p:commandButton action="#{userBean.deleteSecuredEntity(securedEntity)}" rendered="#{userBean.canUserUpdateEntity()}" icon="ui-icon-trash"
 									update=":userFormId:tabView:selectedEntitiesPanel" process="@this" />
+
+								<p:commandButton icon="ui-icon-circle-check" rendered="#{securedEntity.disabled and userBean.canUserUpdateEntity()}"
+									action="#{userBean.enableOrDisable(securedEntity, false)}" update=":userFormId:tabView:selectedEntitiesPanel" process="@this">
+									<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+								</p:commandButton>
+
+								<p:commandButton icon="ui-icon-circle-close" rendered="#{!securedEntity.disabled and userBean.canUserUpdateEntity()}"
+									action="#{userBean.enableOrDisable(securedEntity, true)}" update=":userFormId:tabView:selectedEntitiesPanel" process="@this">
+									<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+								</p:commandButton>
 							</p:column>
 							<f:facet name="footer">
 								<p:commandButton id="addEntity" value="#{messages['user.addSecuredEntity']}" rendered="#{userBean.canUserUpdateEntity()}" oncomplete="PF('securedEntitiesDialog').show()"></p:commandButton>

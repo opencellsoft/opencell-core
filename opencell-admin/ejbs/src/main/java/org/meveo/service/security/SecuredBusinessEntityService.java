@@ -30,11 +30,16 @@ import javax.persistence.NonUniqueResultException;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
+import org.meveo.model.IEnable;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.base.PersistenceService;

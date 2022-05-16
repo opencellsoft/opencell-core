@@ -204,7 +204,8 @@ public class UserRoleBean extends BaseBean<Role> {
      */
     @ActionMethod
     public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
-        securedBusinessEntityService.remove(selectedSecuredEntity);
+        securedBusinessEntityService.remove(selectedSecuredEntity.getId());
+        messages.info(new BundleKey("messages", "securedEntity.deleted"));
     }
 
     @ActionMethod
@@ -225,7 +226,6 @@ public class UserRoleBean extends BaseBean<Role> {
      */
     @ActionMethod
     public void saveSecuredEntity(SelectEvent event) throws BusinessException {
-        log.debug("saveSecuredEntity: {}", this.selectedEntity);
         if (this.selectedEntity != null) {
 
             SecuredEntity securedEntity = new SecuredEntity();

@@ -2245,6 +2245,9 @@
 								"name": "POST"
 							},
 							{
+								"name": "DELETE"
+							},
+							{
 								"name": "PUT"
 							}
 						]
@@ -5259,7 +5262,7 @@
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
 							"resources": "[\"Page Roles\"]",
-							"scopes": "[\"PUT\",\"POST\"]",
+							"scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
 							"applyPolicies": "[\"Role superAdminManagement\"]"
 						}
 					},

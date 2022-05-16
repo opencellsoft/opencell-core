@@ -34,13 +34,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.IEnable;
 import org.meveo.model.IEntity;
 
 /**
@@ -56,9 +57,9 @@ import org.meveo.model.IEntity;
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "SecuredEntity.validateByRoleName", query = "SELECT count(*) from org.meveo.model.admin.SecuredEntity s where s.roleName=:roleName and entity_code=:entityCode and entity_class=:entityClass"),
         @NamedQuery(name = "SecuredEntity.validateByUserName", query = "SELECT count(*) from org.meveo.model.admin.SecuredEntity s where lower(s.userName)=:userName and entity_code=:entityCode and entity_class=:entityClass"),
-        @NamedQuery(name = "SecuredEntity.listForCurrentUser", query = "SELECT new org.meveo.security.SecuredEntity(s.entityId, s.entityCode, s.entityClass, s.permission) from org.meveo.model.admin.SecuredEntity s where lower(s.userName)=:userName or s.roleName in :roleNames", hints = {
+        @NamedQuery(name = "SecuredEntity.listForCurrentUser", query = "SELECT new org.meveo.security.SecuredEntity(s.entityId, s.entityCode, s.entityClass, s.permission) from org.meveo.model.admin.SecuredEntity s where s.disabled=false and (lower(s.userName)=:userName or s.roleName in :roleNames)", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
-public class SecuredEntity implements Serializable, IEntity {
+public class SecuredEntity implements Serializable, IEntity, IEnable {
 
     private static final long serialVersionUID = 84222776645282176L;
 
@@ -114,8 +115,10 @@ public class SecuredEntity implements Serializable, IEntity {
     @Enumerated(EnumType.STRING)
     private SecuredEntityPermissionEnum permission = SecuredEntityPermissionEnum.READ;
 
+    @Type(type = "numeric_boolean")
     @Column(name = "disabled", nullable = false)
-    private int disabled = 0;
+    @NotNull
+    private boolean disabled;
 
     public SecuredEntity() {
     }
@@ -223,41 +226,39 @@ public class SecuredEntity implements Serializable, IEntity {
 
     @Override
     public String toString() {
-        return entityClass + ":" + entityId + ":" + entityCode + (permission != null ? ":" + permission : "");
+        return entityClass + ":" + entityId + ":" + entityCode + (permission != null ? ":" + permission : "") + disabled;
     }
 
     public String toStringWoutId() {
-        return entityClass + ":" + entityCode + (permission != null ? ":" + permission : "");
+        return entityClass + ":" + entityCode + (permission != null ? ":" + permission : "") + disabled;
     }
 
     /**
-     * @return Is configuration disabled. 1=true, 0=false
+     * @return Is secured entity configuration disabled
      */
-    public int getDisabled() {
+    public boolean isDisabled() {
         return disabled;
     }
 
     /**
-     * @param disabled the disabled to set
+     * @param disabled Is secured entity configuration disabled
      */
-    public void setDisabled(int disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
 
     /**
-     * @return the disabled value as a boolean
+     * @return Is secured entity configuration active
      */
-    @Transient
-    public boolean getDisabledAsBoolean() {
-        return disabled == 1;
+    public boolean isActive() {
+        return !disabled;
     }
 
     /**
-     * @param disabled The disabled value as a boolean
+     * @param active Is secured entity configuration active
      */
-    @Transient
-    public void setDisabledAsBoolean(boolean disabled) {
-        this.disabled = disabled ? 1 : 0;
+    public void setActive(boolean active) {
+        setDisabled(!active);
     }
 
     /**

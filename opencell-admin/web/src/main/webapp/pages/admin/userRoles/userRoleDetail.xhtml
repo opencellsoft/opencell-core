@@ -46,15 +46,13 @@
 								<p:commandButton action="#{userRoleBean.deleteSecuredEntity(securedEntity)}" rendered="#{userRoleBean.canUserUpdateEntity()}" icon="ui-icon-trash"
 									update=":roleFormId:tabView:selectedEntitiesPanel" />
 
-								<p:commandButton icon="ui-icon-circle-check" rendered="#{securedEntity.disabledAsBoolean and userRoleBean.canUserUpdateEntity()}"
-									action="#{userRoleBean.enableOrDisable(securedEntity, false)}" update=":roleFormId:tabView:selectedEntitiesPanel">
-									<f:setPropertyActionListener target="#{userRoleBean.entity}" value="#{entity}" />
+								<p:commandButton icon="ui-icon-circle-check" rendered="#{securedEntity.disabled and userRoleBean.canUserUpdateEntity()}"
+									action="#{userRoleBean.enableOrDisable(securedEntity, false)}" update=":roleFormId:tabView:selectedEntitiesPanel" process="@this">
 									<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
 								</p:commandButton>
 
-								<p:commandButton icon="ui-icon-circle-close" rendered="#{!securedEntity.disabledAsBoolean and userRoleBean.canUserUpdateEntity()}"
-									action="#{userRoleBean.enableOrDisable(securedEntity, true)}" update=":roleFormId:tabView:selectedEntitiesPanel">
-									<f:setPropertyActionListener target="#{userRoleBean.entity}" value="#{entity}" />
+								<p:commandButton icon="ui-icon-circle-close" rendered="#{!securedEntity.disabled and userRoleBean.canUserUpdateEntity()}"
+									action="#{userRoleBean.enableOrDisable(securedEntity, true)}" update=":roleFormId:tabView:selectedEntitiesPanel" process="@this">
 									<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
 								</p:commandButton>
 
