@@ -12512,6 +12512,25 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
+		<sql>
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = null;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = nextval('account_operation_number_seq')
+			FROM (select ap.start_date, ap.end_date
+					 from accounting_period ap
+					 where accounting_period_year='2022-2023') as current_ap
+			WHERE accounting_date between current_ap.start_date and current_ap.end_date;
+
+			ALTER TABLE ${db.schema.adapted}ar_account_operation ALTER COLUMN operation_number SET DEFAULT nextval('account_operation_number_seq');
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq OWNED BY ar_account_operation.operation_number;
+		</sql>
+	</changeSet>
+	
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA">
         <addColumn tableName="billing_billing_run">
             <column name="pdf_job_execution_result_id" type="bigint" />
