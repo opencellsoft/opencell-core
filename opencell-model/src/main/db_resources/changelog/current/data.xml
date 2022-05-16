@@ -10148,4 +10148,15 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-7144_05162022" author="ZBariki">
+		<insert tableName="billing_article_mapping">
+			<column name="id" valueSequenceNext="billing_article_mapping_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="DEFAULT_ARTICLE_MAPPING" />
+			<column name="description" value="Default article mapping" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
