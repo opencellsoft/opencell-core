@@ -199,6 +199,17 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		return attribute;
 	}
 
+	public Set<AttributeDTO> findByCodes(List<String> codes) throws MeveoApiException {
+		List<Attribute> attribute = attributeService.findByCodes(codes);
+
+		Set<AttributeDTO> assignedAttributes=new HashSet<>();
+		for(Attribute attr : attribute) {
+			assignedAttributes.add(new AttributeDTO(attr));
+		}
+
+		return assignedAttributes;
+	}
+
 	public GetAttributeDtoResponse findByCode(String code) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("code");
@@ -277,8 +288,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				.stream()
 				.forEach(
 						att -> {
-							List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(att.getCode(), productCode);
-							if (sourceRules != null && !sourceRules.isEmpty()) {
+							if (commercialRuleLineService.hasSourceProductAttributeRules(att.getCode(), productCode)) {
 								att.setRuled(true);
 							}
 						}

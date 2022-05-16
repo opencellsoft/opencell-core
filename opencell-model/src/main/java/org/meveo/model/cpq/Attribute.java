@@ -27,10 +27,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -53,7 +55,9 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
 @NamedQueries({
-	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id")})
+	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id"),
+	@NamedQuery(name = "Attribute.findByCodes", query = "SELECT a FROM Attribute a WHERE LOWER(a.code) IN :codes", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")})
+})
 public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * 
@@ -85,6 +89,7 @@ public class Attribute extends EnableBusinessCFEntity{
     /**
 	 * allowed values
 	 */
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
@@ -93,7 +98,8 @@ public class Attribute extends EnableBusinessCFEntity{
 	
 	   /**
      * list of tag attached
-     */   
+     */
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
     private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
@@ -119,20 +125,24 @@ public class Attribute extends EnableBusinessCFEntity{
     
     /**
      * list of Media
-     */   
+     */
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<>();
-    
-    
+
+
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "cpq_attribute_tag", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
-    
+
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
-    
+
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();

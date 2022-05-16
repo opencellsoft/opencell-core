@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -77,6 +78,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -941,7 +943,64 @@ public class ProductApi extends BaseApi {
 		productSourceSelectedAttributes.add(offerSourceSelectedAttributes);
 		log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
         GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes);
-        for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
+
+		// Build Offer product
+		Set<String> attributeCodes = new HashSet<>();
+		Set<String> groupedAttributeCodes = new HashSet<>();
+		Set<String> productCodes = new HashSet<>();
+		Set<String> offertemplateCodes = new HashSet<>();
+
+		for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
+			if(CollectionUtils.isNotEmpty(offerProduct.getProduct().getCurrentProductVersion().getAttributeCodes())){
+				attributeCodes.addAll(offerProduct.getProduct().getCurrentProductVersion().getAttributeCodes());
+				groupedAttributeCodes.addAll(offerProduct.getProduct().getCurrentProductVersion().getGroupedAttributeCodes());
+			}
+			offertemplateCodes.add(offertemplateDTO.getCode());
+			productCodes.add(offerProduct.getProduct().getCode());
+
+		}
+
+		Map<String, List<CommercialRuleHeader>> mapCommercialRules = new HashMap<>();
+
+		commercialRuleHeaderService.getProductAttributeRulesByCodes(attributeCodes, productCodes).forEach(commercialRuleHeader -> {
+			if(mapCommercialRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-"+commercialRuleHeader.getTargetProduct().getCode()) == null){
+				List<CommercialRuleHeader> rules = new ArrayList<>();
+				rules.add(commercialRuleHeader);
+				mapCommercialRules.put(commercialRuleHeader.getTargetAttribute().getCode() + "-"+commercialRuleHeader.getTargetProduct().getCode(), rules);
+			}else{
+				mapCommercialRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-"+commercialRuleHeader.getTargetProduct().getCode()).add(commercialRuleHeader);
+			}
+		});
+
+		Map<String, List<CommercialRuleHeader>> mapGroupedAttributeCommercialRules = new HashMap<>();
+
+		if (CollectionUtils.isNotEmpty(groupedAttributeCodes) && CollectionUtils.isNotEmpty(productCodes)) {
+			commercialRuleHeaderService.getGroupedAttributesRulesByCodes(groupedAttributeCodes, productCodes).forEach(commercialRuleHeader -> {
+				if (mapCommercialRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode()) == null) {
+					List<CommercialRuleHeader> rules = new ArrayList<>();
+					rules.add(commercialRuleHeader);
+					mapGroupedAttributeCommercialRules.put(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode(), rules);
+				} else {
+					mapGroupedAttributeCommercialRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode()).add(commercialRuleHeader);
+				}
+			});
+		}
+
+		Map<String, List<CommercialRuleHeader>> mapOfferAttributeRules = new HashMap<>();
+
+		if (CollectionUtils.isNotEmpty(groupedAttributeCodes) && CollectionUtils.isNotEmpty(productCodes)) {
+			commercialRuleHeaderService.getOfferAttributeRulesByCodes(attributeCodes, offertemplateCodes).forEach(commercialRuleHeader -> {
+				if (mapOfferAttributeRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode()) == null) {
+					List<CommercialRuleHeader> rules = new ArrayList<>();
+					rules.add(commercialRuleHeader);
+					mapOfferAttributeRules.put(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode(), rules);
+				} else {
+					mapOfferAttributeRules.get(commercialRuleHeader.getTargetAttribute().getCode() + "-" + commercialRuleHeader.getTargetProduct().getCode()).add(commercialRuleHeader);
+				}
+			});
+		}
+
+		for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
             if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
                 List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
                 if (commercialRules != null && !commercialRules.isEmpty()) {
@@ -956,15 +1015,19 @@ public class ProductApi extends BaseApi {
                     offerProduct.setSelectable(isSelectable);
                 }
 
-                List<Long> sourceProductRules = commercialRuleLineService.getSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+                /*List<Long> sourceProductRules = commercialRuleLineService.getSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
                 if (sourceProductRules != null && !sourceProductRules.isEmpty()) {
                     offerProduct.setRuled(true);
-                }
+                }*/
+				if (commercialRuleLineService.hasSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion())) {
+					offerProduct.setRuled(true);
+				}
 
 
                 GetProductVersionResponse productVersionResponse = (GetProductVersionResponse) offerProduct.getProduct().getCurrentProductVersion();
                 for (AttributeDTO attributeDto : productVersionResponse.getAttributes()) {
-                    List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+                    List<CommercialRuleHeader> attributeCommercialRules = mapCommercialRules.get(attributeDto.getCode()+"-"+offerProduct.getProduct().getCode());
+							// commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
 
 					if (attributeCommercialRules != null && !attributeCommercialRules.isEmpty()) {
                         List<String> commercialRuleCodes = new ArrayList<String>();
@@ -982,16 +1045,21 @@ public class ProductApi extends BaseApi {
 							attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
 						}
                     }
-                    List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+                    /*List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
                     if (sourceRules != null && !sourceRules.isEmpty()) {
                         attributeDto.setRuled(true);
-                    }
+                    }*/
+
+					if (commercialRuleLineService.hasSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode())) {
+						attributeDto.setRuled(true);
+					}
                 }
 
 
                 for (GroupedAttributeDto groupedAttributeDTO : productVersionResponse.getGroupedAttributes()) {
-                    List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
-                    if (groupedAttributeCommercialRules != null && !groupedAttributeCommercialRules.isEmpty()) {
+                    //List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+					List<CommercialRuleHeader> groupedAttributeCommercialRules = mapGroupedAttributeCommercialRules.get(groupedAttributeDTO.getCode()+"-"+offerProduct.getProduct().getCode());
+					if (groupedAttributeCommercialRules != null && !groupedAttributeCommercialRules.isEmpty()) {
                         List<String> commercialRuleCodes = new ArrayList<String>();
                         for (CommercialRuleHeader rule : groupedAttributeCommercialRules) {
                             commercialRuleCodes.add(rule.getCode());
@@ -1000,16 +1068,21 @@ public class ProductApi extends BaseApi {
                         boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts(),offerContextDTO.getSelectedOfferAttributes(), (rule) -> true);
                         groupedAttributeDTO.setSelectable(isSelectable);
                     }
-                    List<Long> sourceGroupedAttributeRules = commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+                    /*List<Long> sourceGroupedAttributeRules = commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
                     if (sourceGroupedAttributeRules != null && !sourceGroupedAttributeRules.isEmpty()) {
                         groupedAttributeDTO.setRuled(true);
-                    }
+                    }*/
+
+					if (commercialRuleLineService.hasSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode())) {
+						groupedAttributeDTO.setRuled(true);
+					}
                 }
                 offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
             }
         }
         for (AttributeDTO attributeDto : offertemplateDTO.getAttributes()) {
-            List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
+            //List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
+			List<CommercialRuleHeader> commercialRules = mapOfferAttributeRules.get(attributeDto.getCode()+"-"+offertemplateDTO.getCode());
             if (commercialRules != null && !commercialRules.isEmpty()) {
                 List<String> commercialRuleCodes = new ArrayList<String>();
                 for (CommercialRuleHeader rule : commercialRules) {
@@ -1023,10 +1096,14 @@ public class ProductApi extends BaseApi {
 					attributeDto.setAssignedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getCode()));
 				}
             }
-            List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);
+            /*List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);
             if (sourceRules != null && !sourceRules.isEmpty()) {
                 attributeDto.setRuled(true);
-            }
+            }*/
+
+			if (commercialRuleLineService.hasSourceOfferAttributeRules(attributeDto.getCode(), offerCode)) {
+				attributeDto.setRuled(true);
+			}
         }
 
         result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));

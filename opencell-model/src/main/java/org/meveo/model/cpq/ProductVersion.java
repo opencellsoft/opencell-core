@@ -32,6 +32,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
@@ -128,10 +129,10 @@ public class ProductVersion extends AuditableEntity{
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_product_version_tags", joinColumns = @JoinColumn(name = "product_version_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<Tag>();
-    
 
-	
 
+
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_attributes",

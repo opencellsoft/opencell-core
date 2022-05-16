@@ -13,14 +13,18 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -91,6 +95,17 @@ public class AttributeService extends BusinessService<Attribute>{
         }
     }
 
+    public Set<String> getNotExistByCodes(Set<String> codes){
+        return null; // TODO
+    }
+
+    @Override
+    public List<Attribute> findByCodes(List<String> codes) {
+        List<String> lowerCodes = codes.stream().map(s -> s.toLowerCase()).collect(Collectors.toList());
+        return (List<Attribute>) getEntityManager().createNamedQuery("Attribute.findByCodes")
+                .setParameter("codes", lowerCodes).getResultList();
+    }
+
     private String createErrorMessage(Attribute attribute) {
     	 if(StringUtils.isNotBlank(attribute.getValidationLabel())){
              return evaluateExpression(attribute.getValidationLabel(), String.class, attribute);
@@ -105,4 +120,5 @@ public class AttributeService extends BusinessService<Attribute>{
                 .append(attribute.getValidationPattern());
         return errorMessage.toString();
     }
+
 }

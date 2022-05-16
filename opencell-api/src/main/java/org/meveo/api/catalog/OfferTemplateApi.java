@@ -74,6 +74,7 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -806,11 +807,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         								getProductVersionResponse =new GetProductVersionResponse(productVersion,false,true);
 
         								if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
-		    									Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
+                                            Set<AttributeDTO> attributes = new HashSet<>();
+		    									/*Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
 			        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
 			        										return result;
-			        									}).collect(Collectors.toSet()); 
-		    									getProductVersionResponse.setAttributes(attributes);
+			        									}).collect(Collectors.toSet()); */
+		    									getProductVersionResponse.setAttributes(attributeApi.findByCodes(productVersion.getAttributes().stream().map(BusinessEntity::getCode)
+                                                        .collect(Collectors.toList())));
                                             Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
                                                         .stream()
                                                         .map(GroupedAttributeDto::new)

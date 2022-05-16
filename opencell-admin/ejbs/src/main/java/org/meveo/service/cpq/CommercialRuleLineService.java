@@ -128,4 +128,90 @@ public class CommercialRuleLineService extends PersistenceService<CommercialRule
 		return commercialRules;
 	}
 
+	@SuppressWarnings("unchecked")
+	public boolean hasSourceProductAttributeRules(String attributeCode,String productCode) throws BusinessException{
+		// replace by is exist
+		// Attribute attribute=attributeService.findByCode(attributeCode);
+		String queryName="CommercialRuleLine.getSourceAttributeRules";
+		/*if(attribute == null) {
+			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
+		}*/
+		if(!StringUtils.isEmpty(productCode)) {
+			queryName="CommercialRuleLine.getSourceProductAttributeRules";
+		}
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("attributeCode", attributeCode);
+		if(!StringUtils.isEmpty(productCode)) {
+			query.setParameter("productCode", productCode);
+		}
+
+		return (Long) query.getSingleResult() > 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean hasSourceOfferAttributeRules(String attributeCode,String offerCode) throws BusinessException{
+		// replace by is existe
+		//Attribute attribute=attributeService.findByCode(attributeCode);
+		String queryName="CommercialRuleLine.getSourceAttributeRules";
+		/*if(attribute == null) {
+			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
+		}*/
+		if(!StringUtils.isEmpty(offerCode)) {
+			queryName="CommercialRuleLine.getSourceOfferAttributeRules";
+		}
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("attributeCode", attributeCode);
+		if(!StringUtils.isEmpty(offerCode)) {
+			query.setParameter("offerCode", offerCode);
+		}
+
+		return (Long) query.getSingleResult()>0;
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean hasSourceProductRules(String offerCode,String productCode,Integer currentVersion) throws BusinessException{
+		String queryName="CommercialRuleLine.getSourceProductRules";
+		if(!StringUtils.isEmpty(offerCode)) {
+			// replace by is exist
+			/*OfferTemplate offer=offerTemplateService.findByCode(offerCode);
+			if(offer == null) {
+				throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode);
+			}*/
+			queryName="CommercialRuleLine.getSourceProductRulesWithOffer";
+		}
+
+		// replace by is exist
+		/*Product product=productService.findByCode(productCode);
+		if(product == null) {
+			throw new EntityDoesNotExistsException(Product.class,productCode);
+		};*/
+		if(currentVersion!=null) {
+			// replace by is exist
+			/*ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode, currentVersion);
+			if(productVersion==null) {
+				throw new EntityDoesNotExistsException(ProductVersion.class, productCode+" and version "+currentVersion);
+			}*/
+		}
+
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("productCode", productCode);
+		if(!StringUtils.isEmpty(offerCode)) {
+			query.setParameter("offerCode", offerCode);
+		}
+		return (Long) query.getSingleResult()>0;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public boolean hasSourceGroupedAttributesRules(String groupedAttributeCode,String productCode) throws BusinessException{
+		// replace by is existe
+		/*GroupedAttributes groupedAttribute=groupedAttributeService.findByCode(groupedAttributeCode);
+		if(groupedAttribute == null) {
+			throw new EntityDoesNotExistsException(GroupedAttributes.class,groupedAttributeCode);
+		}*/
+		Query query = getEntityManager().createNamedQuery("CommercialRuleLine.getSourceGroupedAttributeRules")
+				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("productCode", productCode);
+		return (Long)query.getSingleResult()>0;
+	}
+
 }

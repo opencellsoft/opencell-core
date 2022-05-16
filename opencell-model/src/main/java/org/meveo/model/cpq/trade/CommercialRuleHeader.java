@@ -15,6 +15,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -45,10 +46,13 @@ import org.meveo.model.cpq.tags.Tag;
 @NamedQueries({ 
 	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetOfferTemplate.code=:offerTemplateCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRulesByCodes", query = "select c from CommercialRuleHeader c where c.targetAttribute.code IN (:attributeCode) and c.targetOfferTemplate.code IN (:offerTemplateCode)", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")}),
 	@NamedQuery(name = "CommercialRuleHeader.getProductAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getByProductOrAttributeRules", query = "SELECT c FROM CommercialRuleHeader c WHERE (c.targetAttribute.code IN (:attributeCodes) OR c.targetProduct.code IN (:productCodes)) AND c.targetAttribute IS NOT NULL AND c.targetProduct IS NOT NULL", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")}),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRulesByCodes", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code IN (:groupedAttributeCodes) and c.targetProduct.code IN (:productCodes)", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")}),
 	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null"),
 	@NamedQuery(name = "CommercialRuleHeader.getProductRulesWithOffer", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProduct.code=:productCode and c.targetAttribute is null and c.targetGroupedAttributes is null")
 })

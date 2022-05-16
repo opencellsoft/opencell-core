@@ -21,6 +21,7 @@ package org.meveo.api.exception;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -34,6 +35,11 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 
 	public EntityDoesNotExistsException(String entityName, String code) {
 		super(entityName + " with code=" + code + " does not exists.");
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+	}
+
+	public EntityDoesNotExistsException(Class<?> clazz, Set<String> codes) {
+		super(clazz.getSimpleName() + " with codes=" + codes + " does not exists.");
 		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
 	}
 
