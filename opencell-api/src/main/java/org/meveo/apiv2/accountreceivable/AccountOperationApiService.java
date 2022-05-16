@@ -135,6 +135,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			}
 			accountOperation.setCustomerAccount(customerAccount);
 			accountOperation.setStatus(POSTED);
+			// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
+			accountOperationService.fillOperationNumber(accountOperation);
 			try {
 				accountOperationService.update(accountOperation);
 			} catch (Exception exception) {
