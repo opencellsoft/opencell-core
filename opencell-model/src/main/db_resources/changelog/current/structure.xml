@@ -12615,4 +12615,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-6779_2022_04_28" author="ZBariki">
+        <dropColumn tableName="billing_rated_transaction" columnName="accounting_article_id"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction"
+                                  constraintName="rated_transaction_article_fk"/>
+        <renameColumn columnDataType="bigint" newColumnName="accounting_article_id"
+                      oldColumnName="article_id" tableName="billing_rated_transaction"/>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="accounting_article_id"
+                                 constraintName="fk_billing_rated_transaction_accounting_article_id"
+                                 referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>

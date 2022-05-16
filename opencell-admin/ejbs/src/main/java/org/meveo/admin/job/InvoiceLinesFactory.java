@@ -17,14 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
@@ -34,13 +27,7 @@ import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.InvoiceLineService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -63,6 +50,7 @@ public class InvoiceLinesFactory {
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
+    private WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(WalletOperationService.class.getSimpleName());
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -149,22 +137,20 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        if(record.get("parameter_2") != null) {
-            String accountingArticleCode = (String) record.get("parameter_2");
-            if(!accountingArticleCode.isBlank()) {
-                invoiceLine.setAccountingArticle(accountingArticleService.findByCode(accountingArticleCode));
-            }
-        }
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-            String param1 = (String) record.get("parameter_1");
-            String param2 = (String) record.get("parameter_2");
-            String param3 = (String) record.get("parameter_3");
-        	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
             Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
             List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
             Map<String, Object> attributes = fromAttributeValue(attributeValues);
-            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, param1, param2, param3)
+            ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) record.get("charge_instance_id")).longValue());
+            String[] rtIds = ofNullable((String) record.get("rated_transaction_ids"))
+                    .map(ids -> ids.split(","))
+                    .orElse(null);
+            WalletOperation walletOperation = null;
+            if(rtIds != null && rtIds.length == 1) {
+                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
+            }
+            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
                     .orElseThrow(() -> new BusinessException("No accountingArticle found"));
             invoiceLine.setAccountingArticle(accountingArticle);
         }
