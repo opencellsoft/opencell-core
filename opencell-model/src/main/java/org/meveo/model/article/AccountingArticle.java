@@ -4,15 +4,19 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -21,6 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
@@ -79,6 +84,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
+
+    @Column(name = "accountingcode_el", length = 500)
+    private String accountingCodeEl;
+
+    @Column(name = "column_criteria_el", length = 500)
+    private String columnCriteriaEL;
+
+    @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountingCodeMapping> accountingCodeMappings;
 
     public AccountingArticle() {
     }
@@ -190,12 +204,36 @@ public class AccountingArticle extends EnableBusinessCFEntity {
         this.invoiceTypeEl = invoiceTypeEL;
     }
 
-	@Override
+    public String getAccountingCodeEl() {
+        return accountingCodeEl;
+    }
+
+    public void setAccountingCodeEl(String accountingCodeEl) {
+        this.accountingCodeEl = accountingCodeEl;
+    }
+
+    public String getColumnCriteriaEL() {
+        return columnCriteriaEL;
+    }
+
+    public void setColumnCriteriaEL(String columCriteriaEL) {
+        this.columnCriteriaEL = columCriteriaEL;
+    }
+
+    public List<AccountingCodeMapping> getAccountingCodeMappings() {
+        return accountingCodeMappings;
+    }
+
+    public void setAccountingCodeMappings(List<AccountingCodeMapping> accountingCodeMappings) {
+        this.accountingCodeMappings = accountingCodeMappings;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
 		return result;
 	}
 

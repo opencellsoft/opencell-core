@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.article.AccountingArticles;
+import org.meveo.apiv2.article.AccountingCodeMapping;
+import org.meveo.apiv2.article.AccountingCodeMappingInput;
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
 import org.meveo.apiv2.article.ImmutableAccountingArticles;
 import org.meveo.apiv2.article.resource.AccountingArticleResource;
@@ -30,7 +32,6 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
     private AccountingArticleApiService accountingArticleApiService;
     @Inject private AccountingArticleBaseApi accountingArticleBaseApi;
     private AccountingArticleMapper mapper = new AccountingArticleMapper();
-
 
     @Override
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
@@ -147,6 +148,26 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 		return accountingArticleApiService.getAccountingArticles(productCode, attribues)
 											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
 											.orElseThrow(NotFoundException::new);
+	}
+
+	@Override
+	public Response createAccountingCodeMapping(AccountingCodeMappingInput accountingCodeMapping) {
+		accountingArticleApiService.createAccountingCodeMappings(accountingCodeMapping);
+		return Response
+				.ok()
+				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Accounting code mapping successfully created\"}}")
+				.build();
+	}
+
+	@Override
+	public Response updateAccountingCodeMapping(String accountingArticleCode,
+												AccountingCodeMappingInput accountingCodeMappingInput) {
+		AccountingArticle accountingArticle =
+				accountingArticleApiService.updateAccountingCodeMapping(accountingArticleCode, accountingCodeMappingInput);
+		return Response
+				.ok(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticle.getId()).build())
+				.entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Accounting code mapping successfully updated\"}}")
+				.build();
 	}
 
 }
