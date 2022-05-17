@@ -12972,7 +12972,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
-    <changeSet id="INTRD-6608_20220420-fix" author="AkadidAbdelmounaim">
+    <changeSet id="INTRD-6608_20220420-fix" author="AkadidAbdelmounaim" failOnError="false">
         <createView viewName="billing_wallet_operation_period">
             select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
             from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
