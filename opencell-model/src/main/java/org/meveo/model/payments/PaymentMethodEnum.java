@@ -41,6 +41,7 @@ public enum PaymentMethodEnum {
 	 * @return true/fale
 	 */
 	public boolean isSimple() {
-		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL;
+		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL
+				|| this == PaymentMethodEnum.STRIPE || this == PaymentMethodEnum.CASH;
 	}
 }
