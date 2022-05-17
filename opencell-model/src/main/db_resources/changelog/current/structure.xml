@@ -12933,6 +12933,11 @@ order by date_trunc('month', i.invoice_date) DESC
 		</sql>
 	</changeSet>
 
+    <changeSet id="#INTRD-7273_20220517" author="HichamHANINE">
+		<sql>
+			UPDATE billing_invoice_line set tax_mode = 'ARTICLE' where tax_mode is null
+		</sql>
+	</changeSet>
 	
 	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
