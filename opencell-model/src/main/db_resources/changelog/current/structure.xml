@@ -12783,4 +12783,8 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
+    <changeSet id="#INTRD-6664_20220420" author="aelmalki">
+        <dropNotNullConstraint tableName="accounting_journal_entry" columnName="seller_id"/>
+    </changeSet>
+
 </databaseChangeLog>
