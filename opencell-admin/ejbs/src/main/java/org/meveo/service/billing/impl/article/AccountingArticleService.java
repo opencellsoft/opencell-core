@@ -144,18 +144,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
-		if(!StringUtils.isBlank(mappingExpressionEl)) {
-			if(walletOperation != null) {
-				Object result = evaluateExpression(mappingExpressionEl,
-						Map.of("walletOperation", walletOperation), Boolean.class);
-				try {
-					return (Boolean) result;
-				} catch (Exception exception) {
-					throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
-				}
-			} else {
-				return false;
+		if (!StringUtils.isBlank(mappingExpressionEl)) {
+			Object result = evaluateExpression(mappingExpressionEl,
+					Map.of("walletOperation", walletOperation), Boolean.class);
+			try {
+				return (Boolean) result;
+			} catch (Exception exception) {
+				throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
 			}
+
 		} else {
 			return true;
 		}
