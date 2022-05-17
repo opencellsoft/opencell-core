@@ -72,7 +72,9 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
 @NamedQueries({
     @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled= false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC", hints = {
-            @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+            @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId")
+})
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;

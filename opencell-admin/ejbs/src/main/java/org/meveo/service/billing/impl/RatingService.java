@@ -26,7 +26,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -78,6 +82,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -1467,27 +1472,30 @@ public class RatingService extends PersistenceService<WalletOperation> {
     		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
     	}
     	
-    	List<DiscountPlanItem> allDiscountPlanItems=new ArrayList<DiscountPlanItem>();  
+    	List<DiscountPlanItem> applicableDiscountPlanItems=new ArrayList<DiscountPlanItem>(); 
+    	SortedMap<Integer, DiscountPlanItem>  sortedDiscountPlanItems = new TreeMap<>();
+    	SortedMap<Integer, DiscountPlanItem>  fixedDiscountPlanItems = new TreeMap<>();
     	if(!discountPlanInstances.isEmpty()) {
     		DiscountPlan discountPlan =null;
     		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
     			discountPlan=discountPlanInstance.getDiscountPlan();
-    			if(discountPlan.isApplicableOnDiscountedPrice()) {
-    				allDiscountPlanItems.addAll(discountPlan.getDiscountPlanItems());
-    			}else {
-    				ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlan,null, isVirtual));
-    				ratingResult.getEligibleFixedDiscountItems().addAll(
+    			var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+    			sortedDiscountPlanItems.putAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, walletOperation.getOperationDate()));
+    			fixedDiscountPlanItems.putAll(
     						discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
-    								walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(),allDiscountPlanItems));
-    			}
-    		} 
+    								walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+
     	}
-    	if(!allDiscountPlanItems.isEmpty()) {
-    		ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(),null,allDiscountPlanItems, isVirtual));
-    		ratingResult.getEligibleFixedDiscountItems().addAll(
-					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), null, 
-							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(),allDiscountPlanItems));
+    	if(!sortedDiscountPlanItems.isEmpty()) {
+    		Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    		 discountPlanService.calculateDiscountplanItems(sortedDiscountPlanItems.values().stream().collect(Collectors.toList()), seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
+					walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
+					walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE);
     	}
+    	if(!fixedDiscountPlanItems.isEmpty()) {
+    		 ratingResult.getEligibleFixedDiscountItems().addAll(fixedDiscountPlanItems.values().stream().collect(Collectors.toList()));
+    	}
+    	
     }
 
 }
