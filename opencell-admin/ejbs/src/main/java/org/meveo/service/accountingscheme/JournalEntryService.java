@@ -330,8 +330,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
-                AccountingCode revenuACC = invoiceLine.getAccountingArticle().getAccountingCode() != null ?
-                        invoiceLine.getAccountingArticle().getAccountingCode() : occT.getContraAccountingCode();
+                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
 
                 if (revenuACC == null) {
                     throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +

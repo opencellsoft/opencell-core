@@ -5,10 +5,13 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +21,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -28,13 +33,20 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.cpq.AttributeService;
 
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
+
+	private static final String SCORE_1 = "1";
+	private static final String SCORE_0 = "0";
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
+	@Inject
+	private AccountingCodeService accountingCodeService;
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes, null);
@@ -141,18 +153,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
-		if(!StringUtils.isBlank(mappingExpressionEl)) {
-			if(walletOperation != null) {
-				Object result = evaluateExpression(mappingExpressionEl,
-						Map.of("walletOperation", walletOperation), Boolean.class);
-				try {
-					return (Boolean) result;
-				} catch (Exception exception) {
-					throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
-				}
-			} else {
-				return false;
+		if (!StringUtils.isBlank(mappingExpressionEl)) {
+			Object result = evaluateExpression(mappingExpressionEl,
+					Map.of("walletOperation", walletOperation), Boolean.class);
+			try {
+				return (Boolean) result;
+			} catch (Exception exception) {
+				throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
 			}
+
 		} else {
 			return true;
 		}
@@ -195,6 +204,171 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("taxClass", taxClass)
 				.setParameter("invoiceSubCategory", invoiceSubCategory)
 				.getResultList();
+	}
+
+	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
+		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
+		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
+			String resultEl = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
+					accountingArticle, invoiceLine.getInvoice(), String.class);
+
+			if (StringUtils.isBlank(resultEl)) {
+				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
+			}
+
+			AccountingCode result = accountingCodeService.findByCode(resultEl);
+
+			if (result == null) {
+				throw new BusinessException("No accounting code found for code=" + resultEl);
+			}
+
+			return result;
+		}
+		// **2** if not, if accountingCodeMapping table contains related lines get the best matched line
+
+		// Find related AccountingCodeMappping
+		List<AccountingCodeMapping> codeMappings = getEntityManager().createNamedQuery("AccountingCodeMapping.findByAccountingArticle")
+				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
+
+		if (codeMappings == null || !codeMappings.isEmpty()) {
+			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
+
+			if (accountingCode != null) {
+				return accountingCode;
+			}
+
+		}
+
+		// **3** if no line is matched, return accounting code single value (accountingArticle.accountingCode field)
+		return accountingArticle.getAccountingCode();
+
+	}
+
+	private <T> T evaluateAccountingCodeArticleEl(String expression,
+												  AccountingArticle accountingArticle,
+												  Invoice invoice,
+												  Class<T> type) throws InvalidELException {
+		if (StringUtils.isNotBlank(expression)) {
+			// EL will have access to the following variables: article / billingAccount / seller
+			BillingAccount billingAccount = invoice.getBillingAccount();
+			Seller seller = invoice.getSeller();
+
+			Map<Object, Object> contextMap = new HashMap<>();
+			contextMap.put("article", accountingArticle);
+			contextMap.put("billingAccount", billingAccount);
+			contextMap.put("seller", seller);
+			contextMap.put("ratedTransaction", null); // always null in this case
+
+			try {
+				return ValueExpressionWrapper.evaluateExpression(expression, contextMap, type);
+			} catch (Exception e) {
+				throw new BusinessException("Error during evaluate EL for AccountingArticle id=" + accountingArticle.getId());
+			}
+		}
+
+		return null;
+	}
+
+	private AccountingCode accountingCodeMappingMatching(List<AccountingCodeMapping> mappings, Invoice invoice,
+														 AccountingArticle accountingArticle) {
+		// Prepare vars
+		TradingCountry billingCountry = invoice.getBillingAccount().getTradingCountry();
+		TradingCurrency billingCurrency = invoice.getBillingAccount().getTradingCurrency();
+		TradingCountry sellerCountry = invoice.getSeller().getTradingCountry();
+		Seller seller = invoice.getSeller();
+		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumnCriteriaEL(),
+				accountingArticle, invoice, String.class);
+
+		// check if only one toMatch field are not found in datas..if yes, return null
+		//if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
+		//	return null;
+		//} ===== UPDATE 17/05 (INTRD-7248) when we have as lest one field not matched with all Mapping, we should continue process to perform "best matching"
+
+		Map<Long, Integer> matchingScore = new HashMap<>();
+
+		mappings.forEach(map -> {
+
+			String score = (map.getAccountingArticle() == null && accountingArticle.getId() == null ? SCORE_1 :
+					map.getAccountingArticle() != null && map.getAccountingArticle().getId().equals(accountingArticle.getId()) ? SCORE_1 : SCORE_0) +
+					(map.getBillingCountry() == null && billingCountry == null ? SCORE_1 :
+							(map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId()) ? SCORE_1 : SCORE_0) +
+					(map.getBillingCurrency() == null && billingCurrency == null ? SCORE_1 :
+							(map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId()) ? SCORE_1 : SCORE_0) +
+					(map.getSellerCountry() == null && sellerCountry == null ? SCORE_1 :
+							(map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId()) ? SCORE_1 : SCORE_0) +
+					(map.getSeller() == null && seller == null ? SCORE_1 :
+							(map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId()) ? SCORE_1 : SCORE_0) +
+					(map.getCriteriaElValue() == null && StringUtils.isBlank(columCriteriaEL) ? SCORE_1 :
+							map.getCriteriaElValue() != null && map.getCriteriaElValue().equals(columCriteriaEL) ? SCORE_1 : SCORE_0);
+
+			Integer theScore = Integer.valueOf(score);
+
+			if (theScore > 0) {
+				matchingScore.put(map.getId(), theScore);
+			}
+
+		});
+
+		if (matchingScore.size() == 0) {
+			return null;
+		}
+
+		List<Integer> results = matchingScore.entrySet()
+				.stream()
+				.sorted(Map.Entry.comparingByValue())
+				.map(Map.Entry::getValue).collect(Collectors.toList());
+
+		Collections.reverse(results);
+
+		if (results.size() > 1 && results.get(0).equals(results.get(1))) {
+			throw new BusinessException("More than one AccountingCode found during matching with AccountingCodeMapping of AccountingArticle id="
+					+ accountingArticle.getId()
+					+ (invoice.getBillingAccount() == null ? "" : " for BillingAccount code=" + invoice.getBillingAccount().getCode())
+					+ (seller == null ? "" : " and Seller code=" + seller.getCode()));
+		}
+
+		AtomicReference<AccountingCode> result = new AtomicReference<>();
+
+		matchingScore.forEach((mappingId, integer) -> {
+			if (results.get(0).equals(integer)) {
+				mappings.stream().filter(map -> mappingId.equals(map.getId()))
+						.findAny().ifPresent(mapping -> result.set(mapping.getAccountingCode()));
+			}
+		});
+
+		return result.get();
+
+	}
+
+	private static boolean hasAllData(List<AccountingCodeMapping> mappings, AccountingArticle accountingArticle,
+									  TradingCountry billingCountry, TradingCurrency billingCurrency,
+									  TradingCountry sellerCountry, Seller seller, String columCriteriaEL) {
+		boolean articleMatched = accountingArticle != null && accountingArticle.getId() != null &&
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getAccountingArticle().getId())
+						.collect(Collectors.toSet()).contains(accountingArticle.getId());
+
+		boolean billingCountryMatched = billingCountry != null && billingCountry.getId() != null &&
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCountry().getId())
+						.collect(Collectors.toSet()).contains(billingCountry.getId());
+
+		boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency().getId())
+						.collect(Collectors.toSet()).contains(billingCurrency.getId());
+
+		boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSellerCountry().getId())
+						.collect(Collectors.toSet()).contains(sellerCountry.getId());
+
+		boolean sellerIdMatched = seller != null && seller.getId() != null &&
+				!mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSeller().getId())
+						.collect(Collectors.toSet()).contains(seller.getId());
+
+		boolean valueMatched = StringUtils.isNotBlank(columCriteriaEL) &&
+				!mappings.stream().map(AccountingCodeMapping::getCriteriaElValue)
+						.collect(Collectors.toSet()).contains(columCriteriaEL);
+
+		return articleMatched || billingCountryMatched || billingCurrencyMatched
+				|| sellerCountryMatched || sellerIdMatched || valueMatched;
 	}
 	
 }

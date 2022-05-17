@@ -349,7 +349,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         RatingResult ratedEDRResult = new RatingResult();
-        ratedEDRResult.setWalletOperation(walletOperation);
+        ratedEDRResult.addWalletOperation(walletOperation);
         
         if(!isVirtual) {
         	walletOperationService.create(walletOperation);
@@ -567,7 +567,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-    	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+    	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
     	bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
