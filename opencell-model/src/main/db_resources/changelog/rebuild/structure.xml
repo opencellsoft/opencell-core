@@ -3600,6 +3600,7 @@
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint"/>
 			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -9412,6 +9413,7 @@
 			<column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
 			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
 			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -9997,6 +9999,7 @@
 			<column name="discount_plan_item_id" type="bigint" />
 		    <column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
 		    <column name="discounted_amount" type="numeric(23,12)"/>
+		    <column name="sequence" type="int4"/>
             
         </createTable>
     </changeSet>

@@ -576,6 +576,10 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**The amount after discount**/
     @Column(name = "discounted_amount")
    	private BigDecimal discountedAmount;
+    
+    /**The amount after discount**/
+    @Column(name = "sequence")
+   	private Integer sequence;
 
     @Transient
     private boolean overrodePrice;
@@ -1590,6 +1594,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setDiscountedAmount(BigDecimal discountedAmount) {
 		this.discountedAmount = discountedAmount;
 	}
+
+
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
     
+	
     
 }

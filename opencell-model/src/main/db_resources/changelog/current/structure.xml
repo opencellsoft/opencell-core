@@ -9545,6 +9545,7 @@ public class OrderAdvancement extends ModuleScript {
 		
 		<addColumn tableName="billing_wallet_operation">
 		<column name="discounted_amount" type="numeric(23,12)"/>
+		<column name="sequence" type="int4"/>
 		</addColumn>
 		
 		<addColumn tableName="cpq_quote_price">

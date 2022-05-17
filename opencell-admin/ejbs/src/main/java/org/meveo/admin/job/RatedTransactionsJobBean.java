@@ -140,6 +140,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         		discountRatedTransaction.setDiscountPlanItem(walletOperation.getDiscountPlanItem());
         		discountRatedTransaction.setDiscountPlanType(walletOperation.getDiscountPlanType());
         		discountRatedTransaction.setDiscountValue(walletOperation.getDiscountValue());
+        		discountRatedTransaction.setSequence(walletOperation.getSequence());
         		ratedTransactionService.update(discountRatedTransaction);
         	}
     		
