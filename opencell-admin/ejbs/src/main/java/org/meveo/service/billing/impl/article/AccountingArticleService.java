@@ -276,9 +276,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				accountingArticle, invoice, String.class);
 
 		// check if only one toMatch field are not found in datas..if yes, return null
-		if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
-			return null;
-		}
+		//if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
+		//	return null;
+		//} ===== UPDATE 17/05 (INTRD-7248) when we have as lest one field not matched with all Mapping, we should continue process to perform "best matching"
 
 		Map<Long, Integer> matchingScore = new HashMap<>();
 
@@ -318,7 +318,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 		if (results.size() > 1 && results.get(0).equals(results.get(1))) {
 			throw new BusinessException("More than one AccountingCode found during matching with AccountingCodeMapping of AccountingArticle id="
-					+ accountingArticle.getId());
+					+ accountingArticle.getId()
+					+ (invoice.getBillingAccount() == null ? "" : " for BillingAccount code=" + invoice.getBillingAccount().getCode())
+					+ (seller == null ? "" : " and Seller code=" + seller.getCode()));
 		}
 
 		AtomicReference<AccountingCode> result = new AtomicReference<>();
