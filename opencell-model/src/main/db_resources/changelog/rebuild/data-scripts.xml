@@ -357,7 +357,9 @@ public class PaymentCallBackScript extends Script {
 
     </changeSet>
    
-
+    <changeSet author="ZBARIKI" id="#6048_20210326" dbms="postgresql"/>
+    <changeSet author="MohamedSTITANE" id="#6048_20210326" dbms="oracle"/>
+    
     <changeSet author="AmineBENAICHA" id="#6048_20210611">
         <insert tableName="meveo_script_instance" dbms="postgresql">
             <column name="id" valueNumeric="-30"/>
