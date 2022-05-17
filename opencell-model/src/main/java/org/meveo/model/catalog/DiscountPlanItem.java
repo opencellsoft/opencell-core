@@ -38,6 +38,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -224,6 +225,11 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@Column(name = "sequence")
 	private Integer sequence;
+	
+	@Transient
+	private Integer finalSequence=(Math.multiplyExact(discountPlan.getSequence(),1000))+getSequence();
+	
+	
 	
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -503,6 +509,10 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	public Integer getFinalSequence() {
+		return finalSequence;
 	}
 
 

@@ -1471,8 +1471,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
     	if (walletOperation.getSubscription() != null) {
     		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
     	}
+
     	
-    	List<DiscountPlanItem> applicableDiscountPlanItems=new ArrayList<DiscountPlanItem>(); 
     	SortedMap<Integer, DiscountPlanItem>  sortedDiscountPlanItems = new TreeMap<>();
     	SortedMap<Integer, DiscountPlanItem>  fixedDiscountPlanItems = new TreeMap<>();
     	if(!discountPlanInstances.isEmpty()) {
@@ -1482,20 +1482,21 @@ public class RatingService extends PersistenceService<WalletOperation> {
     			var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
     			sortedDiscountPlanItems.putAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, walletOperation.getOperationDate()));
     			fixedDiscountPlanItems.putAll(
-    						discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
-    								walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+    					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
+    							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+    		}
+    		List<DiscountPlanItem> applicableDiscountPlanItems=sortedDiscountPlanItems.values().stream().collect(Collectors.toList()); 
+    		if(!applicableDiscountPlanItems.isEmpty()) {
+    			Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    			discountPlanService.calculateDiscountplanItems(applicableDiscountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
+    					walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
+    					walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE);
+    		}
+    		if(!fixedDiscountPlanItems.isEmpty()) {
+    			ratingResult.getEligibleFixedDiscountItems().addAll(fixedDiscountPlanItems.values().stream().collect(Collectors.toList()));
+    		}
 
     	}
-    	if(!sortedDiscountPlanItems.isEmpty()) {
-    		Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    		 discountPlanService.calculateDiscountplanItems(sortedDiscountPlanItems.values().stream().collect(Collectors.toList()), seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
-					walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
-					walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE);
-    	}
-    	if(!fixedDiscountPlanItems.isEmpty()) {
-    		 ratingResult.getEligibleFixedDiscountItems().addAll(fixedDiscountPlanItems.values().stream().collect(Collectors.toList()));
-    	}
-    	
-    }
+    } 
 
 }

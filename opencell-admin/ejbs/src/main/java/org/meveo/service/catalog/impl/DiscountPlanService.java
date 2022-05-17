@@ -173,25 +173,6 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		return false;
 	}
 
-
-	/**
-	 * apply discount type of product
-	 * @param chargeInstance
-	 */
-    public List<WalletOperation> applyArticleDiscounts(WalletOperation walletOperation, BillingAccount billingAccount, DiscountPlan discountPlan ,List<DiscountPlanItem> allApplicableDiscountPlanItem, boolean isVirtual) {
-    	if(walletOperation == null)
-    		throw new MissingParameterException("Wallet operation is null");
-    	
-    	ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-    	if(billingAccount == null)
-    		throw new MissingParameterException("following parameters are required : billing account");
-    	
-    	Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	return calculateDiscountplanItems(allApplicableDiscountPlanItem, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
-    										walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
-    										walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE);
-    	
-    }
     
     public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
     		BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
