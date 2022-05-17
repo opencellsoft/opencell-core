@@ -26,8 +26,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 
-import org.meveo.model.billing.InvoiceType;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -35,6 +33,10 @@ import java.math.BigDecimal;
 @Table(name = "accounting_journal_entry")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_journal_entry_seq")})
+@NamedQueries({
+        @NamedQuery(name = "JournalEntry.checkExistenceWithAccountingCode",
+                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.accountingCode.id = :ID_ACCOUNTING_CODE")
+})
 public class JournalEntry extends AuditableEntity {
 
     /**
