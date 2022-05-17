@@ -180,6 +180,12 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private Boolean applyByArticle;
     
     /**
+	 defines the order in which discount plans are applied
+	 */
+	@Schema(description = "defines the order in which discount plans are applied")
+	private Integer sequence;
+    
+    /**
      * Instantiates a new discount plan item dto.
      */
     public DiscountPlanItemDto() {
@@ -214,6 +220,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.priority=discountPlanItem.getPriority();
         this.accountingArticleCode= discountPlanItem.getAccountingArticle() != null ? discountPlanItem.getAccountingArticle().getCode() : null;
         this.applyByArticle=discountPlanItem.isApplyByArticle();
+        this.sequence=discountPlanItem.getSequence();
     }
 
     /**
@@ -506,6 +513,15 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.applyByArticle = applyByArticle;
 	}
 
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	
 	
 	
 	

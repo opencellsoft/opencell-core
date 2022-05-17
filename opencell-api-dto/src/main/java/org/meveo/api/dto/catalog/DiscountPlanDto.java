@@ -176,6 +176,20 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	private List<ApplicableEntityDto> applicableEntities;
 
 	private Boolean applicableOnOverriddenPrice;
+	
+	
+	/**
+	 defines the order in which discount plans are applied
+	 */
+	@Schema(description = "defines the order in which discount plans are applied")
+	private Integer sequence;
+	
+	
+	/**
+	 determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Schema(description = "determines whether the discount plan is applicable on the gross or discounted amount")
+	private boolean applicableOnDiscountedPrice;
 
 	/**
 	 * Instantiates a new DiscountPlanDto
@@ -219,6 +233,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 			incompatibleDiscountPlans = discountPlansDto;
 		}
 		this.applicableOnOverriddenPrice = discountPlan.isApplicableOnOverriddenPrice();
+		this.applicableOnDiscountedPrice=discountPlan.isApplicableOnDiscountedPrice();
+		this.sequence=discountPlan.getSequence();
 	}
 
     @Override
@@ -390,4 +406,23 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	public boolean isApplicableOnDiscountedPrice() {
+		return applicableOnDiscountedPrice;
+	}
+
+	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
+		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
+	}
+	
+	
+	
 }

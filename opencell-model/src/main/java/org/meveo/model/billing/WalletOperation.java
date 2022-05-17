@@ -572,6 +572,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**The amount after discount**/
+    @Column(name = "sequence")
+   	private Integer sequence;
 
     @Transient
     private boolean overrodePrice;
@@ -1574,4 +1582,31 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public void setOverrodePrice(boolean overrodePrice) {
         this.overrodePrice = overrodePrice;
     }
+
+
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+    
+	
+    
 }

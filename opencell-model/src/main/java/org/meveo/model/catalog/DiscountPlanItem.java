@@ -216,6 +216,13 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "apply_by_article")
 	private boolean applyByArticle=false;
 	
+	/**
+	 * 
+	 *defines the order in which discount plans are applied
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
+	
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
 	}
@@ -486,6 +493,14 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	public void setApplyByArticle(boolean applyByArticle) {
 		this.applyByArticle = applyByArticle;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 

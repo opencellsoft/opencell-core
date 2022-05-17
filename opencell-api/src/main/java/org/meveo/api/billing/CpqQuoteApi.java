@@ -1332,6 +1332,7 @@ public class CpqQuoteApi extends BaseApi {
 //        }
         String accountingArticleCode = null;
         clearOfferPrices(quoteOffer);
+        boolean applicableOnDiscountedPrice=false; 
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
             if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
@@ -1340,7 +1341,7 @@ public class CpqQuoteApi extends BaseApi {
             }else {
             	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
             	quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
-            }
+            } 
                 QuotePrice quotePrice = new QuotePrice();
                 quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
                 quotePrice.setPriceLevelEnum(PriceLevelEnum.PRODUCT);
@@ -1357,6 +1358,8 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
                 quotePrice.setDiscountValue(wo.getDiscountValue());
                 quotePrice.setPriceOverCharged(wo.isOverrodePrice());
+                quotePrice.setDiscountedAmount(wo.getDiscountedAmount());
+                quotePrice.setSequence(wo.getSequence());
                 QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
                 if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
                     quotePrice.setDiscountedQuotePrice(discounteQuotePrice);

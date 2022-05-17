@@ -129,6 +129,17 @@ public class OrderPrice extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")
     private Boolean applyDiscountsOnOverridenPrice;
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**
+	 * 
+	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -312,6 +323,22 @@ public class OrderPrice extends BusinessEntity {
 
 	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
 		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 	
 	

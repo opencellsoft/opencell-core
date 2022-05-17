@@ -3093,6 +3093,7 @@
     		<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint"/>
+            <column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3598,6 +3599,8 @@
     		<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint"/>
+			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3904,6 +3907,8 @@
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -3952,6 +3957,7 @@
             <column name="priorty" type="bigint"></column>
             <column name="price_plan_matrix_id" type="bigint" />
             <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -4907,6 +4913,7 @@
             <column name="cust_no_current_sequence_nb" type="bigint" />
             <column name="invoice_config_id" type="bigint" />
             <column name="gdpr_config_id" type="bigint" />
+            <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/> 
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -9405,6 +9412,8 @@
 			<column name="discount_plan_item_id" type="bigint" />
 			<column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
 			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -9989,6 +9998,8 @@
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
 		    <column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+		    <column name="discounted_amount" type="numeric(23,12)"/>
+		    <column name="sequence" type="int4"/>
             
         </createTable>
     </changeSet>
@@ -10147,6 +10158,7 @@
               <column name="discount_value" type="numeric(23,12)" />
 			  <column name="discount_plan_type" type="varchar(50)" />
 			  <column name="discount_plan_item_id" type="bigint"/>
+			  <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -16009,6 +16021,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
     <changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
     <changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
+    <changeSet id="#20220415_M540_6931" author="Mbarek-Ay"/>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

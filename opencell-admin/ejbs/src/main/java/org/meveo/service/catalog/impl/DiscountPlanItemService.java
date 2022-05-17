@@ -22,12 +22,17 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -243,28 +248,39 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     }
 
     
-    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
+    public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,
+    		DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate,List<DiscountPlanItem> allDiscountPlanItem)
             throws BusinessException {
-        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
+    	SortedMap<Integer, DiscountPlanItem>  sortedDiscountPlanItems = new TreeMap<>(); 
         if(accountingArticle==null && walletOperation!=null) {
         	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
         }
         ChargeTemplate chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
-        log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
-        
         Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
-        boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.isApplicableOnOverriddenPrice());
-        
+        boolean isDiscountApplicable =true;
+        boolean applyDiscountsOnOverridenPrice=false;
+        if(discountPlan!=null) {
+        	isDiscountApplicable=discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
+            applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.isApplicableOnOverriddenPrice());
+        	log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
+            
+        } 
         if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
             return Collections.emptyList();
         }
+        List<DiscountPlanItem> applicableDiscountPlanItems=new ArrayList<DiscountPlanItem>();
         boolean isFixedDpItemIncluded=false;
         if (isDiscountApplicable) {
-        	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+        	List<DiscountPlanItem> discountPlanItems=null;
+        	if(allDiscountPlanItem!=null) { 
+        		discountPlanItems = new ArrayList<DiscountPlanItem>(allDiscountPlanItem);
+        	}else {
+        		discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+        	}
         	Long lowPriority=null;
         	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
         		isFixedDpItemIncluded=false;
+        		DiscountPlan discount =discountPlanItem.getDiscountPlan();
         		if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
@@ -278,17 +294,23 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         			}
         		}
 
-        		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+        		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null)) {
         			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
         					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
         				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
-        				applicableDiscountPlanItems.add(discountPlanItem);
+        				if(discount.getSequence()!=null && discountPlanItem.getSequence()!=null && discount.isApplicableOnDiscountedPrice()) {
+        					Integer key=(Math.multiplyExact(discount.getSequence(),1000))+discountPlanItem.getSequence();
+        					sortedDiscountPlanItems.put(key,discountPlanItem);
+        				}else {
+        					applicableDiscountPlanItems.add(discountPlanItem);
+        				}
         			}
-        		}   
+        		}  
+
         	}
         }
-        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
-       
+        log.info("getApplicableDiscountPlanItems  applicableDiscountPlanItems size={}", sortedDiscountPlanItems.size());
+        applicableDiscountPlanItems=discountPlan!=null?applicableDiscountPlanItems:sortedDiscountPlanItems.values().stream().collect(Collectors.toList());
         return applicableDiscountPlanItems;
     }
     

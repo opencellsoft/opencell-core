@@ -73,6 +73,8 @@ public class QuotePrice extends AuditableEntity {
 		this.discountValue=copy.discountValue;
 		this.applyDiscountsOnOverridenPrice=copy.getApplyDiscountsOnOverridenPrice();
 		this.overchargedUnitAmountWithoutTax=copy.getOverchargedUnitAmountWithoutTax();
+		this.discountedAmount=copy.getDiscountedAmount();
+		this.sequence=copy.getSequence();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -165,6 +167,19 @@ public class QuotePrice extends AuditableEntity {
     
     @Column(name = "overcharged_unit_amount_without_tax")
 	private BigDecimal overchargedUnitAmountWithoutTax;
+    
+    
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**
+	 * 
+	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
 	
 	public BigDecimal getQuantity() {
 		return quantity;
@@ -366,6 +381,23 @@ public class QuotePrice extends AuditableEntity {
 		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
 	}
 
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	
 
 
 	

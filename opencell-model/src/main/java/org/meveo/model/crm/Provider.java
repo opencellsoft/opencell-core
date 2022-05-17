@@ -360,6 +360,10 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")),
             @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
     private GenericSequence customerNoSequence = new GenericSequence();
+    
+    @Type(type = "numeric_boolean")
+	@Column(name = "activate_cascading_discounts ")
+	private boolean activateCascadingDiscounts=true;
 
     public String getCode() {
         return code;
@@ -774,4 +778,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public boolean isCurrentProvider() {
         return id != null && id == CURRENT_PROVIDER_ID;
     }
+
+	public boolean isActivateCascadingDiscounts() {
+		return activateCascadingDiscounts;
+	}
+
+	public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
+		this.activateCascadingDiscounts = activateCascadingDiscounts;
+	}
+    
+    
 }

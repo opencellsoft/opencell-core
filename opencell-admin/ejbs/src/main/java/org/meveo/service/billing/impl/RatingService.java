@@ -18,6 +18,25 @@
 
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.ws.rs.core.Response;
+
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
@@ -56,6 +75,8 @@ import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -98,24 +119,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScriptService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and
@@ -1463,14 +1466,28 @@ public class RatingService extends PersistenceService<WalletOperation> {
     	if (walletOperation.getSubscription() != null) {
     		discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
     	}
-        if(discountPlanInstances != null && !discountPlanInstances.isEmpty()) {
-     	   for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
-     		  ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), isVirtual));
-     		   ratingResult.getEligibleFixedDiscountItems().addAll(
-     				   													discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlanInstance.getDiscountPlan(), walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate())
-     				   												);
-     	   }
-        }
+    	
+    	List<DiscountPlanItem> allDiscountPlanItems=new ArrayList<DiscountPlanItem>();  
+    	if(!discountPlanInstances.isEmpty()) {
+    		DiscountPlan discountPlan =null;
+    		for(DiscountPlanInstance discountPlanInstance: discountPlanInstances) {
+    			discountPlan=discountPlanInstance.getDiscountPlan();
+    			if(discountPlan.isApplicableOnDiscountedPrice()) {
+    				allDiscountPlanItems.addAll(discountPlan.getDiscountPlanItems());
+    			}else {
+    				ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(), discountPlan,null, isVirtual));
+    				ratingResult.getEligibleFixedDiscountItems().addAll(
+    						discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
+    								walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(),allDiscountPlanItems));
+    			}
+    		} 
+    	}
+    	if(!allDiscountPlanItems.isEmpty()) {
+    		ratingResult.getWalletOperations().addAll(discountPlanService.applyPercentageDiscount(walletOperation, walletOperation.getBillingAccount(),null,allDiscountPlanItems, isVirtual));
+    		ratingResult.getEligibleFixedDiscountItems().addAll(
+					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), null, 
+							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(),allDiscountPlanItems));
+    	}
     }
 
 }

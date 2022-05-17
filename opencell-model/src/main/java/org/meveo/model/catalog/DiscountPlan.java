@@ -217,6 +217,19 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_overridden_price")
 	private Boolean applicableOnOverriddenPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_discounted_price")
+	private boolean applicableOnDiscountedPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
 
 	public enum DurationPeriodUnitEnum {
 		/**
@@ -269,6 +282,8 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setCfValues(dp.getCfValues());
 		this.setCfAccumulatedValues(dp.getCfAccumulatedValues());
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
+		this.sequence=dp.getSequence();
+		this.applicableOnDiscountedPrice=dp.getApplicableOnOverriddenPrice();
 	}
 	
 	public boolean isValid() {
@@ -457,6 +472,15 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		}
 		
 	}
+	
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
 	/**
      * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
@@ -480,6 +504,20 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         }
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
+
+	public boolean isApplicableOnDiscountedPrice() {
+		return applicableOnDiscountedPrice;
+	}
+
+	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
+		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
+	}
+
+	public Boolean getApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+
 
 
 
