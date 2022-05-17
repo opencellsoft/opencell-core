@@ -1,0 +1,414 @@
+{
+	"info": {
+		"_postman_id": "d1e46ed8-4f9a-4596-a802-d0f0d7c9c676",
+		"name": "DoubleRun-550-V10",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "test case",
+			"item": [
+				{
+					"name": "Create customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"customer.code\", pm.variables.replaceIn('{{$guid}}'));\r",
+									"pm.collectionVariables.set(\"customer.fullname\", pm.variables.replaceIn('{{$randomFullName}}'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"CABINET-D-EXPERTCOMPTABLE.COM\",\r\n  \"code\" : \"{{customer.code}}\",\r\n  \"description\": \"{{customer.fullname}}\",\r\n  \"name\" : {\r\n    \"title\" : \"\",\r\n    \"firstName\" : \"{{$randomFirstName}}\",\r\n    \"lastName\" : \"{{customer.fullname}}\"\r\n  },\r\n  \"jobTitle\": \"{{$randomJobTitle}}\",\r\n  \"address\" : {\r\n    \"address1\" : \"{{$randomStreetAddress}}\",\r\n    \"zipCode\" : \"75009\",\r\n    \"city\" : \"{{$randomCity}}\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{$randomEmail}}\",\r\n    \"mobile\" : \"+{{$randomPhoneNumber}}\"\r\n  },\r\n  \"email\" : \"{{$randomEmail}}\",\r\n  \"language\" : \"FRA\",\r\n  \r\n   \"methodOfPayment\" : [\r\n \r\n {\r\n \"paymentMethodType\" : \"DIRECTDEBIT\", \r\n \"alias\" : \"ComptePersoDD\",\r\n \r\n \r\n \"bankCoordinates\" : {\r\n \"bankCode\" : \"20041\",\r\n \"branchCode\" : \"01005\",\r\n \"accountNumber\" : \"0500013M026\",\r\n \"iban\" : \"FRXXXX41010050500013M02606\",\r\n \"bic\" : \"BNPAFRPPXXX\",\r\n \"accountOwner\" : \"John Smith\",\r\n \"bankName\" : \"BNP Paribas\",\r\n \"bankId\" : \"20041\"\r\n },\r\n \"mandateIdentification\" : \"RUM123456\",\r\n \"mandateDate\" : \"2020-01-01\"\r\n }]\r\n  ,\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"MENSUEL\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"accountHierarchy",
+								"createOrUpdateCRMAccountHierarchy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscribe customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"subscription.code\", pm.variables.replaceIn('{{$guid}}'));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"code\": \"{{subscription.code}}\",\r\n\t\"subscriptionDate\": \"2021-05-19\",\r\n\t\"userAccount\": \"{{customer.code}}\",\r\n\t\"offerTemplate\": \"OF_COMPTABILITE\",\r\n\t\"billingCycle\": \"MENSUEL\",\r\n\t\"servicesToActivate\": {\r\n\t\t\"service\": [\r\n\t\t\t{\r\n\t\t\t\t\"code\": \"SE_HONORAIRES_COMPTABLES\",\r\n\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\"subscriptionDate\": \"2021-06-03\"\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/billing/subscription/subscribeAndActivateServices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"subscription",
+								"subscribeAndActivateServices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscribe customer 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"subscription.code\", pm.variables.replaceIn('{{$guid}}'));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"code\": \"{{subscription.code}}\",\r\n\t\"subscriptionDate\": \"2021-05-19\",\r\n\t\"userAccount\": \"{{customer.code}}\",\r\n\t\"offerTemplate\": \"OF_COMPTABILITE\",\r\n\t\"billingCycle\": \"MENSUEL\",\r\n\t\"servicesToActivate\": {\r\n\t\t\"service\": [\r\n\t\t\t{\r\n\t\t\t\t\"code\": \"SE_HONORAIRES_COMPTABLES\",\r\n\t\t\t\t\"quantity\": 1,\r\n\t\t\t\t\"subscriptionDate\": \"2021-06-03\"\r\n\t\t\t}\r\n\t\t]\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/billing/subscription/subscribeAndActivateServices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"subscription",
+								"subscribeAndActivateServices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Run  RR job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"subscription.code\", pm.variables.replaceIn('{{$guid}}'));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"RR_Job\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/execute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"execute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check amount in the last generated Invoice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202]);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Amount Check\", function () {\r",
+									"\r",
+									"pm.expect(pm.response.json().data[0].amountWithoutTax).to.equal(99.00000000000);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"subscription.code\", pm.variables.replaceIn('{{$guid}}'));\r",
+									"setTimeout(function(){}, 600000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"limit\": 1,\r\n\r\n    \"sortBy\":\"id\",\r\n\r\n    \"sortOrder\": \"DESCENDING\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/all/invoice",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"all",
+								"invoice"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var moment = require('moment');",
+					"",
+					"pm.globals.set('currentdate', moment().format((\"YYYY-MM-DD\")));",
+					"",
+					"var parts = pm.info.requestName.split(\"|\");",
+					"",
+					"",
+					"",
+					"for (let i = 0; i < parts.length; i++) {",
+					"",
+					"    pm.globals.set(\"wait\", 0);",
+					"",
+					"    pm.globals.set(\"request.label.\" + i, parts[i]);",
+					"",
+					"",
+					"",
+					"    if (parts[i].indexOf(\"=\") != -1) {",
+					"",
+					"        propName = parts[i].split(\"=\")[0].trim();",
+					"",
+					"        propValue = parts[i].split(\"=\")[1];",
+					"",
+					"        pm.globals.set(propName, propValue);",
+					"",
+					"    }",
+					"",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "customer.code",
+			"value": "eff8d4ac-e074-49f7-98e0-bb54deba4401"
+		},
+		{
+			"key": "customer.fullname",
+			"value": "Lela Sporer"
+		},
+		{
+			"key": "subscription.code",
+			"value": "aa988509-16e2-4cfe-8731-d8c0bda22b7f"
+		}
+	]
+}

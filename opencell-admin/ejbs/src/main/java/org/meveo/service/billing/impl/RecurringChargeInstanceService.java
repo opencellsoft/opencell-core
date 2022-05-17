@@ -411,7 +411,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     revenueRecognitionScriptService.createRevenueSchedule(recurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), recurringChargeInstance);
                 }
             }
-
+            if (recurringChargeInstance.getNextChargeDate() == null) {
+                log.warn("Rating RecurringChargeInstance {} updates its next charge date to null. " +
+                        "It'll be no longer rated even is active!", recurringChargeInstance.getId());
+            }
             return walletOperations;
 
         } catch (Exception e) {

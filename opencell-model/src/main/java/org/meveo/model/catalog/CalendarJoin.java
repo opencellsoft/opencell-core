@@ -57,9 +57,6 @@ public class CalendarJoin extends Calendar {
     @JoinColumn(name = "join_cal_2_id")
     private Calendar joinCalendar2;
 
-    @Transient
-    private Date lastCalendar1date;
-
     public CalendarJoinTypeEnum getJoinType() {
         return joinType;
     }
@@ -100,11 +97,10 @@ public class CalendarJoin extends Calendar {
             Date firstCalendarDate = joinCalendar1.nextCalendarDate(date, getInitDate());
 
             if(firstCalendarDate != null){
-                lastCalendar1date = firstCalendarDate;
                 return firstCalendarDate;
             }else {
-                Date secondDate = joinCalendar2.nextCalendarDate(date, lastCalendar1date);
-                return secondDate;
+                Date cal1PreviousPeriodEndDate = joinCalendar1.previousPeriodEndDate(date);
+                return joinCalendar2.nextCalendarDate(date, cal1PreviousPeriodEndDate);
             }
         }
     	

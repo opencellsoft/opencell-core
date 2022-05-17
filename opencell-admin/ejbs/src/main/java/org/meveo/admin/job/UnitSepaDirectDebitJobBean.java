@@ -107,53 +107,57 @@ public class UnitSepaDirectDebitJobBean {
 	 */
     @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-    	ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
+	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum)
+			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
 		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());
-		AccountOperation automatedPayment = null;
-		PaymentErrorTypeEnum paymentErrorTypeEnum = null;
-		String errorMsg = null;
-		if (!ddrequestItem.hasError()) {
-			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-				log.info("invoice: {}  balanceDue: {}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
-			} else {
-				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
-						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
-						ddRequestLOT.getSendDate(), ddrequestItem.getDueDate(), new Date(),
-						ddrequestItem.getAccountOperations(), isToMatching, MatchingTypeEnum.A_DERICT_DEBIT);
-				if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
-					ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);
+		if (ddrequestItem.getAccountOperations().size() == 1) {
+			AccountOperation automatedPayment = null;
+			PaymentErrorTypeEnum paymentErrorTypeEnum = null;
+			String errorMsg = null;
+			if (!ddrequestItem.hasError()) {
+				if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
+					log.info("invoice: {}  balanceDue: {}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 				} else {
-					ddrequestItem.setAutomatedPayment((AutomatedPayment) automatedPayment);
+					automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
+							ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(),
+							ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), ddrequestItem.getDueDate(), new Date(), ddrequestItem.getAccountOperations(), isToMatching,
+							MatchingTypeEnum.A_DERICT_DEBIT);
+					if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+						ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);
+					} else {
+						ddrequestItem.setAutomatedPayment((AutomatedPayment) automatedPayment);
 
+					}
 				}
+
+			} else {
+				paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
+				paymentStatusEnum = PaymentStatusEnum.ERROR;
+				errorMsg = ddrequestItem.getErrorMsg();
 			}
-			
-		} else {
-			paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
-			paymentStatusEnum = PaymentStatusEnum.ERROR;
-			errorMsg = ddrequestItem.getErrorMsg();			
-		}
-		Payment payment = automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null;
-		Refund refund = automatedPayment instanceof Refund ? (Refund) automatedPayment : null;
-		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
-				payment, refund, (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
-				paymentStatusEnum, errorMsg, errorMsg, payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null), paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());	
-		
-		if (!ddrequestItem.hasError()) {
-			if (result != null) {
-				result.registerSucces();
-			}
-			
-		}else {
-			if (result != null) {
-				result.registerError(errorMsg);
+			Payment payment = automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null;
+			Refund refund = automatedPayment instanceof Refund ? (Refund) automatedPayment : null;
+			paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), payment, refund,
+					(ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(), paymentStatusEnum, errorMsg, errorMsg,
+					payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null), paymentErrorTypeEnum,
+					ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+					ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),
+					ddrequestItem.getAccountOperations());
+
+			if (!ddrequestItem.hasError()) {
+				if (result != null) {
+					result.registerSucces();
+				}
+
+			} else {
+				if (result != null) {
+					result.registerError(errorMsg);
+				}
 			}
 		}
 	}
-
 	/**
 	 * Creates the payment/refund.
 	 *
