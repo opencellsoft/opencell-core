@@ -14689,11 +14689,6 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="cpq_product" />
     </changeSet>
-    <changeSet author="NabilOuachi" id="rebuild-str-fk-1446">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="accounting_article_id"
-                                 constraintName="fk_billing_rated_transaction_accounting_article_id" referencedTableName="billing_accounting_article"
-                                 referencedColumnNames="id"/>
-    </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1447">
         <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="article_mapping_line_id"
                                  constraintName="attribute_mapping_article_mapping_line_fk" referencedTableName="billing_article_mapping_line"
