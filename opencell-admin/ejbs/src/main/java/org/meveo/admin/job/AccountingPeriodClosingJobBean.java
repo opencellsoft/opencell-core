@@ -103,7 +103,9 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      * @param jobExecutionResult Job execution result
      */
     private void closeSubAccountingPeriods(List<SubAccountingPeriod> subAccountingPeriods, JobExecutionResultImpl jobExecutionResult) {
+        AccountingPeriod accountingPeriod = subAccountingPeriods.get(0).getAccountingPeriod();
         List<Long> ids = subAccountingPeriods.stream().map(SubAccountingPeriod::getId).collect(Collectors.toList());
         subAccountingPeriodService.closeSubAccountingPeriods(ids);
+        subAccountingPeriodService.resetSequenceIfIsTheLastPeriode(accountingPeriod, ids);
     }
 }

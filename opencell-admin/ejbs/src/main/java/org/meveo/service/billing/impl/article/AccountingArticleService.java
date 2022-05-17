@@ -5,10 +5,13 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +21,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -28,6 +33,7 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.cpq.AttributeService;
 
 @Stateless
@@ -42,7 +48,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
-		List<ChargeTemplate> productCharges = new ArrayList<ChargeTemplate>();
 		List<ArticleMappingLine> articleMappingLines = null;
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
 		if (articleMappingLines.isEmpty() && chargeTemplate != null) {
@@ -196,4 +201,35 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("invoiceSubCategory", invoiceSubCategory)
 				.getResultList();
 	}
+	
+    private static boolean hasAllData(List<AccountingCodeMapping> mappings, AccountingArticle accountingArticle,
+            TradingCountry billingCountry, TradingCurrency billingCurrency,
+            TradingCountry sellerCountry, Seller seller, String columCriteriaEL) {
+        boolean articleMatched = accountingArticle != null && accountingArticle.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getAccountingArticle() == null ? false : accountingCodeMapping.getAccountingArticle().getId())
+                .collect(Collectors.toSet()).contains(accountingArticle.getId());
+        
+        boolean billingCountryMatched = billingCountry != null && billingCountry.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCountry() == null ? false : accountingCodeMapping.getBillingCountry().getId())
+                .collect(Collectors.toSet()).contains(billingCountry.getId());
+        
+        boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency() == null ? false : accountingCodeMapping.getBillingCurrency().getId())
+                .collect(Collectors.toSet()).contains(billingCurrency.getId());    
+        
+        boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSellerCountry() == null ? false : accountingCodeMapping.getSellerCountry().getId())
+                .collect(Collectors.toSet()).contains(sellerCountry.getId());
+        
+        boolean sellerIdMatched = seller != null && seller.getId() != null &&
+                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSeller() == null ? false : accountingCodeMapping.getSeller().getId())
+                .collect(Collectors.toSet()).contains(seller.getId());
+        
+        boolean valueMatched = StringUtils.isNotBlank(columCriteriaEL) &&
+                !mappings.stream().map(AccountingCodeMapping::getCriteriaElValue)
+                .collect(Collectors.toSet()).contains(columCriteriaEL);
+        
+        return articleMatched || billingCountryMatched || billingCurrencyMatched
+                || sellerCountryMatched || sellerIdMatched || valueMatched;
+    }
 }

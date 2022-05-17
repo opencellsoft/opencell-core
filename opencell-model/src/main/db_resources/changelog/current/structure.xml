@@ -12512,6 +12512,25 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+	<changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
+		<sql>
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = null;
+
+			UPDATE ${db.schema.adapted}ar_account_operation
+			SET operation_number = nextval('account_operation_number_seq')
+			FROM (select ap.start_date, ap.end_date
+					 from accounting_period ap
+					 where accounting_period_year='2022-2023') as current_ap
+			WHERE accounting_date between current_ap.start_date and current_ap.end_date;
+
+			ALTER TABLE ${db.schema.adapted}ar_account_operation ALTER COLUMN operation_number SET DEFAULT nextval('account_operation_number_seq');
+			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq OWNED BY ar_account_operation.operation_number;
+		</sql>
+	</changeSet>
+	
     <changeSet id="#INTRD-6264_20220406" author="AmineBENAICHA">
         <addColumn tableName="billing_billing_run">
             <column name="pdf_job_execution_result_id" type="bigint" />
@@ -12660,6 +12679,23 @@ order by date_trunc('month', i.invoice_date) DESC
 		</sql>
     </changeSet>
     
+    <changeSet id="#INTRD-6895_20220504" author="HichamHANINE">
+		<sql>
+			<![CDATA[
+				ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
+				update ar_account_operation as t
+				set operation_number = nextval('account_operation_number_seq')
+				from (select * 
+						from ar_account_operation
+						where accounting_date >= (select ap.start_date from accounting_period ap where accounting_period_year='2022-2023')
+						and accounting_date <= (select ap.end_date from accounting_period ap where accounting_period_year='2022-2023')
+						order by created) as s
+				where s.id = t.id;
+				ALTER SEQUENCE account_operation_number_seq RESTART WITH 1;
+            ]]>			
+		</sql>
+	</changeSet>
+	
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA">
     	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
         <addColumn tableName="ar_account_operation">
