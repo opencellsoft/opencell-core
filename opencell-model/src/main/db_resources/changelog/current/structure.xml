@@ -12995,4 +12995,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" />
     </changeSet>
 
+    <changeSet id="#INTRD-7192_20220518" author="ZBariki">
+        <addColumn tableName="finance_settings">
+            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="auxiliary_account_code_el" type="varchar(2000)" />
+            <column name="auxiliary_account_label_el" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

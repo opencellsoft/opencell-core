@@ -42,6 +42,9 @@ public class FinanceSettings extends BusinessEntity {
     @JoinColumn(name = "open_order_settings_id")
     private OpenOrderSetting openOrderSetting;
 
+    @Embedded
+    private AuxiliaryAccounting auxiliaryAccounting;
+
     public FinanceSettings() {
         super();
     }
@@ -93,5 +96,13 @@ public class FinanceSettings extends BusinessEntity {
 
     public void setOpenOrderSetting(OpenOrderSetting openOrderSetting) {
         this.openOrderSetting = openOrderSetting;
+    }
+
+    public AuxiliaryAccounting getAuxiliaryAccounting() {
+        return auxiliaryAccounting;
+    }
+
+    public void setAuxiliaryAccounting(AuxiliaryAccounting auxiliaryAccounting) {
+        this.auxiliaryAccounting = auxiliaryAccounting;
     }
 }
