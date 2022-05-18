@@ -11580,6 +11580,9 @@
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="open_order_settings_id" type="bigint"/>
+            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="auxiliary_account_code_el" type="varchar(2000)" />
+            <column name="auxiliary_account_label_el" type="varchar(2000)" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -17743,6 +17746,7 @@
     <changeSet id="INTRD-5806_20220516" author="HichamELHALOUI" />
 	<changeSet id="#INTRD-7244_20220517" author="HichamHANINE" />
 	<changeSet id="#INTRD-7273_20220517" author="HichamHANINE" />
+    <changeSet id="#INTRD-7192_20220518" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
