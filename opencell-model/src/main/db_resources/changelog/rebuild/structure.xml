@@ -11707,16 +11707,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
             </column>
             <column name="version" type="int4"/>
-            <column name="created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="datetime"/>
-            <column name="creator" type="varchar(100)"/>
-            <column name="updater" type="varchar(100)"/>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
             <column name="sequence" type="int"/>
             <column name="percentage" type="int"/>
             <column name="open_order_template_id" type="bigint"/>
@@ -11739,10 +11729,11 @@
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
             <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
+                <constraints nullable="true" unique="true"/>
             </column>
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
+            <column name="status" type="varchar(255)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
             <column name="open_order_template_id" type="bigint">
@@ -15975,7 +15966,7 @@
                 <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
                                  constraintName="open_order_threshold_open_order_template_id_fk"
                                  referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
 
 
         <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
@@ -17747,6 +17738,7 @@
 	<changeSet id="#INTRD-7244_20220517" author="HichamHANINE" />
 	<changeSet id="#INTRD-7273_20220517" author="HichamHANINE" />
     <changeSet id="#INTRD-7192_20220518" author="ZBariki" />
+    <changeSet id="INTRD-5311_20220518" author="HichamELHALOUI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
