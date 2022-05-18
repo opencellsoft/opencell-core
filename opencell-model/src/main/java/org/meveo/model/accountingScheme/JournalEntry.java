@@ -26,8 +26,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 
-import org.meveo.model.billing.InvoiceType;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -144,6 +142,29 @@ public class JournalEntry extends AuditableEntity {
     @Column(name = "supporting_document_type")
     private String supportingDocumentType;
 
+    /**
+     * Code trading currency
+     */
+    @Column(name = "trading_currency")
+    private String tradingCurrency; 
+    
+	/**
+	 * trading amount
+	 */
+	@Column(name = "trading_amount")
+	private BigDecimal tradingAmount;
+
+    /**
+     * Auxiliary account code
+     */
+    @Column(name = "auxiliary_account_code")
+	private String auxiliaryAccountCode;
+
+    /**
+     * Auxiliary account label
+     */
+    @Column(name = "auxiliary_account_label")
+	private String auxiliaryAccountLabel;
     
     public AccountOperation getAccountOperation() {
         return accountOperation;
@@ -272,4 +293,36 @@ public class JournalEntry extends AuditableEntity {
 	public void setSupportingDocumentType(String supportingDocumentType) {
 		this.supportingDocumentType = supportingDocumentType;
 	}
+
+	public String getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(String tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public BigDecimal getTradingAmount() {
+		return tradingAmount;
+	}
+
+	public void setTradingAmount(BigDecimal tradingAmount) {
+		this.tradingAmount = tradingAmount;
+	}
+
+    public String getAuxiliaryAccountCode() {
+        return auxiliaryAccountCode;
+    }
+
+    public void setAuxiliaryAccountCode(String auxiliaryAccountCode) {
+        this.auxiliaryAccountCode = auxiliaryAccountCode;
+    }
+
+    public String getAuxiliaryAccountLabel() {
+        return auxiliaryAccountLabel;
+    }
+
+    public void setAuxiliaryAccountLabel(String auxiliaryAccountLabel) {
+        this.auxiliaryAccountLabel = auxiliaryAccountLabel;
+    }
 }

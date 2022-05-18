@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 
@@ -79,6 +80,15 @@ public class QuoteProductDTO extends BaseEntityDto{
 	private CustomFieldsDto customFields;
 	
 	private Date deliveryDate;
+	
+	@Schema(description = "The termination date")
+    private Date terminationDate;
+	
+	@Schema(description = "The termination reason code")
+    private String terminationReasonCode;
+	
+	@Schema(description = "The action type")
+    private ProductActionTypeEnum actionType;
     
     public QuoteProductDTO() {
     	super();
@@ -275,6 +285,36 @@ public class QuoteProductDTO extends BaseEntityDto{
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+
+	public String getTerminationReasonCode() {
+		return terminationReasonCode;
+	}
+
+
+	public void setTerminationReasonCode(String terminationReasonCode) {
+		this.terminationReasonCode = terminationReasonCode;
+	}
+
+
+	public ProductActionTypeEnum getActionType() {
+		return actionType;
+	}
+
+
+	public void setActionType(ProductActionTypeEnum actionType) {
+		this.actionType = actionType;
 	}
 	
 	

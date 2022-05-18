@@ -9987,7 +9987,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-6484" author="hichamElHaloui">
+	<changeSet id="#INTRD-6484" author="hichamElHaloui" dbms="postgres">
 		<sql>
 			with cte as
 					 (
@@ -10120,5 +10120,91 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>id=-42</where>
 		</update>
 	</changeSet>
+
+    <changeSet id="#INTRD-7049_20220509" author="TarikRabeh">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        trading_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+
+	<changeSet id="#INTRD-6961_20220511" author="aelmalki">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Unidentified customer" />
+			<where>code='419100000'</where>
+		</update>
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Banks" />
+			<where>code='512000000'</where>
+		</update>
+	</changeSet>
+	<changeSet id="#6023_130522" author="AbdelkaderBouazza">
+		<update tableName="crm_seller">
+			<column name="email" value="test@opencell.com" />
+			<where>email is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-7144_05162022" author="ZBariki">
+		<insert tableName="billing_article_mapping">
+			<column name="id" valueSequenceNext="billing_article_mapping_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="DEFAULT_ARTICLE_MAPPING" />
+			<column name="description" value="Default article mapping" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="FIX validateBR script compile" author="AbdelmounaimAkadid">
+        <update tableName="meveo_script_instance">
+            <column name="script" >
+            	<![CDATA[
+			package org.meveo.service.script;
+
+			import java.util.List;
+			import java.util.Map;
+
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.model.billing.BillingRun;
+			import org.meveo.model.billing.BillingRunStatusEnum;
+			import org.meveo.service.billing.impl.BillingRunExtensionService;
+			import org.meveo.service.billing.impl.BillingRunService;
+
+			public class ValidateBRScript extends Script {
+
+				@Override
+				public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+					BillingRunService billingRunService = (BillingRunService) getServiceInterface("BillingRunService");
+
+					BillingRunExtensionService billingRunExtensionService = (BillingRunExtensionService) getServiceInterface(
+							"BillingRunExtensionService");
+
+					if (billingRunService != null) {
+						List<BillingRun> billingRuns = billingRunService.getBillingRuns(BillingRunStatusEnum.PREINVOICED,  BillingRunStatusEnum.POSTINVOICED);
+
+						for (BillingRun billingRun : billingRuns) {
+
+							try {
+								billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
+										BillingRunStatusEnum.POSTVALIDATED, null);
+							} catch (Exception e) {
+								System.err.println("Error " + e.getMessage());
+							}
+						}
+
+					}
+
+				}
+			}
+					]]>
+            </column>
+            <where>id=-24</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>

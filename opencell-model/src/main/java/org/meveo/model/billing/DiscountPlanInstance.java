@@ -37,14 +37,18 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.*;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Instance of {@link DiscountPlan}. It basically just contains the effectivity date per BA.
@@ -142,6 +146,12 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     @Column(name = "application_count")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long applicationCount;
+    
+
+    /** The service instance. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
     public boolean isValid() {
         return (startDate == null || endDate == null || startDate.before(endDate));
@@ -293,7 +303,9 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     public void assignEntityToDiscountPlanInstances(IDiscountable entity) {
         if (entity instanceof BillingAccount) {
             this.setBillingAccount((BillingAccount) entity);
-        } else {
+        }else if (entity instanceof ServiceInstance) {
+        	this.setServiceInstance((ServiceInstance) entity);
+        }else {
             this.setSubscription((Subscription) entity);
         }
     }
@@ -350,5 +362,13 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
         this.status = DiscountPlanInstanceStatusEnum.EXPIRED;
         this.statusDate = now;
     }
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
 
 }
