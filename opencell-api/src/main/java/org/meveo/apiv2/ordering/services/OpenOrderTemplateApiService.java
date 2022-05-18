@@ -13,6 +13,7 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OpenOrderTemplateService;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.meveo.admin.util.CollectionUtil.isNullOrEmpty;
-
+@Stateless
 public class OpenOrderTemplateApiService {
 
     @Inject
@@ -73,7 +74,7 @@ public class OpenOrderTemplateApiService {
         if(!isNullOrEmpty(thresholds)){
             thresholds
                     .stream()
-                    .filter(threshold -> threshold.getPercentage() >= 1 || threshold.getPercentage() > 100)
+                    .filter(threshold -> threshold.getPercentage() < 1 || threshold.getPercentage() > 100)
                     .findAny()
                     .ifPresent(threshold -> { throw new BusinessApiException("Threshold should be between 1 and 100");});
 

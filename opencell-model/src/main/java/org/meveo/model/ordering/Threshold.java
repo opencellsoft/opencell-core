@@ -2,6 +2,7 @@ package org.meveo.model.ordering;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_threshold_seq"),})
 
-public class Threshold extends BusinessEntity {
+public class Threshold extends BaseEntity {
 
     @Column(name = "sequence")
     @NotNull
