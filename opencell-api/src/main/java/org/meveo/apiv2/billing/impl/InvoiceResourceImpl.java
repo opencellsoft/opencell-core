@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.MeveoApiException;
@@ -400,4 +401,24 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("invoice", invoice);
         return Response.ok(response).build();
     }
+
+	@Override
+	public Response quarantineInvoice(Long id, QuarantineBillingRunDto quarantineBillingRunDto) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		if(InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())) {
+			throw new ActionForbiddenException("Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") ;
+		}
+
+		Long quarantineBillingRunId = invoiceApiService.quarantineInvoice(invoice, quarantineBillingRunDto);
+		
+		
+		Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("quarantineBillingRunId", quarantineBillingRunId);
+        return Response.ok(response).build();
+	}
+    
+    
 }

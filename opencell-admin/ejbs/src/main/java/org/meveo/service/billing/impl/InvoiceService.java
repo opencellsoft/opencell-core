@@ -104,6 +104,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.ActionForbiddenException;
@@ -6156,4 +6157,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+
+    /**
+     * @param billingRunId
+     * @param invoiceIds
+     * @return billingRunId the id of the new billing run.
+     */
+    public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
+        List<Long> invoiceIds = new ArrayList<Long>();
+        invoiceIds.add(invoice.getId());
+        
+        if (invoice.getBillingRun() != null) {
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(invoice.getBillingRun(), quarantineBillingRunDto.getQuarantineBillingRunId());
+            getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            return nextBR.getId();
+        }else {
+            throw new BusinessException("Invoice with invoice id " + invoice.getId() + " doesn't have a billing run.");
+        }
+
+    }
+
 }

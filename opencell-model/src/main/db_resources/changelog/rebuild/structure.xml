@@ -2593,8 +2593,10 @@
             <column name="xml_job_execution_result_id" type="bigint" />
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="description" type="varchar(255)" />
-        </createTable>
+            <column name="long_description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
         <createTable tableName="billing_billing_run_list">
@@ -17651,6 +17653,7 @@
 	<changeSet id="INTRD-7006_09052022" author="TarikRabeh" />
 	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
 	<changeSet id="INTRD-7038_11052022" author="TarikRabeh" />
+	<changeSet id="INTRD-7040_18052022" author="TarikRabeh" />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
