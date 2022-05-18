@@ -53,6 +53,9 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
@@ -566,6 +569,25 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "invoice_line_id")
     private InvoiceLine invoiceLine;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
+    
+    
+    @Column(name = "discounted_ratedtransaction_id")
+    private Long discountedRatedTransaction;
+    
+    @Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "discount_plan_type", length = 50)
+	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+    
     public RatedTransaction() {
         super();
     }
@@ -717,6 +739,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
         this.sortIndex = walletOperation.getSortIndex();
         this.cfValues = walletOperation.getCfValues();
+        this.discountPlan = walletOperation.getDiscountPlan();
     }
 
     public WalletInstance getWallet() {
@@ -1443,4 +1466,48 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setInvoiceLine(InvoiceLine invoiceLine) {
         this.invoiceLine = invoiceLine;
     }
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	public Long getDiscountedRatedTransaction() {
+		return discountedRatedTransaction;
+	}
+
+	public void setDiscountedRatedTransaction(Long discountedRatedTransaction) {
+		this.discountedRatedTransaction = discountedRatedTransaction;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	
+	
+	
 }

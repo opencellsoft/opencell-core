@@ -1,26 +1,48 @@
 package org.meveo.service.script.catalog;
 
-import java.util.*;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.article.*;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.article.ArticleMapping;
+import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.catalog.*;
-import org.meveo.model.cpq.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.ServiceChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.tax.TaxClass;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.article.*;
-import org.meveo.service.catalog.impl.*;
-import org.meveo.service.cpq.*;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
+import org.meveo.service.billing.impl.article.ArticleMappingService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.tax.TaxClassService;
-import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class V11MigrationScript extends Script {
 	public static final String ARTICLE_MAPPING_ID = "mainArticleMapping";
@@ -216,7 +238,7 @@ public class V11MigrationScript extends Script {
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
 		ppmv.setStatusDate(Calendar.getInstance().getTime());
 		ppmv.setVersion(1);
-		DatePeriod validity=new DatePeriod(ppm.getAuditable().getCreated(),null);
+		DatePeriod validity=new DatePeriod(DateUtils.truncateTime(ppm.getAuditable().getCreated()),null);
 		ppmv.setValidity(validity);
 		pricePlanMatrixVersionService.create(ppmv);
 		return ppmv;

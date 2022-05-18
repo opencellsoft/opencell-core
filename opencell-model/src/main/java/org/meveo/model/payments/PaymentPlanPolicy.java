@@ -51,6 +51,7 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
     	this.setAllowedPaymentMethods(allowedPaymentMethods);
     	this.setDunningDefaultPauseReason(dunningDefaultPauseReason);
     	this.setAllowedCreditCategories(allowedCreditCategories);
+    	this.setDefaultStartingDateOfPlan(defaultStartingDateOfPlan);
     }
     
 	@Column(name = "min_allowed_receivable_amount")
@@ -115,7 +116,11 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "clearing_priority")
-	private ClearingPriorityEnum clearingPriority = ClearingPriorityEnum.OLDEST;	
+	private ClearingPriorityEnum clearingPriority = ClearingPriorityEnum.OLDEST;
+
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "default_starting_date_of_plan")
+	private DefaultStartingDateOfPlan defaultStartingDateOfPlan;
 
 	public BigDecimal getMinAllowedReceivableAmount() {
 		return minAllowedReceivableAmount;
@@ -307,4 +312,12 @@ public class PaymentPlanPolicy implements Serializable, Cloneable {
     	PaymentPlanPolicy o = (PaymentPlanPolicy) super.clone();
         return o;
     }
+
+	public DefaultStartingDateOfPlan getDefaultStartingDateOfPlan() {
+		return defaultStartingDateOfPlan;
+	}
+
+	public void setDefaultStartingDateOfPlan(DefaultStartingDateOfPlan defaultStartingDateOfPlan) {
+		this.defaultStartingDateOfPlan = defaultStartingDateOfPlan;
+	}
 }

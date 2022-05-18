@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.codec.binary.Hex;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
@@ -36,6 +35,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -137,16 +137,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
             resultDto.setEndDate(newTo);
 
             try {
-
-                if (newFrom == null) {
-                    throw new BusinessApiException("The start date name is mandatory");
-                }
-                if (newFrom != null && newFrom.before(DateUtils.setTimeToZero(new Date()))) {
-                    throw new BusinessApiException("Uploaded PV cannot start before today");
-                }
-                if (newFrom != null && newTo != null && newTo.before(newFrom)) {
-                    throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
-                }
+                validateDates(newFrom, newTo);
 
                 if (StringUtils.isBlank(importItem.getFileName())) {
                     throw new BusinessApiException("The file name is mandatory");
@@ -182,34 +173,73 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
                     pricePlanMatrixVersionService.update(ppmvToUpdate);
                 }
 
-                List<PricePlanMatrixVersion> previousPVs = pricePlanMatrixVersionService.findToDateAfterDateAndVersion(pricePlanMatrix, newFrom, ppmvToUpdate.getCurrentVersion());
-                for (PricePlanMatrixVersion previousPV : previousPVs) {
-                    if (previousPV.getId() != pricePlanVersionId && previousPV.getValidity().getFrom() != null && previousPV.getValidity().getFrom().compareTo(newFrom) > 0
-                            && previousPV.getValidity().getTo() != null && previousPV.getValidity().getTo().compareTo(newFrom) > 0) {
-                        pricePlanMatrixVersionService.remove(previousPV);
-                    } else {
-                        previousPV.setValidity(new DatePeriod(previousPV.getValidity().getFrom(), newFrom));
-                        pricePlanMatrixVersionService.update(previousPV);
-                        break;
-                    }
-                }
+                PricePlanMatrixVersion newPv = null;
+                int fromVersion = ppmvToUpdate.getCurrentVersion();
 
-                if (newTo != null) {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, ppmvToUpdate.getCurrentVersion());
-                    for (PricePlanMatrixVersion nextPV : nextPVs) {
-                        if (nextPV.getId() != pricePlanVersionId && nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) < 0) {
-                            pricePlanMatrixVersionService.remove(nextPV);
+                if (importItem.getStatus() == VersionStatusEnum.PUBLISHED) {
+
+                    boolean forwardAddition = false;
+                    Date oldFrom = ppmvToUpdate.getValidity().getFrom();
+                    Date oldTo = ppmvToUpdate.getValidity().getTo();
+
+                    if (newTo == null || oldTo == null) {
+                        ppmvToUpdate.setValidity(new DatePeriod(newFrom, newTo));
+                        pricePlanMatrixVersionService.update(ppmvToUpdate);
+
+                    } else if (newFrom.compareTo(oldTo) < 0) {
+
+                        if (newFrom.compareTo(oldFrom) >= 0) {
+                            ppmvToUpdate.setValidity(new DatePeriod(newFrom, newTo));
+                            pricePlanMatrixVersionService.update(ppmvToUpdate);
+
                         } else {
-                            nextPV.setValidity(new DatePeriod(newTo, nextPV.getValidity().getTo()));
-                            pricePlanMatrixVersionService.update(nextPV);
-                            break;
+                            fromVersion = fromVersion-- > 1 ? fromVersion : 1;
+                            pricePlanMatrixVersionService.incrementVersions(pricePlanMatrix, fromVersion);
+
+                            DatePeriod newValidiy = null;
+
+                            if (newTo.compareTo(oldFrom) > 0) {
+                                newValidiy = new DatePeriod(newFrom, oldFrom);
+                            } else {
+                                newValidiy = new DatePeriod(newFrom, newTo);
+                            }
+                            newPv = pricePlanMatrixVersionService.duplicate(ppmvToUpdate, newValidiy, fromVersion, VersionStatusEnum.PUBLISHED);
+                        }
+
+                    } else {
+                        pricePlanMatrixVersionService.incrementVersions(pricePlanMatrix, (fromVersion + 1));
+                        newPv = pricePlanMatrixVersionService.duplicate(ppmvToUpdate, new DatePeriod(newFrom, newTo), (fromVersion + 1), VersionStatusEnum.PUBLISHED);
+                    }
+
+                    if (!forwardAddition) {
+                        List<PricePlanMatrixVersion> previousPVs = pricePlanMatrixVersionService.findToDateAfterDateAndVersion(pricePlanMatrix, newFrom, fromVersion);
+                        for (PricePlanMatrixVersion previousPV : previousPVs) {
+                            if (previousPV.getValidity().getTo() != null && previousPV.getValidity().getTo().compareTo(newFrom) >= 0) {
+                                pricePlanMatrixVersionService.removeInNewTransaction(previousPV);
+                            } else {
+                                previousPV.setValidity(new DatePeriod(previousPV.getValidity().getFrom(), newFrom));
+                                pricePlanMatrixVersionService.update(previousPV);
+                                break;
+                            }
                         }
                     }
-                } else {
-                    List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom,
-                        ppmvToUpdate.getCurrentVersion());
-                    for (PricePlanMatrixVersion nextPV : nextPVs) {
-                        pricePlanMatrixVersionService.remove(nextPV);
+
+                    if (newTo != null) {
+                        List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateBeforeDateAndVersion(pricePlanMatrix, newTo, fromVersion);
+                        for (PricePlanMatrixVersion nextPV : nextPVs) {
+                            if (nextPV.getValidity().getTo() != null && nextPV.getValidity().getTo().compareTo(newTo) <= 0) {
+                                pricePlanMatrixVersionService.removeInNewTransaction(nextPV);
+                            } else {
+                                nextPV.setValidity(new DatePeriod(newTo, nextPV.getValidity().getTo()));
+                                pricePlanMatrixVersionService.update(nextPV);
+                                break;
+                            }
+                        }
+                    } else {
+                        List<PricePlanMatrixVersion> nextPVs = pricePlanMatrixVersionService.findFromDateAfterDateAndVersion(pricePlanMatrix, newFrom, fromVersion);
+                        for (PricePlanMatrixVersion nextPV : nextPVs) {
+                            pricePlanMatrixVersionService.removeInNewTransaction(nextPV);
+                        }
                     }
                 }
 
@@ -219,23 +249,26 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
 
                     String header = eliminateBOM(lnr.readLine());
 
+                    if (newPv != null) {
+                        ppmvToUpdate = newPv;
+                    }
+
                     if ("id;label;amount".equals(header)) {
                         String firstLine = lnr.readLine();
                         String[] split = firstLine.split(";");
                         ppmvToUpdate.setMatrix(false);
                         ppmvToUpdate.setLabel(split[1]);
                         ppmvToUpdate.setAmountWithoutTax(new BigDecimal(split[2]));
+
                     } else if (StringUtils.isNotBlank(header)) {
                         String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                         ppmvToUpdate.setMatrix(true);
                         PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.populateLinesAndValues(pricePlanMatrix.getCode(), data, ppmvToUpdate);
-                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrix.getCode(), ppmvToUpdate.getCurrentVersion(), pricePlanMatrixLinesDto, false);
+                        pricePlanMatrixLineApi.updatePricePlanMatrixLines(ppmvToUpdate, pricePlanMatrixLinesDto);
                     }
 
-                    DatePeriod validity = new DatePeriod(newFrom, newTo);
-                    ppmvToUpdate.setValidity(validity);
-                    ppmvToUpdate.setStatus(importItem.getStatus());
                     pricePlanMatrixVersionService.update(ppmvToUpdate);
+
                 } catch (Exception e) {
                     throw e;
                 }
@@ -255,6 +288,18 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         return resultDtos;
     }
 
+    private void validateDates(Date newFrom, Date newTo) {
+        if (newFrom == null) {
+            throw new BusinessApiException("The start date name is mandatory");
+        }
+        if (newFrom != null && newFrom.before(DateUtils.setTimeToZero(new Date()))) {
+            throw new BusinessApiException("Uploaded PV cannot start before today");
+        }
+        if (newFrom != null && newTo != null && newTo.before(newFrom)) {
+            throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
+        }
+    }
+
     private String readAllLines(LineNumberReader lnr) throws IOException {
         StringBuilder sb = new StringBuilder();
         String lineRead;
@@ -268,10 +313,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         if (StringUtils.isNotBlank(row)) {
             // Get the first character
             String bom = row.substring(0, 1);
-            // Convert first character to byte to character(Use Apache Commons Codec Hex class)
-            String bomByte = new String(Hex.encodeHex(bom.getBytes()));
-            if ("efbbbf".equals(bomByte)) {
-                // Eliminate BOM
+            if (!bom.equals("i")) { // i for id;
                 row = row.substring(1);
             }
         }

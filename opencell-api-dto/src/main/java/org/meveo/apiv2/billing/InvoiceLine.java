@@ -274,4 +274,7 @@ public interface InvoiceLine extends Resource {
 	@Nullable
 	Date getEndDate();
 	
+	@Schema(description = "The Tax Mode")
+    @Nullable
+    String getTaxMode();
 }
