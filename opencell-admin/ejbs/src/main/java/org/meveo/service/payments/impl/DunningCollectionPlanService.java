@@ -187,6 +187,8 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                         collectionPlan.setBalance(recordedInvoice.getUnMatchingAmount()));
         collectionPlan.setDaysOpen((int) daysBetween(collectionPlan.getStartDate(), new Date()) + 1);
         create(collectionPlan);
+        invoice.setRelatedDunningCollectionPlan(collectionPlan);
+        invoiceService.update(invoice);
         if(policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
             collectionPlan.setDunningLevelInstances(createLevelInstances(policy, collectionPlan,
                     collectionPlanStatus, dayOverDue));
