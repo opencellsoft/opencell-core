@@ -11703,16 +11703,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
             </column>
             <column name="version" type="int4"/>
-            <column name="created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="datetime"/>
-            <column name="creator" type="varchar(100)"/>
-            <column name="updater" type="varchar(100)"/>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
             <column name="sequence" type="int"/>
             <column name="percentage" type="int"/>
             <column name="open_order_template_id" type="bigint"/>
@@ -11735,7 +11725,7 @@
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
             <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
+                <constraints nullable="true" unique="true"/>
             </column>
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
@@ -15971,7 +15961,7 @@
                 <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
                                  constraintName="open_order_threshold_open_order_template_id_fk"
                                  referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
 
 
         <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
@@ -16074,7 +16064,7 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-    
+
 	<!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17730,6 +17720,7 @@
     <changeSet id="#INTRD-7099_2022051Z" author="ZBariki" />
 	<changeSet id="#INTRD-6672_20220511" author="HichamHANINE" />
 	<changeSet id="#INTRD-7244_20220517" author="HichamHANINE" />
+    <changeSet id="INTRD-5311_20220518" author="HichamELHALOUI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
