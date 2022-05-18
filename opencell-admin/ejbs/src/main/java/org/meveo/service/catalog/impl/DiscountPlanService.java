@@ -215,14 +215,16 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
     			TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, false, false);
     			taxPercent = taxInfo.tax.getPercent();
-    			discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
+    			discountedAmount=unitAmountWithoutTax;
     			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && discountPlan.getApplicableOnDiscountedPrice()==null))
     					&& walletOperation!=null 
     					&& walletOperation.getDiscountedAmount()!=null 
     					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
     				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
+    				discountedAmount=unitAmountWithoutTax;
     			}else if(walletOperation!=null) {
     				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
+    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
     			}
     			 
     			walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
@@ -230,7 +232,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);            	
     			discountedAmount=discountedAmount.add(walletOperationDiscountAmount);
     			
-    		     log.info("calculateDiscountplanItems unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",unitAmountWithoutTax,discountValue,discountedAmount);
+    		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
     			
     			discountWalletOperation.setAccountingArticle(discountAccountingArticle);
     			discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
