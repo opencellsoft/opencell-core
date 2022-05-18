@@ -1,6 +1,7 @@
 package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
+import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
 import org.meveo.service.order.OpenOrderTemplateService;
 
 import javax.inject.Inject;
@@ -9,23 +10,23 @@ import javax.ws.rs.core.Response;
 
 public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResource{
 
-    private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
-
     @Inject
-    private OpenOrderTemplateService openOrderTemplateService;
+    private OpenOrderTemplateApiService openOrderTemplateApiService;
+
+
 
     public Response createOpenOrderTemplate(OpenOrderTemplateInput openOrderTemplateInput){
 
-        openOrderTemplateService.create(null);
-        return null;
+        openOrderTemplateApiService.create(openOrderTemplateInput);
+        return Response.ok().build();
     }
 
 
 
 
     public Response updateOpenOrderTemplate( String code, OpenOrderTemplateInput openOrderTemplateInput){
-        openOrderTemplateService.update(null);
-        return null;
+        openOrderTemplateApiService.update(code, openOrderTemplateInput);
+        return Response.ok().build();
     }
 
 }
