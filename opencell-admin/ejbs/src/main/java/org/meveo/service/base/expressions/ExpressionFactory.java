@@ -95,7 +95,7 @@ public class ExpressionFactory extends NativeExpressionFactory {
     }
 
     @Override
-    protected void addListFilter(Object value, String fieldName, boolean notIn){
+    protected void addInListFilter(Object value, String fieldName, boolean notIn){
         // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
         if (isFieldCollection(fieldName)) {
 
