@@ -51,6 +51,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -266,13 +267,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     if(discountAmount != null) {
                         DiscountLineAmount = DiscountLineAmount.add(discountAmount);
                     }
-                    if(invoiceLine.getTargetTaxRate() != null)
+                    if(InvoiceLineTaxModeEnum.RATE.equals(invoiceLine.getTaxMode()) 
+                            || InvoiceLineTaxModeEnum.TAX.equals(invoiceLine.getTaxMode()))
                     {
-                        taxPercent = invoiceLine.getTargetTaxRate();
-                    }
-                    else if(invoiceLine.getTargetTax()!= null)
-                    {
-                        taxPercent = invoiceLine.getTargetTax().getPercent();
+                        taxPercent = invoiceLine.getTaxRate();
                     }
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(DiscountLineAmount, DiscountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     var quantity = entity.getQuantity();
@@ -407,38 +405,29 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
-        Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
-        Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
-        if (isExonerated == null) {
-            isExonerated = billingAccountService.isExonerated(billingAccount);
-        }
-        Object[] applicableTax = taxMappingService
-                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
-        boolean taxRecalculated = (boolean) applicableTax[1];
-        if (taxRecalculated) {
-            Tax tax = (Tax) applicableTax[0];
-            log.debug("Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(),
-                    accountingArticle.getTaxClass().getId(), invoiceLine.getTax() == null ? null : invoiceLine.getTax().getId(), tax == null ? null : tax.getPercent(), tax.getId(),
-                    tax.getPercent());
-            invoiceLine.setTax(tax);
-            invoiceLine.setTaxRecalculated(taxRecalculated);
-            
-            if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
-            	   invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
-                   invoiceLine.setTaxRate(tax.getPercent());
+        if(InvoiceLineTaxModeEnum.ARTICLE.equals(invoiceLine.getTaxMode()))
+        {
+            Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
+            Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+            if (isExonerated == null) {
+                isExonerated = billingAccountService.isExonerated(billingAccount);
             }
-        }
-        
-        if(invoiceLine.getTargetTaxRate() != null)
-        {
-            invoiceLine.setTaxRecalculated(taxRecalculated);
-            invoiceLine.setTaxRate(invoiceLine.getTargetTaxRate());            
-        } 
-        else if(invoiceLine.getTargetTax() != null)
-        {
-            invoiceLine.setTaxRecalculated(taxRecalculated);
-            invoiceLine.setTaxRate(invoiceLine.getTargetTax().getPercent());
-            invoiceLine.setTax(invoiceLine.getTargetTax());
+            Object[] applicableTax = taxMappingService
+                    .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+            boolean taxRecalculated = (boolean) applicableTax[1];
+            if (taxRecalculated) {
+                Tax tax = (Tax) applicableTax[0];
+                log.debug("Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(),
+                        accountingArticle.getTaxClass().getId(), invoiceLine.getTax() == null ? null : invoiceLine.getTax().getId(), tax == null ? null : tax.getPercent(), tax.getId(),
+                        tax.getPercent());
+                invoiceLine.setTax(tax);
+                invoiceLine.setTaxRecalculated(taxRecalculated);
+                
+                if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
+                       invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+                       invoiceLine.setTaxRate(tax.getPercent());
+                }
+            }
         }
     }
 
@@ -615,11 +604,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
-        ofNullable(resource.getTargetTaxRate()).ifPresent(invoiceLine::setTargetTaxRate);
 		AccountingArticle accountingArticle=null;
 		if (resource.getAccountingArticleCode() != null) {
 			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
 		}	
+		
+		if(resource.getTaxMode() != null) {   
+            try {
+                invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.valueOf(resource.getTaxMode().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                log.error("the Value tax Mode " + resource.getTaxMode() +" is not in ('ARTICLE', 'TAX', 'RATE')", e);
+                throw new BusinessException("the Value tax Mode " + resource.getTaxMode() +" is not in ('ARTICLE', 'TAX', 'RATE')");
+            }
+        }
 		
 		if(invoiceLine.getQuantity() == null) {
             invoiceLine.setQuantity(new BigDecimal(1));
@@ -670,9 +667,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			invoiceLine.setTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTaxCode()));
 			invoiceLine.setTaxRate(invoiceLine.getTax().getPercent());
 		}
-		if(resource.getTargetTaxCode()!=null) {
-            invoiceLine.setTargetTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTargetTaxCode()));
-        }
 		if(resource.getOrderLotCode()!=null) {
 			invoiceLine.setOrderLot((OrderLot)tryToFindByEntityClassAndCode(OrderLot.class, resource.getOrderLotCode()));
 		}

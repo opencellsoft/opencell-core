@@ -10509,8 +10509,7 @@
 			  <column name="discount_plan_type" type="varchar(50)" />
 			  <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
-            <column name="target_tax_id" type="bigint" />
-			<column name="target_tax_rate" type="numeric(23, 12)" />
+            <column name="tax_mode" type="varchar(50)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -16075,10 +16074,7 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-    <changeSet author="HichamHANINE" id="#INTRD-6672_20220511-fk">
-		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false"
-			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-	</changeSet>
+    
 	<!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17733,6 +17729,7 @@
     <changeSet id="INTRD-6024-13052022" author="Abdelkader.Bouazza"/>
     <changeSet id="#INTRD-7099_2022051Z" author="ZBariki" />
 	<changeSet id="#INTRD-6672_20220511" author="HichamHANINE" />
+	<changeSet id="#INTRD-7244_20220517" author="HichamHANINE" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
