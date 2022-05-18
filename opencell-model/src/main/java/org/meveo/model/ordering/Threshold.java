@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "open_order_threshold")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_threshold_seq"),})
-
+@NamedQueries({ @NamedQuery(name = "Threshold.deleteByOpenOrderTemplate", query = "delete from Threshold t where t.openOrderTemplate.id =:openOrderTemplateId ")})
 public class Threshold extends BaseEntity {
 
     @Column(name = "sequence")
@@ -29,6 +29,10 @@ public class Threshold extends BaseEntity {
     @Column(name = "recipient")
     @Enumerated(EnumType.STRING)
     private List<ThresholdRecipientsEnum> recipients;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "open_order_template_id", nullable = false, updatable = false)
+    private OpenOrderTemplate openOrderTemplate;
 
     public Integer getSequence() {
         return sequence;
@@ -52,5 +56,13 @@ public class Threshold extends BaseEntity {
 
     public void setRecipients(List<ThresholdRecipientsEnum> recipients) {
         this.recipients = recipients;
+    }
+
+    public OpenOrderTemplate getOpenOrderTemplate() {
+        return openOrderTemplate;
+    }
+
+    public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
+        this.openOrderTemplate = openOrderTemplate;
     }
 }

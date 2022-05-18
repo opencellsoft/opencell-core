@@ -12,6 +12,7 @@ import org.meveo.model.ordering.Threshold;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OpenOrderTemplateService;
+import org.meveo.service.order.ThresholdService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,6 +31,8 @@ public class OpenOrderTemplateApiService {
     private AccountingArticleService accountingArticleService;
     @Inject
     private OpenOrderTemplateService openOrderTemplateService;
+    @Inject
+    private ThresholdService thresholdService;
 
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
@@ -39,8 +42,10 @@ public class OpenOrderTemplateApiService {
 
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
          openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
-        checkParameters(openOrderTemplate);
-        setProductOrArticles(openOrderTemplate, input);
+        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
+        if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+         checkParameters(openOrderTemplate);
+
         openOrderTemplateService.create(openOrderTemplate);
     }
 
@@ -54,9 +59,13 @@ public class OpenOrderTemplateApiService {
             throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
         }
         openOrderTemplateMapper.fillEntity(openOrderTemplate, input);
-        checkParameters(openOrderTemplate);
-        setProductOrArticles(openOrderTemplate, input);
+        thresholdService.deleteThresholdsByOpenOrderTemplateId(openOrderTemplate.getId());
+         openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
+        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
+        if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+         checkParameters(openOrderTemplate);
 
+        openOrderTemplateService.update(openOrderTemplate);
 
 
     }
@@ -103,15 +112,7 @@ public class OpenOrderTemplateApiService {
         }
     }
 
-    private void setProductOrArticles(OpenOrderTemplate openOrderTemplate, OpenOrderTemplateInput input)
-    {
-        if(openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.ARTICLES && !isNullOrEmpty(input.getArticles()))
-        {
-            openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
-        }else if(openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.PRODUCTS && !isNullOrEmpty(input.getProducts())){
-            openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
-        }
-    }
+
 
     private List<Product> fetchProducts(List<String> productsCodes) {
 

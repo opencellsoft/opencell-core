@@ -18,15 +18,9 @@
 
 package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
-import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
-import org.meveo.apiv2.ordering.resource.order.ImmutableOpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.ordering.OpenOrderTemplate;
-import org.meveo.model.ordering.Threshold;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInput, OpenOrderTemplate> {
 
