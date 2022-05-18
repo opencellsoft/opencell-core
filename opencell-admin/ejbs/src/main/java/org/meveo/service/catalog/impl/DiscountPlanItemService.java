@@ -232,7 +232,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
             // If the discount and the aggregate are of opposite signs, then the absolute value of the discount must not be greater than the absolute value of the
             // considered invoice aggregate
-            if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
+            if (amountToApplyDiscountOn!=null && !((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
                     || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) > 0)) && (discountAmount.abs().compareTo(amountToApplyDiscountOn.abs()) > 0)) {
 
             	discountAmount=amountToApplyDiscountOn.negate();
