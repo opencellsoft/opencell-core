@@ -89,6 +89,9 @@
 
             <!-- Additional query functions for accessing JSON -->
             <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
+            
+              <!-- Flush mode to COMMIT for hibernate -->
+            <property name="org.hibernate.flushMode" value="COMMIT"/>
         </properties>
     </persistence-unit>
 
