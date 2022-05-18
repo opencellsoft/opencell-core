@@ -34,6 +34,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.cpq.AttributeService;
 
 @Stateless
@@ -44,6 +45,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
+	@Inject
+	private AccountingCodeService accountingCodeService;
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes, null);
@@ -144,18 +147,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
-		if(!StringUtils.isBlank(mappingExpressionEl)) {
-			if(walletOperation != null) {
-				Object result = evaluateExpression(mappingExpressionEl,
-						Map.of("walletOperation", walletOperation), Boolean.class);
-				try {
-					return (Boolean) result;
-				} catch (Exception exception) {
-					throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
-				}
-			} else {
-				return false;
+		if (!StringUtils.isBlank(mappingExpressionEl)) {
+			Object result = evaluateExpression(mappingExpressionEl,
+					Map.of("walletOperation", walletOperation), Boolean.class);
+			try {
+				return (Boolean) result;
+			} catch (Exception exception) {
+				throw new BusinessException("Expression " + mappingExpressionEl + " do not evaluate to boolean");
 			}
+
 		} else {
 			return true;
 		}
@@ -202,11 +202,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
 		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
 		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
-			AccountingCode result = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
-					accountingArticle, invoiceLine.getInvoice(), AccountingCode.class);
+			String resultEl = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
+					accountingArticle, invoiceLine.getInvoice(), String.class);
+
+			if (StringUtils.isBlank(resultEl)) {
+				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
+			}
+
+			AccountingCode result = accountingCodeService.findByCode(resultEl);
 
 			if (result == null) {
-				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
+				throw new BusinessException("No accounting code found for code=" + resultEl);
 			}
 
 			return result;
@@ -220,12 +226,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if (codeMappings == null || !codeMappings.isEmpty()) {
 			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
 
-			if (accountingCode == null) {
-				throw new BusinessException("No AccountingCode found for AccountingCodeMapping of AccountingArticle id="
-						+ accountingArticle.getId());
+			if (accountingCode != null) {
+				return accountingCode;
 			}
-
-			return accountingCode;
 
 		}
 
@@ -269,10 +272,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumnCriteriaEL(),
 				accountingArticle, invoice, String.class);
 
-		// check if only one toMatch field are not foud in datas..if yes, return null
-		if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
-			return null;
-		}
+		// check if only one toMatch field are not found in datas..if yes, return null
+		//if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
+		//	return null;
+		//} ===== UPDATE 17/05 (INTRD-7248) when we have as lest one field not matched with all Mapping, we should continue process to perform "best matching"
 
 		Map<Long, Integer> matchingScore = new HashMap<>();
 
@@ -312,7 +315,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 		if (results.size() > 1 && results.get(0).equals(results.get(1))) {
 			throw new BusinessException("More than one AccountingCode found during matching with AccountingCodeMapping of AccountingArticle id="
-					+ accountingArticle.getId());
+					+ accountingArticle.getId()
+					+ (invoice.getBillingAccount() == null ? "" : " for BillingAccount code=" + invoice.getBillingAccount().getCode())
+					+ (seller == null ? "" : " and Seller code=" + seller.getCode()));
 		}
 
 		AtomicReference<AccountingCode> result = new AtomicReference<>();
