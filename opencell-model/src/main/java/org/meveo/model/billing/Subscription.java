@@ -320,7 +320,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Instance of discount plans.
      */
     @OneToMany(mappedBy = "subscription", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<DiscountPlanInstance> discountPlanInstances;
+    private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<DiscountPlanInstance>();
 
     /**
      * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.

@@ -41,6 +41,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentVentilation;
 import org.meveo.model.payments.VentilationActionStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.JournalService;
 
 /**
  * @author melyoussoufi
@@ -66,6 +67,9 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @Inject
     private AccountOperationService accountOperationService;
+
+    @Inject
+    private JournalService journalService;
     
 
     @JpaAmpNewTx
@@ -130,6 +134,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         payment.setPaymentInfo2(originalOTG.getPaymentInfo2());
         // Additional payment information 3 - Account Number
         payment.setPaymentInfo3(originalOTG.getPaymentInfo3());
+        payment.setJournal(journalService.findByCode("BAN"));
         accountOperationService.handleAccountingPeriods(payment);
         paymentService.create(payment);
 

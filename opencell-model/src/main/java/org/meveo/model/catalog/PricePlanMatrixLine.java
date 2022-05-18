@@ -33,9 +33,7 @@ import java.util.Set;
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
-    @NamedQuery(name = "PricePlanMatrixLine.deleteByPricePlanMatrixVersion", query = "delete from PricePlanMatrixLine p where p.pricePlanMatrixVersion=:pricePlanMatrixVersion"),
-    @NamedQuery(name = "PricePlanMatrixLine.deleteByPricePlanMatrixVersionIds", query = "delete from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")
-})
+    @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
