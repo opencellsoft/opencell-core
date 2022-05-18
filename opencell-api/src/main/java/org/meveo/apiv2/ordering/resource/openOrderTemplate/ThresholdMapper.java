@@ -16,41 +16,31 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.ordering.resource.order;
+package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.immutables.value.Value;
-import org.meveo.apiv2.models.Resource;
-import org.meveo.model.ordering.OpenOrderTypeEnum;
+import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
+import org.meveo.model.ordering.Threshold;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
 
-@Value.Immutable
-@Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableOpenOrderTemplateInput.class)
-public interface OpenOrderTemplateInput extends Resource {
-    @NotNull
-    String getCode();
 
-    @NotNull
-    OpenOrderTypeEnum getOpenOrderType();
+    @Override
+    protected ThresholdInput toResource(Threshold entity) {
+        return null;
+    }
 
-    @NotNull
-    String getDescription();
+    @Override
+    public Threshold toEntity(ThresholdInput input) {
 
-    @Nullable
-    List<Resource> getTags();
+        Threshold threshold = new Threshold();
+        threshold.setSequence(input.getSequence());
+        threshold.setPercentage(input.getPercentage());
+        threshold.setRecipients(input.getRecipients());
+        return threshold;
+    }
 
-    @Nullable
-    List<ThresholdInput> getThresholds();
 
-    @Nullable
-    List<String> getProducts();
-
-    @Nullable
-    List<String> getArticles();
 
 
 }

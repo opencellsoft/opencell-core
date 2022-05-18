@@ -9,6 +9,8 @@ import javax.ws.rs.core.Response;
 
 public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResource{
 
+    private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
+
     @Inject
     private OpenOrderTemplateService openOrderTemplateService;
 
