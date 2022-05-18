@@ -91,7 +91,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 }
                 dunningPolicyLevels.add(dunningPolicyLevelEntity);
             }
-            if(countReminderLevels == 0 || totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
+            if(totalDunningLevels == 0 || countEndOfDunningLevel > 1) {
                 dunningPolicyService.remove(savedEntity);
             }
             dunningPolicyApiService.validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
