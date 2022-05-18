@@ -36,13 +36,13 @@ import javax.ws.rs.core.Response;
 public interface OpenOrderTemplateResource {
 
     @POST
-    @Operation(summary = "Returns the created open order template",
+    @Operation(summary = "create open order template",
             tags = { "Open Orders Templates" },
-            description = "Returns the newly created open order template",
+            description = "create open order template",
             responses = {
                     @ApiResponse(
-                            description = "the created open order template", content = @Content(schema = @Schema(implementation = Order.class)),
-                            responseCode = "201"
+                            description = "the created open order template",
+                            responseCode = "200"
                     ),
                     @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
@@ -51,16 +51,27 @@ public interface OpenOrderTemplateResource {
 
     @POST
     @Path("/{code}")
-    @Operation(summary = "Returns the created open order template",
+    @Operation(summary = "update  open order template",
             tags = { "Open Orders Templates" },
-            description = "Returns the newly created open order template",
+            description = "Returns the updated open order template",
             responses = {
                     @ApiResponse(
-                            description = "the created open order template", content = @Content(schema = @Schema(implementation = Order.class)),
-                            responseCode = "201"
+                            description = "the updated open order template",
+                            responseCode = "200"
                     ),
                     @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response updateOpenOrderTemplate(@Parameter(description = "code of the open order template ", required = true) @PathParam("code") String code, @Parameter(description = "open order template object to be updated", required = true) OpenOrderTemplateInput openOrderTemplateInput);
+
+    @PUT
+    @Path("/{code}/disable")
+    @Operation(summary = "disable open order template",
+            tags = { "Open Orders Templates" },
+            description = "disable the specified open order template",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response disableOpenOrderTemplate(@Parameter(description = "code of the open order template ", required = true) @PathParam("code") String code);
+
 
 }

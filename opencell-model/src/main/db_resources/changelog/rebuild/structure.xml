@@ -11733,6 +11733,7 @@
             </column>
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
+            <column name="status" type="varchar(255)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
             <column name="open_order_template_id" type="bigint">

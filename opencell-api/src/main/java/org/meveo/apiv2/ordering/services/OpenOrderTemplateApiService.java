@@ -7,6 +7,7 @@ import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -67,6 +68,18 @@ public class OpenOrderTemplateApiService {
 
         openOrderTemplateService.update(openOrderTemplate);
 
+
+    }
+
+    public void disableOpenOrderTemplate(String code)
+    {
+        OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
+        if(null == openOrderTemplate)
+        {
+            throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
+        }
+        openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.Archived);
+        openOrderTemplateService.update(openOrderTemplate);
 
     }
 

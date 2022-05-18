@@ -38,6 +38,10 @@ public class OpenOrderTemplate extends BusinessEntity {
     @JoinTable(name = "open_order_template_articles", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"))
     private List<AccountingArticle> articles;
 
+    @Column(name = "status")
+	@Enumerated(EnumType.STRING)
+    private OpenOrderTemplateStatusEnum status;
+
     public OpenOrderTypeEnum getOpenOrderType() {
         return openOrderType;
     }
@@ -76,5 +80,13 @@ public class OpenOrderTemplate extends BusinessEntity {
 
     public void setArticles(List<AccountingArticle> articles) {
         this.articles = articles;
+    }
+
+    public OpenOrderTemplateStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(OpenOrderTemplateStatusEnum status) {
+        this.status = status;
     }
 }
