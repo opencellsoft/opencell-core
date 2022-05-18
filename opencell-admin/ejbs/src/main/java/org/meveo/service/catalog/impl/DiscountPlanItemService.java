@@ -295,7 +295,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         				if(discountPlanItem.getSequence()==null) {
         					setDisountPlanItemSequence(discountPlanItem);
-        					update(discountPlanItem);
+        					super.update(discountPlanItem);
         				}
         				applicableDiscountPlanItems.add(discountPlanItem);
 
@@ -336,14 +336,13 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     public void setDisountPlanItemSequence(DiscountPlanItem dpi) {
     	Integer sequence=null;
     	if(dpi.getSequence()==null) {
-    		sequence= getEntityManager().createNamedQuery("DiscountPlanItem.getMaxSequence", Integer.class).setParameter("discountPlanItemId", dpi.getId()).getSingleResult();
+    		sequence= getEntityManager().createNamedQuery("DiscountPlanItem.getMaxSequence", Integer.class).setParameter("discountPlanId", dpi.getDiscountPlan().getId()).getSingleResult();
     		if(sequence==null) 
     			dpi.setSequence(1);
     		else
     			dpi.setSequence(sequence+1);
     	}
-    }
-    	
+    } 
     
 
 }

@@ -19,6 +19,8 @@
 package org.meveo.api.dto.catalog;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
@@ -189,7 +191,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 determines whether the discount plan is applicable on the gross or discounted amount
 	 */
 	@Schema(description = "determines whether the discount plan is applicable on the gross or discounted amount")
-	private boolean applicableOnDiscountedPrice;
+	private Boolean applicableOnDiscountedPrice;
 
 	/**
 	 * Instantiates a new DiscountPlanDto
@@ -233,7 +235,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 			incompatibleDiscountPlans = discountPlansDto;
 		}
 		this.applicableOnOverriddenPrice = discountPlan.isApplicableOnOverriddenPrice();
-		this.applicableOnDiscountedPrice=discountPlan.isApplicableOnDiscountedPrice();
+		this.applicableOnDiscountedPrice=BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice());
 		this.sequence=discountPlan.getSequence();
 	}
 
@@ -415,14 +417,14 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.sequence = sequence;
 	}
 
-	public boolean isApplicableOnDiscountedPrice() {
+	public Boolean getApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
-	
+
 	
 	
 }

@@ -9529,7 +9529,7 @@ public class OrderAdvancement extends ModuleScript {
 		<dropNotNullConstraint columnDataType="bigint" columnName="order_article_line_id" tableName="order_price" />
 	</changeSet>
 	
-	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay">
+	<changeSet id="#20220415_M540_6931-8" author="Mbarek-Ay">
 		<addColumn tableName="cat_discount_plan">
 		<column name="applicable_on_discounted_price" type="${type.boolean}"/>
 		<column name="sequence" type="int4"/>
@@ -9566,6 +9566,13 @@ public class OrderAdvancement extends ModuleScript {
 		<column name="sequence" type="int4"/>
 		</addColumn>
 		
+		 <createSequence sequenceName="discount_plan_sequence_seq" />
+		<sql>
+		alter sequence ${db.schema.adapted}discount_plan_sequence_seq RESTART WITH 1;
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='PRODUCT';
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='OFFER';
+		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='QUOTE';
+		</sql>
 		
       </changeSet>
 

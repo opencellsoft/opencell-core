@@ -268,6 +268,7 @@
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+        <createSequence sequenceName="discount_plan_sequence_seq" startValue="1" />
     </changeSet>
     
      

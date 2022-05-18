@@ -74,7 +74,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @NamedQueries({
     @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled= false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.id=:discountPlanItemId")
+    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId")
 })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
@@ -227,7 +227,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	private Integer sequence;
 	
 	@Transient
-	private Integer finalSequence=(Math.multiplyExact(discountPlan.getSequence(),1000))+getSequence();
+	private Integer finalSequence;
 	
 	
 	
@@ -512,6 +512,9 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	}
 
 	public Integer getFinalSequence() {
+		if(getDiscountPlan()!=null && getSequence()!=null) {
+		finalSequence=(Math.multiplyExact(getDiscountPlan().getSequence(),1000))+getSequence();
+		}
 		return finalSequence;
 	}
 

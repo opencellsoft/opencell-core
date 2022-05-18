@@ -223,7 +223,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_discounted_price")
-	private boolean applicableOnDiscountedPrice;
+	private Boolean applicableOnDiscountedPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
@@ -505,11 +505,13 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
 
-	public boolean isApplicableOnDiscountedPrice() {
+
+
+	public Boolean getApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
