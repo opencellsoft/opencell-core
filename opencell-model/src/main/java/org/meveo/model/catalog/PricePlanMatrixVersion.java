@@ -45,13 +45,14 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl  where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids)"),
         @NamedQuery(name = "PricePlanMatrixVersion.findFromDateAfterDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and p.validity.from >= :date and p.currentVersion > :version order by p.currentVersion"),
         @NamedQuery(name = "PricePlanMatrixVersion.findToDateAfterDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and p.validity.to >= :date and p.currentVersion < :version order by p.currentVersion desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and p.validity.from <= :date and p.currentVersion > :version order by p.currentVersion")
+        @NamedQuery(name = "PricePlanMatrixVersion.findFromDateBeforeDateAndVersion", query = "select p from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and p.validity.from <= :date and p.currentVersion > :version order by p.currentVersion"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findAndOrderByVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion >= :fromVersion and p.pricePlanMatrix=:pricePlanMatrix order by p.currentVersion desc")
     })
 public class PricePlanMatrixVersion extends AuditableEntity {
 
