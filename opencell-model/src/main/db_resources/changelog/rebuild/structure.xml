@@ -17738,6 +17738,7 @@
     <changeSet id="INTRD-5312_20220518" author="HichamELHALOUI" />
    	<changeSet id="INTRD-5311_20220518-fix" author="AkadidAbdelmounaim" />
     <changeSet id="INTRD-7031-18052022" author="Abdelkader.Bouazza"/>
+    <changeSet id="INTRD-7031-18052022-split" author="AbdelmounaimAkadid" />
     
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
