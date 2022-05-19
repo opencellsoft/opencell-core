@@ -12947,7 +12947,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			UPDATE billing_invoice_line set tax_mode = 'ARTICLE' where tax_mode is null
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
     </changeSet>
@@ -13057,6 +13057,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="status" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    <changeSet id="INTRD-7031-18052022" author="Abdelkader.Bouazza">
+        <addColumn tableName="billing_invoice">
+            <column name="related_dunning_collection_plan_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="related_dunning_collection_plan_id" baseTableName="billing_invoice" constraintName="fk_invoice_related_collection_plan"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
+        <sql>update ${db.schema.adapted}billing_invoice as invoice set related_dunning_collection_plan_id = (SELECT dc.id FROM dunning_collection_plan as dc WHERE dc.related_invoice_id=invoice.id)
+        </sql>
+    </changeSet>
+
     
     <changeSet id="INTRD-7040_18052022" author="TarikRabeh">
         <dropColumn tableName="billing_billing_run">
