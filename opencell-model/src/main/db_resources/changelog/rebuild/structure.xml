@@ -2593,7 +2593,7 @@
             <column name="xml_job_execution_result_id" type="bigint" />
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="long_description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+            <column name="description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
                 <constraints nullable="false" />
             </column>
 		</createTable>

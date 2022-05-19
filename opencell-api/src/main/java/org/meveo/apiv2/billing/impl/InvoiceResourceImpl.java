@@ -405,7 +405,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response quarantineInvoice(Long id, QuarantineBillingRunDto quarantineBillingRunDto) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-		if(InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+		if(!InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
                 && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
                 && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())) {
 			throw new ActionForbiddenException("Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") ;

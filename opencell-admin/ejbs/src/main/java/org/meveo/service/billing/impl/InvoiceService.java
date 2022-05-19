@@ -6231,9 +6231,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
         List<Long> invoiceIds = new ArrayList<Long>();
         invoiceIds.add(invoice.getId());
-        
-        if (invoice.getBillingRun() != null) {
-            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(invoice.getBillingRun(), quarantineBillingRunDto.getQuarantineBillingRunId());
+        BillingRun billingRun = invoice.getBillingRun() ;
+       
+        if (billingRun != null) {
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId());
             getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             return nextBR.getId();
         }else {
