@@ -807,13 +807,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         								getProductVersionResponse =new GetProductVersionResponse(productVersion,false,true);
 
         								if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
-                                            Set<AttributeDTO> attributes = new HashSet<>();
-		    									/*Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
-			        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
-			        										return result;
-			        									}).collect(Collectors.toSet()); */
-		    									getProductVersionResponse.setAttributes(attributeApi.findByCodes(productVersion.getAttributes().stream().map(BusinessEntity::getCode)
-                                                        .collect(Collectors.toList())));
+                                            Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
+                                                GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
+                                                return result;
+                                            }).collect(Collectors.toSet());
+
+                                            getProductVersionResponse.setAttributes(attributes);
+
                                             Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
                                                         .stream()
                                                         .map(GroupedAttributeDto::new)

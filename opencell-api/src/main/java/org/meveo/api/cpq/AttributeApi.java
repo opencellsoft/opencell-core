@@ -30,7 +30,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
-import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
@@ -197,17 +196,6 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setValidationLabel(postData.getValidationLabel());
 		attributeService.update(attribute);
 		return attribute;
-	}
-
-	public Set<AttributeDTO> findByCodes(List<String> codes) throws MeveoApiException {
-		List<Attribute> attribute = attributeService.findByCodes(codes);
-
-		Set<AttributeDTO> assignedAttributes=new HashSet<>();
-		for(Attribute attr : attribute) {
-			assignedAttributes.add(new AttributeDTO(attr));
-		}
-
-		return assignedAttributes;
 	}
 
 	public GetAttributeDtoResponse findByCode(String code) throws MeveoApiException {

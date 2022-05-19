@@ -158,6 +158,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	@Column(name = "default_value")
 	private String defaultValue;
 
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ManyToMany(mappedBy = "attributes")
 	private List<GroupedAttributes> groupedAttributes;
 
