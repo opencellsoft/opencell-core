@@ -185,6 +185,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	@Schema(description = "defines the order in which discount plans are applied")
 	private Integer sequence;
     
+	
+	 @Schema(description = "last discount")
+	 private boolean lastDiscount;
+	 
     /**
      * Instantiates a new discount plan item dto.
      */
@@ -221,6 +225,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.accountingArticleCode= discountPlanItem.getAccountingArticle() != null ? discountPlanItem.getAccountingArticle().getCode() : null;
         this.applyByArticle=discountPlanItem.isApplyByArticle();
         this.sequence=discountPlanItem.getSequence();
+        this.lastDiscount=discountPlanItem.isLastDiscount();
     }
 
     /**
@@ -521,9 +526,15 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.sequence = sequence;
 	}
 
-	
-	
-	
+	public boolean isLastDiscount() {
+		return lastDiscount;
+	}
+
+	public void setLastDiscount(boolean lastDiscount) {
+		this.lastDiscount = lastDiscount;
+	}
+
+
 	
 	
 	

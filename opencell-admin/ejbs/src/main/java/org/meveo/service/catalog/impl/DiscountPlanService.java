@@ -218,10 +218,10 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && discountPlan.getApplicableOnDiscountedPrice()==null))
     					&& walletOperation!=null 
     					&& walletOperation.getDiscountedAmount()!=null 
-    					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
+    					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 && !discountPlanItem.isLastDiscount() ) {
     				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
     				discountedAmount=unitAmountWithoutTax;
-    			}else if(walletOperation!=null) {
+    			}else if(walletOperation!=null && !discountPlanItem.isLastDiscount() ) {
     				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
     				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
     			}

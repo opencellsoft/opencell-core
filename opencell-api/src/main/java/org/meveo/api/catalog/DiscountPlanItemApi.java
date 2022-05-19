@@ -371,7 +371,9 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         if (source.getSequence() != null) {
         	discountPlanItem.setSequence(source.getSequence());
-        }
+        } 
+        discountPlanItem.setLastDiscount(source.isLastDiscount()); 
+        
         return discountPlanItem;
     }
 

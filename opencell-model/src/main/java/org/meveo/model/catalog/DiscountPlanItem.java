@@ -226,6 +226,14 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "sequence")
 	private Integer sequence;
 	
+	/**
+	 * determines if the following discounts ordered by sequence is applicable
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "last_discount")
+	private boolean lastDiscount;
+	
+	
 	@Transient
 	private Integer finalSequence;
 	
@@ -509,6 +517,15 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	 
+
+	public boolean isLastDiscount() {
+		return lastDiscount;
+	}
+
+	public void setLastDiscount(boolean lastDiscount) {
+		this.lastDiscount = lastDiscount;
 	}
 
 	public Integer getFinalSequence() {

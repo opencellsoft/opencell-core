@@ -230,7 +230,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 */
 	@Column(name = "sequence")
 	private Integer sequence;
-
+	
 	public enum DurationPeriodUnitEnum {
 		/**
 		 * Month: 2
@@ -283,7 +283,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setCfAccumulatedValues(dp.getCfAccumulatedValues());
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
 		this.sequence=dp.getSequence();
-		this.applicableOnDiscountedPrice=dp.getApplicableOnOverriddenPrice();
+		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
 	}
 	
 	public boolean isValid() {
@@ -517,8 +517,9 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	public Boolean getApplicableOnOverriddenPrice() {
 		return applicableOnOverriddenPrice;
-	}
+	} 
 
+	
 
 
 

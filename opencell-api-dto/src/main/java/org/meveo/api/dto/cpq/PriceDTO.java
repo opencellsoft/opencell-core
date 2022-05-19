@@ -83,6 +83,8 @@ public class PriceDTO extends BaseEntityDto {
     private String discountPlanItemCode;
     private Boolean applyDiscountsOnOverridenPrice;
     private BigDecimal overchargedUnitAmountWithoutTax;
+    private BigDecimal discountedAmount;
+    private Integer sequence;
     private CustomFieldsDto customFields;
     
     
@@ -117,7 +119,8 @@ public class PriceDTO extends BaseEntityDto {
 	   discountValue=quotePrice.getDiscountValue();
 	   applyDiscountsOnOverridenPrice=quotePrice.getApplyDiscountsOnOverridenPrice();
 	   overchargedUnitAmountWithoutTax=quotePrice.getOverchargedUnitAmountWithoutTax();
-	   
+	   discountedAmount=quotePrice.getDiscountedAmount();
+	   sequence=quotePrice.getSequence();	   
 		
 	}
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
