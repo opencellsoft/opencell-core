@@ -13014,43 +13014,6 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="description" type="varchar(255)"/>
         </dropColumn>
         <addUniqueConstraint columnNames="code" constraintName="uk_open_order_template_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="open_order_template" />
-
-        <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
-                                 constraintName="open_order_threshold_open_order_template_id_fk"
-                                 referencedTableName="open_order_template"
-                                 referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
-
-
-        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
-                                 constraintName="open_order_template_tags_open_order_template_id_fk"
-                                 referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="tag_id"
-                                 constraintName="open_order_template_tags_tag_id_fk" referencedTableName="cpq_tag"
-                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_order_template_id"
-                                 constraintName="open_order_template_products_open_order_template_id_fk"
-                                 referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
-                                 constraintName="open_order_template_products_product_id_fk"
-                                 referencedTableName="cpq_product"
-                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
-                                 constraintName="open_order_template_articles_open_order_template_id_fk"
-                                 referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
-                                 constraintName="open_order_template_articles_article_id_fk"
-                                 referencedTableName="billing_accounting_article"
-                                 referencedColumnNames="id"/>
     </changeSet>
     <changeSet id="INTRD-5312_20220518" author="HichamELHALOUI">
         <addColumn tableName="open_order_template">
