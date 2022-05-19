@@ -2955,9 +2955,6 @@
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="related_dunning_collection_plan_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="related_dunning_collection_plan_id" baseTableName="billing_invoice" constraintName="fk_invoice_related_collection_plan"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
         <createTable tableName="billing_invoice_agregate">
@@ -16075,11 +16072,6 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-
-    <changeSet author="HichamHANINE" id="#INTRD-6672_20220511-fk">
-		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false"
-			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-	</changeSet>
 
    <changeSet id="INTRD-5806_20220516-fk" author="HichamELHALOUI">
 		<addForeignKeyConstraint baseTableName="finance_settings" baseColumnNames="open_order_settings_id"
