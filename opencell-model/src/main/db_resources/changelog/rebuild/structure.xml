@@ -2953,9 +2953,6 @@
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="related_dunning_collection_plan_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="related_dunning_collection_plan_id" baseTableName="billing_invoice" constraintName="fk_invoice_related_collection_plan"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
         <createTable tableName="billing_invoice_agregate">
