@@ -9578,7 +9578,7 @@ public class OrderAdvancement extends ModuleScript {
       
       <changeSet id="#20220519_M540_7341" author="Mbarek-Ay">
       <addColumn tableName="cat_discount_plan_item">
-		<column name="lastDiscount" type="${type.boolean}"/> 
+		<column name="last_discount" type="${type.boolean}"/> 
 		</addColumn>
 	 </changeSet>
 

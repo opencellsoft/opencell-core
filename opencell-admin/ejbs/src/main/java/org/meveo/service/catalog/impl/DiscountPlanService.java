@@ -218,10 +218,10 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && discountPlan.getApplicableOnDiscountedPrice()==null))
     					&& walletOperation!=null 
     					&& walletOperation.getDiscountedAmount()!=null 
-    					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 && !discountPlanItem.isLastDiscount() ) {
+    					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
     				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
     				discountedAmount=unitAmountWithoutTax;
-    			}else if(walletOperation!=null && !discountPlanItem.isLastDiscount() ) {
+    			}else if(walletOperation!=null){
     				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
     				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
     			}
@@ -278,6 +278,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
     			//TODO: must have wallet operation for : link discountWallet to the current wallet, and
     			discountWalletOperations.add(discountWalletOperation);
+    			if(BooleanUtils.isTrue(discountPlanItem.getLastDiscount())){
+    				break;
+    			}
     		}
     	}
 

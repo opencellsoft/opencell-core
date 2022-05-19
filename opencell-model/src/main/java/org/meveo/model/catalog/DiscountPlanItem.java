@@ -231,7 +231,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "last_discount")
-	private boolean lastDiscount;
+	private Boolean lastDiscount;
 	
 	
 	@Transient
@@ -520,11 +520,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	}
 	 
 
-	public boolean isLastDiscount() {
+
+	public Boolean getLastDiscount() {
 		return lastDiscount;
 	}
 
-	public void setLastDiscount(boolean lastDiscount) {
+	public void setLastDiscount(Boolean lastDiscount) {
 		this.lastDiscount = lastDiscount;
 	}
 
