@@ -9355,4 +9355,11 @@ public class OrderAdvancement extends ModuleScript {
             create index cpq_commercial_rule_header_tag_id_index on cpq_commercial_rule_header (tag_id);
         </sql>
     </changeSet>
+
+    <changeSet id="#INTRD-6364_20220519" author="aelmalki">
+        <sql>
+            CREATE INDEX idx_cpq_product ON cpq_product(code);
+            CREATE INDEX idx_cpq_attribute ON cpq_attribute(code);
+        </sql>
+    </changeSet>
 </databaseChangeLog>

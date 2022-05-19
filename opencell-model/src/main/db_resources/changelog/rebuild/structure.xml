@@ -15886,6 +15886,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay"/>
     <changeSet id="INTRD-2535_20211021" author="NabilOuachi"/>
     <changeSet id="#INTRD-5385_20220228" author="TarikFA."/>
+    <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
