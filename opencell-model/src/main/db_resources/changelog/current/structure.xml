@@ -13015,7 +13015,11 @@ order by date_trunc('month', i.invoice_date) DESC
         </dropColumn>
         <addUniqueConstraint columnNames="code" constraintName="uk_open_order_template_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="open_order_template" />
 
-        <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
+    </changeSet>
+    
+    <!--  fix for forgotten FK in current -->
+    <changeSet id="INTRD-5311_20220518-fix" author="AkadidAbdelmounaim" failOnError="false">
+    	<addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
                                  constraintName="open_order_threshold_open_order_template_id_fk"
                                  referencedTableName="open_order_template"
                                  referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
@@ -13052,6 +13056,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedTableName="billing_accounting_article"
                                  referencedColumnNames="id"/>
     </changeSet>
+                                 
     <changeSet id="INTRD-5312_20220518" author="HichamELHALOUI">
         <addColumn tableName="open_order_template">
             <column name="status" type="varchar(255)" />
