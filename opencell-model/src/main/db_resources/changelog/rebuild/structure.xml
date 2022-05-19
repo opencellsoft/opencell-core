@@ -2951,7 +2951,11 @@
             <column name="cpq_quote_id" type="bigint" />
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="related_dunning_collection_plan_id" type="bigint" />
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="related_dunning_collection_plan_id" baseTableName="billing_invoice" constraintName="fk_invoice_related_collection_plan"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
         <createTable tableName="billing_invoice_agregate">
@@ -10509,8 +10513,7 @@
 			  <column name="discount_plan_type" type="varchar(50)" />
 			  <column name="discount_plan_item_id" type="bigint"/>
             <column name="aggregate_id_f" type="bigint" />
-            <column name="target_tax_id" type="bigint" />
-			<column name="target_tax_rate" type="numeric(23, 12)" />
+            <column name="tax_mode" type="varchar(50)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -11580,6 +11583,10 @@
             <column name="max_amount_security_deposit" type="numeric(23, 12)"  />
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="open_order_settings_id" type="bigint"/>
+            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="auxiliary_account_code_el" type="varchar(2000)" />
+            <column name="auxiliary_account_label_el" type="varchar(2000)" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -11704,16 +11711,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="open_order_threshold_pkey"/>
             </column>
             <column name="version" type="int4"/>
-            <column name="created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="datetime"/>
-            <column name="creator" type="varchar(100)"/>
-            <column name="updater" type="varchar(100)"/>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
             <column name="sequence" type="int"/>
             <column name="percentage" type="int"/>
             <column name="open_order_template_id" type="bigint"/>
@@ -11736,10 +11733,11 @@
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
             <column name="code" type="varchar(255)">
-                <constraints nullable="true"/>
+                <constraints nullable="true" unique="true"/>
             </column>
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
+            <column name="status" type="varchar(255)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
             <column name="open_order_template_id" type="bigint">
@@ -15972,7 +15970,7 @@
                 <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
                                  constraintName="open_order_threshold_open_order_template_id_fk"
                                  referencedTableName="open_order_template"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
 
 
         <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
@@ -16075,9 +16073,16 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
+
     <changeSet author="HichamHANINE" id="#INTRD-6672_20220511-fk">
 		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false"
 			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+	</changeSet>
+
+   <changeSet id="INTRD-5806_20220516-fk" author="HichamELHALOUI">
+		<addForeignKeyConstraint baseTableName="finance_settings" baseColumnNames="open_order_settings_id"
+                                 constraintName="fk_finance_settings_open_order_setting_id" referencedTableName="open_order_setting"
+                                 referencedColumnNames="id" />
 	</changeSet>
 	<!-- end fk -->
 
@@ -17733,7 +17738,13 @@
     <changeSet id="INTRD-6024-13052022" author="Abdelkader.Bouazza"/>
     <changeSet id="#INTRD-7099_2022051Z" author="ZBariki" />
 	<changeSet id="#INTRD-6672_20220511" author="HichamHANINE" />
+    <changeSet id="INTRD-5806_20220516" author="HichamELHALOUI" />
+	<changeSet id="#INTRD-7244_20220517" author="HichamHANINE" />
+	<changeSet id="#INTRD-7273_20220517" author="HichamHANINE" />
+    <changeSet id="#INTRD-7192_20220518" author="ZBariki" />
+    <changeSet id="INTRD-5311_20220518" author="HichamELHALOUI"/>
 
+    <changeSet id="INTRD-7031-18052022" author="Abdelkader.Bouazza"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

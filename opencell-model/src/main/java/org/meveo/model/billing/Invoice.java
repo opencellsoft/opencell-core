@@ -26,27 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -66,6 +46,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -632,6 +613,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "is_reminder_level_triggered")
     private boolean isReminderLevelTriggered;
 
+    /**
+     * The collection plan related invoice
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "related_dunning_collection_plan_id")
+    private DunningCollectionPlan relatedDunningCollectionPlan;
+
     public Invoice() {
 	}
 
@@ -682,6 +670,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.invoiceLines = new ArrayList<InvoiceLine>();
 		this.invoiceAgregates = new ArrayList<InvoiceAgregate>();
 		this.isReminderLevelTriggered = copy.isReminderLevelTriggered;
+		this.relatedDunningCollectionPlan = copy.relatedDunningCollectionPlan;
 	}
 
 
@@ -1623,5 +1612,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setReminderLevelTriggered(boolean reminderLevelTriggered) {
         isReminderLevelTriggered = reminderLevelTriggered;
+    }
+
+    public DunningCollectionPlan getRelatedDunningCollectionPlan() {
+        return relatedDunningCollectionPlan;
+    }
+
+    public void setRelatedDunningCollectionPlan(DunningCollectionPlan relatedDunningCollectionPlan) {
+        this.relatedDunningCollectionPlan = relatedDunningCollectionPlan;
     }
 }
