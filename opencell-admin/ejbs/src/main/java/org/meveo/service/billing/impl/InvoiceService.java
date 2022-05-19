@@ -2148,8 +2148,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public boolean isInvoiceXmlExist(Invoice invoice) {
 
         String xmlFileName = getFullXmlFilePath(invoice, false);
-        File xmlFile = new File(xmlFileName);
-        return xmlFile.exists();
+        return StorageFactory.exists(xmlFileName);
     }
 
     /**
