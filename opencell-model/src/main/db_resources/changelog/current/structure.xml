@@ -9586,6 +9586,8 @@ public class OrderAdvancement extends ModuleScript {
         <sql>
             CREATE INDEX idx_cpq_product_code ON cpq_product(code);
             CREATE INDEX idx_cpq_attribute_code ON cpq_attribute(code);
+            CREATE INDEX idx_cpq_product_code_lower ON cpq_product(lower(code));
+            CREATE INDEX idx_cpq_attribute_code_lower ON cpq_attribute(lower(code));
         </sql>
     </changeSet>
 
