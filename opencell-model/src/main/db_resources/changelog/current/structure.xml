@@ -9582,6 +9582,13 @@ public class OrderAdvancement extends ModuleScript {
 		</addColumn>
 	 </changeSet>
 
+    <changeSet id="#INTRD-6364_20220519" author="aelmalki">
+        <sql>
+            CREATE INDEX idx_cpq_product ON cpq_product(code);
+            CREATE INDEX idx_cpq_attribute ON cpq_attribute(code);
+        </sql>
+    </changeSet>
+
       
     
 </databaseChangeLog>

@@ -805,7 +805,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         								if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
 		    									Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
-			        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
+			        										GetAttributeDtoResponse result =attributeApi.populateAttributToDto(d);
 			        										return result;
 			        									}).collect(Collectors.toSet()); 
 		    									getProductVersionResponse.setAttributes(attributes);

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -123,6 +125,25 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return commercialRules;
     }
 
+    public List<CommercialRuleHeader> getProductAttributeRulesByCodes(Set<String> attributeCodes, Set<String> productCodes) throws BusinessException {
+        String queryName = null;
+        if (CollectionUtils.isNotEmpty(attributeCodes)) {
+            queryName = "CommercialRuleHeader.getByProductOrAttributeRules";
+        } else {
+            queryName = "CommercialRuleHeader.getByProductRules";
+        }
+
+        Query query = getEntityManager().createNamedQuery(queryName)
+                .setParameter("productCodes", productCodes);
+
+        if (CollectionUtils.isNotEmpty(attributeCodes)) {
+            query.setParameter("attributeCodes", attributeCodes);
+        }
+
+        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
+        return commercialRules;
+    }
+
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getGroupedAttributesRules(String groupedAttributeCode, String productCode) throws BusinessException {
         GroupedAttributes groupedAttribute = groupedAttributeService.findByCode(groupedAttributeCode);
@@ -135,6 +156,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return commercialRules;
     }
 
+    public List<CommercialRuleHeader> getGroupedAttributesRulesByCodes(Set<String> groupedAttributeCodes, Set<String> productCodes) throws BusinessException {
+        Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getGroupedAttributeRulesByCodes")
+                .setParameter("groupedAttributeCodes", groupedAttributeCodes).setParameter("productCodes", productCodes);
+        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
+        return commercialRules;
+    }
+
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getOfferAttributeRules(String attributeCode, String offerCode) throws BusinessException {
         Attribute attribute = attributeService.findByCode(attributeCode);
@@ -143,6 +171,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         }
         Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRules")
                 .setParameter("attributeCode", attributeCode).setParameter("offerTemplateCode", offerCode);
+        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
+        return commercialRules;
+    }
+
+    public List<CommercialRuleHeader> getOfferAttributeRulesByCodes(Set<String> attributeCodes, Set<String> offerCodes) throws BusinessException {
+        Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRulesByCodes")
+                .setParameter("attributeCodes", attributeCodes).setParameter("offerTemplateCodes", offerCodes);
         List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
         return commercialRules;
     }
