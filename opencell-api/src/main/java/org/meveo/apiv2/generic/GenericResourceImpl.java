@@ -1,6 +1,8 @@
 package org.meveo.apiv2.generic;
 
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.generic.core.GenericHelper;
@@ -8,6 +10,7 @@ import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.util.Inflector;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -64,6 +67,41 @@ public class GenericResourceImpl implements GenericResource {
 	        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), excludedFields)
 	                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
 	                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        }
+    }
+
+    @Override
+    public Response getEntity(Boolean extractList, String entityName, Long id, GenericPagingAndFiltering searchConfig) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        // if entityName is of plural form, process the request
+        if (Inflector.getInstance().pluralize(entityName).equals(entityName)) {
+            entityName = Inflector.getInstance().singularize(entityName);
+
+            return get(extractList, entityName, id, searchConfig);
+        }
+        // otherwise, entityName is not of plural form, raise an exception
+        else {
+            MeveoApiException notPluralFormException = new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
+                    "The entity name " + entityName + " is not a valid plural form");
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(notPluralFormException).build();
+        }
+    }
+
+    @Override
+    public Response getAllEntities(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
+        // if entityName is of plural form, process the request
+        if ( Inflector.getInstance().pluralize(entityName).equals(entityName) ) {
+            entityName = Inflector.getInstance().singularize(entityName);
+
+            return getAll(extractList, entityName, searchConfig);
+        }
+        // otherwise, entityName is not of plural form, raise an exception
+        else {
+            MeveoApiException notPluralFormException = new MeveoApiException(
+                    "The entity name " + entityName + " is not a valid plural form");
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(notPluralFormException).build();
         }
     }
 
