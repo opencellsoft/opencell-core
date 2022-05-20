@@ -82,11 +82,11 @@ public class GenericResourceImpl implements GenericResource {
         }
         // otherwise, entityName is not of plural form, raise an exception
         else {
-            MeveoApiException notPluralFormException = new MeveoApiException(
+            MeveoApiException invalidPluralFormException = new MeveoApiException(
                     "The entity name " + entityName + " is not a valid plural form");
             MeveoExceptionMapper meveoExceptionMapper = new MeveoExceptionMapper();
 
-            return meveoExceptionMapper.toResponse(notPluralFormException);
+            return meveoExceptionMapper.toResponse(invalidPluralFormException);
         }
     }
 
@@ -100,11 +100,11 @@ public class GenericResourceImpl implements GenericResource {
         }
         // otherwise, entityName is not of plural form, raise an exception
         else {
-            MeveoApiException notPluralFormException = new MeveoApiException(
+            MeveoApiException invalidPluralFormException = new MeveoApiException(
                     "The entity name " + entityName + " is not a valid plural form");
             MeveoExceptionMapper meveoExceptionMapper = new MeveoExceptionMapper();
 
-            return meveoExceptionMapper.toResponse(notPluralFormException);
+            return meveoExceptionMapper.toResponse(invalidPluralFormException);
         }
     }
 
