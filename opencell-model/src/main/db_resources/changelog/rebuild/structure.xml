@@ -2593,8 +2593,10 @@
             <column name="xml_job_execution_result_id" type="bigint" />
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="description" type="varchar(255)" />
-        </createTable>
+            <column name="description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
         <createTable tableName="billing_billing_run_list">
@@ -17739,8 +17741,8 @@
    	<changeSet id="INTRD-5311_20220518-fix" author="AkadidAbdelmounaim" />
     <changeSet id="INTRD-7031-18052022" author="Abdelkader.Bouazza"/>
     <changeSet id="INTRD-7031-18052022-split" author="AbdelmounaimAkadid" />
-    
-    
+	<changeSet id="INTRD-7040_18052022" author="TarikRabeh" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
