@@ -40,7 +40,7 @@ import org.meveo.model.cpq.tags.Tag;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq")})
 @NamedQueries({  
-	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode"),
+	@NamedQuery(name = "CommercialRuleLine.getSourceAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true")}),
 	@NamedQuery(name = "CommercialRuleLine.getSourceProductAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	@NamedQuery(name = "CommercialRuleLine.getSourceOfferAttributeRules", query = "select c.id from CommercialRuleLine c where c.sourceAttribute.code=:attributeCode and c.sourceOfferTemplate.code=:offerCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	@NamedQuery(name = "CommercialRuleLine.getSourceProductRules", query = "select c.id from CommercialRuleLine c where c.sourceProduct.code=:productCode", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
