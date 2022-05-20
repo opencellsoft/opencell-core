@@ -125,11 +125,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     public List<CommercialRuleHeader> getProductAttributeRulesByCodes(Set<String> attributeCodes, Set<String> productCodes) throws BusinessException {
-        Set<String> notExistByCodes = attributeService.getNotExistByCodes(attributeCodes);
-        if (CollectionUtils.isNotEmpty(notExistByCodes)) {
-            throw new EntityDoesNotExistsException(Attribute.class, notExistByCodes);
-        }
-
         String queryName = "CommercialRuleHeader.getByProductOrAttributeRules";
 
         Query query = getEntityManager().createNamedQuery(queryName)
@@ -153,7 +148,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     public List<CommercialRuleHeader> getGroupedAttributesRulesByCodes(Set<String> groupedAttributeCodes, Set<String> productCodes) throws BusinessException {
-        // TODO add check existence of codes
         /*GroupedAttributes groupedAttribute = groupedAttributeService.findByCode(groupedAttributeCode);
         if (groupedAttribute == null) {
             throw new EntityDoesNotExistsException(GroupedAttributes.class, groupedAttributeCode);
@@ -177,7 +171,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     }
 
     public List<CommercialRuleHeader> getOfferAttributeRulesByCodes(Set<String>  attributeCodes, Set<String>  offerCodes) throws BusinessException {
-        // TODO check existence of aattribute
         /*Attribute attribute = attributeService.findByCode(attributeCode);
         if (attribute == null) {
             throw new EntityDoesNotExistsException(Attribute.class, attributeCode);

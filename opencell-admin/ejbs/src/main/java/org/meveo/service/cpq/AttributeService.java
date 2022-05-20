@@ -95,10 +95,6 @@ public class AttributeService extends BusinessService<Attribute>{
         }
     }
 
-    public Set<String> getNotExistByCodes(Set<String> codes){
-        return null; // TODO
-    }
-
     @Override
     public List<Attribute> findByCodes(List<String> codes) {
         List<String> lowerCodes = codes.stream().map(s -> s.toLowerCase()).collect(Collectors.toList());

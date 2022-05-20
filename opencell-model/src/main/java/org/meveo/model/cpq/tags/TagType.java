@@ -43,7 +43,7 @@ public class TagType extends BusinessEntity {
 	/**
 	 * seller associated to the entity
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
 	

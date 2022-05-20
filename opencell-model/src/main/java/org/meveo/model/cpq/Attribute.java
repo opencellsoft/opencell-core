@@ -129,23 +129,23 @@ public class Attribute extends EnableBusinessCFEntity{
 	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-    private List<Media> medias = new ArrayList<>();
+    private Set<Media> medias = new HashSet<>();
 
 
 	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "cpq_attribute_tag", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
 	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+    private Set<CommercialRuleHeader> commercialRules = new HashSet<>();
 
 	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
-    private List<Attribute> assignedAttributes = new ArrayList<>();
+    private Set<Attribute> assignedAttributes = new HashSet<>();
     
     @Column(name = "unit_nb_decimal")
     protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
@@ -268,42 +268,42 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the tags
 	 */
-	public List<Tag> getTags() {
+	public Set<Tag> getTags() {
 		return tags;
 	}
 
 	/**
 	 * @param tags the tags to set
 	 */
-	public void setTags(List<Tag> tags) {
+	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
 
 	/**
 	 * @return the commercialRules
 	 */
-	public List<CommercialRuleHeader> getCommercialRules() {
+	public Set<CommercialRuleHeader> getCommercialRules() {
 		return commercialRules;
 	}
 
 	/**
 	 * @param commercialRules the commercialRules to set
 	 */
-	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+	public void setCommercialRules(Set<CommercialRuleHeader> commercialRules) {
 		this.commercialRules = commercialRules;
 	}
 
 	/**
 	 * @return the assignedAttributes
 	 */
-	public List<Attribute> getAssignedAttributes() {
+	public Set<Attribute> getAssignedAttributes() {
 		return assignedAttributes;
 	}
 
 	/**
 	 * @param assignedAttributes the assignedAttributes to set
 	 */
-	public void setAssignedAttributes(List<Attribute> assignedAttributes) {
+	public void setAssignedAttributes(Set<Attribute> assignedAttributes) {
 		this.assignedAttributes = assignedAttributes;
 	}
 
@@ -338,14 +338,14 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the medias
 	 */
-	public List<Media> getMedias() {
+	public Set<Media> getMedias() {
 		return medias;
 	}
 
 	/**
 	 * @param medias the medias to set
 	 */
-	public void setMedias(List<Media> medias) {
+	public void setMedias(Set<Media> medias) {
 		this.medias = medias;
 	}
 

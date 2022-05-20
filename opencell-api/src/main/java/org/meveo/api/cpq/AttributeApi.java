@@ -110,7 +110,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	private void processTags(AttributeDTO postData, Attribute attribute) {
 		List<String> tagCodes = postData.getTagCodes(); 
 		if(tagCodes != null && !tagCodes.isEmpty()){
-			Set<Tag> tags=new HashSet<Tag>();
+			Set<Tag> tags=new HashSet<>();
 			for(String code:tagCodes) {
 				Tag tag=tagService.findByCode(code);
 				if(tag == null) { 
@@ -118,7 +118,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				}
 				tags.add(tag);
 			}
-			attribute.setTags(new ArrayList<>(tags));
+			attribute.setTags(new HashSet<>(tags));
 		}else {
 			attribute.getTags().clear();
 		}
@@ -127,7 +127,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	 private void processMedias(AttributeDTO postData, Attribute attribute) {
 			Set<String> mediaCodes = postData.getMediaCodes(); 
 			if(mediaCodes != null && !mediaCodes.isEmpty()){
-				List<Media> medias=new ArrayList<Media>();
+				Set<Media> medias=new HashSet<>();
 				for(String code:mediaCodes) {
 					Media media=mediaService.findByCode(code);
 					if(media == null) { 
@@ -208,6 +208,15 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		} 
+		return populateAttributToDto(attribute);
+	}
+
+	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute) throws MeveoApiException {
+		if (attribute == null) {
+			missingParameters.add("attribute");
+			handleMissingParameters();
+		}
+
 		ChargeTemplateDto chargeTemplateDto=null;
 		Set<ChargeTemplateDto> chargeTemplateDtos=new HashSet<ChargeTemplateDto>();
 		for(ChargeTemplate charge : attribute.getChargeTemplates()) {
@@ -220,14 +229,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			tagDto=new TagDto(tag);
 			tagDtos.add(tagDto);
 		}
-		
+
 		AttributeDTO attributeDto=null;
 		List<AttributeDTO> assignedAttributes=new ArrayList<AttributeDTO>();
 		for(Attribute attr : attribute.getAssignedAttributes()) {
 			attributeDto=new AttributeDTO(attr);
 			assignedAttributes.add(attributeDto);
 		}
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes,true); 
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes,true);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
 		return result;
 	}
