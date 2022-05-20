@@ -87,7 +87,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	 * allowed values
 	 */
 	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
 	private Set<String> allowedValues=new HashSet<>();
