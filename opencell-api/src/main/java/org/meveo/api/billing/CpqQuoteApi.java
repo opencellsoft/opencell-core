@@ -1676,9 +1676,12 @@ public class CpqQuoteApi extends BaseApi {
             offerQuotePrices.addAll(createFixedDiscountQuotePrices(offerFixedDiscountWalletOperation, quoteOffer.getQuoteVersion(), quoteOffer,billingAccount,PriceLevelEnum.OFFER));
 
         }
-        List<WalletOperation> sortedWalletOperations = walletOperations.stream()
-        		  .sorted(Comparator.comparing(WalletOperation::getUnitAmountWithoutTax).reversed())
-        		  .collect(Collectors.toList());
+        List<WalletOperation>  sortedWalletOperations = walletOperations.stream()
+      		  .filter(w->w.getDiscountPlan()==null)
+      		  .collect(Collectors.toList());
+       sortedWalletOperations.addAll(walletOperations.stream()
+        		  .filter(w->w.getDiscountPlan()!=null)
+           		  .collect(Collectors.toList()));
         
         quoteEligibleFixedDiscountItems.addAll(offerEligibleFixedDiscountItems);
         return sortedWalletOperations;
