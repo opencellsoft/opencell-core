@@ -2187,8 +2187,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public boolean isInvoicePdfExist(Invoice invoice) {
 
         String pdfFileName = getFullPdfFilePath(invoice, false);
-        File pdfFile = new File(pdfFileName);
-        return pdfFile.exists();
+        return StorageFactory.exists(pdfFileName);
     }
 
     /**
