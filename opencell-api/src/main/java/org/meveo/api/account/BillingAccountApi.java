@@ -240,9 +240,9 @@ public class BillingAccountApi extends AccountEntityApi {
     }
 
     private void processTags(BillingAccountDto postData, BillingAccount billingAccount) {
+    	List<Tag> tags=new ArrayList<Tag>();
     	Set<String> tagCodes = postData.getTagCodes();
 		if(tagCodes != null && !tagCodes.isEmpty()){
-			List<Tag> tags=new ArrayList<Tag>();
 			for(String code:tagCodes) {
 				Tag tag=tagService.findByCode(code);
 				if(tag == null) {
@@ -250,8 +250,8 @@ public class BillingAccountApi extends AccountEntityApi {
 				}
 				tags.add(tag);
 			}
-			billingAccount.setTags(tags);
 		}
+		billingAccount.setTags(tags);
     }
 
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
