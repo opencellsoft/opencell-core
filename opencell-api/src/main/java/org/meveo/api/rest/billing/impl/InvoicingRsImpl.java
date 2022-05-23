@@ -60,6 +60,25 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
     @Override
+    public ActionStatus createOrUpdateBillingRun(CreateBillingRunDto createBillingRunDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.info("createOrUpdateBillingRun request={}", createBillingRunDto);
+        try {
+            long billingRunId;
+        	if(createBillingRunDto.getId() != null) {
+                billingRunId = invoicingApi.updateBillingRun(createBillingRunDto);
+        	}else{
+                billingRunId = invoicingApi.createBillingRun(createBillingRunDto);
+        	}
+            result.setMessage(billingRunId + "");
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public GetBillingRunInfoResponseDto getBillingRunInfo(Long billingRunId) {
         GetBillingRunInfoResponseDto result = new GetBillingRunInfoResponseDto();
         log.info("getBillingRunInfo request={}", billingRunId);

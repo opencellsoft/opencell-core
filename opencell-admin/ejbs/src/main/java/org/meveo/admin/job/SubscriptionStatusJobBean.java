@@ -97,9 +97,9 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
 
         Subscription subscription = subscriptionService.findById(subscriptionId);
         // Handle subscription renewal or termination
-        if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE || subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
+        if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE || subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.SUSPENDED)) {
 
-            if (subscription.getSubscriptionRenewal().isAutoRenew()) {
+            if (subscription.getSubscriptionRenewal().isAutoRenew() && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
                 Date subscribedTillDate = subscription.getSubscribedTillDate();
                 while (subscribedTillDate.before(untilDate)) {
                     Date calendarDate = new Date();
@@ -133,7 +133,7 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
                     subscribedTillDate = subscription.getSubscribedTillDate();
                 }
 
-            } else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+            } else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
                 subscriptionService.subscriptionSuspension(subscription, subscription.getSubscribedTillDate());
 
             } else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {

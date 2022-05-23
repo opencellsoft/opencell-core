@@ -290,7 +290,7 @@ public class InvoiceLine extends AuditableEntity {
 	@Enumerated(EnumType.STRING)
     @Column(name = "tax_mode", nullable = false)
     @NotNull
-    private InvoiceLineTaxModeEnum taxMode;
+    private InvoiceLineTaxModeEnum taxMode = InvoiceLineTaxModeEnum.ARTICLE;
     
 	public InvoiceLine() {
 	}
