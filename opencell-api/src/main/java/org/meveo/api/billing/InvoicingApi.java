@@ -133,6 +133,10 @@ public class InvoicingApi extends BaseApi {
             billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
         
+        if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
+        }
+        
         billingRunService.create(billingRun);
 
         // populate customFields
@@ -146,17 +150,15 @@ public class InvoicingApi extends BaseApi {
             throw e;
         }
 
-        if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
-        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
-        }else {
-        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("en", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
-        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("fr", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        if(dto.getDescriptionsTranslated() == null || dto.getDescriptionsTranslated().isEmpty()){
+        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
         	
         	List<LanguageDescriptionDto> descriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
         	descriptionsTranslated.add(languageDescriptionEn);
         	descriptionsTranslated.add(languageDescriptionFr);
 
-        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
         }
 
         billingRunService.update(billingRun);
@@ -221,7 +223,6 @@ public class InvoicingApi extends BaseApi {
             billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
         }
 
-        
         if (dto.getInvoiceDate() == null) {
             if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
                 billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
@@ -257,8 +258,8 @@ public class InvoicingApi extends BaseApi {
         if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
         }else {
-        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("en", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
-        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("fr", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
         	
         	List<LanguageDescriptionDto> descriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
         	descriptionsTranslated.add(languageDescriptionEn);
