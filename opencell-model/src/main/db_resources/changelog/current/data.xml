@@ -10207,4 +10207,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-7375_20220523" author="ZBariki">
+		<update tableName="finance_settings">
+			<column name="auxiliary_account_code_el" value="#{substring(gcl.code, 0, 3), String.class)ca.description};" />
+			<column name="auxiliary_account_label_el" value="#{ca.description};" />
+			<where> auxiliary_account_label_el is NULL AND auxiliary_account_code_el is NULL</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
