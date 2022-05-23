@@ -12234,7 +12234,7 @@ order by date_trunc('month', i.invoice_date) DESC
 
     </changeSet>
 
-	<changeSet id="#INTRD-5341_20220307" author="aelmalki">
+	<changeSet id="#INTRD-5341_20220307" author="aelmalki" failOnError="false">
         <renameTable oldTableName="cpq_invoice_line" newTableName="billing_invoice_line"/>
         <renameSequence oldSequenceName="cpq_invoice_line_seq" newSequenceName="billing_invoice_line_seq" />
 
