@@ -142,7 +142,6 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		order.setDeliveryDate(cpqQuote.getDeliveryDate());
 		order.setUserAccount(cpqQuote.getUserAccount());
-		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
 		if(customFieldsFromQuoteVersion != null && customFieldsFromQuoteVersion.getValues() != null && !customFieldsFromQuoteVersion.getValues().isEmpty()) {
