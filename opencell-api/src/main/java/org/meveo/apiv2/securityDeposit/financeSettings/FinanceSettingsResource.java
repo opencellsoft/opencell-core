@@ -44,8 +44,7 @@ public interface FinanceSettingsResource {
                     @ApiResponse(responseCode = "404",
                             description = "Following security deposit does not exist : {financeSettings ids}")
             })
-    Response update(@Parameter(description = "contain the code of Security deposit settings te be updated by its id", required = true) @PathParam("id") Long id,
-            @Parameter(description = "Security Deposit Settings", required = true) FinanceSettings financeSettings);
-    
-
+    Response update(@Parameter(description = "contain the code of Security deposit settings te be updated by its id", required = true)
+                    @PathParam("id") Long id,
+                    @Parameter(description = "Security Deposit Settings", required = true) FinanceSettings financeSettings);
 }
