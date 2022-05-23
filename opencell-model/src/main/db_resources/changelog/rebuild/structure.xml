@@ -3959,6 +3959,7 @@
             <column name="price_plan_matrix_id" type="bigint" />
             <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="sequence" type="int4"/>
+            <column name="last_discount" type="${type.boolean}"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
