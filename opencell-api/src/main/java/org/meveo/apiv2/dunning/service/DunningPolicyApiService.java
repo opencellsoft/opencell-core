@@ -176,7 +176,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         for (DunningPolicyLevel policyLevel : dunningPolicyLevels) {
             if(!policyLevel.getDunningLevel().isEndOfDunningLevel()
                     && policyLevel.getDunningLevel().getDaysOverdue() > endOfLevelDayOverDue) {
-                throw new BadRequestException("End of level must have the highest day over due");
+                throw new BadRequestException("End of dunning level must have the higher days overdue");
             }
         }
     }
