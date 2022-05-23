@@ -13089,4 +13089,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="INTRD-7039_23052022" author="TarikRabeh">
+        <sql>
+            <![CDATA[
+				alter table billing_billing_run alter column description_i18n drop not null;
+			]]>
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
