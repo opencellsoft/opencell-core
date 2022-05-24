@@ -620,6 +620,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "related_dunning_collection_plan_id")
     private DunningCollectionPlan relatedDunningCollectionPlan;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "dunning_collection_plan_triggered")
+    private boolean dunningCollectionPlanTriggered;
+
     public Invoice() {
 	}
 
@@ -1624,5 +1628,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setRelatedDunningCollectionPlan(DunningCollectionPlan relatedDunningCollectionPlan) {
         this.relatedDunningCollectionPlan = relatedDunningCollectionPlan;
+    }
+
+    public boolean isDunningCollectionPlanTriggered() {
+        return dunningCollectionPlanTriggered;
+    }
+
+    public void setDunningCollectionPlanTriggered(boolean dunningCollectionPlanTriggered) {
+        this.dunningCollectionPlanTriggered = dunningCollectionPlanTriggered;
     }
 }
