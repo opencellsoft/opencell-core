@@ -10321,7 +10321,7 @@
             <!-- Auditable End -->
 
             <column name="order_article_line_id" type="bigint" >
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="order_id" type="bigint" >
                 <constraints nullable="false"/>
