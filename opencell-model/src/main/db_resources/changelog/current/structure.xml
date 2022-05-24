@@ -13114,4 +13114,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" >
+        <addColumn tableName="open_order_template">
+            <column name="number_instantiation" type="int" />
+              <column name="template_name" type="varchar(100)" />
+        </addColumn>
+
+    </changeSet>
+
 </databaseChangeLog>
