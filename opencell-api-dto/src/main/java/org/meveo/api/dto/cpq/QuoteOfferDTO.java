@@ -178,6 +178,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		deliveryDate = quoteOffer.getDeliveryDate();
 		userAccountCode=quoteOffer.getUserAccount()!=null?quoteOffer.getUserAccount().getCode():null;
 		quoteLineType = quoteOffer.getQuoteLineType();
+		subscriptionCode = quoteOffer.getSubscription().getCode();
 	}
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
