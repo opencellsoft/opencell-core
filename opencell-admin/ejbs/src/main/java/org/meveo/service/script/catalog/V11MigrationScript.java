@@ -143,8 +143,8 @@ public class V11MigrationScript extends Script {
 			}
 			
 		}
-			offerTemplate.getOfferServiceTemplates().clear();
-			offerTemplateService.update(offerTemplate);
+		offerTemplate.getOfferServiceTemplates().clear();
+		offerTemplateService.update(offerTemplate);
 		
 		return offerTemplate;
 	}
@@ -218,11 +218,9 @@ public class V11MigrationScript extends Script {
 		DatePeriod validity=new DatePeriod(product.getAuditable().getCreated(),null);
 		productVersion.setValidity(validity);
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
-		productVersionService.create(productVersion);
-		
+		productVersionService.create(productVersion);		
 		product.setCurrentVersion(productVersion);
-		productService.update(product);
-		
+		productService.update(product);		
 		return productVersion;
 	}
 	
@@ -230,9 +228,7 @@ public class V11MigrationScript extends Script {
 		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
 		ppmv.setPricePlanMatrix(ppm);
 		ppmv.setAmountWithoutTax(ppm.getAmountWithoutTax());
-		ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
 		ppmv.setAmountWithTax(ppm.getAmountWithTax());
-		ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
 		ppmv.setLabel(ppm.getDescription());
 		ppmv.setMatrix(false);
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
@@ -267,9 +263,6 @@ public class V11MigrationScript extends Script {
 		default:
 			break;	
 	    }
-	   
-	    
-		
 		
 		return productChargeTemplateMapping;
 	}
@@ -283,8 +276,6 @@ public class V11MigrationScript extends Script {
 				.map(key ->mapToProductChargeTemplate(product,key)).collect(Collectors.toList()));
 		productCharges.addAll(serviceTemplate.getServiceUsageCharges().stream().map(key ->mapToProductChargeTemplate(product,key))
 				.collect(Collectors.toList()));
-	
-		
 		return productCharges;
 	}
 }
