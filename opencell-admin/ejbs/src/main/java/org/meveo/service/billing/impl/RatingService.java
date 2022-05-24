@@ -714,27 +714,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
                     priceWithoutTax = ppmVersion.getAmountWithoutTax();
-                    /*if (ppmVersion.getAmountWithoutTaxEL() != null) {
-                        priceWithoutTax = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
-                        if (priceWithoutTax == null) {
-                            throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithoutTaxEL());
-                        }
-                    }*/
-
                 } else {
                     priceWithTax = ppmVersion.getAmountWithTax();
-                    /*if (ppmVersion.getAmountWithTaxEL() != null) {
-                        priceWithTax = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), null, priceWithoutTax);
-                        if (priceWithTax == null) {
-                            throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getAmountWithTaxEL());
-                        }
-                    }*/
                 }
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                if(pricePlanMatrixLine!=null) {
                 	  priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
-                    String amountEL="";//appProvider.isEntreprise()?ppmVersion.getAmountWithoutTaxEL():ppmVersion.getAmountWithTaxEL();
+                    String amountEL="";
                     if (!StringUtils.isBlank(amountEL)) {
                     	priceWithoutTax = evaluateAmountExpression(amountEL,
                                 wo, wo.getChargeInstance().getUserAccount(),
