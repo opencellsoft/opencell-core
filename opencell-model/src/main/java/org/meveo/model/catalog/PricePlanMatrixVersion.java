@@ -93,11 +93,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
-    @Column(name = "amount_without_tax_el")
-    private String amountWithoutTaxEL;
-
-    @Column(name = "amount_with_tax_el")
-    private String amountWithTaxEL;
+    @Column(name = "price_el")
+    private String priceEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixLine> lines = new HashSet<>();
@@ -125,8 +122,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.isMatrix = copy.isMatrix;
         this.amountWithoutTax = copy.amountWithoutTax;
         this.amountWithTax = copy.amountWithTax;
-        this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
-        this.amountWithTaxEL = copy.amountWithTaxEL;
+        this.priceEL = copy.priceEL;
         this.lines = new HashSet<>();
         this.columns = new HashSet<>();
         this.priority = copy.priority;
@@ -236,22 +232,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public String getAmountWithoutTaxEL() {
-        return amountWithoutTaxEL;
-    }
-
-    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
-        this.amountWithoutTaxEL = amountWithoutTaxEL;
-    }
-
-    public String getAmountWithTaxEL() {
-        return amountWithTaxEL;
-    }
-
-    public void setAmountWithTaxEL(String amountWithTaxEL) {
-        this.amountWithTaxEL = amountWithTaxEL;
-    }
-
     /**
      * @return the priority
      */
@@ -282,13 +262,21 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public void setStatusChangeLog(String statusChangeLog) {
         this.statusChangeLog = statusChangeLog;
     }
+    
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Objects.hash(amountWithTax, amountWithTaxEL, amountWithoutTax, amountWithoutTaxEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
-            priority, status, statusChangeLog, statusDate, validity);
+        result = prime * result + Objects.hash(amountWithTax, amountWithoutTax, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
+          priority, status, statusChangeLog, statusDate, validity);
         return result;
     }
 
@@ -301,8 +289,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
-        return Objects.equals(amountWithTax, other.amountWithTax) && Objects.equals(amountWithTaxEL, other.amountWithTaxEL)
-                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(amountWithoutTaxEL, other.amountWithoutTaxEL)
+        return Objects.equals(amountWithTax, other.amountWithTax) 
+                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(priceEL, other.priceEL)
                 && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);

@@ -230,9 +230,9 @@ public class V11MigrationScript extends Script {
 		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
 		ppmv.setPricePlanMatrix(ppm);
 		ppmv.setAmountWithoutTax(ppm.getAmountWithoutTax());
-		ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
+		//ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
 		ppmv.setAmountWithTax(ppm.getAmountWithTax());
-		ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
+		//ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
 		ppmv.setLabel(ppm.getDescription());
 		ppmv.setMatrix(false);
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
