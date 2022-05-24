@@ -2535,8 +2535,6 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
-            <column name="auxiliary_account_code" type="varchar(255)" />
-            <column name="auxiliary_account_label" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
