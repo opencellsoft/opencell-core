@@ -43,12 +43,16 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "price_el")
+    private String priceEL;
+    
     public PricePlanMatrixLine(PricePlanMatrixLine copy) {
 		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
 		this.description = copy.description;
 		this.priceWithoutTax = copy.priceWithoutTax;
 		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
-		this.priority = copy.priority;
+        this.priority = copy.priority;
+        this.priceEL = copy.priceEL;
 	}
 
     public PricePlanMatrixLine() {
@@ -115,6 +119,14 @@ public class PricePlanMatrixLine extends AuditableEntity {
                 .allMatch(v -> v.matchWithAllValues());
     }
 
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }
+    
     public boolean match(Set<AttributeValue> attributeValues) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(attributeValues));
@@ -128,6 +140,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
+                Objects.equals(getPriceEL(), that.getPriceEL()) &&             
                 Objects.equals(getPriority(), that.getPriority());
     }
 

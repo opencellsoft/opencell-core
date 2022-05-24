@@ -25,6 +25,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
@@ -135,7 +136,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if(pricePlanMatrixVersion.getId() == null) {
             pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode()) + 1);
         }
-        pricePlanMatrixVersion.setValidity(pricePlanMatrixVersionDto.getValidity());
+
+        DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+        pricePlanMatrixVersion.setValidity(new DatePeriod(DateUtils.truncateTime(validity.getFrom()), DateUtils.truncateTime(validity.getTo())));
         if (status != null) {
             pricePlanMatrixVersion.setStatus(status);
         }
@@ -144,8 +147,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
         pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
-        pricePlanMatrixVersion.setAmountWithoutTaxEL(pricePlanMatrixVersionDto.getAmountWithoutTaxEL());
-        pricePlanMatrixVersion.setAmountWithTaxEL(pricePlanMatrixVersionDto.getAmountWithTaxEL());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrixVersion.setPriority(pricePlanMatrixVersionDto.getPriority());
@@ -214,7 +215,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                     throw new MeveoApiException(resourceMessages.getString("error.pricePlanMatrixVersion.overlapPeriodWithVersion") + ppmv.getCurrentVersion());
 	        	}
 			 });
-            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion,validity, null));
+            return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, validity));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }

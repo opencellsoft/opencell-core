@@ -1,6 +1,6 @@
 package org.meveo.apiv2.settings;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableQuoteSettings.class)
 public interface QuoteSettings {
 
-    @Nonnull
+    @Nullable
     Integer getQuoteDefaultValidityDelay();
 
 }

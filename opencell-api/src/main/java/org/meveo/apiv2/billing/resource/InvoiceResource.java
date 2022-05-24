@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
@@ -333,6 +334,19 @@ public interface InvoiceResource {
     @ApiResponse(responseCode = "200", description = "invoice lines successfully duplicated"),
     @ApiResponse(responseCode = "403", description = "error when duplicating invoice lines")})
     Response duplicateInvoiceLines(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-            @Parameter(description = "invoice lines to remove")  InvoiceLinesToDuplicate invoiceLinesToDuplicate);;
-    
+            @Parameter(description = "invoice lines to remove")  InvoiceLinesToDuplicate invoiceLinesToDuplicate);
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	@PUT
+	@Path("/{id}/quarantine")
+	@Operation(summary = "Quarantine invoice",  description = "Quarantine invoice", 
+	responses = {
+	@ApiResponse(responseCode = "200", description = "invoice successfully quarantined"),
+	@ApiResponse(responseCode = "403", description = "Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") })
+	Response quarantineInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Quarantine billing run id")  QuarantineBillingRunDto quarantineBillingRunDto);         
+            
 }

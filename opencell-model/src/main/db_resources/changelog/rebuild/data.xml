@@ -9975,6 +9975,54 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+    <changeSet id="#INTRD-6664_20220519" author="ZBariki">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="onlyClosedPeriods"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Only closed periods"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:2"/>
+		</insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;field:0"/>
+        </insert>
+    </changeSet>
+
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
@@ -9984,6 +10032,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-6961_20220511" author="aelmalki" />
 
 	<changeSet id="#6023_130522" author="AbdelkaderBouazza"/>
+	<changeSet id="#INTRD-7375_20220523" author="ZBariki" />
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

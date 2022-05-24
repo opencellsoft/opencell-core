@@ -12821,6 +12821,15 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
     
+    <changeSet id="#INTRD-7244_20220517" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="tax_mode" type="varchar(50)" />
+        </addColumn>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id"/>
+		<dropColumn columnName="target_tax_id" tableName="billing_invoice_line" />
+		<dropColumn columnName="target_tax_rate" tableName="billing_invoice_line" />
+    </changeSet>
+
     <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
@@ -12881,6 +12890,17 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-7179_20220524" author="HichamHANINE">    	
+        <dropColumn columnName="amount_without_tax_el" tableName="cpq_price_plan_version" />
+        <dropColumn columnName="amount_with_tax_el" tableName="cpq_price_plan_version" />
+        <addColumn tableName="cpq_price_plan_version">
+            <column name="price_el" type="varchar(255)" />
+        </addColumn>
+		<addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="price_el" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
@@ -12933,6 +12953,11 @@ order by date_trunc('month', i.invoice_date) DESC
 		</sql>
 	</changeSet>
 
+    <changeSet id="#INTRD-7273_20220517" author="HichamHANINE">
+		<sql>
+			UPDATE billing_invoice_line set tax_mode = 'ARTICLE' where tax_mode is null
+		</sql>
+	</changeSet>
 	
 	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
@@ -12969,6 +12994,123 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-7099_2022051Z" author="ZBariki">
         <addColumn tableName="crm_provider">
             <column name="default_starting_date_of_plan" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-5806_20220516" author="HichamELHALOUI">
+        <addColumn tableName="finance_settings">
+            <column name="open_order_settings_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="finance_settings" baseColumnNames="open_order_settings_id"
+                                 constraintName="fk_finance_settings_open_order_setting_id" referencedTableName="open_order_setting"
+                                 referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-7192_20220518" author="ZBariki">
+        <addColumn tableName="finance_settings">
+            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="auxiliary_account_code_el" type="varchar(2000)" />
+            <column name="auxiliary_account_label_el" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-5311_20220518" author="HichamELHALOUI">
+
+        <dropColumn tableName="open_order_threshold">
+            <column name="created" />
+            <column name="updated" />
+            <column name="creator" />
+            <column name="updater" />
+            <column name="code" />
+            <column name="description" type="varchar(255)"/>
+        </dropColumn>
+        <addUniqueConstraint columnNames="code" constraintName="uk_open_order_template_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="open_order_template" />
+
+    </changeSet>
+    
+    <!--  fix for forgotten FK in current -->
+    <changeSet id="INTRD-5311_20220518-fix" author="AkadidAbdelmounaim" failOnError="false">
+    	<addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_threshold_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id" onDelete="CASCADE" onUpdate="CASCADE"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_tags_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_products_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
+                                 constraintName="open_order_template_products_product_id_fk"
+                                 referencedTableName="cpq_product"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_template_articles_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
+                                 constraintName="open_order_template_articles_article_id_fk"
+                                 referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+                                 
+    <changeSet id="INTRD-5312_20220518" author="HichamELHALOUI">
+        <addColumn tableName="open_order_template">
+            <column name="status" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="INTRD-7031-18052022" author="Abdelkader.Bouazza">
+        <addColumn tableName="billing_invoice">
+            <column name="related_dunning_collection_plan_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="related_dunning_collection_plan_id" baseTableName="billing_invoice" constraintName="fk_invoice_related_collection_plan"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
+    </changeSet>
+    
+    <!--  was split to deblock deploy -->
+    <changeSet id="INTRD-7031-18052022-split" author="AbdelmounaimAkadid" failOnError="false">
+        <sql>update ${db.schema.adapted}billing_invoice as invoice set related_dunning_collection_plan_id = (SELECT dc.id FROM dunning_collection_plan as dc WHERE dc.related_invoice_id=invoice.id)
+        </sql>
+    </changeSet>
+
+    
+    <changeSet id="INTRD-7040_18052022" author="TarikRabeh">
+        <dropColumn tableName="billing_billing_run">
+            <column name="description"></column>
+        </dropColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="description_i18n" type="${type.json}" defaultValue='{"FRA":"", "ENG":""}'>
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-7039_23052022" author="TarikRabeh">
+        <sql>
+            <![CDATA[
+				alter table billing_billing_run alter column description_i18n drop not null;
+			]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-7157_20220523" author="ZBariki">
+        <addColumn tableName="billing_invoice">
+            <column name="dunning_collection_plan_triggered" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
 

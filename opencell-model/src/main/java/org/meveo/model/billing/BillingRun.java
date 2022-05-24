@@ -394,7 +394,18 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "pdf_job_execution_result_id")
     private Long pdfJobExecutionResultId;
 
-    public BillingRun getNextBillingRun() {
+    /**
+     * i18n Description
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;
+	
+	@Type(type = "numeric_boolean")
+    @Column(name = "is_quarantine")
+    private Boolean isQuarantine;
+	
+	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
 
@@ -928,4 +939,20 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setPdfJobExecutionResultId(Long pdfJobExecutionResultId) {
         this.pdfJobExecutionResultId = pdfJobExecutionResultId;
     }
+
+	public Map<String, String> getDescriptionI18n() {
+		return descriptionI18n;
+	}
+
+	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+		this.descriptionI18n = descriptionI18n;
+	}
+
+	public Boolean getIsQuarantine() {
+		return isQuarantine;
+	}
+
+	public void setIsQuarantine(Boolean isQuarantine) {
+		this.isQuarantine = isQuarantine;
+	}
 }

@@ -17,6 +17,29 @@
  */
 package org.meveo.commons.utils;
 
+import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -25,17 +48,6 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
 
 /**
  * Query builder class for building JPA queries.
@@ -1028,7 +1040,14 @@ public class QueryBuilder {
         return this;
     }
 
+    /**
+     * Value is in field's list value. Applies to string, date and number type fields.
+     * 
+     * @param fieldName Field name
+     * @param value Value to compare to
+     */
     public void addListFilters(String fieldName, Object value){
+
         String paramName = convertFieldToParam(fieldName);
         fieldName = createExplicitInnerJoins(fieldName);
         addSqlCriterion(":" + paramName + " in elements(" + fieldName + ")", paramName, value);
@@ -1082,7 +1101,7 @@ public class QueryBuilder {
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
-            addSql("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (" + value + ")");
+            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
 
         } else if (value instanceof Collection) {
 
@@ -1516,6 +1535,21 @@ public class QueryBuilder {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
         return result;
+    }
+
+    /**
+     * Add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
+     * 
+     * @param fieldName Fieldname
+     * @param value A list of values to compare against
+     */
+    public void addListInList(String fieldName, Object value) {
+
+        String paramName = convertFieldToParam(fieldName);
+        if (value.getClass().isArray()) {
+            Object[] values = (Object[]) value;
+            IntStream.range(0, values.length).forEach(idx -> addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
+        }
     }
 
     // Was causing issues with distinct clause. Switched to EXISTS clause instead when using inList criteria for list type field

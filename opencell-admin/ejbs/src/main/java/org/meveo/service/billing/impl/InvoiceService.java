@@ -104,6 +104,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.ActionForbiddenException;
@@ -1525,7 +1526,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
                     VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice");
+                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
                     log.info("default jaspers path : {}", vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
@@ -1544,7 +1545,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
                     VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
+                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
@@ -2148,8 +2149,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public boolean isInvoiceXmlExist(Invoice invoice) {
 
         String xmlFileName = getFullXmlFilePath(invoice, false);
-        File xmlFile = new File(xmlFileName);
-        return xmlFile.exists();
+        return StorageFactory.exists(xmlFileName);
     }
 
     /**
@@ -2188,8 +2188,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public boolean isInvoicePdfExist(Invoice invoice) {
 
         String pdfFileName = getFullPdfFilePath(invoice, false);
-        File pdfFile = new File(pdfFileName);
-        return pdfFile.exists();
+        return StorageFactory.exists(pdfFileName);
     }
 
     /**
@@ -6204,7 +6203,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLineSource);
             var duplicateInvoiceLine = new InvoiceLine(invoiceLineSource, invoice);
             duplicateInvoiceLine.setStatus(InvoiceLineStatusEnum.BILLED);
-            duplicateInvoiceLine.setTargetTax(invoiceLineSource.getTax());
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoiceSource);
             invoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
@@ -6222,4 +6220,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+
+    /**
+     * @param billingRunId
+     * @param invoiceIds
+     * @return billingRunId the id of the new billing run.
+     */
+    public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
+        List<Long> invoiceIds = new ArrayList<Long>();
+        invoiceIds.add(invoice.getId());
+        BillingRun billingRun = invoice.getBillingRun() ;
+       
+        if (billingRun != null) {
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId());
+            getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            return nextBR.getId();
+        }else {
+            throw new BusinessException("Invoice with invoice id " + invoice.getId() + " doesn't have a billing run.");
+        }
+
+    }
+
 }

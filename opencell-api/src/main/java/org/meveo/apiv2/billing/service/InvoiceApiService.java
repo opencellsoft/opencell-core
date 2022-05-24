@@ -22,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
@@ -412,4 +413,11 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	    
 	    return adjInvoice;
 	}
+
+	public Long quarantineInvoice(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {       
+        Long nextBillingRun = invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
+        return nextBillingRun;
+    }
+
+
 }

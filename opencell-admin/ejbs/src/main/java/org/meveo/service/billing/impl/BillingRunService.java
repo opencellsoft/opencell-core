@@ -1352,6 +1352,57 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
+     * Search if a next quarantine BR exist for the given BR quarantineBRId. if is not found, a new one is created and associated to the BR
+     * @param billingRun
+     * @param quarantineBRId
+     * @return
+     */
+    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId) {
+       BillingRun billingRun = findById(billingRunId);
+       if (billingRun != null) {
+    	   if(quarantineBRId != null) {
+	            BillingRun quarantineBillingRun = findById(quarantineBRId);
+	            if (quarantineBillingRun != null) {
+	            	if(quarantineBillingRun.getIsQuarantine()) {
+	            		return quarantineBillingRun;
+	            	}else {
+	                    throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not a quarantine billing run");
+	            	}
+	            	
+	            }else {
+	                throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not found");
+	            }
+	       }else {
+	    	   BillingRun nextQuantineBillingRun = new BillingRun();
+	           try {
+	               BeanUtils.copyProperties(nextQuantineBillingRun, billingRun);
+	               final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
+	               selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
+	               Set<BillingRunList> billingRunLists = new HashSet<>();
+	               billingRunLists.addAll(billingRun.getBillingRunLists());
+	               List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
+	               rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
+	               nextQuantineBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
+	               nextQuantineBillingRun.setBillingRunLists(billingRunLists );
+	               nextQuantineBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
+	               nextQuantineBillingRun.setInvoices(new ArrayList<>());
+	               nextQuantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
+	               nextQuantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               nextQuantineBillingRun.setId(null);
+	               create(nextQuantineBillingRun);
+	               billingRun.setNextBillingRun(nextQuantineBillingRun);
+	               update(billingRun);
+	               return nextQuantineBillingRun;
+	           } catch (Exception e) {
+	               log.error(e.getMessage());
+	               throw new BusinessException(e);
+	           }
+	       }
+       }
+       return null;
+    }
+    
+    /**
      * Creates the aggregates and invoice with invoiceLines.
      * @param billingRun the billing run
      * @param nbRuns the nb runs

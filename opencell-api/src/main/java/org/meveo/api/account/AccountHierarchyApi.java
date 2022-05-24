@@ -1291,6 +1291,7 @@ public class AccountHierarchyApi extends BaseApi {
                 }
             }
         }
+        billingAccountDto.setTradingCurrency(postData.getCurrency());
 
         return billingAccountDto;
     }

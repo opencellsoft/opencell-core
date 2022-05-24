@@ -287,12 +287,10 @@ public class InvoiceLine extends AuditableEntity {
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
 	
-	@ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "target_tax_id")
-    private Tax targetTax;
-    
-    @Column(name = "target_tax_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal targetTaxRate;
+	@Enumerated(EnumType.STRING)
+    @Column(name = "tax_mode", nullable = false)
+    @NotNull
+    private InvoiceLineTaxModeEnum taxMode = InvoiceLineTaxModeEnum.ARTICLE;
     
 	public InvoiceLine() {
 	}
@@ -346,8 +344,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.productVersion = copy.productVersion;
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
-		this.targetTax = copy.targetTax;
-        this.targetTaxRate = copy.targetTaxRate;
+		this.taxMode = copy.taxMode;
 		this.status = InvoiceLineStatusEnum.OPEN;
 	}
 
@@ -706,20 +703,12 @@ public class InvoiceLine extends AuditableEntity {
 		this.discountPlanItem = discountPlanItem;
 	}
 	
-	public Tax getTargetTax() {
-        return targetTax;
+	public InvoiceLineTaxModeEnum getTaxMode() {
+        return taxMode;
     }
 
-    public void setTargetTax(Tax targetTax) {
-        this.targetTax = targetTax;
-    }
-
-    public BigDecimal getTargetTaxRate() {
-        return targetTaxRate;
-    }
-
-    public void setTargetTaxRate(BigDecimal targetTaxRate) {
-        this.targetTaxRate = targetTaxRate;
+    public void setTaxMode(InvoiceLineTaxModeEnum taxMode) {
+        this.taxMode = taxMode;
     }
 	
 }
