@@ -632,6 +632,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "is_reminder_level_triggered")
     private boolean isReminderLevelTriggered;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "dunning_collection_plan_triggered")
+    private boolean dunningCollectionPlanTriggered;
+
     public Invoice() {
 	}
 
@@ -1629,5 +1633,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setReminderLevelTriggered(boolean reminderLevelTriggered) {
         isReminderLevelTriggered = reminderLevelTriggered;
+    }
+
+    public boolean isDunningCollectionPlanTriggered() {
+        return dunningCollectionPlanTriggered;
+    }
+
+    public void setDunningCollectionPlanTriggered(boolean dunningCollectionPlanTriggered) {
+        this.dunningCollectionPlanTriggered = dunningCollectionPlanTriggered;
     }
 }
