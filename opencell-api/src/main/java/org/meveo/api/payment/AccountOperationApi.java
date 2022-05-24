@@ -31,6 +31,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -453,15 +454,20 @@ public class AccountOperationApi extends BaseApi {
         if (!customerAccount.getAccountOperations().contains(accountOperation)) {
             throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
         }
-        List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
-        Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
-        while (iterator.hasNext()) {
-            MatchingAmount matchingAmount = iterator.next();
-            MatchingCode matchingCode = matchingAmount.getMatchingCode();
-            if (matchingCode != null) {
-                matchingCodesToUnmatch.add(matchingCode.getId());
+
+        List<Long> matchingCodesToUnmatch = new ArrayList<>();
+
+        for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
+            if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && !postData.getMatchingAmountIds().contains(matchingAmount.getId())) {
+                continue;
+            } else {
+                MatchingCode matchingCode = matchingAmount.getMatchingCode();
+                if (matchingCode != null) {
+                    matchingCodesToUnmatch.add(matchingCode.getId());
+                }
             }
         }
+
         for (Long matchingCodeId : matchingCodesToUnmatch) {
             matchingCodeService.unmatching(matchingCodeId);
         }
