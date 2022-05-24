@@ -2535,6 +2535,8 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="auxiliary_account_code" type="varchar(255)" />
+            <column name="auxiliary_account_label" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -10321,7 +10323,7 @@
             <!-- Auditable End -->
 
             <column name="order_article_line_id" type="bigint" >
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="order_id" type="bigint" >
                 <constraints nullable="false"/>
@@ -17745,6 +17747,7 @@
 	<changeSet id="INTRD-7039_23052022" author="TarikRabeh" />
 	<changeSet id="#INTRD-7179_20220524" author="HichamHANINE" />
     <changeSet id="#INTRD-7157_20220523" author="ZBariki" />
+    <changeSet id="#INTRD-7428_20220524" author="ZBariki" />
     <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
