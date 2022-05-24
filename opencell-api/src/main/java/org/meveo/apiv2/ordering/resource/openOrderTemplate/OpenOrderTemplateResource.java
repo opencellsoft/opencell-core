@@ -49,7 +49,7 @@ public interface OpenOrderTemplateResource {
     Response createOpenOrderTemplate(@Parameter(description = "open order template object to be created", required = true) OpenOrderTemplateInput openOrderTemplateInput);
 
 
-    @POST
+    @PUT
     @Path("/{code}")
     @Operation(summary = "update  open order template",
             tags = { "Open Orders Templates" },
