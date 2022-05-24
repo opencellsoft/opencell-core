@@ -68,6 +68,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.deliveryDate = copy.deliveryDate;
 		this.userAccount = copy.userAccount;
 		this.quoteLineType = copy.quoteLineType;
+		this.subscription = copy.subscription;
 	}
 
 
