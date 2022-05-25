@@ -269,6 +269,15 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		aos.forEach(ao -> {
 			UnMatchingOperationRequestDto unM = new UnMatchingOperationRequestDto();
 			unM.setAccountOperationId(ao.getId());
+
+			UnMatchingAccountOperationDetail unMatchingAccountOperationDetail = accountOperations.stream()
+					.filter(aoRequest -> ao.getId().equals(aoRequest.getId()))
+					.findAny()
+					.orElse(null);
+
+			if (unMatchingAccountOperationDetail != null) {
+				unM.setMatchingAmountIds(unMatchingAccountOperationDetail.getMatchingAmountIds());
+			}
 			unM.setCustomerAccountCode(customerAccountService.findById(ao.getCustomerAccount().getId()).getCode());
 
 			toUnmatch.add(unM);
