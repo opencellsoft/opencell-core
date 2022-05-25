@@ -13125,4 +13125,13 @@ order by date_trunc('month', i.invoice_date) DESC
 
     </changeSet>
 
+    <changeSet id="#INTRD-7422_20220525" author="ZBariki">
+        <addColumn tableName="ar_customer_account">
+            <column name="general_client_account_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="general_client_account_id" baseTableName="ar_customer_account"
+                                 constraintName="fk_general_client_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
 </databaseChangeLog>
