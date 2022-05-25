@@ -42,7 +42,7 @@ public interface OpenOrderTemplateInput extends Resource {
     String getDescription();
 
     @Nullable
-    List<Resource> getTags();
+    List<String> getTags();
 
     @Nullable
     List<ThresholdInput> getThresholds();
