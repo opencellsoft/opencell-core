@@ -168,30 +168,18 @@ public class InvoicingApi extends BaseApi {
 
     public long updateBillingRun(CreateBillingRunDto dto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
-        String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
-        boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-
         BillingRun billingRun = billingRunService.findById(dto.getId());
         if(billingRun == null) {
             throw new BadRequestException("Billing run Entity with id "+dto.getId()+" not found");
         }
-        
-        if (billingRunService.isActiveBillingRunsExist() && !isAllowed) {
-            throw new BusinessApiException("error.invoicing.alreadyLunched");
-        }
 
-        if (StringUtils.isBlank(dto.getBillingCycleCode())) {
-            missingParameters.add("billingCycleCode");
-        }
-        if (dto.getBillingRunTypeEnum() == null) {
-            missingParameters.add("billingRunType");
-        }
-
-        handleMissingParameters();
-
-        BillingCycle billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
-        if (billingCycle == null) {
-            throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        if(dto.getBillingCycleCode() != null) {
+            billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
+            }
+            billingRun.setBillingCycle(billingCycle);
         }
 
         billingRun.setBillingCycle(billingCycle);
@@ -223,49 +211,38 @@ public class InvoicingApi extends BaseApi {
             billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
         }
 
-        if (dto.getInvoiceDate() == null) {
-            if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
-                billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
-            } else {
-                billingRun.setInvoiceDate(billingRun.getProcessDate());
-            }
+        if(dto.getCollectionDate() != null) {
+            billingRun.setCollectionDate(dto.getCollectionDate());
         }
-        if (dto.getLastTransactionDate() == null) {
-            if (billingCycle.getLastTransactionDateEL() != null) {
-                billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
-            } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
-                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
-            } else {
-                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
-            }
-        }
-        billingRun.setCollectionDate(dto.getCollectionDate());
+        
         if (dto.isComputeDatesAtValidation() != null) {
             billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
 
         // populate customFields
-        try {
-            populateCustomFields(dto.getCustomFields(), billingRun, true);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
+        if(dto.getCustomFields() != null) {
+            try {
+                populateCustomFields(dto.getCustomFields(), billingRun, true);
+            } catch (MissingParameterException | InvalidParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
+            }
         }
 
         if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
-        }else {
-        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
-        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        }else if (billingRun.getDescriptionI18n() == null){
+        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+(billingCycle != null ? billingCycle.getDescription() : " ")+"; invoice date="+billingRun.getInvoiceDate()+")"); 
+        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+(billingCycle != null ? billingCycle.getDescription() : " ")+"; invoice date="+billingRun.getInvoiceDate()+")"); 
         	
         	List<LanguageDescriptionDto> descriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
         	descriptionsTranslated.add(languageDescriptionEn);
         	descriptionsTranslated.add(languageDescriptionFr);
 
-        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
         }
 
         billingRunService.update(billingRun);
