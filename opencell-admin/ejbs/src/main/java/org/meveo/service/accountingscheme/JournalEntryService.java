@@ -331,10 +331,13 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
                 AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
-
-                if (revenuACC == null) {
-                    throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
-                            REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                
+                if (revenuACC == null &&  occT != null) {
+                    revenuACC = occT.getContraAccountingCode();
+                    if (revenuACC == null) {
+                        throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                                REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                    }
                 }
 
                 String groupKey = revenuACC.getCode() +
