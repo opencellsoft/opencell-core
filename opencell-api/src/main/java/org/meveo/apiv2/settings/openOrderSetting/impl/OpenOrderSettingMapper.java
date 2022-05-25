@@ -7,9 +7,10 @@ import org.meveo.model.settings.OpenOrderSetting;
 
 public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput, OpenOrderSetting> {
 
-    @Override protected OpenOrderSettingInput toResource(OpenOrderSetting entity) {
+    @Override public OpenOrderSettingInput toResource(OpenOrderSetting entity) {
         return ImmutableOpenOrderSettingInput.builder()
                 .id(entity.getId())
+                .code(entity.getCode())
                 .useOpenOrders(entity.getUseOpenOrders())
                 .applyMaximumValidity(entity.getApplyMaximumValidity())
                 .applyMaximumValidityValue(entity.getApplyMaximumValidityValue())
@@ -20,12 +21,14 @@ public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput
                 .build();
     }
 
-    @Override protected OpenOrderSetting toEntity(OpenOrderSettingInput resource) {
+    @Override public OpenOrderSetting toEntity(OpenOrderSettingInput resource) {
         return toEntity(new OpenOrderSetting(), resource);
     }
 
-     protected OpenOrderSetting toEntity(OpenOrderSetting entity, OpenOrderSettingInput resource) {
-         entity.setUseOpenOrders(resource.getUseOpenOrders());
+     public OpenOrderSetting toEntity(OpenOrderSetting entity, OpenOrderSettingInput resource) {
+        entity.setId(resource.getId());
+        entity.setCode(resource.getCode());
+        entity.setUseOpenOrders(resource.getUseOpenOrders());
          entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
          entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
          entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
