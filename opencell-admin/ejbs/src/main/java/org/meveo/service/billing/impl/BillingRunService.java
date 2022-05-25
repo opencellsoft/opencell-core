@@ -1376,8 +1376,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	    	            }else {
 	    	            	BillingCycle billingCycle = billingRun.getBillingCycle();
 	    	            	
-	    	            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ billingCycle != null ? billingCycle.getDescription() : "" +"; invoice date="+billingRun.getInvoiceDate()+")");  
-	    	            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ billingCycle != null ? billingCycle.getDescription() : "" +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
 	    	            	
 	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
@@ -1417,8 +1417,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		            }else {
 		            	BillingCycle billingCycle = billingRun.getBillingCycle();
 		            	
-		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ billingCycle != null ? billingCycle.getDescription() : "" +"; invoice date="+billingRun.getInvoiceDate()+")");  
-		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ billingCycle != null ? billingCycle.getDescription() : "" +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
 		            	
 		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 		            	newDescriptionsTranslated.add(languageDescriptionEn);
@@ -1427,6 +1427,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		            }
    	            
 	               create(quarantineBillingRun);
+	               commit();
 	               billingRun.setNextBillingRun(quarantineBillingRun);
 	               update(billingRun);
 	               return quarantineBillingRun;
