@@ -1363,6 +1363,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param quarantineBRId
      * @return
      */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId, List<LanguageDescriptionDto> descriptionsTranslated) {
        BillingRun billingRun = findById(billingRunId);
        if (billingRun != null) {
@@ -1427,7 +1429,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		            }
    	            
 	               create(quarantineBillingRun);
-	               commit();
 	               billingRun.setNextBillingRun(quarantineBillingRun);
 	               update(billingRun);
 	               return quarantineBillingRun;
