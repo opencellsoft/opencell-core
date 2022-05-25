@@ -25,8 +25,8 @@ import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -456,6 +456,21 @@ public class AccountOperationApi extends BaseApi {
         }
 
         List<Long> matchingCodesToUnmatch = new ArrayList<>();
+
+        // Check if the postData.getMatchingAmountIds() value are contained in accountOperation.getMatchingAmounts()
+        // That should avoid pass invalid of incorrect id, and after unmatch all related matchingAmout for the AO
+        if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && CollectionUtils.isNotEmpty(accountOperation.getMatchingAmounts())) {
+            List<Long> requestMathchingAmountIds = new ArrayList<>(postData.getMatchingAmountIds());
+            List<Long> aoMatchingAmountIds = accountOperation.getMatchingAmounts().stream()
+                    .map(MatchingAmount::getId)
+                    .collect(Collectors.toList());
+
+            requestMathchingAmountIds.removeAll(aoMatchingAmountIds);
+
+            if (CollectionUtils.isNotEmpty(requestMathchingAmountIds)) {
+                throw new BusinessException("Those matchingAmoutIds " + requestMathchingAmountIds + " are not present for AO passed to unmatch=" + accountOperation.getId());
+            }
+        }
 
         for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
             if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && !postData.getMatchingAmountIds().contains(matchingAmount.getId())) {
