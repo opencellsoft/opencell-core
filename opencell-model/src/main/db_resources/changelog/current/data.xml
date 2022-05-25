@@ -10207,4 +10207,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-7360_20220525" author="hichamhanine">
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]>
+			</column>
+			<where>code='Dual entry scheme'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
