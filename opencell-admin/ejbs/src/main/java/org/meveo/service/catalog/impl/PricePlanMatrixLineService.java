@@ -249,24 +249,24 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
     
     public void updatePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-        ppmVersion.getLines().clear();
-        Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
+        
+        Set<PricePlanMatrixLine> lines = new HashSet<>();
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
             pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
-            pricePlanMatrixLine.setPriceEL(pricePlanMatrixLineDto.getPriceEL());
-            pricePlanMatrixLine.getPricePlanMatrixValues().clear();
             pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             create(pricePlanMatrixLine);
+            
             Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
             pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
             pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
             lines.add(pricePlanMatrixLine);
         }
-        ppmVersion.getLines().addAll(lines);
+
+        ppmVersion.setLines(lines);
     }
 
     public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
