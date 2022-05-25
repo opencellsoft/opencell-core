@@ -103,6 +103,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			articleMappingLineUpdated.getAttributesMapping().addAll(attributesMapping);
 		}
 		articleMappingLineUpdated.setMappingKeyEL(articleMappingLine.getMappingKeyEL());
+		articleMappingLineUpdated.setDescription(articleMappingLine.getDescription());
 		update(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}

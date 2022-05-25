@@ -38,22 +38,26 @@ public interface ArticleMappingLine extends Resource {
     Resource getCharge();
 
     @Nullable
-	@Schema(description = "first parameter of artcile mapping line")
+	@Schema(description = "first parameter of article mapping line")
     String getParameter1();
 
     @Nullable
-	@Schema(description = "second parameter of artcile mapping line")
+	@Schema(description = "second parameter of article mapping line")
     String getParameter2();
 
     @Nullable
-	@Schema(description = "third parameter of artcile mapping line")
+	@Schema(description = "third parameter of article mapping line")
     String getParameter3();
 
     @Nullable
-	@Schema(description = "mapping expression language of artcile mapping line")
+	@Schema(description = "mapping expression language of article mapping line")
     String getMappingKeyEL();
 
     @Nullable
 	@Schema(description = "list of attribute mapping")
     List<org.meveo.apiv2.article.AttributeMapping> getAttributesMapping();
+
+    @Schema(description = "article mapping line description")
+    @Nullable
+    String getDescription();
 }
