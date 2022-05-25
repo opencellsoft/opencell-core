@@ -11,6 +11,7 @@ import java.util.Date;
 @JsonDeserialize(as = ImmutableInvoiceMatchedOperation.class)
 public interface InvoiceMatchedOperation {
     Long getPaymentId();
+    Long getMatchingAmountId();
     String getPaymentCode();
     String getPaymentDescription();
     String getMatchingType();

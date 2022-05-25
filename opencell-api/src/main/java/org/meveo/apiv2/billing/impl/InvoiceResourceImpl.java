@@ -179,7 +179,8 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		MatchingCode matchingCode = matchingAmountPrimary.getMatchingCode();
 		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
 		return builder
-				.paymentId(matchingAmountPrimary.getId())
+				.paymentId(accountOperation.getId())
+				.matchingAmountId(matchingAmountPrimary.getId())
 				.paymentCode(accountOperation.getCode())
 				.paymentDescription(accountOperation.getDescription())
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
