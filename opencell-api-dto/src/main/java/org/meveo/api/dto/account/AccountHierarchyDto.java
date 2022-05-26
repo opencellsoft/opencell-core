@@ -296,6 +296,10 @@ public class AccountHierarchyDto implements Serializable {
     @XmlElement
     private Boolean customerThresholdPerEntity;
 
+    /** General client account code **/
+    @Schema(description = "General client account code")
+    private String generalClientAccountCode;
+
     public Boolean isCustomerThresholdPerEntity() {
 		return customerThresholdPerEntity;
 	}
@@ -1124,5 +1128,13 @@ public class AccountHierarchyDto implements Serializable {
      */
     public void setTaxCategoryCode(String taxCategoryCode) {
         this.taxCategoryCode = taxCategoryCode;
+    }
+
+    public String getGeneralClientAccountCode() {
+        return generalClientAccountCode;
+    }
+
+    public void setGeneralClientAccountCode(String generalClientAccountCode) {
+        this.generalClientAccountCode = generalClientAccountCode;
     }
 }
