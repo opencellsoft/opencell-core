@@ -20,9 +20,8 @@ import org.meveo.apiv2.catalog.ImportPricePlanVersionsItem;
 import org.meveo.apiv2.catalog.PricePlanMLinesDTO;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
@@ -41,8 +40,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
+    private ParamBeanFactory paramBeanFactory;
 
     @Override
     public List<PricePlanMatrix> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -97,16 +95,20 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
             throw new MissingParameterException("fileToImport");
         }
 
-        unzipFile(importPricePlanVersionsDto.getFileToImport());
+
+        String importRootDir = paramBeanFactory.getDefaultChrootDir() + File.separator + "/imports/priceplan_versions";
+        String importTempDir = importRootDir + File.separator + "temp" + System.currentTimeMillis();
+        File zipFile = new File(importRootDir + File.separator + importPricePlanVersionsDto.getFileToImport());
+        unzipFile(importTempDir, zipFile);
 
         List<ImportResultDto> resultDtos = new ArrayList<>();
-
         for (ImportPricePlanVersionsItem importItem : importPricePlanVersionsDto.getPricePlanVersions()) {
-            resultDtos.add(pricePlanMatrixVersionService.importPricePlanVersion(importItem));
+            resultDtos.add(pricePlanMatrixVersionService.importPricePlanVersion(importTempDir, importItem));
         }
 
         try {
-            FileUtils.deleteDirectory(new File(pricePlanMatrixVersionService.getImportTempDir()));
+            FileUtils.deleteDirectory(new File(importTempDir));
+            zipFile.delete();
         } catch (IOException e) {
             log.warn(e.getMessage());
         }
@@ -114,18 +116,17 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         return resultDtos;
     }
 
-    private void unzipFile(String fileToImport) {
-        File file = new File(pricePlanMatrixVersionService.getImportRootDir() + File.separator + fileToImport);
-        if (!file.exists()) {
+    private void unzipFile(String importTempDir, File zipFile) {
+        if (!zipFile.exists()) {
             throw new BusinessApiException("The zipped file does not exist");
         }
-        if (!FileUtils.isValidZip(file)) {
+        if (!FileUtils.isValidZip(zipFile)) {
             throw new BusinessApiException("The zipped file is invalid!");
         }
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            FileUtils.unzipFile(pricePlanMatrixVersionService.getImportTempDir(), fileInputStream);
+        try (FileInputStream fileInputStream = new FileInputStream(zipFile)) {
+            FileUtils.unzipFile(importTempDir, fileInputStream);
         } catch (Exception e) {
-            throw new BusinessApiException("Error unziping file: " + fileToImport);
+            throw new BusinessApiException("Error when unziping file");
         }
     }
 }
