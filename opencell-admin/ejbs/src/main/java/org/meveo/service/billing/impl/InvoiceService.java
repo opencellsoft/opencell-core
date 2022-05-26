@@ -2548,7 +2548,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoice.getBillingRun() == null) {
             throw new BusinessException("Invoice not related to a billing run");
         }
-        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        if(InvoiceStatusEnum.DRAFT.equals(status)) {
+            invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
+        }else {
+            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        }
     }
 
     /**
