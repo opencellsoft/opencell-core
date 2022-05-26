@@ -262,7 +262,7 @@ public class JobApi extends BaseApi {
             	}
         	}else if("PDF_Job".equals(jobExecutionResultDto.getJobInstanceCode())) {
             	if(codeLanguage.equals("FRA")) {
-                	jobExecutionResultDto.setReport("Une erreur s’est produite, veuillez vérifier l’exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job XML [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
+                	jobExecutionResultDto.setReport("Une erreur s’est produite, veuillez vérifier l’exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job PDF [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
             	}else {
             		jobExecutionResultDto.setReport("An error has occurred, please check PDF job instance [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"] execution [id="+jobExecutionResultDto.getId()+"]");
             	}
