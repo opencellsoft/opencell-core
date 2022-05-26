@@ -1005,7 +1005,7 @@ public class EntityExportImportService implements Serializable {
         };
 
         xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
-        xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "id");
+        xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
         IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId, currentUser);
