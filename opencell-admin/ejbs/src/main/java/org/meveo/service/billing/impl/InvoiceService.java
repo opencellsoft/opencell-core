@@ -2542,8 +2542,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void rejectInvoice(Invoice invoice) {
         InvoiceStatusEnum status = invoice.getStatus();
-        if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-            throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :" + status.name());
+        if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
+            throw new BusinessException("Can only reject invoices in statuses NEW/DRAFT/SUSPECT. current invoice status is :" + status.name());
+        }
+        if(invoice.getBillingRun() == null) {
+            throw new BusinessException("Invoice not related to a billing run");
         }
         invoice.setStatus(InvoiceStatusEnum.REJECTED);
     }
