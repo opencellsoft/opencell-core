@@ -17,6 +17,8 @@
  */
 package org.meveo.service.accountingscheme;
 
+import static java.util.Optional.ofNullable;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
@@ -27,6 +29,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -71,12 +74,14 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
         // INTRD-4702
         // First JournalEntry
-        JournalEntry firstEntry = buildJournalEntry(ao, occT.getAccountingCode(), occT.getOccCategory(),
+        AccountingCode accountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                .orElse(occT.getAccountingCode());
+        JournalEntry firstEntry = buildJournalEntry(ao, accountingCode, occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
                 null);
 
         // Second JournalEntry
-        JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
+        JournalEntry secondEntry = buildJournalEntry(ao, accountingCode,
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
@@ -94,8 +99,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     public List<JournalEntry> createFromInvoice(RecordedInvoice recordedInvoice, OCCTemplate occT) {
         List<JournalEntry> saved = new ArrayList<>();
 
+        AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
         // 1- produce a Customer account entry line
-        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice,
+        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice, accountingCode != null ? accountingCode :
                 recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() != null ?
                         recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() :
                         occT.getAccountingCode(),
@@ -157,7 +163,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
 
         // 1- produce a first accounting entry
-        JournalEntry firstAccountingEntry = buildJournalEntry(ao, firstAccountingCode, firstCategory,
+        AccountingCode accountingCode = fromCustomerAccount(ao.getCustomerAccount());
+        JournalEntry firstAccountingEntry = buildJournalEntry(ao, accountingCode != null ? accountingCode : firstAccountingCode, firstCategory,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(firstAccountingEntry);
@@ -166,7 +173,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 ao.getId(), firstCategory, firstAccountingCode);
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
-        JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
+        JournalEntry secondAccountingEntry = buildJournalEntry(ao, accountingCode != null ? accountingCode : secondAccountingCode, secondCategory,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(secondAccountingEntry);
@@ -180,6 +187,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         log.info("{} Payments JournalEntries created for AO={}", saved.size(), ao.getId());
 
         return saved;
+    }
+
+    private AccountingCode fromCustomerAccount(CustomerAccount customerAccount) {
+        return ofNullable(customerAccount)
+                .map(CustomerAccount::getGeneralClientAccount)
+                .orElse(null);
     }
 
     public void validateAOForInvoiceScheme(AccountOperation ao) {
@@ -283,7 +296,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             // otherwise the default accounting code should be assigned before grouping
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             taxResult.forEach(taxAgr -> {
-                AccountingCode taxACC = taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
+                AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
+                AccountingCode taxACC = accountingCode != null ? accountingCode :
+                        taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
                 if (taxACC == null) {
                     throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
                             TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
@@ -330,7 +345,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
-                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
+                AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
+                AccountingCode revenuACC = accountingCode != null
+                        ? accountingCode : accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
 
                 if (revenuACC == null &&  occT != null) {
                     revenuACC = occT.getContraAccountingCode();
