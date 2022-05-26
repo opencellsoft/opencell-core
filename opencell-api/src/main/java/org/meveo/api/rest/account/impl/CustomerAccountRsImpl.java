@@ -24,6 +24,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
@@ -65,8 +66,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
             CustomerAccount customerAccount = customerAccountApi.create(postData);
             result.setEntityCode(customerAccount.getCode());
             result.setEntityId(customerAccount.getId());
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(result, exception);
         }
 
         return result;
@@ -80,11 +81,18 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
             CustomerAccount customerAccount = customerAccountApi.update(postData);
             result.setEntityCode(customerAccount.getCode());
             result.setEntityId(customerAccount.getId());
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(result, exception);
         }
 
         return result;
+    }
+
+    private void processException(ActionStatus result, Exception exception) {
+        if (exception.getCause() instanceof NotFoundException) {
+            throw new NotFoundException(exception.getMessage());
+        }
+        processException(exception, result);
     }
 
     @Override
