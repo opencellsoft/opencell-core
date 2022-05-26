@@ -10215,4 +10215,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='Dual entry scheme'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#7477_260522" author="HatimOUDAD">
+		<update tableName="global_settings">
+			<column name="quote_default_validity_delay" value="30" />
+			<where>quote_default_validity_delay is null</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
