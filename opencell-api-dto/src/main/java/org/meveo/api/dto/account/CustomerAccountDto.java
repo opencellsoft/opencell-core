@@ -161,6 +161,9 @@ public class CustomerAccountDto extends AccountDto {
     /** information GDPR **/
     private List<GDPRInfoDto> infoGdpr;
 
+    /** General client account code **/
+    private String generalClientAccountCode;
+
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
@@ -682,4 +685,12 @@ public class CustomerAccountDto extends AccountDto {
 	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
 		this.infoGdpr = infoGdpr;
 	}
+
+    public String getGeneralClientAccountCode() {
+        return generalClientAccountCode;
+    }
+
+    public void setGeneralClientAccountCode(String generalClientAccountCode) {
+        this.generalClientAccountCode = generalClientAccountCode;
+    }
 }
