@@ -46,9 +46,12 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -75,6 +78,8 @@ public class JobApi extends BaseApi {
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    @Inject
+    private ProviderService providerService;
     /**
      * Execute job.
      * 
@@ -224,6 +229,44 @@ public class JobApi extends BaseApi {
             if (jobExecutionStatus != null && !jobExecutionStatus.getNodes().isEmpty()) {
                 jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", jobExecutionStatus.getNodes()));
             }
+        }
+        
+
+        Provider provider = providerService.getProvider();
+        String codeLanguage = "ENG";
+        if(provider.getLanguage() != null) {
+        	codeLanguage = provider.getLanguage().getLanguageCode();
+        }
+
+        if(jobExecutionResultDto.getStatus() != null && JobExecutionResultStatusEnum.COMPLETED.equals(jobExecutionResultDto.getStatus()) && jobExecutionResultDto.getNbItemsProcessedWithError() > 0){
+        	if("XMLInvoiceGenerationJobV2".equals(jobExecutionResultDto.getJobInstanceCode())){
+            	if(codeLanguage.equals("FRA")) {
+                	jobExecutionResultDto.setReport("La génération d'XML a rapporté " + jobExecutionResultDto.getNbItemsProcessedWithError() + " erreurs. Pour plus de details, veuillez vérifier l'exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job XML [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
+            	}else {
+            		jobExecutionResultDto.setReport("XML generation reported " + jobExecutionResultDto.getNbItemsProcessedWithError() + " errors. For details, please check XML job instance [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"] execution [id="+jobExecutionResultDto.getId()+"]");
+            	}
+        	}else if("PDF_Job".equals(jobExecutionResultDto.getJobInstanceCode())) {
+            	if(codeLanguage.equals("FRA")) {
+                	jobExecutionResultDto.setReport("La génération du PDF a rapporté " + jobExecutionResultDto.getNbItemsProcessedWithError() + " erreurs. Pour plus de details, veuillez vérifier l'exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job PDF [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
+            	}else {
+            		jobExecutionResultDto.setReport("PDF generation reported " + jobExecutionResultDto.getNbItemsProcessedWithError() + " errors. For details, please check PDF job instance [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"] execution [id="+jobExecutionResultDto.getId()+"]");
+            	}
+        	}
+
+        } else if(jobExecutionResultDto.getStatus() != null && JobExecutionResultStatusEnum.FAILED.equals(jobExecutionResultDto.getStatus())){
+        	if("XMLInvoiceGenerationJobV2".equals(jobExecutionResultDto.getJobInstanceCode())){
+            	if(codeLanguage.equals("FRA")) {
+                	jobExecutionResultDto.setReport("Une erreur s’est produite, veuillez vérifier l’exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job XML [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
+            	}else {
+            		jobExecutionResultDto.setReport("An error has occurred, please check XML job instance [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"] execution [id="+jobExecutionResultDto.getId()+"]");
+            	}
+        	}else if("PDF_Job".equals(jobExecutionResultDto.getJobInstanceCode())) {
+            	if(codeLanguage.equals("FRA")) {
+                	jobExecutionResultDto.setReport("Une erreur s’est produite, veuillez vérifier l’exécution [id="+jobExecutionResultDto.getId()+"] de l’instance du job XML [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"]");
+            	}else {
+            		jobExecutionResultDto.setReport("An error has occurred, please check PDF job instance [id="+jobExecutionResultDto.getJobInstanceId()+", code="+jobExecutionResultDto.getJobInstanceCode()+"] execution [id="+jobExecutionResultDto.getId()+"]");
+            	}
+        	}
         }
 
         return jobExecutionResultDto;
