@@ -53,13 +53,13 @@ public class CommercialRulesContainerProvider implements Serializable {
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-rule-offer-product")
     private Cache<CacheKeyStr, List<CommercialRuleHeader>> offerAndProduct;
 
-    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-line-product-attribute")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-rule-product-attribute")
     private Cache<CacheKeyStr, List<CommercialRuleHeader>> productAndAtttribute;
 
-    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-header-product-grpattr")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-rule-product-grpattr")
     private Cache<CacheKeyStr, List<CommercialRuleHeader>> productAndGrpAttribute;
 
-    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-header-offer-attribute")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-commercial-rule-offer-attribute")
     private Cache<CacheKeyStr, List<CommercialRuleHeader>> offerAndAttribute;
 
     @Inject
