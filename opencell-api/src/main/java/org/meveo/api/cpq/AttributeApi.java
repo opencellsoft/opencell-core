@@ -209,33 +209,35 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
-		return populateAttributToDto(attribute);
+		return populateAttributToDto(attribute, false);
 	}
 
-	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute) throws MeveoApiException {
+	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute, boolean isLoadAllAttributeDetails) throws MeveoApiException {
 		if (attribute == null) {
 			missingParameters.add("attribute");
 			handleMissingParameters();
 		}
 
-		ChargeTemplateDto chargeTemplateDto = null;
-		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<ChargeTemplateDto>();
-		for (ChargeTemplate charge : attribute.getChargeTemplates()) {
-			chargeTemplateDto = new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge));
-			chargeTemplateDtos.add(chargeTemplateDto);
-		}
-		TagDto tagDto = null;
-		List<TagDto> tagDtos = new ArrayList<TagDto>();
-		for (Tag tag : attribute.getTags()) {
-			tagDto = new TagDto(tag);
-			tagDtos.add(tagDto);
+		if (!isLoadAllAttributeDetails) {
+			// Skip all load lazies collections and objects
+			GetAttributeDtoResponse result = new GetAttributeDtoResponse();
+			result.initLight(attribute);
+			result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
+			return result;
 		}
 
-		AttributeDTO attributeDto = null;
-		List<AttributeDTO> assignedAttributes = new ArrayList<AttributeDTO>();
+		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<>();
+		for (ChargeTemplate charge : attribute.getChargeTemplates()) {
+			chargeTemplateDtos.add(new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge)));
+		}
+		List<TagDto> tagDtos = new ArrayList<>();
+		for (Tag tag : attribute.getTags()) {
+			tagDtos.add(new TagDto(tag));
+		}
+
+		List<AttributeDTO> assignedAttributes = new ArrayList<>();
 		for (Attribute attr : attribute.getAssignedAttributes()) {
-			attributeDto = new AttributeDTO(attr);
-			assignedAttributes.add(attributeDto);
+			assignedAttributes.add(new AttributeDTO(attr));
 		}
 		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos, assignedAttributes, true);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));

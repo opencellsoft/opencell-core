@@ -101,6 +101,10 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 					.collect(Collectors.toList());
 		}
  	}
+
+	public GetAttributeDtoResponse(Attribute attribute) {
+		super(attribute);
+	}
     
 
     /**
