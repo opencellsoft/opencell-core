@@ -94,6 +94,7 @@ public class JobExecutionService extends BaseService {
      * @return Job execution result ID
      * @throws BusinessException Any exception
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher) throws BusinessException {
         return executeJob(jobInstance, params, jobLauncher, true);
     }
@@ -108,6 +109,7 @@ public class JobExecutionService extends BaseService {
      * @return Job execution result ID
      * @throws BusinessException Any exception
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher, boolean triggerExecutionOnOtherNodes) throws BusinessException {
 
         // Preserve runTimeValues field, that gets set when executing from API
@@ -148,10 +150,10 @@ public class JobExecutionService extends BaseService {
         // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only
         if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
                 && (!jobInstance.isLimitToSingleNode() || (jobInstance.isLimitToSingleNode() && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
-            
+
             Map<String, Object> jobParameters = new HashMap<String, Object>();
             jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
-            
+
             clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobParameters);
         }
         return jobExecutionResultId;
@@ -215,7 +217,6 @@ public class JobExecutionService extends BaseService {
      *
      * @param jobInstance Job instance to stop
      */
-    @SuppressWarnings("rawtypes")
     public void stopJobByForce(JobInstance jobInstance) {
         stopJobByForce(jobInstance, true);
     }
@@ -300,9 +301,7 @@ public class JobExecutionService extends BaseService {
      * @param limitToSingleNode true if this job can be run on only one node.
      * @return Previous job execution status - was Job locked or running before and if on this or another node
      */
-    // @Lock(LockType.WRITE)
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
+    private JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
         return jobCacheContainerProvider.lockForRunning(jobInstance, limitToSingleNode);
     }
 

@@ -57,8 +57,6 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-// @Singleton
-// @Lock(LockType.READ)
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -138,7 +136,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstanceId Job instance identifier
      * @return Is Job currently running and if on this or another node
      */
-    // @Lock(LockType.READ)
     public JobRunningStatusEnum isJobRunning(Long jobInstanceId) {
         if (jobInstanceId == null) {
             return JobRunningStatusEnum.NOT_RUNNING;
@@ -199,7 +196,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstanceId Job instance identifier
      * @return Is Job currently running on this cluster node and was not requested to be stopped
      */
-    // @Lock(LockType.READ)
     public boolean isShouldJobContinue(Long jobInstanceId) {
         String currentProvider = currentUser.getProviderCode();
         if (jobInstanceId == null) {
@@ -225,7 +221,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param limitToSingleNode true if this job can be run on only one node.
      * @return Previous job execution status - was Job locked or running before and if on this or another node
      */
-    // @Lock(LockType.WRITE)
     public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -321,7 +316,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param threads Threads/futures that job is running on (optional)
      * @return Previous job execution status - was Job locked or running before and if on this or another node
      */
-    // @Lock(LockType.WRITE)
     @SuppressWarnings("rawtypes")
     @Interceptors(JobExecutionInterceptor.class)
     public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
@@ -424,10 +418,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         try {
 
-            JobExecutionStatus jobExecutionStatusOld = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-            JobExecutionStatus jobExecutionStatusNew = remappingFunction.apply(cacheKey, jobExecutionStatusOld);
-
-            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, jobExecutionStatusNew);
+            JobExecutionStatus jobExecutionStatusNew = runningJobsCache.compute(cacheKey, remappingFunction);
 
             return jobExecutionStatusNew;
 
