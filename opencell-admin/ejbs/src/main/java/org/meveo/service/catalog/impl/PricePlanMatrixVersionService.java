@@ -187,17 +187,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                             && ((pv.getValidity().getTo() != null && pv.getValidity().getTo().compareTo(newTo) <= 0)
                                     || newTo == null)) {
                         remove(pv);
-
                     }
                     else {
                         DatePeriod validity = pv.getValidity();
                         Date oldFrom = validity.getFrom();
                         Date oldTo = validity.getTo();
                         
-                        if (newFrom.compareTo(oldFrom) > 0 && oldTo != null && newFrom.compareTo(oldTo) < 0) {
+                        if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
                             validity.setTo(newFrom);
                         }
-                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && newTo.compareTo(oldTo) < 0 && newTo.compareTo(validity.getTo()) < 0) {
+                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(validity.getTo()) < 0) {
                             validity.setFrom(newTo);
                         }
                         update(pv);
