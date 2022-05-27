@@ -506,6 +506,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setUniqueConstraint(dto.getUniqueConstraint());
         }
 
+        if(dto.getAnonymizeGdpr() != null){
+            cft.setAnonymizeGdpr(dto.getAnonymizeGdpr());
+        }
+
         return cft;
     }
 
