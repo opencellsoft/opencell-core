@@ -34,17 +34,24 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         } 
         // User cannot set a rate in a paste date
         if (postData.getFromDate().before(DateUtils.setTimeToZero(new Date()))) {
-            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.past"));
+            throw new MeveoApiException(resourceMessages.getString("The date must not be in the past"));
+        }               
+        
+        if (postData.getExchangeRate() != null) {
+            if (postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
+            }
+            
+            if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
+                throw new MeveoApiException(resourceMessages.getString("The exchange rate decimals must be limited to 6 digits and the fractional part to 9,999,999,999"));
+            }
+            
+            BigDecimal fracExchangeRate = postData.getExchangeRate().subtract(new BigDecimal(postData.getExchangeRate().toBigInteger()));
+            if (fracExchangeRate.toString().length() > 8) {
+                throw new MeveoApiException(resourceMessages.getString("The exchange rate decimals must be limited to 6 digits and the fractional part to 9,999,999,999"));
+            }
         }
         
-        if (postData.getExchangeRate() == null || postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.exchangeRate.incorrect"));
-        }
-        
-        if (postData.getExchangeRate().compareTo(new BigDecimal("9999999999")) > 0) {
-            throw new MeveoApiException(resourceMessages.getString("The exchange rate must be lower than or equal to 9,999,999,999"));
-        }
-
         // Check if a user choose a date that is already taken
         if (findByfromDate(postData.getFromDate(), postData.getTradingCurrency().getId()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
