@@ -2,11 +2,13 @@ package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableFinanceSettings;
+import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingMapper;
 import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
 
 public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.securityDeposit.FinanceSettings, FinanceSettings> {
 
+    private OpenOrderSettingMapper openOrderSettingMapper = new OpenOrderSettingMapper();
     @Override protected org.meveo.apiv2.securityDeposit.FinanceSettings toResource(FinanceSettings entity) {
         ImmutableFinanceSettings.Builder builder = ImmutableFinanceSettings.builder()
                 .id(entity.getId())
@@ -18,6 +20,10 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
                     .auxiliaryAccountLabelEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountLabelEl());
+        }
+
+         if(entity.getOpenOrderSetting() != null) {
+            builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
         return builder.build();
     }

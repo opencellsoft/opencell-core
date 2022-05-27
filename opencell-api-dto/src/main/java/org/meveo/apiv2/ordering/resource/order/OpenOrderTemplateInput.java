@@ -19,6 +19,7 @@
 package org.meveo.apiv2.ordering.resource.order;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
@@ -41,7 +42,7 @@ public interface OpenOrderTemplateInput extends Resource {
     String getDescription();
 
     @Nullable
-    List<Resource> getTags();
+    List<String> getTags();
 
     @Nullable
     List<ThresholdInput> getThresholds();
@@ -51,6 +52,13 @@ public interface OpenOrderTemplateInput extends Resource {
 
     @Nullable
     List<String> getArticles();
+
+    @Schema(description = "The Number Of Instantiation")
+    @Nullable
+    Integer getNumberOfInstantiation();
+
+    @Schema(description = "The Template Name")
+    @NotNull String getTemplateName();
 
 
 }

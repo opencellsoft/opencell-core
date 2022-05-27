@@ -140,6 +140,11 @@ public class AccountOperationServiceUnMatchingTest {
                 public Long getId() {
                     return aoIds.get(indice);
                 }
+
+                @Override
+                public List<Long> getMatchingAmountIds() {
+                    return null;
+                }
             };
 
             unMatchingAccountOperationDetails.add(unMatchingAccountOperationDetail);

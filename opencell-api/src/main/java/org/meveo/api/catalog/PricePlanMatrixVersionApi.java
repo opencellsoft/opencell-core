@@ -134,7 +134,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         if(pricePlanMatrixVersion.getId() == null) {
-            pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode()) + 1);
+            pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrix) + 1);
         }
 
         DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
@@ -147,6 +147,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
         pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
+        pricePlanMatrixVersion.setPriceEL(pricePlanMatrixVersionDto.getPriceEL());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrixVersion.setPriority(pricePlanMatrixVersionDto.getPriority());

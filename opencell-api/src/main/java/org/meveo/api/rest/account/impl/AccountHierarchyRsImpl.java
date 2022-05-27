@@ -21,6 +21,7 @@ package org.meveo.api.rest.account.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
@@ -88,8 +89,8 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 
         try {
             accountHierarchyApi.create(accountHierarchyDto);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(result, exception);
         }
 
         return result;
@@ -101,11 +102,18 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 
         try {
             accountHierarchyApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(result, exception);
         }
 
         return result;
+    }
+
+    private void processException(ActionStatus result, Exception exception) {
+        if (exception.getCause() instanceof NotFoundException) {
+            throw new NotFoundException(exception.getMessage());
+        }
+        processException(exception, result);
     }
 
     @Override

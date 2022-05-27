@@ -130,6 +130,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
+
 		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
 				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
 				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
@@ -142,9 +143,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.flatMap(Collection::stream)
 				.distinct()
 				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
-				.collect(Collectors.toSet());*/
+				.collect(Collectors.toSet());
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();*/
 
-		// Quick & (may be) dirty fix : above flatMap cause wrong behavoir, i replace it by nested loop (no time to investigate why ! malheureusement)
 		Set<InvoiceMatchedOperation> result = new HashSet<>();
 
 		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
@@ -179,14 +180,15 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
 		return builder
 				.paymentId(accountOperation.getId())
+				.matchingAmountId(matchingAmountPrimary.getId())
 				.paymentCode(accountOperation.getCode())
 				.paymentDescription(accountOperation.getDescription())
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
-				.paymentDate(accountOperation.getTransactionDate())
+				.paymentDate(matchingAmountPrimary.getMatchingCode().getMatchingDate())
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
 				.paymentRef(ofNullable(accountOperation.getReference()).orElse(""))
-				.amount(accountOperation.getMatchingAmount())
-				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
+				.amount(matchingAmountPrimary.getMatchingAmount())
+				.percentageCovered(matchingAmountPrimary.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
 				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
 				.matchingDate(matchingCode.getMatchingDate())
 				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")

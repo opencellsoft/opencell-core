@@ -12891,14 +12891,16 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
     
     <changeSet id="#INTRD-7179_20220524" author="HichamHANINE">    	
-        <dropColumn columnName="amount_without_tax_el" tableName="cpq_price_plan_version" />
-        <dropColumn columnName="amount_with_tax_el" tableName="cpq_price_plan_version" />
         <addColumn tableName="cpq_price_plan_version">
             <column name="price_el" type="varchar(255)" />
         </addColumn>
 		<addColumn tableName="cpq_price_plan_matrix_line">
             <column name="price_el" type="varchar(255)" />
         </addColumn>
+        <sql>UPDATE cpq_price_plan_version SET price_el = amount_with_tax_el WHERE amount_with_tax_el is not null</sql>
+		<sql>UPDATE cpq_price_plan_version SET price_el = amount_without_tax_el WHERE amount_without_tax_el is not null</sql>			
+		<dropColumn columnName="amount_without_tax_el" tableName="cpq_price_plan_version" />
+        <dropColumn columnName="amount_with_tax_el" tableName="cpq_price_plan_version" />
     </changeSet>
     
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
@@ -13114,11 +13116,22 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
-    <changeSet id="#INTRD-7428_20220524" author="ZBariki">
-        <addColumn tableName="billing_billing_account">
-            <column name="auxiliary_account_code" type="varchar(255)" />
-            <column name="auxiliary_account_label" type="varchar(255)" />
+
+    <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" >
+        <addColumn tableName="open_order_template">
+            <column name="number_instantiation" type="int" />
+              <column name="template_name" type="varchar(100)" />
         </addColumn>
+
+    </changeSet>
+
+    <changeSet id="#INTRD-7422_20220525" author="ZBariki">
+        <addColumn tableName="ar_customer_account">
+            <column name="general_client_account_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="general_client_account_id" baseTableName="ar_customer_account"
+                                 constraintName="fk_general_client_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
 </databaseChangeLog>

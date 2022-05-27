@@ -707,32 +707,35 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-
+        BigDecimal priceTax = null;
+        
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
         if (ppmVersion != null) {
-
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
-                    priceWithoutTax = ppmVersion.getAmountWithoutTax();
+                    priceTax = ppmVersion.getAmountWithoutTax();
                 } else {
-                    priceWithTax = ppmVersion.getAmountWithTax();
+                    priceTax = ppmVersion.getAmountWithTax();
+                }
+                if (ppmVersion.getPriceEL() != null) {
+                    priceTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceTax);
+                    if (priceTax == null) {
+                        throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getPriceEL());
+                    }
                 }
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
-               if(pricePlanMatrixLine!=null) {
-                	  priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
-                    String amountEL="";
+                if(pricePlanMatrixLine!=null) {
+                    priceTax = pricePlanMatrixLine.getPriceWithoutTax();
+                    String amountEL = ppmVersion.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                    	priceWithoutTax = evaluateAmountExpression(amountEL,
-                                wo, wo.getChargeInstance().getUserAccount(),
-                                null, priceWithoutTax);
+                        priceTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceTax);
                     }
-               }
-                if (priceWithoutTax == null) {
+                }
+                if (priceTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }
-
         } else {
             if (appProvider.isEntreprise()) {
                 priceWithoutTax = pricePlan.getAmountWithoutTax();
@@ -742,11 +745,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
-
             } else {
                 priceWithTax = pricePlan.getAmountWithTax();
                 if (pricePlan.getAmountWithTaxEL() != null) {
-                    priceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), pricePlan, priceWithoutTax);
+                    priceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), pricePlan, priceWithTax);
                     if (priceWithTax == null) {
                         throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
                     }

@@ -347,6 +347,6 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "200", description = "invoice successfully quarantined"),
 	@ApiResponse(responseCode = "403", description = "Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") })
 	Response quarantineInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-            @Parameter(description = "Quarantine billing run id")  QuarantineBillingRunDto quarantineBillingRunDto);         
+            @Parameter(description = "Quarantine billing run")  QuarantineBillingRunDto quarantineBillingRunDto);         
             
 }

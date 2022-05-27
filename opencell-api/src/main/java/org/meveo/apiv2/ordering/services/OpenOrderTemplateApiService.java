@@ -6,12 +6,14 @@ import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.order.ThresholdService;
 
@@ -34,6 +36,8 @@ public class OpenOrderTemplateApiService {
     private OpenOrderTemplateService openOrderTemplateService;
     @Inject
     private ThresholdService thresholdService;
+    @Inject
+    private TagService tagService;
 
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
@@ -45,6 +49,7 @@ public class OpenOrderTemplateApiService {
          if(null != input.getThresholds() ) openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
         if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
          checkParameters(openOrderTemplate);
 
         openOrderTemplateService.create(openOrderTemplate);
@@ -64,6 +69,7 @@ public class OpenOrderTemplateApiService {
          openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
         if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
          checkParameters(openOrderTemplate);
 
         openOrderTemplateService.update(openOrderTemplate);
@@ -156,6 +162,21 @@ public class OpenOrderTemplateApiService {
             articles.add(article);
         }
         return articles;
+    }
+
+    private List<Tag> fetchTags(List<String> tagsCodes) {
+        List<Tag> tags= new ArrayList<>();
+        for(String tagCode : tagsCodes)
+        {
+            Tag tag = tagService.findByCode(tagCode);
+            if( null == tag)
+            {
+                throw new BusinessApiException(String.format("Tag with code %s doesn't exist", tagCode));
+
+            }
+            tags.add(tag);
+        }
+        return tags;
     }
 
 }

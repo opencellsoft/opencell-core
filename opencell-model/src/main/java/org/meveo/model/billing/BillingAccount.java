@@ -348,18 +348,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Transient
     private List<InvoiceLine> minInvoiceLines;
 
-    /**
-     * Customer auxiliary account code
-     */
-    @Column(name = "auxiliary_account_code")
-    private String auxiliaryAccountCode;
-
-    /**
-     * Customer auxiliary account label
-     */
-    @Column(name = "auxiliary_account_label")
-    private String auxiliaryAccountLabel;
-
     public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
 	}
@@ -809,21 +797,5 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
                 .stream()
                 .filter(userAccount -> userAccount.getParentUserAccount() == null)
                 .collect(toList());
-    }
-
-    public String getAuxiliaryAccountCode() {
-        return auxiliaryAccountCode;
-    }
-
-    public void setAuxiliaryAccountCode(String auxiliaryAccountCode) {
-        this.auxiliaryAccountCode = auxiliaryAccountCode;
-    }
-
-    public String getAuxiliaryAccountLabel() {
-        return auxiliaryAccountLabel;
-    }
-
-    public void setAuxiliaryAccountLabel(String auxiliaryAccountLabel) {
-        this.auxiliaryAccountLabel = auxiliaryAccountLabel;
     }
 }

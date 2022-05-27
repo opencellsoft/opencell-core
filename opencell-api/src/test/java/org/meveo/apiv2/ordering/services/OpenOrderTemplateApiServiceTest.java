@@ -33,10 +33,6 @@ public class OpenOrderTemplateApiServiceTest {
     private ProductService productService;
     @Mock
     private AccountingArticleService accountingArticleService;
-    @Mock
-    private OpenOrderTemplateService openOrderTemplateService;
-    @Mock
-    private ThresholdService thresholdService;
 
     @Test
     public void createOpenOrderTemplate_typeArticle_productExist()
@@ -44,6 +40,8 @@ public class OpenOrderTemplateApiServiceTest {
         OpenOrderTemplateInput input =
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
+                        .templateName("some name")
+                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .products(Collections.singleton("product 1"))
@@ -66,6 +64,8 @@ public class OpenOrderTemplateApiServiceTest {
         OpenOrderTemplateInput input =
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
+                        .templateName("some name")
+                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.PRODUCTS)
                         .articles(Collections.singleton("article 1"))
@@ -88,9 +88,12 @@ public class OpenOrderTemplateApiServiceTest {
         OpenOrderTemplateInput input =
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
+                        .templateName("some name")
+                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .articles(Collections.singleton("article 1"))
+
                         .thresholds(Collections.singleton(
                                 ImmutableThresholdInput.builder().sequence(1).percentage(-1).build()))
 
@@ -113,6 +116,8 @@ public class OpenOrderTemplateApiServiceTest {
         OpenOrderTemplateInput input =
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
+                        .templateName("some name")
+                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .articles(Collections.singleton("article 1"))

@@ -39,6 +39,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .offer(createResource(entity.getOfferTemplate()))
                 .product(createResource(entity.getProduct()))
                 .charge(createResource(entity.getChargeTemplate()))
+                .description(entity.getDescription())
                 .build();
     }
 
@@ -86,6 +87,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             product.setCode(resource.getProduct().getCode());
             articleMappingLine.setProduct(product);
         }
+        articleMappingLine.setDescription(resource.getDescription());
         return articleMappingLine;
     }
 
