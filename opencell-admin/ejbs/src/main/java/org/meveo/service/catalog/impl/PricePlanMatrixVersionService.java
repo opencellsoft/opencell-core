@@ -37,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
@@ -367,11 +368,17 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
 	public int getLastVersion(PricePlanMatrix pricePlanMatrix) {
-    	return this.getEntityManager()
-    	        .createNamedQuery("PricePlanMatrixVersion.lastCurrentVersion", Integer.class)
-				.setParameter("pricePlanMatrix", pricePlanMatrix)
-				.setMaxResults(1)
-				.getSingleResult();
+		Integer version = 0;
+        try {
+    		version =  this.getEntityManager()
+    		        .createNamedQuery("PricePlanMatrixVersion.lastCurrentVersion", Integer.class)
+    				.setParameter("pricePlanMatrix", pricePlanMatrix)
+    				.setMaxResults(1)
+    				.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No lastCurrentVersion for PricePlanMatrixVersion {} found", pricePlanMatrix.getId());
+        }
+		 return version;
     }
     
     public PricePlanMatrixVersionDto load(Long id) {
