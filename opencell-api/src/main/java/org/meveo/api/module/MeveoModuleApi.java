@@ -886,7 +886,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         if (bom.getOfferTemplate() != null) {
             dto.setOfferTemplate(offerTemplateApi.fromOfferTemplate(bom.getOfferTemplate(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE,modulePropertyFlagLoader.isLoadOfferProducts(), modulePropertyFlagLoader.isLoadOfferServiceTemplate(),
                 modulePropertyFlagLoader.isLoadOfferProductTemplate(), modulePropertyFlagLoader.isLoadServiceChargeTemplate(), modulePropertyFlagLoader.isLoadProductChargeTemplate(),
-                modulePropertyFlagLoader.isLoadAllowedDiscountPlan(),false,false,null));
+                modulePropertyFlagLoader.isLoadAllowedDiscountPlan(),false,false,null, true));
         }
     }
 

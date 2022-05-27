@@ -17,7 +17,6 @@ import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
-import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -31,6 +30,7 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.BillingAccount;
@@ -46,7 +46,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
-import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
@@ -79,7 +78,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -146,6 +144,9 @@ public class ProductApi extends BaseApi {
 
 	 @Inject
 	 private CounterTemplateService counterTemplateService;
+
+	 @Inject
+	 private CommercialRulesContainerProvider commercialRulesContainerProvider;
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -940,10 +941,12 @@ public class ProductApi extends BaseApi {
 				.collect(Collectors.toList());
 		productSourceSelectedAttributes.add(offerSourceSelectedAttributes);
 		log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
-        GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes);
-        for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
+        GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes, offerContextDTO.isLoadAllAttributeDetails());
+		for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
             if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
-                List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+
+                List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndProduct(offerCode + "-"+ offerProduct.getProduct().getCode());
+				//List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getProductRulesWithoutCheck(offerCode, offerProduct.getProduct().getCode());
                 if (commercialRules != null && !commercialRules.isEmpty()) {
                     List<CommercialRuleHeaderDTO> commercialRuleDtoList = new ArrayList<CommercialRuleHeaderDTO>();
                     for (CommercialRuleHeader rule : commercialRules) {
@@ -964,10 +967,11 @@ public class ProductApi extends BaseApi {
 
                 GetProductVersionResponse productVersionResponse = (GetProductVersionResponse) offerProduct.getProduct().getCurrentProductVersion();
                 for (AttributeDTO attributeDto : productVersionResponse.getAttributes()) {
-                    List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+					List<CommercialRuleHeader> attributeCommercialRules = commercialRulesContainerProvider.getForProductAndAtttribute(attributeDto.getCode() + "-"+ offerProduct.getProduct().getCode());
+                    //List<CommercialRuleHeader> attributeCommercialRules = commercialRuleHeaderService.getProductAttributeRulesWithoutCheck(attributeDto.getCode(), offerProduct.getProduct().getCode());
 
 					if (attributeCommercialRules != null && !attributeCommercialRules.isEmpty()) {
-                        List<String> commercialRuleCodes = new ArrayList<String>();
+                        List<String> commercialRuleCodes = new ArrayList<>();
                         for (CommercialRuleHeader rule : attributeCommercialRules) {
                             commercialRuleCodes.add(rule.getCode());
                         }
@@ -990,7 +994,8 @@ public class ProductApi extends BaseApi {
 
 
                 for (GroupedAttributeDto groupedAttributeDTO : productVersionResponse.getGroupedAttributes()) {
-                    List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+					List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRulesContainerProvider.getForProductAndGrpAttribute(groupedAttributeDTO.getCode() + "-"+ offerProduct.getProduct().getCode());
+                    //List<CommercialRuleHeader> groupedAttributeCommercialRules = commercialRuleHeaderService.getGroupedAttributesRulesWithoutCheck(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
                     if (groupedAttributeCommercialRules != null && !groupedAttributeCommercialRules.isEmpty()) {
                         List<String> commercialRuleCodes = new ArrayList<String>();
                         for (CommercialRuleHeader rule : groupedAttributeCommercialRules) {
@@ -1009,7 +1014,8 @@ public class ProductApi extends BaseApi {
             }
         }
         for (AttributeDTO attributeDto : offertemplateDTO.getAttributes()) {
-            List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
+			List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForoOerAndAttribute(attributeDto.getCode() + "-"+ offertemplateDTO.getCode());
+            //List<CommercialRuleHeader> commercialRules = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
             if (commercialRules != null && !commercialRules.isEmpty()) {
                 List<String> commercialRuleCodes = new ArrayList<String>();
                 for (CommercialRuleHeader rule : commercialRules) {

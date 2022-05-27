@@ -55,8 +55,9 @@ public class OfferContextDTO extends BaseEntityDto {
 
     @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
-	
-	
+
+	@Schema(description = "Load related Tag, ChargeTemplate, Media of Attribute")
+	private boolean loadAllAttributeDetails = false;
 	
     /**
      * The selected products in the quote
@@ -115,14 +116,13 @@ public class OfferContextDTO extends BaseEntityDto {
 	public void setSelectedOfferAttributes(LinkedHashMap<String, Object> selectedOfferAttributes) {
 		this.selectedOfferAttributes = selectedOfferAttributes;
 	}
- 
 
-	
 
-	
+	public boolean isLoadAllAttributeDetails() {
+		return loadAllAttributeDetails;
+	}
 
-    
-    
-    
-    
+	public void setLoadAllAttributeDetails(boolean loadAllAttributeDetails) {
+		this.loadAllAttributeDetails = loadAllAttributeDetails;
+	}
 }

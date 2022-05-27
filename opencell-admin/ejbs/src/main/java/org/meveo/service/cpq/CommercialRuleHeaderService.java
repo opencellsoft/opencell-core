@@ -19,7 +19,10 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -156,28 +159,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return commercialRules;
     }
 
-    public List<CommercialRuleHeader> getGroupedAttributesRulesByCodes(Set<String> groupedAttributeCodes, Set<String> productCodes) throws BusinessException {
-        Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getGroupedAttributeRulesByCodes")
-                .setParameter("groupedAttributeCodes", groupedAttributeCodes).setParameter("productCodes", productCodes);
-        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
-        return commercialRules;
-    }
-
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getOfferAttributeRules(String attributeCode, String offerCode) throws BusinessException {
-        Attribute attribute = attributeService.findByCode(attributeCode);
-        if (attribute == null) {
-            throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
-        }
         Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRules")
                 .setParameter("attributeCode", attributeCode).setParameter("offerTemplateCode", offerCode);
-        List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
-        return commercialRules;
-    }
-
-    public List<CommercialRuleHeader> getOfferAttributeRulesByCodes(Set<String> attributeCodes, Set<String> offerCodes) throws BusinessException {
-        Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRulesByCodes")
-                .setParameter("attributeCodes", attributeCodes).setParameter("offerTemplateCodes", offerCodes);
         List<CommercialRuleHeader> commercialRules = (List<CommercialRuleHeader>) query.getResultList();
         return commercialRules;
     }
@@ -487,6 +472,62 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                             }
                         }
                 );
+    }
+
+    @Transactional
+    public List<CommercialRuleHeader> findAll() {
+        TypedQuery<CommercialRuleHeader> query = getEntityManager().createQuery("SELECT c FROM CommercialRuleHeader c WHERE c.disabled=false", entityClass);
+        // Fetch all layzies collections and objects
+        try {
+            List<CommercialRuleHeader> result = query.getResultList();
+            result.forEach(ruleH -> {
+                if (ruleH.getCommercialRuleItems() != null) {
+                    ruleH.getCommercialRuleItems().forEach(commercialRuleItem -> {
+                        if (commercialRuleItem.getCommercialRuleLines() != null) {
+                            commercialRuleItem.getCommercialRuleLines().forEach(commercialRuleLine -> {
+                                if (commercialRuleLine.getSourceGroupedAttributes() != null) {
+                                    commercialRuleLine.getSourceGroupedAttributes().getCode();
+                                }
+
+                                if (commercialRuleLine.getSourceAttribute() != null) {
+                                    commercialRuleLine.getSourceAttribute().getCode();
+                                }
+
+                                if (commercialRuleLine.getSourceProduct() != null) {
+                                    commercialRuleLine.getSourceProduct().getCode();
+                                }
+
+                                if (commercialRuleLine.getSourceProductVersion() != null) {
+                                    commercialRuleLine.getSourceProductVersion().getCurrentVersion();
+                                }
+                            });
+                        }
+                    });
+                }
+                if (ruleH.getTargetProductVersion() != null) {
+                    ruleH.getTargetProductVersion().getCurrentVersion();
+                }
+
+                if (ruleH.getCommercialRuleItems() != null) {
+                    ruleH.getCommercialRuleItems().size();
+                }
+                if (ruleH.getTargetProduct() != null) {
+                    ruleH.getTargetProduct().getCode();
+                }
+
+                if (ruleH.getTargetGroupedAttributes() != null && ruleH.getTargetGroupedAttributes().getAttributes() != null) {
+                    ruleH.getTargetGroupedAttributes().getAttributes().size();
+                }
+
+                if (ruleH.getTargetOfferTemplate() != null) {
+                    ruleH.getTargetOfferTemplate().getCode();
+                }
+            });
+
+            return result;
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     private boolean isOfferScope(ScopeTypeEnum scopeType) {
