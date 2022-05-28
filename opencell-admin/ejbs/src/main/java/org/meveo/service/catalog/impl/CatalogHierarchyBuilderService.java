@@ -193,6 +193,9 @@ public class CatalogHierarchyBuilderService {
     @Inject private CommercialRuleItemService commercialRuleItemService;
     
     @Inject private CommercialRuleLineService commercialRuleLineService;
+    
+
+    @Inject private QuoteArticleLineService quoteArticleLineService;
 
     @Inject
     @CurrentUser
@@ -1282,26 +1285,21 @@ public class CatalogHierarchyBuilderService {
 			}
 		 }
     	quoteVersionService.create(duplicate);
-    	List<QuotePrice> overridPrices = new ArrayList<QuotePrice>(quoteVersion.getQuotePrices().stream()
-    			.filter(q -> BooleanUtils.isTrue(q.getApplyDiscountsOnOverridenPrice())).collect(Collectors.toList()));
-    	if(!overridPrices.isEmpty()) {
-		duplicateQuotePrice(overridPrices);
-		}
 		var quoteOffer = quoteVersion.getQuoteOffers();
-    	duplicateQuoteOffer(quoteOffer, duplicate,true);
+    	duplicateQuoteOffer(quoteOffer, duplicate);
     	return duplicate;
     }
     
-    private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity,boolean fromQuote) {
+    private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
     	for (QuoteOffer quoteOffer : offers) {
-    		duplicateQuoteOffer(quoteOffer,entity,fromQuote);
+    		duplicateQuoteOffer(quoteOffer,entity);
 		}
     }
     
-    private void duplicateQuoteProduct(List<QuoteProduct> products, QuoteOffer offer,boolean fromQuote) {
+    private void duplicateQuoteProduct(List<QuoteProduct> products, QuoteOffer offer) {
     	for (QuoteProduct quoteProduct : products) {
 			final var duplicate = new QuoteProduct(quoteProduct);
-			List<QuotePrice> overridPrices=null;
+			List<QuotePrice> overriddenPrices=null;
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
 			duplicate.setQuoteOffer(offer);
@@ -1310,14 +1308,27 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
 			duplicate.setQuoteArticleLines(new ArrayList<QuoteArticleLine>());
 			quoteProductService.create(duplicate);
-			duplicateQuoteAttribute(quoteAttributes, duplicate, null);
-			if(!fromQuote) {
-			for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
-				overridPrices= new ArrayList<>(quoteArticleLine.getQuotePrices().stream()
-						.filter(q -> BooleanUtils.isTrue(q.getApplyDiscountsOnOverridenPrice()) && PriceLevelEnum.PRODUCT.equals(q.getPriceLevelEnum())).collect(Collectors.toList()));
-				if(!overridPrices.isEmpty())
-				duplicateQuotePrice(overridPrices);
-			}
+			duplicateQuoteAttribute(quoteAttributes, duplicate, null); 
+			var quoteProducts = quoteProduct.getQuoteArticleLines();
+			for(QuoteArticleLine quoteArticleLine:quoteProducts) {
+				overriddenPrices= new ArrayList<>(quoteArticleLine.getQuotePrices().stream()
+						.filter(q -> BooleanUtils.isTrue(q.getPriceOverCharged()) && PriceLevelEnum.PRODUCT.equals(q.getPriceLevelEnum())).collect(Collectors.toList()));
+				if(!overriddenPrices.isEmpty()) {
+					final var duplicateArticle=new QuoteArticleLine(quoteArticleLine);
+					quoteArticleLineService.detach(quoteArticleLine);
+					duplicateArticle.setQuoteProduct(duplicate);
+					duplicateArticle.setQuoteVersion(offer.getQuoteVersion());
+					quoteArticleLineService.create(duplicateArticle);
+					for (QuotePrice quotePrice : overriddenPrices) {
+						final var duplicateQuotePrice = new QuotePrice(quotePrice);
+						quotePriceService.detach(quotePrice);
+						duplicateQuotePrice.setQuoteOffer(offer);
+						duplicateQuotePrice.setQuoteVersion(offer.getQuoteVersion());
+						duplicateQuotePrice.setQuoteArticleLine(duplicateArticle);
+						quotePriceService.create(duplicateQuotePrice);
+					}
+				}
+			
 			}
 			
 			
@@ -1337,17 +1348,9 @@ public class CatalogHierarchyBuilderService {
 			quoteAttributeService.create(duplicate);
 		}
     }
+ 
     
-    private void duplicateQuotePrice(List<QuotePrice> quotePrices) {
-    	for (QuotePrice quotePrice : quotePrices) {
-			final var duplicate = new QuotePrice(quotePrice);
-			quotePriceService.detach(quotePrice);
-			quotePriceService.create(duplicate);
-		}
-    }
-     
-    
-    public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion,boolean fromQuote) {
+    public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
         breakLazyLoadForQuoteOffer(quoteOffer);
 		var quoteProducts = new ArrayList<QuoteProduct>(quoteOffer.getQuoteProduct());
 		var quoteAttributes = new ArrayList<QuoteAttribute>(quoteOffer.getQuoteAttributes());
@@ -1365,14 +1368,8 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());  
 			quoteOfferService.create(duplicate);
-			duplicateQuoteProduct(quoteProducts,duplicate,fromQuote);
+			duplicateQuoteProduct(quoteProducts,duplicate);
 			duplicateQuoteAttribute(quoteAttributes,null, duplicate); 
-			if(!fromQuote) {
-			List<QuotePrice> overridPrices = new ArrayList<QuotePrice>(quoteOffer.getQuotePrices().stream()
-					.filter(q -> BooleanUtils.isTrue(q.getApplyDiscountsOnOverridenPrice()) && PriceLevelEnum.OFFER.equals(q.getPriceLevelEnum())).collect(Collectors.toList()));
-			if(!overridPrices.isEmpty())
-				duplicateQuotePrice(overridPrices);
-			}
 		} catch (Exception e) {
 			log.error("Error when trying to cloneBean quoteOffer : ", e);
 		}
