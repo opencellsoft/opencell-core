@@ -110,11 +110,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getProductAttributeRules(String attributeCode, String productCode) throws BusinessException {
-        Attribute attribute = attributeService.findByCode(attributeCode);
-        String queryName = "CommercialRuleHeader.getAttributeRules";
-        if (attribute == null) {
-            throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
-        }
+       String queryName = "CommercialRuleHeader.getAttributeRules";
+       
         if (!StringUtils.isEmpty(productCode)) {
             queryName = "CommercialRuleHeader.getProductAttributeRules";
         }
