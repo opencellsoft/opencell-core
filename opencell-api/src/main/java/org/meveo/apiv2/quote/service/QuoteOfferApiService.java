@@ -34,7 +34,7 @@ public class QuoteOfferApiService {
 			throw new EntityDoesNotExistsException(QuoteVersion.class, "("+quoteCode+", "+quoteCurrentVersion+")");
 		}
 		
-		return catalogHierarchyBuilderService.duplicateQuoteOffer(quoteOffer,quoteVersion);		
+		return catalogHierarchyBuilderService.duplicateQuoteOffer(quoteOffer,quoteVersion,false);		
 	
 	}
 	
