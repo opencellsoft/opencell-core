@@ -32,6 +32,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
@@ -109,6 +110,9 @@ public class ApplicationInitializer {
     @Inject
     private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
+    @Inject
+    private CommercialRulesContainerProvider commercialRulesContainerProvider;
+
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
@@ -171,6 +175,7 @@ public class ApplicationInitializer {
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         metricsConfigurationCacheContainerProvider.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        commercialRulesContainerProvider.populateCache();
 
         if (createESIndex) {
             // Here cache will be populated as part of reindexing

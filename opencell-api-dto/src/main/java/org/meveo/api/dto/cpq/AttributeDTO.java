@@ -192,6 +192,25 @@ public class AttributeDTO extends EnableBusinessDto {
 		validationLabel = attribute.getValidationLabel();
 		validationPattern = attribute.getValidationPattern();
     }
+
+	public AttributeDTO initLight(Attribute attribute) {
+		AttributeDTO dto = new AttributeDTO();
+		dto.setDisabled(attribute.isDisabled());
+		dto.setMandatory(attribute.isMandatory());
+		dto.setSequence(attribute.getSequence());
+		dto.setPriority(attribute.getPriority());
+		dto.setAllowedValues(attribute.getAllowedValues());
+		dto.setAttributeType(attribute.getAttributeType());
+		dto.setDisplay(attribute.isDisplay());
+		dto.setUnitNbDecimal(attribute.getUnitNbDecimal());
+		dto.setReadOnly(attribute.getReadOnly());
+		dto.setDefaultValue(attribute.getDefaultValue());
+		dto.setValidationType(attribute.getValidationType());
+		dto.setValidationLabel(attribute.getValidationLabel());
+		dto.setValidationPattern(attribute.getValidationPattern());
+
+		return dto;
+	}
     
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {
     	this(attribute);

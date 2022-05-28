@@ -30,11 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -74,6 +76,7 @@ import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -190,6 +193,9 @@ public class CatalogHierarchyBuilderService {
     @Inject private CommercialRuleItemService commercialRuleItemService;
     
     @Inject private CommercialRuleLineService commercialRuleLineService;
+    
+
+    @Inject private QuoteArticleLineService quoteArticleLineService;
 
     @Inject
     @CurrentUser
@@ -1234,12 +1240,14 @@ public class CatalogHierarchyBuilderService {
     private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
     	quoteVersion.getMedias().size();
     	quoteVersion.getQuoteOffers().size();
+    	quoteVersion.getQuotePrices().size();
     	quoteVersion.getQuoteOffers().forEach(this::breakLazyLoadForQuoteOffer);
     }
 
     private void breakLazyLoadForQuoteOffer(QuoteOffer qo) {
             qo.getQuoteProduct().size();
             qo.getQuoteAttributes().size();
+            qo.getQuotePrices().size();
             qo.getQuoteProduct().forEach(qp -> {
                 qp.getQuoteAttributes().size();
                 qp.getQuoteArticleLines().size();
@@ -1258,7 +1266,7 @@ public class CatalogHierarchyBuilderService {
 			BeanUtils.copyProperties(duplicate, quoteVersion);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 		}
-    	var quoteOffer = quoteVersion.getQuoteOffers();
+    	
     	
     	duplicate.setId(null);
     	duplicate.setQuoteOffers(new ArrayList<QuoteOffer>());
@@ -1276,8 +1284,8 @@ public class CatalogHierarchyBuilderService {
 				 duplicate.getMedias().add(mediaService.findById(media.getId()));
 			}
 		 }
-    	
     	quoteVersionService.create(duplicate);
+		var quoteOffer = quoteVersion.getQuoteOffers();
     	duplicateQuoteOffer(quoteOffer, duplicate);
     	return duplicate;
     }
@@ -1291,6 +1299,7 @@ public class CatalogHierarchyBuilderService {
     private void duplicateQuoteProduct(List<QuoteProduct> products, QuoteOffer offer) {
     	for (QuoteProduct quoteProduct : products) {
 			final var duplicate = new QuoteProduct(quoteProduct);
+			List<QuotePrice> overriddenPrices=null;
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
 			duplicate.setQuoteOffer(offer);
@@ -1299,8 +1308,29 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
 			duplicate.setQuoteArticleLines(new ArrayList<QuoteArticleLine>());
 			quoteProductService.create(duplicate);
+			duplicateQuoteAttribute(quoteAttributes, duplicate, null); 
+			var quoteProducts = quoteProduct.getQuoteArticleLines();
+			for(QuoteArticleLine quoteArticleLine:quoteProducts) {
+				overriddenPrices= new ArrayList<>(quoteArticleLine.getQuotePrices().stream()
+						.filter(q -> BooleanUtils.isTrue(q.getPriceOverCharged()) && PriceLevelEnum.PRODUCT.equals(q.getPriceLevelEnum())).collect(Collectors.toList()));
+				if(!overriddenPrices.isEmpty()) {
+					final var duplicateArticle=new QuoteArticleLine(quoteArticleLine);
+					quoteArticleLineService.detach(quoteArticleLine);
+					duplicateArticle.setQuoteProduct(duplicate);
+					duplicateArticle.setQuoteVersion(offer.getQuoteVersion());
+					quoteArticleLineService.create(duplicateArticle);
+					for (QuotePrice quotePrice : overriddenPrices) {
+						final var duplicateQuotePrice = new QuotePrice(quotePrice);
+						quotePriceService.detach(quotePrice);
+						duplicateQuotePrice.setQuoteOffer(offer);
+						duplicateQuotePrice.setQuoteVersion(offer.getQuoteVersion());
+						duplicateQuotePrice.setQuoteArticleLine(duplicateArticle);
+						quotePriceService.create(duplicateQuotePrice);
+					}
+				}
 			
-			duplicateQuoteAttribute(quoteAttributes, duplicate, null);
+			}
+			
 			
 		}
     }
@@ -1318,6 +1348,7 @@ public class CatalogHierarchyBuilderService {
 			quoteAttributeService.create(duplicate);
 		}
     }
+ 
     
     public QuoteOffer duplicateQuoteOffer(QuoteOffer quoteOffer, QuoteVersion quoteVersion) {
         breakLazyLoadForQuoteOffer(quoteOffer);
@@ -1335,10 +1366,10 @@ public class CatalogHierarchyBuilderService {
 			duplicate.setCode(code);
 			duplicate.setQuotePrices(new ArrayList<QuotePrice>());
 			duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
-			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());  
 			quoteOfferService.create(duplicate);
-			duplicateQuoteProduct(quoteProducts,duplicate );
-			duplicateQuoteAttribute(quoteAttributes,null, duplicate);
+			duplicateQuoteProduct(quoteProducts,duplicate);
+			duplicateQuoteAttribute(quoteAttributes,null, duplicate); 
 		} catch (Exception e) {
 			log.error("Error when trying to cloneBean quoteOffer : ", e);
 		}
