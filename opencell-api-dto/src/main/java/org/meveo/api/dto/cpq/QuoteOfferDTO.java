@@ -180,6 +180,7 @@ public class QuoteOfferDTO extends BusinessEntityDto{
 	}
 
 	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer) {
+		quoteOffer.getQuotePrices().size();
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()
