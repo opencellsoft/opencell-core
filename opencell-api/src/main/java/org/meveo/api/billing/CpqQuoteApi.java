@@ -1651,10 +1651,8 @@ public class CpqQuoteApi extends BaseApi {
 					if (walletOperationsFromEdr != null) {
 						for (WalletOperation walletOperation : walletOperationsFromEdr) {
 							log.debug("walletOperationsFromEdr code={},UnitAmountWithoutTax={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
-							if ((walletOperation.getUnitAmountWithoutTax() != null && walletOperation
-									.getUnitAmountWithoutTax().compareTo(BigDecimal.ZERO) != 0)
-									|| (walletOperation.getUnitAmountWithTax() != null && walletOperation
-											.getUnitAmountWithTax().compareTo(BigDecimal.ZERO) != 0))
+							if ((walletOperation.getUnitAmountWithoutTax() != null )
+									|| (walletOperation.getUnitAmountWithTax() != null))
 							walletOperations.add(walletOperation);
 						}
 					}
