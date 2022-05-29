@@ -40,6 +40,8 @@ import java.util.List;
 @Stateless
 public class CommercialRulesContainerProvider implements Serializable {
 
+    private static final String TIRET = "-";
+
     @Inject
     protected Logger log;
 
@@ -109,7 +111,7 @@ public class CommercialRulesContainerProvider implements Serializable {
 
     public void add(CommercialRuleHeader rule) {
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + TIRET + rule.getTargetProductCode());
             // Cache 1
             List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
             if (CollectionUtils.isEmpty(offerAndProductContents)) {
@@ -120,7 +122,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetProductCode());
             // Cache 2
             List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
             if (CollectionUtils.isEmpty(productAndAtttributeContents)) {
@@ -131,7 +133,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
-            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + TIRET + rule.getTargetProductCode());
             // Cache 3
             List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
             if (CollectionUtils.isEmpty(productAndGrpAttributeContents)) {
@@ -142,7 +144,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetOfferTemplateCode());
+            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetOfferTemplateCode());
             // Cache 4
             List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
             if (CollectionUtils.isEmpty(offerAndAttributeContents)) {
@@ -155,7 +157,7 @@ public class CommercialRulesContainerProvider implements Serializable {
 
     public void update(CommercialRuleHeader rule) {
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + TIRET + rule.getTargetProductCode());
             // Cache 1
             List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
             if (CollectionUtils.isEmpty(offerAndProductContents)) {
@@ -167,7 +169,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetProductCode());
             // Cache 2
             List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
             if (CollectionUtils.isEmpty(productAndAtttributeContents)) {
@@ -179,7 +181,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
-            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + "-" + rule.getTargetProductCode());
+            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + TIRET + rule.getTargetProductCode());
             // Cache 3
             List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
             if (CollectionUtils.isEmpty(productAndGrpAttributeContents)) {
@@ -191,7 +193,7 @@ public class CommercialRulesContainerProvider implements Serializable {
         }
 
         if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetOfferTemplateCode());
+            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetOfferTemplateCode());
             // Cache 4
             List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
             if (CollectionUtils.isEmpty(offerAndAttributeContents)) {
@@ -200,6 +202,44 @@ public class CommercialRulesContainerProvider implements Serializable {
             }
             offerAndAttributeContents.remove(rule);
             offerAndAttributeContents.add(rule);
+        }
+    }
+
+    public void remove(CommercialRuleHeader rule) {
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + TIRET + rule.getTargetProductCode());
+            // Cache 1
+            List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
+            if (CollectionUtils.isNotEmpty(offerAndProductContents)) {
+                offerAndProductContents.remove(rule);
+            }
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetProductCode());
+            // Cache 2
+            List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
+            if (CollectionUtils.isNotEmpty(productAndAtttributeContents)) {
+                productAndAtttributeContents.remove(rule);
+            }
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
+            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + TIRET + rule.getTargetProductCode());
+            // Cache 3
+            List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
+            if (CollectionUtils.isNotEmpty(productAndGrpAttributeContents)) {
+                productAndGrpAttributeContents.remove(rule);
+            }
+        }
+
+        if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + TIRET + rule.getTargetOfferTemplateCode());
+            // Cache 4
+            List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
+            if (CollectionUtils.isNotEmpty(offerAndAttributeContents)) {
+                offerAndAttributeContents.remove(rule);
+            }
         }
     }
 

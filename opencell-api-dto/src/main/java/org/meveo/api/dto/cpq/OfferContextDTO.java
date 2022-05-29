@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.api.dto.cpq.xml.Offer;
 
 /**
  * The Class ServiceDto.
@@ -56,15 +57,9 @@ public class OfferContextDTO extends BaseEntityDto {
     @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
 
-	@Schema(description = "Load related Tag of Attribute")
-	private boolean loadAttributeTags = false;
+	@Schema(description = "Context config")
+	private OfferContextConfigDTO config = new OfferContextConfigDTO();
 
-	@Schema(description = "Load related ChargeTemplate of Attribute")
-	private boolean loadAttributeChargeTemplates = false;
-
-	@Schema(description = "Load related AssignedAttribute of Attribute")
-	private boolean loadAttributeAssignedAttr = false;
-	
     /**
      * The selected products in the quote
      */
@@ -123,27 +118,11 @@ public class OfferContextDTO extends BaseEntityDto {
 		this.selectedOfferAttributes = selectedOfferAttributes;
 	}
 
-	public boolean isLoadAttributeTags() {
-		return loadAttributeTags;
+	public OfferContextConfigDTO getConfig() {
+		return config;
 	}
 
-	public void setLoadAttributeTags(boolean loadAttributeTags) {
-		this.loadAttributeTags = loadAttributeTags;
-	}
-
-	public boolean isLoadAttributeChargeTemplates() {
-		return loadAttributeChargeTemplates;
-	}
-
-	public void setLoadAttributeChargeTemplates(boolean loadAttributeChargeTemplates) {
-		this.loadAttributeChargeTemplates = loadAttributeChargeTemplates;
-	}
-
-	public boolean isLoadAttributeAssignedAttr() {
-		return loadAttributeAssignedAttr;
-	}
-
-	public void setLoadAttributeAssignedAttr(boolean loadAttributeAssignedAttr) {
-		this.loadAttributeAssignedAttr = loadAttributeAssignedAttr;
+	public void setConfig(OfferContextConfigDTO config) {
+		this.config = config;
 	}
 }

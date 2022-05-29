@@ -1,9 +1,12 @@
 package org.meveo.api.cpq;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +16,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.cpq.MediaDto;
+import org.meveo.api.dto.cpq.OfferContextConfigDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
@@ -208,37 +214,53 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
-		return populateAttributToDto(attribute, false, false, false);
+		return populateAttributToDto(attribute, null);
 	}
 
-	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute, boolean isLoadAttributeTags, boolean isLoadAttributeChargeTemplates, boolean isLoadAttributeAssignedAttr) throws MeveoApiException {
+	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute, OfferContextConfigDTO config) throws MeveoApiException {
 		if (attribute == null) {
 			missingParameters.add("attribute");
 			handleMissingParameters();
 		}
 
 		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<>();
-		if (isLoadAttributeChargeTemplates) {
+		if (config != null && config.isLoadAttributeChargeTemplates()) {
 			for (ChargeTemplate charge : attribute.getChargeTemplates()) {
 				chargeTemplateDtos.add(new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge)));
 			}
 		}
 
 		List<TagDto> tagDtos = new ArrayList<>();
-		if (isLoadAttributeTags) {
+		if (config != null && config.isLoadAttributeTags()) {
 			for (Tag tag : attribute.getTags()) {
 				tagDtos.add(new TagDto(tag));
 			}
 		}
 
 		List<AttributeDTO> assignedAttributes = new ArrayList<>();
-		if (isLoadAttributeAssignedAttr) {
+		if (config != null && config.isLoadAttributeAssignedAttr()) {
 			for (Attribute attr : attribute.getAssignedAttributes()) {
 				assignedAttributes.add(new AttributeDTO(attr));
 			}
 		}
 
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos, assignedAttributes, false);
+		List<MediaDto> medias=new ArrayList<>();
+		if (config != null && config.isLoadAttributeMedia()) {
+			if (attribute.getMedias() != null && !attribute.getMedias().isEmpty()) {
+				medias = attribute.getMedias().stream().map(MediaDto::new).collect(Collectors.toList());
+			}
+		}
+
+		List<GroupedAttributeDto> groupedAttributes = new ArrayList<>();
+		if (config != null && config.isLoadAttributeGroupedAttribute()) {
+			groupedAttributes = Optional.ofNullable(attribute.getGroupedAttributes()).orElse(Collections.emptyList())
+					.stream()
+					.map(GroupedAttributeDto::new)
+					.collect(Collectors.toList());
+		}
+
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos,
+				assignedAttributes, medias, groupedAttributes);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
 
 		return result;

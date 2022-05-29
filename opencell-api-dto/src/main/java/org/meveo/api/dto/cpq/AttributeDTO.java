@@ -193,25 +193,25 @@ public class AttributeDTO extends EnableBusinessDto {
 		validationPattern = attribute.getValidationPattern();
     }
 
-	public AttributeDTO initLight(Attribute attribute) {
-		AttributeDTO dto = new AttributeDTO();
-		dto.setDisabled(attribute.isDisabled());
-		dto.setMandatory(attribute.isMandatory());
-		dto.setSequence(attribute.getSequence());
-		dto.setPriority(attribute.getPriority());
-		dto.setAllowedValues(attribute.getAllowedValues());
-		dto.setAttributeType(attribute.getAttributeType());
-		dto.setDisplay(attribute.isDisplay());
-		dto.setUnitNbDecimal(attribute.getUnitNbDecimal());
-		dto.setReadOnly(attribute.getReadOnly());
-		dto.setDefaultValue(attribute.getDefaultValue());
-		dto.setValidationType(attribute.getValidationType());
-		dto.setValidationLabel(attribute.getValidationLabel());
-		dto.setValidationPattern(attribute.getValidationPattern());
+	public AttributeDTO(Attribute attribute, List<GroupedAttributeDto> groupedAttributes) {
+		super(attribute);
+		mandatory=attribute.isMandatory();
+		sequence=attribute.getSequence();
+		priority=attribute.getPriority();
+		allowedValues=attribute.getAllowedValues();
+		attributeType=attribute.getAttributeType();
+		display=attribute.isDisplay();
+		unitNbDecimal = attribute.getUnitNbDecimal();
+		readOnly = attribute.getReadOnly();
+		defaultValue = attribute.getDefaultValue();
+		validationType = attribute.getValidationType();
+		validationLabel = attribute.getValidationLabel();
+		validationPattern = attribute.getValidationPattern();
+		this.setDisabled(attribute.isDisabled());
 
-		return dto;
+		this.groupedAttributes=groupedAttributes;
 	}
-    
+
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {
     	this(attribute);
     	this.customFields = customFieldsDto;

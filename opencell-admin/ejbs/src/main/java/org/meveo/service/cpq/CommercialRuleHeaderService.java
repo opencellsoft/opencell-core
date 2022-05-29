@@ -100,6 +100,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         return updated;
     }
 
+    @Override
+    public void remove(CommercialRuleHeader entity) throws BusinessException {
+        super.remove(entity);
+        commercialRulesContainerProvider.remove(entity);
+    }
+
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException {
         Tag tag = tagService.findByCode(tagCode);

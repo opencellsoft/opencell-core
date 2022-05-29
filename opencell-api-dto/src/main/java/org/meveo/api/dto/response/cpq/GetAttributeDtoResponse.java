@@ -102,6 +102,17 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 		}
  	}
 
+	public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates,
+								   List<TagDto> tags,List<AttributeDTO> assignedAttributes, List<MediaDto> medias,
+								   List<GroupedAttributeDto> groupedAttributes) {
+		super(attribute, groupedAttributes);
+		this.chargeTemplates = chargeTemplates;
+		this.tags=tags;
+		this.assignedAttributes=assignedAttributes;
+		this.medias=medias;
+		this.groupedAttributes = groupedAttributes;
+	}
+
 	public GetAttributeDtoResponse(Attribute attribute) {
 		super(attribute);
 	}
@@ -189,5 +200,13 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
 	}
 }

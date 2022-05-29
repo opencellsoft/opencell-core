@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -78,6 +79,7 @@ public class GroupedAttributes extends EnableBusinessCFEntity {
     @Column(name = "sequence")
     private Integer sequence;
 
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "targetGroupedAttributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
@@ -86,6 +88,7 @@ public class GroupedAttributes extends EnableBusinessCFEntity {
 	/**
 	 * list of attributes attached to this product version
 	 */
+	@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_grouped_attributes_attribute",
