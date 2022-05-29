@@ -30,7 +30,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
-import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
@@ -209,38 +208,39 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
-		return populateAttributToDto(attribute, false);
+		return populateAttributToDto(attribute, false, false, false);
 	}
 
-	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute, boolean isLoadAllAttributeDetails) throws MeveoApiException {
+	public GetAttributeDtoResponse populateAttributToDto(Attribute attribute, boolean isLoadAttributeTags, boolean isLoadAttributeChargeTemplates, boolean isLoadAttributeAssignedAttr) throws MeveoApiException {
 		if (attribute == null) {
 			missingParameters.add("attribute");
 			handleMissingParameters();
 		}
 
-		if (!isLoadAllAttributeDetails) {
-			// Skip all load lazies collections and objects
-			GetAttributeDtoResponse result = new GetAttributeDtoResponse();
-			result.initLight(attribute);
-			result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
-			return result;
+		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<>();
+		if (isLoadAttributeChargeTemplates) {
+			for (ChargeTemplate charge : attribute.getChargeTemplates()) {
+				chargeTemplateDtos.add(new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge)));
+			}
 		}
 
-		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<>();
-		for (ChargeTemplate charge : attribute.getChargeTemplates()) {
-			chargeTemplateDtos.add(new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge)));
-		}
 		List<TagDto> tagDtos = new ArrayList<>();
-		for (Tag tag : attribute.getTags()) {
-			tagDtos.add(new TagDto(tag));
+		if (isLoadAttributeTags) {
+			for (Tag tag : attribute.getTags()) {
+				tagDtos.add(new TagDto(tag));
+			}
 		}
 
 		List<AttributeDTO> assignedAttributes = new ArrayList<>();
-		for (Attribute attr : attribute.getAssignedAttributes()) {
-			assignedAttributes.add(new AttributeDTO(attr));
+		if (isLoadAttributeAssignedAttr) {
+			for (Attribute attr : attribute.getAssignedAttributes()) {
+				assignedAttributes.add(new AttributeDTO(attr));
+			}
 		}
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos, assignedAttributes, true);
+
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute, chargeTemplateDtos, tagDtos, assignedAttributes, false);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
+
 		return result;
 	}
 

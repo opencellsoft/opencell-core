@@ -100,54 +100,107 @@ public class CommercialRulesContainerProvider implements Serializable {
 //            commercialRuleHeaderService.getProductAttributeRulesWithoutCheck(attributeDto.getCode(), offerProduct.getProduct().getCode()) == Cache 2
 //            commercialRuleHeaderService.getGroupedAttributesRulesWithoutCheck(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode()); == Cache 3
 //            commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode()) == Cache 4
-
-            if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
-                CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + "-" + rule.getTargetProductCode());
-                // Cache 1
-                List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
-                if (CollectionUtils.isEmpty(offerAndProductContents)) {
-                    offerAndProductContents = new ArrayList<>();
-                    offerAndProduct.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache1Key, offerAndProductContents);
-                }
-                offerAndProductContents.add(rule);
-            }
-
-            if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-                CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetProductCode());
-                // Cache 2
-                List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
-                if (CollectionUtils.isEmpty(productAndAtttributeContents)) {
-                    productAndAtttributeContents = new ArrayList<>();
-                    productAndAtttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache2Key, productAndAtttributeContents);
-                }
-                productAndAtttributeContents.add(rule);
-            }
-
-            if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
-                CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + "-" + rule.getTargetProductCode());
-                // Cache 3
-                List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
-                if (CollectionUtils.isEmpty(productAndGrpAttributeContents)) {
-                    productAndGrpAttributeContents = new ArrayList<>();
-                    productAndGrpAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache3Key, productAndGrpAttributeContents);
-                }
-                productAndGrpAttributeContents.add(rule);
-            }
-
-            if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
-                CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetOfferTemplateCode());
-                // Cache 4
-                List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
-                if (CollectionUtils.isEmpty(offerAndAttributeContents)) {
-                    offerAndAttributeContents = new ArrayList<>();
-                    offerAndAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache4Key, offerAndAttributeContents);
-                }
-                offerAndAttributeContents.add(rule);
-            }
+            add(rule);
 
         }
 
         log.info("CommercialRuleHeader cache populated with {} entries for provider {}", ruleHeaders.size(), provider);
+    }
+
+    public void add(CommercialRuleHeader rule) {
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + "-" + rule.getTargetProductCode());
+            // Cache 1
+            List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
+            if (CollectionUtils.isEmpty(offerAndProductContents)) {
+                offerAndProductContents = new ArrayList<>();
+                offerAndProduct.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache1Key, offerAndProductContents);
+            }
+            offerAndProductContents.add(rule);
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetProductCode());
+            // Cache 2
+            List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
+            if (CollectionUtils.isEmpty(productAndAtttributeContents)) {
+                productAndAtttributeContents = new ArrayList<>();
+                productAndAtttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache2Key, productAndAtttributeContents);
+            }
+            productAndAtttributeContents.add(rule);
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
+            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + "-" + rule.getTargetProductCode());
+            // Cache 3
+            List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
+            if (CollectionUtils.isEmpty(productAndGrpAttributeContents)) {
+                productAndGrpAttributeContents = new ArrayList<>();
+                productAndGrpAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache3Key, productAndGrpAttributeContents);
+            }
+            productAndGrpAttributeContents.add(rule);
+        }
+
+        if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetOfferTemplateCode());
+            // Cache 4
+            List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
+            if (CollectionUtils.isEmpty(offerAndAttributeContents)) {
+                offerAndAttributeContents = new ArrayList<>();
+                offerAndAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache4Key, offerAndAttributeContents);
+            }
+            offerAndAttributeContents.add(rule);
+        }
+    }
+
+    public void update(CommercialRuleHeader rule) {
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache1Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetOfferTemplateCode() + "-" + rule.getTargetProductCode());
+            // Cache 1
+            List<CommercialRuleHeader> offerAndProductContents = offerAndProduct.get(cache1Key);
+            if (CollectionUtils.isEmpty(offerAndProductContents)) {
+                offerAndProductContents = new ArrayList<>();
+                offerAndProduct.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache1Key, offerAndProductContents);
+            }
+            offerAndProductContents.remove(rule);
+            offerAndProductContents.add(rule);
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache2Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetProductCode());
+            // Cache 2
+            List<CommercialRuleHeader> productAndAtttributeContents = productAndAtttribute.get(cache2Key);
+            if (CollectionUtils.isEmpty(productAndAtttributeContents)) {
+                productAndAtttributeContents = new ArrayList<>();
+                productAndAtttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache2Key, productAndAtttributeContents);
+            }
+            productAndAtttributeContents.remove(rule);
+            productAndAtttributeContents.add(rule);
+        }
+
+        if (rule.getTargetProductCode() != null && rule.getTargetAttribute() == null && rule.getTargetGroupedAttributes() != null) {
+            CacheKeyStr cache3Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetGroupedAttributes().getCode() + "-" + rule.getTargetProductCode());
+            // Cache 3
+            List<CommercialRuleHeader> productAndGrpAttributeContents = productAndGrpAttribute.get(cache3Key);
+            if (CollectionUtils.isEmpty(productAndGrpAttributeContents)) {
+                productAndGrpAttributeContents = new ArrayList<>();
+                productAndGrpAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache3Key, productAndGrpAttributeContents);
+            }
+            productAndGrpAttributeContents.remove(rule);
+            productAndGrpAttributeContents.add(rule);
+        }
+
+        if (rule.getTargetOfferTemplate() != null && rule.getTargetAttribute() != null && rule.getTargetGroupedAttributes() == null) {
+            CacheKeyStr cache4Key = new CacheKeyStr(currentUser.getProviderCode(), rule.getTargetAttribute().getCode() + "-" + rule.getTargetOfferTemplateCode());
+            // Cache 4
+            List<CommercialRuleHeader> offerAndAttributeContents = offerAndAttribute.get(cache4Key);
+            if (CollectionUtils.isEmpty(offerAndAttributeContents)) {
+                offerAndAttributeContents = new ArrayList<>();
+                offerAndAttribute.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cache4Key, offerAndAttributeContents);
+            }
+            offerAndAttributeContents.remove(rule);
+            offerAndAttributeContents.add(rule);
+        }
     }
 
     public List<CommercialRuleHeader> getForOfferAndProduct(String identifier) {

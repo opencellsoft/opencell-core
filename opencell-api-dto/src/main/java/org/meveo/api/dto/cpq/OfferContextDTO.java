@@ -56,8 +56,14 @@ public class OfferContextDTO extends BaseEntityDto {
     @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
 
-	@Schema(description = "Load related Tag, ChargeTemplate, Media of Attribute")
-	private boolean loadAllAttributeDetails = false;
+	@Schema(description = "Load related Tag of Attribute")
+	private boolean loadAttributeTags = false;
+
+	@Schema(description = "Load related ChargeTemplate of Attribute")
+	private boolean loadAttributeChargeTemplates = false;
+
+	@Schema(description = "Load related AssignedAttribute of Attribute")
+	private boolean loadAttributeAssignedAttr = false;
 	
     /**
      * The selected products in the quote
@@ -117,12 +123,27 @@ public class OfferContextDTO extends BaseEntityDto {
 		this.selectedOfferAttributes = selectedOfferAttributes;
 	}
 
-
-	public boolean isLoadAllAttributeDetails() {
-		return loadAllAttributeDetails;
+	public boolean isLoadAttributeTags() {
+		return loadAttributeTags;
 	}
 
-	public void setLoadAllAttributeDetails(boolean loadAllAttributeDetails) {
-		this.loadAllAttributeDetails = loadAllAttributeDetails;
+	public void setLoadAttributeTags(boolean loadAttributeTags) {
+		this.loadAttributeTags = loadAttributeTags;
+	}
+
+	public boolean isLoadAttributeChargeTemplates() {
+		return loadAttributeChargeTemplates;
+	}
+
+	public void setLoadAttributeChargeTemplates(boolean loadAttributeChargeTemplates) {
+		this.loadAttributeChargeTemplates = loadAttributeChargeTemplates;
+	}
+
+	public boolean isLoadAttributeAssignedAttr() {
+		return loadAttributeAssignedAttr;
+	}
+
+	public void setLoadAttributeAssignedAttr(boolean loadAttributeAssignedAttr) {
+		this.loadAttributeAssignedAttr = loadAttributeAssignedAttr;
 	}
 }

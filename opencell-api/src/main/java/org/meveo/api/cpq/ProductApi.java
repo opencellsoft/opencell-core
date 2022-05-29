@@ -941,7 +941,8 @@ public class ProductApi extends BaseApi {
 				.collect(Collectors.toList());
 		productSourceSelectedAttributes.add(offerSourceSelectedAttributes);
 		log.info("OfferTemplateApi requestedTagTypes={}", requestedTagTypes);
-        GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes, offerContextDTO.isLoadAllAttributeDetails());
+        GetOfferTemplateResponseDto offertemplateDTO = offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, false, false, false, false, false, true, true, requestedTagTypes,
+				offerContextDTO.isLoadAttributeTags(), offerContextDTO.isLoadAttributeChargeTemplates(), offerContextDTO.isLoadAttributeAssignedAttr());
 		for (OfferProductsDto offerProduct : offertemplateDTO.getOfferProducts()) {
             if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
 
