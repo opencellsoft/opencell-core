@@ -31,6 +31,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -82,6 +83,28 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     @Inject
     QuoteAttributeService quoteAttributeService;
+
+    @Inject
+    private CommercialRulesContainerProvider commercialRulesContainerProvider;
+
+    @Override
+    public void create(CommercialRuleHeader entity) throws BusinessException {
+        super.create(entity);
+        commercialRulesContainerProvider.add(entity);
+    }
+
+    @Override
+    public CommercialRuleHeader update(CommercialRuleHeader entity) throws BusinessException {
+        CommercialRuleHeader updated = super.update(entity);
+        commercialRulesContainerProvider.update(updated);
+        return updated;
+    }
+
+    @Override
+    public void remove(CommercialRuleHeader entity) throws BusinessException {
+        super.remove(entity);
+        commercialRulesContainerProvider.remove(entity);
+    }
 
     @SuppressWarnings("unchecked")
     public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException {

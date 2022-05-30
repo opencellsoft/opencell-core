@@ -2,6 +2,7 @@ package org.meveo.model.cpq.trade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -120,7 +121,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 /** 
      * grouped service
      */
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes targetGroupedAttributes;
@@ -195,7 +196,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	}
 
 	/**
-	 * @param targetCommercialOffer the targetCommercialOffer to set
+	 * @param offerTemplate the targetCommercialOffer to set
 	 */
 	public void setTargetOfferTemplate(OfferTemplate offerTemplate) {
 		this.targetOfferTemplate = offerTemplate;
@@ -347,5 +348,19 @@ public class CommercialRuleHeader extends BusinessEntity {
 
 	public String getTargetProductCode() {
 		return targetProduct != null ? targetProduct.getCode() : null;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		CommercialRuleHeader that = (CommercialRuleHeader) o;
+		return id.equals(that.id) && code.equals(that.code);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), id, code);
 	}
 }

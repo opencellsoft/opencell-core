@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.api.dto.cpq.xml.Offer;
 
 /**
  * The Class ServiceDto.
@@ -56,9 +57,9 @@ public class OfferContextDTO extends BaseEntityDto {
     @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
 
-	@Schema(description = "Load related Tag, ChargeTemplate, Media of Attribute")
-	private boolean loadAllAttributeDetails = false;
-	
+	@Schema(description = "Context config")
+	private OfferContextConfigDTO config = new OfferContextConfigDTO();
+
     /**
      * The selected products in the quote
      */
@@ -117,12 +118,11 @@ public class OfferContextDTO extends BaseEntityDto {
 		this.selectedOfferAttributes = selectedOfferAttributes;
 	}
 
-
-	public boolean isLoadAllAttributeDetails() {
-		return loadAllAttributeDetails;
+	public OfferContextConfigDTO getConfig() {
+		return config;
 	}
 
-	public void setLoadAllAttributeDetails(boolean loadAllAttributeDetails) {
-		this.loadAllAttributeDetails = loadAllAttributeDetails;
+	public void setConfig(OfferContextConfigDTO config) {
+		this.config = config;
 	}
 }
