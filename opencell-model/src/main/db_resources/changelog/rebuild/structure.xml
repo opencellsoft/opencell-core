@@ -2132,6 +2132,7 @@
             <column name="minimum_charge_template_id" type="bigint" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="general_client_account_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-150">
@@ -2952,6 +2953,7 @@
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="related_dunning_collection_plan_id" type="bigint" />
+            <column name="dunning_collection_plan_triggered" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -9377,8 +9379,7 @@
             <column name="valid_to" type="datetime" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
-            <column name="amount_without_tax_el" type="varchar(255)" />
-            <column name="amount_with_tax_el" type="varchar(255)" />
+            <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
         </createTable>
@@ -10321,7 +10322,7 @@
             <!-- Auditable End -->
 
             <column name="order_article_line_id" type="bigint" >
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="order_id" type="bigint" >
                 <constraints nullable="false"/>
@@ -10626,7 +10627,7 @@
 
             <column name="ppm_version_id" type="bigint" />
             <column name="priority" type="int4" defaultValueNumeric="0"/>
-
+			<column name="price_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="price_without_tax" type="numeric(23, 12)" />
         </createTable>
@@ -11735,6 +11736,8 @@
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
             <column name="status" type="varchar(255)" />
+             <column name="number_instantiation" type="int" />
+              <column name="template_name" type="varchar(100)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
             <column name="open_order_template_id" type="bigint">
@@ -16076,7 +16079,13 @@
                                  constraintName="fk_finance_settings_open_order_setting_id" referencedTableName="open_order_setting"
                                  referencedColumnNames="id" />
 	</changeSet>
-	<!-- end fk -->
+    <changeSet id="#INTRD-7422_20220525-fk" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="general_client_account_id" baseTableName="ar_customer_account"
+                                 constraintName="fk_general_client_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
+    <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
         <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_history add constraint adm_notif_history_nb_retry_check check (nb_retry <= 10)]]></sql>
@@ -17741,6 +17750,10 @@
     <changeSet id="INTRD-7031-18052022-split" author="AbdelmounaimAkadid" />
 	<changeSet id="INTRD-7040_18052022" author="TarikRabeh" />
 	<changeSet id="INTRD-7039_23052022" author="TarikRabeh" />
+	<changeSet id="#INTRD-7179_20220524" author="HichamHANINE" />
+    <changeSet id="#INTRD-7157_20220523" author="ZBariki" />
+    <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" />
+    <changeSet id="#INTRD-7422_20220525" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

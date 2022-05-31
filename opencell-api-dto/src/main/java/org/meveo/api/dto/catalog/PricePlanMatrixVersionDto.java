@@ -54,11 +54,8 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
     
-    @Schema(description = "The amount without tax EL")
-    private String amountWithoutTaxEL;
-    
-    @Schema(description = "The amount with tax EL")
-    private String amountWithTaxEL;
+    @Schema(description = "The Price EL")
+    private String priceEL;
     
     @Schema(description = "The priority")
     protected int priority=0;
@@ -81,13 +78,13 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setValidity(pricePlanMatrixVersion.getValidity());
         setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
-        setAmountWithoutTaxEL(pricePlanMatrixVersion.getAmountWithoutTaxEL());
-        setAmountWithTaxEL(pricePlanMatrixVersion.getAmountWithTaxEL());
+        setPriceEL(pricePlanMatrixVersion.getPriceEL());
         setPriority(pricePlanMatrixVersion.getPriority());
-        if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty())
+        if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty()) {
             lines = pricePlanMatrixVersion.getLines().stream()
                     .map(PricePlanMatrixLineDto::new)
                     .collect(Collectors.toSet());
+        }
         if (pricePlanMatrixVersion.getColumns() != null && !pricePlanMatrixVersion.getColumns().isEmpty()) {
             columns = pricePlanMatrixVersion.getColumns().stream()
                     .map(PricePlanMatrixColumnDto::new)
@@ -167,20 +164,12 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         this.amountWithTax = amountWithTax;
     }
 
-    public String getAmountWithoutTaxEL() {
-        return amountWithoutTaxEL;
+    public String getPriceEL() {
+        return priceEL;
     }
 
-    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
-        this.amountWithoutTaxEL = amountWithoutTaxEL;
-    }
-
-    public String getAmountWithTaxEL() {
-        return amountWithTaxEL;
-    }
-
-    public void setAmountWithTaxEL(String amountWithTaxEL) {
-        this.amountWithTaxEL = amountWithTaxEL;
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
     }
 
     public Set<PricePlanMatrixLineDto> getLines() {

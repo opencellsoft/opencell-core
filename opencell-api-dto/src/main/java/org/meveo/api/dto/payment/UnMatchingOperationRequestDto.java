@@ -21,6 +21,8 @@ package org.meveo.api.dto.payment;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class UnMatchingOperationRequestDto.
@@ -36,6 +38,9 @@ public class UnMatchingOperationRequestDto {
     
     /** The account operation id. */
     private Long accountOperationId;
+
+    /** Used for specifique unmatching invoice : when this id is exist, that means only MatchingAmount should be unmatched */
+    private List<Long> matchingAmountIds;
 
     /**
      * Gets the customer account code.
@@ -73,4 +78,11 @@ public class UnMatchingOperationRequestDto {
         this.accountOperationId = accountOperationId;
     }
 
+    public List<Long> getMatchingAmountIds() {
+        return matchingAmountIds == null ? new ArrayList<>() : matchingAmountIds;
+    }
+
+    public void setMatchingAmountIds(List<Long> matchingAmountIds) {
+        this.matchingAmountIds = matchingAmountIds;
+    }
 }

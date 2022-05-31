@@ -145,7 +145,6 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		order.setDeliveryDate(cpqQuote.getDeliveryDate());
 		order.setUserAccount(cpqQuote.getUserAccount());
-		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
 		if(customFieldsFromQuoteVersion != null && customFieldsFromQuoteVersion.getValues() != null && !customFieldsFromQuoteVersion.getValues().isEmpty()) {
@@ -188,6 +187,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setDeliveryDate(quoteOffer.getDeliveryDate());
 		offer.setUserAccount(quoteOffer.getUserAccount());
 		offer.setOrderLineType(OfferLineTypeEnum.CREATE);
+		offer.setSubscription(quoteOffer.getSubscription());
 		orderOfferService.create(offer);
 		LOGGER.info("quoteOffer.getQuoteAttributes() size{}",quoteOffer.getQuoteAttributes().size());
 		quoteOffer.getQuoteAttributes().forEach(quoteAttribute -> {
@@ -206,6 +206,9 @@ public class QuoteValidationScript extends ModuleScript {
 		orderProduct.setOrderOffer(orderOffer);  
 		orderProduct.setQuoteProduct(product); 
 		orderProduct.setDeliveryDate(product.getDeliveryDate());
+		orderProduct.setProductActionType(product.getProductActionType());
+		orderProduct.setTerminationDate(product.getTerminationDate());
+		orderProduct.setTerminationReason(product.getTerminationReason());
 		
 		orderProductService.create(orderProduct);
 		

@@ -2542,10 +2542,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void rejectInvoice(Invoice invoice) {
         InvoiceStatusEnum status = invoice.getStatus();
-        if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-            throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :" + status.name());
+        if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
+            throw new BusinessException("Can only reject invoices in statuses NEW/DRAFT/SUSPECT. current invoice status is :" + status.name());
         }
-        invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        if(invoice.getBillingRun() == null) {
+            throw new BusinessException("Invoice not related to a billing run");
+        }
+        if(InvoiceStatusEnum.DRAFT.equals(status)) {
+            invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
+        }else {
+            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        }
     }
 
     /**
@@ -6232,7 +6239,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingRun billingRun = invoice.getBillingRun() ;
        
         if (billingRun != null) {
-            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId());
+            BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId(), quarantineBillingRunDto.getDescriptionsTranslated());
             getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             return nextBR.getId();
         }else {

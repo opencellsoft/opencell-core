@@ -192,7 +192,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                     try {
                         accountOperationApi.unMatchingOperations(unmatchDto);
                     } catch (Exception e) {
-                        throw new BusinessApiException(e);
+                        throw new BusinessApiException(e.getMessage());
                     }
 
                 });

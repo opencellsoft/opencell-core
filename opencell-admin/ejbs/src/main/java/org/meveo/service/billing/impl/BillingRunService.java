@@ -55,9 +55,12 @@ import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.job.InvoicingJobV2Bean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
@@ -179,6 +182,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private  InvoiceLineService invoiceLineService;
 
+    @Inject
+    private TradingLanguageService tradingLanguageService;
+    
     private static final  int rtPaginationSize = 30000;
 
 	@MeveoAudit
@@ -1357,13 +1363,31 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param quarantineBRId
      * @return
      */
-    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId) {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId, List<LanguageDescriptionDto> descriptionsTranslated) {
        BillingRun billingRun = findById(billingRunId);
        if (billingRun != null) {
     	   if(quarantineBRId != null) {
 	            BillingRun quarantineBillingRun = findById(quarantineBRId);
+
 	            if (quarantineBillingRun != null) {
 	            	if(quarantineBillingRun.getIsQuarantine()) {
+	    	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
+	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+	    	            }else {
+	    	            	BillingCycle billingCycle = billingRun.getBillingCycle();
+	    	            	
+			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+	    	            	
+	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
+	    	            	newDescriptionsTranslated.add(languageDescriptionFr);
+	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
+	    	            	
+	    	            	update(quarantineBillingRun);
+	    	            }
 	            		return quarantineBillingRun;
 	            	}else {
 	                    throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not a quarantine billing run");
@@ -1373,26 +1397,41 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	                throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not found");
 	            }
 	       }else {
-	    	   BillingRun nextQuantineBillingRun = new BillingRun();
+	    	   BillingRun quarantineBillingRun = new BillingRun();
 	           try {
-	               BeanUtils.copyProperties(nextQuantineBillingRun, billingRun);
+	               BeanUtils.copyProperties(quarantineBillingRun, billingRun);
 	               final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
 	               selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
 	               Set<BillingRunList> billingRunLists = new HashSet<>();
 	               billingRunLists.addAll(billingRun.getBillingRunLists());
 	               List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
 	               rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
-	               nextQuantineBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
-	               nextQuantineBillingRun.setBillingRunLists(billingRunLists );
-	               nextQuantineBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
-	               nextQuantineBillingRun.setInvoices(new ArrayList<>());
-	               nextQuantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
-	               nextQuantineBillingRun.setIsQuarantine(Boolean.TRUE);
-	               nextQuantineBillingRun.setId(null);
-	               create(nextQuantineBillingRun);
-	               billingRun.setNextBillingRun(nextQuantineBillingRun);
+	               quarantineBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
+	               quarantineBillingRun.setBillingRunLists(billingRunLists );
+	               quarantineBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
+	               quarantineBillingRun.setInvoices(new ArrayList<>());
+	               quarantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
+	               quarantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               quarantineBillingRun.setId(null);
+	               
+	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
+		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+		            }else {
+		            	BillingCycle billingCycle = billingRun.getBillingCycle();
+		            	
+		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+		            	
+		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+		            	newDescriptionsTranslated.add(languageDescriptionEn);
+		            	newDescriptionsTranslated.add(languageDescriptionFr);
+		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
+		            }
+   	            
+	               create(quarantineBillingRun);
+	               billingRun.setNextBillingRun(quarantineBillingRun);
 	               update(billingRun);
-	               return nextQuantineBillingRun;
+	               return quarantineBillingRun;
 	           } catch (Exception e) {
 	               log.error(e.getMessage());
 	               throw new BusinessException(e);
@@ -1515,4 +1554,37 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         return pollingQuery;
     }
+    
+    private Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues) throws InvalidParameterException {
+        if (translationInfos == null || translationInfos.isEmpty()) {
+            return null;
+        }
+
+        List<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
+
+        Map<String, String> values = null;
+        if (currentValues == null) {
+            values = new HashMap<>();
+        } else {
+            values = currentValues;
+        }
+
+        for (LanguageDescriptionDto translationInfo : translationInfos) {
+            if (!supportedLanguages.contains(translationInfo.getLanguageCode())) {
+                throw new InvalidParameterException("Language " + translationInfo.getLanguageCode() + " is not supported by the provider.");
+            }
+            if (StringUtils.isBlank(translationInfo.getDescription())) {
+                values.remove(translationInfo.getLanguageCode());
+            } else {
+                values.put(translationInfo.getLanguageCode(), translationInfo.getDescription());
+            }
+        }
+
+        if (values.isEmpty()) {
+            return null;
+        } else {
+            return values;
+        }
+    }
+    
 }

@@ -29,7 +29,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.billing.impl.article.ArticleMappingLineService;
@@ -117,14 +116,17 @@ public class V11MigrationScript extends Script {
 
 	public Product map(ServiceTemplate serviceTemplate) {
 		Product product = createProduct(serviceTemplate);
-		createArticle(product);
-		ProductVersion productVersion = createProductVersion(product);
-		List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate);
-		serviceInstances.forEach(serviceInstance -> {
-			serviceInstance.setProductVersion(productVersion);
-			serviceInstance.setServiceTemplate(null);
-			serviceInstanceService.update(serviceInstance);
-		});
+		if(product!=null) {
+			createArticle(product);
+			ProductVersion productVersion = createProductVersion(product);
+			List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate);
+			serviceInstances.forEach(serviceInstance -> {
+				serviceInstance.setProductVersion(productVersion);
+				serviceInstance.setServiceTemplate(null);
+				serviceInstanceService.update(serviceInstance);
+			});
+		}
+		
 		
 		return product;
 	}
@@ -135,8 +137,10 @@ public class V11MigrationScript extends Script {
 		for(OfferServiceTemplate offerServiceTemplate:offerTemplate.getOfferServiceTemplates()) {
 			OfferComponent offerComponent = new OfferComponent();
 			String productCode=offerServiceTemplate.getServiceTemplate().getCode().replaceAll("_OLD$", "");
+          System.out.println("productCode="+productCode);
 			product=productService.findByCode(productCode);
 			if(product!=null) {
+               System.out.println("productId="+product.getId());
 				offerComponent.setProduct(product);
 				offerComponent.setOfferTemplate(offerTemplate);
 				offerTemplate.getOfferComponents().add(offerComponent);
@@ -151,7 +155,10 @@ public class V11MigrationScript extends Script {
 	public ChargeTemplate map(ChargeTemplate chargeTemplate) {
 		List<PricePlanMatrix> ppmList=pricePlanMatrixService.listByChargeCode(chargeTemplate.getCode());
 		for(PricePlanMatrix ppm:ppmList) {
-			createPPMVersion(ppm);
+			if(ppm.getVersions().isEmpty()) {
+				createPPMVersion(ppm);
+			}
+			
 		}
 		return chargeTemplate;
 	}
@@ -185,7 +192,7 @@ public class V11MigrationScript extends Script {
 	}
 
 	private Product createProduct(ServiceTemplate serviceTemplate) {
-		Product product=productService.findByCode(serviceTemplate.getCode());
+		Product product=productService.findByCode(serviceTemplate.getCode().replaceAll("_OLD$", ""));
 		if(product==null) {
 			product = new Product();
 			product.setCode(serviceTemplate.getCode());
@@ -204,7 +211,8 @@ public class V11MigrationScript extends Script {
 			
 			serviceTemplateService.update(serviceTemplate);
 		}else {
-			log.warn("Product with code {} already exists",serviceTemplate.getCode());
+			log.warn("Product with code {} already exists",serviceTemplate.getCode().replaceAll("_OLD$", ""));
+			return null;
 		}
 		
 		return product;
@@ -230,15 +238,18 @@ public class V11MigrationScript extends Script {
 		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
 		ppmv.setPricePlanMatrix(ppm);
 		ppmv.setAmountWithoutTax(ppm.getAmountWithoutTax());
-		ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
 		ppmv.setAmountWithTax(ppm.getAmountWithTax());
-		ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
+		if(ppm.getAmountWithoutTaxEL() != null) {
+		    ppmv.setPriceEL(ppm.getAmountWithoutTaxEL());
+		} else {
+		    ppmv.setPriceEL(ppm.getAmountWithTaxEL());
+		}		
 		ppmv.setLabel(ppm.getDescription());
 		ppmv.setMatrix(false);
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
 		ppmv.setStatusDate(Calendar.getInstance().getTime());
 		ppmv.setVersion(1);
-		DatePeriod validity=new DatePeriod(DateUtils.truncateTime(ppm.getAuditable().getCreated()),null);
+		DatePeriod validity=new DatePeriod(ppm.getAuditable().getCreated(),null);
 		ppmv.setValidity(validity);
 		pricePlanMatrixVersionService.create(ppmv);
 		return ppmv;

@@ -1,12 +1,10 @@
 package org.meveo.model.catalog;
 
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.cpq.AttributeValue;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,12 +18,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
-@SuppressWarnings("serial")
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.Auditable;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.AttributeValue;
+
 @Entity
 @ExportIdentifier({"code"})
 @Table(name = "cpq_price_plan_matrix_line")
@@ -36,6 +36,11 @@ import java.util.Set;
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
 public class PricePlanMatrixLine extends AuditableEntity {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4919786663248378605L;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
     @JoinColumn(name = "ppm_version_id")
     private PricePlanMatrixVersion pricePlanMatrixVersion;
@@ -43,21 +48,9 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "description")
     private String description;
 
-    public PricePlanMatrixLine(PricePlanMatrixLine copy) {
-		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
-		this.description = copy.description;
-		this.priceWithoutTax = copy.priceWithoutTax;
-		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
-		this.priority = copy.priority;
-	}
-
-    public PricePlanMatrixLine() {
-	}
-
-	protected PricePlanMatrixLine(Auditable auditable) {
-		super(auditable);
-	}
-
+    @Column(name = "price_el")
+    private String priceEL;
+    
 	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal priceWithoutTax;
@@ -68,6 +61,23 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "priority")
     @NotNull
     private Integer priority = 0;
+    
+    public PricePlanMatrixLine() {
+        super();
+    }
+
+    public PricePlanMatrixLine(Auditable auditable) {
+        super(auditable);
+    }
+
+    public PricePlanMatrixLine(PricePlanMatrixLine copy) {
+        this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+        this.description = copy.description;
+        this.priceWithoutTax = copy.priceWithoutTax;
+        this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+        this.priority = copy.priority;
+        this.priceEL = copy.priceEL;
+    }
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
@@ -115,6 +125,14 @@ public class PricePlanMatrixLine extends AuditableEntity {
                 .allMatch(v -> v.matchWithAllValues());
     }
 
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }
+    
     public boolean match(Set<AttributeValue> attributeValues) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(attributeValues));
@@ -128,6 +146,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getPriceWithoutTax(), that.getPriceWithoutTax()) &&
+                Objects.equals(getPriceEL(), that.getPriceEL()) &&             
                 Objects.equals(getPriority(), that.getPriority());
     }
 
