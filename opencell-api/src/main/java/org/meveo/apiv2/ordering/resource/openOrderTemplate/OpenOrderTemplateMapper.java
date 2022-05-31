@@ -17,7 +17,6 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
 
         OpenOrderTemplate openOrderTemplate = new OpenOrderTemplate();
         openOrderTemplate.setId(resource.getId());
-        openOrderTemplate.setCode(resource.getCode());
         openOrderTemplate.setDescription(resource.getDescription());
         openOrderTemplate.setOpenOrderType(resource.getOpenOrderType());
         openOrderTemplate.setNumberOfInstantiation(resource.getNumberOfInstantiation());
