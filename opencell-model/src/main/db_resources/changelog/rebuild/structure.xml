@@ -2585,6 +2585,7 @@
             <column name="suspect_auto_action" type="varchar(255)"/>
             <column name="reject_auto_action" type="varchar(255)"/>
             <column name="next_billing_run_id" type="bigint"/>
+            <column name="origin_billing_run_id" type="bigint"/>
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -16621,6 +16622,11 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet>
 
+    <changeSet id="#INTRD-7537_20220531" author="TarikRabeh">          
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
+    
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
