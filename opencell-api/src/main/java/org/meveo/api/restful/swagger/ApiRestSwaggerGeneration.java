@@ -9,7 +9,10 @@ import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
 import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
 import org.meveo.api.restful.constant.MapRestUrlAndStandardUrl;
@@ -25,9 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ import java.util.Map;
  *
  * @author Thang Nguyen
  */
-@Path("/openapiv1.{type:json|yaml}")
+@Path("/openapi.{type:json|yaml}")
 public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
 
     @Inject
@@ -50,8 +51,6 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
     @Inject
     private Apiv1SwaggerDeleteOperation deleteOperation;
 
-    private static final String FORWARD_SLASH = "/";
-
     @GET
     @Produces({MediaType.APPLICATION_JSON, "application/json"})
     @io.swagger.v3.oas.annotations.Operation(hidden = true)
@@ -62,7 +61,13 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
         Map<String, PathItem> MAP_SWAGGER_PATHS = new Gson().fromJson(jsonApiStd, new TypeToken<Map<String, PathItem>>(){}.getType());
 
 
-        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell OpenApi definition V1"));
+        OpenAPI oasRestApi = new OpenAPI().info(new Info().title("Opencell OpenApi definition V1")
+                .version("1.0")
+                .description("This Swagger documentation contains API v1 endpoints")
+                .termsOfService("http://opencell.com/terms/")
+                .contact(new Contact().email("opencell@opencellsoft.com"))
+                .license(new License().name("Apache 2.0").url("http://www.apache.org/licenses/LICENSE-2.0.html")));
+
         SwaggerConfiguration oasRestConfig = new SwaggerConfiguration()
                 .openAPI(oasRestApi)
                 .prettyPrint(true)
@@ -83,9 +88,9 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
         oasRestApi.setPaths(paths);
 
         // Populate tags, components, extensions and servers of oasRestApi
-//        oasRestApi.setTags(GenericOpencellRestfulAPIv1.API_STD_SWAGGER.getTags());
-        oasRestApi.setComponents(GenericOpencellRestfulAPIv1.API_STD_SWAGGER.getComponents());
-        oasRestApi.setServers(Collections.singletonList(new Server().url("/opencell")));
+        oasRestApi.components(GenericOpencellRestfulAPIv1.API_STD_SWAGGER.getComponents())
+                .servers(Collections.singletonList(new Server().url("/opencell").description("Root path")))
+                .security(Collections.singletonList(new SecurityRequirement().addList("auth")));
 
         for ( Map.Entry<String, String> mapPathEntry : MapRestUrlAndStandardUrl.MAP_RESTFUL_URL_AND_STANDARD_URL.entrySet() ) {
             String aStdPath = mapPathEntry.getKey();
@@ -118,14 +123,10 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
                             break;
                     }
                     break;
-                }else {
-                	aRFPath=GenericOpencellRestfulAPIv1.REST_PATH +anOldPath;
                 }
-                paths.addPathItem(aRFPath, pathItemInOldSwagger); 
-                
             }
 
-            //paths.addPathItem(aRFPath, pathItem);
+            paths.addPathItem(aRFPath, pathItem);
         }
 
         oasRestApi.setPaths(paths);
