@@ -195,6 +195,10 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     @XmlElement
     protected String displayFormat;
 
+    /** if field could be GDPR anonymized or not */
+    @XmlElement
+    protected Boolean anonymizeGdpr;
+
     /**
      * Instantiates a new custom field template dto.
      */
@@ -807,5 +811,13 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
 
     public void setUniqueConstraint(Boolean uniqueConstraint) {
         this.uniqueConstraint = uniqueConstraint;
+    }
+
+    public Boolean getAnonymizeGdpr() {
+        return anonymizeGdpr;
+    }
+
+    public void setAnonymizeGdpr(Boolean anonymizeGdpr) {
+        this.anonymizeGdpr = anonymizeGdpr;
     }
 }
