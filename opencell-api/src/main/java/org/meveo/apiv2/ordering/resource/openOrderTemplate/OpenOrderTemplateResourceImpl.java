@@ -2,12 +2,9 @@ package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
-import org.meveo.apiv2.securityDeposit.FinanceSettings;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 
