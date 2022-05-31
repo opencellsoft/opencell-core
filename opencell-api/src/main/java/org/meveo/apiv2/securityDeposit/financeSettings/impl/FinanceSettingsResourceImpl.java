@@ -60,6 +60,7 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
 
             openOrderSettingToUpdate = openOrderSettingMapper.toEntity(openOrderSettingToUpdate,
                     financeSettings.getOpenOrderSetting());
+            openOrderSettingService.checkParameters(openOrderSettingToUpdate);
             financeSettingsToUpdate.setOpenOrderSetting(openOrderSettingToUpdate);
         }
 
