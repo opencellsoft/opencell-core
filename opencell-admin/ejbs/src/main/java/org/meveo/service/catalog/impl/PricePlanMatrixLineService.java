@@ -265,8 +265,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
             lines.add(pricePlanMatrixLine);
         }
-
-        ppmVersion.setLines(lines);
+        ppmVersion.getLines().clear();
+        ppmVersion.getLines().addAll(lines);
+        pricePlanMatrixVersionService.update(ppmVersion);
     }
 
     public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
