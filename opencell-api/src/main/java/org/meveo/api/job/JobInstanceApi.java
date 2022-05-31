@@ -194,11 +194,15 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             jobInstance.setTimerEntity(null);
         }
 
-        if (!StringUtils.isBlank(postData.getFollowingJob())) {
-            JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob());
-            jobInstance.setFollowingJob(nextJob);
-            if (nextJob == null) {
-                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+        if (postData.getFollowingJob() != null) {
+            if (!StringUtils.isBlank(postData.getFollowingJob())) {
+                JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob());
+                jobInstance.setFollowingJob(nextJob);
+                if (nextJob == null) {
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+                }
+            } else {
+                jobInstance.setFollowingJob(null);
             }
         }
 
