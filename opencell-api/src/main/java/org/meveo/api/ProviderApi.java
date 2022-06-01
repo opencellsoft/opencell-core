@@ -553,6 +553,7 @@ public class ProviderApi extends BaseApi {
         		paymentPlanPolicy.setDefaultInterestRate(postData.getPaymentPlanPolicy().getDefaultInterestRate());
         	}
         	
+        	
         	if(postData.getPaymentPlanPolicy().getAllowedPaymentMethods() != null) {
             	paymentPlanPolicy.setAllowedPaymentMethods(postData.getPaymentPlanPolicy().getAllowedPaymentMethods());
             }
@@ -590,6 +591,9 @@ public class ProviderApi extends BaseApi {
         if (postData.isRecognizeRevenue() != null) {
             provider.setRecognizeRevenue(postData.isRecognizeRevenue());
         }
+        if (postData.getCdrDeduplicationKeyEL() != null) {
+        	provider.setCdrDeduplicationKeyEL(postData.getCdrDeduplicationKeyEL());
+    	}
 
         InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
         if (invoiceConfigurationDto != null) {
