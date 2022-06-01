@@ -2,7 +2,7 @@
   "scannerClass": "io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner",
   "resourceClasses":
   [],
-  "resourcePackages": ["org.meveo.apiv2"],
+  "resourcePackages": ["org.meveo.api.rest"],
   "prettyPrint" : true,
   "cacheTTL": 0,
   "openAPI": {
@@ -12,8 +12,8 @@
     }],
     "info": {
       "version": "1.0",
-      "title": "Opencell OpenApi definition V2",
-      "description": "This Swagger documentation contains Opencell API v2 endpoints",
+      "title": "Opencell OpenApi definition Legacy API",
+      "description": "This Swagger documentation contains all Legacy API endpoints",
       "termsOfService": "http://opencell.com/terms/",
       "contact": {
         "email": "opencell@opencellsoft.com"

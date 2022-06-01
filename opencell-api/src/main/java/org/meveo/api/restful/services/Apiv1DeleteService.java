@@ -32,7 +32,7 @@ public class Apiv1DeleteService {
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv1.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv1.get(i).getPath() );
-        String deletePath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
+        String deletePath = GenericOpencellRestfulAPIv1.REST_PATH + suffixPathBuilder;
 
         if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( deletePath ) ) {
             String pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get(deletePath);
