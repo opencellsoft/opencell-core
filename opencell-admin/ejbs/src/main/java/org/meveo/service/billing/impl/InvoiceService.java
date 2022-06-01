@@ -3613,38 +3613,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
     
-    private void applyDiscountPlanItem(Invoice invoice) {
-    	
-    	 Subscription subscription = invoice.getSubscription();
-         BillingAccount billingAccount = invoice.getBillingAccount();
-         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-         
-         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
-         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
-         
-         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
-             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
-         }
-
-         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
-             if(subscription == null) {
-            	 List<Subscription> subscriptions = subscriptionService.listByBillingAccount(billingAccount);
-            	 Seller seller = invoice.getSeller() != null ? invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-            	 subscriptions.forEach(sub -> {
-                	 if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
-                         subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
-                         invoice.getInvoiceLines().forEach(invoiceLine -> {
-                        	 invoiceLinesService.addDiscountPlanInvoiceLine(billingAccountApplicableDiscountPlanItems, invoiceLine, invoice, billingAccount, seller);
-                         });
-                        
-                     }
-            	 });
-             }
-         }
-         
-    }
-    
     private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates) throws BusinessException {
 
         Subscription subscription = invoice.getSubscription();
@@ -3670,7 +3638,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
-            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+            addApplicableDiscount(subscriptionApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
@@ -3729,7 +3697,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
+            addApplicableDiscount(billingAccountApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
         // Construct discount and tax aggregates
@@ -6248,6 +6216,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Invoice with invoice id " + invoice.getId() + " doesn't have a billing run.");
         }
 
+    }
+    
+    private void addApplicableDiscount(List<DiscountPlanItem> applicableDiscountPlanItems,List<DiscountPlanInstance> discountPlanInstances, BillingAccount billingAccount, CustomerAccount customerAccount, Invoice invoice) {
+    	if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+    		var filtredDiscountPlanInstanes= discountPlanInstances.stream().filter(dpi -> DiscountPlanTypeEnum.INVOICE == dpi.getDiscountPlan().getDiscountPlanType()).collect(Collectors.toList());
+    		// use getApplicableDiscountPlanItemsV11 instead of getApplicableDiscountPlanItems after merging DP US INTRD-5730
+    		applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, filtredDiscountPlanInstanes, invoice, customerAccount));
+    	}else{
+    		applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount));
+    	}
     }
 
 }
