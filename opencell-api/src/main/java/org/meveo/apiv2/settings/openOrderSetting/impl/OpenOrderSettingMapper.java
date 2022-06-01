@@ -27,14 +27,17 @@ public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput
 
      public OpenOrderSetting toEntity(OpenOrderSetting entity, OpenOrderSettingInput resource) {
         entity.setId(resource.getId());
-        entity.setCode(resource.getCode());
         entity.setUseOpenOrders(resource.getUseOpenOrders());
-         entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
-         entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
-         entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
-         entity.setDefineMaximumValidity(resource.getDefineMaximumValidity());
-         entity.setDefineMaximumValidityValue(resource.getDefineMaximumValidityValue());
-         entity.setUseManagmentValidationForOOQuotation(resource.getUseManagmentValidationForOOQuotation());
+        if(entity.getUseOpenOrders() == true) {
+
+            entity.setCode(resource.getCode());
+            entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
+            entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
+            entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
+            entity.setDefineMaximumValidity(resource.getDefineMaximumValidity());
+            entity.setDefineMaximumValidityValue(resource.getDefineMaximumValidityValue());
+            entity.setUseManagmentValidationForOOQuotation(resource.getUseManagmentValidationForOOQuotation());
+        }
         return entity;
     }
 }

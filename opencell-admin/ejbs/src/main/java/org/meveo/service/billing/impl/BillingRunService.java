@@ -1372,7 +1372,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	            BillingRun quarantineBillingRun = findById(quarantineBRId);
 
 	            if (quarantineBillingRun != null) {
-	            	if(quarantineBillingRun.getIsQuarantine()) {
+	            	if(quarantineBillingRun.getIsQuarantine() && BillingRunStatusEnum.REJECTED.equals(quarantineBillingRun.getStatus())) {
 	    	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
 	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
 	    	            }else {
@@ -1412,6 +1412,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	               quarantineBillingRun.setInvoices(new ArrayList<>());
 	               quarantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
 	               quarantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               quarantineBillingRun.setOriginBillingRun(billingRun);
 	               quarantineBillingRun.setId(null);
 	               
 	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {

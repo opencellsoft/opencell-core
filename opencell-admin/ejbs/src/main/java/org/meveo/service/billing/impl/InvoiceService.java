@@ -2553,6 +2553,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }else {
             invoice.setStatus(InvoiceStatusEnum.REJECTED);
         }
+        
+        update(invoice);
     }
 
     /**
