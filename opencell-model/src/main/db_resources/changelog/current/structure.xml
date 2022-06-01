@@ -12502,7 +12502,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime"/>
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
-            <column name="quote_default_validity_delay" type="int">
+            <column name="quote_default_validity_delay" type="int" defaultValueNumeric="30">
             	<constraints nullable="false" />
             </column>
         </createTable>
@@ -13132,6 +13132,16 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="general_client_account_id" baseTableName="ar_customer_account"
                                  constraintName="fk_general_client_account" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
+
+    <changeSet id="#INTRD-7537_20220531" author="TarikRabeh">
+        <addColumn tableName="billing_billing_run">
+            <column name="origin_billing_run_id" type="bigint" />
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
 
 </databaseChangeLog>

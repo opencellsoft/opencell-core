@@ -2585,6 +2585,7 @@
             <column name="suspect_auto_action" type="varchar(255)"/>
             <column name="reject_auto_action" type="varchar(255)"/>
             <column name="next_billing_run_id" type="bigint"/>
+            <column name="origin_billing_run_id" type="bigint"/>
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -16085,6 +16086,11 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
+    <changeSet id="#INTRD-7537_20220531-fk" author="TarikRabeh">          
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17754,6 +17760,7 @@
     <changeSet id="#INTRD-7157_20220523" author="ZBariki" />
     <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" />
     <changeSet id="#INTRD-7422_20220525" author="ZBariki" />
+    <changeSet id="#INTRD-7537_20220531" author="TarikRabeh" />          
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

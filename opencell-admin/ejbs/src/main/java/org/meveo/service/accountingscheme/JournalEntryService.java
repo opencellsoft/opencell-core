@@ -17,7 +17,10 @@
  */
 package org.meveo.service.accountingscheme;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Map.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
@@ -34,14 +37,18 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.securityDeposit.AuxiliaryAccounting;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +76,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     @Inject
     private AccountingArticleService accountingArticleService;
+
+    @Inject
+    private FinanceSettingsService financeSettingsService;
 
     @Transactional
     public List<JournalEntry> createFromAccountOperation(AccountOperation ao, OCCTemplate occT) {
@@ -245,7 +255,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
         firstEntry.setAmount(amount);
-        firstEntry.setCustomerAccount(ao.getCustomerAccount());
+        CustomerAccount customerAccount = ao.getCustomerAccount();
+        firstEntry.setCustomerAccount(customerAccount);
         firstEntry.setDirection(JournalEntryDirectionEnum.getValue(categoryEnum.getId()));
         firstEntry.setTax(tax);
 
@@ -269,6 +280,11 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setTradingAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getAmountWithTax() : null);            
             
         }
+        Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
+        if(accountingInfo != null && !accountingInfo.isEmpty()) {
+            firstEntry.setAuxiliaryAccountCode(accountingInfo.get("auxiliaryAccountCode"));
+            firstEntry.setAuxiliaryAccountLabel(accountingInfo.get("auxiliaryAccountLabel"));
+        }
 
         return firstEntry;
     }
@@ -277,6 +293,32 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         return ao.getSeller() != null ? ao.getSeller() :
                 ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
                         ao.getCustomerAccount().getCustomer().getSeller() : null;
+    }
+
+    private Map<String, String> addAccountingInfo(CustomerAccount customerAccount) {
+        FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
+                .orElseThrow(() -> new NotFoundException("No finance settings found"));
+        AuxiliaryAccounting auxiliaryAccounting = ofNullable(financeSettings.getAuxiliaryAccounting())
+                .orElseThrow(() -> new NotFoundException("Auxiliary accounting not configured for finance settings"));
+        if(auxiliaryAccounting.isUseAuxiliaryAccounting()) {
+            try {
+                return evaluateAccountingELs(customerAccount, auxiliaryAccounting);
+            } catch (Exception exception) {
+                log.error(exception.getMessage());
+            }
+        }
+        return emptyMap();
+    }
+
+    private Map<String, String> evaluateAccountingELs(CustomerAccount customerAccount,
+                                                          AuxiliaryAccounting auxiliaryAccounting) {
+        Map<Object, Object> context =
+                of("ca", customerAccount, "gca", customerAccount.getGeneralClientAccount());
+        String auxiliaryAccountCode =
+                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountCodeEl(), context, String.class);
+        String auxiliaryAccountLabel =
+                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountLabelEl(), context, String.class);
+        return of("auxiliaryAccountCode", auxiliaryAccountCode, "auxiliaryAccountLabel", auxiliaryAccountLabel);
     }
 
     private void buildTaxesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
@@ -391,5 +433,4 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
         return revenuEntry;
     }
-
 }

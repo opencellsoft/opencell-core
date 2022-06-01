@@ -5,6 +5,7 @@ import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 
 public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResource{
@@ -18,7 +19,7 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
     public Response createOpenOrderTemplate(OpenOrderTemplateInput openOrderTemplateInput){
 
         openOrderTemplateApiService.create(openOrderTemplateInput);
-        return Response.ok().build();
+        return Response.ok().entity(Map.of("status", "SUCCESS", "message", "open Order template has been created with success")).build();
     }
 
 
@@ -27,7 +28,7 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
     @Override
     public Response updateOpenOrderTemplate( String code, OpenOrderTemplateInput openOrderTemplateInput){
         openOrderTemplateApiService.update(code, openOrderTemplateInput);
-        return Response.ok().build();
+        return Response.ok().entity(Map.of("status", "SUCCESS", "message", "open Order template has been updated with success")).build();
     }
 
     @Override
@@ -35,4 +36,6 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
         openOrderTemplateApiService.disableOpenOrderTemplate(code);
         return Response.ok().build();
     }
+
+
 }

@@ -46,6 +46,7 @@ public class OpenOrderTemplateApiService {
     {
 
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
+        openOrderTemplate.setCode(openOrderTemplate.getTemplateName());
          if(null != input.getThresholds() ) openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
         if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));

@@ -138,7 +138,7 @@ public class Apiv1PostService {
      */
     public Response postCreationOrUpdate(UriInfo uriInfo, String jsonDto) throws URISyntaxException, JsonProcessingException {
         URI redirectURI;
-        StringBuilder aPathBd = new StringBuilder(GenericOpencellRestfulAPIv1.API_VERSION);
+        StringBuilder aPathBd = new StringBuilder(GenericOpencellRestfulAPIv1.REST_PATH);
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
 
         String entityCode = segmentsOfPathAPIv1.get(segmentsOfPathAPIv1.size() - 2).toString();

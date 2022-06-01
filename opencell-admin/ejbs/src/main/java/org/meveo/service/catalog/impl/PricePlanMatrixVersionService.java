@@ -37,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
@@ -187,17 +188,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                             && ((pv.getValidity().getTo() != null && pv.getValidity().getTo().compareTo(newTo) <= 0)
                                     || newTo == null)) {
                         remove(pv);
-
                     }
                     else {
                         DatePeriod validity = pv.getValidity();
                         Date oldFrom = validity.getFrom();
                         Date oldTo = validity.getTo();
                         
-                        if (newFrom.compareTo(oldFrom) > 0 && oldTo != null && newFrom.compareTo(oldTo) < 0) {
+                        if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
                             validity.setTo(newFrom);
                         }
-                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && newTo.compareTo(oldTo) < 0 && newTo.compareTo(validity.getTo()) < 0) {
+                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(validity.getTo()) < 0) {
                             validity.setFrom(newTo);
                         }
                         update(pv);
@@ -367,11 +367,17 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
 	public int getLastVersion(PricePlanMatrix pricePlanMatrix) {
-    	return this.getEntityManager()
-    	        .createNamedQuery("PricePlanMatrixVersion.lastCurrentVersion", Integer.class)
-				.setParameter("pricePlanMatrix", pricePlanMatrix)
-				.setMaxResults(1)
-				.getSingleResult();
+		Integer version = 0;
+        try {
+    		version =  this.getEntityManager()
+    		        .createNamedQuery("PricePlanMatrixVersion.lastCurrentVersion", Integer.class)
+    				.setParameter("pricePlanMatrix", pricePlanMatrix)
+    				.setMaxResults(1)
+    				.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No lastCurrentVersion for PricePlanMatrixVersion {} found", pricePlanMatrix.getId());
+        }
+		 return version;
     }
     
     public PricePlanMatrixVersionDto load(Long id) {

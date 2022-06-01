@@ -32,8 +32,6 @@ import java.util.List;
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableOpenOrderTemplateInput.class)
 public interface OpenOrderTemplateInput extends Resource {
-    @NotNull
-    String getCode();
 
     @NotNull
     OpenOrderTypeEnum getOpenOrderType();
