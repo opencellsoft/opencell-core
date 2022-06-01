@@ -5,6 +5,8 @@ import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -18,8 +20,8 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
     @Override
     public Response createOpenOrderTemplate(OpenOrderTemplateInput openOrderTemplateInput){
 
-        openOrderTemplateApiService.create(openOrderTemplateInput);
-        return Response.ok().entity(Map.of("status", "SUCCESS", "message", "open Order template has been created with success")).build();
+        OpenOrderTemplateInput openOrderTemplate = openOrderTemplateApiService.create(openOrderTemplateInput);
+        return buildResponse(openOrderTemplate);
     }
 
 
@@ -27,14 +29,21 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
 
     @Override
     public Response updateOpenOrderTemplate( String code, OpenOrderTemplateInput openOrderTemplateInput){
-        openOrderTemplateApiService.update(code, openOrderTemplateInput);
-        return Response.ok().entity(Map.of("status", "SUCCESS", "message", "open Order template has been updated with success")).build();
+        OpenOrderTemplateInput openOrderTemplate =  openOrderTemplateApiService.update(code, openOrderTemplateInput);
+         return buildResponse(openOrderTemplate);
     }
 
     @Override
     public Response disableOpenOrderTemplate(String code) {
         openOrderTemplateApiService.disableOpenOrderTemplate(code);
         return Response.ok().build();
+    }
+
+    private Response buildResponse(OpenOrderTemplateInput openOrderTemplateInput) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
+        response.put("openOrderTemplate", openOrderTemplateInput);
+        return Response.ok().entity(response).build();
     }
 
 

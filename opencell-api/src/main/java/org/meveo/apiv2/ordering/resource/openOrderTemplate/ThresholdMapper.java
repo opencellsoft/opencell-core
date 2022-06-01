@@ -19,15 +19,30 @@
 package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.apiv2.ordering.resource.order.ImmutableThresholdInput;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
 import org.meveo.model.ordering.Threshold;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
 
 
     @Override
-    protected ThresholdInput toResource(Threshold entity) {
-        return null;
+    public ThresholdInput toResource(Threshold entity) {
+
+        return ImmutableThresholdInput.builder()
+                .sequence(entity.getSequence())
+                .percentage(entity.getPercentage())
+                .recipients(entity.getRecipients())
+                .build();
+    }
+
+    public List<ThresholdInput>  toResource(List<Threshold> entities)
+    {
+        if(entities == null || entities.isEmpty()) return null;
+        return entities.stream().map(this::toResource).collect(Collectors.toList());
     }
 
     @Override
@@ -39,6 +54,8 @@ public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
         threshold.setRecipients(input.getRecipients());
         return threshold;
     }
+
+
 
 
 
