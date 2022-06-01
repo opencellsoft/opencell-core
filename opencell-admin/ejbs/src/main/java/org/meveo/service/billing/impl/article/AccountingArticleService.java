@@ -40,9 +40,6 @@ import org.meveo.service.cpq.AttributeService;
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 
-	private static final String SCORE_1 = "1";
-	private static final String SCORE_0 = "0";
-	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
 	@Inject
@@ -272,32 +269,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		String columCriteriaEL = evaluateAccountingCodeArticleEl(accountingArticle.getColumnCriteriaEL(),
 				accountingArticle, invoice, String.class);
 
-		// check if only one toMatch field are not found in datas..if yes, return null
-		//if (hasAllData(mappings, accountingArticle, billingCountry, billingCurrency, sellerCountry, seller, columCriteriaEL)) {
-		//	return null;
-		//} ===== UPDATE 17/05 (INTRD-7248) when we have as lest one field not matched with all Mapping, we should continue process to perform "best matching"
-
 		Map<Long, Integer> matchingScore = new HashMap<>();
 
 		mappings.forEach(map -> {
 
-			String score = (map.getAccountingArticle() == null && accountingArticle.getId() == null ? SCORE_1 :
-					map.getAccountingArticle() != null && map.getAccountingArticle().getId().equals(accountingArticle.getId()) ? SCORE_1 : SCORE_0) +
-					(map.getBillingCountry() == null && billingCountry == null ? SCORE_1 :
-							(map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId()) ? SCORE_1 : SCORE_0) +
-					(map.getBillingCurrency() == null && billingCurrency == null ? SCORE_1 :
-							(map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId()) ? SCORE_1 : SCORE_0) +
-					(map.getSellerCountry() == null && sellerCountry == null ? SCORE_1 :
-							(map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId()) ? SCORE_1 : SCORE_0) +
-					(map.getSeller() == null && seller == null ? SCORE_1 :
-							(map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId()) ? SCORE_1 : SCORE_0) +
-					(map.getCriteriaElValue() == null && StringUtils.isBlank(columCriteriaEL) ? SCORE_1 :
-							map.getCriteriaElValue() != null && map.getCriteriaElValue().equals(columCriteriaEL) ? SCORE_1 : SCORE_0);
+			int mappingScore = 0;
+			mappingScore += ((map.getBillingCountry() == null && billingCountry == null) || (map.getBillingCountry() != null && billingCountry == null)) ? 0 : (map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId()) ? 1000 : -1000;
+			mappingScore += ((map.getBillingCurrency() == null && billingCurrency == null) || (map.getBillingCurrency() != null && billingCurrency == null))  ? 0 : (map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId()) ? 500 : -500;
+			mappingScore += ((map.getSellerCountry() == null && sellerCountry == null) || (map.getSellerCountry() != null && sellerCountry == null))  ? 0 : (map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId()) ? 250 : -250;
+			mappingScore += ((map.getSeller() == null && seller == null) || (map.getSeller() != null && seller == null))  ? 0 : (map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId()) ? 150 : -150;
+			mappingScore += ((map.getCriteriaElValue() == null && StringUtils.isBlank(columCriteriaEL) || map.getCriteriaElValue() != null && StringUtils.isBlank(columCriteriaEL))) ? 0 : (map.getCriteriaElValue() != null && map.getCriteriaElValue().equals(columCriteriaEL)) ? 50 : -50;
 
-			Integer theScore = Integer.valueOf(score);
-
-			if (theScore > 0) {
-				matchingScore.put(map.getId(), theScore);
+			if (mappingScore > 0) {
+				matchingScore.put(map.getId(), mappingScore);
 			}
 
 		});
@@ -333,34 +317,4 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	}
 
-	private static boolean hasAllData(List<AccountingCodeMapping> mappings, AccountingArticle accountingArticle,
-									  TradingCountry billingCountry, TradingCurrency billingCurrency,
-									  TradingCountry sellerCountry, Seller seller, String columCriteriaEL) {
-	    boolean articleMatched = accountingArticle != null && accountingArticle.getId() != null &&
-                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getAccountingArticle() == null ? false : accountingCodeMapping.getAccountingArticle().getId())
-                        .collect(Collectors.toSet()).contains(accountingArticle.getId());
-
-        boolean billingCountryMatched = billingCountry != null && billingCountry.getId() != null &&
-                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCountry() == null ? false : accountingCodeMapping.getBillingCountry().getId())
-                        .collect(Collectors.toSet()).contains(billingCountry.getId());
-
-        boolean billingCurrencyMatched = billingCurrency != null && billingCurrency.getId() != null &&
-                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getBillingCurrency() == null ? false : accountingCodeMapping.getBillingCurrency().getId())
-                    .collect(Collectors.toSet()).contains(billingCurrency.getId());    
-          
-        boolean sellerCountryMatched = sellerCountry != null && sellerCountry.getId() != null &&
-                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSellerCountry() == null ? false : accountingCodeMapping.getSellerCountry().getId())
-                        .collect(Collectors.toSet()).contains(sellerCountry.getId());
-
-        boolean sellerIdMatched = seller != null && seller.getId() != null &&
-                !mappings.stream().map(accountingCodeMapping -> accountingCodeMapping.getSeller() == null ? false : accountingCodeMapping.getSeller().getId())
-                        .collect(Collectors.toSet()).contains(seller.getId());
-
-        boolean valueMatched = StringUtils.isNotBlank(columCriteriaEL) &&
-                !mappings.stream().map(AccountingCodeMapping::getCriteriaElValue)
-                        .collect(Collectors.toSet()).contains(columCriteriaEL);
-
-        return articleMatched || billingCountryMatched || billingCurrencyMatched
-				|| sellerCountryMatched || sellerIdMatched || valueMatched;
-	}
 }
