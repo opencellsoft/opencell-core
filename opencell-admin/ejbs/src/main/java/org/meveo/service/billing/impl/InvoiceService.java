@@ -159,6 +159,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -3474,7 +3475,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
     }
-
+    private void addApplicableDiscount(List<DiscountPlanItem> applicableDiscountPlanItems,List<DiscountPlanInstance> discountPlanInstances, BillingAccount billingAccount, CustomerAccount customerAccount, Invoice invoice) {
+    	if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
+    		var filtredDiscountPlanInstanes= discountPlanInstances.stream().filter(dpi -> DiscountPlanTypeEnum.INVOICE == dpi.getDiscountPlan().getDiscountPlanType()).collect(Collectors.toList());
+    		// use getApplicableDiscountPlanItemsV11 instead of getApplicableDiscountPlanItems after merging DP US INTRD-5730
+    		applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, filtredDiscountPlanInstanes, invoice, customerAccount));
+    	}else{
+    		applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount));
+    	}
+    }
     private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates) throws BusinessException {
 
         Subscription subscription = invoice.getSubscription();
@@ -3500,7 +3509,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
-            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+        	addApplicableDiscount(subscriptionApplicableDiscountPlanItems, subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
@@ -3554,7 +3563,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
+        	addApplicableDiscount(billingAccountApplicableDiscountPlanItems, subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
 
         // Construct discount and tax aggregates
