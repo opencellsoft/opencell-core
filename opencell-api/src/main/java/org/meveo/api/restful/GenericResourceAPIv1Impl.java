@@ -64,13 +64,13 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      */
     @Override
     public Response getRequest( PagingAndFilteringRest pagingAndFiltering ) throws URISyntaxException, IOException {
-        String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String aGetPath = GenericOpencellRestfulAPIv1.REST_PATH + uriInfo.getPath();
 
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv1.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv1.get(i).getPath() );
-        String getAnEntityPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
+        String getAnEntityPath = GenericOpencellRestfulAPIv1.REST_PATH + suffixPathBuilder;
 
         // to get all entities
         if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
@@ -91,7 +91,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     @Override
     public Response postRequest( String jsonDto ) throws URISyntaxException, IOException {
-        String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String postPath = GenericOpencellRestfulAPIv1.REST_PATH + uriInfo.getPath();
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         queryParamsMap = uriInfo.getQueryParameters();
         queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
@@ -114,12 +114,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     @Override
     public Response putRequest( String jsonDto ) throws URISyntaxException, IOException {
-        String putPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String putPath = GenericOpencellRestfulAPIv1.REST_PATH + uriInfo.getPath();
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv1.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv1.get(i).getPath() );
-        String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
+        String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.REST_PATH + suffixPathBuilder;
 
         if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
             return putService.updateService( uriInfo, putPath, jsonDto );
@@ -165,7 +165,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     @Override
     public Response getApiVersion() {
         ActionStatus successfulStatus = new ActionStatus(ActionStatusEnum.SUCCESS,
-                "Opencell core version " + Version.appVersion + ", Opencell Rest API version " + GenericOpencellRestfulAPIv1.API_VERSION.substring(1)
+                "Opencell core version " + Version.appVersion + ", Opencell Rest API version " + GenericOpencellRestfulAPIv1.REST_PATH.substring(1)
                         + ", commit " + Version.buildNumber + " , build at " + Version.build_time);
 
         return Response.status(Response.Status.OK).entity(successfulStatus).build();
