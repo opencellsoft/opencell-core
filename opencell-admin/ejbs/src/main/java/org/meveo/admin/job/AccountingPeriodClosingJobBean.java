@@ -23,7 +23,11 @@ import static org.meveo.model.accounting.CustomLockOption.AFTER_END_OF_SUB_AP_PE
 import static org.meveo.model.accounting.RegularUserLockOption.CUSTOM;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -57,7 +61,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
 
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
-
+    
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -103,7 +107,9 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
      * @param jobExecutionResult Job execution result
      */
     private void closeSubAccountingPeriods(List<SubAccountingPeriod> subAccountingPeriods, JobExecutionResultImpl jobExecutionResult) {
+        AccountingPeriod accountingPeriod = subAccountingPeriods.get(0).getAccountingPeriod();
         List<Long> ids = subAccountingPeriods.stream().map(SubAccountingPeriod::getId).collect(Collectors.toList());
         subAccountingPeriodService.closeSubAccountingPeriods(ids);
+        subAccountingPeriodService.resetSequenceIfIsTheLastPeriode(accountingPeriod, ids);
     }
 }

@@ -102,7 +102,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
             messages.error(new BundleKey("messages", "ddrequestLot.generateFileFailed"));
         }
 
-        return null;
+        return back();
     }
 
     /**
@@ -126,7 +126,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
             messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsFailed"));
         }
 
-        return null;
+        return back();
     }
 
     /**
@@ -148,7 +148,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
             messages.info(new BundleKey("messages", "ddrequestLot.launchProcessFailed"));
             messages.info(e.getMessage());
         }
-        return null;
+        return back();
     }
 
     @Override
@@ -222,10 +222,9 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
     }
     
     public boolean canCreatePayments() {
-        if (entity != null && !entity.isPaymentCreated() && !StringUtils.isBlank(entity.getFileName())) {
+       
             return true;
-        }
-        return false;
+       
     }
     
     

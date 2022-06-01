@@ -709,7 +709,9 @@ public class CustomFieldValues implements Cloneable, Serializable {
      * @param cfts Custom field template definitions for description lookup
      */
     public void asDomElement(Document doc, Element parentElement, Map<String, CustomFieldTemplate> cfts) {
-
+        if (valuesByCode == null) {
+            return;
+        }
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
             CustomFieldTemplate cft = cfts.get(cfValueInfo.getKey());
 
@@ -977,16 +979,19 @@ public class CustomFieldValues implements Cloneable, Serializable {
 
     @Override
     public CustomFieldValues clone() {
-        Map<String, List<CustomFieldValue>> cfCopy = new HashMap<String, List<CustomFieldValue>>();
-        for (Entry<String, List<CustomFieldValue>> cfValue : getValuesByCode().entrySet()) {
-            if (!cfValue.getValue().isEmpty()) {
-                List<CustomFieldValue> valuesCopy = new ArrayList<CustomFieldValue>();
-                for (CustomFieldValue customFieldValue : cfValue.getValue()) {
-                    valuesCopy.add(customFieldValue.clone());
+        if(getValuesByCode() != null) {
+            Map<String, List<CustomFieldValue>> cfCopy = new HashMap<>();
+            for (Entry<String, List<CustomFieldValue>> cfValue : getValuesByCode().entrySet()) {
+                if (!cfValue.getValue().isEmpty()) {
+                    List<CustomFieldValue> valuesCopy = new ArrayList<>();
+                    for (CustomFieldValue customFieldValue : cfValue.getValue()) {
+                        valuesCopy.add(customFieldValue.clone());
+                    }
+                    cfCopy.put(cfValue.getKey(), valuesCopy);
                 }
-                cfCopy.put(cfValue.getKey(), valuesCopy);
             }
+            return new CustomFieldValues(cfCopy);
         }
-        return new CustomFieldValues(cfCopy);
+        return null;
     }
 }

@@ -27,6 +27,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -34,11 +35,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AuthenticationTypeEnum;
-import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -254,7 +255,17 @@ public class MeveoInstance extends BusinessEntity {
      */
     @Column(name = "auth_password", length = 60)
     @Size(max = 60)
-    private String authPassword;
+    private String authPasswordDB;
+
+    /**
+     * transient authPassword
+     */
+    transient private String authPassword;
+
+    /**
+     * transient authPassword in Keystore
+     */
+    transient private String authPasswordKS;
     
     /**
      * Authentication client id
@@ -647,12 +658,52 @@ public class MeveoInstance extends BusinessEntity {
         this.authUsername = authUsername;
     }
 
-    public String getAuthPassword() {
-        return authPassword;
+    public String getAuthPasswordDB() {
+        return authPasswordDB;
     }
 
-    public void setAuthPassword(String authPassword) {
-        this.authPassword = authPassword;
+    public void setAuthPasswordDB(String authPasswordDB) {
+        this.authPasswordDB = authPasswordDB;
+    }
+
+    public String getAuthPassword() {
+        if (KeystoreManager.existKeystore()) {
+            return getAuthPasswordKS();
+        }
+        else {
+            return getAuthPasswordDB();
+        }
+    }
+
+    public void setAuthPassword(String password) {
+        if (KeystoreManager.existKeystore()) {
+            authPasswordDB = "";
+            this.authPasswordKS = password;
+            setAuthPasswordKS();
+        }
+        else {
+            setAuthPasswordDB(password);
+        }
+    }
+
+    public String getAuthPasswordKS() {
+        if (KeystoreManager.existCredential(getClass().getSimpleName() + "." + getId())) {
+            return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getId());
+        }
+        else {
+            return "";
+        }
+    }
+
+    @PostPersist
+    public void setAuthPasswordKS() {
+        if (this.authPasswordKS == null) {
+            this.authPasswordKS = "";
+        }
+
+        if (getId() != null &&! this.authPasswordKS.equals(getAuthPasswordKS())) {
+            KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.authPasswordKS);
+        }
     }
     
     public String getClientId() {

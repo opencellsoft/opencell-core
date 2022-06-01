@@ -1,0 +1,50 @@
+{
+	"info": {
+		"_postman_id": "c1c3be89-38e4-4413-894b-4bd99b9b98b6",
+		"name": "payments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create Payment",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 100,\n    \"occTemplateCode\": \"PAY_CHK\", \n    \"reference\" : \"123456789\", \n    \"paymentMethod\": \"CHECK\"\n\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/payment",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"payment"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

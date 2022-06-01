@@ -1,13 +1,26 @@
 package org.meveo.service.payments.impl;
 
+import java.util.List;
+
+import javax.ejb.Stateless;
+
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
-
 @Stateless
 public class DunningLevelInstanceService extends PersistenceService<DunningLevelInstance> {
+
+    public List<DunningLevelInstance> findByCollectionPlan(DunningCollectionPlan collectionPlan) {
+        try {
+            return getEntityManager()
+                    .createNamedQuery("DunningLevelInstance.findByCollectionPlan", entityClass)
+                    .setParameter("collectionPlan", collectionPlan)
+                    .getResultList();
+        } catch (Exception exception) {
+            return null;
+        }
+    }
 
     public DunningLevelInstance findByLevelId(Long levelId) {
         try {
@@ -23,7 +36,7 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
     public DunningLevelInstance findByCurrentLevelSequence(DunningCollectionPlan collectionPlan) {
         try {
             return getEntityManager()
-                    .createNamedQuery("DunningLevelInstance.findByCurrentLevelSequence", entityClass)
+                    .createNamedQuery("DunningLevelInstance.findBySequence", entityClass)
                     .setParameter("collectionPlan", collectionPlan)
                     .setParameter("sequence", collectionPlan.getCurrentDunningLevelSequence())
                     .getSingleResult();
@@ -63,9 +76,9 @@ public class DunningLevelInstanceService extends PersistenceService<DunningLevel
                 .getSingleResult() > 0;
     }
 
-    public Long getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
+    public Integer getMinSequenceByDaysOverdue(DunningCollectionPlan collectionPlan, Integer daysOverdue) {
         return getEntityManager()
-                .createNamedQuery("DunningLevelInstance.checkDaysOverdueIsAlreadyExist", Long.class)
+                .createNamedQuery("DunningLevelInstance.minSequenceByDaysOverdue", Integer.class)
                 .setParameter("collectionPlan", collectionPlan)
                 .setParameter("daysOverdue", daysOverdue)
                 .getSingleResult();

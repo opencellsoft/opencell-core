@@ -24,6 +24,8 @@
 					backingBean="#{AccountingEntryListBean}" columns="3">
 			<hftl:searchField label="#{messages['accountingEntry.writingDate']}"
 				field="auditable.created" />
+			<hftl:searchField label="#{messages['accountingEntry.extraParam2']}"
+							  field="extraParam2" />
 			<hftl:searchField label="#{messages['accountingEntry.eventType']}"
 				field="eventType" />
 			<hftl:searchField id="accountingCodeField" label="#{messages['accountingEntry.accountingCode']}" field="accountingCode" valueLabelField="code"
@@ -56,7 +58,7 @@
 				</f:facet>
 				<p:commandButton id="accountOperationListBtn" icon="ui-icon-document" 
 							oncomplete="PF('accountOperationListDialog').show()" update="accountOperationListDialog"
-							action="#{accountingEntryListBean.selectAccountingEntry(entity.id)}">
+							action="#{accountingEntryListBean.selectAccountingWriting(entity.id)}">
 					<f:actionListener></f:actionListener>
                 </p:commandButton>
 			</p:column>

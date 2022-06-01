@@ -158,7 +158,7 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
-        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L);
+        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
         assertEquals(3, map.get("total"));
@@ -192,7 +192,7 @@ public class DiscountPlanApiServiceTest {
         Map<String, Object> filter = new HashMap<>();
         filter.put("status", "DRAFT");
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
-        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlan.class, 1L, searchConfig, null, null, 1L);
+        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlan.class, 1L, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> data = objectMapper.readValue(jsonResponse.get(), Map.class);
         Map<String, Object> discountPlan = (Map<String, Object>) data.get("data");
@@ -267,7 +267,7 @@ public class DiscountPlanApiServiceTest {
         Map<String, Object> filter = new HashMap<>();
         filter.put("status", "DRAFT");
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
-        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanItem.class, 1L, searchConfig, null, null, 1L);
+        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanItem.class, 1L, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> data = objectMapper.readValue(jsonResponse.get(), Map.class);
         Map<String, Object> discountPlanItem = (Map<String, Object>) data.get("data");

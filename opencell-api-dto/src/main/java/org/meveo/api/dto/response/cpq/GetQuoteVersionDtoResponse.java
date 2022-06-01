@@ -10,15 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
-import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 

@@ -18,6 +18,7 @@
  */
 package org.meveo.service.job;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -36,8 +37,8 @@ import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.PersistenceUtils;
-import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -147,7 +148,11 @@ public class JobExecutionService extends BaseService {
         // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only
         if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
                 && (!jobInstance.isLimitToSingleNode() || (jobInstance.isLimitToSingleNode() && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
-            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobLauncher.name());
+            
+            Map<String, Object> jobParameters = new HashMap<String, Object>();
+            jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
+            
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobParameters);
         }
         return jobExecutionResultId;
     }

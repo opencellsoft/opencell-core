@@ -302,6 +302,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
             setAccountingCode(accountOp.getAccountingCode().getCode());
             setAccountCode(accountOp.getAccountingCode().getCode());
         }
+        setCustomerAccount(accountOp.getCustomerAccount() == null ? null :accountOp.getCustomerAccount().getCode() );
         setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
         setAmount(accountOp.getAmount());
         setMatchingAmount(accountOp.getMatchingAmount());

@@ -1,25 +1,33 @@
 package org.meveo.apiv2.billing.impl;
 
+import static java.util.stream.Collectors.toList;
+import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
+import org.meveo.apiv2.billing.InvoiceLine;
 import org.meveo.apiv2.billing.ImmutableGenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.order.Order;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoice, Invoice> {
+
+	private AccountingArticleService accountingArticleService =
+			(AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
 
 	@Override
 	public org.meveo.apiv2.billing.Invoice toResource(Invoice entity) {
@@ -33,18 +41,33 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 					.discountPlan(buildById(entity.getDiscountPlan()))
 					.tradingLanguage(buildById(entity.getTradingLanguage())).quote(buildById(entity.getQuote()))
 					.paymentMethod(buildById(entity.getPaymentMethod()))
-					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x->x.getId()).collect(Collectors.toList()))
+					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x -> x.getId()).collect(toList()))
+					.invoiceLines(buildInvoiceLines(entity.getInvoiceLines()))
 					.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder())).build();
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
 	}
-	
+
+	private List<InvoiceLine> buildInvoiceLines(List<org.meveo.model.billing.InvoiceLine> invoiceLines) {
+		if(invoiceLines != null) {
+			return invoiceLines.stream()
+					.map(il ->
+							ImmutableInvoiceLine.builder()
+									.id(il.getId())
+									.accountingArticleCode(accountingArticleService.findById(il.getAccountingArticle().getId()).getCode())
+									.build())
+					.collect(toList());
+		} else {
+			return null;
+		}
+	}
+
 	public List<org.meveo.apiv2.billing.Invoice> toResources(List<Invoice> invoices) {
 		if(CollectionUtils.isEmpty(invoices)) {
 			return null;
 		}
-		return invoices.stream().map(i->toResource(i)).collect(Collectors.toList());
+		return invoices.stream().map(i->toResource(i)).collect(toList());
 	}
 
 	private ImmutableResource buildById(BaseEntity entity) {
@@ -99,7 +122,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.id(invoice.getId())
 				.amount(Optional.ofNullable(invoice.getAmount()).orElse(BigDecimal.ZERO))
 				.invoiceDate(invoice.getInvoiceDate())
-				.temporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber())
+				.temporaryInvoiceNumber(Optional.ofNullable(invoice.getTemporaryInvoiceNumber()).orElse(""))
 				.dueDate(invoice.getDueDate())
 				.amountTax(invoice.getAmountTax())
 				.amountWithTax(invoice.getAmountTax())

@@ -49,13 +49,13 @@ public class PriceDTO extends BaseEntityDto {
 	@XmlAttribute
 	private PriceTypeEnum priceType;
 
-    private BigDecimal amountWithtax;
+    private BigDecimal amountWithTax;
     
     private BigDecimal unitPriceWithoutTax;
 
     private BigDecimal amountWithoutTax;
     
-    private BigDecimal amountWithoutTaxWithDiscount;
+    private BigDecimal amountWithoutTaxWithoutDiscount;
 
     private BigDecimal taxAmount;
     
@@ -72,6 +72,8 @@ public class PriceDTO extends BaseEntityDto {
     
     private String taxCategory;
     private String taxCode;
+    private BigDecimal quantity;
+    private PriceDTO discountedQuotePrice;
     
     private CustomFieldsDto customFields;
     
@@ -86,9 +88,9 @@ public class PriceDTO extends BaseEntityDto {
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
 	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
-	    amountWithtax=quotePrice.getAmountWithTax();
+		amountWithTax=quotePrice.getAmountWithTax();
 		amountWithoutTax=quotePrice.getAmountWithoutTax();
-		amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
+		amountWithoutTaxWithoutDiscount=quotePrice.getAmountWithoutTaxWithoutDiscount();
 		
 
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
@@ -98,6 +100,10 @@ public class PriceDTO extends BaseEntityDto {
 	   taxCategory=taxCategoryEntity!=null?taxCategoryEntity.getCode():null;
 	   TaxClass taxClass=quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass() : null;
 	   taxCode=taxClass!=null?taxClass.getCode():null;
+	   quantity = quotePrice.getQuantity();
+	   if(quotePrice.getDiscountedQuotePrice() != null) {
+		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
+	   }
 		
 	}
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
@@ -118,12 +124,8 @@ public class PriceDTO extends BaseEntityDto {
 	public void setPriceType(PriceTypeEnum priceType) {
 		this.priceType = priceType;
 	}
-	public BigDecimal getAmountWithtax() {
-		return amountWithtax;
-	}
-	public void setAmountWithtax(BigDecimal amountWithtax) {
-		this.amountWithtax = amountWithtax;
-	}
+	public BigDecimal getAmountWithTax() { return amountWithTax; }
+	public void setAmountWithTax(BigDecimal amountWithTax) { this.amountWithTax = amountWithTax; }
 	public BigDecimal getAmountWithoutTax() {
 		return amountWithoutTax;
 	}
@@ -166,11 +168,11 @@ public class PriceDTO extends BaseEntityDto {
 	public void setUnitPriceWithoutTax(BigDecimal unitPriceWithoutTax) {
 		this.unitPriceWithoutTax = unitPriceWithoutTax;
 	}
-	public BigDecimal getAmountWithoutTaxWithDiscount() {
-		return amountWithoutTaxWithDiscount;
+	public BigDecimal getAmountWithoutTaxWithoutDiscount() {
+		return amountWithoutTaxWithoutDiscount;
 	}
-	public void setAmountWithoutTaxWithDiscount(BigDecimal amountWithoutTaxWithDiscount) {
-		this.amountWithoutTaxWithDiscount = amountWithoutTaxWithDiscount;
+	public void setAmountWithoutTaxWithoutDiscount(BigDecimal amountWithoutTaxWithDiscount) {
+		this.amountWithoutTaxWithoutDiscount = amountWithoutTaxWithDiscount;
 	}
 	/**
 	 * @return the priceOverCharged
@@ -233,6 +235,18 @@ public class PriceDTO extends BaseEntityDto {
 	}
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+	public PriceDTO getDiscountedQuotePrice() {
+		return discountedQuotePrice;
+	}
+	public void setDiscountedQuotePrice(PriceDTO discountedQuotePrice) {
+		this.discountedQuotePrice = discountedQuotePrice;
 	}
 
 	

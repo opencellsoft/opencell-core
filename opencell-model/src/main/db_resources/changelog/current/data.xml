@@ -3582,7 +3582,7 @@ public class ValidateBRScript extends Script {
 <!--            <column name="inh_as_def_value" value="0"/>-->
 <!--            <column name="cf_protectable" value="0"/>-->
 <!--        </insert>-->
-<!--    </changeSet>-->
+<!--    </changeSet>
 
     <changeSet id="#5890-2021-02-05_43" author="ZBARIKI">
         <update tableName="crm_custom_field_tmpl">
@@ -3613,7 +3613,7 @@ public class ValidateBRScript extends Script {
             <column name="listvalues" value="DATE"/>
             <column name="listvalues_key" value="DATE"/>
         </insert>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="#5951_20210209_data" author="AbdelmounaimAkadid">
         <insert tableName="billing_tax_class">
@@ -6850,8 +6850,8 @@ salutations les meilleures.<br> <!--[if !supportLineBreakNewLine]--><br> <!--[en
 			<column name="description" value="dunning action" />
 		</insert>
 	</changeSet>
-	
-	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI">
+
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" failOnError="false">
 		<insert tableName="billing_trading_language">
 			<column name="id" valueNumeric="-1" />
 			<column name="version" valueNumeric="0" />
@@ -8102,6 +8102,37 @@ Opencell team.
 		</insert>
 	</changeSet>
 
+	<changeSet id="INTRD-3507_20220218" author="HatimOUDAD">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="PAYMENT" />
+			<column name="job_template" value="AutoRefundSecurityDepositJob" />
+			<column name="code" value="AutoRefundSecurityDepositJob_Job" />
+
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AutoRefundSecurityDepositJob_Job" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="INTRD-5669_20220324" author="HichamHANINE">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="UTILS" />
+			<column name="job_template" value="AutoUpdateCurrentRateJob" />
+			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+		</insert>
+	</changeSet>
+
 	<changeSet id="INTRD-3678_20211214" author="AmineBENAICHA">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -8348,4 +8379,1855 @@ Opencell team.
         </update>
 	</changeSet>
 
+	
+	<changeSet id="#4044_30122021_counter_period_job" author="Mbarek-Ay">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-49" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2021-12-30 00:00:00.000" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="CounterPeriodJob" />
+            <column name="code" value="CounterPeriodJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Counter period job"/>
+            <column name="uuid" value="CounterPeriodJob" />
+        </insert>
+    </changeSet>
+
+   	<changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA">
+		<insert tableName="billing_tax_mapping">
+        	<column name="id" value='-20'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-2'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-21'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-5'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-22'/>
+            <column name="tax_category_id" value="-2"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-1'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-23'/>
+            <column name="tax_category_id" value="null"/>
+            <column name="tax_class_id" value="null"/>
+            <column name="tax_id" value='-1'/>
+            <column name="priority" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+     	</insert>
+     </changeSet>
+
+	<changeSet author="ZBariki" id="INTRD-4227_20220110">
+		<update tableName="com_message_template">
+			<column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>We are reaching out to you in regards of your invoice #{invoiceInvoiceNumber} and more specifically its payment that was due on the #{invoiceDueDate}. You can find a copy of the invoice attached to this email.</p>
+					<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+					<p>Best regards,</p>
+                ]]>
+			</column>
+			<where>code='ENG - B2B relance 1 (J+15)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Dunning Letter for Invoice #{invoiceInvoiceNumber}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					#{billingAccountDescription}<br>
+					#{billingAccountAddressAddress1}<br>
+					#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+					#{billingAccountContactInformationPhone}<br>
+					<br>
+					#{customerAccountDescription} / #{customerAccountFirstName}<br>
+					#{customerAccountAddressAddress1}<br>
+					#{customerAccountAddressZipCode}<br>
+					#{customerAccountAddressCity}<br>
+
+					<p>#{billingAccountAddressCity}, on #{dayDate}</p>
+					<p>#{customerAccountLegalEntityTypeCode},</p>
+					<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}</p>
+					<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+					<p>You will find a copy of the invoice attached to this letter.</p>
+					<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+					<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards.</p>
+					<p>Signature</p>
+					<p>Your name and surname</p>
+                ]]>
+			</column>
+			<where>code='ENG - B2B relance 4 (J+35)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>We are reaching out to you in regards of your invoice #{invoiceInvoiceNumber} and more specifically its payment that was due on the #{invoiceDueDate}. You can find a copy of the invoice attached to this email.</p>
+					<p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
+					<p>Best regards,</p>
+                ]]>
+			</column>
+			<where>code='ENG - B2C relance 1 (J+1)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>We are following up on our email dated on the #{dunningCollectionPlanLastActionDate} where we informed you that invoice #{invoiceInvoiceNumber} was overdue for payment since #{invoiceDueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
+					<p>We ask that you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this invoice.</p>
+					<p>You will find a copy of the invoice attached.</p>
+					<p>Kind regards,</p>
+                ]]>
+			</column>
+			<where>code='ENG - B2C relance 1 (J+7)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Dunning Letter for Invoice #{invoiceInvoiceNumber}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					#{billingAccountDescription}<br>
+					#{billingAccountAddressAddress1}<br>
+					#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+					#{billingAccountContactInformationPhone}<br>
+					<br>
+					#{customerAccountLegalEntityTypeCode}   #{customerAccountDescription}<br>
+					#{customerAccountAddressAddress1}<br>
+					#{customerAccountAddressZipCode}<br>
+					#{customerAccountAddressCity}<br>
+
+					<p>#{billingAccountAddressCity}, on #{dayDate}</p>
+					<p>#{customerAccountLegalEntityTypeCode},</p>
+					<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}</p>
+					<p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
+					<p>You will find a copy of the invoice attached to this letter.</p>
+					<p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
+					<p>We remain at your disposal in case of any questions. Please accept, Madam / Sir, the assurance of our best regards. </p>
+					<p>Signature</p>
+					<p>Your name and surname</p>
+                ]]>
+			</column>
+			<where>code='ENG - B2C relance 4 (J+14)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>Nous vous contactons concernant votre facture #{invoiceInvoiceNumber} qui est en retard de paiement depuis le #{invoiceDueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+					<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+					<p>Bien à vous,</p>
+                ]]>
+			</column>
+			<where>code='FR - B2B relance 1 (J+15)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Lettre de relance pour la facture #{invoiceInvoiceNumber}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					#{billingAccountDescription}<br>
+					#{billingAccountAddressAddress1}<br>
+					#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+					#{billingAccountContactInformationPhone}<br>
+					<br>
+					#{customerAccountDescription} / #{customerAccountFirstName}<br>
+					#{customerAccountAddressAddress1}<br>
+					#{customerAccountAddressZipCode}<br>
+					#{customerAccountAddressCity}<br>
+
+					<p>#{billingAccountAddressCity}, le #{dayDate}</p>
+					<p>#{customerAccountLegalEntityTypeCode},</p>
+					<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).</p>
+					<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+					<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+					<p>Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+					<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+					<p>Company Signature</p>
+                ]]>
+			</column>
+			<where>code='FR - B2B relance 4 (J+35)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>Nous vous contactons concernant votre facture #{invoiceInvoiceNumber} qui est en retard de paiement depuis le #{invoiceDueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+					<p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
+					<p>Bien à vous,</p>
+                ]]>            </column>
+			<where>code='FR - B2C relance 1 (J+1)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+					<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlanLastActionDate}  où nous vous informions que votre facture #{invoiceInvoiceNumber} était en retard de paiement depuis le #{invoiceDueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p>
+					<p>Nous vous demandons de procéder au règlement de la facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette facture.</p>
+					<p>Vous trouverez à nouveau une copie de la facture en pièce jointe.</p>
+					<p>Bien à vous,</p>
+                ]]>
+			</column>
+			<where>code='FR - B2C relance 2 (J+7)'</where>
+		</update>
+		<update tableName="com_message_template">
+			<column name="subject" value="Lettre de relance pour la facture #{invoiceInvoiceNumber}" />
+			<column name="htmlcontent">
+				<![CDATA[
+					#{billingAccountDescription}<br>
+					#{billingAccountAddressAddress1}<br>
+					#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+					#{billingAccountContactInformationPhone}<br>
+					<br>
+					#{customerAccountLegalEntityTypeCode} , #{customerAccountDescription}<br>
+					#{customerAccountAddressAddress1}<br>
+					#{customerAccountAddressZipCode}<br>
+					#{customerAccountAddressCity}<br>
+
+					<p>#{billingAccountAddressCity}, le #{dayDate}</p>
+					<p>#{customerAccountLegalEntityTypeCode},</p>
+					<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).</p>
+					<p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
+					<p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
+					Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
+					<p>Nous restons à votre disposition dans l’hypothèse d’éventuelles questions. Nous vous prions d'agréer l’assurance de nos salutations les meilleures.</p>
+					<p>Company Signature</p>
+                ]]>
+			</column>
+			<where>code='FR - B2C relance 4 (J+14)'</where>
+		</update>
+	</changeSet>
+	<changeSet id="INTRD-3765_07012022" author="hichamElHaloui">
+        <sql><![CDATA[ UPDATE ${db.schema.adapted}meveo_script_instance set script = '
+package org.meveo.service.script;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.crm.Customer;
+import org.meveo.service.base.BusinessEntityService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterPeriodService;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.order.OrderItemService;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingAmountService;
+
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Said Ramli
+ */
+@SuppressWarnings({ "unchecked", "unused" })
+public class DeleteCustomersScript extends Script {
+
+	private final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+			AccountOperationService.class.getSimpleName());
+	private final CustomerService customerService = (CustomerService) getServiceInterface(
+			CustomerService.class.getSimpleName());
+	private final InvoiceService invoiceService = (InvoiceService) getServiceInterface(
+			InvoiceService.class.getSimpleName());
+	private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(
+			SubscriptionService.class.getSimpleName());
+	private final RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(
+			RatedTransactionService.class.getSimpleName());
+	private final WalletService walletService = (WalletService) getServiceInterface(
+			WalletService.class.getSimpleName());
+	private final RejectedBillingAccountService rejectedBillingAccountService = (RejectedBillingAccountService) getServiceInterface(
+			RejectedBillingAccountService.class.getSimpleName());
+	private final CounterInstanceService counterInstanceService = (CounterInstanceService) getServiceInterface(
+			CounterInstanceService.class.getSimpleName());
+	private final CounterPeriodService counterPeriodService = (CounterPeriodService) getServiceInterface(
+			CounterPeriodService.class.getSimpleName());
+	private final OrderItemService orderItemService = (OrderItemService) getServiceInterface(
+			OrderItemService.class.getSimpleName());
+	private final ProductInstanceService productInstanceService = (ProductInstanceService) getServiceInterface(
+			ProductInstanceService.class.getSimpleName());
+	private final BusinessEntityService businessEntityService = (BusinessEntityService) getServiceInterface(
+			BusinessEntityService.class.getSimpleName());
+	private final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+			WalletOperationService.class.getSimpleName());
+	private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
+			ServiceInstanceService.class.getSimpleName());
+
+	private final EdrService edrService = (EdrService) getServiceInterface(EdrService.class.getSimpleName());
+
+	@SuppressWarnings("rawtypes")
+	private final ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(
+			ChargeInstanceService.class.getSimpleName());
+
+	private static final List<String> noCheckAllowedValues = Arrays.asList("0", "1");
+
+	@Override
+	public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+		log.debug(" >>> execute {} ", methodContext.entrySet());
+
+		try {
+
+			Map<String, String> record = (Map<String, String>) methodContext.get("RECORD");
+			if (MapUtils.isEmpty(record)) {
+				throw new BusinessException(String.format("Parameter RECORD is missing"));
+			}
+
+			final String customerCode = record.get("customerCode");
+			Customer customer = customerService.findByCode(customerCode);
+			if (customer == null) {
+				throw new BusinessException(String.format("No customer found having code = %s ", customerCode));
+			}
+
+			String noCheckVal = record.get("noCheck");
+			if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) {
+				throw new BusinessException(
+						String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal));
+			}
+			boolean noCheck = "1".contentEquals(noCheckVal);
+
+			if (!noCheck) {
+				// If noCheck is 0 then the following conditions must be met in order to allow
+				// deletion:
+				// No unmatched AO
+				// No open EDR/WO/RT
+
+				this.checkUnmatchedAOs(customer);
+				this.checkOpenEDRs(customer);
+				this.checkOpenWOs(customer);
+				this.checkOpenRTs(customer);
+			}
+
+			this.removeCustomerHirarchy(customer);
+
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception e) {
+			log.error(" Error executing DeleteCustomersScript ", e);
+			throw new BusinessException(e.getMessage());
+		}
+	}
+
+	private void checkOpenEDRs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start checkOpenEDRs for customer = {} ", customer);
+			String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Object count = edrService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId())
+					.getSingleResult();
+			log.debug(" count of open EDRs = {} ", count);
+			log.debug(" End checkOpenEDRs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open EDRs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenEDRs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkOpenWOs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start checkOpenWOs for customer = {} ", customer);
+			String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+					WalletOperationService.class.getSimpleName());
+
+			Object count = walletOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of open WOs = {} ", count);
+			log.debug(" End checkOpenWOs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open WOs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenWOs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkOpenRTs(Customer customer) throws BusinessException {
+		try {
+
+			log.debug(" Start checkOpenRTs for customer = {} ", customer);
+			String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId ";
+			Object count = this.ratedTransactionService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of open RTs = {} ", count);
+			log.debug(" End checkOpenRTs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open RTs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenRTs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkUnmatchedAOs(Customer customer) throws BusinessException {
+		try {
+
+			log.debug(" Start checkUnmatchedAOs for customer = {} ", customer);
+			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId ";
+			final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+					AccountOperationService.class.getSimpleName());
+			Object count = accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of unmatched AOs = {} ", count);
+			log.debug(" End checkUnmatchedAOs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] unmatched AOs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkUnmatchedAOs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeCustomerHirarchy(Customer customer) throws BusinessException {
+		log.debug(" Start removeCustomerHirarchy for customer = {} ", customer);
+
+		//
+		// A workaround for #4134 , no need for this method if #4134 is fixed (only
+		// 6.1.X is concerned)!
+      	this.nullifyDDRequestItem(customer);
+		this.nullifyAOsSeller(customer);
+
+      	this.removeWalletOperations(customer);
+		this.removeChargeInstances(customer);
+		// the relationship [SubCategoryInvoiceAgregate <=> WalletInstance] should be broke fisrt
+		this.nullifySubCategoryInvoiceAgregatesWallet(customer);
+		this.removeRatedTransactions(customer);
+		this.nullifyWalletInstanceInUserAccount(customer);
+		this.removeWalletInstances(customer);
+
+		this.removePaymentHistory(customer);
+//		this.removeRatedTransactions(customer);
+
+		this.removeMatchingAmounts(customer);
+		this.nullifyRecordedInvoice(customer);
+		this.removeInvoices(customer);
+
+
+
+		this.removeServiceInstances(customer);
+		this.removeAccess(customer);
+		this.removeEDRs(customer);
+		this.removeDiscountPlanInstance(customer);
+		this.nullifyAOSubscriptions(customer);
+		this.removeSubscriptions(customer);
+		this.removeRejectedBAs(customer);
+
+		this.removeCounterPeriods(customer);
+		this.removeCounterInstances(customer);
+		this.removeOrderItems(customer);
+		this.removeProductInstances(customer);
+
+
+		this.customerService.remove(customer);
+
+		log.debug(" End removeCustomerHirarchy for customer = {} ", customer);
+	}
+
+	private void nullifyWalletInstanceInUserAccount(Customer customer) {
+		try {
+			log.debug(" Start removeEDRs for customer = {} ", customer);
+		String query = "Update UserAccount ua set ua.wallet = null where ua.wallet.id in (select wi.id from WalletInstance wi where wi.userAccount.billingAccount.customerAccount.customer.id =:customerId)";
+		edrService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeEDRs for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeEDRs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeEDRs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeEDRs for customer = {} ", customer);
+
+			String queryText = "delete from EDR edr1 where edr1.id in (select edr.id from EDR edr where edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			edrService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeEDRs for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeEDRs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeMatchingAmounts(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeMatchingAmounts for customer = {} ", customer);
+
+			final MatchingAmountService matchingAmountService = (MatchingAmountService) getServiceInterface(MatchingAmountService.class.getSimpleName());
+			final String query = "delete from MatchingAmount ma1 where ma1.id in (select ma.id from MatchingAmount ma where ma.accountOperation.customerAccount.customer.id =:customerId )";
+			matchingAmountService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeMatchingAmounts for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeMatchingAmounts : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeAccess(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeAccess for customer = {} ", customer);
+
+			final AccessService accessService = (AccessService) getServiceInterface(
+					AccessService.class.getSimpleName());
+
+			final String queryText = "delete from Access a1 where a1.id in (select a.id from Access a where a.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			accessService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeAccess for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeAccess : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeServiceInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeServiceInstances for customer = {} ", customer);
+
+			String queryText = "delete from ServiceInstance si1 where si1.id in (select si.id from ServiceInstance si where si.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId) ";
+			this.serviceInstanceService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeServiceInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeServiceInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+	private void removeWalletOperations(Customer customer) throws BusinessException {
+		try {
+			log.debug(" removeWalletOperations for customer={} ", customer);
+			String queryText = "delete from WalletOperation wo where wo.id in ( select wo1.id from WalletOperation wo1  where wo1.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId) ";
+
+			Query query = this.walletOperationService.getEntityManager().createQuery(queryText);
+			query.setParameter("customerId", customer.getId());
+			query.executeUpdate();
+		} catch (Exception e) {
+			log.error(" Error on removeWalletOperations : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+	/**
+	 * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+	 *
+	 * @param customer
+	 * @throws BusinessException
+	 */
+	private void removePaymentHistory(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removePaymentHistory for customer = {} ", customer);
+
+			String query = "delete from PaymentHistory ph1 where ph1.id in (select ph2.id from PaymentHistory ph2 where ph2.customerCode=:customerCode) ";
+			int count = this.businessEntityService.getEntityManager().createQuery(query)
+					.setParameter("customerCode", customer.getCode()).executeUpdate();
+
+			log.debug(" {} PaymentHistory to delete ", count);
+			log.debug(" End removePaymentHistory for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removePaymentHistory : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	/**
+	 * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+	 *
+	 * @param customer
+	 * @throws BusinessException
+	 */
+
+ private void nullifyDDRequestItem(Customer customer){
+
+    try {
+			log.debug(" Start deleteDDRequestItem for customer = {} ", customer);
+
+			String query = "update DDRequestItem ddri set ddri.automatedPayment= null where ddri.automatedPayment.id in (select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId) ";
+			int count = this.accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" seller to nullify for {} AOs ", count);
+			log.debug(" End nullifyAOsSeller for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+  }
+	private void nullifyAOsSeller(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifyAOsSeller for customer = {} ", customer);
+
+			String query = "UPDATE AccountOperation ao1 SET ao1.seller = null where ao1.id in (select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId) ";
+			int count = this.accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" seller to nullify for {} AOs ", count);
+			log.debug(" End nullifyAOsSeller for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void nullifySubCategoryInvoiceAgregatesWallet(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+
+			StringBuilder query = new StringBuilder( "UPDATE SubCategoryInvoiceAgregate subCat SET subCat.wallet = null ")
+					.append(" where subCat.id in (select subCatIn.id from SubCategoryInvoiceAgregate subCatIn where subCatIn.wallet.userAccount.billingAccount.customerAccount.customer.id =:customerId) ");
+
+			int count = this.accountOperationService.getEntityManager().createQuery(query.toString()).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" wallet to nullify for {} SubCategoryInvoiceAgregate ", count);
+			log.debug(" End nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifySubCategoryInvoiceAgregatesWallet : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+
+	}
+
+
+	private void removeProductInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeProductInstances for customer = {} ", customer);
+			String query = "delete from ProductInstance pi where pi.id in (select p.id from ProductInstance p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			productInstanceService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId()).executeUpdate();
+			log.debug(" End removeProductInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeProductInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+	private void removeOrderItems(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeOrderItem for customer = {} ", customer);
+
+			String query = "delete from OrderItem oi where oi.id in (select p.id from OrderItem p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId) ";
+
+			orderItemService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeOrderItem for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeOrderItem : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+	private void removeCounterPeriods(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeCounterPeriods for customer = {} ", customer);
+			String queryText = "delete from CounterPeriod cp1 where cp1.id in ( select c.id from CounterPeriod c where c.counterInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			counterInstanceService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+			log.debug(" End removeCounterPeriods for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeCounterPeriods : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+	private void removeCounterInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeCounterInstances for customer = {} ", customer);
+
+			String query = "delete from CounterInstance c1 where c1.id in (select c.id from CounterInstance c where c.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			counterInstanceService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeCounterInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeCounterInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+	private void removeRejectedBAs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRejectedBAs for customer = {} ", customer);
+
+			String queryText = "delete from RejectedBillingAccount rba1 where rba1.id in (select rba.id from RejectedBillingAccount rba where rba.billingAccount.customerAccount.customer.id =:customerId )";
+			rejectedBillingAccountService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeRejectedBAs for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRejectedBAs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+
+	private void nullifyRecordedInvoice(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRecordedInvoice for customer = {} ", customer);
+
+			String queryText = "update  RecordedInvoice ri   set ri.invoice = null where ri.invoice.id in ( select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer.id =:customerId )";
+			invoiceService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeRecordedInvoice for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRecordedInvoice : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeInvoices(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeInvoices for customer = {} ", customer);
+
+			String queryText = "delete from Invoice inv1 where inv1.id in (select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer.id =:customerId )";
+			invoiceService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeInvoices for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeInvoices : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeWalletInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeWalletInstances for customer = {} ", customer);
+
+			String queryText = "delete from WalletInstance wi1 where wi1.id in (select wi.id from WalletInstance wi where wi.userAccount.billingAccount.customerAccount.customer.id =:customerId) ";
+			this.walletService.getEntityManager().createQuery(queryText).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" End removeWalletInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeWalletInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+	private void removeRatedTransactions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRatedTransactions for customer = {} ", customer);
+
+						String queryText = "delete from RatedTransaction rt1 where rt1.id in (select rt.id from RatedTransaction rt where rt.billingAccount.customerAccount.customer.id =:customerId )";
+			Query query =chargeInstanceService.getEntityManager().createQuery(queryText);
+			query.setParameter("customerId", customer.getId());
+			query.executeUpdate();
+
+			log.debug(" End removeRatedTransactions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRatedTransactions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+
+	}
+
+
+	private void removeChargeInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeChargeInstances for customer = {} ", customer);
+
+			String queryText = "delete from ChargeInstance ci1 where ci1.id in (select ci.id from ChargeInstance ci where ci.userAccount.billingAccount.customerAccount.customer.id =:customerId )";
+			Query query =chargeInstanceService.getEntityManager().createQuery(queryText);
+			query.setParameter("customerId", customer.getId());
+			query.executeUpdate();
+
+			log.debug(" End removeChargeInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeChargeInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+	private void nullifyAOSubscriptions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifyAOSubscriptions for customer = {} ", customer);
+						String queryText = "update AccountOperation  ao set ao.subscription= null where ao.subscription.id in (select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer) ";
+			subscriptionService.getEntityManager().createQuery(queryText).setParameter("customer", customer).executeUpdate();
+			log.debug(" End nullifyAOSubscriptions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOSubscriptions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeSubscriptions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeSubscriptions for customer = {} ", customer);
+						String queryText = "delete from Subscription s1 where s1.id in (select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer) ";
+			subscriptionService.getEntityManager().createQuery(queryText).setParameter("customer", customer).executeUpdate();
+			log.debug(" End removeSubscriptions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeSubscriptions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeDiscountPlanInstance(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeSubscriptions for customer = {} ", customer);
+						String queryText = "delete from DiscountPlanInstance dpi where subscription_id in (select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer) ";
+			subscriptionService.getEntityManager().createQuery(queryText).setParameter("customer", customer).executeUpdate();
+			log.debug(" End removeSubscriptions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeSubscriptions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+
+
+	private <T> Collection<T> safe(Collection<T> collection) {
+		return collection == null ? Collections.EMPTY_LIST : collection;
+	}
+}' where id= -23 ;]]>
+		</sql>
+	</changeSet>
+<changeSet id="INTRD-3432_21012022_Manual_refund_by_card_KO" author="anasseh">
+	<update tableName="meveo_script_instance">
+           <column name="script">
+               <![CDATA[package org.meveo.service.script.demo;
+
+import java.io.StringReader;
+import java.util.Map;
+import javax.xml.xpath.*;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.*;
+import org.meveo.service.script.payment.PaymentScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+/**
+ * @author anasseh
+ */
+public class CustomGatewayPaymentScript extends PaymentScript{
+    private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
+
+    public void createCardToken(Map<String, Object> methodContext) throws BusinessException {           
+        methodContext.put(PaymentScript.RESULT_TOKEN, "7ced0000-3ab2-000d-6a50-08d4b8a6"+(int )(Math.random() * 1000 + 1));
+    }
+    public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "PAL");
+    }
+      public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "PAL_CARD");
+    }
+  
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD");
+    }
+   public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD_CARD");
+    }
+  
+    private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
+        try{
+            log.debug("EXECUTE  methodContext {} ", methodContext);
+            Long amountCts = (Long)methodContext.get(PaymentScript.CONTEXT_AMOUNT_CTS);
+            if(amountCts == null){
+                throw new BusinessException("amountCts is null");
+            }
+            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+            if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
+                throw new BusinessException("paymentMethod is null");
+            }
+            
+            //DEMO : get tokenId or card infos from context
+            String body  = "{";
+            body  += " \"PSPID\" : \"PSPID\" ,";
+            body  += " \"USERID\" : \"USERID\" ,";
+            body  += " \"PSWD\" : \"PSWD\" ,";
+            body  += " \"REFKIND\" :  \"PSPID\" ,";
+            body  += " \"REFID\" : \"PSPID\" ,";
+            body  += " \"OPERATION\" : \""+operationType +"\" ,";
+            body  += " \"AMOUNT\" : \""+amountCts.longValue()+"\" ,";
+            body  += " \"SHASIGN\" : \"SHASIGN\" ,";
+            body  += " }";
+          
+        
+            String paymentResponse = "<root>";
+            paymentResponse += "<STATUS>92</STATUS>";
+            paymentResponse += "<PAYID>"+((int )(Math.random() * 100000 + 1))+"</PAYID>"; 
+            paymentResponse += "<TRANSACTIONID>92</TRANSACTIONID>";
+            paymentResponse += "<CRMTOKEN>clientSide</CRMTOKEN>"; 
+            paymentResponse += "<BRAND>VISA</BRAND>";
+            paymentResponse += "<ACCEPTENCE>bankRef</ACCEPTENCE>"; 
+            paymentResponse += "</root>";
+            methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.PENDING);
+            methodContext.put(PaymentScript.RESULT_PAYMENT_ID, getValue(paymentResponse,"/root/PAYID"));
+            methodContext.put(PaymentScript.RESULT_TRANSACTION_ID, getValue(paymentResponse,"/root/TRANSACTIONID"));
+            methodContext.put(PaymentScript.RESULT_CODE_CLIENT_SIDE, getValue(paymentResponse,"/root/CRMTOKEN"));
+            methodContext.put(PaymentScript.RESULT_PAYMENT_BRAND, getValue(paymentResponse,"/root/BRAND"));
+            methodContext.put(PaymentScript.RESULT_BANK_REFERENCE, getValue(paymentResponse,"/root/ACCEPTENCE"));           
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+    private String getValue(String sourceXML,String expression) throws XPathExpressionException{        
+        InputSource iSource = new InputSource(new StringReader(sourceXML));
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();      
+        return xpath.evaluate(expression, iSource);         
+    }
+}
+                ]]>
+           </column>
+           <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
+	</update>
+   </changeSet>
+
+	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-36" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="165000000" />
+			<column name="description" value="Deposits and sureties received"></column>
+			<column name="chart_of_account_type" value="LIABILITIES" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-51" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-3" />
+			<column name="account_code_client_side" valueNumeric="165000000" />
+			<column name="code" value="CRD_SD" />
+			<column name="description" value="Credit for Security deposit transfer" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-52" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="41100000" />
+			<column name="code" value="DEB_SD" />
+			<column name="description" value="Debit for Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-53" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="512010000" />
+			<column name="code" value="REF_SD" />
+			<column name="description" value="Refund of Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_seq_invoice">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="Security Deposit" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_invoice_type">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="SD - Security Deposit" />
+			<column name="invoice_sequence_id" valueNumeric="-6" />
+			<column name="occ_template_id" valueNumeric="-52" />
+			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
+		</insert>
+		<insert tableName="billing_invoice_cat">
+			<column name="id" value='-4'/>
+			<column name="code" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
+		</insert>
+		<insert tableName="billing_invoice_sub_cat">
+			<column name="id" value='-4'/>
+			<column name="invoice_category_id" value='-4'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_sub_cat_iscat_security_deposit" />
+		</insert>
+		<insert tableName="billing_accounting_article">
+			<column name="id" value='-11'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ART_SECURITY_DEPOSIT"/>
+			<column name="tax_class_id" value="-3"/>
+			<column name="invoice_sub_category_id" value="-4"/>
+			<column name="invoice_type_id" value="-6"/>
+			<column name="description" value="Article Security Deposit"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
+		</insert>
+	</changeSet>
+	<changeSet id="#INTRD-4950-20220208" author="MohammedSTITANE">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="FILE_ACCOUNTING_SCHEMES"/>
+			<column name="description" value="File accounting schemes"/>
+		</insert>
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="accounting_scheme_sequence" />
+			<column name="description" value="AccountingScheme sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="AccountingScheme" />
+			<column name="code_el" value="#{sequenceNextValue}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
+		</insert>
+	</changeSet>
+    <changeSet id="INTRD-5089_20220215" author="TarikRabeh">
+        <update tableName="billing_accounting_article">
+			<column name="accounting_code_id" value="-36"/>
+            <where>code='ART_SECURITY_DEPOSIT'</where>
+        </update>
+    </changeSet>
+    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
+    	<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id = (SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')</sql>
+	    <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' and code ='AggregationOptions'</sql>
+	    <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_AggregationPerUnitAmount"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="aggregation per unit amount"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_ILDateAggregationOptions"/>
+            <column name="description" value="date aggregation options"/>
+            <column name="field_type" value="LIST"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="trigger_end_period_event" value="0"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="allow_edit" value="1"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="NO_DATE_AGGREGATION"/>
+            <column name="listvalues_key" value="NO_DATE_AGGREGATION"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="MONTH_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="MONTH_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="WEEK_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="WEEK_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="DAY_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
+        </insert>
+    </changeSet>
+	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza">
+		<update tableName="cpq_attribute">
+			<column name="el_value">${sub.getSubscriptionDate()}</column>
+			<where>id=-8</where>
+		</update>
+	</changeSet>
+	<changeSet id="INTRD-4680-01032022" author="TarikRabeh">
+		<update tableName="billing_user_account">
+			<column name="is_consumer">1</column>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-5691-20220315" author="ZBariki">
+		<insert tableName="crm_provider_pay_methods">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="payment_method" value="CHECK" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD">
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value="-5"/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="ADV-STD"/>
+        	<column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
+            <column name="description" value='Advance payment'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ADV-STD" />
+        </insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-4285-20220317" author="AmineBENAICHA">
+		<!-- Grant role "query_manager" to role "administrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+        
+        <!-- Grant role "query_manager" to role "superAdministrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-2" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+	</changeSet>
+	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
+		<update tableName="meveo_script_instance_cat">
+			<column name="code" value="ACCOUNTING_SCHEMES"></column>
+			<column name="description" value="Accounting schemes"></column>
+			<where>code='FILE_ACCOUNTING_SCHEMES'</where>
+		</update>
+	</changeSet>
+	<changeSet id="#INTRD-5888_2022-03_23" author="hichamELHALOUI" >
+
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="$US"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=49</where>
+		</update>
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="€"  />
+            <column name="decimal_places" valueNumeric="2" />
+			<where>currency_id=5</where>
+		</update>
+    </changeSet>
+
+	<changeSet id="#INTRD-5831_20220325" author="aelmalki">
+		<sql>UPDATE ar_occ_template occ SET contra_accounting_code_id = (SELECT ac.id FROM billing_accounting_code ac WHERE ac.code=occ.account_code_client_side) WHERE occ.contra_accounting_code_id IS NULL</sql>
+	</changeSet>
+
+	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Default Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleAccountingSchemeScript extends DefaultAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5960_20220328" author="HichamHANINE">
+    	<sql>Update  cpq_order_offer o set subscription_id = (select id from billing_subscription s where s.order_offer_id = o.id) where o.subscription_id is null</sql>
+    </changeSet>
+
+	<changeSet id="#INTRD-5955_20220324" author="aelmalki">
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+			<column name="description" value="Default Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript')"/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5958_20220328" author="aelmalki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2022-03-28 00:00:00.000" />
+			<column name="job_category" value="ACCOUNTING" />
+			<column name="job_template" value="AccountingSchemesJob" />
+			<column name="code" value="AccountingSchemesJob" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AccountingSchemesJob" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5992_20220329" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Invoice accounting scheme script"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleInvoiceAccountingSchemeScript extends InvoiceAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Invoice and Credit Note" />
+			<column name="description" value="Invoice accounting scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
+		</insert>
+		<update tableName="ar_occ_template">
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Invoice and Credit Note')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6075_20220330" author="aelmalki">
+		<update tableName="meveo_script_instance">
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+			<where> code IN ('org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript', 'org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')</where>
+		</update>
+	</changeSet>
+
+    	<changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-37" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511011000" />
+			<column name="description" value="CB à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-38" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511002000" />
+			<column name="description" value="Paypal à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-39" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511003000" />
+			<column name="description" value="Stripe à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511000610" />
+			<column name="description" value="TIP à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-41" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="531100000" />
+			<column name="description" value="Caisse en monnaie nationale"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-42" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511200000" />
+			<column name="description" value="Chèques à encaisser"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+
+        <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-54" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-42" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CHECK" />
+			<column name="description" value="Payment - check" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-55" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-37" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CB" />
+			<column name="description" value="Payment - card" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-56" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_DIRECT_DEBIT" />
+			<column name="description" value="Payment - direct debit (prélèvement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-57" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-38" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_PAYPAL" />
+			<column name="description" value="Payment Paypal" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-58" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-39" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_STRIPE" />
+			<column name="description" value="Payment Stripe" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-59" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-40" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_TIP_DEBIT" />
+			<column name="description" value="Payment - TIP" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-41" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_CASH" />
+			<column name="description" value="Payment - cash" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-61" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-20" />
+			<column name="contra_accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PAY_WIRE" />
+			<column name="description" value="WIRETRANSFER (virement)" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+
+
+        </changeSet>
+
+    <changeSet id="#INTRD-4666_20220331" author="HatimOUDAD">
+		<update tableName="cpq_order_product">
+			<column name="production_action_type" value="CREATE" />
+			<where> production_action_type is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-5924-20220401" author="ZBariki">
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="discount_plan_item_seq" />
+			<column name="description" value="Discount plan item sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="org.meveo.model.catalog.DiscountPlanItem" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence_id"
+					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
+		</insert>
+	</changeSet>
+
+
+
+	<changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid">
+		<update tableName="ar_occ_template">
+			<column name="description" value="WIRETRANSFER" />
+			<where>id=-61</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - direct debit" />
+			<where>id=-56</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6298_20220405" author="aelmalki">
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]>
+			</column>
+			<column name="code" value="Dual entry scheme" />
+			<where>code='DefaultAccountingScheme'</where>
+		</update>
+
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit des lignes d'écritures pour une facture ou un avoir (ci-dessous \"document\") :</p><ul><li>Une ligne unique pour le total TTC du document, sur le compte client (de la catégorie de client ou à défaut du type d'opération de compte).</li></ul><p class=\"ql-indent-1\">Le sens est celui de l'opération de compte (pour une facture : DEBIT, pour un avoir : CREDIT).</p><ul><li>Des lignes de contrepartie (au moins une) pour les montants HT pour les comptes de revenus, en utilisant les codes comptables des articles liés aux lignes du document.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p><ul><li>S'il y a lieu, des lignes pour les montants des différentes taxes appliquées au document, en utilisant les codes comptables de ces taxes.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p>","ENG":"<p>This scheme produces entries for an invoice or credit note (here after \"document\"):</p><ul><li>A single entry with the document total amount with tax using the customer accounting code (from the customer category, or if not set from the account operation type). </li></ul><p class=\"ql-indent-1\">Line direction is the one from the account operation type (for invoice: DEBIT, for credit note: CREDIT).</p><ul><li>\"Contra\" entries (at least one) with the amounts without tax for revenue accounts, using the accounting codes from the article linked to the document lines. </li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p><ul><li>\"Contra\" entries (if applies) with the tax amounts for the different taxes applied on the document, using the accounting codes from these taxes.</li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p>"}]]>
+			</column>
+			<column name="code" value="Invoice and Credit Note" />
+			<where>code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid">
+		 <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-42" />
+            <where>id=-1</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-37" />
+            <where>id=-43</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+            <where>id=-3</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-38" />
+            <where>id=-46</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-39" />
+            <where>id=-47</where>
+		</update>
+
+        <update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-40" />
+            <where>id=-2</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-41" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-60</where>
+		</update>
+
+		<update tableName="ar_occ_template">
+			<column name="version" valueNumeric="1" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="contra_accounting_code_id" valueNumeric="-20" />
+			<column name="occ_category" value="CREDIT" />
+            <where>id=-61</where>
+		</update>
+
+		<delete tableName="ar_occ_template">
+	        <where>id IN (-54, -55, -56, -57, -58, -59)</where>
+	    </delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-6341_20220406" author="aelmalki">
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza">
+		<update tableName="dunning_settings">
+			<column name="dunning_mode">INVOICE_LEVEL</column>
+			<where>code='DUN_DEF'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6484" author="hichamElHaloui" dbms="postgres">
+		<sql>
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = (select current_rate from cte where cte.id = bil.id) * bil.unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is not null);
+
+
+			with cte as
+					 (
+						 select bil.id, btc.current_rate
+						 from billing_invoice_line bil
+								  left join billing_invoice invoice on bil.invoice_id = invoice.id
+								  left join billing_trading_currency btc on invoice.trading_currency_id = btc.id
+					 )
+			update billing_invoice_line bil
+			set functional_unit_price = unit_price
+			where exists(select id from cte where cte.id = bil.id and cte.current_rate is null);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="#INTRD-6056_20220415" author="HatimOUDAD">
+		<update tableName="cpq_quote_product">
+			<column name="product_action_type" value="CREATE" />
+			<where> product_action_type is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh">
+		<update tableName="adm_currency">
+			<column name="symbol" value="€" />
+			<where> currency_code = 'EUR'</where>
+		</update>
+		<update tableName="adm_currency">
+			<column name="symbol" value="$US" />
+			<where> currency_code = 'USD'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI">
+		<update tableName="ar_occ_template">
+			<column name="description" value="Payment - wiretransfer"/>
+			<where>id=-61</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6638_20220422" author="aelmalki">
+		<!-- Add Payment Script -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Payment Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SamplePaymentAccountingSchemeScript extends PaymentAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+
+		<!-- Add Scheme -->
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Payment entry scheme" />
+			<column name="description" value="Payment Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
+		</insert>
+
+		<!-- Add New 419100000 AccountinCode -->
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-45" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="419100000" />
+			<column name="description" value="Client non renconnu" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki">
+		<!-- Link to OCCTemplate Payment -->
+		<update tableName="ar_occ_template">
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Payment entry scheme')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+			<column name="occ_category" value="CREDIT" />
+			<where> code IN ('PAY_CHK','PAY_CRD','PAY_DDT','PAY_PAL','PAY_STP','PAY_TIP','PAY_CASH','PAY_WIRE')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-6908_20220503" author="HichamELHALOUI">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Payment Card to collect"></column>
+			<where>id=-37</where>
+		</update>
+
+        <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Paypal to collect"></column>
+			<where>id=-38</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Payment Stripe to collect"></column>
+			<where>id=-39</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Payment - TIP to collect"></column>
+			<where>id=-40</where>
+		</update>
+
+         <update tableName="billing_accounting_code">
+			<column name="description" value="Cash in local currency"></column>
+			<where>id=-41</where>
+		</update>
+
+          <update tableName="billing_accounting_code">
+			<column name="description" value="Checks to collect"></column>
+			<where>id=-42</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#INTRD-7049_20220509" author="TarikRabeh">
+        <sql>
+	        update public.accounting_journal_entry set 
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        trading_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+
+	<changeSet id="#INTRD-6961_20220511" author="aelmalki">
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Unidentified customer" />
+			<where>code='419100000'</where>
+		</update>
+		<update tableName="billing_accounting_code">
+			<column name="description" value="Banks" />
+			<where>code='512000000'</where>
+		</update>
+	</changeSet>
+	<changeSet id="#6023_130522" author="AbdelkaderBouazza">
+		<update tableName="crm_seller">
+			<column name="email" value="test@opencell.com" />
+			<where>email is null</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-7144_05162022" author="ZBariki">
+		<insert tableName="billing_article_mapping">
+			<column name="id" valueSequenceNext="billing_article_mapping_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="DEFAULT_ARTICLE_MAPPING" />
+			<column name="description" value="Default article mapping" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="FIX validateBR script compile" author="AbdelmounaimAkadid">
+        <update tableName="meveo_script_instance">
+            <column name="script" >
+            	<![CDATA[
+			package org.meveo.service.script;
+
+			import java.util.List;
+			import java.util.Map;
+
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.model.billing.BillingRun;
+			import org.meveo.model.billing.BillingRunStatusEnum;
+			import org.meveo.service.billing.impl.BillingRunExtensionService;
+			import org.meveo.service.billing.impl.BillingRunService;
+
+			public class ValidateBRScript extends Script {
+
+				@Override
+				public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+					BillingRunService billingRunService = (BillingRunService) getServiceInterface("BillingRunService");
+
+					BillingRunExtensionService billingRunExtensionService = (BillingRunExtensionService) getServiceInterface(
+							"BillingRunExtensionService");
+
+					if (billingRunService != null) {
+						List<BillingRun> billingRuns = billingRunService.getBillingRuns(BillingRunStatusEnum.PREINVOICED,  BillingRunStatusEnum.POSTINVOICED);
+
+						for (BillingRun billingRun : billingRuns) {
+
+							try {
+								billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
+										BillingRunStatusEnum.POSTVALIDATED, null);
+							} catch (Exception e) {
+								System.err.println("Error " + e.getMessage());
+							}
+						}
+
+					}
+
+				}
+			}
+					]]>
+            </column>
+            <where>id=-24</where>
+        </update>
+    </changeSet>
+
+	<changeSet id="#INTRD-7375_20220523" author="ZBariki">
+		<update tableName="finance_settings">
+			<column name="auxiliary_account_code_el" value="#{substring(gcl.code, 0, 3), String.class)ca.description};" />
+			<column name="auxiliary_account_label_el" value="#{ca.description};" />
+			<where> auxiliary_account_label_el is NULL AND auxiliary_account_code_el is NULL</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-7428_20220524" author="ZBariki">
+		<update tableName="finance_settings">
+			<column name="auxiliary_account_code_el" value="#{substring(gcl.code, 0, 3)ca.description};" />
+			<where> auxiliary_account_code_el = '#{substring(gcl.code, 0, 3), String.class)ca.description};' </where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-7360_20220525" author="hichamhanine">
+		<update tableName="ar_accounting_scheme">
+			<column name="long_description_i18n">
+				<![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]>
+			</column>
+			<where>code='Dual entry scheme'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

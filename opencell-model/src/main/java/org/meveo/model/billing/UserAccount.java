@@ -41,6 +41,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -93,6 +94,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_useraccount_id",referencedColumnName = "id")
+    private UserAccount parentUserAccount;
+    
+    @OneToMany(mappedBy = "parentUserAccount", fetch = FetchType.LAZY)
+    private List<UserAccount> userAccounts = new ArrayList<>();
 
     /**
      * Account termination date
@@ -141,6 +149,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
+    
+    /**
+     * is the user account a consumer
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_consumer")
+    private Boolean isConsumer=Boolean.TRUE;
 
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -165,7 +180,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return statusDate;
     }
 
-    public void setStatusDate(Date statusDate) {
+	public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
 
@@ -189,7 +204,23 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
         return subscriptions;
     }
 
-    public void setSubscriptions(List<Subscription> subscriptions) {
+	public UserAccount getParentUserAccount() {
+		return parentUserAccount;
+	}
+
+	public void setParentUserAccount(UserAccount parentUserAccount) {
+		this.parentUserAccount = parentUserAccount;
+	}
+
+	public List<UserAccount> getUserAccounts() {
+		return userAccounts;
+	}
+
+	public void setUserAccounts(List<UserAccount> userAccounts) {
+		this.userAccounts = userAccounts;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
 
@@ -250,4 +281,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     public Class<? extends BusinessEntity> getParentEntityType() {
         return BillingAccount.class;
     }
+
+	public Boolean getIsConsumer() {
+		return isConsumer;
+	}
+
+	public void setIsConsumer(Boolean isConsumer) {
+		this.isConsumer = isConsumer;
+	}
+    
 }

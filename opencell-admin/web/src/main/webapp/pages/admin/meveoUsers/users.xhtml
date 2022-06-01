@@ -20,7 +20,7 @@
             </p:breadCrumb>
         </h:form>
 		                
-        <hftl:searchPanel backingBean="#{userListBean}" renderNewButton="false">
+        <hftl:searchPanel backingBean="#{userListBean}" dataModel="#{userListBean.filteredLazyDataModel}" renderNewButton="false">
 			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
 
 			<ui:define name="buttons">
@@ -30,7 +30,9 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['user.title']}"
-			backingBean="#{userListBean}" sortBy="userName" dataModel="#{userListBean.filteredLazyDataModel}">
+			backingBean="#{userListBean}" sortBy="userName" dataModel="#{userListBean.filteredLazyDataModel}"
+			paginator="true" rows="30" resizableColumns="true"
+            paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true">
 			<hftl:column label="#{messages['user.userName']}" field="userName" entityView="userDetail" valueIdField="id"/>
             <hftl:column label="#{messages['user.name']}" field="name.fullName"/>
             <hftl:column label="#{messages['user.userGroupLevel']}" field="userLevel.descriptionOrCode"/>

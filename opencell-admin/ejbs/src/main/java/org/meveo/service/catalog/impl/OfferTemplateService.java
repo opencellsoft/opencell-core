@@ -53,10 +53,14 @@ import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleItem;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.CommercialRuleItemService;
+import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.MediaService;
 
 /**
@@ -79,6 +83,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     private MediaService mediaService;
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
+
+    @Inject
+    private CommercialRuleItemService commercialRuleItemService;
+
+    @Inject
+    private CommercialRuleLineService commercialRuleLineService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -215,6 +225,11 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getOfferComponents().size();
         offerToDuplicate.getOfferAttributes().size();
         offerToDuplicate.getOfferComponents().forEach(oc -> oc.getTagsList().size());
+        offerToDuplicate.getCommercialRules()
+                .forEach(commercialRuleHeader -> commercialRuleHeader.getCommercialRuleItems().size());
+        offerToDuplicate.getCommercialRules()
+                .forEach(commercialRuleHeader -> commercialRuleHeader.getCommercialRuleItems()
+                        .forEach(commercialRuleItem -> commercialRuleItem.getCommercialRuleLines().size()));
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -246,22 +261,22 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     	offer.setOfferModel(offerToDuplicate.getIsModel() ? offerToDuplicate : null);
 
         List<OfferServiceTemplate> offerServiceTemplates = offer.getOfferServiceTemplates();
-        offer.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
+        offer.setOfferServiceTemplates(new ArrayList<>());
 
         List<BusinessAccountModel> businessAccountModels = offer.getBusinessAccountModels();
-        offer.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+        offer.setBusinessAccountModels(new ArrayList<>());
 
         List<DigitalResource> attachments = offer.getAttachments();
-        offer.setAttachments(new ArrayList<DigitalResource>());
+        offer.setAttachments(new ArrayList<>());
 
         List<Channel> channels = offer.getChannels();
-        offer.setChannels(new ArrayList<Channel>());
+        offer.setChannels(new ArrayList<>());
 
         List<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
-        offer.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
+        offer.setOfferProductTemplates(new ArrayList<>());
 
         List<OfferTemplateCategory> offerTemplateCategories = offer.getOfferTemplateCategories();
-        offer.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+        offer.setOfferTemplateCategories(new ArrayList<>());
 
         List<Seller> sellers = offer.getSellers();
         offer.setSellers(new ArrayList<>());
@@ -270,13 +285,17 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offer.setOfferAttributes(new ArrayList<>());
 
         List<CustomerCategory> customerCategories = offer.getCustomerCategories();
-        offer.setCustomerCategories(new ArrayList<CustomerCategory>());
+        offer.setCustomerCategories(new ArrayList<>());
         
         List<Media> medias = offer.getMedias();
-        offer.setMedias(new ArrayList<Media>());
+        offer.setMedias(new ArrayList<>());
         
         List<OfferComponent> offerComponents = offer.getOfferComponents();
-        offer.setOfferComponents(new ArrayList<OfferComponent>());
+        offer.setOfferComponents(new ArrayList<>());
+
+        List<CommercialRuleHeader> commercialRulesHeader = offer.getCommercialRules();
+        offer.setCommercialRules(new ArrayList<>());
+
 
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
@@ -310,6 +329,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         
         if (offerAttributes != null) {
             for (OfferTemplateAttribute offerAttribute : offerAttributes) {
+                offerAttribute.setId(null);
+                offerAttribute.setOfferTemplate(offer);
                 offer.getOfferAttributes().add(offerAttribute);
             }
         }
@@ -319,7 +340,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getCustomerCategories().add(customerCategory);
             }
         }
-        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
         if (persist) {
             create(offer);
         }
@@ -353,17 +373,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             			
 				}
             }
-            
-            /*if(commercialRulesHeader != null) {
-            	for (CommercialRuleHeader commercialRuleHeader : commercialRulesHeader) {
-            		commercialRuleHeader.getCommercialRuleItems().size();
-            		commercialRuleHeaderService.detach(commercialRuleHeader);
-            		CommercialRuleHeader duplicate = new CommercialRuleHeader(commercialRuleHeader);
-            		duplicate.setTargetOfferTemplate(offer);
-            		commercialRuleHeaderService.create(duplicate);
-            		offer.getCommercialRules().add(duplicate);
-    			}
-            }*/
+            if(commercialRulesHeader != null) {
+                offer.setCommercialRules(duplicateCommercialRules(offer, commercialRulesHeader));
+            }
 
         } else {
             if (offerServiceTemplates != null) {
@@ -371,7 +383,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                     serviceTemplate.getIncompatibleServices().size();
                     serviceTemplate.setId(null);
                     List<ServiceTemplate> incompatibleServices = serviceTemplate.getIncompatibleServices();
-                    serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
+                    serviceTemplate.setIncompatibleServices(new ArrayList<>());
                     if (incompatibleServices != null) {
                         for (ServiceTemplate incompatibleService : incompatibleServices) {
                             serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
@@ -404,6 +416,39 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         return offer;
+    }
+
+    private List<CommercialRuleHeader> duplicateCommercialRules(OfferTemplate offer,
+                                                                List<CommercialRuleHeader> commercialRules) {
+        List<CommercialRuleHeader> commercialRuleHeaders = new ArrayList<>();
+        for (CommercialRuleHeader commercialRuleHeader : commercialRules) {
+            commercialRuleHeaderService.detach(commercialRuleHeader);
+            CommercialRuleHeader duplicate = new CommercialRuleHeader(commercialRuleHeader);
+            List<CommercialRuleItem> commercialRuleItems = new ArrayList<>();
+            for (CommercialRuleItem ruleItem : commercialRuleHeader.getCommercialRuleItems()) {
+                commercialRuleItemService.detach(ruleItem);
+                CommercialRuleItem duplicatedRuleItem = new CommercialRuleItem(ruleItem);
+                List<CommercialRuleLine> commercialRuleLines = new ArrayList<>();
+                for (CommercialRuleLine ruleLine : ruleItem.getCommercialRuleLines()) {
+                    commercialRuleLineService.detach(ruleLine);
+                    CommercialRuleLine duplicatedRuleLine = new CommercialRuleLine(ruleLine);
+                    duplicatedRuleLine.setSourceOfferTemplate(offer);
+                    duplicatedRuleLine.setCommercialRuleItem(duplicatedRuleItem);
+                    commercialRuleLineService.create(duplicatedRuleLine);
+                    commercialRuleLines.add(duplicatedRuleLine);
+                }
+                duplicatedRuleItem.setCommercialRuleLines(commercialRuleLines);
+                duplicatedRuleItem.setCommercialRuleHeader(duplicate);
+                commercialRuleItemService.create(duplicatedRuleItem);
+                commercialRuleItems.add(duplicatedRuleItem);
+            }
+            duplicate.setCommercialRuleItems(commercialRuleItems);
+            duplicate.setTargetOfferTemplate(offer);
+            commercialRuleHeaderService.create(duplicate);
+            duplicate.setCode(duplicate.getCode() + "_" + duplicate.getId());
+            commercialRuleHeaders.add(duplicate);
+        }
+        return commercialRuleHeaders;
     }
 
     public List<OfferTemplate> list(String code, Date validFrom, Date validTo, LifeCycleStatusEnum lifeCycleStatusEnum) {

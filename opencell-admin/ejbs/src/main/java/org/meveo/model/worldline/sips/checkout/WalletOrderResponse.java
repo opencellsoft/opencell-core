@@ -13,7 +13,8 @@ public class WalletOrderResponse extends BaseResponse {
     private String transactionDateTime;
     private String transactionPlatform;
     private String complementaryCode;
-
+    private String schemeTransactionIdentifier;
+    
     public String getAcquirerResponseCode() {
         return acquirerResponseCode;
     }
@@ -77,5 +78,14 @@ public class WalletOrderResponse extends BaseResponse {
 	public void setComplementaryCode(String complementaryCode) {
 		this.complementaryCode = complementaryCode;
 	}
+
+	public String getSchemeTransactionIdentifier() {
+		return schemeTransactionIdentifier;
+	}
+
+	public void setSchemeTransactionIdentifier(String schemeTransactionIdentifier) {
+		this.schemeTransactionIdentifier = schemeTransactionIdentifier;
+	}
+	
     
 }

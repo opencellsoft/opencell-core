@@ -34,9 +34,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -216,6 +213,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
     }
     public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
 
+        id = walletOperation.getId();
         code = walletOperation.getCode();
         description = walletOperation.getDescription();
 

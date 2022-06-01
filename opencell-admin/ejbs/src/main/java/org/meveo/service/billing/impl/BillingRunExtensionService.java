@@ -18,6 +18,8 @@
 
 package org.meveo.service.billing.impl;
 
+import static java.util.Optional.ofNullable;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +84,30 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
             billingRun.setProcessDate(dateStatus);
         }
         billingRun.setStatus(status);
+        return updateNoCheck(billingRun);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics, int count, BillingRunStatusEnum status) {
+    	billingRun = refreshOrRetrieve(billingRun);
+        billingRun.setBillableBillingAcountNumber(count);
+        billingRun.setPrAmountTax(basicStatistics.getSumAmountTax());
+        billingRun.setPrAmountWithTax(basicStatistics.getSumAmountWithTax());
+        billingRun.setPrAmountWithoutTax(basicStatistics.getSumAmountWithoutTax());
+        billingRun.setProcessDate(new Date());
+        billingRun.setStatus(status);
+        updateNoCheck(billingRun);
+        return billingRun;
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun updateBillingRunWithXMLPDFExecutionResult(Long billingRunId, Long xmlExecutionResultId,
+                                                                Long pdfExecutionResultId) throws BusinessException {
+        BillingRun billingRun = findById(billingRunId);
+        ofNullable(xmlExecutionResultId).ifPresent(xmlExecutionId -> billingRun.setXmlJobExecutionResultId(xmlExecutionId));
+        ofNullable(pdfExecutionResultId).ifPresent(pdfExecutionId -> billingRun.setPdfJobExecutionResultId(pdfExecutionId));
         return updateNoCheck(billingRun);
     }
 }

@@ -297,6 +297,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     @JsonProperty("fields")
     private String fields;
+    
+    @JsonProperty("mapCfValues")
+    private Map<String,String> mapCfValues;
 
     /**
      * Custom field value instance
@@ -669,6 +672,12 @@ public class CustomFieldValue implements Serializable, Cloneable {
             mapEntityValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 mapEntityValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : (EntityReferenceWrapper) mapItem.getValue());
+            }
+        }
+        else if (itemClass == Map.class) {
+        	mapCfValues = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+            	mapCfValues.put(mapItem.getKey(), mapItem.getValue() == null ? null : (String) mapItem.getValue());
             }
         }
     }

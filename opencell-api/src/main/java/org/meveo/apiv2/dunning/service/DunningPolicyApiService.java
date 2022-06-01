@@ -14,12 +14,16 @@ import javax.ws.rs.NotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningPolicyRule;
+import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
@@ -28,6 +32,9 @@ import org.meveo.service.payments.impl.DunningPolicyRuleService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
+
+    @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
 
     @Inject
     private DunningPolicyService dunningPolicyService;
@@ -47,6 +54,12 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     @Inject
     private DunningPolicyRuleLineService dunningPolicyRuleLineService;
 
+    @Inject
+    private CurrencyService currencyService;
+
+    @Inject
+    protected ResourceBundle resourceMessages;
+    
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
     private DunningPolicyRuleLineMapper policyRuleLineMapper = new DunningPolicyRuleLineMapper();
@@ -72,7 +85,15 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public DunningPolicy create(DunningPolicy dunningPolicy) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
+            if(dunningPolicy.getMinBalanceTriggerCurrency() != null) {
+                Currency currency = currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode());
+                if(currency == null) {
+                    throw new NotFoundException("Currency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
+                }
+                dunningPolicy.setMinBalanceTriggerCurrency(currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode()));
+            }
             dunningPolicyService.create(dunningPolicy);
             auditLogService.trackOperation("create", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
             return findByCode(dunningPolicy.getPolicyName()).get();
@@ -84,6 +105,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> update(Long id, DunningPolicy dunningPolicy) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             int countReminderLevels = 0;
             int countEndOfDunningLevel = 0;
@@ -95,21 +117,15 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     refreshPolicyLevel(policyLevel);
                     if (policyLevel.getDunningLevel().isReminder()) {
                         countReminderLevels++;
-                    } else {
-                        totalDunningLevels++;
                     }
+                    totalDunningLevels++;
                     if (policyLevel.getDunningLevel().isEndOfDunningLevel()) {
                         endOfLevelDayOverDue = policyLevel.getDunningLevel().getDaysOverdue();
                         countEndOfDunningLevel++;
                     }
                     dunningPolicyLevels.add(policyLevel);
                 }
-                if (countReminderLevels == 0) {
-                    throw new BadRequestException("Can not remove reminder level");
-                }
-                if (countEndOfDunningLevel == 0) {
-                    throw new BadRequestException("Can not remove end of level");
-                }
+                
                 validateLevelsNumber(countReminderLevels, countEndOfDunningLevel, totalDunningLevels);
                 dunningPolicy.setTotalDunningLevels(totalDunningLevels);
                 validateLevels(dunningPolicyLevels, endOfLevelDayOverDue);
@@ -118,7 +134,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             return of(dunningPolicy);
         } catch (Exception exception) {
             checkNameConstraint(exception);
-            throw new BusinessException(exception);
+            throw new BusinessException(exception.getMessage());
         }
     }
 
@@ -142,20 +158,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public void validateLevelsNumber(int countReminderLevels, int countEndOfDunningLevel, int totalDunningLevels) {
-        if (countReminderLevels == 0) {
-            throw new BadRequestException("Reminder level is mandatory");
-        }
-        if (countEndOfDunningLevel == 0) {
-            throw new BadRequestException("End of level is mandatory");
-        }
         if (countReminderLevels > 1) {
-            throw new BadRequestException("There is already a Reminder level for this policy, remove the existing level to select a new one.");
+            throw new BadRequestException("There is already a reminder level for this policy, remove the existing level to select a new one");
         }
         if (countEndOfDunningLevel > 1) {
-            throw new BadRequestException("A policy can have only 1 level with isEndOfDunningLevel = TRUE");
+            throw new BadRequestException("There is already an end of dunning level for this policy");
         }
-        if (totalDunningLevels == 0) {
-            throw new BadRequestException("Policy should have at least one dunning level other the reminder level");
+        if (totalDunningLevels  < 1) {
+            throw new BadRequestException("Dunning policy should have at least one dunning level other the reminder level");
+        }
+        if (countEndOfDunningLevel == 0) {
+            throw new BadRequestException("Dunning policy should have an end of dunning level");
         }
     }
 
@@ -163,7 +176,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         for (DunningPolicyLevel policyLevel : dunningPolicyLevels) {
             if(!policyLevel.getDunningLevel().isEndOfDunningLevel()
                     && policyLevel.getDunningLevel().getDaysOverdue() > endOfLevelDayOverDue) {
-                throw new BadRequestException("End of level must have the highest day over due");
+                throw new BadRequestException("End of dunning level must have the higher days overdue");
             }
         }
     }
@@ -175,11 +188,23 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Override
     public Optional<DunningPolicy> delete(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicy dunningPolicy = dunningPolicyService.findById(id);
         if(dunningPolicy != null) {
-            dunningPolicyService.remove(id);
-            auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
-            return of(dunningPolicy);
+        	try {
+                dunningPolicyService.remove(id);
+                auditLogService.trackOperation("delete", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
+                return of(dunningPolicy);
+        	} catch (Exception exception) {
+                Throwable throwable = exception.getCause();
+                while (throwable != null) {
+                    if (throwable instanceof ConstraintViolationException) {
+                        throw new BusinessException("The dunning policy with id "+ id + " is referenced");
+                    }
+                    throwable = throwable.getCause();
+                }
+                throw new BusinessException(exception.getMessage());
+            }
         } else {
             return empty();
         }
@@ -210,12 +235,14 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     }
 
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
-        dunningPolicy.setActivePolicy(FALSE);
+        globalSettingsVerifier.checkActivateDunning();
+        dunningPolicy.setIsActivePolicy(FALSE);
         auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
 
     public Optional<DunningPolicyRule> removePolicyRule(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicyRule dunningPolicyRule = dunningPolicyRuleService.findById(id);
         if(dunningPolicyRule == null) {
             return empty();
@@ -242,6 +269,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     public Optional<DunningPolicyRule> addPolicyRule(DunningPolicyRule dunningPolicyRule,
                                                      List<org.meveo.apiv2.dunning.DunningPolicyRuleLine> policyRuleLines) {
+        globalSettingsVerifier.checkActivateDunning();
         dunningPolicyRuleService.create(dunningPolicyRule);
         for (org.meveo.apiv2.dunning.DunningPolicyRuleLine line : policyRuleLines) {
             org.meveo.model.dunning.DunningPolicyRuleLine dunningPolicyRuleLine =
@@ -250,5 +278,17 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
             dunningPolicyRuleLineService.create(dunningPolicyRuleLine);
         }
         return of(dunningPolicyRule);
+    }
+    
+    public List<DunningPolicyRule> getPolicyRuleWithPolicyId(Long policyId) {
+        return dunningPolicyRuleService.findByDunningPolicy(policyId);
+    }
+    
+    public List<DunningPolicyRuleLine> getPolicyRuleLineWithPolicyId(Long policyId) {
+        return dunningPolicyRuleLineService.findByDunningPolicy(policyId);
+    }
+    
+    public List<DunningPolicyRuleLine> getPolicyRuleLineWithDunningPolicyRuled(Long dunningPolicyRule) {
+        return dunningPolicyRuleLineService.findByDunningPolicyRule(dunningPolicyRule);
     }
 }

@@ -69,7 +69,7 @@ public class DunningSettings extends BusinessEntity {
      */
     @Column(name = "dunning_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private DunningModeEnum dunningMode = DunningModeEnum.CUSTOMER_LEVEL;
+    private DunningModeEnum dunningMode = DunningModeEnum.INVOICE_LEVEL;
 
     /**
      * Maximum number of dunning levels

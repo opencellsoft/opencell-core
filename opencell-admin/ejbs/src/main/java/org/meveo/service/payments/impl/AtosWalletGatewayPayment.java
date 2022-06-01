@@ -1,7 +1,6 @@
 package org.meveo.service.payments.impl;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,16 +40,20 @@ import org.meveo.model.worldline.sips.checkout.WalletOrderRequest;
 import org.meveo.model.worldline.sips.checkout.WalletOrderResponse;
 import org.meveo.model.worldline.sips.wallet.WalletAction;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worldline.sips.exception.SealCalculationException;
 import com.worldline.sips.exception.UnknownStatusException;
+import com.worldline.sips.model.CaptureMode;
 import com.worldline.sips.model.Currency;
 import com.worldline.sips.model.OrderChannel;
+import com.worldline.sips.model.PaymentPattern;
 import com.worldline.sips.model.ResponseCode;
 import com.worldline.sips.util.SealCalculator;
 
@@ -59,7 +62,7 @@ import com.worldline.sips.util.SealCalculator;
  * <p>
  * Use <a href="https://documentation.sips.worldline.com/fr/WLSIPS.310-UG-Sips-Office-JSON.html">SIPS Office JSON API</a> to make payment/refund requests
  * <br>
- * Currently support only card payment methods
+ * Currently support only card payment methods with payPage
  * </p>
  *
  * @author Julien LEBOUTEILLER
@@ -67,6 +70,7 @@ import com.worldline.sips.util.SealCalculator;
 @PaymentGatewayClass
 public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private static final String WALLET_URL_PROPERTY = "atos.api.walletUrl";
+    private static final String WALLET_HOSTED_CHECK_OUT_URL_PROPERTY = "atos.api.walletUrl.hostedCheckOut";
     private static final String OFFICE_URL_PROPERTY = "atos.api.officeUrl";
     private static final String WALLET_ORDER_URI_PROPERTY = "atos.api.wallet.order.uri";
     private static final String WALLET_CREDIT_HOLDER_URI_PROPERTY = "atos.api.wallet.credit.uri";
@@ -85,7 +89,9 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private PaymentGateway paymentGateway = null;
     private ParamBeanFactory paramBeanFactory;
     private CustomerAccountService customerAccountService;
-    private RequestConfig requestConfig;
+    private RequestConfig requestConfig;   
+    private PaymentMethodService paymentMethodService;
+    private ScriptInstanceService scriptInstanceService = null;
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expiryDate, String issueNumber,
@@ -95,7 +101,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.24"));
+        return doPaymentOrRefundToken(paymentCardToken, ctsAmount, paramBean().getProperty(WALLET_ORDER_URI_PROPERTY,"/checkout/walletOrder"), paramBean().getProperty(CHECKOUT_INTERFACE_VERSION_PROPERTY,"IR_WS_2.42"),true);
     }
 
     @Override
@@ -122,7 +128,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
     	
-        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"));
+        return doPaymentOrRefundToken(paymentToken, ctsAmount, paramBean().getProperty(WALLET_CREDIT_HOLDER_URI_PROPERTY,"/cashManagement/walletCreditHolder"), paramBean().getProperty(CASHMANAGEMENT_INTERFACE_VERSION_PROPERTY,"CR_WS_2.25"),false);
     }
 
     @Override
@@ -146,129 +152,166 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         throw new UnsupportedOperationException();
     }
 
-    private PaymentResponseDto doPaymentOrRefundToken(CardPaymentMethod paymentMethod, Long ctsAmount, String wsUri, String interfaceVersion) throws BusinessException {
-        PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
+	private PaymentResponseDto doPaymentOrRefundToken(CardPaymentMethod paymentMethod, Long ctsAmount, String wsUri, String interfaceVersion , boolean isPayment) throws BusinessException {
+		PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
+		String scriptInstanceCode = paramBean().getProperty("sips.paymentRequest.script", null);
+		WalletOrderRequest request = null;
+		if (StringUtils.isBlank(scriptInstanceCode)) {
 
-        WalletOrderRequest request = buildWalletOrderRequest(paymentMethod, ctsAmount, interfaceVersion);
- 
-        String seal;
-        try {
-            String data = getSealString(request);
-            seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
-            request.setSeal(seal);
-            request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256"));
-        } catch (SealCalculationException e) {
-            processError("Error occurred during seal calculation", e, paymentResponseDto);
-            return paymentResponseDto;
-        }
+			request = buildWalletOrderRequest(paymentMethod, ctsAmount, interfaceVersion,isPayment);
 
-        String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, "changeIt");
-        wsUrl += wsUri;
+			String seal;
+			try {
+				String data = getSealString(request,isPayment);
+				log.info("getSealString(request):" + data);
+				seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
+				request.setSeal(seal);
+				request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY, "HMAC-SHA-256"));
+			} catch (SealCalculationException e) {
+				processError("Error occurred during seal calculation", e, paymentResponseDto);
+				return paymentResponseDto;
+			}
+		} else {
 
-        ObjectMapper mapper = new ObjectMapper();
-        String requestBody;
-        try {
-            requestBody = mapper.writeValueAsString(request);
-            log.debug("WalletOrderRequest: {}", requestBody);
-        } catch (JsonProcessingException e) {
-            processError("Unable to parse request as JSON", e, paymentResponseDto);
-            return paymentResponseDto;
-        }
+			Map<String, Object> context = new HashMap<String, Object>();
 
-        // Request parameters and other properties.
-        HttpPost httpPost = new HttpPost(wsUrl);
-        httpPost.setConfig(getRequestConfig());
-        httpPost.setEntity(new StringEntity(requestBody, "UTF-8"));
-        httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+			context.put("CardPaymentMethod", paymentMethod);
+			context.put("ctsAmount", ctsAmount);
+			context.put("interfaceVersion", interfaceVersion);
+			context.put("PaymentGateway", paymentGateway);
 
-        // Execute and get the response
-        WalletOrderResponse response;
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpResponse httpResponse = httpClient.execute(httpPost);
+			context = getScriptInstanceService().executeCached(scriptInstanceCode, context);
+			request = (WalletOrderRequest) context.get("WalletOrderRequest");
 
-            String responseBody = EntityUtils.toString(httpResponse.getEntity());
-            log.debug("WallerOrderResponse: {}", responseBody);
-            response = mapper.readValue(responseBody, WalletOrderResponse.class);
-        } catch (IOException e) {
-            processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
-            return paymentResponseDto;
-        }
-        
-        if (response != null) {
-            paymentResponseDto.setPaymentID(request.getTransactionReference());
-            paymentResponseDto.setTokenId(paymentMethod.getTokenId()); // Token ID = merchant wallet ID (since created, this never change)
-            paymentResponseDto.setNewToken(false);
-            paymentResponseDto.setPaymentStatus(mappingStatus(response.getResponseCode()));
-            paymentResponseDto.setTransactionId(response.getAuthorisationId());
+		}
+		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, "changeIt");
+		if(!isPayment) {
+			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
+		}
+		wsUrl += wsUri;
+		
+		log.info("wsUrl: {}", wsUrl);
 
-            if (!paymentResponseDto.getPaymentStatus().equals(PaymentStatusEnum.ACCEPTED)) {
-                paymentResponseDto.setErrorCode(getErreurCodeAndMsg(response)[0]);
-                paymentResponseDto.setErrorMessage(getErreurCodeAndMsg(response)[1]);              
-            }
+		ObjectMapper mapper = new ObjectMapper();
+		String requestBody;
+		try {
+			mapper.setSerializationInclusion(Include.NON_NULL);
+			requestBody = mapper.writeValueAsString(request);
+			log.info("WalletOrderRequest: {}", requestBody);
+		} catch (JsonProcessingException e) {
+			processError("Unable to parse request as JSON", e, paymentResponseDto);
+			return paymentResponseDto;
+		}
 
-            return paymentResponseDto;
-        } else {
-            paymentResponseDto.setErrorMessage("Empty response");
-        }
+		// Request parameters and other properties.
+		HttpPost httpPost = new HttpPost(wsUrl);
+		httpPost.setConfig(getRequestConfig());
+		httpPost.setEntity(new StringEntity(requestBody, "UTF-8"));
+		httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-        // Default fallback to ERROR
-        paymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+		// Execute and get the response
+		WalletOrderResponse response;
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpResponse httpResponse = httpClient.execute(httpPost);
 
-        return paymentResponseDto;
-    }
+			String responseBody = EntityUtils.toString(httpResponse.getEntity());
+			log.debug("WallerOrderResponse: {}", responseBody);
+			response = mapper.readValue(responseBody, WalletOrderResponse.class);
+		} catch (IOException e) {
+			processError("Error occurred while calling WalletOrder method", e, paymentResponseDto);
+			return paymentResponseDto;
+		}
+
+		if (response != null) {
+			paymentResponseDto.setPaymentID(request.getTransactionReference());
+			paymentResponseDto.setTokenId(paymentMethod.getTokenId()); // Token ID = merchant wallet ID (since created, this never change)
+			paymentResponseDto.setNewToken(false);
+			paymentResponseDto.setPaymentStatus(mappingStatus(response.getResponseCode()));
+			paymentResponseDto.setTransactionId(response.getAuthorisationId());
+			if (!StringUtils.isBlank(response.getSchemeTransactionIdentifier())) {
+				paymentMethod.setToken3DsId(response.getSchemeTransactionIdentifier());
+				paymentMethodService().updateNoCheck(paymentMethod);
+			}
+
+			if (!paymentResponseDto.getPaymentStatus().equals(PaymentStatusEnum.ACCEPTED)) {
+				paymentResponseDto.setErrorCode(getErreurCodeAndMsg(response)[0]);
+				paymentResponseDto.setErrorMessage(getErreurCodeAndMsg(response)[1]);
+			}
+
+			return paymentResponseDto;
+		} else {
+			paymentResponseDto.setErrorMessage("Empty response");
+		}
+
+		// Default fallback to ERROR
+		paymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+
+		return paymentResponseDto;
+	}
 
 	private String[] getErreurCodeAndMsg(WalletOrderResponse response) {
 		Map<Object, Object> mapErrorCodeAndMsg = new HashMap<Object, Object>();
 		Provider provider = ((ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName())).getProvider();
-		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}",response.getAuthorisationId(),response.getAcquirerResponseCode(),response.getComplementaryCode(),response.getResponseCode());
+		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}", response.getAuthorisationId(),
+				response.getAcquirerResponseCode(), response.getComplementaryCode(), response.getResponseCode());
 		String[] codeAndMsg = { "notFound", "notFound" };
-		
+
+		String prefixCodeError = "";
 		if (!StringUtils.isBlank(response.getAcquirerResponseCode())) {
-			codeAndMsg[0] = response.getAcquirerResponseCode();
-			mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_ACQUIRER_CODE_WLSIPS);			
+			codeAndMsg[0] = "" + response.getAcquirerResponseCode();
+			prefixCodeError = "A";
+			mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_ACQUIRER_CODE_WLSIPS);
 		} else {
-			if (!StringUtils.isBlank(response.getComplementaryCode()) && !"0".equals(response.getComplementaryCode())) {
-				codeAndMsg[0] = response.getComplementaryCode();
-				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_COMPL_CODE_WLSIPS);				
-			} else {
+			if (StringUtils.isBlank(response.getComplementaryCode()) || "0".equals(response.getComplementaryCode()) || "00".equals(response.getComplementaryCode())) {
 				codeAndMsg[0] = response.getResponseCode();
-				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_RESPONSE_CODE_WLSIPS);				
+				prefixCodeError = "R";
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_RESPONSE_CODE_WLSIPS);
+			} else {
+				codeAndMsg[0] = response.getComplementaryCode();
+				prefixCodeError = "C";
+				mapErrorCodeAndMsg = (Map<Object, Object>) provider.getCfValue(CF_PRV_COMPL_CODE_WLSIPS);
 			}
 		}
 		codeAndMsg[1] = (String) mapErrorCodeAndMsg.get(codeAndMsg[0]);
+		codeAndMsg[0] = prefixCodeError + codeAndMsg[0];
 		return codeAndMsg;
 	}
 
 	@Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         String returnUrl = hostedCheckoutInput.getReturnUrl();
-        String walletUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
+        String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, "changeIt");
 
         PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
         PaymentHostedCheckoutResponseDto.Result result = response.getResult();
 
         result.setHostedCheckoutUrl(walletUrl);
-        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"IR_WS_2.0"));
+        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"HP_2.39"));
         result.setReturnUrl(returnUrl);
 
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
 
-        String data = "merchantId=" + paymentGateway.getMarchandId() +
+        String data ="amount="+hostedCheckoutInput.getAmount()+
+        		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
+        		"|currencyCode="+hostedCheckoutInput.getCurrencyCode()+
+        		"|merchantId="+paymentGateway.getMarchandId() +
+        		"|normalReturnUrl="+returnUrl+
+        		"|orderChannel="+OrderChannel.INTERNET.name()+
+        		"|transactionReference="+System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId()+
+        		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
+                "|fraudData.challengeMode3DS=CHALLENGE_MANDATE"+
+                "|captureMode="+CaptureMode.AUTHOR_CAPTURE.name()+
+                "|captureDay=0"+
                 "|merchantWalletId=" + merchantWalletId +
-                "|keyVersion=" + paymentGateway.getWebhooksKeyId() +
-                "|requestDateTime=" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date());
+                "|keyVersion=" + paymentGateway.getWebhooksKeyId()+
+                "|sealAlgorithm="+paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256");
+                
+        		
 
-        // Wallet action
-        if (!StringUtils.isBlank(hostedCheckoutInput.getAllowedActions())) {
-            String walletActionnameList = buildWalletActionnameList(hostedCheckoutInput.getAllowedActions());
-            if (!StringUtils.isBlank(walletActionnameList)) {
-                data += "|walletActionnameList=" + walletActionnameList;
-            }
-        }
 
         if (!StringUtils.isBlank(hostedCheckoutInput.getVariant())) {
             data += "|templateName=" + hostedCheckoutInput.getVariant();
@@ -312,29 +355,36 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return null;
     }
 
-    private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion) {
-        WalletOrderRequest request = new WalletOrderRequest();
-        request.setAmount(String.valueOf(amount));
-        request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
-        request.setMerchantId(paymentGateway.getMarchandId());
-        request.setOrderChannel(OrderChannel.INTERNET.name());
-        request.setInterfaceVersion(interfaceVersion);
-        request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-        request.setTransactionReference(System.currentTimeMillis() + "CA" + paymentMethod.getCustomerAccount().getId());
-        request.setSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
+	private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion,boolean isPayment) {
+		WalletOrderRequest request = new WalletOrderRequest();
+		request.setAmount(String.valueOf(amount));
+		request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
+		request.setMerchantId(paymentGateway.getMarchandId());
+		request.setOrderChannel(OrderChannel.INTERNET.name());
+		if(isPayment) {
+			request.setPaymentPattern(PaymentPattern.RECURRING_N.name());
+		}
+		request.setInterfaceVersion(interfaceVersion);
+		request.setKeyVersion(paymentGateway.getWebhooksKeyId());
+		request.setTransactionReference(amount+"T"+System.currentTimeMillis() + "R" + (int) (Math.random() * 1000000 + 1) + "CA" + paymentMethod.getCustomerAccount().getId());
+		if (!StringUtils.isBlank(paymentMethod.getToken3DsId()) && isPayment) {
+			request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
+		}
 
-        // Needed for backward compatibility purpose, in 5.X version, the merchant wallet ID is the customer account ID
-        // Starting at 9.X version, the merchant wallet ID match the token ID of payment method
-        if (StringUtils.isBlank(paymentMethod.getInfo1())) {
-            request.setMerchantWalletId(String.valueOf(paymentMethod.getCustomerAccount().getId()));
-            request.setPaymentMeanId(paymentMethod.getTokenId());
-        } else {
-            request.setMerchantWalletId(paymentMethod.getTokenId());
-            request.setPaymentMeanId(paymentMethod.getInfo1());
-        }
+		// Needed for backward compatibility purpose, in 5.X version, the merchant
+		// wallet ID is the customer account ID
+		// Starting at 9.X version, the merchant wallet ID match the token ID of payment
+		// method
+		if (StringUtils.isBlank(paymentMethod.getInfo1())) {
+			request.setMerchantWalletId(String.valueOf(paymentMethod.getCustomerAccount().getId()));
+			request.setPaymentMeanId(paymentMethod.getTokenId());
+		} else {
+			request.setMerchantWalletId(paymentMethod.getTokenId());
+			request.setPaymentMeanId(paymentMethod.getInfo1());
+		}
 
-        return request;
-    }
+		return request;
+	}
 
     private String buildWalletActionnameList(String variant) {
         String[] variantList = variant.split(",");
@@ -400,21 +450,31 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         return status;
     }
 
-    private String getSealString(WalletOrderRequest request) {
-        return request.getAmount()
+    private String getSealString(WalletOrderRequest request,boolean isPayment) {
+    	
+    	String token3ds = request.getInitialSchemeTransactionIdentifier();
+    	if(StringUtils.isBlank(token3ds) || !isPayment) {
+    		token3ds = "";
+    	}
+        return    request.getAmount()
                 + request.getCurrencyCode()
-                + request.getInterfaceVersion()
+                + token3ds
+                + request.getInterfaceVersion()                 
                 + request.getMerchantId()
-                + request.getMerchantWalletId()
-                + request.getOrderChannel()
+                + request.getMerchantWalletId()  
+                + request.getOrderChannel() 
                 + request.getPaymentMeanId()
-                + request.getTransactionReference();
+                + (isPayment ? request.getPaymentPattern() : "")
+                + request.getTransactionReference();                 
     }
-
+    
+    
     private void processError(String message, Exception e, PaymentResponseDto paymentResponseDto) {
         log.error(message, e);
         paymentResponseDto.setErrorMessage(message);
         paymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+        paymentResponseDto.setPaymentID(paymentResponseDto.getPaymentID());
+        paymentResponseDto.setTransactionId(paymentResponseDto.getTransactionId());
     }
 
     private RequestConfig getRequestConfig() {
@@ -449,21 +509,37 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
         return customerAccountService;
     }
+    
+    private ScriptInstanceService getScriptInstanceService() {
+    	if(scriptInstanceService != null) {
+    		return scriptInstanceService;
+    	}
+    	scriptInstanceService = (ScriptInstanceService) EjbUtils.getServiceInterface(ScriptInstanceService.class.getSimpleName());
+    	return scriptInstanceService;
+    }
+    
+    private PaymentMethodService paymentMethodService() {
+        if (paymentMethodService == null) {
+        	paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
+        }
+
+        return paymentMethodService;
+    }
 
 	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-		 throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
-		 throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 		
 	}
 
 	@Override
 	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
-		 throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 		
 	}
 }

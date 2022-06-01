@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -63,7 +64,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -338,6 +338,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinTable(name = "cpq_billing_account_tags", joinColumns = @JoinColumn(name = "billing_account_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<>();
 
+	/**
+	 * Currency of account
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "trading_currency_id", nullable = false)
+	private TradingCurrency tradingCurrency;
 
     @Transient
     private List<InvoiceLine> minInvoiceLines;
@@ -756,6 +762,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 		this.tags = tags;
 	}
 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -777,5 +790,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Override
     public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
         this.minInvoiceLines = invoiceLines;
+    }
+
+    public List<UserAccount> getParentUserAccounts() {
+        return getUsersAccounts()
+                .stream()
+                .filter(userAccount -> userAccount.getParentUserAccount() == null)
+                .collect(toList());
     }
 }

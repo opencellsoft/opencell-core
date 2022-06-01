@@ -129,6 +129,11 @@ public class UserDto extends AuditableEntityDto {
     @Schema(description = "Is required roles")
     private boolean isRequiredRoles = true;
 
+    /** The user external email. */
+    @XmlElement()
+    @Schema(description = "the user external email")
+    private String externalEmail;
+
     /**
      * Instantiates a new user dto.
      */
@@ -435,9 +440,17 @@ public class UserDto extends AuditableEntityDto {
 		this.isRequiredRoles = isRequiredRoles;
 	}
 
+	public String getExternalEmail() {
+		return externalEmail;
+	}
+
+	public void setExternalEmail(String externalEmail) {
+		this.externalEmail = externalEmail;
+	}
+
 	@Override
     public String toString() {
         return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
-                + userLevel + ", securedEntities=" + securedEntities + " ]";
+                + userLevel + ", securedEntities=" + securedEntities + ", externalEmail=" + externalEmail + " ]";
     }
 }

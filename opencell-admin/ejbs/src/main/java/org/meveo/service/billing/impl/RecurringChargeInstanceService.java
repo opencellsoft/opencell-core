@@ -263,16 +263,34 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
             // INTRD-279 fix: if reactivate a suspended recurring charge then update its next charge date
             // and charged to date. Maybe to review this fix when implementing suspension prorata evol
-            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED ) {
+                log.debug("Reactivation of Recurring charge instance {} [id={}]. Current chargedToDate={} and nextChargeDate={}",
+                            recurringChargeInstance.getCode(), recurringChargeInstance.getId(), recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+
                 DatePeriod reactivationCurrentPeriod = recurringRatingService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
-                recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
-                if (recurringRatingService.isApplyInAdvance(recurringChargeInstance)) {
-                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
-                } else {
-                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom());
+                Date reactivationCurrentPeriodEnd = reactivationCurrentPeriod.getTo();
+
+                if (reactivationCurrentPeriodEnd != null &&
+                        recurringChargeInstance.getNextChargeDate() != null &&
+                        recurringChargeInstance.getNextChargeDate().before(reactivationDate)) {
+
+                    // adjust nextChargeDate only if reactivationCurrentPeriodEnd is before charge termination date
+                    if (recurringChargeInstance.getTerminationDate() == null ||
+                        reactivationCurrentPeriodEnd.before(recurringChargeInstance.getTerminationDate())) {
+
+                        recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
+                        if (recurringRatingService.isApplyInAdvance(recurringChargeInstance)) {
+                            recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
+                        } else {
+                            recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom() != null ?
+                                    reactivationCurrentPeriod.getFrom() : recurringChargeInstance.getChargedToDate());
+                        }
+                        log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
+                                        "its chargedToDate and nextChargeDate are reajusted to {}, {}.",
+                                recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
+                                recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+                    }
                 }
-                log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " + "its chargedToDate and nextChargeDate are reajusted to {}, {}.", recurringChargeInstance.getCode(),
-                    recurringChargeInstance.getId(), recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
             }
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                 recurringChargeInstance.setTerminationDate(null);
@@ -330,6 +348,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     throw new RatingException("Can not determine a next charge period for charge instance " + recurringChargeInstance.getId() + " and subscription date " + recurringChargeInstance.getSubscriptionDate());
                 }
                 recurringChargeInstance.setChargeDate(recurringChargeInstance.getSubscriptionDate());
+                recurringChargeInstance.setChargedToDate(new Date(recurringChargeInstance.getSubscriptionDate().getTime()));                
                 recurringChargeInstance.setNextChargeDate(isApplyInAdvance && !recurringChargeInstance.getSubscriptionDate().after(period.getFrom()) ? recurringChargeInstance.getSubscriptionDate() : nextChargeDate);
                 chargeWasUpdated = true;
 
@@ -398,7 +417,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     revenueRecognitionScriptService.createRevenueSchedule(recurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), recurringChargeInstance);
                 }
             }
-
+            if (recurringChargeInstance.getNextChargeDate() == null) {
+                log.warn("Rating RecurringChargeInstance {} updates its next charge date to null. " +
+                        "It'll be no longer rated even is active!", recurringChargeInstance.getId());
+            }
             return ratingResult;
 
         } catch (Exception e) {

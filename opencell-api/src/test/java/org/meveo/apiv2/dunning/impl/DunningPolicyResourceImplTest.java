@@ -28,6 +28,7 @@ import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningPolicy;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 import org.mockito.InjectMocks;
@@ -54,6 +55,9 @@ public class DunningPolicyResourceImplTest {
 
     @Mock
     private DunningPolicyService dunningPolicyService;
+
+    @Mock
+    private DunningLevelService levelService;
     
     @Mock
     private AuditLogService auditLogService;
@@ -64,7 +68,7 @@ public class DunningPolicyResourceImplTest {
         dunningPolicy.setId(1L);
         dunningPolicy.setPolicyName("policyNAme");
         dunningPolicy.setPolicyDescription("description");
-        dunningPolicy.setDefaultPolicy(Boolean.TRUE);
+        dunningPolicy.setIsDefaultPolicy(Boolean.TRUE);
         dunningPolicy.setMinBalanceTrigger(0.5);
         dunningPolicy.setTotalDunningLevels(1);
 
@@ -81,6 +85,7 @@ public class DunningPolicyResourceImplTest {
         when(dunningPolicyApiService.create(any())).thenReturn(dunningPolicy);
         when(dunningPolicyService.findById(anyLong(), Mockito.anyList())).thenReturn(dunningPolicy);
         when(dunningPolicyApiService.update(anyLong(), any(DunningPolicy.class))).thenReturn(Optional.of(dunningPolicy));
+        when(levelService.findById(anyLong())).thenReturn(dunningLevel);
     }
 
     @Test
@@ -140,8 +145,7 @@ public class DunningPolicyResourceImplTest {
     @Test
     public void shouldUpdateDunningPolicy() {
         DunningPolicyLevel dunningPolicyLevel = ImmutableDunningPolicyLevel.builder()
-                .id(1L)
-                .collectionPlanStatusId(1L)
+                .dunningLevelId(1L)
                 .build();
         org.meveo.apiv2.dunning.DunningPolicyInput resource = ImmutableDunningPolicyInput.builder()
                 .policyName("policyNAme")
@@ -150,7 +154,6 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningPolicyLevelService.findById(1L)).thenReturn(null);
 
         Response response = dunningPolicyResource.update(1L, resource);
         Assert.assertEquals(200, response.getStatus());

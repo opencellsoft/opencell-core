@@ -23,7 +23,9 @@ import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -60,6 +62,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
@@ -84,16 +87,15 @@ import org.meveo.model.finance.AccountingEntry;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
+        @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
                 "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundByCA", query = "Select ao  from AccountOperation as ao, PaymentMethod as pm where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC')  and ao.customerAccount.id = pm.customerAccount.id " +
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and " +
-                "                                pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundByCA", query = "Select ao  from AccountOperation as ao where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
+                + "                             in ('I','OCC') and (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and " +
+                "                                ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
                 "                                (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
                 "                                pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
@@ -104,7 +106,11 @@ import org.meveo.model.finance.AccountingEntry;
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao,MatchingAmount ma where :invoice MEMBER OF ao.invoices")
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
+        @NamedQuery(name = "AccountOperation.findAoClosedSubPeriodByStatus", query = "SELECT ao FROM AccountOperation ao" +
+                " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
+                " AND ao.status IN (:AO_STATUS)"),
+        @NamedQuery(name = "AccountOperation.findAoByStatus", query = "SELECT ao FROM AccountOperation ao WHERE ao.status IN (:AO_STATUS)")
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
@@ -161,7 +167,9 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     /**
      * List of associated accounting writing
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
      */
+    @Deprecated
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
     private List<AccountingEntry> accountingEntries = new ArrayList<>();
 
@@ -422,12 +430,24 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private PaymentActionEnum paymentAction;
 
     @Column(name = "payment_deferral_count")
-    private Integer paymentDeferralCount;
+    private Integer paymentDeferralCount = 0;
     /**
      * Account export file
      */
     @Column(name = "accounting_export_file")
     private String accountingExportFile;
+
+    /**
+     * Associated accountingScheme.AccountingEntry
+     */
+    @OneToMany(mappedBy = "accountOperation", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<JournalEntry> accountingSchemeEntries = new HashSet<>();
+    
+    /**
+     * Operation number
+     */
+    @Column(name = "operation_number")
+    private Long operationNumber;
 
     public Date getDueDate() {
         return dueDate;
@@ -684,10 +704,20 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
+     * @return AccountingEntries
+     */
+    @Deprecated
     public List<AccountingEntry> getAccountingEntries() {
 		return accountingEntries;
 	}
 
+    /**
+     * @deprecated since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
+     * @param accountingEntries AccountingEntries
+     */
+    @Deprecated
 	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
 		this.accountingEntries = accountingEntries;
 	}
@@ -989,5 +1019,21 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setPaymentDeferralCount(Integer paymentDeferralCount) {
         this.paymentDeferralCount = paymentDeferralCount;
+    }
+
+    public Set<JournalEntry> getAccountingSchemeEntries() {
+        return accountingSchemeEntries;
+    }
+
+    public void setAccountingSchemeEntries(Set<JournalEntry> accountingSchemeEntries) {
+        this.accountingSchemeEntries = accountingSchemeEntries;
+    }
+
+    public Long getOperationNumber() {
+        return operationNumber;
+    }
+
+    public void setOperationNumber(Long operationNumber) {
+        this.operationNumber = operationNumber;
     }
 }

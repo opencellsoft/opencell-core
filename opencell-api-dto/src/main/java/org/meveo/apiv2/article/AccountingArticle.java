@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutableAccountingArticle.class)
 public interface AccountingArticle extends Resource {
 
-
 	@Schema(description = "code of accounting article")
 	@NotNull
     String getCode();
@@ -69,4 +68,19 @@ public interface AccountingArticle extends Resource {
 	@Schema(description = "custom field associated to accounting article")
     CustomFieldsDto getCustomFields();
 
+    @Nullable
+    @Schema(description = "invoice type associated to accounting article")
+    Resource getInvoiceType();
+    
+    @Nullable
+    @Schema(description = "invoice type el associated to accounting article")
+    String getInvoiceTypeEl();
+
+    @Nullable
+    @Schema(description = "Accounting code El")
+    String getAccountingCodeEl();
+
+    @Nullable
+    @Schema(description = "Column criteria EL")
+    String getColumCriteriaEL();
 }

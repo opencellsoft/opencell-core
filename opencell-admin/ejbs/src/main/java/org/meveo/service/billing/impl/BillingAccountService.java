@@ -37,7 +37,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -58,7 +58,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
  * The Class BillingAccountService.
- * 
+ *
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
@@ -245,7 +245,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         /**
          * *
-         * 
+         *
          * @Todo : ajouter la condition : l'encours de facturation est vide :
          */
         if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
@@ -325,7 +325,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     /**
      * Find a list of not processed billing accounts by a billing run
-     * 
+     *
      * @param billingRun Billing run
      * @return A list of Billing Account identifiers
      */
@@ -355,7 +355,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     /**
      * List billing accounts that are associated with a given billing run
-     * 
+     *
      * @param billingRun Billing run
      * @return A list of Billing accounts
      */
@@ -544,5 +544,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public long getCountByParent(CustomerAccount parent) {
 
         return getEntityManager().createNamedQuery("BillingAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
+
+    @Override
+    public void remove(BillingAccount entity) throws BusinessException {
+        checkIfBillingAccountIsReferenced(entity);
+        super.remove(entity);
+    }
+
+    private void checkIfBillingAccountIsReferenced(BillingAccount entity) {
+        String entities = findReferencedByEntities(BillingAccount.class, entity.getId());
+        if (StringUtils.isNotBlank(entities))
+            throw new BusinessException("Cannot delete this billing account , because is still referenced");
     }
 }

@@ -45,14 +45,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 
 /**
  * The Class SubCategoryInvoiceAgregate.
  */
 @Entity
 @DiscriminatorValue("F")
-@NamedQueries({ @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
+@NamedQueries({ @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId AND ia.invoice.id in (select ia2.invoice.id from SubCategoryInvoiceAgregate ia2 where ia2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
         @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id ,ia.billingAccount.id,  ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"
                 + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.id, ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomerAccount", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.id"

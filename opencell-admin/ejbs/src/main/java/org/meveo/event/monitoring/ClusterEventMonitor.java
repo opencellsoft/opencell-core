@@ -37,6 +37,7 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticClientConnection;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -120,7 +121,9 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
 
             if (eventDto.getAction() == CrudActionEnum.execute) {
-                JobLauncherEnum jobLauncher = JobLauncherEnum.valueOf(eventDto.getAdditionalInfo());
+                JobLauncherEnum jobLauncher = eventDto.getAdditionalInfo() != null && eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER) != null
+                        ? JobLauncherEnum.valueOf((String) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER))
+                        : null;
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
@@ -137,16 +140,22 @@ public class ClusterEventMonitor implements MessageListener {
             CustomFieldTemplate cft = customFieldTemplateService.findById(eventDto.getId());
             cfValueAccumulator.refreshCfAccumulationRules(cft);
 
-        } else if (eventDto.getClazz().equals(CustomEntityTemplate.class.getSimpleName()) && esConnection.isEnabled()) {
+        } else if (eventDto.getClazz().equals(CustomEntityTemplate.class.getSimpleName())) {
 
             if (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.enable) {
-                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId());
-                esPopulationService.addToIndexAndTypeCache(cet);
+                CustomEntityTemplate cet = customEntityTemplateService.findByCode(eventDto.getCode()); // Find by code instead of ID, so it would be added to a cache
+                if (esConnection.isEnabled()) {
+                    esPopulationService.addToIndexAndTypeCache(cet);
+                }
 
-            } else if (eventDto.getAction() == CrudActionEnum.remove || eventDto.getAction() == CrudActionEnum.disable) {
-                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId());
+            } else if (eventDto.getAction() == CrudActionEnum.update) {
+                CustomEntityTemplate cet = customEntityTemplateService.findByCode(eventDto.getCode()); // Find by code instead of ID, so it would be added to a cache
+
+            } else if ((eventDto.getAction() == CrudActionEnum.remove || eventDto.getAction() == CrudActionEnum.disable) && esConnection.isEnabled()) {
+                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId()); // No need to add to cache, so just find by id
                 esPopulationService.removeFromIndexAndTypeCache(cet);
             }
+
         }
     }
 }

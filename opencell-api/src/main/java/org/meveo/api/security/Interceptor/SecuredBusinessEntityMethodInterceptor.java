@@ -18,10 +18,28 @@
 
 package org.meveo.api.security.Interceptor;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
+import org.meveo.api.security.config.FilterPropertyConfig;
+import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.api.security.config.SecuredBusinessEntityConfig;
 import org.meveo.api.security.config.SecuredBusinessEntityConfigFactory;
@@ -29,11 +47,12 @@ import org.meveo.api.security.config.SecuredMethodConfig;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityAnnotationConfigFactory;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -42,16 +61,10 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This will handle the processing of {@link SecuredBusinessEntityMethod} annotated methods.
@@ -67,6 +80,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private static final long serialVersionUID = 4656634337151866255L;
 
     private static final Logger log = LoggerFactory.getLogger(SecuredBusinessEntityMethodInterceptor.class);
+
+    private static final String AND_OR_FIELD_SUFFIX = "_secured";
 
     @Inject
     private SecuredBusinessEntityService securedBusinessEntityService;
@@ -92,42 +107,41 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private ParamBeanFactory paramBeanFactory;
 
     /**
-     * Default one which is injected
-     * is {@link SecuredBusinessEntityAnnotationConfigFactory}
+     * Default one which is injected is {@link SecuredBusinessEntityAnnotationConfigFactory}
      */
     @Inject
     protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
 
     /**
-     * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the
-     * {@link SecuredBusinessEntityMethod} annotation placed on the method and then validate the parameters described in the {@link SecureMethodParameter} validation attributes and
-     * then filters the result using the {@link SecureMethodResultFilter} filter attribute.
+     * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the {@link SecuredBusinessEntityMethod} annotation
+     * placed on the method and then validate the parameters described in the {@link SecureMethodParameter} validation attributes and then filters the result using the {@link SecureMethodResultFilter} filter attribute.
      *
-     * @param context  The invocation context
-     * @return  The filtered result object
+     * @param context The invocation context
+     * @return The filtered result object
      * @throws Exception exception
      */
     @AroundInvoke
     public Object aroundInvoke(InvocationContext context) throws Exception {
+        // Check if secured entities are enabled.
+        boolean secureEntitesEnabled = paramBeanFactory.getInstance().getPropertyAsBoolean("secured.entities.enabled", true);
+        if (!secureEntitesEnabled) {
+            return context.proceed();
+        }
+
         SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(context);
         return checkForSecuredEntities(context, sbeConfig);
     }
 
     /**
      * Check an API method for configured secured entities
+     * 
      * @param context method invocation context
      * @param sbeConfig {@link SecuredBusinessEntityConfig} instance
      * @return the method result if check is success
      * @throws Exception exception if check is failed
      */
     protected Object checkForSecuredEntities(InvocationContext context, SecuredBusinessEntityConfig sbeConfig) throws Exception {
-        if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null ) {
-            return context.proceed();
-        }
-        String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "true");
-        boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
-        // if not, immediately return.
-        if (!secureEntitesEnabled) {
+        if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null) {
             return context.proceed();
         }
 
@@ -144,10 +158,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 
         Object[] values = context.getParameters();
-        //List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
-        //addSecuredEntitiesToFilters(securedEntities, values);
 
         SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
+
+        if (securedMethodConfig.getResultFilter().equals(ListFilter.class)) {
+            List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
+            addSecuredEntitiesToFilters(securedEntities, values, sbeConfig.getFilterResultsConfig());
+        }
 
         // check validation
         SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
@@ -160,11 +177,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                         log.debug("Checking if entity={} is allowed for currentUser", entity);
                         if (entity != null && securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                             log.debug("Checked entity is OK");
-                            isAllowed =true;
+                            isAllowed = true;
                             break;
                         }
                     }
-                    if(!isAllowed) {
+                    if (!isAllowed) {
                         throw new AccessDeniedException("Access to entity details is not allowed.");
                     }
                 }
@@ -173,17 +190,17 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
         Object result = context.proceed();
 
-        // perform filtering
-        SecureMethodResultFilter filter = filterFactory.getFilter(securedMethodConfig.getResultFilter());
-        log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
-        result = filter.filterResult(sbeConfig.getFilterResultsConfig(), result, currentUser, allSecuredEntitiesMap);
+        // Perform results filtering if it was not done as part of SQl query (exclude ListFilter and NullFilter (as it does nothing))
+        if (securedMethodConfig.getResultFilter().equals(ObjectFilter.class)) {
+            SecureMethodResultFilter resultsFilter = filterFactory.getFilter(securedMethodConfig.getResultFilter());
+            log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, resultsFilter);
+            result = resultsFilter.filterResult(sbeConfig.getFilterResultsConfig(), result, currentUser, allSecuredEntitiesMap);
+        }
         return result;
     }
 
     /**
-     * Get all accessible entities for the current user, both associated directly to the user
-     * or to its associated roles.
-     * Those accessible entities are then grouped by types into Map
+     * Get all accessible entities for the current user, both associated directly to the user or to its associated roles. Those accessible entities are then grouped by types into Map
      *
      * @param currentUser MeveoUser current user
      * @return current user's accessible entities
@@ -191,17 +208,10 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user = userService.findByUsername(currentUser.getUserName());
-        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.isDisabled()).collect(Collectors.toList()));
+        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
 
-        List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class)
-                .setParameter("currentUserRoles", currentUser.getRoles())
-                .getResultList();
-        allSecuredEntities.addAll(rolesWithSecuredEntities.stream()
-        													.map(Role::getSecuredEntities)
-    														.flatMap(List::stream)
-    														.filter(securedEntity -> !securedEntity.isDisabled())
-    														.collect(Collectors.toList()));
-
+        List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class).setParameter("currentUserRoles", currentUser.getRoles()).getResultList();
+        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
 
         // group secured entites by types into Map
         Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
@@ -220,34 +230,31 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         }
         return securedEntitiesMap;
     }
+
     /**
      * Adding a secured entities code to the filters for paging
      *
      * @param securedEntities all secured entities
-     * @param values          the context parameter
+     * @param values the context parameter
+     * @param filterResultsConfig Results filter configuration
      */
-    private void addSecuredEntitiesToFilters(List<SecuredEntity> securedEntities, Object[] values) {
-        log.debug("Adding a secured entities code to the filters for paging");
+    private void addSecuredEntitiesToFilters(List<SecuredEntity> securedEntities, Object[] values, FilterResultsConfig filterResultsConfig) {
+
         for (Object obj : values) {
             // Search filters are in PagingAndFiltering
             if (obj instanceof PagingAndFiltering) {
                 PagingAndFiltering pagingAndFiltering = (PagingAndFiltering) obj;
-                if (pagingAndFiltering.getLimit() != null && pagingAndFiltering.getOffset() != null) {
-                    Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
-                    updateFilters(securedEntities, filters);
-                    pagingAndFiltering.setFilters(filters);
-
-                }
+                Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
+                updateFilters(securedEntities, filters, filterResultsConfig);
+                pagingAndFiltering.setFilters(filters);
                 break;
-            }
-            // Search filters are in PagingAndFiltering
-            if (obj instanceof PaginationConfiguration) {
+
+                // Search filters are in PaginationConfiguration
+            } else if (obj instanceof PaginationConfiguration) {
                 PaginationConfiguration paginationConfiguration = (PaginationConfiguration) obj;
-                if (paginationConfiguration.getNumberOfRows() != null && paginationConfiguration.getFirstRow() != null) {
-                    Map<String, Object> filters = Optional.ofNullable(paginationConfiguration.getFilters()).orElse(new HashMap<>());
-                    updateFilters(securedEntities, filters);
-                    paginationConfiguration.setFilters(filters);
-                }
+                Map<String, Object> filters = Optional.ofNullable(paginationConfiguration.getFilters()).orElse(new HashMap<>());
+                updateFilters(securedEntities, filters, filterResultsConfig);
+                paginationConfiguration.setFilters(filters);
                 break;
             }
         }
@@ -256,28 +263,166 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     /**
      * Adding a secured entities code to the filters
      *
-     * @param securedEntities    a secured entities
+     * @param securedEntities a secured entities
      * @param filters filters to update
+     * @param filterResultsConfig Filter result configuration
      */
-    private Map<String, Object> updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters) {
-        for (SecuredEntity securedEntity : securedEntities) {
-            final String entityClass = securedEntity.getEntityClass();
-            //extract the field name from entity class, I supposed that the field name is the same as the Class name.
-            String simpleClassName = entityClass.substring(entityClass.lastIndexOf('.') + 1);
-            String fieldName = simpleClassName.substring(0, 1).toLowerCase() + simpleClassName.substring(1);
-            log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
-            final String keyInList = "inList " + fieldName + ".code";
-            if (filters.containsKey(fieldName)) {
-                final Object initialValue = filters.get(fieldName);
-                filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
-                filters.remove(fieldName);
-            } else if (filters.containsKey(keyInList)) {
-                final Object initialList = filters.get(keyInList);
-                filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
-            } else {
-                filters.put(fieldName + ".code", securedEntity.getCode());
+    private Map<String, Object> updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters, FilterResultsConfig filterResultsConfig) {
+
+        if (filterResultsConfig.getItemPropertiesToFilter().length == 0) {
+            return filters;
+        }
+
+        Map<String, List<String>> newFilterCriteria = new HashMap<String, List<String>>();
+        for (FilterPropertyConfig propertyToFilter : filterResultsConfig.getItemPropertiesToFilter()) {
+
+            String fieldName = propertyToFilter.getProperty();
+
+            String propertyToFilterClass = propertyToFilter.getEntityClass().getSimpleName();
+
+            for (SecuredEntity securedEntity : securedEntities) {
+                String entityClass = securedEntity.getEntityClass();
+                if (entityClass.lastIndexOf('.') > 0) {
+                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                }
+
+                String propertyToFilterPath = getCriteriaPath(fieldName, propertyToFilterClass, entityClass);
+                if (propertyToFilterPath == null) {
+                    continue;
+                }
+
+                if (newFilterCriteria.containsKey(propertyToFilterPath)) {
+                    newFilterCriteria.get(propertyToFilterPath).add(securedEntity.getCode());
+                } else {
+                    List<String> list = new ArrayList<>();
+                    list.add(securedEntity.getCode());
+                    newFilterCriteria.put(propertyToFilterPath, list);
+                }
+            }
+
+            // Add IS NULL as a possible value if field is optional
+            if (propertyToFilter.isAllowAccessIfNull()) {
+                List<String> list = new ArrayList<>();
+                list.add(PersistenceService.SEARCH_IS_NULL);
+                newFilterCriteria.put(PersistenceService.SEARCH_AND + AND_OR_FIELD_SUFFIX + " " + fieldName, list);
             }
         }
+
+        // Was not able to apply any allowed entity as filtering criteria. A case when user is granted access to user account, but a higher resource (e.g. seller) is being accessed
+        if (newFilterCriteria.isEmpty()) {
+            throw new AccessDeniedException("Access to entity list is not allowed.");
+        }
+
+        boolean singleCriteria = newFilterCriteria.size() == 1;
+
+        Map<String, Object> orFilterItems = new HashMap<String, Object>();
+
+        for (Entry<String, List<String>> filterInfo : newFilterCriteria.entrySet()) {
+
+            String propertyToFilterPath = filterInfo.getKey();
+            String propertyToFilterPathAsList = "inList " + propertyToFilterPath;
+            List<String> allowedValues = filterInfo.getValue();
+
+            log.debug("Adding an access limit filter for {} field by {}", propertyToFilterPath, filterInfo.getValue());
+
+            // A search is already done by that field - verify if it is a permitted value according to the secured entities
+            if (singleCriteria && filters.containsKey(propertyToFilterPath)) {
+                final Object initialValue = filters.get(propertyToFilterPath);
+                if (!allowedValues.contains(initialValue)) {
+                    throw new AccessDeniedException("Search for '" + propertyToFilterPath + "' by " + initialValue + " is not allowed.");
+                }
+
+                // A search is already done by a list of values - remove what is not permitted and throw AccessDeniedException if all values were eliminated
+            } else if (singleCriteria && filters.containsKey(propertyToFilterPathAsList)) {
+                final Object initialValue = filters.get(propertyToFilterPathAsList);
+                List<String> initialValues = null;
+                if (initialValue instanceof String) {
+                    initialValues = new ArrayList(Arrays.asList(((String) initialValue).split(",")));
+
+                } else {
+                    initialValues = (List<String>) initialValue;
+                }
+
+                initialValues.retainAll(allowedValues);
+                if (initialValues.size() == 0) {
+                    throw new AccessDeniedException("Search for '" + propertyToFilterPathAsList + "' by " + initialValue + " is not allowed.");
+                }
+
+                filters.put(propertyToFilterPathAsList, initialValues);
+
+                // In case of a single additional query filter to be added, if no current search for a given field, add it as a search criteria
+            } else if (singleCriteria) {
+                if (allowedValues.size() == 1) {
+                    filters.put(propertyToFilterPath, allowedValues.get(0));
+                } else {
+                    filters.put(propertyToFilterPathAsList, allowedValues);
+                }
+
+                // // In case of a multiple additional query filters to be added, add it as a search criteria inside the OR clause
+            } else {
+                if (allowedValues.size() == 1) {
+                    orFilterItems.put(propertyToFilterPath, allowedValues.get(0));
+                } else {
+                    orFilterItems.put(propertyToFilterPathAsList, allowedValues);
+                }
+            }
+        }
+
+        if (!orFilterItems.isEmpty()) {
+            filters.put(PersistenceService.SEARCH_OR + AND_OR_FIELD_SUFFIX, orFilterItems);
+        }
         return filters;
+
+    }
+
+    /**
+     * Get a property hierarchy traversal path to filter one entity based on access right to another entity.
+     * 
+     * @param propertyName Property to filter
+     * @param tryToAccessEntityClass Class that corresponds to a property being filtered
+     * @param allowedToAccessEntityClass Class that corresponds to an entity that user has access to
+     * @return A property hierarchy traversal path. E.g. if user has access to Customer and a rule is applied on Subscription's userAccount property, a method would return
+     *         "userAccount.billingAccount.customerAccount.customer.code"
+     */
+    private String getCriteriaPath(String propertyName, String tryToAccessEntityClass, String allowedToAccessEntityClass) {
+
+        String[] classHierarchyByPosition = new String[] { "billingAccount", "customerAccount", "customer", "seller" };
+
+        Map<String, Integer> classHierarchyByClass = Map.of("UserAccount", 0, "BillingAccount", 1, "CustomerAccount", 2, "Customer", 3, "Seller", 4);
+
+        int posTryAccess = classHierarchyByClass.get(tryToAccessEntityClass);
+        int posAllowed = classHierarchyByClass.get(allowedToAccessEntityClass);
+
+        // User is allowed to access UserAccount, but tries to access Customer, it wont be permitted
+        if (posAllowed < posTryAccess) {
+            return null;
+
+            // User is allowed to access Customer and is accessing a customer
+        } else if (posAllowed == posTryAccess) {
+            if (propertyName.equals("code")) {
+                return "code";
+            } else {
+                return propertyName + ".code";
+            }
+
+            // User is allowed to access Customer and is accessing a userAccount - need to construct the whole hierarchy to climb up
+        } else {
+
+            // Check if seller is considered as parent entity
+            if ("Seller".equals(allowedToAccessEntityClass) && !paramBeanFactory.getInstance().getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", true)) {
+                return null;
+            }
+
+            if (propertyName.equals("code")) {
+                propertyName = null;
+            }
+
+            for (int i = posTryAccess; i < posAllowed; i++) {
+                propertyName = (propertyName == null ? "" : propertyName + ".") + classHierarchyByPosition[i];
+            }
+            propertyName = propertyName + ".code";
+            return propertyName;
+        }
+
     }
 }

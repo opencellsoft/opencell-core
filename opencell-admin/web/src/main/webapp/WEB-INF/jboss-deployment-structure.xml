@@ -32,6 +32,7 @@
           <module name="org.jboss.ejb3"/>
           <module name="org.keycloak.keycloak-adapter-core" />
           <module name="org.joda.time" />
+          <module name="org.jboss.as.server" />
           
         </dependencies>          
 	</deployment>

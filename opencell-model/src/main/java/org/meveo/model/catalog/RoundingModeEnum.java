@@ -46,7 +46,13 @@ public enum RoundingModeEnum {
      * 
      * See java.math.RoundingMode.CEILING.
      */
-    UP(RoundingMode.CEILING);
+    UP(RoundingMode.CEILING),
+
+    /**
+     * Rounding mode to round towards the "nearest neighbor" unless both neighbors are equidistant
+     * See java.math.RoundingMode.HALF_EVEN.
+     */
+    HALF_EVEN(RoundingMode.HALF_EVEN);
 
     /**
      * Rounding mode

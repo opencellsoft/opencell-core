@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "81012fbc-40dd-4f39-8241-c313d4d39fad",
+		"name": "open order template",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create Open order template",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"OOT3\",\n    \"openOrderType\": \"PRODUCTS\",\n    \"description\" : \"open order template\",\n    \"thresholds\" :[\n        {\n            \"sequence\": 1,\n            \"percentage\": 75,\n            \"recipients\": [\"CUSTOMER\",\"SALES_AGENT\",\"CONSUMER\"]  \n        }\n    ],\n\n        \"products\": [\"product 1\"]\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/ordering/openOrderTemplates/",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"ordering",
+						"openOrderTemplates",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disable Open order template",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{opencell.url}}/ordering/openOrderTemplates/OOT3/disable",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"ordering",
+						"openOrderTemplates",
+						"OOT3",
+						"disable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update Open order template Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "Opencell.admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Opencell.admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"openOrderType\": \"ARTICLE\",\n    \"description\" : \"open order template\",\n    \"tags\": [\"tag_code_1\", \"tag_code_2\"] ,\n    \"thresholds\" :[\n        {\n            \"sequence\": 1,\n            \"percentage\": 50,\n            \"recepients\": {\n                \"sellers\": [\"seller_code\"],\n                \"customers\": [\"customer_account_code\"],\n                \"users\" : [\"user_account_code\"]\n            }\n        }\n    ],\n\n        \"products\": [\"product_code_1\"]\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/ordering/openOrderTemplates",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"ordering",
+						"openOrderTemplates"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

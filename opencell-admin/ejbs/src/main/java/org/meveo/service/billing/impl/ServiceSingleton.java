@@ -30,10 +30,7 @@ import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
 import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -44,6 +41,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.InvoicingJob;
+import org.meveo.admin.job.TriggerCollectionPlanLevelsJob;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -60,6 +59,8 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
@@ -68,10 +69,11 @@ import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -128,10 +130,12 @@ public class ServiceSingleton {
     private Logger log;
 
     @Inject
-    private CommercialOrderService commercialOrderService;
+    private SequenceService sequenceService;
 
     @Inject
-    private SequenceService sequenceService;
+    private JobExecutionService jobExecutionService;
+    @Inject
+    private JobInstanceService jobInstanceService;
 
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
@@ -567,7 +571,15 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
+        triggersJobs();
         return invoice;
+    }
+
+    private void triggersJobs() {
+        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
+                .map(jobInstanceService::findByCode)
+                .filter(Objects::nonNull)
+                .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
     }
 
     /**

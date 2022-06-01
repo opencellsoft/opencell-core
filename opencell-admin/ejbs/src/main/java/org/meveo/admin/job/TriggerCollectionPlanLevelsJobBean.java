@@ -1,44 +1,50 @@
 package org.meveo.admin.job;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
+import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.DONE;
+import static org.meveo.model.dunning.DunningActionInstanceStatusEnum.TO_BE_DONE;
 import static org.meveo.model.payments.ActionChannelEnum.EMAIL;
 import static org.meveo.model.payments.ActionChannelEnum.LETTER;
-import static org.meveo.model.payments.ActionTypeEnum.SCRIPT;
-import static org.meveo.model.payments.ActionTypeEnum.SEND_NOTIFICATION;
+import static org.meveo.model.payments.ActionModeEnum.AUTOMATIC;
+import static org.meveo.model.payments.ActionTypeEnum.*;
 import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+import static org.meveo.model.payments.PaymentMethodEnum.CARD;
+import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
-import org.meveo.admin.async.SynchronizedIterator;
+import org.hibernate.proxy.HibernateProxy;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.ActionModeEnum;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.communication.impl.EmailSender;
-import org.meveo.service.communication.impl.EmailTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningCollectionPlanService;
-import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelInstanceService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.payments.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.ApplicationProvider;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Stateless
-public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Long> {
+public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -56,32 +62,37 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
     private DunningLevelInstanceService levelInstanceService;
 
     @Inject
-    private EmailSender emailSender;
-
-    @Inject
-    private EmailTemplateService emailTemplateService;
-
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
-    @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Override
-    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
-                this::process, null, null);
-    }
+    @Inject
+    private PaymentService paymentService;
 
-    /**
-     * Initialize job settings and retrieve data to process
-     *
-     * @param jobExecutionResult Job execution result
-     * @return An iterator over a list of active collection to process
-     */
-    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-        return of(new SynchronizedIterator<>(collectionPlanService.getActiveCollectionPlansIds()));
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private DunningActionInstanceService actionInstanceService;
+
+    @EJB
+    private TriggerCollectionPlanLevelsJobBean jobBean;
+
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        List<Long> collectionPlanToProcess = collectionPlanService.getActiveCollectionPlansIds();
+        jobExecutionResult.setNbItemsToProcess(collectionPlanToProcess.size());
+        for (Long collectionPlanId : collectionPlanToProcess) {
+            try {
+                jobBean.process(collectionPlanId, jobExecutionResult);
+            } catch (Exception exception) {
+                jobExecutionResult.addErrorReport(exception.getMessage());
+            }
+        }
+        jobExecutionResult.setNbItemsCorrectlyProcessed(collectionPlanToProcess.size() - jobExecutionResult.getNbItemsProcessedWithError());
     }
 
     /**
@@ -90,7 +101,9 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
      * @param collectionPlanId   Collection plan id to process
      * @param jobExecutionResult Job execution result
      */
-    private void process(Long collectionPlanId, JobExecutionResultImpl jobExecutionResult) {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void process(Long collectionPlanId, JobExecutionResultImpl jobExecutionResult) {
         DunningCollectionPlan collectionPlan = collectionPlanService.findById(collectionPlanId);
         Date dateToCompare;
         Date today = new Date();
@@ -99,94 +112,215 @@ public class TriggerCollectionPlanLevelsJobBean extends IteratorBasedJobBean<Lon
         String lastAction = "";
         String nextAction = "";
         boolean updateCollectionPlan = false;
-        for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
-            dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
-                    ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
-            if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
-                    && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)
-                    && today.before(dateToCompare)) {
-                nextLevel = index + 1;
-                int countAutoActions = 0;
-                for (int i = 0; i < levelInstance.getActions().size(); i++) {
-                    if (levelInstance.getActions().get(i).getActionMode().equals(ActionModeEnum.AUTOMATIC)) {
-                        if (levelInstance.getActions().get(i).getActionType().equals(SCRIPT)) {
-                            if (levelInstance.getActions().get(i).getDunningAction() != null) {
-                                scriptInstanceService.execute(levelInstance.getActions().get(i).getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+        if (collectionPlan.getDunningLevelInstances() == null || collectionPlan.getDunningLevelInstances().isEmpty()) {
+            throw new BusinessException("Collection plan ID : " + collectionPlan.getId() + " has no levelInstances associated");
+        }
+        if(collectionPlan.getStatus().getStatus() == ACTIVE && collectionPlan.getRelatedInvoice().getPaymentStatus() == PAID) {
+            collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
+            updateCollectionPlan = true;
+        } else {
+            for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
+                dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
+                        ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
+                if (levelInstance.getLevelStatus() != DunningLevelInstanceStatusEnum.DONE
+                        && !collectionPlan.getRelatedInvoice().getPaymentStatus().equals(PAID)
+                        && today.after(dateToCompare)) {
+                    nextLevel = index + 1;
+                    for (int i = 0; i < levelInstance.getActions().size(); i++) {
+                        DunningActionInstance actionInstance = levelInstance.getActions().get(i);
+                        if (actionInstance.getActionMode().equals(AUTOMATIC)
+                                && actionInstance.getActionStatus().equals(TO_BE_DONE)) {
+                            try {
+                                triggerAction(actionInstance, collectionPlan);
+                                actionInstance.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                                if (levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.TO_BE_DONE) {
+                                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                                    levelInstanceService.update(levelInstance);
+                                }
+                                lastAction = actionInstance.getCode();
+                                if (i + 1 < levelInstance.getActions().size()) {
+                                    nextAction = levelInstance.getActions().get(i + 1).getCode();
+                                }
+                            } catch (Exception exception) {
+                                jobExecutionResult.addErrorReport(exception.getMessage());
                             }
                         }
-                        if (levelInstance.getActions().get(i).getActionType().equals(SEND_NOTIFICATION)) {
-                            if (levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(EMAIL)
-                                    || levelInstance.getActions().get(i).getDunningAction().getActionChannel().equals(LETTER)) {
-                                sendReminderEmail(levelInstance.getActions().get(i).getDunningAction().getActionNotificationTemplate(),
-                                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
-                            }
-                        }
-                        levelInstance.getActions().get(i).setActionStatus(DunningActionInstanceStatusEnum.DONE);
-                        countAutoActions++;
-                        lastAction = levelInstance.getActions().get(i).getCode();
-                        if (i + 1 < levelInstance.getActions().size()) {
-                            nextAction = levelInstance.getActions().get(i + 1).getCode();
-                        }
+                        actionInstanceService.update(actionInstance);
+                    }
+                    collectionPlan.setLastActionDate(new Date());
+                    collectionPlan.setLastAction(lastAction);
+                    collectionPlan.setNextAction(nextAction);
+                    updateCollectionPlan = true;
+                    levelInstance = levelInstanceService.refreshOrRetrieve(levelInstance);
+                    if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
+                        collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
+                    }
+                    if (levelInstance.getDunningLevel() != null
+                            && levelInstance.getDunningLevel().isEndOfDunningLevel()
+                            && collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
+                        collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
+                    }
+                    if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
+                        collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
+                    }
+                    long countActions = levelInstance.getActions().stream().filter(action -> action.getActionStatus() == DONE).count();
+                    if (countActions > 0 && countActions < levelInstance.getActions().size()) {
+                        levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
+                    }
+                    if (countActions == levelInstance.getActions().size()) {
+                        levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
                     }
                 }
-                levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.DONE);
-                collectionPlan.setLastActionDate(new Date());
-                collectionPlan.setLastAction(lastAction);
-                collectionPlan.setNextAction(nextAction);
-                updateCollectionPlan = true;
-                if (nextLevel < collectionPlan.getDunningLevelInstances().size()) {
-                    collectionPlan.setCurrentDunningLevelSequence(collectionPlan.getDunningLevelInstances().get(nextLevel).getSequence());
+                if (levelInstance.getDunningLevel() == null) {
+                    throw new BusinessException("No dunning level associated to level instance id " + levelInstance.getId());
+                } else {
+                    levelInstanceService.update(levelInstance);
                 }
-                if (dateToCompare.before(today)) {
-                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
-                }
-                if (countAutoActions == levelInstance.getActions().size()
-                        || collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
-                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
-                }
-                if (countAutoActions > 0 && countAutoActions < levelInstance.getActions().size()) {
-                    levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
-                }
+                index++;
             }
-            levelInstanceService.update(levelInstance);
-            index++;
         }
         if (updateCollectionPlan) {
             collectionPlanService.update(collectionPlan);
         }
-
     }
 
-    private void sendReminderEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
-        Map<Object, Object> params = new HashMap<>();
-        BillingAccount billingAccount =
-                billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
-        params.put("Company.Name", billingAccount.getDescription());
-        params.put("Compagny.adress", billingAccount.getAddress().getAddress1());
-        params.put("Company.postalcode", billingAccount.getAddress().getZipCode());
-        params.put("billingAccount.address.city", billingAccount.getAddress().getCity());
-        params.put("Company.phone", billingAccount.getContactInformation().getPhone());
+    private void triggerAction(DunningActionInstance actionInstance, DunningCollectionPlan collectionPlan) {
+        if (actionInstance.getActionType().equals(SCRIPT)) {
+            if (actionInstance.getDunningAction() != null) {
+                scriptInstanceService.execute(actionInstance.getDunningAction().getScriptInstance().getCode(), new HashMap<>());
+            }
+        }
+        if (actionInstance.getActionType().equals(SEND_NOTIFICATION)) {
+            if (actionInstance.getDunningAction().getActionChannel().equals(EMAIL)
+                    || actionInstance.getDunningAction().getActionChannel().equals(LETTER)) {
+                sendEmail(actionInstance.getDunningAction().getActionNotificationTemplate(),
+                        collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
+            }
+        }
+        if (actionInstance.getActionType().equals(RETRY_PAYMENT)) {
+            BillingAccount billingAccount = collectionPlan.getBillingAccount();
+            if (billingAccount != null && billingAccount.getCustomerAccount() != null
+                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
+                PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
+                        .getPaymentMethods()
+                        .stream()
+                        .filter(PaymentMethod::isPreferred)
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
+                                + billingAccount.getCustomerAccount().getCode()));
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
+                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
+                Invoice invoice = collectionPlan.getRelatedInvoice();
+                if (invoice.getRecordedInvoice() == null) {
+                    throw new BusinessException("No getRecordedInvoice for the invoice "
+                            + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+                }
+                PaymentGateway paymentGateway =
+                        paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+                jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay,
+                        asList(invoice.getRecordedInvoice().getId()), paymentGateway);
+            }
+        }
+    }
 
-        CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
-        params.put("Title.client", ofNullable(customerAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
-        params.put("Company.client.adress", customerAccount.getAddress().getAddress1());
-        params.put("Company.client.postalcode", customerAccount.getAddress().getZipCode());
-        params.put("Company.client.city", customerAccount.getAddress().getCity());
-        params.put("Contact.client", customerAccount.getDescription());
-        params.put("Company.client.name", customerAccount.getName().getFirstName());
+    private void sendEmail(EmailTemplate emailTemplate, Invoice invoice, Date lastActionDate) {
+        if (invoice.getSeller() != null && invoice.getSeller().getContactInformation() != null
+                && invoice.getSeller().getContactInformation().getEmail() != null
+                && !invoice.getSeller().getContactInformation().getEmail().isBlank()) {
+            Seller seller = invoice.getSeller();
+            Map<Object, Object> params = new HashMap<>();
+            BillingAccount billingAccount =
+                    billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
+            params.put("billingAccountDescription", billingAccount.getDescription());
+            params.put("billingAccountAddressAddress1", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getAddress1() : "");
+            params.put("billingAccountAddressZipCode", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getZipCode() : "");
+            params.put("billingAccountAddressCity", billingAccount.getAddress() != null ?
+                    billingAccount.getAddress().getCity() : "");
+            params.put("billingAccountContactInformationPhone", billingAccount.getContactInformation() != null ?
+                    billingAccount.getContactInformation().getPhone() : "");
 
-        params.put("invoice.invoiceNumber", invoice.getInvoiceNumber());
-        params.put("invoice.dueDate", invoice.getDueDate());
-        params.put("invoice.total", invoice.getAmountWithTax());
-        params.put("day.date", new Date());
-        params.put("Last.action.date", lastActionDate);
+            CustomerAccount customerAccount = customerAccountService.findById(billingAccount.getCustomerAccount().getId());
+            if (billingAccount.getIsCompany()) {
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(billingAccount.getLegalEntityType()).map(Title::getCode).orElse(""));
+            } else {
+                Name name = ofNullable(billingAccount.getName()).orElse(null);
+                Title title = ofNullable(name).map(Name::getTitle).orElse(null);
+                params.put("customerAccountLegalEntityTypeCode",
+                        ofNullable(title).map(Title::getDescription).orElse(""));
+            }
+            params.put("customerAccountAddressAddress1", customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getAddress1() : "");
+            params.put("customerAccountAddressZipCode", customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getZipCode() : "");
+            params.put("customerAccountAddressCity", customerAccount.getAddress() != null ?
+                    customerAccount.getAddress().getCity() : "");
+            params.put("customerAccountDescription", customerAccount.getDescription());
+            params.put("customerAccountLastName", customerAccount.getName() != null ?
+                    customerAccount.getName().getLastName() : "");
+            params.put("customerAccountFirstName", customerAccount.getName() != null ?
+                    customerAccount.getName().getFirstName() : "");
 
-        emailTemplate = emailTemplateService.findById(emailTemplate.getId());
-        String subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
-        String content = evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-        String contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-        emailSender.send(appProvider.getEmail(), asList(appProvider.getEmail()),
-                asList(billingAccount.getContactInformation().getEmail()), null, null,
-                subject, content, contentHtml, null, null, false);
+            params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
+            params.put("invoiceTotal", invoice.getAmountWithTax());
+            params.put("invoiceDueDate", formatter.format(invoice.getDueDate()));
+            params.put("dayDate", formatter.format(new Date()));
+
+            params.put("dunningCollectionPlanLastActionDate", lastActionDate != null ? formatter.format(lastActionDate) : "");
+            List<File> attachments = new ArrayList<>();
+            String invoiceFileName = invoiceService.getFullPdfFilePath(invoice, false);
+            File attachment = new File(invoiceFileName);
+            if (attachment.exists()) {
+                attachments.add(attachment);
+            } else {
+                log.warn("No Pdf file exists for the invoice : {}",
+                        ofNullable(invoice.getInvoiceNumber()).orElse(invoice.getTemporaryInvoiceNumber()));
+            }
+            if (billingAccount.getContactInformation() != null && billingAccount.getContactInformation().getEmail() != null) {
+                try {
+                    collectionPlanService.sendNotification(seller.getContactInformation().getEmail(),
+                            billingAccount.getContactInformation().getEmail(), emailTemplate, params, attachments);
+                } catch (Exception exception) {
+                    throw new BusinessException(exception.getMessage());
+                }
+            } else {
+                throw new BusinessException("Billing account email is missing");
+            }
+        } else {
+            throw new BusinessException("From email is missing, email sending skipped");
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void doPayment(PaymentMethod preferredPaymentMethod, CustomerAccount customerAccount,
+                          long amountToPay, List<Long> accountOperationsToPayIds, PaymentGateway paymentGateway) {
+        if (preferredPaymentMethod.getPaymentType().equals(DIRECTDEBIT) || preferredPaymentMethod.getPaymentType().equals(CARD)) {
+            try {
+                if (accountOperationsToPayIds != null && !accountOperationsToPayIds.isEmpty()) {
+                    if (preferredPaymentMethod.getPaymentType().equals(CARD)) {
+                        if (preferredPaymentMethod instanceof HibernateProxy) {
+                            preferredPaymentMethod = (PaymentMethod) ((HibernateProxy) preferredPaymentMethod).getHibernateLazyInitializer()
+                                    .getImplementation();
+                        }
+                        CardPaymentMethod paymentMethod = (CardPaymentMethod) preferredPaymentMethod;
+                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                true, true, paymentGateway, paymentMethod.getCardNumber(),
+                                paymentMethod.getCardNumber(), paymentMethod.getHiddenCardNumber(),
+                                paymentMethod.getExpirationMonthAndYear(), paymentMethod.getCardType(),
+                                true, preferredPaymentMethod.getPaymentType());
+                    } else {
+                        paymentService.doPayment(customerAccount, amountToPay, accountOperationsToPayIds,
+                                true, true, paymentGateway, null, null,
+                                null, null, null, true, preferredPaymentMethod.getPaymentType());
+                    }
+                }
+            } catch (Exception exception) {
+                throw new BusinessException("Error occurred during payment process for customer " + customerAccount.getCode(), exception);
+            }
+        }
     }
 }

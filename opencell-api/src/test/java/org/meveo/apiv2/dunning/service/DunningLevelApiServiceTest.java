@@ -3,6 +3,7 @@ package org.meveo.apiv2.dunning.service;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -33,6 +34,9 @@ public class DunningLevelApiServiceTest {
     @Mock
     private AuditLogService auditLogService;
 
+    @Mock
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
     @Before
     public void setUp() {
         Currency minBalanceCurrency = new Currency();
@@ -40,6 +44,7 @@ public class DunningLevelApiServiceTest {
 
         when(dunningLevelService.findByCode("NEW_DL")).thenReturn(null);
         when(currencyService.findByCode("EUR")).thenReturn(minBalanceCurrency);
+        doNothing().when(globalSettingsVerifier).checkActivateDunning();
     }
 
     @Test

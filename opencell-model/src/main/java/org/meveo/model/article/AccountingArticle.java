@@ -1,33 +1,22 @@
 package org.meveo.model.article;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.tax.TaxClass;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.accountingScheme.*;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.payments.*;
+import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
 @Table(name = "billing_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -59,7 +48,14 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+    
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
 
+    @Column(name = "invoice_type_el")
+    private String invoiceTypeEl;    
+    
     @Column(name = "analytic_code_1")
     private String analyticCode1;
 
@@ -75,6 +71,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
+
+    @Column(name = "accountingcode_el", length = 500)
+    private String accountingCodeEl;
+
+    @Column(name = "column_criteria_el", length = 500)
+    private String columnCriteriaEL;
+
+    @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountingCodeMapping> accountingCodeMappings;
 
     public AccountingArticle() {
     }
@@ -169,13 +174,45 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
 	}
+	
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
+    }
 
-	@Override
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
+    }
+
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    public void setInvoiceTypeEl(String invoiceTypeEL) {
+        this.invoiceTypeEl = invoiceTypeEL;
+    }
+
+    public String getAccountingCodeEl() {
+        return accountingCodeEl;
+    }
+
+    public void setAccountingCodeEl(String accountingCodeEl) {
+        this.accountingCodeEl = accountingCodeEl;
+    }
+
+    public String getColumnCriteriaEL() {
+        return columnCriteriaEL;
+    }
+
+    public void setColumnCriteriaEL(String columCriteriaEL) {
+        this.columnCriteriaEL = columCriteriaEL;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice());
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
 		return result;
 	}
 
@@ -195,8 +232,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		return true;
 	}
-	
-	
-    
-    
+
+    public List<AccountingCodeMapping> getAccountingCodeMappings() {
+        return accountingCodeMappings;
+    }
+
+    public void setAccountingCodeMappings(List<AccountingCodeMapping> accountingCodeMappings) {
+        this.accountingCodeMappings = accountingCodeMappings;
+    }
 }

@@ -318,7 +318,7 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public boolean isDuplicateCheckOn() {
-        return edrService.isDuplicateCheckOn();
+        return EdrService.isDuplicateCheckOn();
     }
 
     /**

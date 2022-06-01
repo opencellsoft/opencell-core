@@ -1,22 +1,32 @@
 package org.meveo.apiv2.admin.providers;
 
-import org.meveo.api.exception.BusinessApiException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.provider.Provider;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Country;
+import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningPauseReason;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.BaseEntityService;
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -24,18 +34,8 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
-import org.meveo.service.payments.impl.PaymentMethodService;
-import org.meveo.service.payments.impl.PaymentService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-public class ProviderResourceImpl implements ProviderResource{
+public class ProviderResourceImpl implements ProviderResource {
     @Inject
     private ProviderService providerService;
 
@@ -62,217 +62,249 @@ public class ProviderResourceImpl implements ProviderResource{
 
     @Inject
     private BaseEntityService baseEntityService;
-    
+
     @Inject
     private CreditCategoryService creditCategoryService;
 
     @Inject
     private DunningPauseReasonsService dunningPauseReasonsService;
-    
+
     @Override
     public Response updateDunningTemplate(String providerCode, Provider provider) {
         org.meveo.model.crm.Provider providerByCode = providerService.findByCode(providerCode);
-        if(providerByCode == null) {
-            throw new EntityDoesNotExistsException("provider with code "+providerCode+" does not exist.");
+        if (providerByCode == null) {
+            throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
         }
         org.meveo.model.crm.Provider providerUpdateInfos = provider.toEntity();
-        if(provider.getDescription() != null) {
+        if (provider.getDescription() != null) {
             providerByCode.setDescription(providerUpdateInfos.getDescription());
         }
-        if(provider.getActive() != null) {
+        if (provider.getActive() != null) {
             providerByCode.setActive(providerUpdateInfos.isActive());
         }
-        if(provider.getMultiLanguageFlag() != null) {
+        if (provider.getMultiLanguageFlag() != null) {
             providerByCode.setMultilanguageFlag(providerUpdateInfos.getMultilanguageFlag());
         }
-        if(provider.getMultiCurrencyFlag() != null) {
+        if (provider.getMultiCurrencyFlag() != null) {
             providerByCode.setMulticurrencyFlag(providerUpdateInfos.getMulticurrencyFlag());
         }
-        if(provider.getMultiCountryFlag() != null) {
+        if (provider.getMultiCountryFlag() != null) {
             providerByCode.setMulticountryFlag(providerUpdateInfos.getMulticountryFlag());
         }
 
-        if(provider.getEnterprise() != null) {
+        if (provider.getEnterprise() != null) {
             providerByCode.setEntreprise(providerUpdateInfos.isEntreprise());
         }
 
-        if(provider.getLevelDuplication() != null) {
+        if (provider.getLevelDuplication() != null) {
             providerByCode.setLevelDuplication(providerUpdateInfos.isLevelDuplication());
         }
 
-        if(provider.getRecognizeRevenue() != null) {
+        if (provider.getRecognizeRevenue() != null) {
             providerByCode.setRecognizeRevenue(providerUpdateInfos.isRecognizeRevenue());
         }
 
-        if(provider.getAutomaticInvoicing() != null) {
+        if (provider.getAutomaticInvoicing() != null) {
             providerByCode.setRecognizeRevenue(provider.getAutomaticInvoicing());
         }
 
-        if(provider.getAmountValidation() != null) {
+        if (provider.getAmountValidation() != null) {
             providerByCode.setAmountValidation(provider.getAmountValidation());
         }
 
-        if(provider.getDisplayFreeTransacInInvoice() != null) {
+        if (provider.getDisplayFreeTransacInInvoice() != null) {
             providerByCode.setDisplayFreeTransacInInvoice(provider.getDisplayFreeTransacInInvoice());
         }
 
-        if(provider.getPaymentDeferral() != null) {
+        if (provider.getPaymentDeferral() != null) {
             providerByCode.setPaymentDeferral(provider.getPaymentDeferral());
         }
 
-        if(provider.getPaymentPlan() != null) {
+        if (provider.getPaymentPlan() != null) {
             providerByCode.setPaymentPlan(provider.getPaymentPlan());
         }
 
-        if(provider.getRounding() != null) {
+        if (provider.getRounding() != null) {
             providerByCode.setRounding(providerUpdateInfos.getRounding());
         }
 
-        if(provider.getInvoiceRounding() != null) {
+        if (provider.getInvoiceRounding() != null) {
             providerByCode.setInvoiceRounding(providerUpdateInfos.getInvoiceRounding());
         }
 
-        if(provider.getPrepaidReservationExpirationDelayinMillisec() != null) {
+        if (provider.getPrepaidReservationExpirationDelayinMillisec() != null) {
             providerByCode.setPrepaidReservationExpirationDelayinMillisec(providerUpdateInfos.getPrepaidReservationExpirationDelayinMillisec());
         }
 
-        if(provider.getRoundingMode() != null) {
+        if (provider.getRoundingMode() != null) {
             providerByCode.setRoundingMode(providerUpdateInfos.getRoundingMode());
         }
 
-        if(provider.getInvoiceRoundingMode() != null) {
+        if (provider.getInvoiceRoundingMode() != null) {
             providerByCode.setRoundingMode(providerUpdateInfos.getRoundingMode());
         }
 
-        if(provider.getDiscountAccountingCode() != null) {
+        if (provider.getDiscountAccountingCode() != null) {
             providerByCode.setDiscountAccountingCode(providerUpdateInfos.getDiscountAccountingCode());
         }
 
-        if(provider.getEmail() != null) {
+        if (provider.getEmail() != null) {
             providerByCode.setEmail(providerUpdateInfos.getEmail());
         }
 
-        if(provider.getBankCoordinates() != null) {
+        if (provider.getBankCoordinates() != null) {
             providerByCode.setBankCoordinates(providerUpdateInfos.getBankCoordinates());
-        }        
-    	
-        if(provider.getPaymentPlanPolicy() != null) {
-        	List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
-            if (provider.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {   
-            	for (CreditCategory elementCreditCategorie : creditCategoryService.list()) {   
-            		if (elementCreditCategorie.getProvider() != null) { 
-            			if (elementCreditCategorie.getProvider().getId() == providerByCode.getId()) { 
-                			elementCreditCategorie.setProvider(null);
-                			creditCategoryService.update(elementCreditCategorie);
-                		}
-            		}            		
-                }
-            	for (CreditCategory elementAllowedCreditCategories : providerUpdateInfos.getPaymentPlanPolicy().getAllowedCreditCategories()) {
-            		CreditCategory creditCategory = creditCategoryService.findById(elementAllowedCreditCategories.getId());
-            		if(creditCategory == null) {
-                        throw new EntityDoesNotExistsException(CreditCategory.class.getName(), "creditCategory with id " + elementAllowedCreditCategories.getId() + " does not exist.");
-                    }
-            		creditCategory.setProvider(providerByCode);
-            		listAllowedCreditCategories.add(creditCategory);
-                }
-            	providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
-            }
-            if (provider.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {         	
-            	
-            	DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
-        		if(dunningPauseReason == null) {
-                    throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), "dunningPauseReason with id " + provider.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId() + " does not exist.");
-                }        		
-        		providerUpdateInfos.getPaymentPlanPolicy().setDunningDefaultPauseReason(dunningPauseReason);
-            }
-            providerByCode.setPaymentPlanPolicy(providerUpdateInfos.getPaymentPlanPolicy());
         }
-        
-        if(provider.getMaximumDelay() != null) {
+
+        if (Boolean.TRUE.equals(provider.getPaymentPlan()))
+            checkPaymentPlanPolicy(provider, providerByCode, providerUpdateInfos);
+
+        if (provider.getMaximumDelay() != null) {
             providerByCode.setMaximumDelay(providerUpdateInfos.getMaximumDelay());
         }
-        
-        if(provider.getMaximumDeferralPerInvoice() != null) {
+
+        if (provider.getMaximumDeferralPerInvoice() != null) {
             providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
         }
-        
-        if(provider.getCurrency() != null) {
-            Currency currency = currencyService.findById(providerUpdateInfos.getCurrency().getId());
-            if(currency == null) {
-                throw new EntityDoesNotExistsException("currency with id "+providerUpdateInfos.getCurrency().getId()+" does not exist.");
-            }
-            providerByCode.setCurrency(currency);
+
+        if (provider.getCurrency() != null) {
+            checkAndAddCurrency(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getCountry() != null) {
-            Country country = countryService.findById(providerUpdateInfos.getCountry().getId());
-            if(country == null) {
-                throw new EntityDoesNotExistsException("country with id "+providerUpdateInfos.getCountry().getId()+" does not exist.");
-            }
-            providerByCode.setCountry(country);
+        if (provider.getCountry() != null) {
+            checkAndAddCountry(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getLanguage() != null) {
-            Language language = languageService.findById(providerUpdateInfos.getLanguage().getId());
-            if(language == null) {
-                throw new EntityDoesNotExistsException("language with id "+providerUpdateInfos.getCountry().getId()+" does not exist.");
-            }
-            providerByCode.setLanguage(language);
+        if (provider.getLanguage() != null) {
+            checkAndAddLanguage(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getCustomer() != null) {
-            Customer customer = customerService.findById(providerUpdateInfos.getCustomer().getId());
-            if(customer == null) {
-                throw new EntityDoesNotExistsException("customer with id "+providerUpdateInfos.getCustomer().getId()+" does not exist.");
-            }
-            providerByCode.setCustomer(customer);
+        if (provider.getCustomer() != null) {
+            checkAndCustomer(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getCustomerAccount() != null) {
-            CustomerAccount customerAccount = customerAccountService.findById(providerUpdateInfos.getCustomerAccount().getId());
-            if(customerAccount == null) {
-                throw new EntityDoesNotExistsException("CustomerAccount with id "+providerUpdateInfos.getCustomerAccount().getId()+" does not exist.");
-            }
-            providerByCode.setCustomerAccount(customerAccount);
+        if (provider.getCustomerAccount() != null) {
+            checkAndCustomerAccount(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getBillingAccount() != null) {
-            BillingAccount billingAccount = billingAccountService.findById(providerUpdateInfos.getBillingAccount().getId());
-            if(billingAccount == null) {
-                throw new EntityDoesNotExistsException("billingAccount with id "+providerUpdateInfos.getBillingAccount().getId()+" does not exist.");
-            }
-            providerByCode.setBillingAccount(billingAccount);
+        if (provider.getBillingAccount() != null) {
+            checkAndBillingAccount(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getUserAccount() != null) {
-            UserAccount userAccount = userAccountService.findById(providerUpdateInfos.getUserAccount().getId());
-            if(userAccount == null) {
-                throw new EntityDoesNotExistsException("user Account with id "+providerUpdateInfos.getUserAccount().getId()+" does not exist.");
-            }
-            providerByCode.setUserAccount(userAccount);
+        if (provider.getUserAccount() != null) {
+            checkAndUserAccount(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getInvoiceConfiguration() != null) {
-            InvoiceConfiguration invoiceConfiguration = (InvoiceConfiguration) baseEntityService.tryToFindByEntityClassAndId(InvoiceConfiguration.class, providerUpdateInfos.getInvoiceConfiguration().getId());
-            if(invoiceConfiguration == null) {
-                throw new EntityDoesNotExistsException("invoice Configuration with id "+providerUpdateInfos.getInvoiceConfiguration().getId()+" does not exist.");
-            }
-            providerByCode.setInvoiceConfiguration(invoiceConfiguration);
+        if (provider.getInvoiceConfiguration() != null) {
+            checkAndAddInvoiceConfiguration(providerByCode, providerUpdateInfos);
         }
 
-        if(provider.getPaymentMethods() != null) {
-            providerByCode.setPaymentMethods(provider.getPaymentMethods().stream()
-                            .filter(Predicate.not(String::isBlank))
-                            .map(paymentEnum -> {
-                                PaymentMethodEnum paymentMethodEnum = PaymentMethodEnum.valueOf(paymentEnum);
-                                if(paymentMethodEnum == null){
-                                    throw new BusinessApiException("paymentMethodEnum "+providerUpdateInfos.getPaymentMethods()+" does not exist.");
-                                }
-                                return paymentMethodEnum;
-                            })
-                    .collect(Collectors.toList()));
+        if (provider.getPaymentMethods() != null) {
+            providerByCode.setPaymentMethods(provider.getPaymentMethods().stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toList()));
         }
         providerService.update(providerByCode);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\"}}").build();
     }
+
+    private void checkAndAddInvoiceConfiguration(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        InvoiceConfiguration invoiceConfiguration = (InvoiceConfiguration) baseEntityService.tryToFindByEntityClassAndId(InvoiceConfiguration.class,
+                providerUpdateInfos.getInvoiceConfiguration().getId());
+        if (invoiceConfiguration == null) {
+            throw new EntityDoesNotExistsException(InvoiceConfiguration.class, providerUpdateInfos.getInvoiceConfiguration().getId());
+        }
+        providerByCode.setInvoiceConfiguration(invoiceConfiguration);
+    }
+
+    private void checkAndUserAccount(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        UserAccount userAccount = userAccountService.findById(providerUpdateInfos.getUserAccount().getId());
+        if (userAccount == null) {
+            throw new EntityDoesNotExistsException(UserAccount.class, providerUpdateInfos.getUserAccount().getId());
+        }
+        providerByCode.setUserAccount(userAccount);
+    }
+
+    private void checkAndBillingAccount(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        BillingAccount billingAccount = billingAccountService.findById(providerUpdateInfos.getBillingAccount().getId());
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, providerUpdateInfos.getBillingAccount().getId());
+        }
+        providerByCode.setBillingAccount(billingAccount);
+    }
+
+    private void checkAndCustomerAccount(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        CustomerAccount customerAccount = customerAccountService.findById(providerUpdateInfos.getCustomerAccount().getId());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, providerUpdateInfos.getCustomerAccount().getId());
+        }
+        providerByCode.setCustomerAccount(customerAccount);
+    }
+
+    private void checkAndCustomer(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        Customer customer = customerService.findById(providerUpdateInfos.getCustomer().getId());
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, providerUpdateInfos.getCustomer().getId());
+        }
+        providerByCode.setCustomer(customer);
+    }
+
+    private void checkAndAddLanguage(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        Language language = languageService.findById(providerUpdateInfos.getLanguage().getId());
+        if (language == null) {
+            throw new EntityDoesNotExistsException(Language.class, providerUpdateInfos.getCountry().getId());
+        }
+        providerByCode.setLanguage(language);
+    }
+
+    private void checkAndAddCountry(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        Country country = countryService.findById(providerUpdateInfos.getCountry().getId());
+        if (country == null) {
+            throw new EntityDoesNotExistsException(Country.class, providerUpdateInfos.getCountry().getId());
+        }
+        providerByCode.setCountry(country);
+    }
+
+    private void checkAndAddCurrency(org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        Currency currency = currencyService.findById(providerUpdateInfos.getCurrency().getId());
+        if (currency == null) {
+            throw new EntityDoesNotExistsException(Currency.class, providerUpdateInfos.getCurrency().getId());
+        }
+        providerByCode.setCurrency(currency);
+    }
+
+    private void checkPaymentPlanPolicy(Provider provider, org.meveo.model.crm.Provider providerByCode, org.meveo.model.crm.Provider providerUpdateInfos) {
+        PaymentPlanPolicy paymentPlanPolicy = provider.getPaymentPlanPolicy();
+        if (paymentPlanPolicy != null) {
+            List<CreditCategory> listAllowedCreditCategories = new ArrayList<>();
+            if (paymentPlanPolicy.getAllowedCreditCategories() != null) {
+                updateCreditCategories(providerByCode);
+            }
+            for (CreditCategory elementAllowedCreditCategories : providerUpdateInfos.getPaymentPlanPolicy().getAllowedCreditCategories()) {
+                CreditCategory creditCategory = creditCategoryService.findById(elementAllowedCreditCategories.getId());
+                if (creditCategory == null) {
+                    throw new EntityDoesNotExistsException(CreditCategory.class, elementAllowedCreditCategories.getId());
+                }
+                creditCategory.setProvider(providerByCode);
+                listAllowedCreditCategories.add(creditCategory);
+            }
+            providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
+            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
+                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
+                if (dunningPauseReason == null) {
+                    throw new EntityDoesNotExistsException(DunningPauseReason.class, paymentPlanPolicy.getDunningDefaultPauseReason().getId());
+                }
+                providerUpdateInfos.getPaymentPlanPolicy().setDunningDefaultPauseReason(dunningPauseReason);
+            }
+            providerByCode.setPaymentPlanPolicy(providerUpdateInfos.getPaymentPlanPolicy());
+        }
+    }
+
+    private void updateCreditCategories(org.meveo.model.crm.Provider providerByCode) {
+        for (CreditCategory elementCreditCategorie : creditCategoryService.list()) {
+            if (elementCreditCategorie.getProvider() != null && Objects.equals(elementCreditCategorie.getProvider().getId(), providerByCode.getId())) {
+                elementCreditCategorie.setProvider(null);
+                creditCategoryService.update(elementCreditCategorie);
+            }
+        }
+    }
 }
+

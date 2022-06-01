@@ -33,7 +33,7 @@ public class AccountingPeriod extends AuditableEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date", unique = true, nullable = false)
-    private Date startDate = new Date();
+    private Date startDate ;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date", unique = true, nullable = false)

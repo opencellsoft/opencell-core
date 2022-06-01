@@ -18,6 +18,17 @@
 
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.NotFoundException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
@@ -29,35 +40,41 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -104,15 +121,19 @@ public class CustomerAccountApi extends AccountEntityApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+    @Inject
+    private AccountingCodeService accountingCodeService;
+
     public CustomerAccount create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
-        return create(postData, true, null);
+        return create(postData, true, null, null);
     }
 
-    public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields,
+                                  BusinessAccountModel businessAccountModel, Customer associatedCustomer) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(CustomerAccount.class.getName(), postData);
@@ -162,10 +183,13 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         CustomerAccount customerAccount = new CustomerAccount();
 
-        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel, associatedCustomer);
 
         if (StringUtils.isBlank(postData.getCode())) {
             customerAccount.setCode(customGenericEntityCodeService.getGenericEntityCode(customerAccount));
+        }
+        if (postData.getIsCompany() != null) {
+            customerAccount.setIsCompany(postData.getIsCompany());
         }
 
 //        if (postData.getPaymentMethods() != null) {
@@ -206,7 +230,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
         }
 
-        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel, null);
 
         customerAccount = customerAccountService.update(customerAccount);
 
@@ -216,17 +240,19 @@ public class CustomerAccountApi extends AccountEntityApi {
     /**
      * Populate entity with fields from DTO entity
      * 
-     * @param userAccount Entity to populate
+     * @param customerAccount Entity to populate
      * @param postData DTO entity object to populate from
-     * @param checkCustomField Should a check be made if CF field is required
+     * @param checkCustomFields Should a check be made if CF field is required
      * @param businessAccountModel Business account model
      **/
-    private void dtoToEntity(CustomerAccount customerAccount, CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+    private void dtoToEntity(CustomerAccount customerAccount, CustomerAccountDto postData, boolean checkCustomFields,
+                             BusinessAccountModel businessAccountModel, Customer associatedCustomer) {
 
         boolean isNew = customerAccount.getId() == null;
 
         if (!StringUtils.isBlank(postData.getCustomer())) {
-            Customer customer = customerService.findByCode(postData.getCustomer());
+            Customer customer =
+                    associatedCustomer != null ?  associatedCustomer : customerService.findByCode(postData.getCustomer());
             if (customer == null) {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!isNew && !customerAccount.getCustomer().equals(customer)) {
@@ -342,12 +368,18 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setAddressbook(addressBook);
         }
 
+        if(postData.getGeneralClientAccountCode() != null && !postData.getGeneralClientAccountCode().isBlank()) {
+            AccountingCode generalClientAccountingCode = Optional.ofNullable(accountingCodeService.findByCode(postData.getGeneralClientAccountCode()))
+                    .orElseThrow(() -> new NotFoundException("General client accounting code not found"));
+            customerAccount.setGeneralClientAccount(generalClientAccountingCode);
+        }
+
     }
 
     private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
 		if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
 			if (customerAccount.getPaymentMethods() == null) {
-				customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
+				customerAccount.setPaymentMethods(new ArrayList<>());
 			}else {
 				for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
 					paymentMethod.setPreferred(false);
@@ -364,6 +396,16 @@ public class CustomerAccountApi extends AccountEntityApi {
 					isFirst = false;
 				}
 				PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
+				try {
+					populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethodFromDto, false, true);
+
+				} catch (MissingParameterException | InvalidParameterException e) {
+					log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+					throw e;
+				} catch (Exception e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw e;
+				}
 
 				int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
 				if (index < 0) {
@@ -440,6 +482,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerAccountsDto listByCustomer(String customerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerCode)) {
@@ -462,6 +505,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customerAccounts.customerAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = CustomerAccount.class) })
     public CustomerAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
         CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
         result.setPaging( pagingAndFiltering );

@@ -902,11 +902,13 @@ public interface SubscriptionRs extends IBaseRs {
 	ActionStatus cancelSubscriptionTermination(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") @RestDateParam Date subscriptionValidityDate);
 
 	/**
+	 * For V11 catalog use : subscribeAndInstantiateProducts API, then activateServices API
      * Create a subscription and activate services in a single transaction.
      * 
      * @param postData Subscription and services to activate data
      * @return Request processing status
      */
+	@Deprecated(since = "V11.1.0")
     @POST
     @Path("/subscribeAndActivateServices")
 	@Operation(

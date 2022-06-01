@@ -1,5 +1,6 @@
 package org.meveo.apiv2.media.file.upload;
 
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.api.admin.FilesApi;
 import org.meveo.apiv2.media.MediaFile;
 
@@ -26,7 +27,7 @@ public class FileUploadResourceImpl implements FileUploadResource {
             }
             Path savedFilePath = Path.of(saveTo.toString(), file.getFileName());
             byte[] data = file.getData() != null ? file.getData() : downloadFile(file.getFileUrl());
-            Files.write(savedFilePath, data);
+            StorageFactory.write(savedFilePath, data);
             return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"media file successfully uploaded\"}," +
                     "\"URL\": \"/opencell/files/"+savedFilePath.subpath(3,savedFilePath.getNameCount())+"\"} ").build();
         } catch (IOException e) {

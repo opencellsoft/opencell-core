@@ -1,7 +1,10 @@
 package org.meveo.apiv2.billing.impl;
 
+import static javax.ws.rs.core.Response.ok;
+
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -10,6 +13,7 @@ import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
 import org.meveo.apiv2.billing.resource.InvoicingResource;
 import org.meveo.apiv2.billing.service.BillingRunApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
@@ -19,7 +23,7 @@ public class InvoicingResourceImpl implements InvoicingResource {
     private BillingRunApiService invoicingApiService;
     
     @Inject
-    InvoiceTypeService invoiceTypeService;
+    private InvoiceTypeService invoiceTypeService;
 
     private final InvoicingMapper mapper = new InvoicingMapper();
 
@@ -57,4 +61,21 @@ public class InvoicingResourceImpl implements InvoicingResource {
                 );
     }
 
+    @Override
+    public Response advanceStatus(Long billingRunId, boolean executeInvoicingJob) {
+        BillingRun billingRun = invoicingApiService.advancedStatus(billingRunId, executeInvoicingJob)
+                .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Advance billing run status successfully executed\"},\"id\":" + billingRun.getId() + ",\"billingRunStatus\": " + billingRun.getStatus() + ", \"executeInvoicingJob\": " + executeInvoicingJob + "}")
+                .build();
+    }
+    
+    @Override
+    public Response cancelBillingRun(Long billingRunId) {
+        BillingRun billingRun = invoicingApiService.cancelBillingRun(billingRunId)
+                .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run status successfully canceled\"},\"id\":" + billingRun.getId() + "}")
+                .build();
+    }
 }

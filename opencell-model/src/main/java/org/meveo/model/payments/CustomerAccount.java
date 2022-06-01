@@ -57,6 +57,7 @@ import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -172,6 +173,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 */
 	@Column(name = "dunning_level")
 	@Enumerated(EnumType.STRING)
+	@Deprecated
 	private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
 	/**
@@ -249,6 +251,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
 	@Transient
 	private String dueBalance;
+
+	/**
+	 * General accounting code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "general_client_account_id")
+	private AccountingCode generalClientAccount;
 
 	/**
 	 * This method is called implicitly by hibernate, used to enable encryption for
@@ -672,8 +681,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		for(PaymentMethod paymentMethod : getPaymentMethods()) {
-		    paymentMethod.anonymize(code);
+		
+		setDateStatus(new Date(0));
+		setDateDunningLevel(new Date(0));
+		if(isNotEmpty(this.getPaymentMethods())) {
+			this.getPaymentMethods().forEach(payment -> payment.anonymize(code));
 		}
 		if (isNotEmpty(this.billingAccounts)) {
 			this.billingAccounts.forEach(ba -> ba.anonymize(code));
@@ -767,5 +779,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
 	public String getDueBalance() {
 		return dueBalance;
+	}
+
+	public AccountingCode getGeneralClientAccount() {
+		return generalClientAccount;
+	}
+
+	public void setGeneralClientAccount(AccountingCode generalClientAccount) {
+		this.generalClientAccount = generalClientAccount;
 	}
 }

@@ -1,10 +1,16 @@
 package org.meveo.service.cpq;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteVersion;
@@ -62,6 +68,17 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 			return null;
 		}
 		
+	}
+	
+	public List<OrderOffer> findBySubscriptionAndStatus(String subscriptionCode, OfferLineTypeEnum quoteLineType) {
+		Query query=getEntityManager().createNamedQuery("OrderOffer.findByStatusAndSubscription");
+		query.setParameter("subscriptionCode", subscriptionCode)
+			  .setParameter("status", quoteLineType);
+		try {
+			return query.getResultList();
+		}catch(NoResultException e ) {
+			return Collections.emptyList();
+		}
 	}
 	
 	

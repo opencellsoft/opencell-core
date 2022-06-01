@@ -22,15 +22,20 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.billing.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Edward P. Legaspi
@@ -42,6 +47,10 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Inject
     private CurrencyApi currencyApi;
+
+      @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     @Override
     public TradingCurrenciesResponseDto list() {
@@ -62,7 +71,9 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.create(postData);
+            CurrencyDto resultDto = currencyApi.create(postData);
+            result.setEntityId(resultDto.getId());
+
         } catch (Exception e) {
             processException(e, result);
         }
@@ -145,6 +156,50 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
             processException(e, result);
         }
 
+        return result;
+    }
+
+    @Override
+    public ActionStatus addFunctionalCurrency(CurrencyDto postData) {
+        return currencyApi.addFunctionalCurrency(postData);
+    }
+
+    @Override
+    public Response addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            Long idEntity = currencyApi.addExchangeRate(postData);
+            result.setEntityId(idEntity);
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        } catch (Exception e) {
+            processException(e, result);
+        } 
+        return Response.ok(result).build();
+    }
+
+    @Override
+    public ActionStatus updateExchangeRate(Long id, ExchangeRateDto postData) {
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.updateExchangeRate(id, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    public ActionStatus removeExchangeRateById(Long id) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.removeExchangeRateById(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 }

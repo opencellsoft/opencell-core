@@ -63,11 +63,11 @@ public class DiscountPlanInstanceApiService {
 	private EntityManagerWrapper entityManagerWrapper;
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L, null, null);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(true, DiscountPlanInstance.class, id, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findByClassNameAndId(true, DiscountPlanInstance.class, id, searchConfig, genericFields, nestedEntities, 1L, null);
 	}
 
 	public Optional<Long> create(IDiscountable discountable, String dto) {
@@ -124,7 +124,7 @@ public class DiscountPlanInstanceApiService {
 			throw new BusinessException("The Subscription with the Id: " + discountable.getId() + " is invalid for discount plan instance with id: " + id);
 		}
 		persistenceDelegate.remove(DiscountPlanInstance.class, entity);
-		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlanInstance.class, entity);
+		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlanInstance.class, entity, null);
 	}
 
 	public Optional<Long> expire(IEntity discountable, Long id) {

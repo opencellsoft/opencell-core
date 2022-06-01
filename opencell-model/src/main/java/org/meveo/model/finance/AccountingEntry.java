@@ -48,6 +48,7 @@ import org.meveo.model.payments.AccountOperation;
  *
  * @author mboukayoua
  */
+@Deprecated // since 12.X. Replaced by "org.meveo.model.accountingScheme.AccountingEntry"
 @Entity
 @Table(name="ar_accounting_writing")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

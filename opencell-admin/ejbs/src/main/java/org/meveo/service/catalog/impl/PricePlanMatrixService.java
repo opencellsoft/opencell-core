@@ -67,6 +67,8 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     @Inject 
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
+    @Inject
+    private ChargeTemplateServiceAll chargeTemplateService;
     // private ParamBean param = ParamBean.getInstance();
 
     // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
@@ -83,6 +85,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
         validatePricePlan(pp);
+        pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
         create(pp);
     }
 
@@ -114,6 +117,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
         validatePricePlan(pp);
+        pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
         return super.update(pp);
     }
 
@@ -723,7 +727,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	duplicate.setVersion(0);
     	duplicate.setVersions(new ArrayList<>());
     	create(duplicate);
-    	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, null, pricePlanMatrixNewCode );
+    	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, null);
     	duplicateVersion.setPricePlanMatrix(duplicate);
     	duplicate.getVersions().add(duplicateVersion);
     	return duplicate;

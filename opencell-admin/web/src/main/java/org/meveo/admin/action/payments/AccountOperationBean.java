@@ -35,7 +35,6 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
-import org.meveo.model.finance.AccountingEntry;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -47,7 +46,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -75,8 +73,6 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     @Inject
     private AccountOperationListBean accountOperationListBean;
 
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
 
     private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
@@ -194,7 +190,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
                 return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
             }
             for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.addLitigation((Long) operation.getId());
+                accountOperationService.addLitigation((Long) operation.getId());
             }
             messages.info(new BundleKey("messages", "save.successful"));
         } catch (Exception e) {
@@ -217,7 +213,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
                 return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
             }
             for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.cancelLitigation((Long) operation.getId());
+            	accountOperationService.cancelLitigation((Long) operation.getId());
             }
             messages.info(new BundleKey("messages", "save.successful"));
         } catch (Exception e) {
@@ -240,6 +236,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
         if (!ca.isTransient()) {
+            filters.put("not-inList code", List.of("CRD_SD", "DEB_SD", "REF_SD"));
             filters.put("customerAccount", ca);
             return getLazyDataModel();
         } else {

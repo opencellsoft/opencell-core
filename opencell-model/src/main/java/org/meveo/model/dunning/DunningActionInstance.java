@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,6 +23,8 @@ import org.meveo.model.payments.ActionTypeEnum;
 @Table(name = "dunning_action_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_action_instance_seq") })
+@NamedQueries({
+        @NamedQuery(name = "DunningActionInstance.updateStatus", query = "UPDATE DunningActionInstance ai SET ai.actionStatus=:actionStatus WHERE ai.dunningLevelInstance=:dunningLevelInstance") })
 public class DunningActionInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 2810376973487134233L;
@@ -53,7 +57,7 @@ public class DunningActionInstance extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_level_instance_id")
     private DunningLevelInstance dunningLevelInstance;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_action_id")
     private DunningAction dunningAction;
@@ -118,12 +122,12 @@ public class DunningActionInstance extends BusinessEntity {
         this.dunningLevelInstance = dunningLevelInstance;
     }
 
-	public DunningAction getDunningAction() {
-		return dunningAction;
-	}
+    public DunningAction getDunningAction() {
+        return dunningAction;
+    }
 
-	public void setDunningAction(DunningAction dunningAction) {
-		this.dunningAction = dunningAction;
-	}
-    
+    public void setDunningAction(DunningAction dunningAction) {
+        this.dunningAction = dunningAction;
+    }
+
 }

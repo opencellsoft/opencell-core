@@ -18,22 +18,30 @@
 
 package org.meveo.api.rest;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.billing.ExchangeRateDto;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
-import org.meveo.api.dto.response.GetTradingCurrencyResponse;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
@@ -55,11 +63,11 @@ public interface CurrencyRs extends IBaseRs {
     @GET
     @Path("/list")
 	@Operation(
-			summary=" Search for list of trading currencies. ",
-			description=" Search for list of trading currencies. ",
-			operationId="    GET_Currency_list",
+			summary="Search for list of trading currencies.",
+			description="Search for list of trading currencies.",
+			operationId="GET_Currency_list",
 			responses= {
-				@ApiResponse(description=" list of trading currencies ",
+				@ApiResponse(description="list of trading currencies",
 						content=@Content(
 									schema=@Schema(
 											implementation= TradingCurrenciesResponseDto.class
@@ -78,11 +86,11 @@ public interface CurrencyRs extends IBaseRs {
     @POST
     @Path("/")
 	@Operation(
-			summary=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
-			description=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
-			operationId="    POST_Currency_create",
+			summary="Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created",
+			description="Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created",
+			operationId="POST_Currency_create",
 			responses= {
-				@ApiResponse(description=" action status ",
+				@ApiResponse(description="action status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -101,11 +109,11 @@ public interface CurrencyRs extends IBaseRs {
     @GET
     @Path("/")
 	@Operation(
-			summary=" Search currency with a given currency code.  ",
-			description=" Search currency with a given currency code.  ",
-			operationId="    GET_Currency_search",
+			summary="Search currency with a given currency code.",
+			description="Search currency with a given currency code.",
+			operationId="GET_Currency_search",
 			responses= {
-				@ApiResponse(description=" currency if exists ",
+				@ApiResponse(description="currency if exists",
 						content=@Content(
 									schema=@Schema(
 											implementation= GetTradingCurrencyResponse.class
@@ -124,11 +132,11 @@ public interface CurrencyRs extends IBaseRs {
     @DELETE
     @Path("/{currencyCode}")
 	@Operation(
-			summary=" Remove currency with a given currency code.  ",
-			description=" Remove currency with a given currency code.  ",
-			operationId="    DELETE_Currency_{currencyCode}",
+			summary="Remove currency with a given currency code.",
+			description="Remove currency with a given currency code.",
+			operationId="DELETE_Currency_{currencyCode}",
 			responses= {
-				@ApiResponse(description=" action status ",
+				@ApiResponse(description="action status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -148,11 +156,11 @@ public interface CurrencyRs extends IBaseRs {
     @PUT
     @Path("/")
 	@Operation(
-			summary=" Modify a tradingCurrency",
-			description=" Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is null  ",
-			operationId="    PUT_Currency_update",
+			summary="Modify a tradingCurrency",
+			description="Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is null",
+			operationId="PUT_Currency_update",
 			responses= {
-				@ApiResponse(description=" action status ",
+				@ApiResponse(description="action status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -171,11 +179,11 @@ public interface CurrencyRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
 	@Operation(
-			summary=" Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created ",
-			description=" Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created ",
-			operationId="    POST_Currency_createOrUpdate",
+			summary="Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created",
+			description="Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created",
+			operationId="POST_Currency_createOrUpdate",
 			responses= {
-				@ApiResponse(description=" action status ",
+				@ApiResponse(description="action status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -194,11 +202,11 @@ public interface CurrencyRs extends IBaseRs {
     @POST
     @Path("/{code}/enable")
 	@Operation(
-			summary=" Enable a Trading currency with a given currency code  ",
-			description=" Enable a Trading currency with a given currency code  ",
-			operationId="    POST_Currency_{code}_enable",
+			summary="Enable a Trading currency with a given currency code",
+			description="Enable a Trading currency with a given currency code",
+			operationId="POST_Currency_{code}_enable",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description="Request processing status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -217,11 +225,11 @@ public interface CurrencyRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
 	@Operation(
-			summary=" Disable a Trading currency with a given currency code  ",
-			description=" Disable a Trading currency with a given currency code  ",
-			operationId="    POST_Currency_{code}_disable",
+			summary="Disable a Trading currency with a given currency code",
+			description="Disable a Trading currency with a given currency code",
+			operationId="POST_Currency_{code}_disable",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description="Request processing status",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -230,4 +238,83 @@ public interface CurrencyRs extends IBaseRs {
 				)}
 	)
     ActionStatus disable(@PathParam("code") String code);
+
+	/**
+     * add functional currency to the main provider
+     *
+     * @param postData Currency dto
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addFunctionalCurrency")
+	@Operation(
+			summary="API to add functional currency to the main provider",
+			description="API to add functional currency to the main provider",
+			operationId="ADD_FUNCTIONAL_CURRENCY",
+			responses= {
+				@ApiResponse(description="Request processing status",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus addFunctionalCurrency(CurrencyDto postData);
+
+    /**
+     * Add an exchange rate
+     *
+     * @param postData ExchangeRate dto
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addExchangeRate")
+    @Operation(
+            summary=" API to add Exchange Rate ",
+            description=" API to add Exchange Rate ",
+            operationId="ADD_EXCHANGE_RATE",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Success"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Failed action"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Entity does not exist")
+            }
+    )
+    Response addExchangeRate(org.meveo.api.dto.ExchangeRateDto postData);
+
+    @PUT
+    @Path("/updateExchangeRate/{id}")
+    @Operation(
+            summary="API to update exchange rate",
+            description="API to update exchange rate",
+            operationId="UPDATE_EXCHANGE_RATE",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Success"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Entity does not exist"),
+                    @ApiResponse(responseCode = "412",
+                            description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400",
+                            description = "failed action")
+            }
+    )
+    ActionStatus updateExchangeRate(@PathParam("id") Long id, ExchangeRateDto postData);
+    
+    @DELETE
+    @Path("/exchangeRate/{id}")
+    @Operation(summary = "API to delete an exchange Rate",
+    tags = { "ExchangeRate" },
+    description ="delete an existing exchange rate",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the exchange rate successfully deleted"),
+            @ApiResponse(responseCode = "400", description = "bad request when exchange rate is not found")
+    })
+    ActionStatus removeExchangeRateById(@Parameter(description = "id of the exchange rate", required = true) @PathParam("id") Long id);
+
 }

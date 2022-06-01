@@ -114,6 +114,7 @@ public class MediationApi extends BaseApi {
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ChargeCDRResponseDto chargeCdr(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
         String cdrLine = chargeCDRDto.getCdr();
         if (StringUtils.isBlank(cdrLine)) {
@@ -125,16 +126,18 @@ public class MediationApi extends BaseApi {
         ChargeCdrListInput cdrListInput = ImmutableChargeCdrListInput.builder().addCdrs(chargeCDRDto.getCdr()).mode(ProcessCdrListModeEnum.PROCESS_ALL).isVirtual(chargeCDRDto.isVirtual())
             .isRateTriggeredEdr(chargeCDRDto.isRateTriggeredEdr()).maxDepth(chargeCDRDto.getMaxDepth()).isReturnEDRs(chargeCDRDto.isReturnEDRs()).isReturnWalletOperations(chargeCDRDto.isReturnWalletOperations())
             .isReturnWalletOperationDetails(chargeCDRDto.isReturnWalletOperationDetails()).isReturnCounters(chargeCDRDto.isReturnCounters()).build();
-        ProcessCdrListResult processCdrListResult = mediationApiService.registerCdrList(cdrListInput, chargeCDRDto.getIp());
+        ProcessCdrListResult processCdrListResult = mediationApiService.chargeCdrList(cdrListInput, chargeCDRDto.getIp());
 
         ChargeCDRResponseDto chargeCDRResponseDto = null;
         for (ChargeCDRResponseDto processedCdr : processCdrListResult.getChargedCDRs()) {
-            if (processedCdr.getError() != null) {
+            if (processedCdr!=null && processedCdr.getError() != null) {
                 throw new MeveoApiException(processedCdr.getError().getErrorMessage());
             } else {
                 chargeCDRResponseDto = processedCdr;
             }
         }
+        if(chargeCDRResponseDto != null && processCdrListResult.getCounterPeriods() != null)
+        	chargeCDRResponseDto.getCounterPeriods().addAll(processCdrListResult.getCounterPeriods());
 
         return chargeCDRResponseDto;
 

@@ -18,10 +18,12 @@
 
 package org.meveo.cache;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
@@ -29,6 +31,11 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.catalog.CalendarBanking;
+import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarInterval;
+import org.meveo.model.catalog.CalendarYearly;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -44,12 +51,16 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * Provides cache related services (loading, update) for event notification related operations
@@ -121,7 +132,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Add notification to a cache.
+     * Add Notification to a cache - store mapping between entity that Notification applies to and a list of notifications
      * 
      * @param notif Notification to add
      */
@@ -133,7 +144,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
         CacheKeyStr cacheKey = getCacheKey(notif, false);
 
-        log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
+        log.trace("Adding notification {} to notification cache under key {} of Provider {}.", notif.getId(), cacheKey, currentUser.getProviderCode());
         // Solve lazy loading issues when firing notification
         if (notif.getScriptInstance() != null) {
             notif.getScriptInstance().getCode();
@@ -157,6 +168,53 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         } catch (Exception e) {
             log.error("Failed to add Notification {} to cache under key {}", notif.getId(), cacheKey);
+        }
+    }
+
+    /**
+     * Add Notification to a cache - store mapping between entity that Notification applies to and a list of notifications
+     * 
+     * @param notifications A list of Notifications
+     */
+    public void addNotificationsToCache(Collection<Notification> notifications) {
+
+        if (!useNotificationCache) {
+            return;
+        }
+
+        Map<CacheKeyStr, Set<Notification>> newNotificationsByEntity = new HashMap<CacheKeyStr, Set<Notification>>();
+
+        for (Notification notif : notifications) {
+
+            CacheKeyStr cacheKey = getCacheKey(notif, true);
+
+            log.trace("Adding notification {} to notification cache under key {} of Provider {}.", notif.getCode(), cacheKey, currentUser.getProviderCode());
+
+            if (!newNotificationsByEntity.containsKey(cacheKey)) {
+
+                Set<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+                if (notificationsOld != null) {
+                    newNotificationsByEntity.put(cacheKey, new HashSet<Notification>(notificationsOld));
+                } else {
+                    newNotificationsByEntity.put(cacheKey, new HashSet<Notification>());
+                }
+            }
+            
+            // Solve lazy loading issues when firing notification
+            if (notif.getScriptInstance() != null) {
+                notif.getScriptInstance().getCode();
+            }
+            if (notif instanceof EmailNotification) {
+                if (((EmailNotification) notif).getEmailTemplate() != null) {
+                    ((EmailNotification) notif).getEmailTemplate().getCode();
+                }
+            }
+
+            newNotificationsByEntity.get(cacheKey).add(notif);
+        }
+
+        for (Entry<CacheKeyStr, Set<Notification>> notifInfo : newNotificationsByEntity.entrySet()) {
+            eventNotificationCache.putForExternalRead(notifInfo.getKey(), notifInfo.getValue());
         }
     }
 
@@ -315,9 +373,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         Object entity = getEntity(entityOrEvent);
 
         CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass());
-        if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
-            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new HashSet<Notification>());
-        }
+        eventNotificationCache.putForExternalRead(cacheKey, new HashSet<Notification>());
     }
 
     /**

@@ -116,7 +116,7 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
         if (cacheName == null || cacheName.equals(tenants.getName()) || cacheName.contains(tenants.getName())) {
 
             Provider provider = providerService.getProviderNoCache();
-            addUpdateTenant(provider);
+            addUpdateTenant(provider, false);
         }
     }
 
@@ -124,8 +124,9 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
      * Store tenant/provider information
      * 
      * @param provider Provider entity
+     * @param isUpdate Is this a cache entry update
      */
-    public void addUpdateTenant(Provider provider) {
+    public void addUpdateTenant(Provider provider, boolean isUpdate) {
 
         if (!useTenantCache) {
             return;
@@ -133,7 +134,6 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
 
         log.trace("Adding/updating tenant {} to Tenant cache of Provider {}", provider.getCode(), currentUser.getProviderCode());
 
-        
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();
         }
@@ -166,12 +166,17 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
         providerCopy.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         providerCopy.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         providerCopy.setPaymentMethods(provider.getPaymentMethods());
-        
+
         providerCopy.setCfValues(provider.getCFValuesCopy());
-        
+
         // detach(provider);
 
-        tenants.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), providerCopy);
+        if (isUpdate) {
+            tenants.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), providerCopy);
+
+        } else {
+            tenants.putForExternalRead(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), providerCopy);
+        }
     }
 
     /**

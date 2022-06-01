@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "fd502ce1-684f-4f90-a617-445620356382",
+		"name": "currency",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add FunctionalCurrency | currency not found",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.superpass}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.superuser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency/addFunctionalCurrency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency",
+						"addFunctionalCurrency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add FunctionalCurrency | currency code is mandatory",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.superpass}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.superuser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"ABCD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency/addFunctionalCurrency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency",
+						"addFunctionalCurrency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add FunctionalCurrency",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.superpass}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.superuser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"MAD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency/addFunctionalCurrency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency",
+						"addFunctionalCurrency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Currency",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\":\"DAM\",\n    \"description\":\"Dirham marrocan \",\n    \"decimalPlaces\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Currency",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"DAM\",\n    \"description\": \"Dirham marrocan \",\n    \"decimalPlaces\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/currency",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{opencell.superpass}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{opencell.superuser}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

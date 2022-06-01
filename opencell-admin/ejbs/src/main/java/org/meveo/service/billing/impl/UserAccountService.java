@@ -17,28 +17,30 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Customer;
 import org.meveo.service.base.AccountService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.util.Date;
-import java.util.List;
 
 @Stateless
 public class UserAccountService extends AccountService<UserAccount> {
-
-	@Inject
-	private WalletService walletService;
 	
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
 			throws BusinessException {

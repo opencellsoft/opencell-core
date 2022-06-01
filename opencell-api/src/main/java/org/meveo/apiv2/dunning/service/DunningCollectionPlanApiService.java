@@ -6,12 +6,24 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -44,6 +56,7 @@ import org.meveo.model.dunning.DunningPolicyLevel;
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningActionInstanceService;
@@ -59,6 +72,9 @@ import org.meveo.service.payments.impl.DunningPolicyService;
 import org.meveo.service.payments.impl.DunningStopReasonsService;
 
 public class DunningCollectionPlanApiService implements ApiService<DunningCollectionPlan> {
+
+    @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -136,7 +152,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     public Optional<DunningCollectionPlan> delete(Long id) {
         DunningCollectionPlan dunningCollectionPlan = findById(id).get();
         dunningCollectionPlanService.remove(dunningCollectionPlan);
-        String origine = (dunningCollectionPlan!=null) ? dunningCollectionPlan.getCollectionPlanNumber() : "";
+        String origine = (dunningCollectionPlan != null) ? dunningCollectionPlan.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("REMOVE", new Date(), dunningCollectionPlan, origine);
         return of(dunningCollectionPlan);
     }
@@ -146,8 +162,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return empty();
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningCollectionPlan> switchCollectionPlan(Long collectionPlanId, SwitchDunningCollectionPlan switchDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningCollectionPlan oldCollectionPlan = dunningCollectionPlanService.findById(collectionPlanId);
         if (oldCollectionPlan == null) {
             throw new EntityDoesNotExistsException("Dunning collection plan with id " + collectionPlanId + " does not exits");
@@ -166,8 +183,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return optional;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massSwitchCollectionPlan(MassSwitchDunningCollectionPlan massSwitchDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPolicy policy = dunningPolicyService.findById(massSwitchDunningCollectionPlan.getDunningPolicy().getId());
         if (policy == null) {
             throw new EntityDoesNotExistsException("Policy with id " + massSwitchDunningCollectionPlan.getDunningPolicy().getId() + " does not exits");
@@ -191,10 +209,22 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<Map<String, Set<Long>>> checkMassSwitch(DunningPolicy policy, List<DunningCollectionPlan> collectionPlans) {
-        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy);
         Set<Long> canBeSwitched = new TreeSet<>();
         Set<Long> canNotBeSwitched = new TreeSet<>();
         Map<String, Set<Long>> massSwitchResult = new HashMap<>();
+        
+        List<Long> invoiceListId = new ArrayList<Long>();
+    	
+        for (DunningCollectionPlan collectionPlan : collectionPlans) {
+            collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+            if (collectionPlan == null) {
+                throw new EntityDoesNotExistsException("Collection plan does not exits");
+            }
+            invoiceListId.add(collectionPlan.getRelatedInvoice().getId());
+        }
+        
+        List<Invoice> eligibleInvoice = dunningPolicyService.findEligibleInvoicesForPolicy(policy, invoiceListId);
+
         if (eligibleInvoice != null && !eligibleInvoice.isEmpty()) {
             for (DunningCollectionPlan collectionPlan : collectionPlans) {
                 collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
@@ -203,17 +233,29 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 for (Invoice invoice : eligibleInvoice) {
                     if (invoice.getId() == collectionPlan.getRelatedInvoice().getId()) {
-                        canBeSwitched.add(collectionPlan.getId());
+                    	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, invoice) && dunningPolicyService.minBalanceTriggerCheck(policy, invoice)) {
+                            canBeSwitched.add(collectionPlan.getId());
+                    	}
                     }
                 }
             }
-            canNotBeSwitched = collectionPlans.stream()
-                                    .map(DunningCollectionPlan::getId)
-                                    .filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId))
-                                    .collect(toSet());
+            canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
+        } else if (!dunningPolicyService.existPolicyRulesCheck(policy)) {
+            for (DunningCollectionPlan collectionPlan : collectionPlans) {
+                collectionPlan = dunningCollectionPlanService.findById(collectionPlan.getId());
+                if (collectionPlan == null) {
+                    throw new EntityDoesNotExistsException("Collection plan does not exits");
+                }
+
+            	if(dunningPolicyService.minBalanceTriggerCurrencyCheck(policy, collectionPlan.getRelatedInvoice()) && dunningPolicyService.minBalanceTriggerCheck(policy, collectionPlan.getRelatedInvoice())) {
+                    canBeSwitched.add(collectionPlan.getId());
+            	}
+            }
+            canNotBeSwitched = collectionPlans.stream().map(DunningCollectionPlan::getId).filter(collectionPlanId -> !canBeSwitched.contains(collectionPlanId)).collect(toSet());
         } else {
             canNotBeSwitched.addAll(collectionPlans.stream().map(DunningCollectionPlan::getId).collect(toList()));
         }
+        
         massSwitchResult.put("canBESwitched", canBeSwitched);
         massSwitchResult.put("canNotBESwitched", canNotBeSwitched);
         return of(massSwitchResult);
@@ -230,6 +272,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> pauseCollectionPlan(DunningCollectionPlanPause dunningCollectionPlanPause, Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToPause = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         DunningPauseReason dunningPauseReason = dunningPauseReasonService.findById(dunningCollectionPlanPause.getDunningPauseReason().getId());
         if (dunningPauseReason == null) {
@@ -242,8 +285,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         return of(collectionPlanToPause);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massPauseCollectionPlan(MassPauseDunningCollectionPlan massPauseDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningPauseReason pauseReason = dunningPauseReasonService.findById(massPauseDunningCollectionPlan.getDunningPauseReason().getId());
         if (pauseReason == null) {
             throw new EntityDoesNotExistsException("Dunning Pause Reason with id " + massPauseDunningCollectionPlan.getDunningPauseReason().getId() + " does not exits");
@@ -265,6 +309,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> stopCollectionPlan(DunningCollectionPlanStop dunningCollectionPlanStop, Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToStop = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         DunningStopReason dunningStopReason = dunningStopReasonService.findById(dunningCollectionPlanStop.getDunningStopReason().getId());
         if (dunningStopReason == null) {
@@ -272,13 +317,14 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
         collectionPlanToStop = dunningCollectionPlanService.stopCollectionPlan(collectionPlanToStop, dunningStopReason);
 
-        String origine = (collectionPlanToStop!=null) ? collectionPlanToStop.getCollectionPlanNumber() : "";
+        String origine = (collectionPlanToStop != null) ? collectionPlanToStop.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("STOP Reason : " + dunningStopReason.getStopReason(), new Date(), collectionPlanToStop, origine);
         return of(collectionPlanToStop);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void massStopCollectionPlan(MassStopDunningCollectionPlan massStopDunningCollectionPlan) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningStopReason stopReason = dunningStopReasonService.findById(massStopDunningCollectionPlan.getDunningStopReason().getId());
         if (stopReason == null) {
             throw new EntityDoesNotExistsException("Dunning Stop Reason with id " + massStopDunningCollectionPlan.getDunningStopReason().getId() + " does not exits");
@@ -298,16 +344,18 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningCollectionPlan> resumeCollectionPlan(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         var collectionPlanToResume = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(NO_DUNNING_FOUND + id));
         collectionPlanToResume = dunningCollectionPlanService.resumeCollectionPlan(collectionPlanToResume);
 
-        String origine = (collectionPlanToResume!=null) ? collectionPlanToResume.getCollectionPlanNumber() : "";
+        String origine = (collectionPlanToResume != null) ? collectionPlanToResume.getCollectionPlanNumber() : "";
         auditLogService.trackOperation("RESUME", new Date(), collectionPlanToResume, origine);
         return of(collectionPlanToResume);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void removeDunningLevelInstance(RemoveLevelInstanceInput removeLevelInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             List<Resource> levelInstanceResources = removeLevelInstanceInput.getLevels();
 
@@ -319,20 +367,20 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     if (levelInstanceToRemove == null) {
                         throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + levelInstanceId);
                     }
-                    // User cannot delete the end level
+                    // User can not delete the end level
                     if (levelInstanceToRemove.getDunningLevel().isEndOfDunningLevel()) {
-                        throw new ActionForbiddenException("Cannot delete the end level");
+                        throw new ActionForbiddenException("Can not delete the end level");
                     }
                     DunningCollectionPlan collectionPlan = levelInstanceToRemove.getCollectionPlan();
-                    // User cannot the current dunning level instance
+                    // User can not the current dunning level instance
                     Integer currentDunningLevelSequence = collectionPlan.getCurrentDunningLevelSequence();
                     if (levelInstanceToRemove.getSequence() == currentDunningLevelSequence) {
-                        throw new ActionForbiddenException("Cannot delete the current dunning level instance");
+                        throw new ActionForbiddenException("Can not delete the current dunning level instance");
                     }
                     // If the dunningLevelInstance status is DONE or IN_PROGRESS
                     if (levelInstanceToRemove.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE
                             || levelInstanceToRemove.getLevelStatus() == DunningLevelInstanceStatusEnum.IN_PROGRESS) {
-                        throw new ActionForbiddenException("Cannot delete dunningLevelInstance with status DONE or IN_PROGRESS");
+                        throw new ActionForbiddenException("Can not delete dunningLevelInstance with status DONE or IN_PROGRESS");
                     }
                     if (levelInstanceToRemove.getActions() != null) {
                         for (DunningActionInstance action : levelInstanceToRemove.getActions()) {
@@ -342,7 +390,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     dunningLevelInstanceService.remove(levelInstanceToRemove);
 
                     // Update DunningCollectionPlan totalDunningLevels
-                    collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() - 1);
+                    if (collectionPlan.getTotalDunningLevels() == null) {
+                        collectionPlan.setTotalDunningLevels(0);
+                    }
+                    if (collectionPlan.getTotalDunningLevels() > 0) {
+                        collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() - 1);
+                    }
 
                     // if the deleted dunningLevelInstance sequence = currentSequence + 1
                     if (currentDunningLevelSequence != null && levelInstanceToRemove.getSequence() == currentDunningLevelSequence + 1) {
@@ -368,8 +421,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     dunningCollectionPlanService.update(collectionPlan);
                     // update the sequence of other levels
                     dunningLevelInstanceService.decrementSequecesGreaterThanDaysOverdue(collectionPlan, levelInstanceToRemove.getDaysOverdue());
-   
-                    String origine = (levelInstanceToRemove.getCollectionPlan()!=null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
+
+                    String origine = (levelInstanceToRemove.getCollectionPlan() != null) ? levelInstanceToRemove.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningLevelInstance", new Date(), levelInstanceToRemove.getCollectionPlan(), origine);
                 }
             }
@@ -380,29 +433,29 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void removeDunningActionInstance(RemoveActionInstanceInput removeActionInstanceInput) {
-
+        globalSettingsVerifier.checkActivateDunning();
         try {
             List<Resource> actionInstanceResources = removeActionInstanceInput.getActions();
 
             if (actionInstanceResources != null) {
                 for (Resource actionInstanceResource : actionInstanceResources) {
                     Long actionInstanceId = actionInstanceResource.getId();
-                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
+                    DunningActionInstance dunningActionInstance = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
                     if (dunningActionInstance == null) {
                         throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
                     }
 
-                    // 1- User cannot either modify or delete the end level!
+                    // 1- User can not either modify or delete the end level!
                     DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningActionInstance.getDunningLevelInstance().getId(),
                         Arrays.asList("dunningLevel", "actions", "collectionPlan"));
                     if (dunningLevelInstance.getDunningLevel().isEndOfDunningLevel()) {
-                        throw new ActionForbiddenException("Cannot modify or delete the end level");
+                        throw new ActionForbiddenException("Can not modify or delete the end level");
                     }
                     // 2- If the dunningActionInstance status is DONE ==> it can not be deleted.
                     if (dunningActionInstance.getActionStatus() != null && dunningActionInstance.getActionStatus() == DunningActionInstanceStatusEnum.DONE) {
-                        throw new ActionForbiddenException("Cannot delete an action instance with status DONE");
+                        throw new ActionForbiddenException("Can not delete an action instance with status DONE");
                     }
                     // 3- If the remaining DunningActionInstance of the dunningLevelInstance are DONE
                     List<DunningActionInstance> actions = dunningLevelInstance.getActions();
@@ -425,7 +478,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
                     dunningActionInstanceService.remove(dunningActionInstance);
 
-                    String origine = (dunningActionInstance.getCollectionPlan()!=null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
+                    String origine = (dunningActionInstance.getCollectionPlan() != null) ? dunningActionInstance.getCollectionPlan().getCollectionPlanNumber() : "";
                     auditLogService.trackOperation("REMOVE DunningActionInstance", new Date(), dunningActionInstance.getCollectionPlan(), origine);
                 }
             }
@@ -436,8 +489,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningLevelInstance> addDunningLevelInstance(DunningLevelInstanceInput dunningLevelInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             DunningLevelInstance newDunningLevelInstance = new DunningLevelInstance();
 
@@ -468,7 +522,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             }
 
             // 2- set sequence
-            Long minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, daysOverdue);
+            Integer minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, daysOverdue);
             newDunningLevelInstance.setSequence(minSequence.intValue());
 
             dunningLevelInstanceService.create(newDunningLevelInstance);
@@ -477,7 +531,11 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             dunningLevelInstanceService.incrementSequecesGreaterThanDaysOverdue(collectionPlan, daysOverdue);
 
             // 4- update DunningCollectionPlan totalDunningLevels;
+            if (collectionPlan.getTotalDunningLevels() == null) {
+                collectionPlan.setTotalDunningLevels(0);
+            }
             collectionPlan.setTotalDunningLevels(collectionPlan.getTotalDunningLevels() + 1);
+
             dunningCollectionPlanService.update(collectionPlan);
 
             // Create actions
@@ -492,41 +550,37 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Optional<DunningLevelInstance> updateDunningLevelInstance(UpdateLevelInstanceInput updateLevelInstanceInput, Long levelInstanceId) {
+        globalSettingsVerifier.checkActivateDunning();
         try {
             DunningLevelInstance levelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
             if (levelInstanceToUpdate == null) {
                 throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + levelInstanceId);
             }
 
+            DunningCollectionPlan collectionPlan = levelInstanceToUpdate.getCollectionPlan();
+
             // 1- Can not update the dunning level instance if :
             // status is DONE
             if (levelInstanceToUpdate.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
-                throw new ActionForbiddenException("Cannot update a DONE dunningLevelInstance");
+                throw new ActionForbiddenException("Can not update a DONE dunningLevelInstance");
             }
             // dunningLevel.isReminderLevel is TRUE
             if (levelInstanceToUpdate.getDunningLevel().isReminder()) {
-                throw new ActionForbiddenException("Can not create a new dunning level instance if dunningLevel.isReminderLevel is TRUE");
+                throw new ActionForbiddenException("Can not update a new dunning level instance if dunningLevel.isReminderLevel is TRUE");
             }
 
             List<String> fields = new ArrayList<>();
-            DunningCollectionPlan collectionPlan = levelInstanceToUpdate.getCollectionPlan();
+
+            Integer oldDaysOverdue = levelInstanceToUpdate.getDaysOverdue();
             Integer newDaysOverdue = updateLevelInstanceInput.getDaysOverdue();
-            if (newDaysOverdue != null) {
+
+            if (!Objects.equals(oldDaysOverdue, newDaysOverdue)) {
                 // check daysOverdue
                 checkDaysOverdue(collectionPlan, newDaysOverdue);
-                if (newDaysOverdue != levelInstanceToUpdate.getDaysOverdue()) {
-                    fields.add("daysOverdue");
-                }
-                levelInstanceToUpdate.setDaysOverdue(updateLevelInstanceInput.getDaysOverdue());
-
-                // 2- set sequence
-                Long minSequence = dunningLevelInstanceService.getMinSequenceByDaysOverdue(collectionPlan, newDaysOverdue);
-                levelInstanceToUpdate.setSequence(minSequence.intValue());
-
-                // 3- update dunningLevelInstances
-                dunningLevelInstanceService.incrementSequecesGreaterThanDaysOverdue(collectionPlan, newDaysOverdue);
+                fields.add("daysOverdue");
+                levelInstanceToUpdate.setDaysOverdue(newDaysOverdue);
             }
 
             if (updateLevelInstanceInput.getLevelStatus() != null) {
@@ -545,11 +599,27 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
                 createActions(levelInstanceToUpdate, updateLevelInstanceInput.getActions());
             }
+            // If "levelStatus" : "DONE" ==> update all its DunningActionInstance to "DONE".
+            else if (updateLevelInstanceInput.getLevelStatus() != null && updateLevelInstanceInput.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
+                dunningActionInstanceService.updateStatus(DunningActionInstanceStatusEnum.DONE, levelInstanceToUpdate);
+                levelInstanceToUpdate = dunningLevelInstanceService.findById(levelInstanceId, Arrays.asList("dunningLevel", "actions", "collectionPlan"));
+            }
 
             updateCollectionPlanActions(levelInstanceToUpdate);
-           
-            String origine = (levelInstanceToUpdate.getCollectionPlan()!=null) ? levelInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
-            auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), levelInstanceToUpdate.getCollectionPlan(), origine, fields);
+
+            // 2- Update sequences
+            if (!Objects.equals(oldDaysOverdue, newDaysOverdue)) {
+                List<DunningLevelInstance> levelInstances = dunningLevelInstanceService.findByCollectionPlan(collectionPlan);
+
+                int i = 0;
+                for (DunningLevelInstance dunningLevelInstance : levelInstances) {
+                    dunningLevelInstance.setSequence(i++);
+                    dunningLevelInstanceService.update(dunningLevelInstance);
+                }
+            }
+
+            String origine = (collectionPlan != null) ? collectionPlan.getCollectionPlanNumber() : "";
+            auditLogService.trackOperation("UPDATE DunningLevelInstance", new Date(), collectionPlan, origine, fields);
             return of(levelInstanceToUpdate);
         } catch (MeveoApiException e) {
             throw e;
@@ -559,14 +629,8 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningActionInstance> addDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningActionInstance dunningActionInstance = new DunningActionInstance();
-        
-        if(dunningActionInstanceInput.getCode() != null) {
-            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCode(dunningActionInstanceInput.getCode());
-            if(dunningActionInstanceExist != null) {
-                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
-            }
-        }
 
         if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
             throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
@@ -579,6 +643,14 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
             throw new ActionForbiddenException("Cant not add actions at the end of dunning level with id : " + dunningLevelInstanceId);
         } else {
             dunningActionInstance.setDunningLevelInstance(dunningLevelInstance);
+        }
+
+        if (dunningActionInstanceInput.getCode() != null) {
+            DunningActionInstance dunningActionInstanceExist = dunningActionInstanceService.findByCodeAndDunningLevelInstance(dunningActionInstanceInput.getCode(),
+                dunningLevelInstanceId);
+            if (dunningActionInstanceExist != null) {
+                throw new EntityAlreadyExistsException("Dunning Action Instance with code : " + dunningActionInstanceInput.getCode() + " already exist");
+            }
         }
 
         if (dunningActionInstanceInput.getCollectionPlan() == null || dunningActionInstanceInput.getCollectionPlan().getId() == null) {
@@ -625,9 +697,9 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
     }
 
     public Optional<DunningActionInstance> updateDunningActionInstance(DunningActionInstanceInput dunningActionInstanceInput, Long actionInstanceId) {
-
+        globalSettingsVerifier.checkActivateDunning();
         try {
-            DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("dunningLevelInstance"));
+            DunningActionInstance dunningActionInstanceToUpdate = dunningActionInstanceService.findById(actionInstanceId, Arrays.asList("collectionPlan", "dunningLevelInstance"));
             if (dunningActionInstanceToUpdate == null) {
                 throw new EntityDoesNotExistsException("No Dunning Action Instance found with id : " + actionInstanceId);
             }
@@ -638,71 +710,74 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
 
             List<String> fields = new ArrayList<>();
 
-            if (dunningActionInstanceInput.getDunningLevelInstance() == null || dunningActionInstanceInput.getDunningLevelInstance().getId() == null) {
+            Long dunningLevelInstanceIdInput = dunningActionInstanceInput.getDunningLevelInstance() != null ? dunningActionInstanceInput.getDunningLevelInstance().getId() : null;
+            Long dunningLevelInstanceIdToUpdate = dunningActionInstanceToUpdate.getDunningLevelInstance() != null ? dunningActionInstanceToUpdate.getDunningLevelInstance().getId()
+                    : null;
+
+            if (dunningLevelInstanceIdInput == null) {
                 throw new ActionForbiddenException("Attribut dunningLevelInstance is mandatory");
             }
-            Long dunningLevelInstanceId = dunningActionInstanceInput.getDunningLevelInstance().getId();
-            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceId, Arrays.asList("collectionPlan", "actions"));
+            DunningLevelInstance dunningLevelInstance = dunningLevelInstanceService.findById(dunningLevelInstanceIdInput,
+                Arrays.asList("dunningLevel", "collectionPlan", "actions"));
             if (dunningLevelInstance == null) {
-                throw new EntityDoesNotExistsException("No Dunning Level found with id : " + dunningLevelInstanceId);
+                throw new EntityDoesNotExistsException("No Dunning Level Instance found with id : " + dunningLevelInstanceIdInput);
             }
-            if (dunningActionInstanceInput.getDunningLevelInstance().getId() != dunningActionInstanceToUpdate.getDunningLevelInstance().getId()) {
+
+            if (!Objects.equals(dunningLevelInstanceIdInput, dunningLevelInstanceIdToUpdate)) {
                 fields.add("dunningLevelInstance");
-            }
-            dunningActionInstanceToUpdate.setDunningLevelInstance(dunningLevelInstance);
-
-            if (dunningActionInstanceInput.getDunningAction() != null && dunningActionInstanceInput.getDunningAction().getId() != null) {
-                Long dunningActionId = dunningActionInstanceInput.getDunningAction().getId();
-                DunningAction dunningAction = dunningActionService.findById(dunningActionId);
-                if (dunningAction == null) {
-                    throw new EntityDoesNotExistsException("No Dunning action found with id : " + dunningActionId);
-                }
-
-                if (dunningActionInstanceInput.getDunningAction().getId() != dunningActionInstanceToUpdate.getDunningAction().getId()) {
-                    fields.add("dunningAction");
-                }
-                dunningActionInstanceToUpdate.setDunningAction(dunningAction);
+                dunningActionInstanceToUpdate.setDunningLevelInstance(dunningLevelInstance);
             }
 
-            if (dunningActionInstanceInput.getActionOwner() != null && dunningActionInstanceInput.getActionOwner().getId() != null) {
-                Long dunningAgentId = dunningActionInstanceInput.getActionOwner().getId();
-                DunningAgent dunningAgent = dunningAgentService.findById(dunningAgentId);
-                if (dunningAgent == null) {
-                    throw new EntityDoesNotExistsException("No Dunning agent found with id : " + dunningAgentId);
-                }
+            Long dunningActionIdInput = dunningActionInstanceInput.getDunningAction() != null ? dunningActionInstanceInput.getDunningAction().getId() : null;
+            Long dunningActionIdToUpdate = dunningActionInstanceToUpdate.getDunningAction() != null ? dunningActionInstanceToUpdate.getDunningAction().getId() : null;
+            if (!Objects.equals(dunningActionIdInput, dunningActionIdToUpdate)) {
 
-                if (dunningActionInstanceInput.getActionOwner().getId() != dunningActionInstanceToUpdate.getActionOwner().getId()) {
-                    fields.add("actionOwner");
+                fields.add("dunningAction");
+                if (dunningActionIdInput != null) {
+                    DunningAction dunningAction = dunningActionService.findById(dunningActionIdInput);
+                    if (dunningAction == null) {
+                        throw new EntityDoesNotExistsException("No Dunning action found with id : " + dunningActionIdInput);
+                    }
+                    dunningActionInstanceToUpdate.setDunningAction(dunningAction);
+                } else {
+                    dunningActionInstanceToUpdate.setDunningAction(null);
                 }
-                dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
             }
 
-            if (dunningActionInstanceInput.getCode() != null) {
-                if (dunningActionInstanceInput.getCode().equals(dunningActionInstanceToUpdate.getCode())) {
-                    fields.add("code");
+            Long actionOwnerIdInput = dunningActionInstanceInput.getActionOwner() != null ? dunningActionInstanceInput.getActionOwner().getId() : null;
+            Long actionOwnerIdToUpdate = dunningActionInstanceToUpdate.getActionOwner() != null ? dunningActionInstanceToUpdate.getActionOwner().getId() : null;
+            if (!Objects.equals(actionOwnerIdInput, actionOwnerIdToUpdate)) {
+
+                fields.add("actionOwner");
+                if (actionOwnerIdInput != null) {
+                    DunningAgent dunningAgent = dunningAgentService.findById(actionOwnerIdInput);
+                    if (dunningAgent == null) {
+                        throw new EntityDoesNotExistsException("No Dunning agent found with id : " + actionOwnerIdInput);
+                    }
+                    dunningActionInstanceToUpdate.setActionOwner(dunningAgent);
+                } else {
+                    dunningActionInstanceToUpdate.setActionOwner(null);
                 }
+
+            }
+            if (StringUtils.isNotBlank(dunningActionInstanceInput.getCode()) && !Objects.equals(dunningActionInstanceInput.getCode(), dunningActionInstanceToUpdate.getCode())) {
+                fields.add("code");
                 dunningActionInstanceToUpdate.setCode(dunningActionInstanceInput.getCode());
             }
-            if (dunningActionInstanceInput.getDescription() != null) {
-                if (dunningActionInstanceInput.getDescription().equals(dunningActionInstanceToUpdate.getDescription())) {
-                    fields.add("description");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getDescription(), dunningActionInstanceToUpdate.getDescription())) {
+                fields.add("description");
                 dunningActionInstanceToUpdate.setDescription(dunningActionInstanceInput.getDescription());
             }
-            if (dunningActionInstanceInput.getActionType() != null) {
-                if (dunningActionInstanceInput.getActionType() != dunningActionInstanceToUpdate.getActionType()) {
-                    fields.add("actionType");
-                }
+            if (dunningActionInstanceInput.getActionType() != null && !Objects.equals(dunningActionInstanceInput.getActionType(), dunningActionInstanceToUpdate.getActionType())) {
+                fields.add("actionType");
                 dunningActionInstanceToUpdate.setActionType(dunningActionInstanceInput.getActionType());
             }
-            if (dunningActionInstanceInput.getMode() != null) {
-                if (dunningActionInstanceInput.getMode() != dunningActionInstanceToUpdate.getActionMode()) {
-                    fields.add("actionMode");
-                }
+            if (dunningActionInstanceInput.getMode() != null && !Objects.equals(dunningActionInstanceInput.getMode(), dunningActionInstanceToUpdate.getActionMode())) {
+                fields.add("actionMode");
                 dunningActionInstanceToUpdate.setActionMode(dunningActionInstanceInput.getMode());
             }
             if (dunningActionInstanceInput.getActionStatus() != null) {
-                if (dunningActionInstanceInput.getActionStatus() != dunningActionInstanceToUpdate.getActionStatus()) {
+                if (!Objects.equals(dunningActionInstanceInput.getActionStatus(), dunningActionInstanceToUpdate.getActionStatus())) {
                     fields.add("actionStatus");
                 }
                 dunningActionInstanceToUpdate.setActionStatus(dunningActionInstanceInput.getActionStatus());
@@ -711,7 +786,7 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 if (dunningActionInstanceInput.getActionStatus() == DunningActionInstanceStatusEnum.DONE) {
 
                     List<DunningActionInstance> actions = dunningLevelInstance.getActions();
-                    actions.removeIf(a -> a.getId() == dunningActionInstanceToUpdate.getId());
+                    actions.removeIf(a -> a.getId().equals(dunningActionInstanceToUpdate.getId()));
 
                     // check if all actions of the dunningLevelInstance are DONE:
                     boolean remainingActionsAreDone = true;
@@ -733,16 +808,14 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                 }
             }
 
-            if (dunningActionInstanceInput.getActionRestult() != null) {
-                if (dunningActionInstanceInput.getActionRestult().equals(dunningActionInstanceToUpdate.getActionRestult())) {
-                    fields.add("actionRestult");
-                }
+            if (!Objects.equals(dunningActionInstanceInput.getActionRestult(), dunningActionInstanceToUpdate.getActionRestult())) {
+                fields.add("actionRestult");
                 dunningActionInstanceToUpdate.setActionRestult(dunningActionInstanceInput.getActionRestult());
             }
 
             dunningActionInstanceService.update(dunningActionInstanceToUpdate);
 
-            String origine = (dunningActionInstanceToUpdate.getCollectionPlan() !=null) ? dunningActionInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
+            String origine = (dunningActionInstanceToUpdate.getCollectionPlan() != null) ? dunningActionInstanceToUpdate.getCollectionPlan().getCollectionPlanNumber() : "";
             auditLogService.trackOperation("UPDATE DunningActionInstance", new Date(), dunningActionInstanceToUpdate.getCollectionPlan(), origine, fields);
             return of(dunningActionInstanceToUpdate);
         } catch (MeveoApiException e) {
@@ -752,7 +825,6 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     private void createActions(DunningLevelInstance dunningLevelInstance, List<DunningActionInstanceInput> actionInstanceInputs) {
         List<DunningActionInstance> actions = new ArrayList<>();
 
@@ -850,8 +922,12 @@ public class DunningCollectionPlanApiService implements ApiService<DunningCollec
                     }
 
                     collectionPlan.setNextAction(nextLevelAction);
-                    collectionPlan
-                        .setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), nextLevelInstance.getDaysOverdue() + collectionPlan.getPauseDuration()));
+
+                    Integer days = nextLevelInstance.getDaysOverdue();
+                    if (collectionPlan.getPauseDuration() != null) {
+                        days += collectionPlan.getPauseDuration();
+                    }
+                    collectionPlan.setNextActionDate(DateUtils.addDaysToDate(collectionPlan.getStartDate(), days));
                 }
             } else {
                 collectionPlan.setNextAction(null);

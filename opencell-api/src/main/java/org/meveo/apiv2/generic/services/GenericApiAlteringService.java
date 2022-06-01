@@ -72,7 +72,7 @@ public class GenericApiAlteringService {
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
         refreshEntityWithDotFields(jsonGenericMapper.readValue(jsonDto, Map.class), iEntity, jsonGenericMapper.parseFromJson(jsonDto, iEntity.getClass()));
         IEntity updatedEntity = persistenceDelegate.update(entityClass, iEntity);
-        return jsonGenericMapper.toJson(null, entityClass, updatedEntity);
+        return jsonGenericMapper.toJson(null, entityClass, updatedEntity, null);
     }
 
 
@@ -94,7 +94,7 @@ public class GenericApiAlteringService {
             throw new NotFoundException("entity " + entityName + " with id " + id + " not found.");
         }
         persistenceDelegate.remove(entityClass, iEntity);
-        return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, entityClass, iEntity);
+        return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, entityClass, iEntity, null);
     }
 
     public void refreshEntityWithDotFields(Map<String, Object> readValueMap, Object fetchedEntity, Object parsedEntity) {

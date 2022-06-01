@@ -63,6 +63,22 @@
             ]
           }
         }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
+                "entityClass": "org.meveo.model.payments.CustomerAccount"
+              }
+            ]
+          }
+        }
       }
     ]
   },
@@ -80,6 +96,22 @@
             ]
           }
         }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
       }
     ]
   },
@@ -92,6 +124,22 @@
           "securedMethodConfig": {
             "validate": [
               {
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
                 "entityClass": "org.meveo.model.billing.UserAccount"
               }
             ]
@@ -499,6 +547,51 @@
               {
                 "property": "billingAccount",
                 "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "AccountOperation",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "customerAccount",
+                "entityClass": "org.meveo.model.payments.CustomerAccount"
               }
             ]
           }

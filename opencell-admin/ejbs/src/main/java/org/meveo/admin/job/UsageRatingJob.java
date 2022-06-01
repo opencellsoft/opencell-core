@@ -136,6 +136,30 @@ public class UsageRatingJob extends Job {
         batchSize.setMaxValue(10000L);
         batchSize.setGuiPosition("tab:Configuration:0;field:4");
         result.put(batchSize.getCode(), batchSize);
+        
+        CustomFieldTemplate parameter1 = new CustomFieldTemplate();
+        parameter1.setCode("parameter1");
+        parameter1.setAppliesTo("JobInstance_UsageRatingJob");
+        parameter1.setActive(true);
+        parameter1.setDescription("EDR Parameter 1");
+        parameter1.setFieldType(CustomFieldTypeEnum.STRING);
+        parameter1.setValueRequired(false);
+        parameter1.setDefaultValue(null);
+        parameter1.setMaxValue(200L);
+        parameter1.setGuiPosition("tab:Configuration:0;field:5");
+        result.put("parameter1", parameter1);
+        
+        CustomFieldTemplate parameter2 = new CustomFieldTemplate();
+        parameter2.setCode("parameter2");
+        parameter2.setAppliesTo("JobInstance_UsageRatingJob");
+        parameter2.setActive(true);
+        parameter2.setDescription("EDR Parameter 2");
+        parameter2.setFieldType(CustomFieldTypeEnum.STRING);
+        parameter2.setValueRequired(false);
+        parameter2.setDefaultValue(null);
+        parameter2.setMaxValue(200L);
+        parameter2.setGuiPosition("tab:Configuration:0;field:6");
+        result.put("parameter2", parameter2);
 
 //        CustomFieldTemplate noRollback = new CustomFieldTemplate();
 //        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);

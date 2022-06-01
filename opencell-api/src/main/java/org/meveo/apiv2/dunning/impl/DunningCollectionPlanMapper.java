@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.apiv2.models.ImmutableResource.builder;
 
@@ -8,6 +9,7 @@ import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningPolicy;
 
 import java.util.List;
@@ -17,32 +19,33 @@ public class DunningCollectionPlanMapper
 
     @Override
     protected DunningCollectionPlan toResource(org.meveo.model.dunning.DunningCollectionPlan entity) {
-        
+
         return ImmutableDunningCollectionPlan.builder()
-            .relatedPolicy(createResource(entity.getRelatedPolicy()))
-            .initialCollectionPlan(createResource(entity.getInitialCollectionPlan()))
-            .billingAccount(createResource(entity.getBillingAccount()))
-            .relatedInvoice(createResource(entity.getRelatedInvoice()))
-            .pauseReason(createResource(entity.getPauseReason()))
-            .stopReason(createResource(entity.getStopReason()))
-            .currentDunningLevelSequence(entity.getCurrentDunningLevelSequence())
-            .startDate(entity.getStartDate())
-            .daysOpen(entity.getDaysOpen())
-            .closeDate(entity.getCloseDate())
-            .status(createResource(entity.getStatus()))
-            .pausedUntilDate(entity.getPausedUntilDate())
-            .balance(entity.getBalance())
-            .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
-            .dunningLevelInstances(entity.getDunningLevelInstances() != null 
-                    ? entity.getDunningLevelInstances().stream().map(l -> createResource(l)).collect(toList())
-                    : null)
-            .nextAction(entity.getNextAction())
-            .nextActionDate(entity.getNextActionDate())
-            .lastAction(entity.getLastAction())
-            .lastActionDate(entity.getLastActionDate())
-            .totalDunningLevels(entity.getTotalDunningLevels())
-            .collectionPlanNumber(entity.getCollectionPlanNumber())
-            .build();
+                .id(entity.getId())
+                .relatedPolicy(createResource(entity.getRelatedPolicy()))
+                .initialCollectionPlan(createResource(entity.getInitialCollectionPlan()))
+                .billingAccount(createResource(entity.getBillingAccount()))
+                .relatedInvoice(createResource(entity.getRelatedInvoice()))
+                .pauseReason(createResource(entity.getPauseReason()))
+                .stopReason(createResource(entity.getStopReason()))
+                .currentDunningLevelSequence(entity.getCurrentDunningLevelSequence())
+                .startDate(entity.getStartDate())
+                .daysOpen(entity.getDaysOpen())
+                .closeDate(entity.getCloseDate())
+                .status(createResource(entity.getStatus()))
+                .pausedUntilDate(entity.getPausedUntilDate())
+                .balance(entity.getBalance())
+                .retryPaymentOnResumeDate(entity.isRetryPaymentOnResumeDate())
+                .dunningLevelInstances(entity.getDunningLevelInstances() != null
+                        ? entity.getDunningLevelInstances().stream().map(l -> createResource(l)).collect(toList())
+                        : null)
+                .nextAction(entity.getNextAction())
+                .nextActionDate(entity.getNextActionDate())
+                .lastAction(entity.getLastAction())
+                .lastActionDate(entity.getLastActionDate())
+                .totalDunningLevels(entity.getTotalDunningLevels())
+                .collectionPlanNumber(entity.getCollectionPlanNumber())
+                .build();
     }
 
     @Override
@@ -75,19 +78,25 @@ public class DunningCollectionPlanMapper
 
     private org.meveo.apiv2.dunning.DunningPolicy toPolicy(DunningPolicy policy) {
         return ImmutableDunningPolicy.builder()
-                    .id(policy.getId())
-                    .isDefaultPolicy(policy.getDefaultPolicy())
-                    .isActivePolicy(policy.getActivePolicy())
-                    .policyName(policy.getPolicyName())
-                    .minBalanceTriggerCurrency(builder().id(policy.getMinBalanceTriggerCurrency().getId()).build())
-                    .policyDescription(policy.getPolicyDescription())
-                    .minBalanceTrigger(policy.getMinBalanceTrigger())
-                    .policyPriority(policy.getPolicyPriority())
-                    .interestForDelaySequence(policy.getInterestForDelaySequence())
-                    .isIncludeDueInvoicesInThreshold(policy.getIncludeDueInvoicesInThreshold())
-                    .isAttachInvoicesToEmails(policy.getAttachInvoicesToEmails())
-                    .isIncludePayReminder(policy.getIncludePayReminder())
-                    .determineLevelBy(policy.getDetermineLevelBy())
+                .id(policy.getId())
+                .isDefaultPolicy(policy.getIsDefaultPolicy())
+                .isActivePolicy(policy.getIsActivePolicy())
+                .policyName(policy.getPolicyName())
+                .minBalanceTriggerCurrency(buildMinBalanceCurrencyResource(policy.getMinBalanceTriggerCurrency()))
+                .policyDescription(policy.getPolicyDescription())
+                .minBalanceTrigger(policy.getMinBalanceTrigger())
+                .policyPriority(policy.getPolicyPriority())
+                .interestForDelaySequence(policy.getInterestForDelaySequence())
+                .isIncludeDueInvoicesInThreshold(policy.getIncludeDueInvoicesInThreshold())
+                .isAttachInvoicesToEmails(policy.getAttachInvoicesToEmails())
+                .isIncludePayReminder(policy.getIncludePayReminder())
+                .determineLevelBy(policy.getDetermineLevelBy())
                 .build();
+    }
+
+    private ImmutableResource buildMinBalanceCurrencyResource(Currency minBalanceTriggerCurrency) {
+        return ofNullable(minBalanceTriggerCurrency)
+                .map(minBalance -> builder().id(minBalance.getId()).build())
+                .orElse(null);
     }
 }

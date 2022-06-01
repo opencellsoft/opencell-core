@@ -10,7 +10,6 @@ import java.util.List;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
@@ -67,21 +66,20 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
     }
 
     @Override
-    public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
+    public synchronized CDR getNextRecord(ICdrParser cdrParser, String originRecordEL) throws IOException {
 
         CDR cdr = cdrIterator.next();
         if (cdr == null) {
             return null;
         }
-        
 
-        return getRecord(cdrParser, cdr);
+        return getRecord(cdrParser, cdr, originRecordEL);
     }
 
     @Override
-    public CDR getRecord(ICdrParser cdrParser, Object cdrData) {
-        
-        CDR cdr = (CDR)cdrData;
+    public CDR getRecord(ICdrParser cdrParser, Object cdrData, String originRecordEL) {
+
+        CDR cdr = (CDR) cdrData;
         Integer timesTried = cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1;
         try {
             CDR newCdr = cdrParser.parse(cdr.getLine());
@@ -89,7 +87,7 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
             cdr.setTimesTried(timesTried);
             cdr.setRejectReasonException(null);
             cdr.setRejectReason(null);
-            cdr.setStatus( CDRStatusEnum.OPEN);           
+            cdr.setStatus(CDRStatusEnum.OPEN);
 
         } catch (CDRParsingException e) {
             cdr.setRejectReasonException(e);

@@ -15,7 +15,9 @@ import org.meveo.service.payments.impl.DunningAgentService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
 public class DunningAgentApiService implements ApiService<DunningAgent> {
-	
+	@Inject
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 
@@ -41,6 +43,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 
 	@Override
 	public DunningAgent create(DunningAgent baseEntity) {
+		globalSettingsVerifier.checkActivateDunning();
 		if(baseEntity.getDunningSettings() != null) {
 			DunningSettings dunningSetting = null;
 			if(!Strings.isEmpty(baseEntity.getDunningSettings().getCode()))
@@ -61,6 +64,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 
 	@Override
 	public Optional<DunningAgent> update(Long id, DunningAgent baseEntity) {
+		globalSettingsVerifier.checkActivateDunning();
 		return Optional.empty();
 	}
 
@@ -71,6 +75,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 
 	@Override
 	public Optional<DunningAgent> delete(Long id) {
+		globalSettingsVerifier.checkActivateDunning();
 		return Optional.empty();
 	}
 
@@ -80,6 +85,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 	}
 
 	public DunningAgent update(String dunningCode, String agentEmailItem, DunningAgent baseEntity) {
+		globalSettingsVerifier.checkActivateDunning();
 		var existingDunningAgent = dunningAgentService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(existingDunningAgent == null)
 			throw new BadRequestException(String.format(NO_DUNNING_AGENT_FOUND, dunningCode, agentEmailItem));
@@ -97,6 +103,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 	}
 
 	public DunningAgent delete(String dunningCode, String agentEmailItem) {
+		globalSettingsVerifier.checkActivateDunning();
 		var deletedgDunningAgent = dunningAgentService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(deletedgDunningAgent == null)
 			throw new BadRequestException(String.format(NO_DUNNING_AGENT_FOUND, dunningCode, agentEmailItem));

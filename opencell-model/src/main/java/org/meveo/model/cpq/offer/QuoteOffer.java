@@ -28,6 +28,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -45,7 +46,8 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code")
+		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code"),
+		@NamedQuery(name = "QuoteOffer.findByStatusAndSubscription", query = "select oo from QuoteOffer oo left join oo.quoteVersion qv where oo.subscription.code=:subscriptionCode and oo.quoteLineType=:status")
 })
 public class QuoteOffer extends BusinessCFEntity {
 
@@ -66,6 +68,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.deliveryDate = copy.deliveryDate;
 		this.userAccount = copy.userAccount;
 		this.quoteLineType = copy.quoteLineType;
+		this.subscription = copy.subscription;
 	}
 
 
@@ -146,6 +149,13 @@ public class QuoteOffer extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "quote_line_type", length = 10)
     private OfferLineTypeEnum quoteLineType = OfferLineTypeEnum.CREATE;
+    
+    /**
+     * Subscription
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -365,4 +375,14 @@ public class QuoteOffer extends BusinessCFEntity {
     public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
         this.quoteLineType = quoteLineType;
     }
+
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
 }

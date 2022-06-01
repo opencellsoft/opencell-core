@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -37,9 +39,14 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     /** The account operation service. */
     @Inject
     private AccountOperationService accountOperationService;
-	
 
     @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addHistoryInNewTransaction(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
+            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
+        addHistory(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoIdsToPay);
+    }
+
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
@@ -50,8 +57,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     	}
     	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
-    
-	@JpaAmpNewTx
+
 	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
 			String externalPaymentId, PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {
@@ -98,6 +104,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		}
 
 		for (AccountOperation ao : aoToPay) {
+			if(ao!=null) {
 			if (ao.getPaymentHistories() == null) {
 				ao.setPaymentHistories(new ArrayList<>());
 			}
@@ -107,6 +114,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 				paymentHistory.setListAoPaid(new ArrayList<>());
 			}
 			paymentHistory.getListAoPaid().add(ao);
+		}
 		}
 		super.create(paymentHistory);
 	}

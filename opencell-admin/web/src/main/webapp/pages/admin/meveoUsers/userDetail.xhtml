@@ -66,7 +66,7 @@
 								<p:commandButton action="#{userBean.deleteSecuredEntity(securedEntity)}" rendered="#{userBean.canUserUpdateEntity()}" icon="ui-icon-trash" update=":userFormId:tabView:selectedEntitiesPanel" />
 								
 								<p:commandButton icon="ui-icon-circle-check"
-						                         rendered="#{securedEntity.disabled}" 
+						                         rendered="#{securedEntity.disabledAsBoolean}" 
 												 action="#{userBean.enable(securedEntity)}" 
 												 update=":userFormId:tabView:selectedEntitiesPanel">
 						            <f:setPropertyActionListener target="#{userBean.entity}" value="#{entity}"/>
@@ -74,7 +74,7 @@
 						        </p:commandButton>
 						
 						        <p:commandButton icon="ui-icon-circle-close"
-						                         rendered="#{!securedEntity.disabled}" 
+						                         rendered="#{!securedEntity.disabledAsBoolean}" 
 												 action="#{userBean.disable(securedEntity)}" 
 												 update=":userFormId:tabView:selectedEntitiesPanel">
 						            <f:setPropertyActionListener target="#{userBean.entity}" value="#{entity}"/>

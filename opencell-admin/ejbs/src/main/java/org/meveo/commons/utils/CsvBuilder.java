@@ -17,18 +17,18 @@
  */
 package org.meveo.commons.utils;
 
+import org.apache.poi.util.IOUtils;
+import org.meveo.admin.storage.StorageFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.util.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Writer;
 
 
 /**
@@ -148,13 +148,13 @@ public class CsvBuilder {
 	 * @param absolutFfilename the absolut ffilename
 	 */
 	public void toFile(String absolutFfilename) {
-		FileWriter fw = null;
+		Writer fw = null;
 		try {
 			File tmp = new File(absolutFfilename);
 			File createDir = tmp.getParentFile();
 
 			createDir.mkdirs();
-			fw = new FileWriter(absolutFfilename, false);
+			fw = StorageFactory.getWriter(absolutFfilename);
 			fw.write(sb.toString());
 			fw.close();
 		} catch (Exception e) {

@@ -52,6 +52,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
@@ -324,6 +325,15 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 // Take care of the last charge period that termination date falls into
                 // Check if prorating is needed on last period (this really should happen in Apply end agreement mode)
                 Date currentPeriodToDate = getRecurringPeriodEndDate(chargeInstance, currentPeriodFromDate);
+                // Handle date not in banking calendar period to avoid infinite loop
+                Calendar cal = resolveRecurrenceCalendar(chargeInstance);
+                if (cal == null) {
+                    throw new IncorrectChargeTemplateException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
+                }
+                if(cal.getCalendarType() != null && cal.getCalendarType().equals("BANKING") && currentPeriodToDate != null && currentPeriodToDate.compareTo(currentPeriodFromDate) == 0) {
+                	throw new IllegalStateException("The given date: " +currentPeriodFromDate +" is not in period [startDate,endDate] of banking Calendar: "+ cal.getCode());
+                }
+                
                 effectiveChargeToDate = currentPeriodToDate;
                 if (prorateLastPeriodToDate != null && currentPeriodToDate.after(prorateLastPeriodToDate)) {
                     effectiveChargeToDate = prorateLastPeriodToDate;
@@ -394,7 +404,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                         RatingResult localRatingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, operationDate, inputQuantity, null,
                             orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
-                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, null, forSchedule, false);
+                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, null, forSchedule, isVirtual);
 
                         ratingResult.add(localRatingResult);
 
@@ -456,7 +466,9 @@ public class RecurringRatingService extends RatingService implements Serializabl
             }
 
             for (WalletOperation wo : ratingResult.getWalletOperations()) {
-                wo.changeStatus(WalletOperationStatusEnum.SCHEDULED);
+                if(forSchedule){
+                    wo.changeStatus(WalletOperationStatusEnum.SCHEDULED);
+                }
                 walletOperationService.chargeWalletOperation(wo);
             }
         }

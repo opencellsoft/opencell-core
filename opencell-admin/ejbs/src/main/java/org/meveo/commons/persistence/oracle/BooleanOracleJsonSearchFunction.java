@@ -18,8 +18,11 @@
 
 package org.meveo.commons.persistence.oracle;
 
+import java.util.List;
+
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.Type;
 
@@ -35,11 +38,30 @@ public class BooleanOracleJsonSearchFunction extends OracleJsonSearchFunction {
 
     @Override
     public String getCastType() {
-        return "boolean";
+        return null;
     }
 
     @Override
     public String getValuePropertyName() {
         return "boolean";
+    }
+
+    @Override
+    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+
+        if (args.size() < 2) {
+            throw new IllegalArgumentException("The function parseJson requires at least 2 arguments");
+        }
+        String entityColumnName = (String) args.get(0);
+        String customFieldName = (String) args.get(1);
+        String customFieldValueProperty = getValuePropertyName();
+        if (args.size() > 2) {
+            customFieldValueProperty = (String) args.get(2);
+        }
+        //        // use JSON_VALUE Ex. SELECT JSON_VALUE('{"ANIMALS":"1","DOG":"D1","CAT":"C1"}', '$.CAT') AS value FROM dual => C1
+        //        // Ex. SELECT JSON_VALUE('{"ANIMALS":[{"DOG":"D1","CAT": "C1"}]}', '$.ANIMALS[0].DOG') AS value FROM dual; ==> D1
+        String fragment = " JSON_VALUE ( "+ entityColumnName + ", '$." + customFieldName + "[0]." + customFieldValueProperty +"' )";
+
+        return "(case when cast(" + fragment + " as varchar2(10)) = 'true' then 1 else 0 END)";
     }
 }

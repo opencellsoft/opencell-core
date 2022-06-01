@@ -3,7 +3,7 @@ package org.meveo.apiv2.article.resource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.article.AccountingArticle;
+import org.meveo.apiv2.article.*;
 
 import java.util.Map;
 
@@ -99,5 +99,29 @@ public interface AccountingArticleResource {
     })
     Response getAccountingArticles(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode, 
     								@Parameter(description = "Map of attributes") Map<String, Object> attribues, @Context Request request);
-    
+
+
+    @POST
+    @Path("/accountingCodeMapping")
+    @Operation(summary = "This endpoint create accounting code mapping",
+            tags = { "AccountingCodeMapping" },
+            description ="Create accounting code mapping",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "Accounting code mapping successfully created, and the id is returned in the response"),
+                    @ApiResponse(responseCode = "404", description = "Entity not found")
+            })
+    Response createAccountingCodeMapping(AccountingCodeMappingInput accountingCodeMappingInput);
+
+    @PUT
+    @Path("/{accountingArticleCode}/accountingCodeMapping")
+    @Operation(summary = "This endpoint update accounting code mapping",
+            tags = { "AccountingCodeMapping" },
+            description ="Update accounting code mapping",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "Accounting code mapping successfully updated, and the id is returned in the response"),
+                    @ApiResponse(responseCode = "404", description = "Entity not found")
+            })
+    Response updateAccountingCodeMapping(@Parameter(description = "accounting article code", required = true)
+                                         @PathParam("accountingArticleCode") String accountingArticleCode,
+                                         AccountingCodeMappingInput accountingCodeMappingInput);
 }

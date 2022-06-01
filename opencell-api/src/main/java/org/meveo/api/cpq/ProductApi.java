@@ -170,15 +170,15 @@ public class ProductApi extends BaseApi {
 		handleMissingParameters();
 		try {
 			productDto.setCode(productDto.getCode().trim());
-			Product product=populateProduct(productDto, true);
+			Product product = populateProduct(productDto, true);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
-			ProductVersion productVersion = null;
-			if(currentProductVersion!=null) {
-				productVersion = createProductVersion(productDto.getCurrentProductVersion());
+			ProductVersion productVersion;
+			if(currentProductVersion != null) {
+				productVersion = createProductVersion(product, productDto.getCurrentProductVersion());
 				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
-			}else {
+			} else {
 				productVersion= new ProductVersion();
 				productVersion.setProduct(product);
 				productVersion.setShortDescription(productDto.getLabel());
@@ -243,7 +243,7 @@ public class ProductApi extends BaseApi {
 				if(existingProductVersion != null)
 					updateProductVersion(productDto.getCurrentProductVersion(), existingProductVersion);
 				else
-					createProductVersion(productDto.getCurrentProductVersion());
+					createProductVersion(null, productDto.getCurrentProductVersion());
 			}
 			Set<DiscountPlan> discountList = new HashSet<>();
 			if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()){
@@ -270,8 +270,8 @@ public class ProductApi extends BaseApi {
 				discountList.addAll(discountListUsingCodes);
 			}
 
+    		product.getDiscountList().clear();
 	    	if(!discountList.isEmpty()){
-	    		product.getDiscountList().clear();
 	    		product.getDiscountList().addAll(discountList);
 			}
 
@@ -381,10 +381,12 @@ public class ProductApi extends BaseApi {
 			return result;
 		}
 
-	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
+	public ProductVersion createProductVersion(Product product, ProductVersionDto postData) throws MeveoApiException, BusinessException {
 		checkMandatoryFields(postData);
 		handleMissingParameters();
-		Product product = checkProductExiste(postData);
+		if(product == null) {
+			product = checkProductExiste(postData);
+		}
 		ProductVersion  productVersion= new ProductVersion();
 		populateProduct(postData, product, productVersion);
 		productVersionService.create(productVersion);
@@ -608,8 +610,8 @@ public class ProductApi extends BaseApi {
      *
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
-     * @throws ProductException
-     * @throws ProductVersionException
+     * @throws MeveoApiException
+     * @throws BusinessException
      */
     public ProductVersion createOrUpdateProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
     	String productCode = postData.getProductCode();
@@ -618,7 +620,7 @@ public class ProductApi extends BaseApi {
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
 	        if (productVersion == null) {
-	            return createProductVersion(postData);
+	            return createProductVersion(null, postData);
 	        } else {
 	            return updateProductVersion(postData);
 	        }
@@ -800,10 +802,10 @@ public class ProductApi extends BaseApi {
 		Set<ProductVersionAttributeDTO> attributeCodes = postData.getProductAttributes(); 
 		productVersion.getAttributes().clear();
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
-            List<ProductVersionAttribute> attributes=new ArrayList<ProductVersionAttribute>();
+            List<ProductVersionAttribute> attributes = new ArrayList<>();
 			for(ProductVersionAttributeDTO attr:attributeCodes) {
                 var currentSequence = attr.getSequence();
-				Attribute attribute=attributeService.findByCode(attr.getAttributeCode());
+				Attribute attribute = attributeService.findByCode(attr.getAttributeCode());
 				if(attribute == null) { 
                     throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeCode());
 				}
@@ -829,7 +831,7 @@ public class ProductApi extends BaseApi {
 	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> tagCodes = postData.getTagCodes();
 		if(tagCodes != null && !tagCodes.isEmpty()){
-			Set<Tag> tags=new HashSet<Tag>();
+			Set<Tag> tags = new HashSet<>();
 			for(String code:tagCodes) {
 				Tag tag=tagService.findByCode(code);
 				if(tag == null) {
@@ -846,9 +848,9 @@ public class ProductApi extends BaseApi {
 	private void processMedias(ProductDto postData, Product product) {
 		Set<String> mediaCodes = postData.getMediaCodes();
 		if(mediaCodes != null && !mediaCodes.isEmpty()){
-			List<Media> medias=new ArrayList<Media>();
+			List<Media> medias = new ArrayList<>();
 			for(String code:mediaCodes) {
-				Media media=mediaService.findByCode(code);
+				Media media = mediaService.findByCode(code);
 				if(media == null) {
 					throw new EntityDoesNotExistsException(Media.class,code);
 				}

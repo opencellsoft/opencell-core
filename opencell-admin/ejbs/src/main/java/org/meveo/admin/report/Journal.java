@@ -33,7 +33,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.reporting.impl.JournalEntryService;
+import org.meveo.service.reporting.impl.DwhJournalEntryService;
 
 /**
  * @author Wassim Drira
@@ -46,7 +46,7 @@ public class Journal extends FileProducer implements Reporting {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Inject
-    private JournalEntryService journalEntryService;
+    private DwhJournalEntryService journalEntryService;
 
     /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject

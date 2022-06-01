@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -42,15 +43,17 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @Entity
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl  where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
-})
-// 
+        @NamedQuery(name = "PricePlanMatrixVersion.lastCurrentVersion", query = "select p.currentVersion from PricePlanMatrixVersion p where  p.pricePlanMatrix=:pricePlanMatrix order by p.currentVersion desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids)"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
+    })
 public class PricePlanMatrixVersion extends AuditableEntity {
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     @NotNull
@@ -61,30 +64,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
 
-    public PricePlanMatrixVersion() {
-	}
-    
-    
-    
-	public PricePlanMatrixVersion(PricePlanMatrixVersion copy) {
-		this.status = VersionStatusEnum.DRAFT;
-		this.pricePlanMatrix = copy.pricePlanMatrix;
-		this.currentVersion = 1;
-		this.label = copy.label;
-		this.statusDate = new Date();
-		this.validity = copy.validity;
-		this.isMatrix = copy.isMatrix;
-		this.amountWithoutTax = copy.amountWithoutTax;
-		this.amountWithTax = copy.amountWithTax;
-		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
-		this.amountWithTaxEL = copy.amountWithTaxEL;
-		this.lines = new HashSet<>();
-		this.columns = new HashSet<>();
-		this.priority = copy.priority;
-		this.version = 1;
-	}
-
-	@Column(name = "current_version", nullable = false)
+    @Column(name = "current_version", nullable = false)
     private int currentVersion;
 
     @Column(name = "label")
@@ -111,23 +91,41 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
-    @Column(name = "amount_without_tax_el") 
-    private String amountWithoutTaxEL;
-
-    @Column(name = "amount_with_tax_el")
-    private String amountWithTaxEL;
+    @Column(name = "price_el")
+    private String priceEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixLine> lines = new HashSet<>();
 
-    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade ={CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH}, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH }, orphanRemoval = true)
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
-    
+
     /**
      * The lower number, the higher the priority is
      */
     @Column(name = "priority")
     private int priority = 0;
+
+    public PricePlanMatrixVersion() {
+    }
+
+    public PricePlanMatrixVersion(PricePlanMatrixVersion copy) {
+        this.status = VersionStatusEnum.DRAFT;
+        this.pricePlanMatrix = copy.pricePlanMatrix;
+        this.currentVersion = 1;
+        this.label = copy.label;
+        this.statusDate = new Date();
+        this.validity = copy.validity;
+        this.isMatrix = copy.isMatrix;
+        this.amountWithoutTax = copy.amountWithoutTax;
+        this.amountWithTax = copy.amountWithTax;
+        this.priceEL = copy.priceEL;
+        this.lines = new HashSet<>();
+        this.columns = new HashSet<>();
+        this.priority = copy.priority;
+        this.version = 1;
+    }
 
     /**
      * @return the status
@@ -135,21 +133,24 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public VersionStatusEnum getStatus() {
         return status;
     }
+
     /**
      * @param status the status to set
      */
     public void setStatus(VersionStatusEnum status) {
-    	if(getId()!=null) {
-    		setStatusChangeLog(", status changed from "+this.status+" to "+status+".");
-    	}
+        if (getId() != null) {
+            setStatusChangeLog(", status changed from " + this.status + " to " + status + ".");
+        }
         this.status = status;
     }
+
     /**
      * @return the statusDate
      */
     public Date getStatusDate() {
         return statusDate;
     }
+
     /**
      * @param statusDate the statusDate to set
      */
@@ -229,50 +230,67 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public String getAmountWithoutTaxEL() {
-        return amountWithoutTaxEL;
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
     }
 
-    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
-        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
-    public String getAmountWithTaxEL() {
-        return amountWithTaxEL;
+    @Transient
+    private String statusChangeLog = "";
+
+    /**
+     * @return the statusChangeLog
+     */
+    public String getStatusChangeLog() {
+        return statusChangeLog;
     }
 
-    public void setAmountWithTaxEL(String amountWithTaxEL) {
-        this.amountWithTaxEL = amountWithTaxEL;
+    /**
+     * @param statusChangeLog the statusChangeLog to set
+     */
+    public void setStatusChangeLog(String statusChangeLog) {
+        this.statusChangeLog = statusChangeLog;
     }
-	/**
-	 * @return the priority
-	 */
-	public int getPriority() {
-		return priority;
-	}
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-	
-	@Transient
-	private String statusChangeLog="";
-	
-	/**
-	 * @return the statusChangeLog
-	 */
-	public String getStatusChangeLog() {
-		return statusChangeLog;
-	}
-
-	/**
-	 * @param statusChangeLog the statusChangeLog to set
-	 */
-	public void setStatusChangeLog(String statusChangeLog) {
-		this.statusChangeLog = statusChangeLog;
-	}
-
     
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(amountWithTax, amountWithoutTax, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
+          priority, status, statusChangeLog, statusDate, validity);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof PricePlanMatrixVersion))
+            return false;
+        PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
+        return Objects.equals(amountWithTax, other.amountWithTax) 
+                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(priceEL, other.priceEL)
+                && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
+                && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
+                && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);
+    }
 }

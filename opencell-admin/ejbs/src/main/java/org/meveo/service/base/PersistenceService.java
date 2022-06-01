@@ -27,7 +27,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,8 +37,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -52,13 +52,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
@@ -73,6 +74,7 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -91,7 +93,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -105,6 +106,7 @@ import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
+import org.meveo.service.base.expressions.ExpressionParser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -143,10 +145,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter criteria - wildcard Or
      */
     public static final String SEARCH_WILDCARD_OR = "wildcardOr";
+
     /**
-     * Entity list search parameter name - parameter's value contains sql statement
+     * Entity list search parameter criteria - list
+     */
+    public static final String SEARCH_LIST = "list";
+
+    /**
+     * Entity list search parameter name - parameter's value contains sql statement. Word "SQL" can be succeeded by a anything else (e.g. number) allowing to support more than one SQL clause.
      */
     public static final String SEARCH_SQL = "SQL";
+    /**
+     * Entity list search parameter name - parameter's value contains a set of elements that are joined by OR clause between them
+     */
+    public static final String SEARCH_OR = "OR";
+    /**
+     * Entity list search parameter name - a prefix allowing to have multiple criteria for the same field. Word will be removed and any other condition evaluated as usual. Word "AND" can be succeeded by a anything else
+     * (e.g. number) allowing to support more than one clause for the same field.
+     */
+    public static final String SEARCH_AND = "AND";
     /**
      * Entity list search parameter criteria - just like wildcardOr but Ignoring case
      */
@@ -164,6 +181,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
     
+    public static final int SHORT_MAX_VALUE = 32767;
     /**
      * Is custom field accumulation being used
      */
@@ -954,7 +972,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * fields. Date value is truncated to the start of the day</li>
      * <li><b>toOptionalRangeInclusive</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;=value. Value is inclusive. Applies to date and
      * number type fields. Date value is truncated to the end of the day</li>
-     * <li><b>list</b>. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li><b>list</b>. Value is in field's list value. Applies to string, date and number type fields.</li>
      * <li><b>listInList</b>. Value, which is a list, should be in field value (list)
      * <li><b>inList</b>/<b>not-inList</b>. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
      * <li><b>minmaxRange</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is exclusive. Date value is truncated to the start of
@@ -1160,16 +1178,34 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     String type = (String) map.keySet().toArray()[0];
                     Object value = map.values().toArray()[0];
 
-                    String[] fieldInfo = customFiterName.split(" ");
-                    String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
-                    String transformedFilter = fieldInfo.length == 1 ? "" : fieldInfo[0] + " ";
-                    for (String fieldName : fields) {
-                        transformedFilter = extractCustomFieldSyntax(type, value.getClass(), transformedFilter, fieldName, "");
-                    }
-                    if (value instanceof EntityReferenceWrapper) {
-                        cftFilters.put(transformedFilter, ((EntityReferenceWrapper) value).getCode());
+                    ExpressionParser fieldInfo = new ExpressionParser(customFiterName.split(" "));
+                    String transformedFilter = fieldInfo.getCondition() != null ? fieldInfo.getCondition() + " " : "";
+
+                    // In case or search inside a LIST storage type CF field, use a SQL search with the following function:
+                    // listVarcharFromJson(<entity>.cfValues,<custom field name>,<value to search for>)=true
+                    if (SEARCH_LIST.equals(fieldInfo.getCondition())) {
+                        if ("string".equals(type)) {
+                            value = "'" + value + "'";
+                        }
+                        type = "list" + StringUtils.capitalizeFirstLetter(type);
+                        String searchFunction = "list";
+                        transformedFilter = searchFunction + FROM_JSON_FUNCTION + "cfValues," + fieldInfo.getFieldName() + "," + type + ",0," + value + ")=true ";
+                        cftFilters.put(PersistenceService.SEARCH_SQL + "_" + fieldInfo.getFieldName(), transformedFilter);
+
                     } else {
-                        cftFilters.put(transformedFilter, value);
+                        if (type.startsWith("list")) {
+                            type = type.substring(4).toLowerCase(); // A fix so inList search by a list of values would be compared against a regular field instead of a list type field e.g. listString - See BaseApi.castFilterValue logic 
+                        }
+
+                        for (String fieldName : fieldInfo.getAllFields()) {
+                            transformedFilter = extractCustomFieldSyntax(type, value.getClass(), transformedFilter, fieldName, "");
+                        }
+
+                        if (value instanceof EntityReferenceWrapper) {
+                            cftFilters.put(transformedFilter, ((EntityReferenceWrapper) value).getCode());
+                        } else {
+                            cftFilters.put(transformedFilter, value);
+                        }
                     }
                 }
             }
@@ -1184,20 +1220,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return transformedFilter;
 	}
 
-    /**
-     * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
-     *
-     * @param queryBuilder
-     * @param filterValue
-     * @param fieldName
-     */
-    private void addListInListCreterion(QueryBuilder queryBuilder, Object filterValue, String fieldName) {
-        String paramName = queryBuilder.convertFieldToParam(fieldName);
-        if (filterValue.getClass().isArray()) {
-            Object[] values = (Object[]) filterValue;
-            IntStream.range(0, values.length).forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
-        }
-    }
 
     /**
      * Update last modified information (created/updated date and username)
@@ -1556,10 +1578,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @param instance
 	 * @return
 	 */
-	public BusinessEntity tryToFindByCodeOrId(BusinessEntity instance) {
-		return tryToFindByCodeOrId(instance, null);
+	@SuppressWarnings("unchecked")
+    public <B extends BusinessEntity> B tryToFindByCodeOrId(B instance) {
+		return (B) tryToFindByCodeOrId(instance, null);
 	}
-	
+
 	/**
 	 * try to find entity in database by code or id
 	 * @param instance
@@ -1607,5 +1630,36 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public boolean areEventsEnabled(NotificationEventTypeEnum eventType) {
         List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, ReflectionUtils.createObject(entityClass.getName()));
         return notifications != null && !notifications.isEmpty();
+    }
+
+
+
+    /**
+     * Execute a HQL select query
+     *
+     * @param hqlQuery HQL query to execute
+     * @param params Parameters to pass
+     * @return A map of values retrieved
+     */
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params) {
+        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return query.getResultStream().map(mapTuplesAsMap()).collect(Collectors.toList());
+    }
+
+    private Function<Tuple, Map<String, Object>> mapTuplesAsMap() {
+        return data -> {
+            Map<String, Object> map = new HashMap<>();
+            for (TupleElement<?> tuple : data.getElements()) {
+                map.put(tuple.getAlias(), data.get(tuple.getAlias()));
+            }
+            return map;
+        };
     }
 }

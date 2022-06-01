@@ -35,7 +35,8 @@ import org.meveo.model.crm.Customer;
 @NamedQueries({
 		@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id"),
 		@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code"),
-		@NamedQuery(name = "Tag.findByRequestedTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:requestedTagType)") 
+		@NamedQuery(name = "Tag.findByRequestedTagType", query = "select tag.code from Tag tag where tag.tagType.code IN (:requestedTagType)") 
+
 })
 public class Tag extends BusinessEntity {
 

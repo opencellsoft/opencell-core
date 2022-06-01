@@ -19,7 +19,7 @@
 package org.meveo.apiv2.standardReport;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlType;
@@ -30,32 +30,65 @@ import org.meveo.model.payments.DunningLevelEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@XmlType(name="agedReceivable", propOrder = { "customerAccountCode", "NotYetDue", "sum_1_30", "sum_31_60", "sum_61_90", "sum_90_up", "general_total" })
+@XmlType(name = "agedReceivable", propOrder = {"customerAccountCode", "NotYetDue", "sum_1_30", "sum_31_60", "sum_61_90", "sum_90_up", "general_total"})
 @Value.Immutable
-@Value.Style(jdkOnly=true)
+@Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableAgedReceivable.class)
 public interface AgedReceivable extends Resource {
     @Nullable
     String getCustomerAccountCode();
+
     @Nullable
     BigDecimal getNotYetDue();
+
     @Nullable
     BigDecimal getSum_1_30();
+
     @Nullable
     BigDecimal getSum_31_60();
+
     @Nullable
     BigDecimal getSum_61_90();
+
     @Nullable
     BigDecimal getSum_90_up();
+
     @Nullable
     BigDecimal getGeneral_total();
+
     @Nullable
     Date dueDate();
+
     @Nullable
     String getCustomerAccountName();
+
     @Nullable
     String getCustomerAccountDescription();
+
     @Nullable
     DunningLevelEnum getDunningLevel();
-    
+
+    @Nullable
+    String getFuncCurrency();
+
+    @Nullable
+    List<BigDecimal> getNetAmountByPeriod();
+
+    @Nullable
+    List<BigDecimal> getTaxAmountByPeriod();
+
+    @Nullable
+    List<BigDecimal> getTotalAmountByPeriod();
+
+    @Nullable
+    String getInvoiceNumber();
+
+    @Nullable
+    Long getInvoiceId();
+
+    @Nullable
+    String getTradingCurrency();
+
+    @Nullable
+    BigDecimal getBilledAmount();
 }

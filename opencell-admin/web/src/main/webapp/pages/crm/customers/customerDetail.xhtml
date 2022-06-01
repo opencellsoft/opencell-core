@@ -96,8 +96,9 @@
 					                </p:panelGrid>
 								</h:panelGrid>
                             </p:fieldset>
-
-                        </p:tab>
+							<hftl:formField label="#{messages['customer.anonymized']}" field="anonymizationDate"
+											rendered="#{customerBean.entity.isAnonymized()}" allowEdit="false" />
+						</p:tab>
 
 
                         <p:tab title="#{messages['customer.tab.information']}" id="tab1">

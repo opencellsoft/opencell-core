@@ -17,6 +17,22 @@
  */
 package org.meveo.model.billing;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
@@ -24,17 +40,6 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
-
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Instantiated counter
@@ -45,6 +50,15 @@ import java.util.List;
 @Table(name = "billing_counter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
+@NamedQueries({ 
+	@NamedQuery(name = "CounterInstance.findByCounterAndCustomer", query = "SELECT ci FROM CounterInstance ci left join ci.customer ca where ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndCustomerAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.customerAccount cust where cust.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndBillingAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.billingAccount ba where ba.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndUserAccount", query = "SELECT ci.id FROM CounterInstance ci left join ci.userAccount ua where ua.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndSubscription", query = "SELECT ci.id FROM CounterInstance ci left join ci.subscription su where su.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode"),
+	@NamedQuery(name = "CounterInstance.findByCounterAndService", query = "SELECT ci.id FROM CounterInstance ci left join ci.serviceInstance si where si.status='ACTIVE' and ci.counterTemplate.code=:counterTemplateCode")
+	
+})
 public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
@@ -102,6 +116,20 @@ public class CounterInstance extends BusinessEntity {
      */
     @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
     private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
+    
+    /**
+     * usage charges instances
+     */
+    @OneToMany(mappedBy = "counter", fetch = FetchType.LAZY)
+    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
+    
+    /**
+     * charge instances related as accumulator counters
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "counter_instance_id"), inverseJoinColumns = @JoinColumn(name = "chrg_instance_id"))
+    @OrderColumn(name = "INDX")
+    private List<ChargeInstance> chargeInstances = new ArrayList<>();
 
     public CounterTemplate getCounterTemplate() {
         return counterTemplate;
@@ -219,4 +247,22 @@ public class CounterInstance extends BusinessEntity {
     public void setCustomerAccount(CustomerAccount customerAccount) {
         this.customerAccount = customerAccount;
     }
+
+	public List<UsageChargeInstance> getUsageChargeInstances() {
+		return usageChargeInstances;
+	}
+
+	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
+		this.usageChargeInstances = usageChargeInstances;
+	}
+
+	public List<ChargeInstance> getChargeInstances() {
+		return chargeInstances;
+	}
+
+	public void setChargeInstances(List<ChargeInstance> chargeInstances) {
+		this.chargeInstances = chargeInstances;
+	}
+    
+    
 }

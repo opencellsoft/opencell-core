@@ -32,6 +32,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.crm.Customer;
@@ -301,7 +302,12 @@ public class ContractApi extends BaseApi{
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
     	item.setDescription(contractItemDto.getDescription());
-    	item.setContractRateType(contractItemDto.getContractRateType());
+
+    	if(contractItemDto.getAmountWithoutTax() != null) {
+    		item.setContractRateType(ContractRateTypeEnum.FIXED);
+    	}else {
+        	item.setContractRateType(contractItemDto.getContractRateType());
+    	}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
@@ -340,7 +346,12 @@ public class ContractApi extends BaseApi{
     		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
-    	item.setContractRateType(contractItemDto.getContractRateType());
+
+    	if(contractItemDto.getAmountWithoutTax() != null) {
+    		item.setContractRateType(ContractRateTypeEnum.FIXED);
+    	}else {
+        	item.setContractRateType(contractItemDto.getContractRateType());
+    	}
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);

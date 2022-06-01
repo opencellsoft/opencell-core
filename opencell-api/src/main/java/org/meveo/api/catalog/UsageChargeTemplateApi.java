@@ -23,6 +23,7 @@ import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.ValidationException;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -135,6 +136,13 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
 
         if (postData.getTriggerNextChargeEL() != null) {
             chargeTemplate.setTriggerNextChargeEL(StringUtils.getDefaultIfEmpty(postData.getTriggerNextChargeEL(), null));
+        }
+        if(postData.getStatus() != null) {
+            try {
+                chargeTemplate.setStatus(postData.getStatus());
+            } catch (ValidationException exception) {
+                throw new MeveoApiException(exception);
+            }
         }
 
         return chargeTemplate;

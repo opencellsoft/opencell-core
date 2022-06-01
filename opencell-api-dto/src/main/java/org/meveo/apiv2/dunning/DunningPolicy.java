@@ -72,7 +72,7 @@ public interface DunningPolicy extends Resource {
     @Value.Default
     @Schema(description = "is policy is activated")
     @JsonProperty("isActivePolicy")
-    default Boolean isActivePolicy() { return TRUE; }
+    default Boolean isActivePolicy() { return FALSE; }
 
     @Schema(description = "Dunning policy levels")
     @Nullable

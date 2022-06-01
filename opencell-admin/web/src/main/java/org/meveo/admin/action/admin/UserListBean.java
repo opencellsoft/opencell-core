@@ -17,17 +17,17 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
-
 import org.meveo.model.admin.User;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
+import java.util.*;
 
 @Named
 @ConversationScoped
@@ -39,29 +39,66 @@ public class UserListBean extends UserBean {
 
 	public LazyDataModel<User> getFilteredLazyDataModel() {
 		
-		if (filteredUsers != null) {
-			return filteredUsers;
-		}
+		if (filteredUsers == null) {
 
-		filteredUsers = new LazyDataModelWSize<User>() {
-			private static final long serialVersionUID = 1L;
+			filteredUsers = new ServiceBasedLazyDataModel<User>() {
+				private static final long serialVersionUID = 1L;
+	
+				@Override
+				public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+					
+					String userName = filters.get("userName") != null ? (String) filters.get("userName") : null;
+					List<User> entities = null;
 
-			@Override
-			public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+					if (currentUser.hasRole("marketingManager")) {
+						if(userName != null) {
+							entities = userService.findUserByRole(userName, "marketingManager", "CUSTOMER_CARE_USER");
+						}else {
+							entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
+						}
+					}else {
+						if(userName != null) {
+							User user = userService.findByUsernameWithFetch(userName, null);
+							if(user != null) {
+								entities = new ArrayList<User>();
+								entities.add(user);
+							}else {
+								return new ArrayList<User>();
+							}
+						}else {
+							return super.load(first, pageSize, sortField, sortOrder,  loadingFilters);
 
-				List<User> entities = null;
-				if (currentUser.hasRole("marketingManager")) {
-					entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
-				}else {
-					entities = userService.list();
+
+
+						}
+					}
+
+
+					setRowCount(entities.size());
+	
+					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
 				}
-				setRowCount(entities.size());
 
-				return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
-			}
-		};
+				@Override
+				protected Map<String, Object> getSearchCriteria() {
+					return new HashMap<>();
+				}
 
+				@Override
+				protected IPersistenceService<User> getPersistenceServiceImpl() {
+					return userService;
+				}
+
+				@Override
+				protected ElasticClient getElasticClientImpl() {
+					return null;
+				}
+			};
+			
+		}
+	
 		return filteredUsers;
+		
 		
 	}
 

@@ -23,10 +23,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.api.dto.payment.AccountingSchemeDto;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class OccTemplateDto.
@@ -65,6 +65,20 @@ public class OccTemplateDto extends BusinessEntityDto {
     @Schema(description = "The journal code")
     private String journalCode;
 
+    /** The accounting scheme. */
+    @XmlElement
+    private AccountingSchemeDto accountingScheme;
+
+    /** contract accounting code */
+    @Schema(description = "contract accounting code")
+    @XmlElement(name = "contraAccountingCode")
+    private String contractAccountingCode;
+
+    /** commission accounting code */
+    @Schema(description = "contra Accounting Code 2")
+    @XmlElement(name = "contraAccountingCode2")
+    private String contraAccountingCode2;
+
     /**
      * Instantiates a new occ template dto.
      */
@@ -82,6 +96,16 @@ public class OccTemplateDto extends BusinessEntityDto {
         accountCode = occTemplate.getAccountingCode().getCode();
         occCategory = occTemplate.getOccCategory();
         accountCodeClientSide = occTemplate.getAccountCodeClientSide();
+        if (occTemplate.getAccountingScheme() != null) {
+            accountingScheme = new AccountingSchemeDto(occTemplate.getAccountingScheme());
+        }
+        if(occTemplate.getContraAccountingCode() != null) {
+            contractAccountingCode = occTemplate.getContraAccountingCode().getCode();
+        }
+
+        if(occTemplate.getContraAccountingCode2() != null) {
+            contraAccountingCode2 = occTemplate.getContraAccountingCode2().getCode();
+        }
     }
 
     /**
@@ -164,12 +188,55 @@ public class OccTemplateDto extends BusinessEntityDto {
         this.accountCode = accountCode;
     }
 
-	public String getJournalCode() {
+    /**
+     * Gets journal code.
+     *
+     * @return the journal code
+     */
+    public String getJournalCode() {
 		return journalCode;
 	}
 
-	public void setJournalCode(String journalCode) {
+    /**
+     * Sets journal code.
+     *
+     * @param journalCode the journal code
+     */
+    public void setJournalCode(String journalCode) {
 		this.journalCode = journalCode;
 	}
-    
+
+    /**
+     * Gets accounting scheme.
+     *
+     * @return the accounting scheme
+     */
+    public AccountingSchemeDto getAccountingScheme() {
+        return accountingScheme;
+    }
+
+    /**
+     * Sets accounting scheme.
+     *
+     * @param accountingScheme the accounting scheme
+     */
+    public void setAccountingScheme(AccountingSchemeDto accountingScheme) {
+        this.accountingScheme = accountingScheme;
+    }
+
+    public String getContractAccountingCode() {
+        return contractAccountingCode;
+    }
+
+    public void setContractAccountingCode(String contractAccountingCode) {
+        this.contractAccountingCode = contractAccountingCode;
+    }
+
+    public String getContraAccountingCode2() {
+        return contraAccountingCode2;
+    }
+
+    public void setContraAccountingCode2(String contraAccountingCode2) {
+        this.contraAccountingCode2 = contraAccountingCode2;
+    }
 }

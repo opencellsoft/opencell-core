@@ -18,6 +18,9 @@ import static java.util.Optional.empty;
 public class DunningPaymentRetryApiService implements ApiService<DunningPaymentRetry> {
 
 	@Inject
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
+	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningPaymentRetriesService dunningPaymentRetriesService;
@@ -44,7 +47,7 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 
 	@Override
 	public DunningPaymentRetry create(DunningPaymentRetry dunningPaymentRetry) {
-
+		globalSettingsVerifier.checkActivateDunning();
 		if (dunningPaymentRetry.getDunningSettings() != null && dunningPaymentRetry.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningPaymentRetry.getDunningSettings().getId());
 			if (dunningSettings == null) {
@@ -64,6 +67,7 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 
 	@Override
 	public Optional<DunningPaymentRetry> update(Long id, DunningPaymentRetry dunningPaymentRetry) {
+		globalSettingsVerifier.checkActivateDunning();
 		if (dunningPaymentRetry.getDunningSettings() != null && dunningPaymentRetry.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningPaymentRetry.getDunningSettings().getId());
 			if (dunningSettings == null) {
@@ -104,6 +108,7 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 
 	@Override
 	public Optional<DunningPaymentRetry> delete(Long id) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningPaymentRetry = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		dunningPaymentRetriesService.remove(dunningPaymentRetry);
 		return Optional.ofNullable(dunningPaymentRetry);

@@ -21,9 +21,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.accounting.resource.impl.AccountingPeriodResourceImpl;
-import org.meveo.apiv2.accountreceivable.accountOperation.AccountReceivableResourceImpl;
+import org.meveo.apiv2.accounting.resource.impl.AccountingResourceImpl;
+import org.meveo.apiv2.accountreceivable.accountOperation.*;
 import org.meveo.apiv2.accountreceivable.deferralPayments.AccountReceivableDeferralPaymentsResourceImpl;
 import org.meveo.apiv2.accounts.impl.AccountsManagementResourceImpl;
+import org.meveo.apiv2.accounts.impl.UserAccountsResourceImpl;
 import org.meveo.apiv2.admin.providers.ProviderResourceImpl;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
@@ -68,12 +70,18 @@ import org.meveo.apiv2.generic.exception.UnprocessableEntityExceptionMapper;
 import org.meveo.apiv2.generic.exception.ValidationExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
+import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
 import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
+import org.meveo.apiv2.securityDeposit.financeSettings.impl.FinanceSettingsResourceImpl;
+import org.meveo.apiv2.securityDeposit.impl.SecurityDepositResourceImpl;
+import org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl.SecurityDepositTemplateResourceImpl;
+import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
+import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
@@ -124,7 +132,10 @@ public class GenericOpencellRestful extends Application {
                 StandardReportResourceImpl.class, MediationResourceImpl.class, DunningPolicyResourceImpl.class, DunningStopReasonsResourceImpl.class, DunningPauseReasonsResourceImpl.class,
                 DunningPaymentRetryResourceImpl.class, FileUploadResourceImpl.class, PricePlanResourceImpl.class, DunningTemplateResourceImpl.class, PricePlanMatrixResourceImpl.class,
                 RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class, ImportExportResourceImpl.class,
-                DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class)
+                DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class,
+                        FinanceSettingsResourceImpl.class, SecurityDepositTemplateResourceImpl.class, SecurityDepositResourceImpl.class, UserAccountsResourceImpl.class,
+                        OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class,
+                OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
@@ -149,6 +160,9 @@ public class GenericOpencellRestful extends Application {
                     versionInfo.put("name", (String) jsonObject.get("name"));
                     versionInfo.put("version", (String) jsonObject.get("version"));
                     versionInfo.put("commit", (String) jsonObject.get("commit"));
+                    if(jsonObject.get("commitDate") != null) {
+                        versionInfo.put("commitDate", (String) jsonObject.get("commitDate"));
+                    }
 
                     VERSION_INFO.add(versionInfo);
                 } catch (ParseException | IOException e) {

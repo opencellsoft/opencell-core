@@ -125,6 +125,13 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     @Column(name = "credit_debit_flag")
     protected OperationTypeEnum type;
+    
+    /**
+     * Operation type
+     */
+    @Column(name = "charge_type", insertable = false, updatable = false, length = 5)
+    @Size(max = 5)
+    private String chargeType;
 
     /**
      * Is amount editable
@@ -587,6 +594,16 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	public ChargeTemplateStatusEnum getStatus() {
 		return status;
 	}
+	
+	
+
+	public String getChargeType() {
+		return chargeType;
+	}
+
+	public void setChargeType(String chargeType) {
+		this.chargeType = chargeType;
+	}
 
 	/**
 	 * @param status the status to set
@@ -600,4 +617,28 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 		}
 		this.status = status;
 	}
+
+    public List<ProductChargeTemplateMapping> getProductCharges() {
+        return productCharges;
+    }
+
+    public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
+        this.productCharges = productCharges;
+    }
+
+    public boolean isRoundingValuesComputed() {
+        return roundingValuesComputed;
+    }
+
+    public void setRoundingValuesComputed(boolean roundingValuesComputed) {
+        this.roundingValuesComputed = roundingValuesComputed;
+    }
+
+    public void setRoundingUnityNbDecimal(int roundingUnityNbDecimal) {
+        this.roundingUnityNbDecimal = roundingUnityNbDecimal;
+    }
+
+    public void setRoundingEdrNbDecimal(int roundingEdrNbDecimal) {
+        this.roundingEdrNbDecimal = roundingEdrNbDecimal;
+    }
 }

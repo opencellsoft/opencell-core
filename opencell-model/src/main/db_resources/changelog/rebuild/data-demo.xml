@@ -280,7 +280,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="code" value="512000000"></column>
-            <column name="description" value="Cash"></column>
+            <column name="description" value="Banks"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
             <column name="chart_of_account_view_type" value="VIEW"></column>
         </insert>
@@ -359,6 +359,71 @@
             <column name="chart_of_account_type" value="REVENUE" />
             <column name="chart_of_account_view_type" value="REGULAR" />
         </insert>
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-37" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511011000" />
+			<column name="description" value="Payment Card to collect"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+        <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-38" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511002000" />
+			<column name="description" value="Payment Paypal to collect"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-39" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511003000" />
+			<column name="description" value="Payment Stripe to collect"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-40" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511000610" />
+			<column name="description" value="Payment - TIP to collect"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+         <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-41" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="531100000" />
+			<column name="description" value="Cash in local currency"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+
+          <insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-42" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="511200000" />
+			<column name="description" value="Checks to collect"></column>
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
     </changeSet>
     
      <changeSet id="#INTRD-292_20210816" author="HatimOUDAD">
@@ -402,36 +467,45 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.046" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CHK" />
             <column name="description" value="Payment - check" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+           	<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511200000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.067" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_TIP" />
             <column name="description" value="Payment - TIP" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511000610')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:20.088" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_DDT" />
             <column name="description" value="Payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='512000000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
@@ -480,6 +554,7 @@
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-9" />
@@ -492,6 +567,7 @@
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-10" />
@@ -552,6 +628,7 @@
             <column name="description" value="Other - deposit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
 
         <insert tableName="ar_occ_template">
@@ -727,12 +804,15 @@
             <column name="id" valueNumeric="-43" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CRD" />
             <column name="description" value="Payment - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511011000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>        
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-44" />
@@ -760,23 +840,29 @@
             <column name="id" valueNumeric="-46" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_PAL" />
             <column name="description" value="Payment Paypal" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511002000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>        
        <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-47" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_STP" />
             <column name="description" value="Payment Stripe" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+           <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+           <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='511003000')" />
+           <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+           <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
         </insert>    
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-50" />
@@ -787,7 +873,8 @@
             <column name="description" value="Payment from batch payment file" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-        </insert>            
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+        </insert>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDEMO">
@@ -1086,7 +1173,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
-            <column name="description" value="United States" />
+            <column name="code" value="US"></column>
+            <column name="description" value="United States"></column>
+            <column name="uuid" value="Trading_Country_US"></column>
 
             <column name="country_id" valueNumeric="220" />
         </insert>
@@ -1095,7 +1184,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
-            <column name="description" value="France" />
+            <column name="code" value="FR"></column>
+            <column name="description" value="France"></column>
+            <column name="uuid" value="Trading_Country_FR"></column>
 
             <column name="country_id" valueNumeric="70" />
         </insert>
@@ -1108,6 +1199,8 @@
             <column name="pr_description" value="US Dollar" />
 
             <column name="currency_id" valueNumeric="49" />
+            <column name="symbol" value="$US"  />
+            <column name="decimal_places" valueNumeric="2" />
         </insert>
         <insert tableName="billing_trading_currency">
             <column name="id" valueNumeric="-2" />
@@ -1118,6 +1211,8 @@
             <column name="pr_description" value="Euro" />
 
             <column name="currency_id" valueNumeric="5" />
+            <column name="symbol" value="€"  />
+            <column name="decimal_places" valueNumeric="2" />
         </insert>
     </changeSet>
     
@@ -1200,7 +1295,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_exempted" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_category">
             <column name="id" value="-3"/>
@@ -1209,7 +1304,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_regular" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>        
         <insert tableName="billing_tax_class">
             <column name="id" valueNumeric="-1"/>
@@ -1227,7 +1322,6 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.744" />
         </insert>
-
         <insert tableName="billing_tax_class">
         	<column name="id" value="-3"/>
             <column name="code" value="NO_TAX"/>
@@ -1235,7 +1329,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_no_tax" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-4"/>
@@ -1244,7 +1338,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_reduced" />
-           <column name="version" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-5"/>
@@ -1253,43 +1347,60 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_normal" />
-           <column name="version" valueNumeric="0" />
-        </insert>        
-        <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-1"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-1" />
-            <column name="buyer_country_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.765" />
         </insert>
         <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-2"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-1" />
-            <column name="buyer_country_id" valueNumeric="-2" />
-            <column name="tax_id" valueNumeric="-2" />
+            <column name="id" value='-1'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="-1"/>
+            <column name="tax_id" value='-1'/>
+            <column name="buyer_country_id" value='-1'/>
+			<column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="0" />
             <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.786" />
         </insert>
         <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-3"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-2" />
-            <column name="buyer_country_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-1" />
+            <column name="id" value='-2'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="-1"/>
+            <column name="tax_id" value='-2'/>
+            <column name="buyer_country_id" value='-2'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="0" />
             <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.807" />
         </insert>
         <insert tableName="billing_tax_mapping">
-            <column name="id" valueNumeric="-4"/>
-            <column name="tax_category_id" valueNumeric="-1"/>
-            <column name="tax_class_id" valueDate="-2" />
-            <column name="buyer_country_id" valueNumeric="-2" />
-            <column name="tax_id" valueNumeric="-2" />
+            <column name="id" value='-3'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="-2"/>
+            <column name="tax_id" value='-1'/>
+            <column name="buyer_country_id" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="0" />
             <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2015-03-19 00:04:19.829" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-4'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_class_id" value="-2"/>
+            <column name="tax_id" value='-2'/>
+            <column name="buyer_country_id" value='-2'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-5'/>
+            <column name="tax_category_id" value="-1"/>
+            <column name="tax_id" value='-5'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="0" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-11'/>
@@ -1297,15 +1408,18 @@
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="100" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-12'/>
+            <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-3"/>
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="20" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-13'/>
@@ -1314,19 +1428,32 @@
             <column name="tax_id" value='-4'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="2" />
+            <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
             <column name="id" value='-14'/>
             <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-5"/>
+            <column name="tax_id" value='-4'/>
+            <column name="buyer_country_id" value='-1'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="priority" valueNumeric="10" />
+            <column name="version" valueNumeric="0" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-15'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-5'/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
-           <column name="version" valueNumeric="0" />
+            <column name="priority" valueNumeric="1" />
+            <column name="version" valueNumeric="0" />
         </insert>
     </changeSet>
-    
+
     <changeSet author="AndriusKarpavicius" id="rebuild-data-subscriptionTerminationReasonsDEMO">
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-1" />
@@ -2277,11 +2404,174 @@
             <column name="description" value="Message" />
             <column name="multiplicator" valueNumeric="1" />
         </insert>
-    </changeSet>    
+    </changeSet>
     
-    
+	<changeSet id="INTRD-4724_20220201" author="TarikRabeh">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-36" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="165000000" />
+			<column name="description" value="Deposits and sureties received"></column>
+			<column name="chart_of_account_type" value="LIABILITIES" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-51" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-3" />
+			<column name="account_code_client_side" valueNumeric="165000000" />
+			<column name="code" value="CRD_SD" />
+			<column name="description" value="Credit for Security deposit transfer" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-52" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="41100000" />
+			<column name="code" value="DEB_SD" />
+			<column name="description" value="Debit for Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-53" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="accounting_code_id" valueNumeric="-36" />
+			<column name="account_code_client_side" valueNumeric="512010000" />
+			<column name="code" value="REF_SD" />
+			<column name="description" value="Refund of Security deposit transfer" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_seq_invoice">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="Security Deposit" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+		</insert>
+		<insert tableName="billing_invoice_type">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="code" value="SECURITY_DEPOSIT" />
+			<column name="description" value="SD - Security Deposit" />
+			<column name="invoice_sequence_id" valueNumeric="-6" />
+			<column name="occ_template_id" valueNumeric="-52" />
+			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
+		</insert>
+		<insert tableName="billing_invoice_cat">
+			<column name="id" value='-4'/>
+			<column name="code" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ICAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
+		</insert>
+		<insert tableName="billing_invoice_sub_cat">
+			<column name="id" value='-4'/>
+			<column name="invoice_category_id" value='-4'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="description" value="ISCAT_SECURITY_DEPOSIT"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_invoice_sub_cat_iscat_security_deposit" />
+		</insert>
+		<insert tableName="billing_accounting_article">
+			<column name="id" value='-11'/>
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="ART_SECURITY_DEPOSIT"/>
+			<column name="tax_class_id" value="-3"/>
+			<column name="accounting_code_id" value="-36"/>
+			<column name="invoice_sub_category_id" value="-4"/>
+			<column name="invoice_type_id" value="-6"/>
+			<column name="description" value="Article Security Deposit"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
+		</insert>
+	</changeSet>
+    <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
+    <changeSet id="#INTRD-5344_2022-02_25" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-5888_2022-03_23" author="hichamELHALOUI" />
+
+    <changeSet id="INTRD-5701_20220215" author="HatimOUDAD">
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value="-5"/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="ADV-STD"/>
+        	<column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
+            <column name="description" value='Advance payment'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ADV-STD" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-60" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_CASH" />
+			<column name="description" value="Payment - cash" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
+             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
+		</insert>
+         <insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-61" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_WIRE" />
+			<column name="description" value="Payment - wiretransfer" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-2" />
+			<column name="creator" value="opencell.admin" />
+             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='512000000')" />
+             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419100000')" />
+             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Payment entry scheme')" />
+		</insert>
+	</changeSet>
+
+    <changeSet id="#INTRD-6341_20220406" author="aelmalki">
+        <update tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
+            <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+            <where> code IN ('INV_STD', 'INV_CRN')</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-6283_20220404" author="AbdelmounaimAkadid"/>
+    <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
+    <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
+    <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
+    <changeSet id="INTRD-6908_20220503" author="HichamELHALOUI"/>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-demo.xml'</sql>
     </changeSet>
+    
 </databaseChangeLog>    

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.invoice;
 
+import static java.lang.Boolean.FALSE;
 
 import org.meveo.api.dto.BaseEntityDto;
 
@@ -24,6 +25,9 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
     @XmlElement(required = true)
     private Long invoiceId;
 
+    /** generate AO */
+    private Boolean generateAO = FALSE;
+
     /**
      * Gets the invoice id.
      *
@@ -40,5 +44,13 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
      */
     public void setInvoiceId(Long invoiceId) {
         this.invoiceId = invoiceId;
+    }
+
+    public Boolean getGenerateAO() {
+        return generateAO;
+    }
+
+    public void setGenerateAO(Boolean generateAO) {
+        this.generateAO = generateAO;
     }
 }

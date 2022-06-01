@@ -36,7 +36,7 @@ import javax.validation.ValidationException;
  * 
  * Example: given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday and friday as previous and next
  * calendar days and intersection calendar will return 8 and 15 as previous and next calendar days.
- * 
+ *
  * An example of Append calendar: if we want to append a period calendar with 3 periods of 1 month, and another with 2 periods of 1 month, even if the initial date is the same, the second one will start on the end of the
  * first one if the initial date is 1/1/2021, this calendar must be used 5 periods, until 1/5/2021
  * 
@@ -68,9 +68,6 @@ public class CalendarJoin extends Calendar {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "join_cal_2_id")
     private Calendar joinCalendar2;
-
-    @Transient
-    private Date lastCalendar1date;
 
     public CalendarJoinTypeEnum getJoinType() {
         return joinType;
@@ -111,11 +108,10 @@ public class CalendarJoin extends Calendar {
             Date firstCalendarDate = joinCalendar1.nextCalendarDate(date, getInitDate());
 
             if (firstCalendarDate != null) {
-                lastCalendar1date = firstCalendarDate;
                 return firstCalendarDate;
             } else {
-                Date secondDate = joinCalendar2.nextCalendarDate(date, lastCalendar1date);
-                return secondDate;
+                Date cal1PreviousPeriodEndDate = joinCalendar1.previousPeriodEndDate(date);
+                return joinCalendar2.nextCalendarDate(date, cal1PreviousPeriodEndDate);
             }
         }
 

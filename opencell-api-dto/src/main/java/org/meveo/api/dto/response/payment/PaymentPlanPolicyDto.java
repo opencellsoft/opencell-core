@@ -10,12 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.payments.ActionOnRemainingAmountEnum;
-import org.meveo.model.payments.ClearingPriorityEnum;
-import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentPlanPolicy;
-import org.meveo.model.payments.RecurrenceUnitEnum;
+import org.meveo.model.payments.*;
 
 /**
  * The Class PaymentPlanPolicyDto.
@@ -52,6 +47,8 @@ public class PaymentPlanPolicyDto implements Serializable {
 	private ClearingPriorityEnum clearingPriority; 
 	private List<PaymentMethodEnum> allowedPaymentMethods;
 	private Long dunningDefaultPauseReason;
+	private DefaultStartingDateOfPlan defaultStartingDateOfPlan;
+
 	public Long getDunningDefaultPauseReason() {
 		return dunningDefaultPauseReason;
 	}
@@ -221,6 +218,14 @@ public class PaymentPlanPolicyDto implements Serializable {
 		this.clearingPriority = clearingPriority;
 	}
 
+	public DefaultStartingDateOfPlan getDefaultStartingDateOfPlan() {
+		return defaultStartingDateOfPlan;
+	}
+
+	public void setDefaultStartingDateOfPlan(DefaultStartingDateOfPlan defaultStartingDateOfPlan) {
+		this.defaultStartingDateOfPlan = defaultStartingDateOfPlan;
+	}
+
 	/**
      * Instantiates a new Payment Plan Policy Dto.
      */
@@ -255,18 +260,21 @@ public class PaymentPlanPolicyDto implements Serializable {
         defaultRecurrenceUnit = paymentPlanPolicy.getDefaultRecurrenceUnit();
         actionOnRemainingAmount = paymentPlanPolicy.getActionOnRemainingAmount();
         clearingPriority = paymentPlanPolicy.getClearingPriority();
-        allowedPaymentMethods = new ArrayList<PaymentMethodEnum>();
+        allowedPaymentMethods = new ArrayList<>();
         for (PaymentMethodEnum elementPaymentMethodEnum : paymentPlanPolicy.getAllowedPaymentMethods()) {
         	allowedPaymentMethods.add(elementPaymentMethodEnum);
         }
         if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
         	dunningDefaultPauseReason = paymentPlanPolicy.getDunningDefaultPauseReason().getId();
         }         
-        List<Long> listAllowedCreditCategoriesDto = new ArrayList<Long>();
+        List<Long> listAllowedCreditCategoriesDto = new ArrayList<>();
         for (CreditCategory elementAllowedCreditCategories : paymentPlanPolicy.getAllowedCreditCategories()) {
         	listAllowedCreditCategoriesDto.add(elementAllowedCreditCategories.getId());
         }
         allowedCreditCategories = listAllowedCreditCategoriesDto;
+        if(paymentPlanPolicy.getDefaultStartingDateOfPlan() != null) {
+        	defaultStartingDateOfPlan = paymentPlanPolicy.getDefaultStartingDateOfPlan();
+		}
         
     }
 
@@ -298,7 +306,8 @@ public class PaymentPlanPolicyDto implements Serializable {
     	paymentPlanPolicy.setClearingPriority(getClearingPriority());
     	paymentPlanPolicy.setAllowedPaymentMethods(paymentPlanPolicy.getAllowedPaymentMethods());        
     	paymentPlanPolicy.setDunningDefaultPauseReason(paymentPlanPolicy.getDunningDefaultPauseReason());        
-    	paymentPlanPolicy.setAllowedCreditCategories(paymentPlanPolicy.getAllowedCreditCategories());        
+    	paymentPlanPolicy.setAllowedCreditCategories(paymentPlanPolicy.getAllowedCreditCategories());
+    	paymentPlanPolicy.setDefaultStartingDateOfPlan(paymentPlanPolicy.getDefaultStartingDateOfPlan());
         return paymentPlanPolicy;
     }
 

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
@@ -127,18 +128,23 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     private List<Object[]> computeInvoiceableAmountForServicesWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate,
                                                                                 Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountBySubscription")
+        	Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+        	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+                query.setParameter("invoiceUpToDate", invoiceUpToDate);
+        	}
+            return query.getResultList();
         } else if (billableEntity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountByBillingAccount")
+            Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountByBA")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+        	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+                query.setParameter("invoiceUpToDate", invoiceUpToDate);
+        	}
+            return query.getResultList();
         }
         return null;
     }
@@ -156,19 +162,23 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     private List<Object[]> computeInvoiceableAmountForSubscriptionsWithMinAmountRule(IBillableEntity billableEntity,
                                                                                      Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountBySubscription")
+            Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+        	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+                query.setParameter("invoiceUpToDate", invoiceUpToDate);
+        	}
+            return query.getResultList();
         } else if (billableEntity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountByBillingAccount")
+            Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountByBA")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+        	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+                query.setParameter("invoiceUpToDate", invoiceUpToDate);
+        	}
+            return query.getResultList();
         }
         return null;
     }
@@ -186,18 +196,25 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     private List<Object[]> computeInvoiceableAmountForUserAccountsWithMinAmountRule(IBillableEntity billableEntity,
                                                                                     Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForUAWithMinAmountBySubscription")
+            Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForUAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
-        }
-        return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByUA")
-                .setParameter("billingAccount", billableEntity)
-                .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate).getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+        	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+                query.setParameter("invoiceUpToDate", invoiceUpToDate);
+        	}
+            return query.getResultList();
+	    } else if (billableEntity instanceof BillingAccount) {
+	        Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByUA")
+	                .setParameter("billingAccount", billableEntity)
+	                .setParameter("firstTransactionDate", firstTransactionDate)
+	                .setParameter("lastTransactionDate", lastTransactionDate);
+	    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+	            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+	    	}
+	        return query.getResultList();
+	    }
+        return null;
     }
 
     /**
@@ -212,20 +229,25 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForBillingAccountWithMinAmountRule(IBillableEntity billableEntity,
                                                                                       Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
-        if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForBAWithMinAmountBySubscription")
+        Query query;
+    	if (billableEntity instanceof Subscription) {
+            query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForBAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
-        }
-        return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByBillingAccount")
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+	    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+	            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+	    	}
+	        return query.getResultList();
+	    }
+    	query =  getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByBA")
                 .setParameter("billingAccount", billableEntity)
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate);
+    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+    	}
+        return query.getResultList();
     }
 
     /**
@@ -240,20 +262,25 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForCustomerAccountWithMinAmountRule(IBillableEntity billableEntity,
                                                                                        Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
-        if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCAWithMinAmountBySubscription")
+        Query query;
+    	if (billableEntity instanceof Subscription) {
+            query =  getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCAWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+	    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+	            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+	    	}
+	        return query.getResultList();
         }
-        return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCA")
+        query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCA")
                 .setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount())
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate);
+    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+    	}
+        return query.getResultList();
     }
     
     /**
@@ -268,20 +295,25 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
     @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForCustomerWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate,
                                                                                 Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
-        if (billableEntity instanceof Subscription) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCustomerWithMinAmountBySubscription")
+        Query query;
+    	if (billableEntity instanceof Subscription) {
+            query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableForCustomerWithMinAmountBySubscription")
                     .setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("invoiceUpToDate", invoiceUpToDate)
-                    .getResultList();
+                    .setParameter("lastTransactionDate", lastTransactionDate);
+	    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+	            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+	    	}
+	        return query.getResultList();
         }
-        return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCustomer")
+        query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableWithMinAmountByCustomer")
                 .setParameter("customer", ((BillingAccount) billableEntity).getCustomerAccount().getCustomer())
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate);
+    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+    	}
+        return query.getResultList();
     }
 
     private Seller getSeller(BillingAccount billingAccount, BusinessEntity entity) {
@@ -620,12 +652,15 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
      * @return Amounts with and without tax, tax amount
      */
     private Amounts computeTotalInvoiceableAmountForSubscription(Subscription subscription, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
-        return (Amounts) getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableBySubscription")
+    	Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableBySubscription")
                 .setParameter("subscription", subscription)
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate);
+    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+    	}
+            	
+    	return (Amounts) query.getSingleResult();
     }
 
     /**
@@ -638,12 +673,15 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
      * @return Amounts with and without tax, tax amount
      */
     private Amounts computeTotalInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, String invoicingProcessType) {
-        return (Amounts) getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableByBA")
+    	Query query = getEntityManager().createNamedQuery(invoicingProcessType + ".sumTotalInvoiceableByBA")
                 .setParameter("billingAccount", billingAccount)
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("invoiceUpToDate", invoiceUpToDate)
-                .getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate);
+    	if(!"InvoiceLine".equalsIgnoreCase(invoicingProcessType)) {
+            query.setParameter("invoiceUpToDate", invoiceUpToDate);
+    	}
+    	
+        return (Amounts) query.getSingleResult();
     }
 
     /**

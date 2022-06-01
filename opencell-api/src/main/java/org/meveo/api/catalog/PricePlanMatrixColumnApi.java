@@ -51,7 +51,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
         
-        if(!pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion).isEmpty()) {
+        if(!pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(dtoData.getCode(), pricePlanMatrixVersion).isEmpty()) {
             throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode().toLowerCase() + ", " + version + ")");
         }
 
@@ -73,7 +73,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
             log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixCode,version);
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
-        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion);
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(dtoData.getCode(), pricePlanMatrixVersion);
         PricePlanMatrixColumn pricePlanMatrixColumn = null;
         if (!pricePlanMatrixColumns.isEmpty()) {
         	pricePlanMatrixColumn = pricePlanMatrixColumns.get(0);
@@ -95,7 +95,7 @@ public class PricePlanMatrixColumnApi extends BaseApi {
             log.warn("The status of the price plan matrix code={} and current version={}, is PUBLISHED, it can not be updated", pricePlanMatrixCode,version);
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
-        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(code, pricePlanMatrixVersion);
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(code, pricePlanMatrixVersion);
         PricePlanMatrixColumn pricePlanMatrixColumn = null;
         if (!pricePlanMatrixColumns.isEmpty()) {
         	pricePlanMatrixColumn = pricePlanMatrixColumns.get(0);

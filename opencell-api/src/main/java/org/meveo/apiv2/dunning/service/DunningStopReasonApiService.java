@@ -17,6 +17,9 @@ import static java.util.Optional.empty;
 public class DunningStopReasonApiService implements ApiService<DunningStopReason> {
 
 	@Inject
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
+	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
 	private DunningStopReasonsService dunningStopReasonsService;
@@ -45,7 +48,7 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 
 	@Override
 	public DunningStopReason create(DunningStopReason dunningStopReason) {
-
+		globalSettingsVerifier.checkActivateDunning();
 		if (dunningStopReason.getDunningSettings() != null && dunningStopReason.getDunningSettings().getId() != null) {
 			var dunningSettings = dunningSettingsService.findById(dunningStopReason.getDunningSettings().getId());
 			if (dunningSettings == null) {
@@ -60,6 +63,7 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 
 	@Override
 	public Optional<DunningStopReason> update(Long id, DunningStopReason dunningStopReason) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningStopReasonUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		if (dunningStopReason.getDescription() != null) {
 			dunningStopReasonUpdate.setDescription(dunningStopReason.getDescription());
@@ -82,12 +86,14 @@ public class DunningStopReasonApiService implements ApiService<DunningStopReason
 
 	@Override
 	public Optional<DunningStopReason> delete(Long id) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningStopReason = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + id));
 		dunningStopReasonsService.remove(dunningStopReason);
 		return Optional.ofNullable(dunningStopReason);
 	}
 
 	public Optional<DunningStopReason> delete(String dunningSettingsCode, String stopReason) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningStopReason = findByCodeAndDunningSettingCode(dunningSettingsCode, stopReason)
 				.orElseThrow(() -> new BadRequestException(NO_DUNNING_STOP_REASON_FOUND + stopReason));
 		dunningStopReasonsService.remove(dunningStopReason);

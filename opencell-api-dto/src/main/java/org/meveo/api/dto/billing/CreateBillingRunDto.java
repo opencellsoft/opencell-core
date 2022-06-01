@@ -22,6 +22,7 @@
 package org.meveo.api.dto.billing;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
@@ -51,6 +53,11 @@ public class CreateBillingRunDto extends BaseEntityDto {
      * The Constant serialVersionUID.
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The billing run id.
+     */
+    private Long id;
 
     /**
      * The billing cycle code.
@@ -87,7 +94,7 @@ public class CreateBillingRunDto extends BaseEntityDto {
     /**
      * The reference date.
      */
-    private ReferenceDateEnum referenceDate;
+    private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
     /**
      * Custom fields.
@@ -110,7 +117,20 @@ public class CreateBillingRunDto extends BaseEntityDto {
     
     private BillingRunAutomaticActionEnum suspectAutoAction; 
 
-    public Boolean getSkipValidationScript() {
+    /**
+     * The description I18N.
+     */
+    private List<LanguageDescriptionDto> descriptionsTranslated;
+
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Boolean getSkipValidationScript() {
 		return skipValidationScript;
 	}
 
@@ -320,8 +340,16 @@ public class CreateBillingRunDto extends BaseEntityDto {
     public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
+    
+    public List<LanguageDescriptionDto> getDescriptionsTranslated() {
+		return descriptionsTranslated;
+	}
 
-    @Override
+	public void setDescriptionsTranslated(List<LanguageDescriptionDto> descriptionsTranslated) {
+		this.descriptionsTranslated = descriptionsTranslated;
+	}
+
+	@Override
     public String toString() {
         return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
                 + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields

@@ -200,7 +200,7 @@ public class DiscountPlanInstanceApiServiceTest {
         Map<String, Object> filters = new HashMap<>();
         filters.put("billingAccount.id", 1);
         PaginationConfiguration searchConfig = new PaginationConfiguration(1, 10, filters, "text", List.of("status", "discountPlan"));
-        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, null, null, 1L);
+        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
         assertEquals(3, map.get("total"));
@@ -236,7 +236,7 @@ public class DiscountPlanInstanceApiServiceTest {
         Map<String, Object> filters = new HashMap<>();
         filters.put("subscription.id", 1);
         PaginationConfiguration searchConfig = new PaginationConfiguration(1, 10, filters, "text", List.of("status", "discountPlan"));
-        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, null, null, 1L);
+        String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);
         assertEquals(3, map.get("total"));
@@ -273,7 +273,7 @@ public class DiscountPlanInstanceApiServiceTest {
         Map<String, Object> filters = new HashMap<>();
         filters.put("billingAccount.id", 1L);
         PaginationConfiguration searchConfig = new PaginationConfiguration(1, 10, filters, "text", List.of("status", "discountPlan"));
-        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanInstance.class, 1L, searchConfig, null, null, 1L);
+        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanInstance.class, 1L, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> data = objectMapper.readValue(jsonResponse.get(), Map.class);
         Map<String, Object> discountPlanInstance = (Map<String, Object>) data.get("data");
@@ -293,7 +293,7 @@ public class DiscountPlanInstanceApiServiceTest {
         Map<String, Object> filters = new HashMap<>();
         filters.put("subscription.id", 1L);
         PaginationConfiguration searchConfig = new PaginationConfiguration(1, 10, filters, "text", List.of("status", "discountPlan"));
-        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanInstance.class, 2L, searchConfig, null, null, 1L);
+        Optional<String> jsonResponse = loadService.findByClassNameAndId(true, DiscountPlanInstance.class, 2L, searchConfig, null, null, 1L, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> data = objectMapper.readValue(jsonResponse.get(), Map.class);
         Map<String, Object> discountPlanInstance = (Map<String, Object>) data.get("data");

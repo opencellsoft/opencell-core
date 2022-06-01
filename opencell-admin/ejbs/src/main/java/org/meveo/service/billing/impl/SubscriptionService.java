@@ -26,9 +26,11 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -49,6 +51,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.RatingResult;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -67,6 +70,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -353,6 +357,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
                 serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber);
+                // INTRD-5666: for services with subscription dates in futurs, they should be passed to terminated
+                // immediately since the whole sub is terminated
+                if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+                    serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                    serviceInstanceService.update(serviceInstance);
+                }
+
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
@@ -456,7 +467,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
 
         List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", untillDate)
-                .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
+                .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED, SubscriptionStatusEnum.SUSPENDED)).getResultList();
         ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", untillDate)
                 .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
@@ -476,13 +487,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    public void activateInstantiatedService(Subscription sub) throws BusinessException {
+    public RatingResult activateInstantiatedService(Subscription sub) throws BusinessException {
         // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+    	RatingResult ratingResult = new RatingResult();
+    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<DiscountPlanItem>();
         for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
             if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-                serviceInstanceService.serviceActivation(si);
+            	ratingResult = serviceInstanceService.serviceActivation(si);
+            	if(ratingResult != null && !ratingResult.getEligibleFixedDiscountItems().isEmpty())
+            		fixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
             }
         }
+        return ratingResult;
     }
 
     /**
@@ -1008,5 +1024,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
              return null;
          }
 
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Subscription> listByBillingAccount(BillingAccount billingAccount) {
+    	 QueryBuilder qb = new QueryBuilder(Subscription.class, "s", Arrays.asList("userAccount", "userAccount.billingAccount"));
+         qb.addCriterionEntity("s.userAccount.billingAccount.code", billingAccount.getCode());
+         try {
+             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+         } catch (NoResultException e) {
+             return null;
+         }
     }
 }

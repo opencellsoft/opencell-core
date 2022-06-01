@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * The Class ChargeCDRResponseDto.
  *
@@ -37,6 +40,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "ChargeCDRResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonInclude(Include.NON_EMPTY)
 public class ChargeCDRResponseDto extends BaseResponse {
 
     private static final long serialVersionUID = 771726001135278144L;
@@ -75,6 +79,12 @@ public class ChargeCDRResponseDto extends BaseResponse {
      * A wallet operations list.
      */
     private List<WalletOperationDto> walletOperations;
+    
+
+    /**
+     * Counter periods that were updated during the rating
+     */
+    private List<CounterPeriodDto> counterPeriods = new ArrayList<CounterPeriodDto>();
 
     public ChargeCDRResponseDto() {
         setActionStatus(null);
@@ -267,4 +277,18 @@ public class ChargeCDRResponseDto extends BaseResponse {
             this.cdr = cdr;
         }
     }
+
+	/**
+	 * @return the counterPeriods
+	 */
+	public List<CounterPeriodDto> getCounterPeriods() {
+		return counterPeriods;
+	}
+
+	/**
+	 * @param counterPeriods the counterPeriods to set
+	 */
+	public void setCounterPeriods(List<CounterPeriodDto> counterPeriods) {
+		this.counterPeriods = counterPeriods;
+	}
 }

@@ -65,7 +65,7 @@ we'll take an example of two versions 11.0.0 and 11.1.0
 3- Make a checkout and pull rebase of the 11.1.0 branch
 
 4- Run updateSQL liquibase command to install the local database to version 11.1.0 and generate a sql delta between 11.0.0 and 11.1.0 by executing this maven command : 
-	mvn mvn -Pdevelopment liquibase:clearCheckSums liquibase:updateSQL
+	mvn -Pdevelopment liquibase:clearCheckSums liquibase:updateSQL
 
 
 ------------------------------------------------------------------

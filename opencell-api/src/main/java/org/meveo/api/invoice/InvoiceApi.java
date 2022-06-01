@@ -18,6 +18,9 @@
 
 package org.meveo.api.invoice;
 
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -59,29 +62,11 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.commons.utils.JsonUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
@@ -101,14 +86,11 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
-import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.util.MeveoParamBean;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
@@ -130,13 +112,7 @@ public class InvoiceApi extends BaseApi {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private SubscriptionService subscriptionService;
-
-    @Inject
     private SellerService sellerService;
-
-    @Inject
-    private OrderService orderService;
 
     @Inject
     private BillingRunService billingRunService;
@@ -164,10 +140,6 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private PaymentApi paymentApi;
-
-    @Inject
-    @MeveoParamBean
-    private ParamBean paramBean;
 
     @Inject
     protected ResourceBundle resourceMessages;
@@ -524,24 +496,38 @@ public class InvoiceApi extends BaseApi {
     /**
      * 
      * @param invoiceId invoice id
-     * 
+     * @param generateAO generate AO, default value false
+     *
      * @return invoice number.
      * @throws MissingParameterException missing parameter exception
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws BusinessException business exception
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
      */
-    public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public String validateInvoice(Long invoiceId, boolean generateAO) throws MissingParameterException,
+            EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-       Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
+        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
+        if(generateAO) {
+            invoiceService.generateRecordedInvoiceAO(invoiceId);
+        }
+        Date today = new Date();
+        invoice = invoiceService.refreshOrRetrieve(invoice);
+        if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
+            invoice.setPaymentStatus(UNPAID);
+            invoice.setPaymentStatusDate(today);
+            invoiceService.update(invoice);
+        }
         return invoice.getInvoiceNumber();
     }
 
     /**
      *
-     * @param invoiceId invoice id
+     * @param invoice invoice
      *
      * @return invoice number.
      * @throws MissingParameterException missing parameter exception
@@ -549,7 +535,7 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception
      */
     public String validateInvoice(Invoice invoice) throws BusinessException {
-        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+        invoice.setStatus(VALIDATED);
         Invoice validatedInvoice = serviceSingleton.assignInvoiceNumber(invoice, true);
         return validatedInvoice.getInvoiceNumber();
     }

@@ -1,13 +1,18 @@
 package org.meveo.apiv2.generic;
 
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
+import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
+import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.util.Inflector;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,6 +20,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -32,13 +38,15 @@ public class GenericResourceImpl implements GenericResource {
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth()))
+        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
@@ -46,15 +54,58 @@ public class GenericResourceImpl implements GenericResource {
     public Response get(Boolean extractList, String entityName, Long id, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
-                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
-                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        if(genericFields != null && loadService.isCustomFieldQuery(genericFields)){
+        	return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), id, null))
+                    .links(buildPaginatedResourceLink(entityName)).build();
+        } else {    
+	        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), excludedFields)
+	                .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
+	                .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+        }
+    }
+
+    @Override
+    public Response getEntity(Boolean extractList, String entityName, Long id, GenericPagingAndFiltering searchConfig) {
+        // if entityName is of plural form, process the request
+        if (Inflector.getInstance().pluralize(entityName).equals(entityName)) {
+            entityName = Inflector.getInstance().singularize(entityName);
+
+            return get(extractList, entityName, id, searchConfig);
+        }
+        // otherwise, entityName is not of plural form, raise an exception
+        else {
+            MeveoApiException invalidPluralFormException = new MeveoApiException(
+                    "The entity name " + entityName + " is not a valid plural form");
+            MeveoExceptionMapper meveoExceptionMapper = new MeveoExceptionMapper();
+
+            return meveoExceptionMapper.toResponse(invalidPluralFormException);
+        }
+    }
+
+    @Override
+    public Response getAllEntities(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
+        // if entityName is of plural form, process the request
+        if (Inflector.getInstance().pluralize(entityName).equals(entityName)) {
+            entityName = Inflector.getInstance().singularize(entityName);
+
+            return getAll(extractList, entityName, searchConfig);
+        }
+        // otherwise, entityName is not of plural form, raise an exception
+        else {
+            MeveoApiException invalidPluralFormException = new MeveoApiException(
+                    "The entity name " + entityName + " is not a valid plural form");
+            MeveoExceptionMapper meveoExceptionMapper = new MeveoExceptionMapper();
+
+            return meveoExceptionMapper.toResponse(invalidPluralFormException);
+        }
     }
 
     @Override

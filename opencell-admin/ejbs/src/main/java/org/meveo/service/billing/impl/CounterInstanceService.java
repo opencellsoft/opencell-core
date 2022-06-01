@@ -61,6 +61,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.notification.Notification;
@@ -242,6 +243,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create a counter period
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = null;
@@ -314,6 +318,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
 
         CounterPeriod counterPeriod = new CounterPeriod();
@@ -405,6 +412,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
+     * Create a counter period for a given date. A check is done and no period will be created if one is already present
+     *
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @param initDate initial date.
+     * @param chargeInstance Charge instance to associate counter with
+     * @throws CounterInstantiationException Failure to create counter period
+     */
+    public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+        getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
+    }
+
+    /**
      * Find or create a counter period for a given date.
      *
      * @param counterInstance Counter instance
@@ -414,6 +434,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found or created counter period or NULL if counter period can not be created because of calendar limitations
      * @throws CounterInstantiationException Failure to create counter period
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         CounterPeriod counterPeriod = getCounterPeriodByDate(counterInstance, date);
 
@@ -529,6 +552,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) {
 
         BigDecimal deducedQuantity = null;
@@ -860,6 +886,43 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         context.put(WALLET_OPERATION, walletOperation);
         return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Long> findByCounterAndAccount(String counterTemplateCode,CounterTemplateLevel level) { 
+    	List<Long> ids=new ArrayList<>();
+    	try {
+    		if(CounterTemplateLevel.CA.equals(level)){
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomer")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.CUST.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndCustomerAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.BA.equals(level)) {
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndBillingAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.UA.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndUserAccount")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.SU.equals(level)){ 
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndSubscription")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+			}
+    		if(CounterTemplateLevel.SI.equals(level)){
+    			ids = (List<Long>)getEntityManager().createNamedQuery("CounterInstance.findByCounterAndService")
+    					.setParameter("counterTemplateCode", counterTemplateCode).getResultList();
+    		}
+    		
+    		
+    	} catch (Exception e) {
+    		log.error("findByCounterAndAccounts error ", e.getMessage());
+    	}
+
+    	return ids;
+    }    
 
     /**
      * Get a list of updated counter periods

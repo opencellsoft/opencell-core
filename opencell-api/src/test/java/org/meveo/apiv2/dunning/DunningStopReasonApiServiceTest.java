@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.service.DunningStopReasonApiService;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningStopReason;
 import org.meveo.service.payments.impl.DunningSettingsService;
@@ -38,12 +39,16 @@ public class DunningStopReasonApiServiceTest {
 
 	private DunningStopReason dunningStopReason;
 
+	@Mock
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
 	@Before
 	public void setup() {
 		dunningStopReason = new DunningStopReason();
 		//dunningStopReasons.setLanguage("Language");
 		dunningStopReason.setDescription("Description");
 		dunningStopReason.setStopReason("Stop reason");
+		doNothing().when(globalSettingsVerifier).checkActivateDunning();
 	}
 
 	@Test

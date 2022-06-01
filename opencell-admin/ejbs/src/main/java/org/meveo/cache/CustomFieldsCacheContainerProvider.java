@@ -143,7 +143,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 lastAppliesTo = cacheKeyByAppliesTo;
 
             } else if (!lastAppliesTo.equals(cacheKeyByAppliesTo)) {
-                cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
+                cftsByAppliesTo.putForExternalRead(lastAppliesTo, cftsSameAppliesTo);
                 cftsSameAppliesTo = new TreeMap<String, CustomFieldTemplate>();
                 lastAppliesTo = cacheKeyByAppliesTo;
             }
@@ -170,7 +170,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         }
 
         if (cftsSameAppliesTo != null && !cftsSameAppliesTo.isEmpty()) {
-            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
+            cftsByAppliesTo.putForExternalRead(lastAppliesTo, cftsSameAppliesTo);
         }
 
         log.info("CFT cache populated with {} values of provider {}.", cfts.size(), currentProvider);
@@ -203,7 +203,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         for (CustomEntityTemplate cet : allCets) {
             customEntityTemplateService.detach(cet);
-            cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentProvider, cet.getCode()), cet);
+            cetsByCode.putForExternalRead(new CacheKeyStr(currentProvider, cet.getCode()), cet);
         }
 
         log.info("CET cache populated with {} values of provider {}.", allCets.size(), currentProvider);
@@ -262,7 +262,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value.
+     * Store mapping between CF code and value and group in cache by CFT appliesTo value.
      * 
      * @param cft Custom field template definition
      */
@@ -281,6 +281,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         if (cftsOld != null) {
             cfts.putAll(cftsOld);
         }
+        boolean isUpdate = cftsOld != null;
 
         // Load calendar for lazy loading
         if (cft.getCalendar() != null) {
@@ -306,11 +307,15 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         cft = SerializationUtils.clone(cft);
 
         cfts.put(cft.getCode(), cft);
-        cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
+        if (isUpdate) {
+            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
+        } else {
+            cftsByAppliesTo.putForExternalRead(cacheKeyByAppliesTo, cfts);
+        }
     }
 
     /**
-     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value.
+     * Store mapping between CF code and value and group in cache by CFT appliesTo value.
      * 
      * @param cfts A list of Custom field template definitions
      */
@@ -365,7 +370,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         }
 
         for (Entry<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsInfo : newcftsByAppliesTo.entrySet()) {
-            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cftsInfo.getKey(), cftsInfo.getValue());
+            cftsByAppliesTo.putForExternalRead(cftsInfo.getKey(), cftsInfo.getValue());
         }
     }
 
@@ -410,7 +415,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         CacheKeyStr cacheKeyByAppliesTo = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
         if (!cftsByAppliesTo.getAdvancedCache().containsKey(cacheKeyByAppliesTo)) {
-            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());
+            cftsByAppliesTo.putForExternalRead(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());
         }
     }
 
@@ -418,8 +423,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * Store custom entity template to cache.
      * 
      * @param cet Custom entity template definition
+     * @param isUpdate Is this a cache entry update
      */
-    public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet) {
+    public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet, boolean isUpdate) {
 
         if (!useCETCache) {
             return;
@@ -427,8 +433,12 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Adding CET template {} to CET cache", cet.getCode());
 
-        cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
-
+        if (isUpdate) {
+            cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
+        } else {
+            cetsByCode.putForExternalRead(new CacheKeyStr(currentUser.getProviderCode(), cet.getCode()), cet);
+        }
+        
         // Sort values by cet.name
         // Collections.sort(cetsByProvider);
 

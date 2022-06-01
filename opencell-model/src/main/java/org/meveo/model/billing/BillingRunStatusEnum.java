@@ -30,12 +30,15 @@ public enum BillingRunStatusEnum {
     CANCELLING(9, "BillingRunStatusEnum.cancelling"),
     REJECTED(10, "BillingRunStatusEnum.rejected"),// the billing run or some invoices are rejected and need to be validated/cancelled.
     //NEW STATUS USED ON V2 ONLY:
+    CREATING_INVOICE_LINES(20,"BillingRunStatusEnum.creatingInvoiceLines"),//Status indicating that the invoice line job is running
     INVOICE_LINES_CREATED(21,"BillingRunStatusEnum.invoiceLinesCreated"),//Pre-invoicing report is based on invoice lines
     INVOICES_CREATED(22,"BillingRunStatusEnum.invoicesCreated"),//Invoices have been created (but are incomplete)
+    
     MINIMUM_ADDED(23,"BillingRunStatusEnum.minimumAdded"),//Invoice lines for invoicing minimum have been added
     THRESHOLD_CHECKED(24,"BillingRunStatusEnum.thresholdChecked"),//Aggregates for invoice discounts have been added
     DISCOUNT_ADDED(25,"BillingRunStatusEnum.discountAdded"),//Invoicing threshold have been checked
     TAX_COMPUTED(26,"BillingRunStatusEnum.taxComputed"),//Tax aggregates have been added
+    
     DRAFT_INVOICES(27,"BillingRunStatusEnum.draftInvoices");//Draft invoices have been created. Postinvoicing report is available
     private Integer id;
     private String label;

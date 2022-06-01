@@ -208,10 +208,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
+    @Deprecated
     public ActionStatus validate(Long invoiceId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            result.setMessage(invoiceApi.validateInvoice(invoiceId));
+            result.setMessage(invoiceApi.validateInvoice(invoiceId, false));
         } catch (Exception e) {
             processException(e, result);
         }
@@ -222,7 +223,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public ActionStatus validate(ValidateInvoiceRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            invoiceApi.validateInvoice(putData.getInvoiceId());
+            invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO());
         } catch (Exception e) {
             processException(e, result);
         }

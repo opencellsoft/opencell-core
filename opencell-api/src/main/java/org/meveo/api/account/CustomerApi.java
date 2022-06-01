@@ -151,10 +151,10 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     public Customer create(CustomerDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
-        return create(postData, true, null);
+        return create(postData, true, null, null);
     }
 
-    public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel, Seller associatedSeller) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(Customer.class.getName(), postData);
@@ -175,7 +175,11 @@ public class CustomerApi extends AccountEntityApi {
 
         Customer customer = new Customer();
 
-        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
+
+        if (postData.getIsCompany() != null) {
+            customer.setIsCompany(postData.getIsCompany());
+        }
 
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
@@ -212,7 +216,7 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
         }
 
-        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, null);
 
         customer = customerService.update(customer);
 
@@ -222,12 +226,14 @@ public class CustomerApi extends AccountEntityApi {
     /**
      * Populate entity with fields from DTO entity
      *
-     * @param billingAccount Entity to populate
+     * @param customer Entity to populate
      * @param postData DTO entity object to populate from
-     * @param checkCustomField Should a check be made if CF field is required
+     * @param checkCustomFields Should a check be made if CF field is required
      * @param businessAccountModel Business account model
+     * @param associatedSeller associated Seller
      **/
-    private void dtoToEntity(Customer customer, CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+    private void dtoToEntity(Customer customer, CustomerDto postData, boolean checkCustomFields,
+                             BusinessAccountModel businessAccountModel, Seller associatedSeller) {
 
         boolean isNew = customer.getId() == null;
 
@@ -252,7 +258,7 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         if (!Strings.isEmpty(postData.getSeller())) {
-            Seller seller = sellerService.findByCode(postData.getSeller());
+            Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
@@ -304,6 +310,11 @@ public class CustomerApi extends AccountEntityApi {
                 additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
             }
             customer.setAdditionalDetails(additionalDetails);
+        }
+
+        if(postData.getIsCompany() != null)
+        {
+            customer.setIsCompany(postData.getIsCompany());
         }
     }
 

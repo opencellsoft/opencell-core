@@ -55,10 +55,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
@@ -75,7 +77,6 @@ import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -105,7 +106,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
         @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
-public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity, IDiscountable  {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -340,6 +341,10 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     @Transient
     private List<UsageChargeInstance> usageChargeInstances;
+    
+
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<>();
 
     /**
      * Gets the end agreement date.
@@ -1213,6 +1218,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         usageChargeInstances = new ArrayList<>();
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
+            PersistenceUtils.initializeAndUnproxy(chargeInstance);
 
             if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);
@@ -1258,5 +1264,26 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 		}
 		return null;
 	}
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstance) {
+		this.discountPlanInstances = discountPlanInstance;
+	}
+
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if (this.getDiscountPlanInstances() == null) {
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
+        this.getDiscountPlanInstances().add(discountPlanInstance);
+    }
     
 }

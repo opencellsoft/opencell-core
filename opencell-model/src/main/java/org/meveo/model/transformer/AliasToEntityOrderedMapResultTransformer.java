@@ -18,6 +18,8 @@
 
 package org.meveo.model.transformer;
 
+import java.io.BufferedReader;
+import java.sql.Clob;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,7 +27,7 @@ import org.hibernate.transform.AliasedTupleSubsetResultTransformer;
 
 /**
  * Sorts the dataset column base on the sql query.
- * 
+ *
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 30 Mar 2018
@@ -52,7 +54,11 @@ public class AliasToEntityOrderedMapResultTransformer extends AliasedTupleSubset
         for (int i = 0; i < tuple.length; i++) {
             String alias = aliases[i];
             if (alias != null) {
-                result.put(alias, tuple[i]);
+                Object data = tuple[i];
+                if (data instanceof Clob) {
+                    result.put(alias.toLowerCase(), clobToString((Clob) data));
+                } else
+                    result.put(alias.toLowerCase(), data);
             }
         }
         return result;
@@ -73,4 +79,25 @@ public class AliasToEntityOrderedMapResultTransformer extends AliasedTupleSubset
     private Object readResolve() {
         return INSTANCE;
     }
+
+    /**
+     * transform clob to string
+     *
+     * @param clob a clob data
+     * @return a string
+     */
+    public static Object clobToString(Clob clob) {
+        try {
+            BufferedReader stringReader = new BufferedReader(clob.getCharacterStream());
+            String singleLine = null;
+            StringBuilder strBuff = new StringBuilder();
+            while ((singleLine = stringReader.readLine()) != null) {
+                strBuff.append(singleLine);
+            }
+            return strBuff.toString();
+        } catch (Exception e) {
+            return clob;
+        }
+    }
+
 }

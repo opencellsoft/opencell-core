@@ -20,19 +20,17 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.resteasy.util.IsAssignableFrom;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.response.billing.InvoicingPlanItemDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
@@ -122,20 +120,20 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 			if(!items.isEmpty() && postData.getAdvancement() != null) {
 				boolean isAdvancementExist = items.stream().anyMatch(ipi -> ipi.getAdvancement() == postData.getAdvancement());
 				if(isAdvancementExist) {
-					throw new BusinessApiException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
+					throw new EntityAlreadyExistsException("Invoicing plan lines with advancement " + postData.getAdvancement() + " already exist");
 				}
 				BigDecimal rateToBill =  items.stream().map(InvoicingPlanItem::getRateToBill).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totalRate = rateToBill.add(postData.getRateToBill() != null ? postData.getRateToBill() : BigDecimal.ZERO);
 				totalRate.add(rateToBill);
 				if(totalRate.intValue() > 100) {
-					throw new BusinessApiException("Down payment of invoicing plan can not be more than 100, current down payment is : " + totalRate.intValue());
+					throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100, current down payment is : " + totalRate.intValue());
 				}
 			}
 			if(postData.getAdvancement() != null && postData.getAdvancement() > 100) {
-				throw new BusinessApiException("Advancement of invoicing plan can not be more than 100");
+				throw new InvalidParameterException("Advancement of invoicing plan can not be more than 100");
 			}
 			if(postData.getRateToBill() != null && postData.getRateToBill().intValue() > 100) {
-				throw new BusinessApiException("Down payment of invoicing plan can not be more than 100");
+				throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100");
 			}
 		}
 		invoicingPlanItem.setCode(

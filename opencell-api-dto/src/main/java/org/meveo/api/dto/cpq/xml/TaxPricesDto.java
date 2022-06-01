@@ -12,6 +12,7 @@ import java.util.List;
 public class TaxPricesDto extends BaseEntityDto {
 
     private BigDecimal taxRate;
+    private BigDecimal unitPriceAmountWithoutTax;
     private List<PriceDTO> prices;
 
     public TaxPricesDto(BigDecimal taxRate, List<PriceDTO> prices) {
@@ -34,4 +35,12 @@ public class TaxPricesDto extends BaseEntityDto {
     public void setPrices(List<PriceDTO> prices) {
         this.prices = prices;
     }
+
+	public BigDecimal getUnitPriceAmountWithoutTax() {
+		return unitPriceAmountWithoutTax;
+	}
+
+	public void setUnitPriceAmountWithoutTax(BigDecimal unitPriceAmountWithoutTax) {
+		this.unitPriceAmountWithoutTax = unitPriceAmountWithoutTax;
+	}
 }

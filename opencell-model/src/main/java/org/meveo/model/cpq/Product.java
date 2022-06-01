@@ -122,7 +122,7 @@ public class Product extends ServiceCharge {
 	@Column(name = "status", nullable = false)
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ProductStatusEnum status;
+	private ProductStatusEnum status = ProductStatusEnum.DRAFT;
 	
 	/**
 	 * status date : modified automatically when the status change
@@ -433,8 +433,8 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
-		List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
 		if(this.serviceUsageCharges.isEmpty()){
+			List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
 					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
@@ -447,8 +447,9 @@ public class Product extends ServiceCharge {
 					}
 				}
 			}
+			return serviceUsageCharges;
 		}
-		return serviceUsageCharges;
+		return this.serviceUsageCharges;
 	}
 
 	@Override

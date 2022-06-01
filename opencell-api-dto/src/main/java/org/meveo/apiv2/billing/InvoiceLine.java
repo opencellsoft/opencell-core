@@ -40,7 +40,7 @@ public interface InvoiceLine extends Resource {
 	 * @return the accountingArticle code
 	 */
 	@Schema(description = "The code of accounting article")
-	@Nullable
+	@NotNull
 	String getAccountingArticleCode();
 
 	/**
@@ -77,6 +77,13 @@ public interface InvoiceLine extends Resource {
 	@Schema(description = "The unit price")
 	@Nullable
 	BigDecimal getUnitPrice();
+
+	/**
+	 * @return the functionalUnitPrice
+	 */
+	@Schema(description = "The functional unit price")
+	@Nullable
+	BigDecimal getFunctionalUnitPrice();
 
 	/**
 	 * @return the discountRate
@@ -267,4 +274,7 @@ public interface InvoiceLine extends Resource {
 	@Nullable
 	Date getEndDate();
 	
+	@Schema(description = "The Tax Mode")
+    @Nullable
+    String getTaxMode();
 }

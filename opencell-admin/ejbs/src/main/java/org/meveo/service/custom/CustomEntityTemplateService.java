@@ -115,7 +115,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
-        customFieldsCache.addUpdateCustomEntityTemplate(cet);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet, false);
         if (cet.isStoreAsTable()) {
             customTableCreatorService.createTable(cet.getDbTablename());
             CustomFieldTemplate disabled = null;
@@ -193,7 +193,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         elasticClient.createOrRemoveCETMapping(cet);
 
-        customFieldsCache.addUpdateCustomEntityTemplate(cet);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet, true);
 
         try {
             permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
@@ -248,7 +248,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             if (cets.isEmpty()) {
                 cets = super.list(active);
                 if (cets != null) {
-                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet));
+                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet, false));
                 }
             }
 
@@ -294,7 +294,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             if (cets.isEmpty()) {
                 cets = super.list(config);
                 if (cets != null) {
-                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet));
+                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet, false));
                 }
             }
 
@@ -363,7 +363,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             if (cet == null) {
                 cet = super.findByCode(code);
                 if (cet != null && cet.isActive()) {
-                    customFieldsCache.addUpdateCustomEntityTemplate(cet);
+                    customFieldsCache.addUpdateCustomEntityTemplate(cet, false);
                 }
             }
 
@@ -453,7 +453,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public CustomEntityTemplate enable(CustomEntityTemplate cet) throws BusinessException {
 
         cet = super.enable(cet);
-        customFieldsCache.addUpdateCustomEntityTemplate(cet);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet, false);
 
         clusterEventPublisher.publishEvent(cet, CrudActionEnum.enable);
         return cet;

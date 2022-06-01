@@ -58,6 +58,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.*;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoParamBean;
 
 import javax.ejb.Stateless;
@@ -156,6 +157,10 @@ public class AccountHierarchyApi extends BaseApi {
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
+
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
 
     public static final String CUSTOMER_PREFIX = "CUST_";
     public static final String CUSTOMER_ACCOUNT_PREFIX = "CA_";
@@ -316,6 +321,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         customerApi.create(customerDto);
+        customerService.getEntityManager().flush();
 
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
         String customerAccountCode = CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -376,7 +382,9 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
 
+        customerAccountDto.setGeneralClientAccountCode(postData.getGeneralClientAccountCode());
         customerAccountApi.create(customerAccountDto);
+        customerAccountService.getEntityManager().flush();
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
 
@@ -393,6 +401,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
         billingAccountDto.setCountry(postData.getCountryCode());
         billingAccountDto.setLanguage(postData.getLanguageCode());
+        billingAccountDto.setTradingCurrency(postData.getCurrencyCode());
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         if (postData.getInvoicingThreshold() != null) {
@@ -434,6 +443,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
+        billingAccountService.getEntityManager().flush();
         setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -623,6 +633,9 @@ public class AccountHierarchyApi extends BaseApi {
         }
         // End compatibility with pre-4.6 versions
 
+        if(postData.getGeneralClientAccountCode() != null) {
+            customerAccountDto.setGeneralClientAccountCode(postData.getGeneralClientAccountCode());
+        }
         customerAccountApi.createOrUpdate(customerAccountDto);
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
@@ -650,6 +663,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
         billingAccountDto.setCountry(postData.getCountryCode());
         billingAccountDto.setLanguage(postData.getLanguageCode());
+        billingAccountDto.setTradingCurrency(postData.getCurrencyCode());
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
@@ -1016,6 +1030,13 @@ public class AccountHierarchyApi extends BaseApi {
             missingParameters.add("crmAccountType");
         }
 
+        if (postData.getCompany() == null) {
+            postData.setCompany(false);
+            if (appProvider.isEntreprise()) {
+                postData.setCompany(true);
+            }
+        }
+
         handleMissingParameters();
 
         String accountType = postData.getCrmAccountType();
@@ -1048,7 +1069,8 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create cust");
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
-            accountEntity = customerApi.create(customerDto, true, businessAccountModel);
+            customerDto.setIsCompany(postData.getCompany());
+            accountEntity = customerApi.create(customerDto, true, businessAccountModel, seller);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
@@ -1056,7 +1078,8 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ca");
 
             CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel);
+            customerAccountDto.setIsCompany(postData.getCompany());
+            accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel, (Customer) accountEntity);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1064,8 +1087,10 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ba");
 
             BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = billingAccountApi.create(billingAccountDto, true, businessAccountModel);
+            accountEntity = billingAccountApi.create(billingAccountDto, true, businessAccountModel, (CustomerAccount) accountEntity);
             setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            accountEntity.setIsCompany(postData.getCompany());
+            billingAccountService.commit();
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
@@ -1073,7 +1098,8 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("create ua");
 
             UserAccountDto userAccountDto = createUserAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = userAccountApi.create(userAccountDto, true, businessAccountModel);
+            userAccountDto.setIsCompany(postData.getCompany());
+            accountEntity = userAccountApi.create(userAccountDto, true, businessAccountModel, (BillingAccount) accountEntity);
         }
 
         if (businessAccountModel != null && businessAccountModel.getScript() != null) {
@@ -1197,7 +1223,6 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * @param postData
      * @param accountHierarchyTypeEnum
-     * @param businessAccountModel
      * @return the created billing account
      */
     private BillingAccountDto createBillingAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
@@ -1273,6 +1298,7 @@ public class AccountHierarchyApi extends BaseApi {
                 }
             }
         }
+        billingAccountDto.setTradingCurrency(postData.getCurrency());
 
         return billingAccountDto;
     }
@@ -1446,7 +1472,6 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * @param postData
-     * @param businessAccountModel
      * @return the created seller dto
      * @throws MeveoApiException
      * @throws BusinessException
@@ -1540,10 +1565,13 @@ public class AccountHierarchyApi extends BaseApi {
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
             // update billing account
             log.debug("update ba");
-
-            BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
-            accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
-            setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            if(StringUtils.isNotBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
+            	terminateCRMAccountHierarchy(postData);
+            }else {
+            	BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
+            	accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
+            	setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
+            }
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {

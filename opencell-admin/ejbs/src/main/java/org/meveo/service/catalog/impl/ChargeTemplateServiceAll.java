@@ -18,10 +18,7 @@
 
 package org.meveo.service.catalog.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.xml.bind.ValidationException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -100,6 +98,18 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	 */
 	public void updateStatus(ChargeTemplate chargeTemplate, String stringStatus) {
 		ChargeTemplateStatusEnum status = ChargeTemplateStatusEnum.valueOf(stringStatus);
+		if(ChargeTemplateStatusEnum.ACTIVE.equals(status)){
+			List<PricePlanMatrix> activePricePlansByChargeCode = pricePlanMatrixService.getActivePricePlansByChargeCode(chargeTemplate.getCode());
+			Optional<PricePlanMatrix> publishedPricePlanMatrix = activePricePlansByChargeCode.stream()
+					.filter(pricePlanMatrix -> pricePlanMatrix.getVersions().stream()
+							.filter(pricePlanMatrixVersion -> VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus()))
+							.findFirst()
+							.isPresent())
+					.findFirst();
+			if(publishedPricePlanMatrix.isEmpty()){
+				throw new BusinessException("to activate a charge, it should at least have ONE PUBLISHED Price plan Version");
+			}
+		}
 		try {
 			chargeTemplate.setStatus(status);
 			update(chargeTemplate);

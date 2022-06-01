@@ -19,8 +19,6 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,11 +26,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.quote.QuoteStatusEnum;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -67,7 +63,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     @Schema(description = "The code of the billing account of the billable")
 	private String billableAccountCode;
     
-	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The delivery date of quote lot ")
 	private Date deliveryDate;
 	
@@ -81,7 +76,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	private String sellerCode;
     
     @Schema(description = "The send date")
-	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date sendDate;
     
     @Schema(description = "The quote number")
@@ -90,7 +84,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     @Schema(description = "The external id")
     private String externalId;
 
-	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
 	

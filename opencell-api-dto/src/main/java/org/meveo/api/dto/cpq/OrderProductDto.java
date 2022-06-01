@@ -22,14 +22,19 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -76,10 +81,19 @@ public class OrderProductDto extends BaseEntityDto{
 	
 	@Schema(description = "The delivery date")
     private Date deliveryDate;
+	
+	@Schema(description = "The termination date")
+    private Date terminationDate;
+	
+	@Schema(description = "The termination reason code")
+    private String terminationReasonCode;
+	
+	@Schema(description = "The action type")
+    private ProductActionTypeEnum actionType;
     
-    private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>(); 
-    
-    public OrderProductDto() {
+    private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
+
+	public OrderProductDto() {
     	super();
     }
     
@@ -94,23 +108,58 @@ public class OrderProductDto extends BaseEntityDto{
 		orderProductId=orderProduct.getId();
 		orderLotCode=orderProduct.getOrderServiceCommercial()!=null?orderProduct.getOrderServiceCommercial().getCode():null;
 		commercialOrderId=orderProduct.getOrder()!=null?orderProduct.getOrder().getId():null;
-		productCode=orderProduct.getProductVersion().getProduct().getCode();
-		productVersion=orderProduct.getProductVersion().getCurrentVersion();
+		if(orderProduct.getProductVersion() != null){
+			productCode= orderProduct.getProductVersion().getProduct().getCode();
+		}
 		quantity=orderProduct.getQuantity();
 		discountPlanCode=orderProduct.getDiscountPlan()!=null?orderProduct.getDiscountPlan().getCode():null;
 		deliveryDate=orderProduct.getDeliveryDate();
+		actionType=orderProduct.getProductActionType();
+		terminationReasonCode=orderProduct.getTerminationReason()!=null?orderProduct.getTerminationReason().getCode():null;
+		terminationDate=orderProduct.getTerminationDate();
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
 		super();
 		init(orderProduct);
-		if(loadAttributes) {
+		if(loadAttributes && orderProduct.getProductVersion() != null) {
 			orderAttributes=new ArrayList<OrderAttributeDto>();
 			for(OrderAttribute orderAttribute:orderProduct.getOrderAttributes()) {
-				orderAttributes.add(new OrderAttributeDto(orderAttribute));
+				OrderAttributeDto orderAttributeDto = new OrderAttributeDto(orderAttribute);
+				AttributeTypeEnum attributeType = orderAttribute.getAttribute().getAttributeType();
+				Optional<ProductVersionAttribute> productVersionAttribute = orderProduct.getProductVersion().getAttributes().stream()
+						.filter(pva -> pva.getAttribute().getId() == orderAttribute.getAttribute().getId())
+						.findFirst();
+				productVersionAttribute.ifPresent(pAttribute -> resolveDefaultValuesIfNull(orderAttributeDto, attributeType, pAttribute));
+				orderAttributes.add(orderAttributeDto);
 			}
 		} 
 		
+	}
+
+	private void resolveDefaultValuesIfNull(OrderAttributeDto orderAttributeDto, AttributeTypeEnum attributeType, ProductVersionAttribute pAttribute) {
+		switch (attributeType) {
+			case BOOLEAN:
+				if(orderAttributeDto.getBooleanValue() == null){
+					orderAttributeDto.setBooleanValue(Boolean.valueOf(pAttribute.getDefaultValue()));
+				}
+				break;
+			case NUMERIC:
+			case INTEGER:
+				if(orderAttributeDto.getDoubleValue() == null && pAttribute.getDefaultValue() != null  &&  !pAttribute.getDefaultValue().isEmpty()){
+					orderAttributeDto.setDoubleValue(Double.valueOf(pAttribute.getDefaultValue()));
+				}
+				break;
+			case DATE:
+				if(orderAttributeDto.getDateValue() == null){
+					orderAttributeDto.setDateValue(new Date(pAttribute.getDefaultValue()));
+				}
+				break;
+			default:
+				if(StringUtils.isBlank(orderAttributeDto.getStringValue())){
+					orderAttributeDto.setStringValue(pAttribute.getDefaultValue());
+				}
+		}
 	}
 
 
@@ -259,6 +308,36 @@ public class OrderProductDto extends BaseEntityDto{
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+
+	public String getTerminationReasonCode() {
+		return terminationReasonCode;
+	}
+
+
+	public void setTerminationReasonCode(String terminationReasonCode) {
+		this.terminationReasonCode = terminationReasonCode;
+	}
+
+
+	public ProductActionTypeEnum getActionType() {
+		return actionType;
+	}
+
+
+	public void setActionType(ProductActionTypeEnum actionType) {
+		this.actionType = actionType;
 	}
 	
 	

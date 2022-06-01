@@ -27,6 +27,6 @@ public class DunningPolicyMapperTest {
                 .build();
         org.meveo.model.dunning.DunningPolicy entity = mapper.toEntity(resource);
         Assert.assertEquals("name", entity.getPolicyName());
-        Assert.assertTrue(entity.getActivePolicy());
+        Assert.assertTrue(entity.getIsActivePolicy());
     }
 }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -30,6 +29,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.billing.EDRDto;
@@ -82,8 +82,7 @@ public class EdrService extends PersistenceService<EDR> {
 
     private static final int PURGE_MAX_RESULTS = 30000;
 
-    @PostConstruct
-    private void init() {
+    static {
         ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
         String deduplicateType = paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name());
@@ -102,21 +101,40 @@ public class EdrService extends PersistenceService<EDR> {
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return List of EDR's we can rate until a given date.
      */
-    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
+    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup,String parameter1, String parameter2, int nbToRetrieve) {
 
-        if (rateUntilDate == null && ratingGroup == null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
-
-        } else if (rateUntilDate != null && ratingGroup == null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve).getResultList();
-
-        } else if (rateUntilDate == null && ratingGroup != null) {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
-
-        } else {
-            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
-                .getResultList();
-        }
+    	 StringBuilder strQuery = new StringBuilder();
+         
+         strQuery.append("SELECT e.id from EDR e where e.status='OPEN'");
+         
+ 	        if(rateUntilDate != null) {
+ 	        	strQuery.append(" AND e.eventDate<:rateUntilDate");
+ 	        }
+ 	        if(ratingGroup != null) {
+ 	        	strQuery.append(" AND lower(e.subscription.ratingGroup)=:ratingGroup");
+ 	        }
+ 	        if(parameter1!=null) {
+ 	        	strQuery.append(" AND lower(e.parameter1)=:parameter1");
+ 	        }
+ 	        if(parameter2!=null) {
+ 	        	strQuery.append(" AND lower(e.parameter2)=:parameter2");
+ 	        }
+ 	        strQuery.append(" order by e.id");
+ 	        
+ 	        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
+ 	        if(rateUntilDate != null) {
+ 	        	query.setParameter("rateUntilDate", rateUntilDate);
+ 	        }
+ 	        if(ratingGroup != null) {
+ 	        	query.setParameter("ratingGroup", ratingGroup.toLowerCase());
+ 	        }
+ 	       if(parameter1!=null) {
+	        	query.setParameter("parameter1", parameter1.toLowerCase());
+	        }
+	        if(parameter2!=null) {
+	        	query.setParameter("parameter2", parameter2.toLowerCase());
+	        }
+ 	        return query.getResultList();
 
     }
 
@@ -164,15 +182,13 @@ public class EdrService extends PersistenceService<EDR> {
         if (!deduplicateEdrs) {
             return false;
         }
-        Boolean isDuplicate = null;
+        
+        boolean isDuplicate = false;
         if (useInMemoryDeduplication) {
-            isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
-            if (isDuplicate == null && !inMemoryDeduplicationPrepopulated) {
+            isDuplicate = cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
+            if (!isDuplicate && !inMemoryDeduplicationPrepopulated) {
                 isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
-                // cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord, isDuplicate); // no need to set as it will be added to cache once EDR
-                // is processed
-            } else if (isDuplicate == null) {
-                isDuplicate = false;
+                cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
             }
         } else {
             isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
@@ -496,7 +512,7 @@ public class EdrService extends PersistenceService<EDR> {
      * 
      * @return True if EDR deduplication is turned on
      */
-    public boolean isDuplicateCheckOn() {
+    public static boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
     }
 

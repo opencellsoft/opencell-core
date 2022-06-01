@@ -36,6 +36,7 @@ import org.meveo.model.billing.Invoice;
 @NamedQueries({
 		@NamedQuery(name = "DunningCollectionPlan.DCPtoResume", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.status.status='PAUSED' and dcp.pausedUntilDate <= :resumeDate"),
 		@NamedQuery(name = "DunningCollectionPlan.findByInvoiceId", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedInvoice.id = :invoiceID"),
+		@NamedQuery(name = "DunningCollectionPlan.findByPolicy", query = "SELECT dcp FROM DunningCollectionPlan dcp where dcp.relatedPolicy = :dunningPolicy"),
 		@NamedQuery(name = "DunningCollectionPlan.activeCollectionPlansIds", query = "SELECT dcp.id FROM DunningCollectionPlan dcp where dcp.status.status = 'ACTIVE'")
 })
 public class DunningCollectionPlan extends AuditableEntity {
@@ -74,8 +75,8 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
     * The collection plan related invoice
     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "related_invoice_id", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "related_invoice_id")
     private Invoice relatedInvoice;
     
     /**

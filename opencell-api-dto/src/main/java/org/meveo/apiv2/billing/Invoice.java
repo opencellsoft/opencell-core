@@ -56,6 +56,7 @@ public interface Invoice extends Resource {
 	InvoiceStatusEnum getStatus();
 
 	@Schema(description = "The Due date")
+	@Nullable
 	Date getDueDate();
 
 	@Schema(description = "The amount of the invoice")
@@ -293,4 +294,16 @@ public interface Invoice extends Resource {
 	@Schema(description = "The cpqQuote attached to this invoice")
 	@Nullable
 	Resource getCpqQuote();
+	
+	@Schema(description = "The temporary invoice number")
+	@Nullable
+	String getTemporaryInvoiceNumber();
+
+	@Schema(description = "Amount without tax before discount")
+	@Nullable
+	BigDecimal getAmountWithoutTaxBeforeDiscount();
+
+	@Schema(description = "discount amount without tax")
+	@Nullable
+	BigDecimal getDiscountAmountWithoutTax();
 }

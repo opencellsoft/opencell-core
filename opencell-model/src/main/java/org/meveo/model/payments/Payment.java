@@ -53,7 +53,7 @@ public class Payment extends AccountOperation {
      * Comments Text free if litigation or special conditions
      */
     @Type(type = "longText")
-    @Column(name = "comment")
+    @Column(name = "comment_text")
     private String comment;
 
     /**

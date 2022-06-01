@@ -29,6 +29,8 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -72,6 +74,9 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
      */
     @Inject
     private OCCTemplateService occTemplateService;
+    
+    @Inject
+    private AccountOperationApi accountOperationApi;
 
     private CustomerAccount customerAccount;
 
@@ -137,12 +142,14 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
             String occTemplateRejectPaymentCode = paramBeanFactory.getInstance().getProperty("occ.rejectedPayment.dd", "REJ_DDT");
             OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode);
             copyFromTemplate(occ);
+            entity.setType("R");
 
             // Create a new entity from a paymentCheck template
         } else if ("loadFromTemplatePaymentCheck".equals(initType)) {
             String occTemplatePaymentCode = paramBeanFactory.getInstance().getProperty("occ.templatePaymentCheckCode", "PAY_CHK");
             OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode);
             copyFromTemplate(occ);
+            entity.setType("P");
 
         }
         return entity;
@@ -158,9 +165,10 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
         // lazyloading fix
         CustomerAccount customerAccount = customerAccountService.retrieveIfNotManaged(entity.getCustomerAccount());
         entity.setCustomerAccount(customerAccount);
-
-        String outcome = super.saveOrUpdate(killConversation);
-        return outcome;
+        AccountOperationDto accountOperationDto = new AccountOperationDto(entity);       
+        accountOperationApi.create(accountOperationDto); 
+        messages.info(new BundleKey("messages", "save.successful"));
+        return back();
     }
 
     @Override

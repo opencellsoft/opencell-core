@@ -27,7 +27,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 
@@ -53,11 +52,9 @@ public class SecuredEntity implements Serializable {
     @Column(name = "entity_class", length = 255)
     @Size(max = 255)
     private String entityClass;
-    
-    @Type(type = "numeric_boolean")
-	@Column(name = "disable", nullable = false)
-	@NotNull
-	private boolean disabled;
+
+    @Column(name = "disabled", nullable = false)
+    private int disabled = 0;
 
     public SecuredEntity() {
     }
@@ -70,7 +67,19 @@ public class SecuredEntity implements Serializable {
     public SecuredEntity(SecuredEntity securedEntity) {
         this.setCode(securedEntity.getCode());
         this.setEntityClass(securedEntity.getEntityClass());
-        this.setDisabled(securedEntity.isDisabled());
+        this.setDisabled(securedEntity.getDisabled());
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param entityClass Secured entity class
+     * @param code Secured entity code
+     */
+    public SecuredEntity(String entityClass, String code) {
+        super();
+        this.code = code;
+        this.entityClass = entityClass;
     }
 
     public String getCode() {
@@ -135,17 +144,33 @@ public class SecuredEntity implements Serializable {
         return Objects.hash(this.getCode(), this.getEntityClass());
     }
 
-	/**
-	 * @return the disabled
-	 */
-	public boolean isDisabled() {
-		return disabled;
-	}
+    /**
+     * @return Is configuration disabled. 1=true, 0=false
+     */
+    public int getDisabled() {
+        return disabled;
+    }
 
-	/**
-	 * @param disabled the disabled to set
-	 */
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    /**
+     * @param disabled the disabled to set
+     */
+    public void setDisabled(int disabled) {
+        this.disabled = disabled;
+    }
+
+    /**
+     * @return the disabled value as a boolean
+     */
+    @Transient
+    public boolean getDisabledAsBoolean() {
+        return disabled == 1;
+    }
+
+    /**
+     * @param disabled The disabled value as a boolean
+     */
+    @Transient
+    public void setDisabledAsBoolean(boolean disabled) {
+        this.disabled = disabled ? 1 : 0;
+    }
 }

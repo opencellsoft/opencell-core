@@ -29,8 +29,10 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -60,7 +62,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
        return getPaymentGateway(customerAccount, paymentMethod, cardType,customerAccount.getCustomer().getSeller());
     }
-
+    
     /**
      * Gets the payment gateway.
      *
@@ -73,6 +75,21 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      */
     @SuppressWarnings("unchecked")
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller) throws BusinessException {
+    	return getAndCheckPaymentGateway(customerAccount, paymentMethod, cardType, seller, null);
+    }
+
+    /**
+     * Gets the payment gateway.
+     *
+     * @param customerAccount the customer account
+     * @param paymentMethod the payment method
+     * @param cardType the card type
+     * @param seller the seller
+     * @return the payment gateway
+     * @throws BusinessException the business exception
+     */
+    @SuppressWarnings("unchecked")
+    public PaymentGateway getAndCheckPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller,String selectedGatewayCode) throws BusinessException {
         PaymentGateway paymentGateway = null;
         try {        	 
             CreditCardTypeEnum cardTypeToCheck = null;
@@ -115,12 +132,20 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
-                log.info("get pg , current :" + pg.getCode());
-				if (!StringUtils.isBlank(pg.getApplicationEL())) {
-					if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
-						return pg;
-					}
-				}
+            	log.info("get pg , current :" + pg.getCode());
+            	if(!StringUtils.isBlank(selectedGatewayCode)) {
+            		if(pg.getCode().equals(selectedGatewayCode)) {
+            			if (!StringUtils.isBlank(pg.getApplicationEL())) {
+            				if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
+            					return pg;
+            				}
+            			}else {
+            				return pg;
+            			}
+            		}
+            	}else if (!StringUtils.isBlank(pg.getApplicationEL()) && matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, seller)) {
+            			return pg;
+            		} 	
             }
             paymentGateway = paymentGateways.get(0);
         } catch (Exception e) {
@@ -197,6 +222,14 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
         }
         return result;
+    }
+
+    @Override
+    public void remove(PaymentGateway paymentGateway) {
+        // remove credential of paymentGateway in the keystore
+        KeystoreManager.removeCredential(paymentGateway.getClass().getSimpleName() + "." + paymentGateway.getId());
+
+        super.remove(paymentGateway);
     }
 
 }

@@ -1,4 +1,5 @@
 package org.meveo.api.dto.cpq;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
@@ -62,18 +62,18 @@ public class ProductVersionDto extends BaseEntityDto {
     @XmlElementWrapper(name = "productAttributes")
     @XmlElement(name = "productAttributes")
     @Schema(description = "List of the attribute")
-    protected Set<ProductVersionAttributeDTO> productAttributes=new HashSet<ProductVersionAttributeDTO>();
+    protected Set<ProductVersionAttributeDTO> productAttributes = new HashSet<>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
     @Schema(description = "List of the grouped attribute codes")
-    protected Set<String> groupedAttributeCodes = new HashSet<String>();
+    protected Set<String> groupedAttributeCodes = new HashSet<>();
     
     /** The services template. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     @Schema(description = "List of tag codes")
-    protected Set<String> tagCodes = new HashSet<String>();
+    protected Set<String> tagCodes = new HashSet<>();
     
 
     

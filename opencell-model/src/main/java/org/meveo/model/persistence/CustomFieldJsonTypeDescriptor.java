@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -49,54 +50,123 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     private static boolean ENCRYPT_CF = TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR));
 
     public static final CustomFieldJsonTypeDescriptor INSTANCE = new CustomFieldJsonTypeDescriptor();
+    
 
     @SuppressWarnings("unchecked")
-    public CustomFieldJsonTypeDescriptor() {
-
+    public CustomFieldJsonTypeDescriptor() 
+    {
         super(CustomFieldValues.class, ImmutableMutabilityPlan.INSTANCE);
-
     }
 
     @Override
-    public String toString(CustomFieldValues value) {
-
+    public String toString(CustomFieldValues value) 
+    {
         if (value == null) {
             return null;
         }
-
+        
         if (ENCRYPT_CF) {
-            return encrypt(value.asJson());
+        	return encryptCfs(value);
         }
 
         return value.asJson();
     }
 
     @Override
-    public CustomFieldValues fromString(String string) {
-
+    public CustomFieldValues fromString(String string) 
+    {
         if (StringUtils.isBlank(string)) {
             return null;
         }
-
-        if (ENCRYPT_CF) {
-            string = decrypt(string);
-            if (IEncryptable.ON_ERROR_RETURN.equalsIgnoreCase(string)) {
-                return null;
-            }
-        }
-
-        if (!ENCRYPT_CF && string.startsWith(ENCRYPTION_CHECK_STRING)) {
-            Map<String, List<CustomFieldValue>> cfValues = new HashMap<String, List<CustomFieldValue>>();
-            cfValues.put("AES", new ArrayList<CustomFieldValue>());
-            return new CustomFieldValues(cfValues);
-        }
-
-        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
-        });
-
-        return new CustomFieldValues(cfValues);
+		 
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {});
+        return new CustomFieldValues(decryptCfs(cfValues));
     }
-
+        	
+	public Map<String, List<CustomFieldValue>> decryptCfs(Map<String, List<CustomFieldValue>> cfValues) 
+	{
+        for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
+			for(CustomFieldValue cf: listCfs.getValue()) {
+				if (cf.getStringValue() != null && cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+				    cf.setStringValue(decrypt(cf.getStringValue()));
+				} else if (cf.getListValue() != null) {
+			        List<Object> listValues = new ArrayList<>();
+				    for(Object object: cf.getListValue()) {
+				        if(object instanceof String) {
+				            String valueString = (String) object;
+				            if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+				                listValues.add(decrypt(valueString));
+				            } else {
+				                listValues.add(valueString);
+				            }
+				        } else {
+				            listValues.add(object);
+				        }
+				    }
+				    cf.setListValue(listValues);
+				} else if (cf.getMapValue() != null) {					
+			        Map<String, Object> mapValues = new LinkedHashMap<>();
+					for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
+					    if(object.getValue() instanceof String) {
+					        String valueString = (String) object.getValue();
+					        if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+					            mapValues.put(object.getKey(), decrypt(valueString));
+					        } else {
+					            mapValues.put(object.getKey(), valueString);
+					        }
+						} else {
+						    mapValues.put(object.getKey(), object.getValue());
+						}
+					}
+					cf.setMapValue(mapValues);
+    			}		
+             }
+         }
+         return cfValues;
+	}
+  		
+	public String encryptCfs(CustomFieldValues cfValues) 
+    {
+        for (Entry<String, List<CustomFieldValue>> listCfs: cfValues.getValuesByCode().entrySet()) {
+            for (CustomFieldValue cf : listCfs.getValue()) {
+                if (cf.getStringValue() != null && !cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
+                    cf.setStringValue(encrypt(cf.getStringValue()));
+                } else if (cf.getListValue() != null) {
+                    List<Object> listValues = new ArrayList<>();
+                    for(Object object: cf.getListValue()) {
+                        if(object instanceof String) {
+                            String valueString = (String) object;
+                            if(!valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+                                listValues.add(encrypt(valueString));
+                            } else {
+                                listValues.add(valueString);
+                            }
+                        } else {
+                            listValues.add(object);
+                        }
+                    }
+                    cf.setListValue(listValues);
+                } else if (cf.getMapValue() != null) {                    
+                    Map<String, Object> mapValues = new LinkedHashMap<>();
+                    for (Entry<String, Object> object : cf.getkeyValueMap().entrySet()) {
+                        if(object.getValue() instanceof String) {
+                            String valueString = (String) object.getValue();
+                            if(!valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
+                                mapValues.put(object.getKey(), encrypt(valueString));
+                            } else {
+                                mapValues.put(object.getKey(), valueString);
+                            }
+                        } else {
+                            mapValues.put(object.getKey(), object.getValue());
+                        }
+                    }
+                    cf.setMapValue(mapValues);
+                }       
+			}
+		}
+        return cfValues.toString();
+    }
+	
     @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
@@ -114,7 +184,8 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return (X) toString(value);
 
         } else if (JsonNode.class.isAssignableFrom(type)) {
-            return (X) JacksonUtil.toJsonNode(toString(value));
+
+        	 return (X) JacksonUtil.toJsonNode(toString(value));
         }
         
         throw unknownUnwrap(type);
@@ -145,11 +216,10 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             
             // Support for Postgresql JsonB type field
         } else {
-            // Logger log = LoggerFactory.getLogger(getClass());
-            // log.error("AKKKK value to wrap is " + (value != null ? value.getClass() : null));
-            return fromString(value.toString());
+        	return fromString(value.toString());
         }
     }
+
 
     @Override
     public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {

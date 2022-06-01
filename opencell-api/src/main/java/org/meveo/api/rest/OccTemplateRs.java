@@ -19,13 +19,10 @@
 package org.meveo.api.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -70,15 +67,15 @@ public interface OccTemplateRs extends IBaseRs {
 			description=" Create OccTemplate.  ",
 			operationId="    POST_OccTemplate_create",
 			responses= {
-				@ApiResponse(description=" action status. ",
+				@ApiResponse(description=" account operation template ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= GetOccTemplateResponseDto.class
 											)
 								)
 				)}
 	)
-    ActionStatus create(OccTemplateDto postData);
+    GetOccTemplateResponseDto create(OccTemplateDto postData);
 
     /**
      * Update OccTemplate.
@@ -93,15 +90,15 @@ public interface OccTemplateRs extends IBaseRs {
 			description=" Update OccTemplate.  ",
 			operationId="    PUT_OccTemplate_update",
 			responses= {
-				@ApiResponse(description=" action status. ",
+				@ApiResponse(description=" account operation template ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= GetOccTemplateResponseDto.class
 											)
 								)
 				)}
 	)
-    ActionStatus update(OccTemplateDto postData);
+    GetOccTemplateResponseDto update(OccTemplateDto postData);
 
     /**
      * Search OccTemplate with a given code.
@@ -198,9 +195,9 @@ public interface OccTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public GetOccTemplatesResponseDto listGet(@QueryParam("query") String query,
+    GetOccTemplatesResponseDto listGet(@QueryParam("query") String query,
             @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("accountCode") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+            @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * Get List of OccTemplates matching a given criteria
@@ -223,6 +220,5 @@ public interface OccTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering);
-
+    GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 }

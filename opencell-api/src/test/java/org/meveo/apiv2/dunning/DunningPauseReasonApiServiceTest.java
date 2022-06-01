@@ -4,15 +4,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.service.DunningPauseReasonApiService;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.payments.impl.DunningSettingsService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
+import org.meveo.service.settings.impl.GlobalSettingsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +40,9 @@ public class DunningPauseReasonApiServiceTest {
 	@Mock
 	private DunningPauseReasonsService dunningPauseReasonsService;
 
+	@Mock
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
 	private DunningPauseReason dunningPauseReason;
 
 	@Before
@@ -44,6 +51,7 @@ public class DunningPauseReasonApiServiceTest {
 		//dunningPauseReasons.setLanguage("Language");
 		dunningPauseReason.setDescription("Description");
 		dunningPauseReason.setPauseReason("Pause reason");
+		doNothing().when(globalSettingsVerifier).checkActivateDunning();
 	}
 
 	@Test

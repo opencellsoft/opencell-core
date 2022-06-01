@@ -1,32 +1,37 @@
 package org.meveo.apiv2.article.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.FlushModeType;
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.*;
 
+import org.meveo.admin.exception.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.apiv2.article.*;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
+import org.meveo.model.admin.*;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.*;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.accountingscheme.*;
+import org.meveo.service.admin.impl.*;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxClassService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Optional.ofNullable;
 
 public class AccountingArticleApiService implements AccountingArticleServiceBase {
 
@@ -34,16 +39,36 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Inject
     private AccountingArticleService accountingArticleService;
+    
     @Inject
     private TaxClassService taxClassService;
+
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private AccountingCodeMappingService accountingCodeMappingService;
+
+    @Inject
+    private TradingCountryService tradingCountryService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     Logger log = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
     public void initService() {
-        fetchFields = Arrays.asList("taxClass", "invoiceSubCategory", "articleFamily", "accountingCode");
+        fetchFields = Arrays.asList("taxClass", "invoiceSubCategory", "articleFamily", "accountingCode", "accountingCodeMappings");
     }
 
     @Override
@@ -75,6 +100,13 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new BadRequestException("No articleFamily found");
             accountingArticle.setArticleFamily(articleFamily);
         }
+        
+        if (accountingArticle.getInvoiceType() != null) {
+            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(accountingArticle.getInvoiceType());
+            if (invoiceType == null)
+                throw new BadRequestException("No invoiceType found");
+            accountingArticle.setInvoiceType(invoiceType);
+        }
 
         accountingArticleService.create(accountingArticle);
         return accountingArticle;
@@ -100,7 +132,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public Optional<AccountingArticle> findById(Long id) {
-        return Optional.ofNullable(accountingArticleService.findById(id, fetchFields));
+        return ofNullable(accountingArticleService.findById(id, fetchFields));
     }
 
     @Override
@@ -167,18 +199,37 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if (baseEntity.getCfValues() != null) {
             accountingArticle.setCfValues(baseEntity.getCfValues());
         }
+        
+        if (baseEntity.getInvoiceType() != null) {
+            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(baseEntity.getInvoiceType());
+            if (invoiceType == null)
+                throw new BadRequestException("No invoiceType found");
+            accountingArticle.setInvoiceType(invoiceType);
+        }
+        
+        if (baseEntity.getInvoiceTypeEl() != null) {
+            accountingArticle.setInvoiceTypeEl(baseEntity.getInvoiceTypeEl());
+        }
+
+        if(baseEntity.getAccountingCodeEl() != null) {
+            accountingArticle.setAccountingCodeEl(baseEntity.getAccountingCodeEl());
+        }
+
+        if(baseEntity.getColumnCriteriaEL() != null) {
+            accountingArticle.setColumnCriteriaEL(baseEntity.getColumnCriteriaEL());
+        }
 
         accountingArticleService.update(accountingArticle);
 
-        return Optional.ofNullable(accountingArticle);
+        return ofNullable(accountingArticle);
     }
 
     @Override
     public Optional<AccountingArticle> findByCode(String code) {
-        AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(code, fetchFields);
         if (accountingArticle == null)
             throw new BadRequestException("No Account Article class found with code: " + code);
-        return Optional.ofNullable(accountingArticle);
+        return ofNullable(accountingArticle);
     }
 
     public List<AccountingArticle> findByAccountingCode(String code) {
@@ -245,5 +296,97 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             throw new BadRequestException("No Product found with code: " + productCode);
         Optional<AccountingArticle> article = accountingArticleService.getAccountingArticle(product, attributes);
         return article;
+    }
+
+    public List<AccountingCodeMapping> createAccountingCodeMappings(AccountingCodeMappingInput accountingCodeMappingInput) {
+        List<AccountingCodeMapping> accountingCodeMappings = new ArrayList<>();
+        AccountingArticle accountingArticle = null;
+        if(accountingCodeMappingInput.getAccountingArticleCode() != null
+                && !accountingCodeMappingInput.getAccountingArticleCode().isBlank()) {
+            accountingArticle = accountingArticleService.findByCode(accountingCodeMappingInput.getAccountingArticleCode());
+            if(accountingArticle == null) {
+                throw new NotFoundException("Accounting article with code "
+                        + accountingCodeMappingInput.getAccountingArticleCode() + " does not exits");
+            }
+        }
+        for (org.meveo.apiv2.article.AccountingCodeMapping accountingCodeMapping
+                : accountingCodeMappingInput.getAccountingCodeMappings()) {
+            accountingCodeMappings.add(createAccountingCodeMapping(accountingCodeMapping, accountingArticle));
+        }
+        return accountingCodeMappings;
+    }
+
+    public AccountingCodeMapping createAccountingCodeMapping(org.meveo.apiv2.article.AccountingCodeMapping resource,
+                                                             AccountingArticle accountingArticle) {
+        AccountingCodeMapping entity = new AccountingCodeMapping();
+        ofNullable(accountingArticle).ifPresent(entity::setAccountingArticle);
+        if(resource.getBillingCountryCode() != null
+                && !resource.getBillingCountryCode().isBlank()) {
+            entity.setBillingCountry(getTradingCountry(resource.getBillingCountryCode(), "Billing"));
+        }
+        if(resource.getBillingCurrencyCode() != null && !resource.getBillingCurrencyCode().isBlank()) {
+            TradingCurrency billingCurrency =
+                    ofNullable(tradingCurrencyService.findByTradingCurrencyCode(resource.getBillingCurrencyCode()))
+                            .orElseThrow(() -> new NotFoundException("Trading currency with code "
+                                    + resource.getBillingCurrencyCode() + " does not exits"));
+            entity.setBillingCurrency(billingCurrency);
+        }
+        if(resource.getSellerCountryCode() != null
+                && !resource.getSellerCountryCode().isBlank()) {
+            entity.setSellerCountry(getTradingCountry(resource.getSellerCountryCode(), "Seller"));
+        }
+        if(resource.getSellerCode() != null && !resource.getSellerCode().isBlank()) {
+            Seller seller = ofNullable(sellerService.findByCode(resource.getSellerCode()))
+                    .orElseThrow(() -> new NotFoundException("Seller with code " + resource.getSellerCode() + " does not exits"));
+            entity.setSeller(seller);
+        }
+        if(resource.getAccountingCode() != null && !resource.getAccountingCode().isBlank()) {
+            AccountingCode accountingCode = ofNullable(accountingCodeService.findByCode(resource.getAccountingCode()))
+                    .orElseThrow(() -> new NotFoundException("Accounting code " + resource.getSellerCode() + " does not exits"));
+            entity.setAccountingCode(accountingCode);
+        }
+        entity.setCriteriaElValue(resource.getCriteriaElValue());
+        try {
+            accountingCodeMappingService.create(entity);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+        return entity;
+    }
+
+    private TradingCountry getTradingCountry(String countryCode, String prefix) {
+        TradingCountry country = tradingCountryService.findByCode(countryCode);
+        if(country == null) {
+            throw new NotFoundException(prefix + " country with code " + countryCode + " does not exits");
+        } else {
+            return country;
+        }
+    }
+
+    public AccountingArticle updateAccountingCodeMapping(String accountingArticleCode,
+                                            AccountingCodeMappingInput accountingCodeMappingInput) {
+        AccountingArticle accountingArticle = ofNullable(accountingArticleService.findByCode(accountingArticleCode, fetchFields))
+                .orElseThrow(() -> new NotFoundException("Accounting article with code "
+                        + accountingCodeMappingInput.getAccountingArticleCode() + " does not exits"));
+        if((accountingCodeMappingInput.getAccountingCodeMappings() == null
+                || accountingCodeMappingInput.getAccountingCodeMappings().isEmpty()) &&
+                (accountingArticle.getAccountingCodeMappings() == null || accountingArticle.getAccountingCodeMappings().isEmpty())) {
+            throw new BadRequestException("Accounting article " + accountingArticleCode + " does not have an accounting code mapping");
+        }
+        accountingArticle.getAccountingCodeMappings().clear();
+        if(accountingCodeMappingInput.getAccountingCodeMappings() != null) {
+            List<AccountingCodeMapping> accountingCodeMappings = new ArrayList<>();
+            for (org.meveo.apiv2.article.AccountingCodeMapping accountingCodeMapping
+                    : accountingCodeMappingInput.getAccountingCodeMappings()) {
+                accountingCodeMappings.add(createAccountingCodeMapping(accountingCodeMapping, accountingArticle));
+            }
+            accountingArticle.setAccountingCodeMappings(accountingCodeMappings);
+        }
+        try {
+            accountingArticleService.update(accountingArticle);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
+        return accountingArticle;
     }
 }

@@ -56,15 +56,15 @@ public class DiscountPlanApiService {
 	}
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, genericFields, nestedEntities, 1L, null, null);
 	}
 
 	public String findPaginatedDiscountPlanItems(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(true, DiscountPlanItem.class, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findPaginatedRecords(true, DiscountPlanItem.class, searchConfig, genericFields, nestedEntities, 1L, null, null);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(true, DiscountPlan.class, id, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findByClassNameAndId(true, DiscountPlan.class, id, searchConfig, genericFields, nestedEntities, 1L, null);
 	}
 
 	public Optional<Long> create(String dto) {
@@ -103,11 +103,11 @@ public class DiscountPlanApiService {
 			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
 		}
 		persistenceDelegate.remove(DiscountPlan.class, entity);
-		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlan.class, entity);
+		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlan.class, entity, null);
 	}
 
 	public Optional<String> findDiscountPlanItemById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(true, DiscountPlanItem.class, id, searchConfig, genericFields, nestedEntities, 1L);
+		return loadService.findByClassNameAndId(true, DiscountPlanItem.class, id, searchConfig, genericFields, nestedEntities, 1L, null);
 	}
 
 	public Optional<Long> createItem(String dto) {
@@ -139,7 +139,7 @@ public class DiscountPlanApiService {
 			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
 		}
 		persistenceDelegate.remove(DiscountPlanItem.class, entity);
-		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlanItem.class, entity);
+		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlanItem.class, entity, null);
 
 	}
 

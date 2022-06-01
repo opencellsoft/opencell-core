@@ -792,4 +792,14 @@ public final class FileUtils {
             throw e;
         }
     }
+
+    /**
+     * Delete directory
+     * 
+     * @param dir
+     * @throws IOException
+     */
+    public static void deleteDirectory(File dir) throws IOException {
+        org.apache.commons.io.FileUtils.deleteDirectory(dir);
+    }
 }

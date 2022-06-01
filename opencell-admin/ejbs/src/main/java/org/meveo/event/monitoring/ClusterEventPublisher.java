@@ -19,6 +19,7 @@
 package org.meveo.event.monitoring;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -80,7 +81,7 @@ public class ClusterEventPublisher implements Serializable {
      * @param action Action performed
      * @param additionalInformation Additional information about the action
      */
-    public void publishEvent(IEntity entity, CrudActionEnum action, String additionalInformation) {
+    public void publishEvent(IEntity entity, CrudActionEnum action, Map<String, Object> additionalInformation) {
 
         if (!EjbUtils.isRunningInClusterMode()) {
             return;
@@ -92,7 +93,12 @@ public class ClusterEventPublisher implements Serializable {
                 currentUser.getProviderCode(), currentUser.getUserName(), additionalInformation);
             log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
 
-            context.createProducer().send(topic, eventDto);
+            // For create and update CRUD actions, send message with a delivery delay of two seconds, so data is saved to DB already before another node process the message
+            if (action == CrudActionEnum.create || action == CrudActionEnum.update) {
+                context.createProducer().setDeliveryDelay(2000L).send(topic, eventDto);
+            } else {
+                context.createProducer().send(topic, eventDto);
+            }
 
         } catch (Exception e) {
             log.error("Failed to publish data synchronization between cluster nodes event", e);

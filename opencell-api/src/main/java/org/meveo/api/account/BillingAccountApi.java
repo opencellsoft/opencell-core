@@ -39,6 +39,7 @@ import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -48,8 +49,11 @@ import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.BeanUtils;
 import org.meveo.model.billing.*;
@@ -58,6 +62,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -66,6 +71,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -107,6 +113,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private CustomerAccountService customerAccountService;
 
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
 
@@ -160,10 +169,11 @@ public class BillingAccountApi extends AccountEntityApi {
     }
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
-        return create(postData, true, null);
+        return create(postData, true, null, null);
     }
 
-    public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel,
+                                 CustomerAccount associatedCA) throws MeveoApiException, BusinessException {
 
         if(StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(BillingAccount.class.getName(), postData);
@@ -197,11 +207,14 @@ public class BillingAccountApi extends AccountEntityApi {
 
         BillingAccount billingAccount = new BillingAccount();
 
-        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel, associatedCA);
 
         processTags(postData,billingAccount);
 
         billingAccountService.createBillingAccount(billingAccount);
+        if (postData.getIsCompany() != null) {
+            billingAccount.setIsCompany(postData.getIsCompany());
+        }
 
         // instantiate the discounts
         if (postData.getDiscountPlansForInstantiation() != null) {
@@ -277,7 +290,7 @@ public class BillingAccountApi extends AccountEntityApi {
             }
         }
 
-        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
+        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel, null);
         processTags(postData,billingAccount);
 
         billingAccount = billingAccountService.update(billingAccount);
@@ -335,10 +348,11 @@ public class BillingAccountApi extends AccountEntityApi {
      * 
      * @param billingAccount Entity to populate
      * @param postData DTO entity object to populate from
-     * @param checkCustomField Should a check be made if CF field is required
+     * @param checkCustomFields Should a check be made if CF field is required
      * @param businessAccountModel Business account model
      **/
-    private void dtoToEntity(BillingAccount billingAccount, BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+    private void dtoToEntity(BillingAccount billingAccount, BillingAccountDto postData, boolean checkCustomFields,
+                             BusinessAccountModel businessAccountModel, CustomerAccount associatedCA) {
 
         boolean isNew = billingAccount.getId() == null;
 
@@ -376,7 +390,8 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         if (postData.getCustomerAccount() != null) {
-            CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
+            CustomerAccount customerAccount =
+                    associatedCA != null ? associatedCA : customerAccountService.findByCode(postData.getCustomerAccount());
             if (customerAccount == null) {
                 throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
 
@@ -394,6 +409,16 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
+        if (!StringUtils.isBlank(postData.getTradingCurrency())) {
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getTradingCurrency());
+            if (tradingCurrency == null) {
+                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
+            }
+            billingAccount.setTradingCurrency(tradingCurrency);
+        }else {
+            billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
+        }
+        
         if (Objects.nonNull(postData.getPaymentMethod())) {
             PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
@@ -603,6 +628,7 @@ public class BillingAccountApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public BillingAccountsDto listByCustomerAccount(String customerAccountCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -642,6 +668,8 @@ public class BillingAccountApi extends AccountEntityApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
     public BillingAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
         BillingAccountsResponseDto result = new BillingAccountsResponseDto();
         result.setPaging( pagingAndFiltering );
@@ -801,7 +829,7 @@ public class BillingAccountApi extends AccountEntityApi {
      */
     private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount) throws MeveoApiException, BusinessException {
 
-        if (postData.getPaymentMethod() == null) {
+        if (postData.getPaymentMethodType() == null) {
             return;
         }
 
@@ -851,7 +879,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
-            if (postData.getPaymentMethodType() == PaymentMethodEnum.CHECK || postData.getPaymentMethodType() == PaymentMethodEnum.WIRETRANSFER) {
+            if (postData.getPaymentMethodType().isSimple()) {
                 paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType())).fromDto(customerAccount, null, currentUser);
             } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
                 paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, null, currentUser);

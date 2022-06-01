@@ -87,6 +87,8 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
         } catch (Exception e) {
             ChargeCDRResponseDto result = new ChargeCDRResponseDto();
+            ActionStatus actionStatus = new ActionStatus(ActionStatusEnum.FAIL, null);
+            result.setActionStatus(actionStatus);
             processException(e, result.getActionStatus());
             return result;
         }

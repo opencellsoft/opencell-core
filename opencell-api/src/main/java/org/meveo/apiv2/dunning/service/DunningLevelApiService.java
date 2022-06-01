@@ -34,6 +34,9 @@ import org.meveo.service.payments.impl.DunningLevelService;
 public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
+    @Inject
     private CurrencyService currencyService;
 
     @Inject
@@ -67,6 +70,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     @Override
     public Optional<DunningLevel> delete(Long id) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningLevel dunningLevel = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
         dunningLevelService.remove(dunningLevel);
         String origine = (dunningLevel!=null) ? dunningLevel.getCode() : "";
@@ -76,6 +80,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     @Override
     public DunningLevel create(DunningLevel newDunningLevel) {
+        globalSettingsVerifier.checkActivateDunning();
         if (dunningLevelService.findByCode(newDunningLevel.getCode()) != null) {
             throw new EntityAlreadyExistsException(DunningLevel.class, newDunningLevel.getCode());
         }
@@ -89,6 +94,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     @Override
     public Optional<DunningLevel> update(Long id, DunningLevel dunningLevel) {
+        globalSettingsVerifier.checkActivateDunning();
         DunningLevel dunningLevelToUpdate = findById(id).orElseThrow(() -> new EntityDoesNotExistsException(DunningLevel.class, id));
 
         List<String> updatedFields = new ArrayList<>();
@@ -238,7 +244,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
                 throw new InvalidParameterException("Reminder Dunning level days overdue should be negative");
             }
             if (!baseEntity.isReminder() && baseEntity.getDaysOverdue() < 0) {
-                throw new InvalidParameterException("Dunning level days Overdue should be positive");
+                throw new InvalidParameterException("Negative days overdue allowed only for reminder levels");
             }
         }
         if (baseEntity.getDunningActions() != null && !(baseEntity.getDunningActions() instanceof PersistentCollection)) {
@@ -252,7 +258,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     private void setDefaultValues(DunningLevel newDunningLevel) {
         if (newDunningLevel.isActive() == null) {
-            newDunningLevel.setActive(Boolean.TRUE);
+            newDunningLevel.setActive(Boolean.FALSE);
         }
         if (newDunningLevel.isReminder() == null) {
             newDunningLevel.setReminder(Boolean.FALSE);

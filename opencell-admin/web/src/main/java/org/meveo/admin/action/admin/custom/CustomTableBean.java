@@ -19,16 +19,15 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -36,26 +35,26 @@ import java.util.stream.Collectors;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.NativePersistenceService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.custom.DataImportExportStatistics;
@@ -63,6 +62,7 @@ import org.meveo.util.view.NativeTableBasedDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.UploadedFile;
 
@@ -71,14 +71,18 @@ import org.primefaces.model.UploadedFile;
 public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = -2748591950645172132L;
+
+    private static final String FIELD_CODE = "code";
+
+    private static final String FIELD_DESCRIPTION = "description";
+
+    private static final String FIELD_ENTITY_TXT_SUFFIX = "_TXTlabel";
+
     @Inject
     private CustomTableService customTableService;
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
-
-    @Inject
-    private CustomEntityInstanceService customEntityInstanceService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -95,7 +99,12 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private LazyDataModel<Map<String, Object>> customTableBasedDataModel;
 
-    private Map<String, Object> newValues = new HashMap<>();
+    /**
+     * Information about entity that entity type field reference to. DB fieldname is a key.
+     */
+    private Map<String, CETEntityTypeFieldInfo> entityReferences = new HashMap<>();
+
+    private Map<String, Object> rowValues = new HashMap<>();
 
     private boolean appendImportedData;
 
@@ -109,6 +118,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         super(CustomEntityTemplate.class);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public CustomEntityTemplate initEntity() {
         super.initEntity();
@@ -116,23 +126,161 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         customTableName = entity.getDbTablename();
 
         // Get fields and sort them by GUI order
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity.getAppliesTo());
-        if (cfts != null) {
-            fields = new ArrayList<>(cfts.values());
+        fields = getCETFields(entity, null);
 
-            Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
+        // Load fields of entities that entity type field points to
+        for (CustomFieldTemplate cetField : fields) {
+            if (cetField.getFieldType() == CustomFieldTypeEnum.ENTITY) {
 
-                @Override
-                public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
-                    int pos1 = cft1.getGUIFieldPosition();
-                    int pos2 = cft2.getGUIFieldPosition();
+                CETEntityTypeFieldInfo cetFieldInfo = new CETEntityTypeFieldInfo();
 
-                    return pos1 - pos2;
+                cetFieldInfo.fields = new ArrayList<CustomFieldTemplate>();
+
+                String customEntityTemplateCode = cetField.getEntityClazzCetCode();
+                if (customEntityTemplateCode != null) {
+                    CustomEntityTemplate fieldCet = customEntityTemplateService.findByCode(customEntityTemplateCode);
+
+                    if (fieldCet != null && fieldCet.isStoreAsTable()) {
+                        cetFieldInfo.referenceType = EntityFieldTypeReference.CT;
+                        cetFieldInfo.tableName = fieldCet.getDbTablename();
+
+                        // Fetch only first 5 fields plus ID field
+                        cetFieldInfo.fields.add(new CustomFieldTemplate("id", "Id", CustomFieldTypeEnum.LONG));
+                        cetFieldInfo.fields.addAll(getCETFields(fieldCet, 5));
+
+                    } else {
+
+                        cetFieldInfo.referenceType = EntityFieldTypeReference.CI;
+                        cetFieldInfo.tableName = CustomEntityInstance.class.getAnnotation(Table.class).name();
+
+                        cetFieldInfo.fields.add(new CustomFieldTemplate(FIELD_CODE, "Code", CustomFieldTypeEnum.STRING));
+                        cetFieldInfo.fields.add(new CustomFieldTemplate(FIELD_DESCRIPTION, "Description", CustomFieldTypeEnum.STRING));
+                    }
+
+                } else {
+                    cetFieldInfo.referenceType = EntityFieldTypeReference.BusinessEntity;
+                    try {
+
+                        Class entityClazz = Class.forName(cetField.getEntityClazz());
+                        if (entityClazz.isAnnotationPresent(Table.class)) {
+                            cetFieldInfo.tableName = ((Table) entityClazz.getAnnotation(Table.class)).name();
+                        } else {
+
+                            Class superClass = entityClazz.getSuperclass();
+                            while (superClass != null) {
+                                if (superClass.isAnnotationPresent(Table.class)) {
+                                    cetFieldInfo.tableName = ((Table) superClass.getAnnotation(Table.class)).name();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (entityClazz.isAnnotationPresent(ReferenceIdentifierCode.class)) {
+                            String entityFieldName = ((ReferenceIdentifierCode) entityClazz.getAnnotation(ReferenceIdentifierCode.class)).value();
+                            Field entityField = FieldUtils.getField(entityClazz, entityFieldName, true);
+                            String dbFieldName = entityFieldName;
+                            if (entityField.isAnnotationPresent(Column.class)) {
+                                dbFieldName = entityField.getAnnotation(Column.class).name();
+                            }
+
+                            cetFieldInfo.fields.add(new CustomFieldTemplate(dbFieldName, StringUtils.capitalize(entityFieldName), CustomFieldTypeEnum.STRING));
+                        }
+                        if (entityClazz.isAnnotationPresent(ReferenceIdentifierDescription.class)) {
+                            String entityFieldName = ((ReferenceIdentifierDescription) entityClazz.getAnnotation(ReferenceIdentifierDescription.class)).value();
+                            Field entityField = FieldUtils.getField(entityClazz, entityFieldName, true);
+                            String dbFieldName = entityFieldName;
+                            if (entityField.isAnnotationPresent(Column.class)) {
+                                dbFieldName = entityField.getAnnotation(Column.class).name();
+                            }
+
+                            cetFieldInfo.fields.add(new CustomFieldTemplate(dbFieldName, StringUtils.capitalize(entityFieldName), CustomFieldTypeEnum.STRING));
+                        }
+
+                    } catch (ClassNotFoundException e) {
+                        log.error("Class {} referenced from a Custom field not found", cetField.getEntityClazz());
+                    }
+
                 }
-            });
+
+                entityReferences.put(cetField.getDbFieldname(), cetFieldInfo);
+            }
         }
 
         return entity;
+
+    }
+
+    /**
+     * Get a data model for primefaces lazy loading datatable component for a given entity reference type field
+     * 
+     * @param field Entity reference type field
+     * @return Data model
+     */
+    public LazyDataModel<Map<String, Object>> getFieldDataModel(CustomFieldTemplate field) {
+
+        if (field == null) {
+            return null;
+        }
+        CETEntityTypeFieldInfo entityReferenceInfo = entityReferences.get(field.getDbFieldname());
+
+        if (entityReferenceInfo.dataModel == null) {
+
+            final Map<String, Object> filters = entityReferenceInfo.dataModelFilter;
+
+            final List<String> fieldsToFetch = entityReferenceInfo.getFieldDBfieldnames();
+            final String tableName = entityReferenceInfo.tableName;
+
+            if (entityReferenceInfo.referenceType == EntityFieldTypeReference.CI) {
+                filters.put("cet_code", entityReferenceInfo.cetCode);
+                fieldsToFetch.add(NativePersistenceService.FIELD_ID);
+
+            } else if (entityReferenceInfo.referenceType == EntityFieldTypeReference.BusinessEntity) {
+                fieldsToFetch.add(NativePersistenceService.FIELD_ID);
+            }
+
+            if (tableName == null) {
+                log.error("Class {} referenced from a Custom field not found", field.getEntityClazz());
+                return null;
+            }
+
+            entityReferenceInfo.dataModel = new NativeTableBasedDataModel() {
+
+                private static final long serialVersionUID = 6682319740448829853L;
+
+                @Override
+                protected Map<String, Object> getSearchCriteria() {
+                    return filters;
+                }
+
+                @Override
+                protected CustomTableService getPersistenceServiceImpl() {
+                    return customTableService;
+                }
+
+                @Override
+                protected String getTableName() {
+                    return tableName;
+                }
+
+                @Override
+                protected List<String> getListFieldsToFetchImpl() {
+                    return fieldsToFetch;
+                }
+
+                @Override
+                public Map<String, Object> getRowData(String rowKey) {
+                    for (Map<String, Object> row : getWrappedData()) {
+                        if (rowKey.equals(row.get(NativePersistenceService.FIELD_ID).toString())) {
+                            return row;
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+
+        return entityReferenceInfo.dataModel;
+
     }
 
     /**
@@ -173,6 +321,65 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
                 protected String getTableName() {
                     return CustomTableBean.this.getCustomTableName();
                 }
+
+                @Override
+                protected List<Map<String, Object>> loadData(PaginationConfiguration paginationConfig) {
+                    List<Map<String, Object>> data = super.loadData(paginationConfig);
+
+                    // Translate IDs of referenced entities to a Code/description representation
+                    for (Entry<String, CETEntityTypeFieldInfo> referenceInfo : entityReferences.entrySet()) {
+
+                        String dbFieldname = referenceInfo.getKey();
+                        CETEntityTypeFieldInfo reference = referenceInfo.getValue();
+
+                        // Nothing else to retrieve for Custom table - there is no clear code/description field equivalent
+                        if (reference.referenceType == EntityFieldTypeReference.CT) {
+
+                            for (Map<String, Object> dataRow : data) {
+                                if (dataRow.get(dbFieldname) != null) {
+                                    dataRow.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, dataRow.get(dbFieldname));
+                                }
+                            }
+                            continue;
+                        }
+
+                        List<Long> ids = data.stream().filter(values -> values.get(dbFieldname) != null).map(values -> Long.valueOf(values.get(dbFieldname).toString())).collect(Collectors.toList());
+
+                        if (!ids.isEmpty()) {
+
+                            PaginationConfiguration criteria = new PaginationConfiguration(Map.of("inList " + NativePersistenceService.FIELD_ID, ids));
+
+                            List<String> fetchFields = new ArrayList<String>();
+                            fetchFields.add(NativePersistenceService.FIELD_ID);
+                            fetchFields.addAll(reference.getFieldDBfieldnames());
+
+                            criteria.setFetchFields(fetchFields);
+
+                            List<Map<String, Object>> values = customTableService.list(referenceInfo.getValue().tableName, criteria);
+                            Map<String, String> valuesById = values.stream().collect(Collectors.toMap(map -> map.get(NativePersistenceService.FIELD_ID).toString(), map -> {
+
+                                List<String> refValues = new ArrayList<String>();
+                                for (String field : reference.getFieldDBfieldnames()) {
+                                    if (map.get(field) != null) {
+                                        refValues.add(map.get(field).toString());
+                                    }
+                                }
+                                return org.meveo.commons.utils.StringUtils.concatenate(" / ", refValues);
+
+                            })
+
+                            );
+
+                            for (Map<String, Object> dataRow : data) {
+                                if (dataRow.get(dbFieldname) != null && valuesById.containsKey(dataRow.get(dbFieldname).toString())) {
+                                    dataRow.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, valuesById.get(dataRow.get(dbFieldname).toString()));
+                                }
+                            }
+                        }
+                    }
+
+                    return data;
+                }
             };
         }
 
@@ -185,6 +392,35 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public void clean() {
         customTableBasedDataModel = null;
         filters = new HashMap<>();
+    }
+
+    /**
+     * Clean entity field search criteria and data model.
+     * 
+     * @param field Custom field template definition of entity field
+     */
+    public void cleanFieldSearch(CustomFieldTemplate field) {
+
+        CETEntityTypeFieldInfo entityReferenceInfo = entityReferences.get(field.getDbFieldname());
+        entityReferenceInfo.dataModel = null;
+        entityReferenceInfo.dataModelFilter = new HashMap<>();
+    }
+
+    /**
+     * Clean entity field search data model.
+     * 
+     * @param field Custom field template definition of entity field
+     */
+    public void cleanFieldDataModel(CustomFieldTemplate field) {
+        CETEntityTypeFieldInfo entityReferenceInfo = entityReferences.get(field.getDbFieldname());
+        entityReferenceInfo.dataModel = null;
+    }
+
+    /**
+     * Clean table row values data entry
+     */
+    public void cleanRowValues() {
+        rowValues.clear();
     }
 
     /**
@@ -214,6 +450,17 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         return fields;
     }
 
+    /**
+     * @param field Custom table field definition
+     * @return Fields
+     */
+    public List<CustomFieldTemplate> getEntityTypeFields(CustomFieldTemplate field) {
+        if (entity == null) {
+            initEntity();
+        }
+        return entityReferences.get(field.getDbFieldname()).fields;
+    }
+
     @Override
     protected IPersistenceService<CustomEntityTemplate> getPersistenceService() {
         return customEntityTemplateService;
@@ -232,12 +479,18 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         messages.info(new BundleKey("messages", "customTable.valuesSaved"));
     }
 
-    public Map<String, Object> getNewValues() {
-        return newValues;
+    /**
+     * @return Selected or new data row field values
+     */
+    public Map<String, Object> getRowValues() {
+        return rowValues;
     }
 
-    public void setNewValues(Map<String, Object> newValues) {
-        this.newValues = newValues;
+    /**
+     * @param rowValues Selected or new data row field values
+     */
+    public void setRowValues(Map<String, Object> rowValues) {
+        this.rowValues = rowValues;
     }
 
     /**
@@ -246,13 +499,26 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
      * @throws BusinessException General exception
      */
     @ActionMethod
-    public void addNewValues() throws BusinessException {
+    public void addUpdateRowValues() throws BusinessException {
 
-        Map<String, Object> convertedValues = customTableService.convertValue(newValues, fields, false, null);
+        // Remove any entity id to label translation fields before saving
+        Map<String, Object> rowValuesCopy = new HashMap<String, Object>(rowValues);
+        for (String fieldname : rowValues.keySet()) {
+            if (fieldname.endsWith(FIELD_ENTITY_TXT_SUFFIX)) {
+                rowValuesCopy.remove(fieldname);
+            }
+        }
 
-        customTableService.create(customTableName, convertedValues);
+        Map<String, Object> convertedValues = customTableService.convertValue(rowValuesCopy, fields, false, null);
+
+        if (isUpdate()) {
+            customTableService.update(customTableName, convertedValues);
+        } else {
+            customTableService.create(customTableName, convertedValues);
+        }
+
         messages.info(new BundleKey("messages", "customTable.valuesSaved"));
-        newValues = new HashMap<>();
+        rowValues = new HashMap<>();
         customTableBasedDataModel = null;
     }
 
@@ -281,6 +547,15 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             messages.info(new BundleKey("messages", "customTable.importFile.startFailed"), e.getMessage());
         }
 
+    }
+
+    /**
+     * A current values refer to new values or an update
+     * 
+     * @return True if row values contain a field "id"
+     */
+    public boolean isUpdate() {
+        return rowValues.containsKey(NativePersistenceService.FIELD_ID);
     }
 
     public boolean isAppendImportedData() {
@@ -376,71 +651,139 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         return importFuture;
     }
 
-    public List<CustomTableRecordDto> entityTypeColumnDatas(CustomFieldTemplate field) {
-        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-        if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
-            return customTableService.selectAllRecordsOfATableAsRecord(field.tableName(),null);
+    /**
+     * Entity field value selection from a datalist event
+     * 
+     * @param selectEvent
+     */
+    public void onEntitySelect(SelectEvent selectEvent) {
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> valueSelected = (Map<String, Object>) selectEvent.getObject();
+        Long id = Long.valueOf(valueSelected.get(NativePersistenceService.FIELD_ID).toString());
+
+        // Data table component id is a <dbFieldname>_datatable
+        String dbFieldname = ((DataTable) selectEvent.getSource()).getId().substring(0, ((DataTable) selectEvent.getSource()).getId().indexOf("_datatable"));
+        rowValues.put(dbFieldname, id);
+
+        CETEntityTypeFieldInfo reference = entityReferences.get(dbFieldname);
+
+        String idPlusDescriptionOrCode = id.toString();
+
+        if (reference.referenceType != EntityFieldTypeReference.CT) {
+
+            List<String> values = new ArrayList<String>();
+            for (String field : reference.getFieldDBfieldnames()) {
+                if (valueSelected.get(field) != null) {
+                    values.add(valueSelected.get(field).toString());
+                }
+            }
+            idPlusDescriptionOrCode = org.meveo.commons.utils.StringUtils.concatenate(" / ", values);
+
         }
-        return getFromCustomEntity(field);
+        rowValues.put(dbFieldname + FIELD_ENTITY_TXT_SUFFIX, idPlusDescriptionOrCode);
     }
 
-    List<CustomTableRecordDto> getFromCustomEntity(CustomFieldTemplate field) {
-
-        return Optional.ofNullable(field.tableName())
-                .map(tableName -> customEntityInstanceService.listByCet(field.tableName()).stream().map(customEntityInstanceService::customEntityInstanceAsMap)
-                        .map(x-> new CustomTableRecordDto(x,tableName)).collect(Collectors.toList())).orElse(loadFromBusinessEntity(field));
+    /**
+     * Get entity reference data model filter
+     * 
+     * @param field Entity type field
+     * @return A map with data model filter values
+     */
+    public Map<String, Object> getFieldFilters(CustomFieldTemplate field) {
+        CETEntityTypeFieldInfo entityReferenceInfo = entityReferences.get(field.getDbFieldname());
+        return entityReferenceInfo.dataModelFilter;
     }
 
-    List<CustomTableRecordDto> loadFromBusinessEntity(CustomFieldTemplate field) {
-        try {
-            Class entityClass = Class.forName(field.getEntityClazz());
-            PersistenceService<BaseEntity> persistenceService = getPersistenceServiceByClass(entityClass);
-            return persistenceService.list(false, 100).stream()
-                    .filter(Objects::nonNull)
-                    .map(this::mapToMap)
-                    .map(x-> new CustomTableRecordDto(x,field.tableName()))
-                    .collect(Collectors.toList());
-        } catch (ClassNotFoundException e) {
-            return Collections.EMPTY_LIST;
-        }
-    }
+//    public void setFieldFilters(Map<String, Object>> fieldFilters) {
+//        this.fieldFilters = fieldFilters;
+//    }
 
-    HashMap<String, Object> mapToMap(Object entity) {
-        if (entity instanceof BusinessEntity) {
-            return convertBusinessEntity((BusinessEntity) entity);
-        }
-        return convertIdAndIdentifiers((BaseEntity) entity);
-    }
+    /**
+     * Get a list of custom entity template fields. Fields are sorted by GUI order.
+     * 
+     * @param cet Custom entity template
+     * @param limit Number of fields to return
+     * @return A list of custom entity templates
+     */
+    private List<CustomFieldTemplate> getCETFields(CustomEntityTemplate cet, Integer limit) {
 
-    HashMap<String, Object> convertIdAndIdentifiers(BaseEntity baseEntity) {
-        HashMap<String, Object> convertedValues = new HashMap<>();
-        convertedValues.put("id", baseEntity.getId());
-        addExternalIdentifiers(baseEntity, convertedValues);
-        return convertedValues;
-    }
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (cfts != null) {
+            List<CustomFieldTemplate> cetFields = new ArrayList<>(cfts.values());
 
-    private void addExternalIdentifiers(BaseEntity baseEntity, HashMap<String, Object> convertedValues) {
-        if (baseEntity.getClass().isAnnotationPresent(ExportIdentifier.class)) {
-            Arrays.asList(baseEntity.getClass().getAnnotation(ExportIdentifier.class).value()).forEach(v -> {
-                try {
-                    convertedValues.put(v, ReflectionUtils.getPropertyValue(baseEntity, v));
-                } catch (IllegalAccessException ex) {
-                    ex.printStackTrace();
+            Collections.sort(cetFields, new Comparator<CustomFieldTemplate>() {
+
+                @Override
+                public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
+                    int pos1 = cft1.getGUIFieldPosition();
+                    int pos2 = cft2.getGUIFieldPosition();
+
+                    return pos1 - pos2;
                 }
             });
+
+            if (limit == null) {
+                return cetFields;
+            } else {
+                return cetFields.subList(0, cetFields.size() < limit ? cetFields.size() : limit);
+            }
+        }
+        return new ArrayList<CustomFieldTemplate>();
+    }
+
+    enum EntityFieldTypeReference {
+        CT, CI, BusinessEntity;
+    }
+
+    /**
+     * Information about entity that entity type field reference to
+     * 
+     * @author Andrius Karpavicius
+     */
+    private class CETEntityTypeFieldInfo {
+        /**
+         * Entity reference type
+         */
+        EntityFieldTypeReference referenceType;
+
+        /**
+         * Custom entity template code when reference type is Custom entity instance
+         */
+        String cetCode;
+
+        /**
+         * A corresponding table name
+         */
+        String tableName;
+
+        /**
+         * Fields to retrieve when presenting reference information
+         */
+        List<CustomFieldTemplate> fields;
+
+        /**
+         * Filter for data model
+         */
+        Map<String, Object> dataModelFilter = new HashMap<String, Object>();
+
+        /**
+         * Data model
+         */
+        LazyDataModel<Map<String, Object>> dataModel;
+
+        /**
+         * Get a list of DB field names corresponding to the fields
+         * 
+         * @return A list of DB field names
+         */
+        List<String> getFieldDBfieldnames() {
+
+            List<String> dbFieldnames = new ArrayList<String>();
+            for (CustomFieldTemplate cft : fields) {
+                dbFieldnames.add(cft.getDbFieldname());
+            }
+            return dbFieldnames;
         }
     }
-
-    private HashMap<String, Object> convertBusinessEntity(BusinessEntity e) {
-        return new HashMap<String, Object>() {{
-            put("id", e.getId());
-            put("code", e.getCode());
-            put("description", e.getDescription());
-        }};
-    }
-
-    PersistenceService getPersistenceServiceByClass(Class entityClass) {
-        return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
-    }
-
 }

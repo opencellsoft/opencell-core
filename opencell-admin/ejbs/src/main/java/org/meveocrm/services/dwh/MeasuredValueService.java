@@ -18,6 +18,7 @@
 
 package org.meveocrm.services.dwh;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,12 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
      * @return list of measured values
      */
     public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq) {
-        return getByDateAndPeriod(code, fromDate, toDate, period, mq, false);
+        try {
+            return getByDateAndPeriod(code, fromDate, toDate, period, mq, false);
+        } catch (Exception e) {
+            log.error("getByDateAndPeriod : {} ", e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -207,7 +213,13 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
             myQuery = getEntityManager().createQuery(sqlQuery);
         }
 
-        return myQuery.getResultList();
+        try {
+            return myQuery.getResultList();
+        } catch (Exception e) {
+            // added to prevent error in th GUI
+            log.error("Error : {} ", e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     /**

@@ -20,6 +20,7 @@ package org.meveo.service.audit.logging;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,9 +28,7 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -47,47 +46,43 @@ public class AuditLogService extends PersistenceService<AuditLog> {
     }
 
     public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String origine) {
-        trackOperation(operationType, operationDate, entity, origine, null);
+        trackOperation(operationType, operationDate, entity, origine, new ArrayList<>());
     }
 
     public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String origine, List<String> fields) {
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
-        String actor = getActor();
-        String simpleName = entity.getClass().getSimpleName();
         StringBuilder parameters = new StringBuilder()
                 .append(formatter.format(operationDate))
-                .append(" - ").append(actor).append(" - ")
-                .append(" apply ").append(operationType)
-                .append(" to ").append(simpleName).append(" with ").append(origine)
+                .append(" - ").append(getActor()).append(" - ")
+                .append(" applied ").append(operationType)
+                .append(" to ").append(entity.getClass().getSimpleName())
+                .append(" with ").append(origine)
                 .append(fields != null && !fields.isEmpty() ? ", fields (" + String.join(",", fields) + ")" : "");
-        
+
+        trackOperation(operationType, operationDate, entity, origine, parameters.toString());
+    }
+
+    public <T extends BaseEntity> void trackOperation(String operationType, Date operationDate, T entity, String source, String parameters) {
+        String actor = getActor();
+        String simpleName = entity.getClass().getSimpleName();
+
         AuditLog auditLog = new AuditLog();
         auditLog.setEntity(simpleName);
         auditLog.setCreated(operationDate);
         auditLog.setActor(actor);
-        auditLog.setAction(operationType);        
-        auditLog.setParameters(parameters.toString());
-        auditLog.setOrigin(origine);
+        auditLog.setAction(operationType);
+        auditLog.setParameters(parameters);
+        auditLog.setOrigin(String.valueOf(entity.getId()));
+        auditLog.setSource(source);
         create(auditLog);
     }
 
-    private String getActor() {
-        if (StringUtils.isNotBlank(currentUser.getFullNameOrUserName())) {
-            return currentUser.getFullNameOrUserName();
+    public String getActor() {
+        if (StringUtils.isNotBlank(currentUser.getFullName())) {
+            return currentUser.getFullName();
         } else if (StringUtils.isNotBlank(currentUser.getEmail())) {
             return currentUser.getEmail();
         }
         return currentUser.getUserName();
-    }
-
-    private <T extends BaseEntity> String getCodeOrId(T entity) {
-        String codeOrId = null;
-        if (entity instanceof BusinessEntity) {
-            codeOrId = ((BusinessEntity) entity).getCode();
-        }
-        if (StringUtils.isNotBlank(codeOrId)) {
-            return "code " + codeOrId;
-        }
-        return "id " + entity.getId();
     }
 }

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andrius
@@ -48,6 +49,16 @@ public class PaginationConfiguration implements Serializable {
      * Fields that needs to be fetched when selecting (like lists or other entities).
      */
     private List<String> fetchFields;
+
+    /**
+     * Result should be grouped by following fields.
+     */
+    private Set<String> groupBy;
+
+    /**
+     * Result should be filtered by having clause.
+     */
+    private Set<String> having;
 
     /**
      * Sort field and order repeated multiple times
@@ -79,6 +90,38 @@ public class PaginationConfiguration implements Serializable {
         this.filters = filters;
         this.fullTextFilter = fullTextFilter;
         this.fetchFields = fetchFields;
+
+        List<Object> sortValues = new ArrayList<Object>();
+        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
+            if (sortFieldsAndOrder[i] == null) {
+                continue;
+            }
+            sortValues.add(sortFieldsAndOrder[i]);
+            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
+        }
+
+        this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param firstRow Number of the first row to retrieve
+     * @param numberOfRows Number of rows to retrieve
+     * @param filters Search criteria
+     * @param fullTextFilter full text filter.
+     * @param fetchFields Lazy loaded fields to fetch
+     * @param groupBy result grouped by fields
+     * @param sortFieldsAndOrder Sort field and order repeated multiple times
+     */
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, Object... sortFieldsAndOrder) {
+        this.firstRow = firstRow;
+        this.numberOfRows = numberOfRows;
+        this.filters = filters;
+        this.fullTextFilter = fullTextFilter;
+        this.fetchFields = fetchFields;
+        this.groupBy = groupBy;
+        this.having = having;
 
         List<Object> sortValues = new ArrayList<Object>();
         for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
@@ -193,6 +236,28 @@ public class PaginationConfiguration implements Serializable {
      */
     public void setFetchFields(List<String> fetchFields) {
         this.fetchFields = fetchFields;
+    }
+
+    public Set<String> getGroupBy() {
+        return groupBy;
+    }
+
+    /**
+     * @param groupBy Related fields to group
+     */
+    public void setGroupBy(Set<String> groupBy) {
+        this.groupBy = groupBy;
+    }
+
+    public Set<String> getHaving() {
+        return having;
+    }
+
+    /**
+     * @param having Related fields to filter
+     */
+    public void setHaving(Set<String> having) {
+        this.having = having;
     }
 
     /**

@@ -31,10 +31,11 @@ import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.LazyDataModel;
 
-import java.util.List;
+
 
 /**
  * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}
@@ -54,6 +55,11 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 	 */
 	@Inject
 	private RecordedInvoiceService recordedInvoiceService;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
+	
+	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -97,7 +103,7 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 
 	public String addLitigation() {
 		try {
-			recordedInvoiceService.addLitigation(entity);
+			accountOperationService.addLitigation(entity);
 			messages.info(new BundleKey("messages",
 					"customerAccount.addLitigationSuccessful"));
 		} catch (Exception e) {
@@ -110,7 +116,7 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 	public String cancelLitigation() {
 
 		try {
-			recordedInvoiceService.cancelLitigation(entity);
+			accountOperationService.cancelLitigation(entity);
 			messages.info(new BundleKey("messages",
 					"customerAccount.cancelLitigationSuccessful"));
 		} catch (Exception e) {

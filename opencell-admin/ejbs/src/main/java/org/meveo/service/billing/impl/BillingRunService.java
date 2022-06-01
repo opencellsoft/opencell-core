@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.BigDecimal.*;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
 
@@ -51,32 +52,19 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
+import org.meveo.admin.job.InvoicingJobV2Bean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunAutomaticActionEnum;
-import org.meveo.model.billing.BillingRunList;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.BillingRunTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.PostInvoicingReportsDTO;
-import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
@@ -194,6 +182,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private  InvoiceLineService invoiceLineService;
 
+    @Inject
+    private TradingLanguageService tradingLanguageService;
+    
     private static final  int rtPaginationSize = 30000;
 
 	@MeveoAudit
@@ -279,11 +270,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer wiretransferBillableBANumber = 0;
         Integer creditDebitCardBillableBANumber = 0;
 
-        BigDecimal checkBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal directDebitBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal tipBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
-        BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal checkBillableBAAmountHT = ZERO;
+        BigDecimal directDebitBillableBAAmountHT = ZERO;
+        BigDecimal tipBillableBAAmountHT = ZERO;
+        BigDecimal wiretransferBillableBAAmountHT = ZERO;
+        BigDecimal creditDebitCardBillableBAAmountHT = ZERO;
 
         for (BillingAccount billingAccount : billingAccounts) {
 
@@ -382,18 +373,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         log.info("generatePostInvoicingReports billingRun={}", billingRun.getId());
         PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
 
-        BigDecimal globalAmountHT = BigDecimal.ZERO;
-        BigDecimal globalAmountTTC = BigDecimal.ZERO;
+        BigDecimal globalAmountHT = ZERO;
+        BigDecimal globalAmountTTC = ZERO;
 
         Integer positiveInvoicesNumber = 0;
-        BigDecimal positiveInvoicesAmountHT = BigDecimal.ZERO;
-        BigDecimal positiveInvoicesAmount = BigDecimal.ZERO;
-        BigDecimal positiveInvoicesTaxAmount = BigDecimal.ZERO;
+        BigDecimal positiveInvoicesAmountHT = ZERO;
+        BigDecimal positiveInvoicesAmount = ZERO;
+        BigDecimal positiveInvoicesTaxAmount = ZERO;
 
         Integer negativeInvoicesNumber = 0;
-        BigDecimal negativeInvoicesAmountHT = BigDecimal.ZERO;
-        BigDecimal negativeInvoicesTaxAmount = BigDecimal.ZERO;
-        BigDecimal negativeInvoicesAmount = BigDecimal.ZERO;
+        BigDecimal negativeInvoicesAmountHT = ZERO;
+        BigDecimal negativeInvoicesTaxAmount = ZERO;
+        BigDecimal negativeInvoicesAmount = ZERO;
 
         Integer emptyInvoicesNumber = 0;
         Integer electronicInvoicesNumber = 0;
@@ -405,19 +396,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer creditDebitCardInvoicesNumber = 0;
         Integer npmInvoicesNumber = 0;
 
-        BigDecimal checkAmuontHT = BigDecimal.ZERO;
-        BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
-        BigDecimal tipAmuontHT = BigDecimal.ZERO;
-        BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
-        BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
-        BigDecimal npmAmountHT = BigDecimal.ZERO;
+        BigDecimal checkAmuontHT = ZERO;
+        BigDecimal directDebitAmuontHT = ZERO;
+        BigDecimal tipAmuontHT = ZERO;
+        BigDecimal wiretransferAmuontHT = ZERO;
+        BigDecimal creditDebitCardAmountHT = ZERO;
+        BigDecimal npmAmountHT = ZERO;
 
-        BigDecimal checkAmuont = BigDecimal.ZERO;
-        BigDecimal directDebitAmuont = BigDecimal.ZERO;
-        BigDecimal tipAmuont = BigDecimal.ZERO;
-        BigDecimal wiretransferAmuont = BigDecimal.ZERO;
-        BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
-        BigDecimal npmAmount = BigDecimal.ZERO;
+        BigDecimal checkAmuont = ZERO;
+        BigDecimal directDebitAmuont = ZERO;
+        BigDecimal tipAmuont = ZERO;
+        BigDecimal wiretransferAmuont = ZERO;
+        BigDecimal creditDebitCardAmount = ZERO;
+        BigDecimal npmAmount = ZERO;
 
         List<Object[]> invoiceSummary = getEntityManager().createNamedQuery("Invoice.portInvoiceReport").setParameter("billingRunId", billingRun.getId()).getResultList();
 
@@ -466,12 +457,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
             }
 
-            if ((amountWithoutTax != null) && (amountWithoutTax.compareTo(BigDecimal.ZERO) > 0)) {
+            if ((amountWithoutTax != null) && (amountWithoutTax.compareTo(ZERO) > 0)) {
                 positiveInvoicesNumber++;
                 positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(amountWithoutTax);
-                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(amountTax == null ? BigDecimal.ZERO : amountTax);
+                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(amountTax == null ? ZERO : amountTax);
                 positiveInvoicesAmount = positiveInvoicesAmount.add(amountWithTax);
-            } else if ((amountWithoutTax == null) || (amountWithoutTax.compareTo(BigDecimal.ZERO) == 0)) {
+            } else if ((amountWithoutTax == null) || (amountWithoutTax.compareTo(ZERO) == 0)) {
                 emptyInvoicesNumber++;
             } else {
                 negativeInvoicesNumber++;
@@ -628,7 +619,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param status the status
      * @return the billing runs
      */
-    public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
+    public List<BillingRun> getBillingRuns(BillingRunStatusEnum... status) {
         return getBillingRuns(null, status);
     }
 
@@ -643,7 +634,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status) {
 
         BillingRunStatusEnum bRStatus;
-        log.debug("getbillingRuns ");
+        log.debug("getBillingRuns ");
         QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
 
         if (code != null) {
@@ -670,7 +661,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run
      * @return the entity objects
      */
-    public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
+    @SuppressWarnings("unchecked")
+	public List<? extends IBillableEntity> getEntitiesToInvoice(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
@@ -924,8 +916,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
-            invoiceLinesService.deleteSupplementalILs(excludedPrepaidInvoices);
-            invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);
+            invoiceLinesService.cancelIlByInvoices(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
@@ -1068,7 +1059,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private void checkThresholdInvoices(Collection<Long> rejectedBillingAccounts, List<Long> invoicesToRemove, Collection<Long> billableEntities, Long billableEntityId, BigDecimal threshold, boolean isThresholdPerEntity,
             Map<Long, Amounts> thresholdAmounts) {
         if (isThresholdPerEntity) {
-            BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalAmount = ZERO;
             for (Amounts amounts : thresholdAmounts.values()) {
                 totalAmount = totalAmount.add((appProvider.isEntreprise()) ? amounts.getAmountWithoutTax() : amounts.getAmountWithTax());
             }
@@ -1367,6 +1358,90 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
+     * Search if a next quarantine BR exist for the given BR quarantineBRId. if is not found, a new one is created and associated to the BR
+     * @param billingRun
+     * @param quarantineBRId
+     * @return
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun findOrCreateNextQuarantineBR(Long billingRunId, Long quarantineBRId, List<LanguageDescriptionDto> descriptionsTranslated) {
+       BillingRun billingRun = findById(billingRunId);
+       if (billingRun != null) {
+    	   if(quarantineBRId != null) {
+	            BillingRun quarantineBillingRun = findById(quarantineBRId);
+
+	            if (quarantineBillingRun != null) {
+	            	if(quarantineBillingRun.getIsQuarantine()) {
+	    	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
+	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+	    	            }else {
+	    	            	BillingCycle billingCycle = billingRun.getBillingCycle();
+	    	            	
+			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+	    	            	
+	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
+	    	            	newDescriptionsTranslated.add(languageDescriptionFr);
+	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
+	    	            	
+	    	            	update(quarantineBillingRun);
+	    	            }
+	            		return quarantineBillingRun;
+	            	}else {
+	                    throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not a quarantine billing run");
+	            	}
+	            	
+	            }else {
+	                throw new BusinessException("The billing run with quarantine billing run id " + quarantineBRId + " is not found");
+	            }
+	       }else {
+	    	   BillingRun quarantineBillingRun = new BillingRun();
+	           try {
+	               BeanUtils.copyProperties(quarantineBillingRun, billingRun);
+	               final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
+	               selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
+	               Set<BillingRunList> billingRunLists = new HashSet<>();
+	               billingRunLists.addAll(billingRun.getBillingRunLists());
+	               List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
+	               rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
+	               quarantineBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
+	               quarantineBillingRun.setBillingRunLists(billingRunLists );
+	               quarantineBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
+	               quarantineBillingRun.setInvoices(new ArrayList<>());
+	               quarantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
+	               quarantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               quarantineBillingRun.setId(null);
+	               
+	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
+		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+		            }else {
+		            	BillingCycle billingCycle = billingRun.getBillingCycle();
+		            	
+		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
+		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+		            	
+		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+		            	newDescriptionsTranslated.add(languageDescriptionEn);
+		            	newDescriptionsTranslated.add(languageDescriptionFr);
+		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
+		            }
+   	            
+	               create(quarantineBillingRun);
+	               billingRun.setNextBillingRun(quarantineBillingRun);
+	               update(billingRun);
+	               return quarantineBillingRun;
+	           } catch (Exception e) {
+	               log.error(e.getMessage());
+	               throw new BusinessException(e);
+	           }
+	       }
+       }
+       return null;
+    }
+    
+    /**
      * Creates the aggregates and invoice with invoiceLines.
      * @param billingRun the billing run
      * @param nbRuns the nb runs
@@ -1374,10 +1449,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
                                                  Long jobInstanceId) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+        billingRun.setBillableBillingAcountNumber(entities.size());
         SubListCreator<? extends IBillableEntity> subListCreator;
         try {
             subListCreator = new SubListCreator<>(entities, (int) nbRuns);
@@ -1429,17 +1505,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 break;
             }
             try {
-                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
+                List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
                         billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
                         null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}",
-                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                updateBillingRunWithStatistics(invoices);
+            } catch (Exception exception) {
+                throw new BusinessException(exception);
             }
         }
 
         return new AsyncResult<>("OK");
+    }
+
+    private void updateBillingRunWithStatistics(List<Invoice> invoices) {
+        BigDecimal amountWithTax = invoices.stream().map(Invoice::getAmountWithTax).reduce(ZERO, BigDecimal::add);
+        BigDecimal amountWithoutTax = invoices.stream().map(Invoice::getAmountWithoutTax).reduce(ZERO, BigDecimal::add);
+        BigDecimal amountTax = invoices.stream().map(Invoice::getAmountTax).reduce(ZERO, BigDecimal::add);
+        InvoicingJobV2Bean.addNewAmounts(amountTax, amountWithoutTax, amountWithTax);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
@@ -1471,4 +1554,37 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         return pollingQuery;
     }
+    
+    private Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues) throws InvalidParameterException {
+        if (translationInfos == null || translationInfos.isEmpty()) {
+            return null;
+        }
+
+        List<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
+
+        Map<String, String> values = null;
+        if (currentValues == null) {
+            values = new HashMap<>();
+        } else {
+            values = currentValues;
+        }
+
+        for (LanguageDescriptionDto translationInfo : translationInfos) {
+            if (!supportedLanguages.contains(translationInfo.getLanguageCode())) {
+                throw new InvalidParameterException("Language " + translationInfo.getLanguageCode() + " is not supported by the provider.");
+            }
+            if (StringUtils.isBlank(translationInfo.getDescription())) {
+                values.remove(translationInfo.getLanguageCode());
+            } else {
+                values.put(translationInfo.getLanguageCode(), translationInfo.getDescription());
+            }
+        }
+
+        if (values.isEmpty()) {
+            return null;
+        } else {
+            return values;
+        }
+    }
+    
 }

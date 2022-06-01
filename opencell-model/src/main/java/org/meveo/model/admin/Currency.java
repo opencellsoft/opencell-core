@@ -17,10 +17,7 @@
  */
 package org.meveo.model.admin;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -56,6 +53,11 @@ public class Currency extends AuditableEntity {
     @Size(max = 255)
     private String descriptionEn;
 
+    /** Currency symbol. */
+    @Column(name = "symbol", length = 255)
+    @Size(max = 255)
+    private String symbol;
+    
     /** Flag field that indicates if it is system currency. */
     @Type(type = "numeric_boolean")
     @Column(name = "system_currency")
@@ -84,7 +86,15 @@ public class Currency extends AuditableEntity {
         this.descriptionEn = descriptionEn;
     }
 
-    public Boolean getSystemCurrency() {
+    public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+	public Boolean getSystemCurrency() {
         return systemCurrency;
     }
 

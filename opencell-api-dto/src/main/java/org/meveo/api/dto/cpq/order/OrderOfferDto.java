@@ -44,9 +44,21 @@ public class OrderOfferDto extends BaseEntityDto {
 	/** The userAccount code. */
 	private String userAccountCode;
 	
+	/** The subscription code. */
+	@Schema(description = "The subscription code") 
+    private String subscriptionCode;
+	
 	/** Order line type */
     @Schema(description = "The order line type")
     private OfferLineTypeEnum orderLineType;
+    
+    /** The delivery date. */
+	@Schema(description = "The termination date") 
+    private Date terminationDate;
+	
+	/** The delivery date. */
+	@Schema(description = "The termination reason") 
+    private String terminationReasonCode;
 
     public OrderOfferDto() {
 	}
@@ -60,6 +72,9 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.offerTemplateCode = orderOffer.getOfferTemplate().getCode();
         this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
+        this.subscriptionCode = orderOffer.getSubscription().getCode();
+        this.terminationDate = orderOffer.getTerminationDate();
+        this.terminationReasonCode = orderOffer.getTerminationReason() != null ? orderOffer.getTerminationReason().getCode() : null;
 	}
  
 
@@ -70,6 +85,7 @@ public class OrderOfferDto extends BaseEntityDto {
 		this.deliveryDate = orderOffer.getDeliveryDate();
         this.orderLineType = orderOffer.getOrderLineType();
         this.userAccountCode = orderOffer.getUserAccount()!=null?orderOffer.getUserAccount().getCode():null;
+        this.subscriptionCode = orderOffer.getSubscription()!=null?orderOffer.getSubscription().getCode():null;
 	}
 	public OrderOfferDto(OrderOffer orderOffer, boolean loadOrderProduct, boolean loadOrderProdAttribute,boolean loadOrderAttributes) {
 		init(orderOffer);
@@ -221,5 +237,32 @@ public class OrderOfferDto extends BaseEntityDto {
     public OfferLineTypeEnum getOrderLineType() {
         return orderLineType;
     }
+
+	public String getSubscriptionCode() {
+		return subscriptionCode;
+	}
+
+	public void setSubscriptionCode(String subscriptionCode) {
+		this.subscriptionCode = subscriptionCode;
+	}
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+	public String getTerminationReasonCode() {
+		return terminationReasonCode;
+	}
+
+	public void setTerminationReasonCode(String terminationReasonCode) {
+		this.terminationReasonCode = terminationReasonCode;
+	}
+	
+    
+    
  
 }

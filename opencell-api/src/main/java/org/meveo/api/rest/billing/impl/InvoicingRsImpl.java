@@ -23,6 +23,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -50,6 +51,25 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("createBillingRun request={}", createBillingRunDto);
         try {
             long billingRunId = invoicingApi.createBillingRun(createBillingRunDto);
+            result.setMessage(billingRunId + "");
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateBillingRun(CreateBillingRunDto createBillingRunDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.info("createOrUpdateBillingRun request={}", createBillingRunDto);
+        try {
+            long billingRunId;
+        	if(createBillingRunDto.getId() != null) {
+                billingRunId = invoicingApi.updateBillingRun(createBillingRunDto);
+        	}else{
+                billingRunId = invoicingApi.createBillingRun(createBillingRunDto);
+        	}
             result.setMessage(billingRunId + "");
         } catch (Exception e) {
             processException(e, result);
@@ -211,6 +231,19 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.debug("validateInvoice Response={}", result);
         return result;
 	}
+	
+	@Override
+    public ActionStatus invalidateInvoiceDocuments(Long billingRunId, InvalidateInvoiceDocumentsDto invalidateInvoiceDocumentsDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("invalidateInvoiceDocuments request={}", billingRunId);
+        try {
+            invoicingApi.invalidateInvoiceDocuments(billingRunId, invalidateInvoiceDocumentsDto.getInvalidateXMLInvoices(), invalidateInvoiceDocumentsDto.getInvalidatePDFInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("invalidateInvoiceDocuments Response={}", result);
+        return result;
+    }
 
 	@Override
 	public ActionStatus moveInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {

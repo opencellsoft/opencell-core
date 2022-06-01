@@ -18,7 +18,8 @@ import java.util.List;
         @Parameter(name = "sequence_name", value = "dunning_policy_seq")})
 @NamedQueries({
         @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName"),
-        @NamedQuery(name = "DunningPolicy.listPoliciesByIsActive", query = "SELECT DISTINCT dp FROM DunningPolicy dp left join fetch dp.dunningLevels dpl left join fetch dpl.dunningLevel dl where dp.isActivePolicy=:active")})
+        @NamedQuery(name = "DunningPolicy.listPoliciesByIsActive", query = "SELECT DISTINCT dp FROM DunningPolicy dp left join fetch dp.dunningLevels dpl left join fetch dpl.dunningLevel dl where dp.isActivePolicy=:active"),
+        @NamedQuery(name = "DunningPolicy.DeactivateDunningPolicies", query = "UPDATE DunningPolicy dp SET dp.isActivePolicy=false WHERE dp.id IN (:ids)")})
 public class DunningPolicy extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
@@ -166,20 +167,20 @@ public class DunningPolicy extends AuditableEntity {
         this.policyPriority = policyPriority;
     }
 
-    public Boolean getDefaultPolicy() {
+    public Boolean getIsDefaultPolicy() {
         return isDefaultPolicy;
     }
 
-    public void setDefaultPolicy(Boolean defaultPolicy) {
-        isDefaultPolicy = defaultPolicy;
+    public void setIsDefaultPolicy(Boolean isDefaultPolicy) {
+        this.isDefaultPolicy = isDefaultPolicy;
     }
 
-    public Boolean getActivePolicy() {
+    public Boolean getIsActivePolicy() {
         return isActivePolicy;
     }
 
-    public void setActivePolicy(Boolean activePolicy) {
-        isActivePolicy = activePolicy;
+    public void setIsActivePolicy(Boolean isActivePolicy) {
+        this.isActivePolicy = isActivePolicy;
     }
 
     public List<DunningPolicyLevel> getDunningLevels() {

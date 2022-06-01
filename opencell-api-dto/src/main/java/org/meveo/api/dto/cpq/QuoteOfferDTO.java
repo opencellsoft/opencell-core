@@ -149,6 +149,10 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	/** Quote line type */
     @Schema(description = "The quote line type")
 	private OfferLineTypeEnum quoteLineType;
+    
+    /** Subscription */
+	@Schema(description = "The code of the subscription")
+	private String subscriptionCode;
    
 	public QuoteOfferDTO() {
         super();
@@ -174,6 +178,9 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		deliveryDate = quoteOffer.getDeliveryDate();
 		userAccountCode=quoteOffer.getUserAccount()!=null?quoteOffer.getUserAccount().getCode():null;
 		quoteLineType = quoteOffer.getQuoteLineType();
+		if (quoteOffer.getSubscription() != null) {
+		    subscriptionCode = quoteOffer.getSubscription().getCode();
+		}
 	}
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -204,16 +211,10 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 
 		for (BigDecimal taxRate : pricesPerTax.keySet() ) {
 
-			Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = quotePrices.stream()
-					.filter(price -> PriceLevelEnum.OFFER.equals(price.getPriceLevelEnum()))
-					.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
 
-			List<PriceDTO> taxPrices = pricesPerType
-					.keySet()
-					.stream()
-					.map(key -> reducePrices(key, pricesPerType, null, quoteOffer, PriceLevelEnum.OFFER))
-					.filter(Optional::isPresent)
-					.map(price -> new PriceDTO(price.get()))
+			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
+					.map(price -> new PriceDTO(price))
 					.collect(Collectors.toList());
 
 			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));
@@ -232,6 +233,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
 			quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
 			quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
+			quotePrice.setAmountWithoutTaxWithoutDiscount(accountingArticlePrice.getAmountWithoutTaxWithoutDiscount());
 			quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
 			quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
 			quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
@@ -247,6 +249,12 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
 			quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
 			quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+			if(a.getAmountWithoutTaxWithoutDiscount() != null && b.getAmountWithoutTaxWithoutDiscount() != null)
+				quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTaxWithoutDiscount()));
+			else if(a.getAmountWithoutTaxWithoutDiscount() != null)
+				quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTaxWithoutDiscount());
+			else 
+				quotePrice.setAmountWithoutTaxWithoutDiscount(b.getAmountWithoutTaxWithoutDiscount());
 			quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
 			quotePrice.setTaxRate(a.getTaxRate());
 			if(a.getRecurrenceDuration()!=null) {
@@ -448,4 +456,13 @@ public class QuoteOfferDTO extends BusinessEntityDto {
     public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
         this.quoteLineType = quoteLineType;
     }
+
+	public String getSubscriptionCode() {
+		return subscriptionCode;
+	}
+
+	public void setSubscriptionCode(String subscriptionCode) {
+		this.subscriptionCode = subscriptionCode;
+	}
+    
 }

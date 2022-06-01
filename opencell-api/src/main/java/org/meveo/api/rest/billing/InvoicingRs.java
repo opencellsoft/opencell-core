@@ -18,18 +18,19 @@
 
 package org.meveo.api.rest.billing;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
@@ -38,8 +39,11 @@ import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/billing/invoicing")
 @Tag(name = "Invoicing", description = "@%Invoicing")
@@ -71,7 +75,30 @@ public interface InvoicingRs extends IBaseRs {
 	)
     ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto);
 
-
+    /**
+     * Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.
+     * 
+     * @param createBillingRunDto The billing run's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/createOrUpdateBillingRun")
+	@Operation(
+			summary=" Create or Update billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			description=" Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			operationId="    POST_Invoicing_createBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus createOrUpdateBillingRun(CreateBillingRunDto createBillingRunDto);
+    
+    
     /**
      * Search for a billing run info with a given Id 
      * 
@@ -324,6 +351,29 @@ public interface InvoicingRs extends IBaseRs {
 	)
     ActionStatus validateInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
+    
+    /**
+     * Validate one or several invoices (change status to DRAFT).
+     * Body will contain a list of invoice id
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/invalidateInvoiceDocuments")
+    @Operation(
+            summary="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
+            description="This API will empty xml_filename and pdf_filename from all invoices in the specified billing run.",
+            operationId="    PUT_Invoicing_billingRun_{billingRunId}_invalidateInvoice",
+            responses= {
+                @ApiResponse(description="type ActionStatus.class Invalidate billing run invoice files",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
+    ActionStatus invalidateInvoiceDocuments(@PathParam("billingRunId") Long billingRunId, InvalidateInvoiceDocumentsDto invalidateInvoiceDocumentsDto);
+
     /**
      * Move invoices to a new Billing Run with the same parameters as the current one, and also in status REJECTED|POSTINVOICED.
      *   

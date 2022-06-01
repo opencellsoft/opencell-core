@@ -32,13 +32,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
@@ -126,8 +120,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	private Contract contract;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_type_id", nullable = false)
-	@NotNull
+	@JoinColumn(name = "order_type_id")
 	private OrderType orderType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

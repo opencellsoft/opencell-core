@@ -18,7 +18,9 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -245,6 +247,12 @@ public class ProductService extends BusinessService<Product> {
 			ProductVersion productVersion= productVersionService.findByProductAndStatus(productCode,VersionStatusEnum.PUBLISHED);
 			if(productVersion==null) {
 				throw new MeveoApiException("At least one version must be published");
+			}
+			Optional<ProductChargeTemplateMapping> firstNonActiveLinkedCharge = product.getProductCharges().stream()
+					.filter(chargeTemplateMapping -> !chargeTemplateMapping.getChargeTemplate().getStatus().equals(ChargeTemplateStatusEnum.ACTIVE))
+					.findFirst();
+			if(firstNonActiveLinkedCharge.isPresent()){
+				throw new BusinessException("All linked charges must be activated before activating the product!");
 			}
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());

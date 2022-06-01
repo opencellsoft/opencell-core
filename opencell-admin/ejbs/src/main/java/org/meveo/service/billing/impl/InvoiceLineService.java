@@ -2,23 +2,32 @@ package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CUST;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SE;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SU;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
@@ -27,6 +36,9 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
@@ -38,7 +50,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -47,8 +60,11 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -56,7 +72,6 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.crm.Customer;
@@ -66,14 +81,19 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
+import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
+
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -109,11 +129,27 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private TaxService taxService;
 
     @Inject
+
+    private InvoiceService invoiceService;
+
+    @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+	private BillingRunService billingRunService;
+    
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+
+    @Inject
+	private TradingCurrencyService tradingCurrencyService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -126,84 +162,169 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("commercialOrder", commercialOrder)
                 .getResultList();
     }
+    
     @Override
     public void create(InvoiceLine entity) throws BusinessException {
-    	AccountingArticle accountingArticle=entity.getAccountingArticle();
-    	Invoice invoice=entity.getInvoice();
-    	Date date=new Date();
-    	if(entity.getValueDate()!=null) {
-    		date=entity.getValueDate();
-    	}
-    	Seller seller=null;
-    	BillingAccount billingAccount=null;
-    	if(invoice!=null) {
-    	   if(invoice.getInvoiceDate()!=null) {
-        		date=invoice.getInvoiceDate();
-        	}
-    	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    	 billingAccount=invoice.getBillingAccount();
-    	}
-    	 else if (entity.getBillingAccount()!=null) {
-    		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-    		 billingAccount=entity.getBillingAccount();
-    	 }
-    	
-    	 if (accountingArticle != null) {
-             billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        createInvoiceLineWithInvoice(entity, entity.getInvoice());
+    }
+    
+    public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice) throws BusinessException {
+        createInvoiceLineWithInvoice(entity, invoice, false);
+    }
+
+    public void createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
+        AccountingArticle accountingArticle=entity.getAccountingArticle();
+        Date date=new Date();
+        if(entity.getValueDate()!=null) {
+            date=entity.getValueDate();
+        }
+        BillingAccount billingAccount=entity.getBillingAccount();
+        Seller seller=null;
+        if(invoice!=null) {
+         seller=invoice.getSeller()!=null?invoice.getSeller():seller;
+         billingAccount=invoice.getBillingAccount();
+        }
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        if(seller==null) {
+             seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
+        }
+        if (accountingArticle != null && entity.getTax() == null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
-    	super.create(entity);
+        super.create(entity);
+        
+        if(!isDuplicated && entity.getDiscountPlan() != null) {
+        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller, entity);
+        }
+    }
+    
+    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
+    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice.getInvoiceDate() );
+    	if(isDiscountApplicable) {
+    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, null, invoice.getInvoiceDate());
+            BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
+            entity.setDiscountAmount(invoiceLineDiscountAmount);
+    	}
+    }
+    
+    public BigDecimal addDiscountPlanInvoiceLine(List<DiscountPlanItem> discountItems,InvoiceLine invoiceLine, Invoice invoice, BillingAccount billingAccount, Seller seller) {
+        BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
+        for (DiscountPlanItem discountPlanItem : discountItems) {
+        	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
+        	discountInvoice.setStatus(invoiceLine.getStatus());
+            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
+            } else {
+                //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
+                BigDecimal taxPercent = invoiceLine.getTaxRate();
+                if(invoiceLine.getAccountingArticle() != null) {
+                	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoice.getInvoiceDate(), false, false);
+                        taxPercent = taxInfo.tax.getPercent();
+                }
+                BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
+                if(discountAmount != null) {
+                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+        	  	}
+                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                var quantity = invoiceLine.getQuantity();
+                discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
+                discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+                discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
+                discountInvoice.setDiscountPlan(null);
+                discountInvoice.setDiscountedInvoiceLine(invoiceLine);
+                discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
+                discountInvoice.setTaxRate(taxPercent);
+                discountInvoice.setRawAmount(invoiceLineDiscountAmount);
+            	super.create(discountInvoice);
+            }
+        }
+        return invoiceLineDiscountAmount;
+    }
+    
+   // private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
+     //   addDiscountPlanInvoiceWithInvoiceSource(discount, entity, billingAccount, invoice, invoice, accountingArticle, seller, invoiceLine);
+   // }
+    
+   private void addDiscountPlanInvoiceWithInvoiceSource(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, Invoice invoiceSource, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
+        var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null,null,null, null, invoiceSource.getInvoiceDate(), invoiceLine);
+        if(isDiscountApplicable) {
+            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null,null, accountingArticle, null, new Date());
+            BigDecimal totalDiscountAmount = BigDecimal.ZERO; 
+            for (DiscountPlanItem discountPlanItem : discountItems) {
+                BigDecimal DiscountLineAmount = BigDecimal.ZERO;
+                InvoiceLine discountInvoice = new InvoiceLine(entity, invoice);
+                discountInvoice.setStatus(entity.getStatus());
+                if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                    totalDiscountAmount = totalDiscountAmount.add(discountPlanItem.getDiscountValue());
+                } else {
+                    BigDecimal taxPercent = entity.getTaxRate();
+                    if(entity.getAccountingArticle() != null) {
+                        TaxInfo taxInfo = taxMappingService.determineTax(entity.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoiceSource.getInvoiceDate(), false, false);
+                            taxPercent = taxInfo.tax.getPercent();
+                    }
+                    BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(entity.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
+                    if(discountAmount != null) {
+                        DiscountLineAmount = DiscountLineAmount.add(discountAmount);
+                    }
+                    if(InvoiceLineTaxModeEnum.RATE.equals(invoiceLine.getTaxMode()) 
+                            || InvoiceLineTaxModeEnum.TAX.equals(invoiceLine.getTaxMode()))
+                    {
+                        taxPercent = invoiceLine.getTaxRate();
+                    }
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(DiscountLineAmount, DiscountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    var quantity = entity.getQuantity();
+                    discountInvoice.setUnitPrice(DiscountLineAmount);
+                    discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+                    discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
+                    totalDiscountAmount = totalDiscountAmount.add(discountInvoice.getAmountWithoutTax().abs());
+                    discountInvoice.setDiscountPlan(null);
+                    discountInvoice.setDiscountAmount(BigDecimal.ZERO);
+                    discountInvoice.setDiscountedInvoiceLine(entity);
+                    discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
+                    discountInvoice.setTaxRate(taxPercent);
+                    super.create(discountInvoice);
+                }
+            }
+            entity.setDiscountAmount(totalDiscountAmount.compareTo(BigDecimal.ZERO) > 0
+                    ? totalDiscountAmount : (totalDiscountAmount.multiply(entity.getQuantity())).abs());
+        }
     }
 
-    public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
-                                                       Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {
+    public List<InvoiceLine> listInvoiceLinesToInvoice(BillingRun billingRun, IBillableEntity entityToInvoice, Date firstTransactionDate,
+                                                       Date lastTransactionDate, Filter filter,Map<String, Object> filterParams, int pageSize) throws BusinessException {
         if (filter != null) {
-            return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, null);
+            return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, filterParams);
+		} else {
+			TypedQuery<InvoiceLine> namedQuery = null;
+			String byBr = billingRun != null ? "AndBR" : "";
+			if (entityToInvoice instanceof Subscription) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceBySubscription" + byBr, InvoiceLine.class)
+						.setParameter("subscriptionId", entityToInvoice.getId());
+			} else if (entityToInvoice instanceof BillingAccount) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByBillingAccount" + byBr, InvoiceLine.class)
+						.setParameter("billingAccountId", entityToInvoice.getId());
+			} else if (entityToInvoice instanceof Order) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByOrderNumber" + byBr, InvoiceLine.class)
+						.setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber());
+			} else if (entityToInvoice instanceof CommercialOrder) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder" + byBr, InvoiceLine.class)
+						.setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId());
+			} else if (entityToInvoice instanceof CpqQuote) {
+				namedQuery = getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByQuote" + byBr, InvoiceLine.class)
+						.setParameter("quoteId", entityToInvoice.getId());
+			} else {
+				return emptyList();
+			}
 
-        } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceBySubscription", InvoiceLine.class)
-                    .setParameter("subscriptionId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByBillingAccount", InvoiceLine.class)
-                    .setParameter("billingAccountId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-
-        } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByOrderNumber", InvoiceLine.class)
-                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }else if (entityToInvoice instanceof CommercialOrder) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder", InvoiceLine.class)
-                    .setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }else if (entityToInvoice instanceof CpqQuote) {
-            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByQuote", InvoiceLine.class)
-                    .setParameter("quoteId", entityToInvoice.getId())
-                    .setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate)
-                    .setHint("org.hibernate.readOnly", true)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }
-        return emptyList();
+			if (billingRun != null) {
+				namedQuery.setParameter("billingRunId", billingRun.getId());
+			} else {
+				namedQuery.setParameter("firstTransactionDate", firstTransactionDate)
+						.setParameter("lastTransactionDate", lastTransactionDate);
+			}
+			return namedQuery.setHint("org.hibernate.readOnly", true).setMaxResults(pageSize).getResultList();
+		}
     }
 
     public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
@@ -216,73 +337,97 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-
-
- public void createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate, OrderOffer orderOffer,BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-	   Date operationDate=new Date();
-       Seller seller=null;
-       BillingAccount billingAccount = null;
-    	InvoiceLine invoiceLine = new InvoiceLine();
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+       return  createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, null);
+    }	
+    
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
+                                         ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+                                         OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
+                                         BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId) {
+    	return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, discountedInvoiceLineId, BigDecimal.ONE);
+    }
+    
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
+                    ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
+                    OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
+                    BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId, BigDecimal quantity) {
+        BillingAccount billingAccount = null;
+        InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
-        invoiceLine.setLabel(accountingArticle.getDescription()); 
+        invoiceLine.setLabel(accountingArticle.getDescription());
         invoiceLine.setProduct(productVersion.getProduct());
         invoiceLine.setProductVersion(productVersion);
         invoiceLine.setOrderLot(orderLot);
         invoiceLine.setOfferTemplate(offerTemplate);
         invoiceLine.setOrderOffer(orderOffer);
-        invoiceLine.setQuoteOffer(orderOffer.getQuoteOffer());
+        ofNullable(orderOffer).ifPresent(offer -> invoiceLine.setQuoteOffer(offer.getQuoteOffer()));
         if (entityToInvoice instanceof CpqQuote) {
             entityToInvoice = cpqQuoteService.retrieveIfNotManaged((CpqQuote) entityToInvoice);
-            CpqQuote quote =((CpqQuote) entityToInvoice);
+            CpqQuote quote = ((CpqQuote) entityToInvoice);
             invoiceLine.setQuote(quote);
             billingAccount = quote.getBillableAccount();
             invoiceLine.setBillingAccount(billingAccount);
-            operationDate=quote.getQuoteDate();
-            seller=quote.getSeller();
         }
-        CommercialOrder commercialOrder=null;
+        CommercialOrder commercialOrder = null;
         if (entityToInvoice instanceof CommercialOrder) {
-        	entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
-        	commercialOrder = ((CommercialOrder) entityToInvoice);
-        	invoiceLine.setCommercialOrder(commercialOrder);
-        	invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
+            entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
+            commercialOrder = ((CommercialOrder) entityToInvoice);
+            invoiceLine.setCommercialOrder(commercialOrder);
+            invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
             billingAccount = commercialOrder.getBillingAccount();
-        	invoiceLine.setBillingAccount(billingAccount);
-        	operationDate=commercialOrder.getOrderDate();
-        	seller=commercialOrder.getSeller();
+            invoiceLine.setBillingAccount(billingAccount);
         }
-        invoiceLine.setQuantity(BigDecimal.valueOf(1));
-        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null)?amountWithoutTaxToBeInvoiced:accountingArticle.getUnitPrice();
-        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
+        if (entityToInvoice instanceof BillingAccount) {
+            entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+            billingAccount = ((BillingAccount) entityToInvoice);
+            invoiceLine.setBillingAccount(billingAccount);
+
+        }
+        invoiceLine.setQuantity(quantity == null || BigDecimal.ZERO.equals(quantity) ? BigDecimal.ONE : quantity);
+        amountWithoutTaxToBeInvoiced = (amountWithoutTaxToBeInvoiced != null) ? amountWithoutTaxToBeInvoiced : accountingArticle.getUnitPrice();
+        invoiceLine.setUnitPrice(BigDecimal.ZERO.equals(quantity) ? amountWithoutTaxToBeInvoiced : amountWithoutTaxToBeInvoiced.divide(quantity));
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
         invoiceLine.setAmountTax(taxAmountToBeInvoiced);
         invoiceLine.setTaxRate(totalTaxRate);
-      
+        if(discountedInvoiceLineId!=null) {
+        	InvoiceLine discountedInvoiceLine=findById(discountedInvoiceLineId);
+        	if(discountedInvoiceLine==null) {
+        		throw new EntityDoesNotExistsException(InvoiceLine.class, discountedInvoiceLineId);
+        	}
+        	invoiceLine.setDiscountedInvoiceLine(discountedInvoiceLine);
+        }
         invoiceLine.setValueDate(new Date());
-     if (accountingArticle != null ) {
-         setApplicableTax(accountingArticle, operationDate, seller, billingAccount, invoiceLine);
-     }
         create(invoiceLine);
+        commit();
+        return invoiceLine;
     }
 
     private void setApplicableTax(AccountingArticle accountingArticle, Date operationDate, Seller seller, BillingAccount billingAccount, InvoiceLine invoiceLine) {
-
-        Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
-        Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
-        if (isExonerated == null) {
-            isExonerated = billingAccountService.isExonerated(billingAccount);
-        }
-        Object[] applicableTax = taxMappingService
-                .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
-        boolean taxRecalculated = (boolean) applicableTax[1];
-        if (taxRecalculated) {
-            Tax tax = (Tax) applicableTax[0];
-            log.debug("Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(),
-                    accountingArticle.getTaxClass().getId(), invoiceLine.getTax() == null ? null : invoiceLine.getTax().getId(), tax == null ? null : tax.getPercent(), tax.getId(),
-                    tax.getPercent());
-            invoiceLine.setTax(tax);
-            invoiceLine.setTaxRecalculated(taxRecalculated);
+        if(InvoiceLineTaxModeEnum.ARTICLE.equals(invoiceLine.getTaxMode()))
+        {
+            Tax taxZero = (billingAccount.isExoneratedFromtaxes() != null && billingAccount.isExoneratedFromtaxes()) ? taxService.getZeroTax() : null;
+            Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+            if (isExonerated == null) {
+                isExonerated = billingAccountService.isExonerated(billingAccount);
+            }
+            Object[] applicableTax = taxMappingService
+                    .checkIfTaxHasChanged(invoiceLine.getTax(), isExonerated, seller, billingAccount, operationDate, accountingArticle.getTaxClass(), null, taxZero);
+            boolean taxRecalculated = (boolean) applicableTax[1];
+            if (taxRecalculated) {
+                Tax tax = (Tax) applicableTax[0];
+                log.debug("Will update invoice line of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%", billingAccount.getId(),
+                        accountingArticle.getTaxClass().getId(), invoiceLine.getTax() == null ? null : invoiceLine.getTax().getId(), tax == null ? null : tax.getPercent(), tax.getId(),
+                        tax.getPercent());
+                invoiceLine.setTax(tax);
+                invoiceLine.setTaxRecalculated(taxRecalculated);
+                
+                if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
+                       invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+                       invoiceLine.setTaxRate(tax.getPercent());
+                }
+            }
         }
     }
 
@@ -396,31 +541,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return accountingArticle;
     }
 
-    private String getMinAmountInvoiceLineCode(BusinessEntity entity, Class accountClass) {
-        StringBuilder prefix = new StringBuilder("");
-        if (accountClass.equals(ServiceInstance.class)) {
-            prefix.append(IL_MIN_AMOUNT_SE.getCode());
-        }
-        if (accountClass.equals(Subscription.class)) {
-            prefix.append(IL_MIN_AMOUNT_SU.getCode());
-        }
-        if (accountClass.equals(UserAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_UA.getCode());
-        }
-        if (accountClass.equals(BillingAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_BA.getCode());
-        }
-        if (accountClass.equals(CustomerAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_CA.getCode());
-        }
-        if (accountClass.equals(Customer.class)) {
-            prefix.append(IL_MIN_AMOUNT_CUST.getCode());
-        }
-        return prefix.append("_")
-                .append(entity.getCode())
-                .toString();
-    }
-
     private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
                                           BusinessEntity entity, Seller seller, AccountingArticle defaultAccountingArticle,
                                           TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
@@ -451,52 +571,80 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @return
 	 */
-	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
+	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
+		InvoiceLine invoiceLine = new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
 		return invoiceLine;
 	}
 
-	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
-		if(invoiceLine==null) {
+	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+		boolean isFunctionalUnitPriceModified = false;
+		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
+		}else {
+			isFunctionalUnitPriceModified = invoiceLine.getFunctionalUnitPrice() != resource.getFunctionalUnitPrice();
 		}
-		Optional.ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
-		Optional.ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
-		Optional.ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
-		Optional.ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
-		Optional.ofNullable(resource.getAmountWithoutTax()).ifPresent(invoiceLine::setAmountWithoutTax);
-		Optional.ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
-		Optional.ofNullable(resource.getAmountWithTax()).ifPresent(invoiceLine::setAmountWithTax);
-		Optional.ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
-		Optional.ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
-		Optional.ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
-		Optional.ofNullable(resource.getValueDate()).ifPresent(invoiceLine::setValueDate);
-		Optional.ofNullable(resource.getOrderNumber()).ifPresent(invoiceLine::setOrderNumber);
-		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
-		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
-		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		
+		ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
+		ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
+		ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
+		ofNullable(resource.getFunctionalUnitPrice()).ifPresent(invoiceLine::setFunctionalUnitPrice);
+		ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
+		ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
+		ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
+		ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
+		ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
+		ofNullable(resource.getValueDate()).ifPresent(invoiceLine::setValueDate);
+		ofNullable(resource.getOrderNumber()).ifPresent(invoiceLine::setOrderNumber);
+		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
+		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
+		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		AccountingArticle accountingArticle=null;
+		if (resource.getAccountingArticleCode() != null) {
+			 accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
+		}	
+		
+		if(resource.getTaxMode() != null) {   
+            try {
+                invoiceLine.setTaxMode(InvoiceLineTaxModeEnum.valueOf(resource.getTaxMode().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                log.error("the Value tax Mode " + resource.getTaxMode() +" is not in ('ARTICLE', 'TAX', 'RATE')", e);
+                throw new BusinessException("the Value tax Mode " + resource.getTaxMode() +" is not in ('ARTICLE', 'TAX', 'RATE')");
+            }
+        }
+		
+		if(invoiceLine.getQuantity() == null) {
+            invoiceLine.setQuantity(new BigDecimal(1));
+        }
+		
+		BigDecimal currentRate = getRateForInvoice(invoiceLine);
+
+		if(invoiceLine.getUnitPrice() == null || isFunctionalUnitPriceModified) {
+			if(invoiceLine.getFunctionalUnitPrice() == null && accountingArticle != null) {
+				invoiceLine.setFunctionalUnitPrice(accountingArticle.getUnitPrice());
+			}
+			invoiceLine.setUnitPrice(invoiceLine.getFunctionalUnitPrice().divide(currentRate,BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+		}else {
+			invoiceLine.setFunctionalUnitPrice(invoiceLine.getUnitPrice().multiply(currentRate));
+		}
+
+		if(resource.getUnitPrice() != null) {
+		    invoiceLine.setUnitPrice(resource.getUnitPrice());
+        }
 		
 		if(invoiceLine.getUnitPrice() == null) {
-			if (resource.getAccountingArticleCode() != null){
-				AccountingArticle accountingArticle = accountingArticleService.findByCode(resource.getAccountingArticleCode());
-				if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
-					invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
-					if(resource.getQuantity() != null) {
-						invoiceLine.setAmountWithoutTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
-					}
-				}else {
-					throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
-				}
-			}else {
-				throw new BusinessException("You cannot create an invoice line without a price");
-			}
-		}
-		
+			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
+		} else {
+            invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
+            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
+                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+        }
+
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
 		}
@@ -517,12 +665,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
 		if(resource.getTaxCode()!=null) {
 			invoiceLine.setTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTaxCode()));
+			invoiceLine.setTaxRate(invoiceLine.getTax().getPercent());
 		}
 		if(resource.getOrderLotCode()!=null) {
 			invoiceLine.setOrderLot((OrderLot)tryToFindByEntityClassAndCode(OrderLot.class, resource.getOrderLotCode()));
 		}
 		if(resource.getBillingAccountCode()!=null) {
 			invoiceLine.setBillingAccount((BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, resource.getBillingAccountCode()));
+        } else if(invoiceLine.getInvoice()!=null){
+        	invoiceLine.setBillingAccount(invoiceLine.getInvoice().getBillingAccount());
         }
         if (resource.getOfferTemplateCode() != null) {
             invoiceLine.setOfferTemplate((OfferTemplate) tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
@@ -539,6 +690,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (resource.getEndDate() != null) {
             datePeriod.setTo(resource.getEndDate());
         }
+        
+
+		if(invoiceLine.getTax()==null  && accountingArticle != null && invoiceLine.getBillingAccount()!=null)  {
+			BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceLine.getBillingAccount());
+			Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
+	        if (isExonerated == null) {
+	            isExonerated = billingAccountService.isExonerated(billingAccount);
+	        }
+			  TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
+					  billingAccount.getCustomerAccount().getCustomer().getSeller(), 
+					  billingAccount, null, 
+					  invoiceLine.getValueDate()!=null?invoiceLine.getValueDate():new Date(), null, 
+				      isExonerated, false, invoiceLine.getTax());
+			  invoiceLine.setTax(recalculatedTaxInfo.tax);
+			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+		}
+		
+        /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
+        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
@@ -549,14 +719,47 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return invoiceLine;
     }
 
+    private BigDecimal getRateForInvoice(InvoiceLine invoiceLine) {
+        if (null != appProvider.getCurrency()) {
+            TradingCurrency providerTradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+
+            Invoice invoice = invoiceService.findById(invoiceLine.getInvoice().getId());
+            if (invoice.getTradingCurrency() != null) {
+                TradingCurrency invoiceTradingCurrency = tradingCurrencyService.findById(invoice.getTradingCurrency().getId());
+                if (invoiceTradingCurrency.getCurrentRate() != null
+                        && invoiceTradingCurrency.getId() != providerTradingCurrency.getId()
+                        && invoiceTradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+                    return invoiceTradingCurrency.getCurrentRate();
+                }
+
+            }
+
+            if (invoice.getBillingAccount() != null && invoice.getBillingAccount().getTradingCurrency() != null  ) {
+
+                    TradingCurrency billingAccountTradingCurrency = tradingCurrencyService.findById(invoice.getBillingAccount().getTradingCurrency().getId());
+                    if (billingAccountTradingCurrency.getCurrentRate() != null
+                            && billingAccountTradingCurrency.getId() != providerTradingCurrency.getId()
+                            && billingAccountTradingCurrency.getCurrentRate() != BigDecimal.ZERO) {
+                        return billingAccountTradingCurrency.getCurrentRate();
+                    }
+
+
+                }
+
+        }
+
+        return BigDecimal.ONE;
+
+    }
+
 	/**
 	 * @param invoice
-	 * @param invoiceLineRessource
+	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
 	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineRessource, invoiceLine);
 		update(invoiceLine);
 	}
 
@@ -567,16 +770,40 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
 		return invoiceLine;
 	}
-
+	
 	/**
 	 * @param invoice
-	 * @param lineId
+	 * @param lineId invoiceLine id
 	 */
 	public void remove(Invoice invoice, Long lineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
-		invoiceLine.setStatus(InvoiceLineStatusEnum.CANCELED);
-		invoiceLine.setInvoice(null);
+        reduceDiscountAmounts(invoice, invoiceLine);
+        deleteByDiscountedPlan(invoiceLine);
+        remove(invoiceLine);
 	}
+
+    private void reduceDiscountAmounts(Invoice invoice, InvoiceLine invoiceLine) {
+        if (invoiceLine.getDiscountPlan() != null
+                && invoiceLine.getDiscountAmount() != null
+                && !invoiceLine.getDiscountAmount().equals(BigDecimal.ZERO)) {
+            invoice.setDiscountAmount(invoice.getDiscountAmount().subtract(invoiceLine.getDiscountAmount()));
+        }
+        if (invoice.getAmountWithoutTaxBeforeDiscount() != null
+                && invoice.getAmountWithoutTaxBeforeDiscount().compareTo(invoice.getAmountWithoutTax()) != 0
+                && invoice.getAmountWithoutTaxBeforeDiscount().compareTo(BigDecimal.ZERO) > 0
+                && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
+            invoice.setAmountWithoutTaxBeforeDiscount(
+                    invoice.getAmountWithoutTaxBeforeDiscount().subtract(invoiceLine.getAmountWithoutTax()));
+        }
+        if (invoiceLine.getDiscountedInvoiceLine() != null
+                && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0) {
+            InvoiceLine discountedInvoiceLine = invoiceLine.getDiscountedInvoiceLine();
+            discountedInvoiceLine.setDiscountAmount(
+                    discountedInvoiceLine.getDiscountAmount().add(invoiceLine.getAmountWithoutTax()));
+            update(discountedInvoiceLine);
+            invoice.setDiscountAmount(invoice.getDiscountAmount().subtract(discountedInvoiceLine.getDiscountAmount()));
+        }
+    }
 
     public List<Object[]> getTotalPositiveILAmountsByBR(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("InvoiceLine.sumPositiveILByBillingRun")
@@ -585,15 +812,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public void uninvoiceILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds")
+        getEntityManager().createNamedQuery("InvoiceLine.unInvoiceByInvoiceIds")
                 .setParameter("now", new Date())
                 .setParameter("invoiceIds", invoicesIds)
                 .executeUpdate();
 
     }
 
-    public void deleteSupplementalILs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds")
+    public void cancelIlByInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
+        .setParameter("now", new Date())
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
@@ -668,20 +896,125 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public Map<Long, List<Long>> createInvoiceLines(List<Map<String, Object>> groupedRTs,
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
+        return createInvoiceLines(groupedRTs, configuration, result, null);
+    }
+    
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
+            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
-        Map<Long, List<Long>> iLIdsRtIdsCorrespondence = new HashMap<>();
+        Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
+        BasicStatistics basicStatistics = new BasicStatistics();
+        InvoiceLine invoiceLine = null;
+        List<Long> associatedRtIds = null;
         for (Map<String, Object> record : groupedRTs) {
-            InvoiceLine invoiceLine = linesFactory.create(record, configuration, result, appProvider);
+            invoiceLine = linesFactory.create(record, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
+            basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+            basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
-            List<Long> associatedRtIds = stream(((String) record.get("rated_transaction_ids"))
-                    .split(","))
-                    .map(Long::parseLong)
-                    .collect(toList());
-            iLIdsRtIdsCorrespondence.put(invoiceLine.getId(), associatedRtIds);
+            associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            basicStatistics.setCount(associatedRtIds.size());
+            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
+            if(record.get("rated_transaction_ids") != null) {
+            	var ratedTransIds = Arrays.asList( ((String) record.get("rated_transaction_ids")).split(","));
+            	for(String id: ratedTransIds) {
+            		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
+            	}
+            }
+            
         }
-        return iLIdsRtIdsCorrespondence;
+        return basicStatistics;
+    }
+
+	/**
+	 * @param result
+	 * @param aggregationConfiguration
+	 * @param billingRun
+	 * @param be billableEntity
+	 * @param basicStatistics
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
+	    basicStatistics.append(ilBasicStatistics);
+	}
+
+    public void deleteByBillingRun(long billingRunId) {
+        List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRun")
+                    .setParameter("billingRunId", billingRunId)
+                    .executeUpdate();
+        }
+    }
+
+    public List<Long> loadInvoiceLinesIdByBillingRun(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRun")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+    public void detachRatedTransactions(List<Long> invoiceLinesIds) {
+        ratedTransactionService.getEntityManager()
+                .createNamedQuery("RatedTransaction.detachFromInvoiceLines")
+                .setParameter("ids", invoiceLinesIds)
+                .executeUpdate();
+    }
+    
+    public List<Long> loadInvoiceLinesByBillingRunNotValidatedInvoices(long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.listByBillingRunNotValidatedInvoices")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
+    }
+
+	public void deleteInvoiceLines(BillingRun billingRun) {
+		List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRun.getId());
+        if(!invoiceLinesIds.isEmpty()) {
+            detachRatedTransactions(invoiceLinesIds);
+            getEntityManager()
+                    .createNamedQuery("InvoiceLine.deleteByBillingRunNotValidatedInvoices")
+                    .setParameter("billingRunId", billingRun.getId())
+                    .executeUpdate();
+        }
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+    private void deleteByDiscountedPlan(InvoiceLine invoiceLine) {
+        if (invoiceLine == null || invoiceLine.getId() == null) {
+            return;
+        }
+        QueryBuilder queryBuilder = new QueryBuilder("from InvoiceLine il ", "il");
+        queryBuilder.addCriterionEntity("il.discountedInvoiceLine", invoiceLine);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        List<InvoiceLine> invoiceLines = query.getResultList();
+        if(invoiceLines != null && !invoiceLines.isEmpty()) {
+            var ids = invoiceLines.stream()
+                    .map(InvoiceLine::getId)
+                    .collect(toSet());
+            remove(ids);
+        }
+    }
+
+    public List<Long> getDiscountLines(Long id) {
+        return getEntityManager()
+                    .createNamedQuery("InvoiceLine.listDiscountLines")
+                    .setParameter("invoiceLineId", id)
+                    .getResultList();
+    }
+
+    public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
+                .setParameter("invoice", invoice)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
     }
 }

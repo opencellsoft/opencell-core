@@ -49,6 +49,8 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     private Date rateUntilDate = null;
     private String ratingGroup = null;
     private boolean hasMore = false;
+    private String parameter1 = null;
+    private String parameter2 = null;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -72,9 +74,13 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
 
         rateUntilDate = null;
         ratingGroup = null;
+        parameter1 = null;
+        parameter2 = null;
         try {
             rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
             ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
+            parameter1 = (String) this.getParamOrCFValue(jobInstance, "parameter1");
+            parameter2 = (String) this.getParamOrCFValue(jobInstance, "parameter2");
         } catch (Exception e) {
             log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
         }
@@ -82,7 +88,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
         // Number of EDRs to process in a single job run
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("usageRatingJob.processNrInJobRun", 2000000);
 
-        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, processNrInJobRun);
+        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup,parameter1,parameter2, processNrInJobRun);
         hasMore = ids.size() == processNrInJobRun;
 
         return Optional.of(new SynchronizedIterator<Long>(ids));

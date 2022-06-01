@@ -26,27 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -65,8 +45,8 @@ import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -110,8 +90,10 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.billingAccountIdByBrItSelDate", query = "select distinct inv.billingAccount.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
+        @NamedQuery(name = "Invoice.nullifyInvoiceXMLFileNames", query = "update Invoice inv set inv.xmlFilename = null where inv.billingRun = :billingRun"),
+        @NamedQuery(name = "Invoice.nullifyInvoicePDFFileNames", query = "update Invoice inv set inv.pdfFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.portInvoiceReport", query = "select inv.amountWithTax, inv.amountWithoutTax, inv.amountTax, inv.paymentMethodType, pm.yearExpiration, pm.monthExpiration, ba.electronicBilling from Invoice inv inner join inv.billingAccount ba left join inv.paymentMethod pm where inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId AND inv.status <> 'VALIDATED'"),
         @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun where inv.id in (:invoiceIds)"),
         @NamedQuery(name = "Invoice.moveToBR", query = "update Invoice inv set inv.billingRun=:nextBR where inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
@@ -125,7 +107,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
-        @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id")
+        @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
+        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -284,7 +267,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Comment
      */
-    @Column(name = "comment", length = 1200)
+    @Column(name = "comment_text", length = 1200)
     @Size(max = 1200)
     private String comment;
 
@@ -620,6 +603,26 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Transient
     private List<InvoiceLine> draftInvoiceLines = new ArrayList<>();
 
+    /**
+     * Amount without tax before discount
+     */
+    @Column(name = "amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTaxBeforeDiscount;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_reminder_level_triggered")
+    private boolean isReminderLevelTriggered;
+
+    /**
+     * The collection plan related invoice
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "related_dunning_collection_plan_id")
+    private DunningCollectionPlan relatedDunningCollectionPlan;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "dunning_collection_plan_triggered")
+    private boolean dunningCollectionPlanTriggered;
 
     public Invoice() {
 	}
@@ -670,6 +673,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.paymentStatusDate = null;
 		this.invoiceLines = new ArrayList<InvoiceLine>();
 		this.invoiceAgregates = new ArrayList<InvoiceAgregate>();
+		this.isReminderLevelTriggered = copy.isReminderLevelTriggered;
+		this.relatedDunningCollectionPlan = copy.relatedDunningCollectionPlan;
 	}
 
 
@@ -686,13 +691,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         if(this.getBillingAccount() != null) {
         	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
         	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
-        	this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
-        	if(billingAccount.getTradingLanguage() != null)
+            this.tradingCurrency = billingAccount.getTradingCurrency() != null ? billingAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+            if(this.tradingCurrency == null) {
+                this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+            }
+            if(billingAccount.getTradingLanguage() != null) {
         		this.tradingLanguage = billingAccount.getTradingLanguage();
-        	if(this.tradingLanguage == null)
+            }
+        	if(this.tradingLanguage == null) {
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
+        	}
         }
-
     }
 
     public String getInvoiceNumber() {
@@ -1595,6 +1604,37 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setCpqQuote(CpqQuote cpqQuote) {
 		this.cpqQuote = cpqQuote;
 	}
-    
-    
+
+
+    public BigDecimal getAmountWithoutTaxBeforeDiscount() {
+        return amountWithoutTaxBeforeDiscount;
+    }
+
+    public void setAmountWithoutTaxBeforeDiscount(BigDecimal amountWithoutTaxBeforeDiscount) {
+        this.amountWithoutTaxBeforeDiscount = amountWithoutTaxBeforeDiscount;
+    }
+
+    public boolean isReminderLevelTriggered() {
+        return isReminderLevelTriggered;
+    }
+
+    public void setReminderLevelTriggered(boolean reminderLevelTriggered) {
+        isReminderLevelTriggered = reminderLevelTriggered;
+    }
+
+    public DunningCollectionPlan getRelatedDunningCollectionPlan() {
+        return relatedDunningCollectionPlan;
+    }
+
+    public void setRelatedDunningCollectionPlan(DunningCollectionPlan relatedDunningCollectionPlan) {
+        this.relatedDunningCollectionPlan = relatedDunningCollectionPlan;
+    }
+
+    public boolean isDunningCollectionPlanTriggered() {
+        return dunningCollectionPlanTriggered;
+    }
+
+    public void setDunningCollectionPlanTriggered(boolean dunningCollectionPlanTriggered) {
+        this.dunningCollectionPlanTriggered = dunningCollectionPlanTriggered;
+    }
 }

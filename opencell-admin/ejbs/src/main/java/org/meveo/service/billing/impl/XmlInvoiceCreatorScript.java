@@ -17,29 +17,8 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.toPlainString;
-import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -79,7 +58,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -105,6 +84,36 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static org.meveo.commons.utils.NumberUtils.toPlainString;
+import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
 /**
  * A default implementation of XML invoice creation.
@@ -226,9 +235,17 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
             File xmlFile = new File(fullXmlFilePath);
-            StreamResult result = new StreamResult(xmlFile);
+            OutputStream outStream = StorageFactory.getOutputStream(fullXmlFilePath);
+            StreamResult result = new StreamResult(outStream);
             trans.transform(source, result);
             log.info("XML file '{}' produced for invoice {}", fullXmlFilePath, invoice.getInvoiceNumberOrTemporaryNumber());
+            try {
+                assert outStream != null;
+                outStream.close();
+            }
+            catch (IOException e) {
+                System.out.println("Transformer exception : " + e.getMessage());
+            }
             return xmlFile;
         } catch (TransformerException e) {
             throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumberOrTemporaryNumber(), e);
@@ -295,12 +312,24 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
-            Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
-            if (userAccountTag == null) {
-                continue;
+        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+        	List<UserAccount> userAccounts = invoice.getBillingAccount().getUsersAccounts();
+        	for(UserAccount userAccount : userAccounts) {
+        		if(userAccount.getParentUserAccount() == null) {
+                    Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+                    createUserAccountChildSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, userAccountTag);
+                    userAccountsTag.appendChild(userAccountTag);
+        		}
+        	}
+        	
+        }else {
+            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+                Element userAccountTag = createUserAccountSection(doc, invoice, userAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+                if (userAccountTag == null) {
+                    continue;
+                }
+                userAccountsTag.appendChild(userAccountTag);
             }
-            userAccountsTag.appendChild(userAccountTag);
         }
         // Generate invoice lines for Categories/RTs that are not linked to User account
         Element userAccountTag = createUserAccountSection(doc, invoice, null, ratedTransactions, isVirtual, userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
@@ -308,6 +337,46 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             userAccountsTag.appendChild(userAccountTag);
         }
         return userAccountsTag;
+    }
+    
+    private void createUserAccountChildSection(Document doc, Invoice invoice, UserAccount parentUserAccount, List<RatedTransaction> ratedTransactions, boolean isVirtual, boolean ignoreUA, String invoiceLanguageCode,
+            InvoiceConfiguration invoiceConfiguration, List<UserAccount> userAccounts, Element parentUserAccountTag) {
+
+        Element childUserAccountsTag = doc.createElement("userAccounts");
+        boolean existChild = false;
+    	for(UserAccount childUserAccount : userAccounts) {
+    		if(parentUserAccount.equals(childUserAccount.getParentUserAccount())) {
+    			existChild = true;
+    	    	Element childUserAccountTag = createUserAccountSection(doc, invoice, childUserAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+    	    	if(childUserAccountTag != null) {
+                    createUserAccountChildSection(doc, invoice, childUserAccount, ratedTransactions, isVirtual, false, invoiceLanguageCode, invoiceConfiguration, userAccounts, childUserAccountTag);
+        	    	childUserAccountsTag.appendChild(childUserAccountTag);
+    	    	}
+    		}
+    	}
+    	if(existChild && childUserAccountsTag != null) {
+    		parentUserAccountTag.appendChild(childUserAccountsTag);
+    	}
+    }
+    
+    private void createUserAccountChildSectionIL(Document doc, Invoice invoice, List<InvoiceLine> invoiceLines,
+                                                 boolean isVirtual, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration,
+                                                 List<UserAccount> childUserAccounts, Element parentUserAccountTag) {
+        Element childUserAccountsTag = doc.createElement("userAccounts");
+        boolean existChild = false;
+    	for(UserAccount childUserAccount : childUserAccounts) {
+            existChild = true;
+            Element childUserAccountTag = createUserAccountSectionIL(doc, invoice, childUserAccount, invoiceLines,
+                    isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+            if (childUserAccountTag != null) {
+                createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceLanguageCode,
+                        invoiceConfiguration, childUserAccount.getUserAccounts(), childUserAccountTag);
+                childUserAccountsTag.appendChild(childUserAccountTag);
+            }
+    	}
+    	if(existChild && childUserAccountsTag != null) {
+    		parentUserAccountTag.appendChild(childUserAccountsTag);
+    	}
     }
 
     /**
@@ -388,19 +457,23 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
-            Element subscriptionTag = doc.createElement("subscription");
-            subscriptionTag.setAttribute("id", subscription.getId() + "");
-            subscriptionTag.setAttribute("code", subscription.getCode());
-            subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
-            subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
-            Element subscriptionDateTag = doc.createElement("subscriptionDate");
-            subscriptionDateTag.appendChild(doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
-            subscriptionTag.appendChild(subscriptionDateTag);
-            Element endAgreementTag = doc.createElement("endAgreementDate");
-            endAgreementTag.appendChild(doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
-            subscriptionTag.appendChild(endAgreementTag);
-            addCustomFields(subscription, doc, subscriptionTag);
-            subscriptionsTag.appendChild(subscriptionTag);
+            if(userAccount == null
+                    || (userAccount.getId() == subscription.getUserAccount().getId()
+                    && userAccount.getCode().equals(subscription.getUserAccount().getCode()))) {
+                Element subscriptionTag = doc.createElement("subscription");
+                subscriptionTag.setAttribute("id", subscription.getId() + "");
+                subscriptionTag.setAttribute("code", subscription.getCode());
+                subscriptionTag.setAttribute("description", getDefaultIfNull(subscription.getDescription(), ""));
+                subscriptionTag.setAttribute("offerCode", subscription.getOffer().getCode());
+                Element subscriptionDateTag = doc.createElement("subscriptionDate");
+                subscriptionDateTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat)));
+                subscriptionTag.appendChild(subscriptionDateTag);
+                Element endAgreementTag = doc.createElement("endAgreementDate");
+                endAgreementTag.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat)));
+                subscriptionTag.appendChild(endAgreementTag);
+                addCustomFields(subscription, doc, subscriptionTag);
+                subscriptionsTag.appendChild(subscriptionTag);
+            }
         }
         return subscriptionsTag;
     }
@@ -509,9 +582,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element calendarTag = doc.createElement("calendar");
         Text calendarText = null;
         if (serviceInstance.getInvoicingCalendar() != null) {
-            calendarText = doc.createTextNode(serviceInstance.getInvoicingCalendar().getCode());
+            calendarText = this.createTextNode(doc, serviceInstance.getInvoicingCalendar().getCode());
         } else {
-            calendarText = doc.createTextNode("");
+            calendarText = this.createTextNode(doc, "");
         }
         calendarTag.appendChild(calendarText);
         if (!isShort) {
@@ -626,44 +699,44 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element addressTag = doc.createElement("address");
         Element address1 = doc.createElement("address1");
         if (account.getAddress() != null && account.getAddress().getAddress1() != null) {
-            Text adress1Txt = doc.createTextNode(account.getAddress().getAddress1());
+            Text adress1Txt = this.createTextNode(doc, account.getAddress().getAddress1());
             address1.appendChild(adress1Txt);
         }
         addressTag.appendChild(address1);
         Element address2 = doc.createElement("address2");
         if (account.getAddress() != null && account.getAddress().getAddress2() != null) {
-            Text adress2Txt = doc.createTextNode(account.getAddress().getAddress2());
+            Text adress2Txt = this.createTextNode(doc, account.getAddress().getAddress2());
             address2.appendChild(adress2Txt);
         }
         addressTag.appendChild(address2);
         Element address3 = doc.createElement("address3");
         if (account.getAddress() != null && account.getAddress().getAddress3() != null) {
-            Text adress3Txt = doc.createTextNode(account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
+            Text adress3Txt = this.createTextNode(doc, account.getAddress().getAddress3() != null ? account.getAddress().getAddress3() : "");
             address3.appendChild(adress3Txt);
         }
         addressTag.appendChild(address3);
         Element city = doc.createElement("city");
         if (account.getAddress() != null && account.getAddress().getCity() != null) {
-            Text cityTxt = doc.createTextNode(account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
+            Text cityTxt = this.createTextNode(doc, account.getAddress().getCity() != null ? account.getAddress().getCity() : "");
             city.appendChild(cityTxt);
         }
         addressTag.appendChild(city);
         Element postalCode = doc.createElement("postalCode");
         if (account.getAddress() != null && account.getAddress().getZipCode() != null) {
-            Text postalCodeTxt = doc.createTextNode(account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
+            Text postalCodeTxt = this.createTextNode(doc, account.getAddress().getZipCode() != null ? account.getAddress().getZipCode() : "");
             postalCode.appendChild(postalCodeTxt);
         }
         addressTag.appendChild(postalCode);
         Element state = doc.createElement("state");
         if (account.getAddress() != null && account.getAddress().getState() != null) {
-            Text stateTxt = doc.createTextNode(account.getAddress().getState());
+            Text stateTxt = this.createTextNode(doc, account.getAddress().getState());
             state.appendChild(stateTxt);
         }
         addressTag.appendChild(state);
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
+            Text countryTxt = this.createTextNode(doc, account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
             String translationKey = "C_" + account.getAddress().getCountry() + "_" + invoiceLanguageCode;
             String descTranslated = descriptionMap.get(translationKey);
@@ -679,7 +752,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 }
                 descriptionMap.put(translationKey, descTranslated);
             }
-            Text countryNameTxt = doc.createTextNode(descTranslated);
+            Text countryNameTxt = this.createTextNode(doc, descTranslated);
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -709,19 +782,23 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 }
                 descriptionMap.put(translationKey, descTranslated);
             }
-            Text titleTxt = doc.createTextNode(descTranslated);
+            Text titleTxt = this.createTextNode(doc, descTranslated);
             quality.appendChild(titleTxt);
         }
         nameTag.appendChild(quality);
         if (account.getName() != null && account.getName().getFirstName() != null) {
             Element firstName = doc.createElement("firstName");
-            Text firstNameTxt = doc.createTextNode(account.getName().getFirstName());
+            Text firstNameTxt = this.createTextNode(doc, account.getName().getFirstName());
             firstName.appendChild(firstNameTxt);
             nameTag.appendChild(firstName);
         }
         Element name = doc.createElement("name");
         if (account.getName() != null && account.getName().getLastName() != null) {
-            Text nameTxt = doc.createTextNode(account.getName().getLastName());
+            Text nameTxt = this.createTextNode(doc, account.getName().getLastName());
+            name.appendChild(nameTxt);
+        }
+        if(account.getIsCompany()) {
+            Text nameTxt = this.createTextNode(doc, account.getDescription());
             name.appendChild(nameTxt);
         }
         nameTag.appendChild(name);
@@ -743,37 +820,37 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element providerContactTag = doc.createElement("providerContact");
         if (account.getPrimaryContact().getFirstName() != null) {
             Element firstName = doc.createElement("firstName");
-            Text firstNameTxt = doc.createTextNode(account.getPrimaryContact().getFirstName());
+            Text firstNameTxt = this.createTextNode(doc, account.getPrimaryContact().getFirstName());
             firstName.appendChild(firstNameTxt);
             providerContactTag.appendChild(firstName);
         }
         if (account.getPrimaryContact().getLastName() != null) {
             Element name = doc.createElement("lastname");
-            Text nameTxt = doc.createTextNode(account.getPrimaryContact().getLastName());
+            Text nameTxt = this.createTextNode(doc, account.getPrimaryContact().getLastName());
             name.appendChild(nameTxt);
             providerContactTag.appendChild(name);
         }
         if (account.getPrimaryContact().getEmail() != null) {
             Element email = doc.createElement("email");
-            Text emailTxt = doc.createTextNode(account.getPrimaryContact().getEmail());
+            Text emailTxt = this.createTextNode(doc, account.getPrimaryContact().getEmail());
             email.appendChild(emailTxt);
             providerContactTag.appendChild(email);
         }
         if (account.getPrimaryContact().getFax() != null) {
             Element fax = doc.createElement("fax");
-            Text faxTxt = doc.createTextNode(account.getPrimaryContact().getFax());
+            Text faxTxt = this.createTextNode(doc, account.getPrimaryContact().getFax());
             fax.appendChild(faxTxt);
             providerContactTag.appendChild(fax);
         }
         if (account.getPrimaryContact().getMobile() != null) {
             Element mobile = doc.createElement("mobile");
-            Text mobileTxt = doc.createTextNode(account.getPrimaryContact().getMobile());
+            Text mobileTxt = this.createTextNode(doc, account.getPrimaryContact().getMobile());
             mobile.appendChild(mobileTxt);
             providerContactTag.appendChild(mobile);
         }
         if (account.getPrimaryContact().getPhone() != null) {
             Element phone = doc.createElement("phone");
-            Text phoneTxt = doc.createTextNode(account.getPrimaryContact().getPhone());
+            Text phoneTxt = this.createTextNode(doc, account.getPrimaryContact().getPhone());
             phone.appendChild(phoneTxt);
             providerContactTag.appendChild(phone);
         }
@@ -821,33 +898,33 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 bankCoordinatesElement.appendChild(bankName);
                 paymentMethodTag.appendChild(bankCoordinatesElement);
                 String bankCodeData = bankCoordinates.getBankCode();
-                Text bankCodeTxt = doc.createTextNode(bankCodeData != null ? bankCodeData : "");
+                Text bankCodeTxt = this.createTextNode(doc, bankCodeData != null ? bankCodeData : "");
                 bankCode.appendChild(bankCodeTxt);
                 String branchCodeData = bankCoordinates.getBranchCode();
-                Text branchCodeTxt = doc.createTextNode(branchCodeData != null ? branchCodeData : "");
+                Text branchCodeTxt = this.createTextNode(doc, branchCodeData != null ? branchCodeData : "");
                 branchCode.appendChild(branchCodeTxt);
                 String accountNumberData = bankCoordinates.getAccountNumber();
-                Text accountNumberTxt = doc.createTextNode(accountNumberData != null ? accountNumberData : "");
+                Text accountNumberTxt = this.createTextNode(doc, accountNumberData != null ? accountNumberData : "");
                 accountNumber.appendChild(accountNumberTxt);
                 String accountOwnerData = bankCoordinates.getAccountOwner();
-                Text accountOwnerTxt = doc.createTextNode(accountOwnerData != null ? accountOwnerData : "");
+                Text accountOwnerTxt = this.createTextNode(doc, accountOwnerData != null ? accountOwnerData : "");
                 accountOwner.appendChild(accountOwnerTxt);
-                Text keyTxt = doc.createTextNode(bankCoordinates.getKey() != null ? bankCoordinates.getKey() : "");
+                Text keyTxt = this.createTextNode(doc, bankCoordinates.getKey() != null ? bankCoordinates.getKey() : "");
                 key.appendChild(keyTxt);
                 String ibanData = bankCoordinates.getIban();
-                Text ibanTxt = doc.createTextNode(ibanData != null ? ibanData : "");
+                Text ibanTxt = this.createTextNode(doc, ibanData != null ? ibanData : "");
                 iban.appendChild(ibanTxt);
                 String bicData = bankCoordinates.getBic();
-                Text bicTxt = doc.createTextNode(bicData != null ? bicData : "");
+                Text bicTxt = this.createTextNode(doc, bicData != null ? bicData : "");
                 bic.appendChild(bicTxt);
                 String bankNameData = bankCoordinates.getBankName();
-                Text bankNameTxt = doc.createTextNode(bankNameData != null ? bankNameData : "");
+                Text bankNameTxt = this.createTextNode(doc, bankNameData != null ? bankNameData : "");
                 bankName.appendChild(bankNameTxt);
                 String mandateIdentificationData = directDebitPayment.getMandateIdentification();
-                Text mandateIdentificationTxt = doc.createTextNode(mandateIdentificationData != null ? mandateIdentificationData : "");
+                Text mandateIdentificationTxt = this.createTextNode(doc, mandateIdentificationData != null ? mandateIdentificationData : "");
                 mandateIdentification.appendChild(mandateIdentificationTxt);
                 String mandateDateData = DateUtils.formatDateWithPattern(directDebitPayment.getMandateDate(), DEFAULT_DATE_TIME_PATTERN);
-                Text mandateDateTxt = doc.createTextNode(mandateDateData != null ? mandateDateData : "");
+                Text mandateDateTxt = this.createTextNode(doc, mandateDateData != null ? mandateDateData : "");
                 mandateDate.appendChild(mandateDateTxt);
             }
         } else if (preferredPaymentMethod != null && PaymentMethodEnum.CARD.equals(preferredPaymentMethod.getPaymentType())) {
@@ -861,13 +938,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             cardInformationElement.appendChild(cardNumber);
             cardInformationElement.appendChild(expiration);
             paymentMethodTag.appendChild(cardInformationElement);
-            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
+            Text cardTypeTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
             cardType.appendChild(cardTypeTxt);
-            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getOwner());
+            Text ownerTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getOwner());
             owner.appendChild(ownerTxt);
-            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
+            Text cardNumberTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
             cardNumber.appendChild(cardNumberTxt);
-            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
+            Text expirationTxt = this.createTextNode(doc, ((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
             expiration.appendChild(expirationTxt);
         }
         return paymentMethodTag;
@@ -911,7 +988,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 //                    subCategory.setAttribute("sortIndex", (invoiceSubCategory.getSortIndex() != null) ? invoiceSubCategory.getSortIndex() + "" : "");
 //                    Element line = doc.createElement("line");
 //                    Element lebel = doc.createElement("label");
-//                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+//                    Text lebelTxt = this.createTextNode(doc, ratedTransaction.getDescription());
 //                    lebel.appendChild(lebelTxt);
 //                    Date periodStartDateRT = ratedTransaction.getStartDate();
 //                    Date periodEndDateRT = ratedTransaction.getEndDate();
@@ -921,24 +998,24 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 //                    line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
 //
 //                    Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-//                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+//                    Text lineUnitAmountWithoutTaxTxt = this.createTextNode(doc, ratedTransaction.getUnitAmountWithoutTax().toPlainString());
 //                    lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
 //                    line.appendChild(lineUnitAmountWithoutTax);
 //
 //                    Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-//                    Text lineAmountWithoutTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithoutTax()));
+//                    Text lineAmountWithoutTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithoutTax()));
 //                    lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 //                    line.appendChild(lineAmountWithoutTax);
 //
 //                    if (!enterprise) {
 //                        Element lineAmountWithTax = doc.createElement("amountWithTax");
-//                        Text lineAmountWithTaxTxt = doc.createTextNode(toPlainString(ratedTransaction.getAmountWithTax()));
+//                        Text lineAmountWithTaxTxt = this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithTax()));
 //                        lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
 //                        line.appendChild(lineAmountWithTax);
 //                    }
 //
 //                    Element quantity = doc.createElement("quantity");
-//                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+//                    Text quantityTxt = this.createTextNode(doc, ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
 //                    quantity.appendChild(quantityTxt);
 //                    line.appendChild(quantity);
 //                    line.appendChild(lebel);
@@ -1078,22 +1155,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                     descriptionMap.put(translationKey, descTranslated);
                 }
                 Element taxName = doc.createElement("name");
-                taxName.appendChild(doc.createTextNode(descTranslated));
+                taxName.appendChild(this.createTextNode(doc, descTranslated));
                 tax.appendChild(taxName);
                 Element percent = doc.createElement("percent");
-                percent.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getTaxPercent())));
+                percent.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getTaxPercent())));
                 tax.appendChild(percent);
                 Element taxAmount = doc.createElement("amount");
-                taxAmount.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountTax())));
+                taxAmount.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountTax())));
                 tax.appendChild(taxAmount);
                 Element amountHT = doc.createElement("amountHT");
-                amountHT.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
+                amountHT.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountHT);
                 Element amountWithoutTax = doc.createElement("amountWithoutTax");
-                amountWithoutTax.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
+                amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
                 tax.appendChild(amountWithoutTax);
                 Element amountWithTax = doc.createElement("amountWithTax");
-                amountWithTax.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
+                amountWithTax.appendChild(this.createTextNode(doc, toPlainString(taxInvoiceAgregate.getAmountWithTax())));
                 tax.appendChild(amountWithTax);
                 taxes.appendChild(tax);
             }
@@ -1162,13 +1239,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             category.setAttribute("code", xmlInvoiceHeaderCategoryDTO != null && xmlInvoiceHeaderCategoryDTO.getCode() != null ? xmlInvoiceHeaderCategoryDTO.getCode() : "");
             category.setAttribute("sortIndex", xmlInvoiceHeaderCategoryDTO != null && xmlInvoiceHeaderCategoryDTO.getSortIndex() != null ? xmlInvoiceHeaderCategoryDTO.getSortIndex() + "" : "");
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
-            amountWithoutTax.appendChild(doc.createTextNode(toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax())));
+            amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax())));
             category.appendChild(amountWithoutTax);
             Element amountWithTax = doc.createElement("amountWithTax");
-            amountWithTax.appendChild(doc.createTextNode(toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithTax())));
+            amountWithTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithTax())));
             category.appendChild(amountWithTax);
             Element amountTax = doc.createElement("amountTax");
-            amountTax.appendChild(doc.createTextNode(toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountTax())));
+            amountTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountTax())));
             category.appendChild(amountTax);
             if (xmlInvoiceHeaderCategoryDTO.getSubCategoryInvoiceAgregates() != null) {
                 Element subCategories = doc.createElement("subCategories");
@@ -1394,7 +1471,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element email = doc.createElement("email");
         if (billingAccount.getContactInformation() != null) {
             String billingEmail = billingAccount.getContactInformation().getEmail();
-            Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
+            Text emailTxt = this.createTextNode(doc, billingEmail != null ? billingEmail : "");
             email.appendChild(emailTxt);
             billingAccountTag.appendChild(email);
         }
@@ -1556,13 +1633,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             Element iban = doc.createElement("iban");
             Element bic = doc.createElement("bic");
             String bankIcs = appBankCoordinates.getIcs();
-            Text icsTxt = doc.createTextNode(bankIcs != null ? bankIcs : "");
+            Text icsTxt = this.createTextNode(doc, bankIcs != null ? bankIcs : "");
             ics.appendChild(icsTxt);
             String bankIban = appBankCoordinates.getIban();
-            Text ibanTxt = doc.createTextNode(bankIban != null ? bankIban : "");
+            Text ibanTxt = this.createTextNode(doc, bankIban != null ? bankIban : "");
             iban.appendChild(ibanTxt);
             String bankBic = appBankCoordinates.getBic();
-            Text bicTxt = doc.createTextNode(bankBic != null ? bankBic : "");
+            Text bicTxt = this.createTextNode(doc, bankBic != null ? bankBic : "");
             bic.appendChild(bicTxt);
             bankCoordinates.appendChild(ics);
             bankCoordinates.appendChild(iban);
@@ -1622,21 +1699,21 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element amount = doc.createElement("amount");
         Element currency = doc.createElement("currency");
-        Text currencyTxt = doc.createTextNode(invoice.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode());
+        Text currencyTxt = this.createTextNode(doc, invoice.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode());
         currency.appendChild(currencyTxt);
         amount.appendChild(currency);
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
-        amountWithoutTax.appendChild(doc.createTextNode(toPlainString(invoice.getAmountWithoutTax())));
+        amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(invoice.getAmountWithoutTax())));
         amount.appendChild(amountWithoutTax);
         Element amountWithTax = doc.createElement("amountWithTax");
-        Text amountWithTaxTxt = doc.createTextNode(toPlainString(invoice.getAmountWithTax()));
+        Text amountWithTaxTxt = this.createTextNode(doc, toPlainString(invoice.getAmountWithTax()));
         amountWithTax.appendChild(amountWithTaxTxt);
         amount.appendChild(amountWithTax);
         Element balance = doc.createElement("balance");
-        balance.appendChild(doc.createTextNode(toPlainString(invoice.getDueBalance())));
+        balance.appendChild(this.createTextNode(doc, toPlainString(invoice.getDueBalance())));
         amount.appendChild(balance);
         Element netToPayElement = doc.createElement("netToPay");
-        netToPayElement.appendChild(doc.createTextNode(toPlainString(invoice.getNetToPay())));
+        netToPayElement.appendChild(this.createTextNode(doc, toPlainString(invoice.getNetToPay())));
         amount.appendChild(netToPayElement);
         Element taxes = createAmountTaxSection(doc, invoice, invoiceConfiguration);
         if (taxes != null) {
@@ -1685,19 +1762,19 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Date invoiceDateData = invoice.getInvoiceDate();
         if (invoiceDateData != null) {
             Element invoiceDate = doc.createElement("invoiceDate");
-            invoiceDate.appendChild(doc.createTextNode(DateUtils.formatDateWithPattern(invoiceDateData, invoiceDateFormat)));
+            invoiceDate.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(invoiceDateData, invoiceDateFormat)));
             header.appendChild(invoiceDate);
         }
         Date dueDateData = invoice.getDueDate();
         if (dueDateData != null) {
             Element dueDate = doc.createElement("dueDate");
-            dueDate.appendChild(doc.createTextNode(DateUtils.formatDateWithPattern(dueDateData, invoiceDateFormat)));
+            dueDate.appendChild(this.createTextNode(doc, DateUtils.formatDateWithPattern(dueDateData, invoiceDateFormat)));
             header.appendChild(dueDate);
         }
         PaymentMethodEnum paymentMethodData = invoice.getPaymentMethodType();
         if (paymentMethodData != null) {
             Element paymentMethod = doc.createElement("paymentMethod");
-            paymentMethod.appendChild(doc.createTextNode(paymentMethodData.name()));
+            paymentMethod.appendChild(this.createTextNode(doc, paymentMethodData.name()));
             header.appendChild(paymentMethod);
         }
         Element comment = doc.createElement("comment");
@@ -1854,42 +1931,42 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         if (ratedTransaction.getParameterExtra() != null) {
             Element paramExtra = doc.createElement("paramExtra");
-            paramExtra.appendChild(doc.createTextNode(ratedTransaction.getParameterExtra()));
+            paramExtra.appendChild(this.createTextNode(doc, ratedTransaction.getParameterExtra()));
             line.appendChild(paramExtra);
         }
         Element lebel = doc.createElement("label");
-        lebel.appendChild(doc.createTextNode(getDefaultIfNull(ratedTransaction.getDescription(), "")));
+        lebel.appendChild(this.createTextNode(doc, getDefaultIfNull(ratedTransaction.getDescription(), "")));
         line.appendChild(lebel);
         if (!StringUtils.isBlank(ratedTransaction.getUnityDescription())) {
             Element lineUnit = doc.createElement("unit");
-            lineUnit.appendChild(doc.createTextNode(ratedTransaction.getUnityDescription()));
+            lineUnit.appendChild(this.createTextNode(doc, ratedTransaction.getUnityDescription()));
             line.appendChild(lineUnit);
         }
         if (!StringUtils.isBlank(ratedTransaction.getRatingUnitDescription())) {
             Element lineRatingUnit = doc.createElement("ratingUnit");
-            lineRatingUnit.appendChild(doc.createTextNode(ratedTransaction.getRatingUnitDescription()));
+            lineRatingUnit.appendChild(this.createTextNode(doc, ratedTransaction.getRatingUnitDescription()));
             line.appendChild(lineRatingUnit);
         }
         if (ratedTransaction.getUnitAmountWithoutTax() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-            lineUnitAmountWithoutTax.appendChild(doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString()));
+            lineUnitAmountWithoutTax.appendChild(this.createTextNode(doc, ratedTransaction.getUnitAmountWithoutTax().toPlainString()));
             line.appendChild(lineUnitAmountWithoutTax);
         }
         Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-        lineAmountWithoutTax.appendChild(doc.createTextNode(toPlainString(ratedTransaction.getAmountWithoutTax())));
+        lineAmountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithoutTax())));
         line.appendChild(lineAmountWithoutTax);
         Element lineAmountWithTax = doc.createElement("amountWithTax");
-        lineAmountWithTax.appendChild(doc.createTextNode(toPlainString(ratedTransaction.getAmountWithTax())));
+        lineAmountWithTax.appendChild(this.createTextNode(doc, toPlainString(ratedTransaction.getAmountWithTax())));
         line.appendChild(lineAmountWithTax);
         Element lineAmountTax = doc.createElement("amountTax");
-        lineAmountTax.appendChild(doc.createTextNode(toPlainString(ratedTransaction.getAmountTax())));
+        lineAmountTax.appendChild(this.createTextNode(doc, toPlainString(ratedTransaction.getAmountTax())));
         line.appendChild(lineAmountTax);
         Element quantity = doc.createElement("quantity");
-        Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+        Text quantityTxt = this.createTextNode(doc, ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
         quantity.appendChild(quantityTxt);
         line.appendChild(quantity);
         Element usageDate = doc.createElement("usageDate");
-        Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
+        Text usageDateTxt = this.createTextNode(doc, DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
         usageDate.appendChild(usageDateTxt);
         line.appendChild(usageDate);
         addCustomFields(ratedTransaction, doc, line);
@@ -2006,13 +2083,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         categoryTag.setAttribute("code", invoiceCategory.getCode());
         categoryTag.setAttribute("sortIndex", (invoiceCategory.getSortIndex() != null) ? invoiceCategory.getSortIndex() + "" : "");
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
-        amountWithoutTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAgregate.getAmountWithoutTax())));
+        amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAgregate.getAmountWithoutTax())));
         categoryTag.appendChild(amountWithoutTax);
         Element amountWithTax = doc.createElement("amountWithTax");
-        amountWithTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAgregate.getAmountWithTax())));
+        amountWithTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAgregate.getAmountWithTax())));
         categoryTag.appendChild(amountWithTax);
         Element amountTax = doc.createElement("amountTax");
-        amountTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAgregate.getAmountTax())));
+        amountTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAgregate.getAmountTax())));
         categoryTag.appendChild(amountTax);
         addCustomFields(invoiceCategory, doc, categoryTag);
         Element subCategories = doc.createElement("subCategories");
@@ -2292,37 +2369,37 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.setAttribute("sortIndex", "");
         line.setAttribute("code", invoiceLine.getOrderRef());
         Element label = doc.createElement("label");
-        label.appendChild(doc.createTextNode(getDefaultIfNull(invoiceLine.getLabel(), "")));
+        label.appendChild(this.createTextNode(doc, getDefaultIfNull(invoiceLine.getLabel(), "")));
         line.appendChild(label);
         Element article = doc.createElement("article");
-        article.appendChild(doc.createTextNode(""));
+        article.appendChild(this.createTextNode(doc, ""));
         article.setAttribute("code", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : "");
-        article.setAttribute("label", invoiceLine.getLabel());
+        article.setAttribute("label", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getDescription() : "");
         line.appendChild(article);
         if (invoiceLine.getUnitPrice() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-            lineUnitAmountWithoutTax.appendChild(doc.createTextNode(invoiceLine.getUnitPrice().toPlainString()));
+            lineUnitAmountWithoutTax.appendChild(this.createTextNode(doc, invoiceLine.getUnitPrice().toPlainString()));
             line.appendChild(lineUnitAmountWithoutTax);
         }
         Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-        lineAmountWithoutTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithoutTax())));
+        lineAmountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(invoiceLine.getAmountWithoutTax())));
         line.appendChild(lineAmountWithoutTax);
         Element lineAmountWithTax = doc.createElement("amountWithTax");
-        lineAmountWithTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountWithTax())));
+        lineAmountWithTax.appendChild(this.createTextNode(doc, toPlainString(invoiceLine.getAmountWithTax())));
         line.appendChild(lineAmountWithTax);
         Element lineAmountTax = doc.createElement("amountTax");
-        lineAmountTax.appendChild(doc.createTextNode(toPlainString(invoiceLine.getAmountTax())));
+        lineAmountTax.appendChild(this.createTextNode(doc, toPlainString(invoiceLine.getAmountTax())));
         line.appendChild(lineAmountTax);
         Element quantity = doc.createElement("quantity");
-        Text quantityTxt = doc.createTextNode(invoiceLine.getQuantity() != null ? invoiceLine.getQuantity().toPlainString() : "");
+        Text quantityTxt = this.createTextNode(doc, invoiceLine.getQuantity() != null ? invoiceLine.getQuantity().toPlainString() : "");
         quantity.appendChild(quantityTxt);
         Element unitPrice = doc.createElement("unitPrice");
-        Text unitPriceTxt = doc.createTextNode(invoiceLine.getUnitPrice() != null ? invoiceLine.getUnitPrice().toPlainString() : "");
+        Text unitPriceTxt = this.createTextNode(doc, invoiceLine.getUnitPrice() != null ? invoiceLine.getUnitPrice().toPlainString() : "");
         unitPrice.appendChild(unitPriceTxt);
         line.appendChild(unitPrice);
         line.appendChild(quantity);
         Element usageDate = doc.createElement("usageDate");
-        Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoiceLine.getValueDate(), invoiceDateFormat));
+        Text usageDateTxt = this.createTextNode(doc, DateUtils.formatDateWithPattern(invoiceLine.getValueDate(), invoiceDateFormat));
         usageDate.appendChild(usageDateTxt);
         line.appendChild(usageDate);
         ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
@@ -2351,14 +2428,31 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-        for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
-            Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
-                    false, invoiceLanguageCode, invoiceConfiguration);
-            if (userAccountTag == null) {
-                continue;
+        
+        if(invoiceConfiguration.isDisplayUserAccountHierarchy()) {
+        	List<UserAccount> parentUserAccounts = invoice.getBillingAccount().getParentUserAccounts();
+        	for(UserAccount parentUserAccount : parentUserAccounts) {
+                    Element userAccountTag = createUserAccountSectionIL(doc, invoice, parentUserAccount,
+                            invoiceLines, isVirtual, false, invoiceLanguageCode, invoiceConfiguration);
+                    if (userAccountTag == null) {
+                        continue;
+                    }
+                    createUserAccountChildSectionIL(doc, invoice, invoiceLines, isVirtual,
+                            invoiceLanguageCode, invoiceConfiguration, parentUserAccount.getUserAccounts(), userAccountTag);
+                    userAccountsTag.appendChild(userAccountTag);        		
+        		}
+
+        } else {
+            for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
+                Element userAccountTag = createUserAccountSectionIL(doc, invoice, userAccount, invoiceLines, isVirtual,
+                        false, invoiceLanguageCode, invoiceConfiguration);
+                if (userAccountTag == null) {
+                    continue;
+                }
+                userAccountsTag.appendChild(userAccountTag);
             }
-            userAccountsTag.appendChild(userAccountTag);
         }
+
         Element userAccountTag = createUserAccountSectionIL(doc, invoice, null, invoiceLines, isVirtual,
                 userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
         if (userAccountTag != null) {
@@ -2389,7 +2483,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
-            userAccountTag.setAttribute("description", "-");
+            return null;
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
@@ -2401,7 +2495,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {
             Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, null, isVirtual, ignoreUA, invoiceConfiguration, invoiceLines);
-            if (subscriptionsTag != null) {
+            if (subscriptionsTag != null
+                    && subscriptionsTag.getChildNodes() != null && subscriptionsTag.getChildNodes().getLength() != 0) {
                 userAccountTag.appendChild(subscriptionsTag);
             }
         }
@@ -2451,7 +2546,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 categoriesTag.appendChild(categoryTag);
             }
         }
-        return categoriesTag.getChildNodes().getLength() > 0 ? categoriesTag : null;
+        return categoriesTag;
     }
 
     /**
@@ -2481,13 +2576,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         categoryTag.setAttribute("sortIndex", (invoiceCategory != null && invoiceCategory.getSortIndex() != null)
                 ? invoiceCategory.getSortIndex() + "" : "");
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
-        amountWithoutTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAggregate.getAmountWithoutTax())));
+        amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithoutTax())));
         categoryTag.appendChild(amountWithoutTax);
         Element amountWithTax = doc.createElement("amountWithTax");
-        amountWithTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAggregate.getAmountWithTax())));
+        amountWithTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithTax())));
         categoryTag.appendChild(amountWithTax);
         Element amountTax = doc.createElement("amountTax");
-        amountTax.appendChild(doc.createTextNode(toPlainString(categoryInvoiceAggregate.getAmountTax())));
+        amountTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountTax())));
         categoryTag.appendChild(amountTax);
         addCustomFields(invoiceCategory, doc, categoryTag);
         Element subCategories = doc.createElement("subCategories");
@@ -2553,6 +2648,14 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         addCustomFields(invoiceSubCat, doc, subCategory);
         return subCategory;
+    }
+
+    private Text createTextNode(Document doc, String data) {
+        if (data != null) {
+            return doc.createTextNode(data);
+        } else {
+            return doc.createTextNode("");
+        }
     }
 
 }

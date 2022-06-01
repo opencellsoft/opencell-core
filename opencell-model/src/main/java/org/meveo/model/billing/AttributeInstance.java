@@ -1,25 +1,23 @@
 package org.meveo.model.billing;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.commercial.OrderAttribute;
-import org.meveo.security.MeveoUser;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Cacheable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.Date;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.security.MeveoUser;
 
 @Entity
 @Cacheable
@@ -45,10 +43,18 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         dateValue=quoteAttribute.getDateValue();
         doubleValue=quoteAttribute.getDoubleValue();
         booleanValue = quoteAttribute.getBooleanValue();
+        if(AttributeTypeEnum.BOOLEAN==attribute.getAttributeType() && booleanValue==null && stringValue!=null ) {
+        	booleanValue=Boolean.valueOf(stringValue);
+        }
         assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
                                         .stream()
                                         .map(AttributeInstance::new)
                                         .collect(Collectors.toList());
+    }
+    
+    public AttributeInstance(MeveoUser currentUser) {
+    	super();
+    	updateAudit(currentUser);
     }
 
     public AttributeInstance(OrderAttribute orderAttribute, MeveoUser currentUser) {
@@ -57,6 +63,9 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
         booleanValue = orderAttribute.getBooleanValue();
+        if(AttributeTypeEnum.BOOLEAN==attribute.getAttributeType() && booleanValue==null && stringValue!=null ) {
+        	booleanValue=Boolean.valueOf(stringValue);
+        }
         updateAudit(currentUser);
         if(orderAttribute.getAssignedAttributeValue() != null) {
             assignedAttributeValue = orderAttribute.getAssignedAttributeValue()

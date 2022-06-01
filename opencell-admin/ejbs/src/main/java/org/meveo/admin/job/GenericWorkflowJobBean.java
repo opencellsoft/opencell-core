@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
@@ -45,7 +46,7 @@ import org.meveo.service.generic.wf.WorkflowInstanceService;
 
 /**
  * Job implementation to execute the transition script on each workflowed entity instance.
- * 
+ *
  * @author Andrius Karpavicius
  */
 @Stateless
@@ -61,6 +62,8 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
 
     @Inject
     private FilterService filterService;
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Workflow to run - - job execution parameter
@@ -76,7 +79,7 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
 
     /**
      * Initialize job settings and retrieve data to process
-     * 
+     *
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of entities to execute workflow on
      */
@@ -148,15 +151,19 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
 
     /**
      * Execute workflow
-     * 
-     * @param workflowInfo An array consisting of business entity and a workflow instance to execute on an entity
+     *
+     * @param workflowInfo       An array consisting of business entity and a workflow instance to execute on an entity
      * @param jobExecutionResult Job execution result
      */
     private void executeWorkflow(Object[] workflowInfo, JobExecutionResultImpl jobExecutionResult) {
 
         BusinessEntity be = (BusinessEntity) workflowInfo[0];
         WorkflowInstance workflowInstance = (WorkflowInstance) workflowInfo[1];
+        boolean execWithLoop = paramBeanFactory.getInstance().getPropertyAsBoolean("wf.execution_with_loop", false);
 
-        genericWorkflowService.executeWorkflow(be, workflowInstance, genericWf);
+        if (execWithLoop) {
+            genericWorkflowService.executeWorkflowWithLoop(be, workflowInstance, genericWf);
+        } else
+            genericWorkflowService.executeWorkflow(be, workflowInstance, genericWf);
     }
 }

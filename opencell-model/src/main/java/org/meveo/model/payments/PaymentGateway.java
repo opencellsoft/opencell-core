@@ -31,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ISearchable;
@@ -158,7 +160,17 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
      * The secret key
      */
     @Column(name = "secret_key")
-    private String secretKey;
+    private String secretKeyDB;
+
+    /**
+     * transient secretKey
+     */
+    transient private String secretKey;
+
+    /**
+     * transient secretKey in Keystore
+     */
+    transient private String secretKeyKS;
 
     /**
      * The api key
@@ -426,17 +438,57 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
      *
      * @return the secretKey
      */
-    public String getSecretKey() {
-        return secretKey;
+    public String getSecretKeyDB() {
+        return secretKeyDB;
     }
 
     /**
      * Sets the secret key.
      *
-     * @param secretKey the secretKey to set
+     * @param secretKeyDB the secretKey to set
      */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
+    public void setSecretKeyDB(String secretKeyDB) {
+        this.secretKeyDB = secretKeyDB;
+    }
+
+    public String getSecretKey() {
+        if (KeystoreManager.existKeystore()) {
+            return getSecretKeyKS();
+        }
+        else {
+            return getSecretKeyDB();
+        }
+    }
+
+    public void setSecretKey(String password) {
+        if (KeystoreManager.existKeystore()) {
+            secretKeyDB = "";
+            this.secretKeyKS = password;
+            setSecretKeyKS();
+        }
+        else {
+            setSecretKeyDB(password);
+        }
+    }
+
+    public String getSecretKeyKS() {
+        if (KeystoreManager.existCredential(getClass().getSimpleName() + "." + getId())) {
+            return KeystoreManager.retrieveCredential(getClass().getSimpleName() + "." + getId());
+        }
+        else {
+            return "";
+        }
+    }
+
+    @PostPersist
+    public void setSecretKeyKS() {
+        if (this.secretKeyKS == null) {
+            this.secretKeyKS = "";
+        }
+
+        if (getId() != null &&! this.secretKeyKS.equals(getSecretKeyKS())) {
+            KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.secretKeyKS);
+        }
     }
 
     /**

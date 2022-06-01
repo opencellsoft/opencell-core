@@ -1,21 +1,41 @@
 package org.meveo.apiv2.billing.resource;
 
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
+import org.meveo.api.dto.response.InvoicesDto;
+import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.GenerateInvoiceInput;
+import org.meveo.apiv2.billing.Invoice;
+import org.meveo.apiv2.billing.InvoiceInput;
+import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
+import org.meveo.apiv2.billing.InvoiceLinesToRemove;
+import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.models.ApiException;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.apiv2.billing.*;
-import org.meveo.apiv2.models.ApiException;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
 
 @Path("/billing/invoices")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -218,7 +238,7 @@ public interface InvoiceResource {
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully canceled"),
 	@ApiResponse(responseCode = "403", description = "error when canceling invoice") })
-	Response cancelInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
+	Response cancelInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 	
 	@POST
 	@Operation(summary = "Create a new invoice", tags = {
@@ -289,4 +309,44 @@ public interface InvoiceResource {
 											implementation = Invoice.class)))
 			})
 	Response generate(GenerateInvoiceInput invoiceInput);
+	
+	@POST
+    @Path("/{id}/createAdjustment")
+    @Operation(
+            summary = "This API will allow creating adjustment based on an existing validated invoice.",
+            description = "This API will allow creating adjustment based on an existing validated invoice.<br>"
+                            + "Either can we choose specific invoice lines from a specific invoice or the whole invoice to be used on the newly created adjustment.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Adjustment successfully created"),
+                    @ApiResponse(responseCode = "403", description = "Invoice should be Validated and occCategory equals to DEBIT as an invoice type!"),
+                    @ApiResponse(responseCode = "500", description = "Error when creating adjustment"),
+                    @ApiResponse(responseCode = "403", description = "IThe following parameters are required or contain invalid values: globalAdjustment")
+                }
+            )
+    Response createAdjustment(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id,
+            @Parameter(description = "InvoiceLines to replicate", required = true) @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate);
+
+
+    @POST
+    @Path("{id}/invoiceLines/duplicate")
+    @Operation(summary = "Duplicate invoice lines",  description = "Duplicate invoice lines", 
+    responses = {
+    @ApiResponse(responseCode = "200", description = "invoice lines successfully duplicated"),
+    @ApiResponse(responseCode = "403", description = "error when duplicating invoice lines")})
+    Response duplicateInvoiceLines(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+            @Parameter(description = "invoice lines to remove")  InvoiceLinesToDuplicate invoiceLinesToDuplicate);
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	@PUT
+	@Path("/{id}/quarantine")
+	@Operation(summary = "Quarantine invoice",  description = "Quarantine invoice", 
+	responses = {
+	@ApiResponse(responseCode = "200", description = "invoice successfully quarantined"),
+	@ApiResponse(responseCode = "403", description = "Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") })
+	Response quarantineInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Quarantine billing run")  QuarantineBillingRunDto quarantineBillingRunDto);         
+            
 }

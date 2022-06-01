@@ -18,10 +18,12 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -90,16 +92,32 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     private SubAccountingPeriodService subAccountingPeriodService;
 
     public AccountOperation createDeferralPayments(AccountOperation accountOperation, PaymentMethodEnum selectedPaymentMethod, Date paymentDate) {
+        if(!appProvider.isPaymentDeferral()) {
+            throw new BusinessException("Payment Deferral is not allowed");
+        }
+
         if(selectedPaymentMethod != null
                 && accountOperation.getCustomerAccount().getPaymentMethods().stream().noneMatch(paymentMethod1 -> paymentMethod1.getPaymentType().equals(selectedPaymentMethod))){
             throw new BusinessException("the selected paymentMethod does not belong to the account operation customer account");
         }
+        
         LocalDate paymentLocalDate = LocalDate.ofInstant(paymentDate.toInstant(), ZoneId.systemDefault());
-        if((paymentLocalDate.toEpochDay() - LocalDate.now().toEpochDay()) > appProvider.getMaximumDelay()){
-            throw new BusinessException("the paymentDate should not exceed " + appProvider.getMaximumDelay());
+        
+        LocalDate collectionDate = accountOperation.getCollectionDate() != null
+        		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
+        				:LocalDate.now();
+        
+        if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
+            throw new BusinessException("the paymentDate should be greated than the current collection date");
         }
-        if(accountOperation.getPaymentDeferralCount() +1 > appProvider.getMaximumDeferralPerInvoice()){
-            throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");
+        if((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > appProvider.getMaximumDelay()) {
+            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + appProvider.getMaximumDelay());
+        }
+        
+        if(appProvider.getMaximumDeferralPerInvoice() != null && accountOperation.getPaymentDeferralCount() != null) {
+            if(accountOperation.getPaymentDeferralCount() + 1 > appProvider.getMaximumDeferralPerInvoice()){
+                throw new BusinessException("the payment deferral count should not exceeds the configured maximum deferral per invoice.");
+            }
         }
         if(selectedPaymentMethod != null){
             DayOfWeek paymentDateDayOfWeek = paymentLocalDate.plusDays(3).getDayOfWeek();
@@ -216,7 +234,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop);
+        create(aop);
         return aop.getId();
 
     }
@@ -532,6 +550,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		} else {
 			accountOperation.setAccountingDate(accountOperation.getTransactionDate());
 		}
+		
+		if(accountOperation.getAccountingDate() == null) {
+			if (accountOperation.getDueDate() != null) {
+				accountOperation.setAccountingDate(accountOperation.getDueDate());
+			}else {
+				accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+			}
+		}
 
 //		Si aucune AP n'est définie dans le système, le système doit considérer toute l'année comme une AP open
 		long count = accountingPeriodService.count();
@@ -666,5 +692,97 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             log.warn("error while getting list AccountOperation by invoice", e);
             return null;
         }
+    }
+    
+    /**
+     * @param accountOperationId the accountOperation id.
+     * @throws BusinessException business exception
+     */
+    public void addLitigation(Long accountOperationId) throws BusinessException {
+        if (accountOperationId == null) {
+            throw new BusinessException("accountOperationId is null");
+        }
+        addLitigation(findById(accountOperationId));
+    }
+
+    /**
+     * @param accountOperation the accountOperation.
+     * @throws BusinessException business exception.
+     */
+    public void addLitigation(AccountOperation accountOperation) throws BusinessException {
+
+        if (accountOperation == null) {
+            throw new BusinessException("accountOperation is null");
+        }
+        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + "status:" + accountOperation.getMatchingStatus());
+
+        accountOperation.setMatchingStatus(MatchingStatusEnum.I);
+        update(accountOperation);
+        log.info("addLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok");
+    }
+
+    /**
+     * @param accountOperationId accountOperation id.
+     * @throws BusinessException business exception.
+     */
+    public void cancelLitigation(Long accountOperationId) throws BusinessException {
+        if (accountOperationId == null) {
+            throw new BusinessException("accountOperationId is null");
+        }
+        cancelLitigation(findById(accountOperationId));
+    }
+
+    /**
+     * @param accountOperation recored invoice
+     * @throws BusinessException business exception.
+     */
+    public void cancelLitigation(AccountOperation accountOperation) throws BusinessException {
+
+        if (accountOperation == null) {
+            throw new BusinessException("accountOperation is null");
+        }
+        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference());
+        if (accountOperation.getMatchingStatus() != MatchingStatusEnum.I) {
+            throw new BusinessException("accountOperation is not on Litigation");
+        }
+        if(accountOperation.getAmount().compareTo(accountOperation.getMatchingAmount()) == 0) {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.L);
+        }else
+        if(accountOperation.getAmount().compareTo(accountOperation.getUnMatchingAmount()) == 0) {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        }else {
+        	accountOperation.setMatchingStatus(MatchingStatusEnum.P);
+        }
+        
+        update(accountOperation);
+        log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> findAoByStatus(boolean onlyClosedPeriods, AccountOperationStatus... statuses) {
+        String namedQueryName = onlyClosedPeriods ? "AccountOperation.findAoClosedSubPeriodByStatus"
+                : "AccountOperation.findAoByStatus";
+
+        Query query = getEntityManager().createNamedQuery(namedQueryName);
+        query.setParameter("AO_STATUS", Arrays.asList(statuses));
+
+        return (List<AccountOperation>) query.getResultList();
+
+    }
+
+    public void resetOperationNumberSequence() {
+        getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
+    }
+
+    public void fillOperationNumber(AccountOperation accountOperation)
+    {
+        BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
+        accountOperation.setOperationNumber(operationNumber.longValue());
+    }
+
+    @Override
+    public void create(AccountOperation entity) {
+        fillOperationNumber(entity);
+        super.create(entity);
     }
 }

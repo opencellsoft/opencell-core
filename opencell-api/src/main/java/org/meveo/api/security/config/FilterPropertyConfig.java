@@ -29,7 +29,7 @@ import org.meveo.model.BusinessEntity;
 public class FilterPropertyConfig {
 
     /**
-     * property to use to extract code value from the filtered item
+     * Property to use to extract code value from the filtered item
      */
     private String property;
 
@@ -39,9 +39,29 @@ public class FilterPropertyConfig {
     private Class<? extends BusinessEntity> entityClass;
 
     /**
-     * allow filtered item if its checked property is null
+     * Allow filtered item if its checked property is null
      */
     private boolean allowAccessIfNull = false;
+
+    /**
+     * Constructor
+     */
+    public FilterPropertyConfig() {
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param property Property to use to extract code value from the filtered item
+     * @param entityClass Secured Entity class to check
+     * @param allowAccessIfNull Allow filtered item if its checked property is null
+     */
+    public FilterPropertyConfig(String property, Class<? extends BusinessEntity> entityClass, boolean allowAccessIfNull) {
+        super();
+        this.property = property;
+        this.entityClass = entityClass;
+        this.allowAccessIfNull = allowAccessIfNull;
+    }
 
     public String getProperty() {
         return property;
@@ -69,10 +89,6 @@ public class FilterPropertyConfig {
 
     @Override
     public String toString() {
-        return "FilterPropertyConfig{" +
-                "property='" + property + '\'' +
-                ", entityClass=" + entityClass +
-                ", allowAccessIfNull=" + allowAccessIfNull +
-                '}';
+        return "FilterPropertyConfig{" + "property='" + property + '\'' + ", entityClass=" + entityClass + ", allowAccessIfNull=" + allowAccessIfNull + '}';
     }
 }

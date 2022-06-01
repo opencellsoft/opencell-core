@@ -724,7 +724,7 @@ public class UserBean extends CustomFieldBean<User> {
     public void enable(SecuredEntity selectedSecuredEntity) throws BusinessException {
         for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
             if (securedEntity.equals(selectedSecuredEntity)) {
-            	securedEntity.setDisabled(false);
+            	securedEntity.setDisabledAsBoolean(false);
                 break;
             }
         }
@@ -735,7 +735,7 @@ public class UserBean extends CustomFieldBean<User> {
     public void disable(SecuredEntity selectedSecuredEntity) throws BusinessException {
         for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
             if (securedEntity.equals(selectedSecuredEntity)) {
-            	securedEntity.setDisabled(true);
+            	securedEntity.setDisabledAsBoolean(true);
                 break;
             }
         }

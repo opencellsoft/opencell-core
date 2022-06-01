@@ -11,6 +11,9 @@ import org.meveo.apiv2.dunning.DunningPolicyRules;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 @Path("/dunning/dunningPolicy")
 @Produces(APPLICATION_JSON)
@@ -29,7 +32,7 @@ public interface DunningPolicyResource {
                     @ApiResponse(responseCode = "412",
                             description = "Missing parameters"),
                     @ApiResponse(responseCode = "400",
-                            description = "DunningLevel creation is failed")
+                            description = "Dunning level creation is failed")
             })
     Response create(@Parameter(description = "Dunning policy to create", required = true) DunningPolicy dunningPolicy);
 
@@ -90,6 +93,19 @@ public interface DunningPolicyResource {
             })
     Response archive(@Parameter(description = "Dunning policy id", required = true)
                      @PathParam("dunningPolicyId") Long dunningPolicyId);
+
+    @POST
+    @Path("/deactivate")
+    @Operation(summary = "deactivate dunning policy",
+            tags = {"Dunning"},
+            description = "deactivate dunning policy",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "dunning policy successfully deactivated"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Dunning policy does not exist")
+            })
+    Response deactivate(@Parameter(description = "Dunning policy ids list", required = true) Map<String, Set<Long>> dunningPolicyIds);
 
     @DELETE
     @Path("/policyRule/{policyRuleID}")

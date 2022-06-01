@@ -5,6 +5,8 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
@@ -20,6 +22,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 @SuppressWarnings("rawtypes")
 public abstract class AttributeValueService<T extends AttributeValue> extends PersistenceService<T> {
@@ -101,4 +104,59 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                 .findFirst();
         return mandatoryEl;
     }
+    public AttributeValue getAttributeValue(AttributeValue attributeInstance, Object... parameters) throws BusinessException{
+
+    	try {
+
+        	if(AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(attributeInstance.getAttribute().getAttributeType())) {
+
+        		if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
+
+        			Object value=ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, parameters);
+
+    	    			if(value!=null) {
+
+    	    				AttributeValue<AttributeValue> attributeValue= (AttributeValue) BeanUtils.cloneBean(attributeInstance);
+
+    	    				attributeValue.setId(null);
+
+    	       			 if(value instanceof Boolean) {
+
+    	       				 attributeValue.setBooleanValue((Boolean)value);
+
+    	       			 }else if(NumberUtils.isCreatable(value.toString().trim())) {
+
+    	       					attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
+
+    	       			 }else {
+
+    	       				attributeValue.setStringValue((String)value);
+
+    	       			}
+
+    	       			log.debug("getAttributeValue value={}, String={},boolean={},double={}",value,attributeValue.getStringValue(),attributeValue.getBooleanValue(),attributeValue.getDoubleValue());
+
+    	       			
+
+    	       			return attributeValue;
+
+        			}
+
+        			
+
+        		  }
+
+        		}
+
+		} catch (Exception e) {
+
+			log.error("Error when trying to get AttributeValue : ", e);
+
+			throw new BusinessException(e.getMessage());
+
+		}
+
+    	return (AttributeValue)attributeInstance;
+
+    	}
 }

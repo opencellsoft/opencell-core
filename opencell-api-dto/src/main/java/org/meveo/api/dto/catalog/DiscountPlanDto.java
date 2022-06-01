@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -102,6 +103,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * Type of the discount plan. Defines on which entity the discount plan can be applied.
 	 */
 	@Schema(description = "Type of the discount plan. Defines on which entity the discount plan can be applied", example = "possible value are : QUOTE, OFFER, PRODUCT, INVOICE, INVOICE_LINE, PROMO_CODE")
+	@NotNull
 	private DiscountPlanTypeEnum discountPlanType;
 
 	/**

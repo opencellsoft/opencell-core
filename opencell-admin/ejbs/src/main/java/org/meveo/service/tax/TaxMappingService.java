@@ -18,6 +18,15 @@
 
 package org.meveo.service.tax;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -42,21 +51,12 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Tax mapping service implementation.
@@ -78,9 +78,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
     @Inject
     private AccountingArticleService accountingArticleService;
-
-    @Inject
-    private SellerService sellerService;
     
     private static boolean IS_DETERMINE_TAX_CLASS_FROM_AA = true;
 
@@ -216,6 +213,28 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
     }
 
+    public TaxInfo determineTax(ChargeInstance chargeInstance, Date date, AccountingArticle accountingArticle) throws BusinessException {
+
+        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        if (taxClass == null) {
+            if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+                taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
+            }
+            if (taxClass == null) {
+                taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+            }
+            if(taxClass==null) {
+            	if(accountingArticle!=null) {
+            		taxClass=accountingArticle.getTaxClass();
+            	}else {
+            		log.warn("No article found for chargeInstance code={},id{}",chargeInstance.getCode(),chargeInstance.getId());
+            	}
+            }
+            chargeInstance.setTaxClassResolved(taxClass);
+        }
+
+        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, true, false);
+    }
     /**
      * Determine applicable tax for a given charge instance. Considers when Billing Account is exonerated.
      * 
@@ -266,7 +285,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         try {
             if (taxClass == null && IS_DETERMINE_TAX_CLASS_FROM_AA) {
-                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+                AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
                     chargeInstance.setTaxClassResolved(taxClass);
@@ -670,7 +689,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
             Tax recalculatedTax = recalculatedTaxInfo.tax;
 
-            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
+            return new Object[] { recalculatedTax, tax == null ? true : recalculatedTax!=null && !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
 }

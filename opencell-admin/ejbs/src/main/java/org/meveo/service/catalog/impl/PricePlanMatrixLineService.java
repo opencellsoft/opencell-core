@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,6 +17,8 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -48,8 +51,18 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     public List<PricePlanMatrixLine> findByPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
         try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", PricePlanMatrixLine.class)
+            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", entityClass)
                     .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
+                    .getResultList();
+        } catch (NoResultException exp) {
+            return new ArrayList<>();
+        }
+    }
+    
+    public List<PricePlanMatrixLine> findByPricePlanMatrixVersionIds(List<Long> ppmvIds) {
+        try {
+            return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersionIds", entityClass)
+                    .setParameter("ppmvIds", ppmvIds)
                     .getResultList();
         } catch (NoResultException exp) {
             return new ArrayList<>();
@@ -66,7 +79,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             throw new MeveoApiException(String.format("status of the price plan matrix version id=%d is %s, it can not be updated",pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getStatus().toString()));
         }
         PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
-        pricePlanMatrixLine.setPricetWithoutTax(dtoData.getPricetWithoutTax());
+        pricePlanMatrixLine.setPriceWithoutTax(dtoData.getPriceWithoutTax());
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         pricePlanMatrixLine.setPriority(dtoData.getPriority());
         pricePlanMatrixLine.setDescription(dtoData.getDescription());
@@ -97,7 +110,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPricePlanMatrixCode(), "pricePlanMatrixVersion.pricePlanMatrixCode", "" + pricePlanMatrixLineDto.getPricePlanMatrixVersion(), "pricePlanMatrixVersion.currentVersion");
         }
 
-        pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
+        pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
         pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
         Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
         pricePlanMatrixLine.getPricePlanMatrixValues().clear();
@@ -133,7 +146,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
-                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
+                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
                     if (pricePlanMatrixColumns.isEmpty())
                         throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
                     pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumns.get(0));
@@ -233,5 +246,38 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     	builder.addCriterion("ppml.priority", "=", priority, false);
     	builder.addCriterion("ppml.pricePlanMatrixVersion.currentVersion", "=", currentVersion, false);
     	return builder.getQuery(this.getEntityManager()).getResultList();
+    }
+    
+    public void updatePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+        
+        Set<PricePlanMatrixLine> lines = new HashSet<>();
+        checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+            PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
+            pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
+            pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
+            pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
+            pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
+            create(pricePlanMatrixLine);
+            
+            Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
+            pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
+            pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+            lines.add(pricePlanMatrixLine);
+        }
+
+        ppmVersion.setLines(lines);
+    }
+
+    public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
+        for (int i = 0; i < list.size(); i++) {
+            var values = list.get(i).getPricePlanMatrixValues(); 
+            for (int k = i + 1; k < list.size(); k++) {
+                var valTobeCompared = list.get(k).getPricePlanMatrixValues();
+                if(!values.isEmpty() 
+                        && !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
+                    throw new MeveoApiException("A line having similar values already exists!.");
+            }
+        }
     }
 }

@@ -29,11 +29,15 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -42,6 +46,8 @@ import org.meveo.model.RatingResult;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -55,6 +61,8 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceCharge;
@@ -70,6 +78,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
@@ -140,7 +149,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
+    @Inject
+    private DiscountPlanService discountPlanService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -441,8 +455,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
      */
-    public void serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
-        serviceActivation(serviceInstance, true, true);
+    public RatingResult serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
+        return serviceActivation(serviceInstance, true, true);
     }
 
     /**
@@ -459,9 +473,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges)
+    public RatingResult serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
+        List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
 
         log.debug("Will activate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
@@ -497,6 +512,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 
+    	RatingResult ratingResult = new RatingResult();
         // apply subscription charges
         if (!serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (SubscriptionChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
@@ -505,8 +521,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
                 if (applySubscriptionCharges) {
 
-                    RatingResult ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, serviceInstance.getSubscriptionDate(),
+                    ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, serviceInstance.getSubscriptionDate(),
                         serviceInstance.getOrderNumber(), ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
+                    if(ratingResult != null) {
+                    	eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
+                    }
 
                     // Uncomment if want to rate with failSilently=true and there is a job that that will rate failed to rate one shot charges afterwards
 //                    // If failed to rate, charge instance status is left as active
@@ -519,6 +538,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 }
 
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
+                instanciateCounterPeriods(oneShotChargeInstance);
             }
         }
 
@@ -533,9 +553,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             try {
                 if (applyRecurringCharges) {
-                    recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
-                        serviceInstance.getRateUntilDate() == null, false, null);
+                	RatingResult ratingResultRec = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
+                            serviceInstance.getRateUntilDate() == null, false, null);
+                    if(ratingResultRec != null) {
+                    	ratingResult.add(ratingResultRec);
+                    	eligibleFixedDiscountItems.addAll(ratingResultRec.getEligibleFixedDiscountItems());
+                    }
                 }
+
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
                 throw e; // e.getBusinessException();
@@ -544,10 +569,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 log.error("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getMessage(), e);
                 throw e;
             }
+            instanciateCounterPeriods(recurringChargeInstance);
         }
 
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
+            instanciateCounterPeriods(usageChargeInstance);
         }
         
 
@@ -569,6 +596,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
         }
         }
+
+        if(!eligibleFixedDiscountItems.isEmpty()) {
+        	//TODO : v12 & dev change new Date() with delivered != null
+        	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
+            discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, null, DiscountPlanTypeEnum.PRODUCT);
+        }
+        
+        return ratingResult;
     }
 
     /**
@@ -1168,5 +1204,63 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         } catch (Exception exception) {
             throw new BusinessException("No service instance with code " + code + " associated to subscription code : " + subscription.getCode());
         }
+    }
+
+    private void instanciateCounterPeriods(ChargeInstance chargeInstance) {
+
+        // Accumulator counters
+        for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
+            if (counterInstance != null) {
+                counterInstanceService.createCounterPeriodIfMissing(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            }
+        }
+        // Standard counter
+        if (chargeInstance.getCounter() != null) {
+            counterInstanceService.createCounterPeriodIfMissing(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+        }
+    } 
+    
+    /**
+     * Find a service instance matching id or code for a given subscription and optional statuses. I
+     *
+     * @param serviceId Service instance id
+     * @param serviceCode Service instance code
+     * @param subscription Subscription containing service instance
+     * @param statuses Statuses to match (optional)
+     * @return Service instance matched
+     * @throws MissingParameterException Either serviceId or serviceCode value must be provided
+     * @throws EntityDoesNotExistsException Service instance was not matched
+     * @throws InvalidParameterException More than one matching service instance found or does not correspond to given subscription and/or statuses
+     */
+    public ServiceInstance getSingleServiceInstance(Long serviceId, String serviceCode, Subscription subscription, InstanceStatusEnum... statuses)
+            throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException {
+
+        ServiceInstance serviceInstance = null;
+        if (serviceId != null) {
+            serviceInstance = findById(serviceId);
+
+            if (serviceInstance == null) {
+                throw new EntityDoesNotExistsException(ServiceInstance.class, serviceId);
+
+            } else if (!serviceInstance.getSubscription().equals(subscription) || (statuses != null && statuses.length > 0 && !ArrayUtils.contains(statuses, serviceInstance.getStatus()))) {
+                throw new InvalidParameterException("Service instance id " + serviceId + " does not correspond to subscription " + subscription.getCode() + " or is not of status ["
+                        + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
+            }
+
+        } else if (!StringUtils.isBlank(serviceCode)) {
+            List<ServiceInstance> services = findByCodeSubscriptionAndStatus(serviceCode, subscription, statuses);
+            if (services.size() == 1) {
+                serviceInstance = services.get(0);
+            } else if (services.size() > 1) {
+                throw new InvalidParameterException(
+                        "More than one service instance with status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "] was found. Please use ID to refer to service instance.");
+            } else {
+                throw new EntityDoesNotExistsException("Service instance with code " + serviceCode + " was not found or is not of status [" + (statuses != null ? StringUtils.concatenate((Object[]) statuses) : "") + "]");
+            }
+
+        } else {
+            throw new MissingParameterException("service id or code");
+        }
+        return serviceInstance;
     }
 }

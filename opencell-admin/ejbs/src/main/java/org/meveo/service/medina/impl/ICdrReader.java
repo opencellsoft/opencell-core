@@ -31,19 +31,21 @@ public interface ICdrReader {
      * Get next CDR record. A synchronized method to read from CDR source. Any failure to parse a line is reflected in CDR.rejectReason and CDR.rejectReasonException.
      *
      * @param cdrParser The cdr parser to apply
+     * @param originRecordEL EL expression to calculate originRecordNumver from CDR record
      * @return CDR record
      * @throws IOException Failure to read the CDR source
      */
-    CDR getNextRecord(ICdrParser cdrParser) throws IOException;
+    CDR getNextRecord(ICdrParser cdrParser, String originRecordEL) throws IOException;
 
     /**
      * Get CDR record from CDR data. Any failure to parse a line is reflected in CDR.rejectReason and CDR.rejectReasonException.
      *
      * @param cdrParser The cdr parser to apply
      * @param cdrData CDR data to parse
+     * @param originRecordEL EL expression to calculate originRecordNumver from CDR record
      * @return CDR record
      */
-    CDR getRecord(ICdrParser cdrParser, Object cdrData);
+    CDR getRecord(ICdrParser cdrParser, Object cdrData, String originRecordEL);
 
     /**
      * Close CDR record reader

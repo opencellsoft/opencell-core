@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
@@ -154,6 +155,10 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
+
+
+    @Schema(description = "indicate if this is a company")
+    protected Boolean isCompany;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
@@ -1270,5 +1275,13 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     public void setTaxCategoryCode(String taxCategoryCode) {
         this.taxCategoryCode = taxCategoryCode;
+    }
+
+    public Boolean getCompany() {
+        return isCompany;
+    }
+
+    public void setCompany(Boolean company) {
+        isCompany = company;
     }
 }

@@ -1,5 +1,6 @@
 {
   "name" : "Opencell Core",
   "version" : "@VERSION_NUMBER@",
-  "commit" : "@BUILD_NUMBER@"
+  "commit" : "@BUILD_NUMBER@",
+  "commitDate" : "@COMMIT_DATE@"
 }

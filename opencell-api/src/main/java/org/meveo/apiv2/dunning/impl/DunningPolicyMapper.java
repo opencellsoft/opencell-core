@@ -9,7 +9,9 @@ import org.hibernate.Hibernate;
 import org.meveo.apiv2.dunning.DunningPolicy;
 import org.meveo.apiv2.dunning.DunningPolicyInput;
 import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.model.admin.Currency;
 
 public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo.model.dunning.DunningPolicy> {
 
@@ -17,14 +19,17 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
 
     @Override
     protected DunningPolicy toResource(org.meveo.model.dunning.DunningPolicy entity) {
-        ImmutableDunningPolicy.Builder builder = ImmutableDunningPolicy.builder().id(entity.getId()).isDefaultPolicy(entity.getDefaultPolicy())
-            .isActivePolicy(entity.getActivePolicy()).policyName(entity.getPolicyName()).policyDescription(entity.getPolicyDescription())
+        ImmutableDunningPolicy.Builder builder = ImmutableDunningPolicy.builder().id(entity.getId()).isDefaultPolicy(entity.getIsDefaultPolicy())
+            .isActivePolicy(entity.getIsActivePolicy()).policyName(entity.getPolicyName()).policyDescription(entity.getPolicyDescription())
             .minBalanceTrigger(entity.getMinBalanceTrigger()).policyPriority(entity.getPolicyPriority()).interestForDelaySequence(entity.getInterestForDelaySequence())
             .isIncludeDueInvoicesInThreshold(entity.getIncludeDueInvoicesInThreshold()).isAttachInvoicesToEmails(entity.getAttachInvoicesToEmails())
             .isIncludePayReminder(entity.getIncludePayReminder()).determineLevelBy(entity.getDetermineLevelBy());
         if (entity.getDunningLevels() != null && Hibernate.isInitialized(entity.getDunningLevels())) {
             builder
                 .dunningPolicyLevels(entity.getDunningLevels().stream().map(dunningPolicyLevel -> policyLevelMapper.toResource(dunningPolicyLevel)).collect(Collectors.toList()));
+        }
+        if(entity.getMinBalanceTriggerCurrency() != null) {
+            builder.minBalanceTriggerCurrency(ImmutableResource.builder().id(entity.getMinBalanceTriggerCurrency().getId()).build());
         }
         return builder.build();
     }
@@ -41,12 +46,18 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         entity.setIncludePayReminder(resource.isIncludePayReminder());
         ofNullable(resource.isAttachInvoicesToEmails()).ifPresent(attachInvoicesToEmail -> entity.setAttachInvoicesToEmails(attachInvoicesToEmail));
         entity.setPolicyPriority(resource.getPolicyPriority());
-        entity.setDefaultPolicy(resource.isDefaultPolicy());
-        entity.setActivePolicy(resource.isActivePolicy());
+        entity.setIsDefaultPolicy(resource.isDefaultPolicy());
+        entity.setIsActivePolicy(resource.isActivePolicy());
+        if(resource.getMinBalanceTriggerCurrency() != null && resource.getMinBalanceTriggerCurrency().getCode() != null) {
+            Currency currency = new Currency();
+            currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
+            entity.setMinBalanceTriggerCurrency(currency);
+        }
         return entity;
     }
 
-    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource, org.meveo.model.dunning.DunningPolicy toUpdate, List<String> updatedFields) {
+    public org.meveo.model.dunning.DunningPolicy toUpdateEntity(DunningPolicyInput resource,
+                                                                org.meveo.model.dunning.DunningPolicy toUpdate, List<String> updatedFields) {
         ofNullable(resource.getPolicyName()).ifPresent(policyName -> {
             if (!resource.getPolicyName().equals(toUpdate.getPolicyName())) {
                 updatedFields.add("policyName");
@@ -60,16 +71,16 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             toUpdate.setPolicyDescription(description);
         });
         ofNullable(resource.isActivePolicy()).ifPresent(activePolicy -> {
-            if (!resource.isActivePolicy().equals(toUpdate.getActivePolicy())) {
+            if (!resource.isActivePolicy().equals(toUpdate.getIsActivePolicy())) {
                 updatedFields.add("activePolicy");
             }
-            toUpdate.setActivePolicy(activePolicy);
+            toUpdate.setIsActivePolicy(activePolicy);
         });
         ofNullable(resource.isDefaultPolicy()).ifPresent(defaultPolicy -> {
-            if (!resource.isDefaultPolicy().equals(toUpdate.getDefaultPolicy())) {
+            if (!resource.isDefaultPolicy().equals(toUpdate.getIsDefaultPolicy())) {
                 updatedFields.add("defaultPolicy");
             }
-            toUpdate.setDefaultPolicy(defaultPolicy);
+            toUpdate.setIsDefaultPolicy(defaultPolicy);
         });
         ofNullable(resource.isAttachInvoicesToEmails()).ifPresent(attachInvoicesToEmails -> {
             if (!resource.isAttachInvoicesToEmails().equals(toUpdate.getAttachInvoicesToEmails())) {
@@ -107,6 +118,35 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
             }
             toUpdate.setDetermineLevelBy(determineLevelBy);
         });
+        if(resource.getPolicyPriority() == null && toUpdate.getPolicyPriority() != null) {
+            updatedFields.add("policyPriority");
+            toUpdate.setPolicyPriority(resource.getPolicyPriority());
+        }else {
+            ofNullable(resource.getPolicyPriority()).ifPresent(policyPriority -> {
+                if (!resource.getPolicyPriority().equals(toUpdate.getPolicyPriority())) {
+                    updatedFields.add("policyPriority");
+                }
+                toUpdate.setPolicyPriority(policyPriority);
+            });
+        }
+        if (resource.getMinBalanceTriggerCurrency() != null) {
+            if(resource.getMinBalanceTriggerCurrency().getCode() == null) {                
+                if(toUpdate.getMinBalanceTriggerCurrency() != null 
+                        && toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode() != null 
+                        && toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode() != "") {
+                    updatedFields.add("minBalanceTriggerCurrency");
+                }
+                toUpdate.setMinBalanceTriggerCurrency(null);
+            } else {
+                if (toUpdate.getMinBalanceTriggerCurrency() == null
+                        || !resource.getMinBalanceTriggerCurrency().getCode().equals(toUpdate.getMinBalanceTriggerCurrency().getCurrencyCode())) {
+                    Currency currency = new Currency();
+                    currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
+                    toUpdate.setMinBalanceTriggerCurrency(currency);
+                    updatedFields.add("minBalanceTriggerCurrency");
+                }
+            }
+        }
         return toUpdate;
     }
 }

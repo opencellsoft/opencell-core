@@ -77,7 +77,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
@@ -172,7 +172,7 @@ public class InvoiceServiceTest {
             }
         });
 
-        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
+        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(), any(),any(), any(), anyInt())).thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
             List<InvoiceLine> invoiceLines = new ArrayList<>();
             IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
             InvoiceLine invoiceLine = getInvoiceLine(entity);
@@ -1089,7 +1089,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null);
         assertThat(invoiceLinesGroups).isNotNull();
         Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesGroups.invoiceLinesGroups.get(0);
@@ -1111,7 +1111,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null,null, false, paymentMethod, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1137,7 +1137,7 @@ public class InvoiceServiceTest {
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(subscription.getSeller()).thenReturn(sellerSub);
         when(customer.getSeller()).thenReturn(sellerCust);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
         Assert.assertEquals(invoiceLinesGroup.getSeller().getCode(), "Seller_code");
@@ -1151,8 +1151,8 @@ public class InvoiceServiceTest {
         BillingCycle bc = new BillingCycle();
         InvoiceType invoiceType = new InvoiceType();
         PaymentMethod paymentMethod = new CardPaymentMethod();
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class), mock(Date.class), mock(Date.class), false,
-            paymentMethod, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class),null, mock(Date.class), mock(Date.class), false,
+            paymentMethod, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1186,6 +1186,7 @@ public class InvoiceServiceTest {
         InvoiceCategory cat1 = new InvoiceCategory();
         cat1.setCode("cat1");
         cat1.setId(11L);
+        BillingRun billingRun = new BillingRun();
 
         InvoiceCategory cat2 = new InvoiceCategory();
         cat2.setCode("cat2");
@@ -1347,7 +1348,7 @@ public class InvoiceServiceTest {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false);
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false, null);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(12);
         SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);

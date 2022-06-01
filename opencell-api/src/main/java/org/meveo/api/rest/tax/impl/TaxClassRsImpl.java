@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.tax.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -32,8 +28,13 @@ import org.meveo.api.dto.tax.TaxClassDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tax.TaxClassRs;
-import org.meveo.api.tax.TaxClassApi;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.tax.TaxClassApi;
+import org.meveo.commons.utils.ExceptionUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * REST interface definition of Tax class API
@@ -91,10 +92,20 @@ public class TaxClassRsImpl extends BaseRs implements TaxClassRs {
         try {
             apiService.remove(code);
         } catch (Exception e) {
-            processException(e, result);
+            processException(beautifyForeignConstraintViolationMessage(e), result);
         }
 
         return result;
+    }
+
+    private Exception beautifyForeignConstraintViolationMessage(Exception e) {
+        if(ExceptionUtils.getRootCause(e).getMessage().contains("violates foreign key constraint"))
+        {
+
+            return new Exception("you cannot delete tax class. it still referenced by other entities ");
+        }
+
+        return e;
     }
 
     @Override

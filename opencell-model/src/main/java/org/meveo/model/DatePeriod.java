@@ -19,6 +19,7 @@ package org.meveo.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -249,6 +250,11 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
      */
     public boolean isEmpty() {
         return from == null && to == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, fromMatch, strictMatch, to, toMatch);
     }
 
     @Override

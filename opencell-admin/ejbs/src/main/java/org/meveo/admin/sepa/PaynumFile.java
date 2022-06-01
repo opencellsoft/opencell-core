@@ -31,6 +31,7 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
@@ -81,7 +82,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
 
 
     @Override
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider, JobExecutionResultImpl result) throws BusinessException {
         if(ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
             throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");
         }

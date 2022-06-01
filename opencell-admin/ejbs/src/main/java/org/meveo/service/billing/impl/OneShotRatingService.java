@@ -19,6 +19,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -35,6 +36,9 @@ public class OneShotRatingService extends RatingService implements Serializable 
 
     @Inject
     private WalletOperationService walletOperationService;
+
+    @Inject
+    private EdrService edrService;
 
     /**
      * Apply/rate a one shot charge. Change charge instance status to CLOSED.
@@ -79,7 +83,11 @@ public class OneShotRatingService extends RatingService implements Serializable 
             incrementAccumulatorCounterValues(ratingResult.getWalletOperations(), ratingResult, isVirtual);
 
             if (!isVirtual && !ratingResult.getWalletOperations().isEmpty()) {
-
+                if (ratingResult.getTriggeredEDRs() != null) {
+                    for (EDR triggeredEdr : ratingResult.getTriggeredEDRs()) {
+                        edrService.create(triggeredEdr);
+                    }
+                }
                 for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
                     walletOperationService.chargeWalletOperation(walletOperation);
                 }
@@ -122,11 +130,15 @@ public class OneShotRatingService extends RatingService implements Serializable 
             return ratingResult;
         
         } catch (EJBTransactionRolledbackException e) {
-            revertCounterChanges(ratingResult.getCounterChanges());
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
             throw e;
             
         } catch (Exception e) {
-            revertCounterChanges(ratingResult.getCounterChanges());
+            if (ratingResult != null) {
+                revertCounterChanges(ratingResult.getCounterChanges());
+            }
 
             if (failSilently) {
                 log.debug("Failed to rate a one shot charge subscription {}, quantity {}, applicationDate {}, chargeInstance {}/{}/{}", subscription.getId(), quantityInChargeUnits, applicationDate,

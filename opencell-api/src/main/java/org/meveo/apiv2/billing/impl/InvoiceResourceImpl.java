@@ -1,35 +1,58 @@
 package org.meveo.apiv2.billing.impl;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.apiv2.billing.*;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.GenerateInvoiceInput;
+import org.meveo.apiv2.billing.GenerateInvoiceResult;
+import org.meveo.apiv2.billing.ImmutableFile;
+import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceMatchedOperation;
+import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.InvoiceInput;
+import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
+import org.meveo.apiv2.billing.InvoiceLinesToRemove;
+import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.InvoiceMatchedOperation;
+import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
-import org.meveo.apiv2.generic.core.filter.filtermapper.ObjectMapper;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
@@ -107,7 +130,8 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
-		Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
+
+		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
 				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
 				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
 						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
@@ -120,7 +144,28 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.distinct()
 				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
 				.collect(Collectors.toSet());
-		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();*/
+
+		Set<InvoiceMatchedOperation> result = new HashSet<>();
+
+		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+				.forEach(accountOperation -> {
+					AccountOperation invoiceAo = accountOperationService.findById(accountOperation.getId(), List.of("matchingAmounts"));
+
+					Optional.ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
+							.forEach(matchingAmount -> {
+								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
+								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+										.forEach(matchingAmountAo -> {
+											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											}
+										});
+							});
+
+				});
+
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(result)).build();
 	}
 
 	private Map<String, Object> buildResponse(Set<InvoiceMatchedOperation> collect) {
@@ -135,14 +180,15 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
 		return builder
 				.paymentId(accountOperation.getId())
+				.matchingAmountId(matchingAmountPrimary.getId())
 				.paymentCode(accountOperation.getCode())
 				.paymentDescription(accountOperation.getDescription())
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
-				.paymentDate(accountOperation.getTransactionDate())
+				.paymentDate(matchingAmountPrimary.getMatchingCode().getMatchingDate())
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
-				.paymentRef(accountOperation.getReference())
-				.amount(accountOperation.getMatchingAmount())
-				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
+				.paymentRef(ofNullable(accountOperation.getReference()).orElse(""))
+				.amount(matchingAmountPrimary.getMatchingAmount())
+				.percentageCovered(matchingAmountPrimary.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
 				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
 				.matchingDate(matchingCode.getMatchingDate())
 				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
@@ -189,7 +235,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceLinesInput = invoiceApiService.createLines(invoice, invoiceLinesInput);
-		if(invoiceLinesInput.getSkipValidation()==null || !invoiceLinesInput.getSkipValidation()) {
+		if(invoiceLinesInput.getSkipValidation() == null || !invoiceLinesInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
 		return Response.ok().entity(invoiceLinesInput).build();
@@ -264,7 +310,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response cancelInvoiceLine(Long id) {
+	public Response cancelInvoice(Long id) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.cancelInvoice(invoice);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
@@ -282,6 +328,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceResource) {
 		final Invoice invoice = findInvoiceEligibleToUpdate(id);
+		if(invoice.getInvoiceLines() == null
+				|| (invoice.getInvoiceLines() != null && invoice.getInvoiceLines().isEmpty())){
+			throw new ActionForbiddenException("invoices with no invoice line can not be updated.") ;
+		}
 		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceResource), invoiceResource);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
@@ -314,4 +364,63 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		List<GenerateInvoiceResult> invoices = invoiceApiService.generate(invoiceRequest, input.getIsDraft()).get();
 		return Response.ok().entity(invoices).build();
 	}
+
+    @Override
+    public Response createAdjustment(@NotNull Long id, @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToReplicate);
+        return Response.ok().entity(buildSuccessResponse(invoiceMapper.toResource(adjInvoice))).build();
+    }
+
+    private Map<String, Object> buildSuccessResponse(org.meveo.apiv2.billing.Invoice invoiceResource) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("invoice", invoiceResource);
+        return response;
+    }
+    
+    @Override
+    public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
+            idsInvoiceLineForInvoice.add(invoiceLine.getId());
+        }
+        int sizeInvoiceLineIds = invoiceLinesToDuplicate.getInvoiceLineIds().size();
+        if(sizeInvoiceLineIds == 0){
+            throw new MissingParameterException("The following parameters are required or contain invalid values: invoiceLineIds");
+        }
+
+        if(!InvoiceStatusEnum.NEW.equals(invoice.getStatus()) 
+                && !InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())){
+            throw new MeveoApiException("The invoice should have one of these statuses: NEW, DRAFT, SUSPECT or REJECTED");
+        }
+        invoice = invoiceApiService.duplicateInvoiceLines(invoice, invoiceLinesToDuplicate.getInvoiceLineIds());
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("invoice", invoice);
+        return Response.ok(response).build();
+    }
+
+	@Override
+	public Response quarantineInvoice(Long id, QuarantineBillingRunDto quarantineBillingRunDto) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		if(!InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())) {
+			throw new ActionForbiddenException("Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") ;
+		}
+
+		Long quarantineBillingRunId = invoiceApiService.quarantineInvoice(invoice, quarantineBillingRunDto);
+		
+		
+		Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("quarantineBillingRunId", quarantineBillingRunId);
+        return Response.ok(response).build();
+	}
+    
+    
 }

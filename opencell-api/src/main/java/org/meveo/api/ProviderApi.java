@@ -515,46 +515,46 @@ public class ProviderApi extends BaseApi {
         	if (provider.getPaymentPlanPolicy() == null) {
         		provider.setPaymentPlanPolicy(new PaymentPlanPolicy());
         	}
-        	PaymentPlanPolicy PaymentPlanPolicy = provider.getPaymentPlanPolicy();
+        	PaymentPlanPolicy paymentPlanPolicy = provider.getPaymentPlanPolicy();
         	if (postData.getPaymentPlanPolicy().getMinAllowedReceivableAmount() != null) {
-        		PaymentPlanPolicy.setMinAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMinAllowedReceivableAmount());
+        		paymentPlanPolicy.setMinAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMinAllowedReceivableAmount());
         	}
         	if (postData.getPaymentPlanPolicy().getMaxAllowedReceivableAmount() != null) {
-        		PaymentPlanPolicy.setMaxAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMaxAllowedReceivableAmount());
+        		paymentPlanPolicy.setMaxAllowedReceivableAmount(postData.getPaymentPlanPolicy().getMaxAllowedReceivableAmount());
         	}
         	if (postData.getPaymentPlanPolicy().getMinInstallmentAmount() != null) {
-        		PaymentPlanPolicy.setMinInstallmentAmount(postData.getPaymentPlanPolicy().getMinInstallmentAmount());
+        		paymentPlanPolicy.setMinInstallmentAmount(postData.getPaymentPlanPolicy().getMinInstallmentAmount());
         	}
         	if (postData.getPaymentPlanPolicy().getMaxPaymentPlanDuration() != null) {
-        		PaymentPlanPolicy.setMaxPaymentPlanDuration(postData.getPaymentPlanPolicy().getMaxPaymentPlanDuration());
+        		paymentPlanPolicy.setMaxPaymentPlanDuration(postData.getPaymentPlanPolicy().getMaxPaymentPlanDuration());
         	}
         	if (postData.getPaymentPlanPolicy().getDefaultRecurrenceUnit() != null) {
-        		PaymentPlanPolicy.setDefaultRecurrenceUnit(postData.getPaymentPlanPolicy().getDefaultRecurrenceUnit());
+        		paymentPlanPolicy.setDefaultRecurrenceUnit(postData.getPaymentPlanPolicy().getDefaultRecurrenceUnit());
         	}
         	if (postData.getPaymentPlanPolicy().getDefaultInstallmentCount() != null) {
-        		PaymentPlanPolicy.setDefaultInstallmentCount(postData.getPaymentPlanPolicy().getDefaultInstallmentCount());
+        		paymentPlanPolicy.setDefaultInstallmentCount(postData.getPaymentPlanPolicy().getDefaultInstallmentCount());
         	}        	
         	if (postData.getPaymentPlanPolicy().getDefaultFeePerInstallmentPlan() != null) {
-        		PaymentPlanPolicy.setDefaultFeePerInstallmentPlan(postData.getPaymentPlanPolicy().getDefaultFeePerInstallmentPlan());
+        		paymentPlanPolicy.setDefaultFeePerInstallmentPlan(postData.getPaymentPlanPolicy().getDefaultFeePerInstallmentPlan());
         	}
         	if (postData.getPaymentPlanPolicy().getInstallmentAmountRounding() != null) {
-        		PaymentPlanPolicy.setInstallmentAmountRounding(postData.getPaymentPlanPolicy().getInstallmentAmountRounding());
+        		paymentPlanPolicy.setInstallmentAmountRounding(postData.getPaymentPlanPolicy().getInstallmentAmountRounding());
         	}
         	if (postData.getPaymentPlanPolicy().getActionOnRemainingAmount() != null) {
-        		PaymentPlanPolicy.setActionOnRemainingAmount(postData.getPaymentPlanPolicy().getActionOnRemainingAmount());
+        		paymentPlanPolicy.setActionOnRemainingAmount(postData.getPaymentPlanPolicy().getActionOnRemainingAmount());
         	}
         	if (postData.getPaymentPlanPolicy().getClearingPriority() != null) {
-        		PaymentPlanPolicy.setClearingPriority(postData.getPaymentPlanPolicy().getClearingPriority());
+        		paymentPlanPolicy.setClearingPriority(postData.getPaymentPlanPolicy().getClearingPriority());
         	}
         	if (postData.getPaymentPlanPolicy().getTheresHoldForApproval() != null) {
-        		PaymentPlanPolicy.setTheresHoldForApproval(postData.getPaymentPlanPolicy().getTheresHoldForApproval());
+        		paymentPlanPolicy.setTheresHoldForApproval(postData.getPaymentPlanPolicy().getTheresHoldForApproval());
         	}
         	if (postData.getPaymentPlanPolicy().getDefaultInterestRate() != null) {
-        		PaymentPlanPolicy.setDefaultInterestRate(postData.getPaymentPlanPolicy().getDefaultInterestRate());
+        		paymentPlanPolicy.setDefaultInterestRate(postData.getPaymentPlanPolicy().getDefaultInterestRate());
         	}
         	
         	if(postData.getPaymentPlanPolicy().getAllowedPaymentMethods() != null) {
-            	PaymentPlanPolicy.setAllowedPaymentMethods(postData.getPaymentPlanPolicy().getAllowedPaymentMethods());
+            	paymentPlanPolicy.setAllowedPaymentMethods(postData.getPaymentPlanPolicy().getAllowedPaymentMethods());
             }
         	
         	if(postData.getPaymentPlanPolicy().getDunningDefaultPauseReason() != null) {          	
@@ -562,11 +562,11 @@ public class ProviderApi extends BaseApi {
             	if(dunningPauseReason == null) {
             		throw new EntityDoesNotExistsException(DunningPauseReason.class.getName(), postData.getPaymentPlanPolicy().getDunningDefaultPauseReason().toString());
             	}
-        		PaymentPlanPolicy.setDunningDefaultPauseReason(dunningPauseReason);
+        		paymentPlanPolicy.setDunningDefaultPauseReason(dunningPauseReason);
         	}
 
         	if (postData.getPaymentPlanPolicy().getAllowedCreditCategories() != null) {
-                List<CreditCategory> listAllowedCreditCategories = new ArrayList<CreditCategory>();
+                List<CreditCategory> listAllowedCreditCategories = new ArrayList<>();
                 for (Long elementAllowedCreditCategoriesDto : postData.getPaymentPlanPolicy().getAllowedCreditCategories()) {               	
                 	CreditCategory allowedCreditCategories = creditCategoryService.findById(elementAllowedCreditCategoriesDto);                	
                 	if(allowedCreditCategories == null) {
@@ -576,19 +576,24 @@ public class ProviderApi extends BaseApi {
                 	listAllowedCreditCategories.add(allowedCreditCategories);
                 }
                 
-                PaymentPlanPolicy.setAllowedCreditCategories(listAllowedCreditCategories);        		
+                paymentPlanPolicy.setAllowedCreditCategories(listAllowedCreditCategories);
         	}
         	
-        	PaymentPlanPolicy.setSplitEvenly(postData.getPaymentPlanPolicy().isSplitEvenly());
-       		PaymentPlanPolicy.setAllowCustomInstallmentPlan(postData.getPaymentPlanPolicy().isAllowCustomInstallmentPlan());
-       		PaymentPlanPolicy.setAddInterestRate(postData.getPaymentPlanPolicy().isAddInterestRate());
-       		PaymentPlanPolicy.setAddInstallmentFee(postData.getPaymentPlanPolicy().isAddInstallmentFee());
-       		PaymentPlanPolicy.setDefaultBlockPayments(postData.getPaymentPlanPolicy().isDefaultBlockPayments());
-    		PaymentPlanPolicy.setRequireInternalApproval(postData.getPaymentPlanPolicy().isRequireInternalApproval());
+        	paymentPlanPolicy.setSplitEvenly(postData.getPaymentPlanPolicy().isSplitEvenly());
+       		paymentPlanPolicy.setAllowCustomInstallmentPlan(postData.getPaymentPlanPolicy().isAllowCustomInstallmentPlan());
+       		paymentPlanPolicy.setAddInterestRate(postData.getPaymentPlanPolicy().isAddInterestRate());
+       		paymentPlanPolicy.setAddInstallmentFee(postData.getPaymentPlanPolicy().isAddInstallmentFee());
+       		paymentPlanPolicy.setDefaultBlockPayments(postData.getPaymentPlanPolicy().isDefaultBlockPayments());
+    		paymentPlanPolicy.setRequireInternalApproval(postData.getPaymentPlanPolicy().isRequireInternalApproval());
+    		paymentPlanPolicy.setDefaultStartingDateOfPlan(postData.getPaymentPlanPolicy().getDefaultStartingDateOfPlan());
         }
         if (postData.isRecognizeRevenue() != null) {
             provider.setRecognizeRevenue(postData.isRecognizeRevenue());
         }
+        
+        if (postData.getCdrDeduplicationKeyEL() != null) {
+        	provider.setCdrDeduplicationKeyEL(postData.getCdrDeduplicationKeyEL());
+    	}
 
         InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
         if (invoiceConfigurationDto != null) {
@@ -670,6 +675,9 @@ public class ProviderApi extends BaseApi {
             		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultDiscountArticleCode());
             	}
                 invoiceConfiguration.setDefaultDiscountAccountingArticle(discountArticle);
+            }
+            if (invoiceConfigurationDto.getDisplayUserAccountHierarchy() != null) {
+                invoiceConfiguration.setDisplayUserAccountHierarchy(invoiceConfigurationDto.getDisplayUserAccountHierarchy());
             }
         }
         return provider;

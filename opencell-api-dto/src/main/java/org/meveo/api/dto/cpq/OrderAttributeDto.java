@@ -30,6 +30,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
  * DTO to create or update a order attribute
@@ -51,6 +52,9 @@ public class OrderAttributeDto extends BaseEntityDto{
 	
 	@Schema(description = "The order attribute code")
 	private String orderAttributeCode;
+
+	@Schema (description = "The order attribute type")
+	private AttributeTypeEnum attributeType;
 	
 	@Schema(description = "The order attribute id")
     private Long orderAttributeId;
@@ -100,6 +104,7 @@ public class OrderAttributeDto extends BaseEntityDto{
 		dateValue =orderAttribute.getDateValue();
 		doubleValue =orderAttribute.getDoubleValue();
 		booleanValue = orderAttribute.getBooleanValue();
+		attributeType = orderAttribute.getAttribute() != null ? orderAttribute.getAttribute().getAttributeType(): null;
 	}
 
 
@@ -270,10 +275,12 @@ public class OrderAttributeDto extends BaseEntityDto{
 		this.booleanValue = booleanValue;
 	}
 
-	
-	
-  
 
-	
-	 
+	public AttributeTypeEnum getAttributeType() {
+		return attributeType;
+	}
+
+	public void setAttributeType(AttributeTypeEnum attributeType) {
+		this.attributeType = attributeType;
+	}
 }

@@ -37,7 +37,6 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -80,6 +79,11 @@ public class BillingAccountDto extends AccountDto {
     @Schema(description = "The country")
     protected String country;
 
+    /** The currency. */
+    @XmlElement(required = true)
+    @Schema(description = "The trading currency")
+    private String tradingCurrency;
+    
     /** The language. */
     @XmlElement(required = true)
     @Schema(description = "The language")
@@ -256,7 +260,7 @@ public class BillingAccountDto extends AccountDto {
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     @Schema(description = "list of the code of tags")
-    protected Set<String> tagCodes = new HashSet<String>();
+    protected Set<String> tagCodes = new HashSet<>();
 
 
     /**
@@ -295,6 +299,9 @@ public class BillingAccountDto extends AccountDto {
         if (e.getTradingCountry() != null) {
             setCountry(e.getTradingCountry().getCountryCode());
         }
+        if (e.getTradingCurrency() != null) {
+            setTradingCurrency(e.getTradingCurrency().getCurrencyCode());
+        }        
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
         }
@@ -411,6 +418,24 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    /**
+     * Gets the tradingCurrency.
+     *
+     * @return the tradingCurrency
+     */
+    public String getTradingCurrency() {
+        return tradingCurrency;
+    }
+
+    /**
+     * Sets the tradingCurrency.
+     *
+     * @param tradingCurrency the tradingCurrency to set
+     */
+    public void setTradingCurrency(String tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
     }
 
     /**

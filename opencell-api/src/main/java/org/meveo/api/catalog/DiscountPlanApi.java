@@ -27,27 +27,31 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Said Ramli
@@ -58,10 +62,16 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private InvoiceLineService invoiceLineService;
 
     @Override
     public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
+    	if(postData.getDiscountPlanType() == null)
+			missingParameters.add("discountPlanType");
+    	handleMissingParameters();
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
         }
@@ -126,7 +136,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        handleMissingParametersAndValidate(postData);
+    	if(postData.getDiscountPlanType() == null)
+			missingParameters.add("discountPlanType");
+    	
+    	handleMissingParameters();
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
         if (discountPlan == null) {
@@ -160,6 +173,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	            }
 	        }
 	        if (postData.getStatus() != null) {
+	            if(postData.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) && discountPlan.getDiscountPlanItems().isEmpty()){
+	                throw new BusinessException("User can not be able to activate a DP if no Discount Line exists");
+                }
 	            discountPlan.setStatus(postData.getStatus());
 	            discountPlan.setStatusDate(new Date());
 	        }
@@ -293,7 +309,15 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, code);
         }
         if (entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT) || entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
+        	try {
             discountPlanService.remove(entity);
+            discountPlanService.commit();
+        	} catch (Exception e) {
+                if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+                	throw new DeleteReferencedEntityException(DiscountPlan.class, code);
+                }
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+            }
         } else {
             throw new BusinessException("only DRAFT and ACTIVE discount plans can be removed");
         }

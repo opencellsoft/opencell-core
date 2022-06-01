@@ -82,6 +82,11 @@ public abstract class Job {
      * Custom field for a number of items to process simultaneously in one transaction as a batch. If batch fails, items will be processed one by one.
      */
     public static final String CF_BATCH_SIZE = "batchSize";
+    
+    /**
+     * What initiated/launched Job
+     */
+    public static final String JOB_PARAM_LAUNCHER = "jobLauncher";
 
     @Resource
     protected TimerService timerService;

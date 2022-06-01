@@ -136,7 +136,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String xmlFileName = invoiceService.getOrGenerateXmlFilename(invoice);
         String fullXmlFilePath = invoiceService.getFullXmlFilePath(invoice, true);
 
-        File file = ((XmlInvoiceCreatorScript) defaultXmlInvoiceCreatorScript).createFile(doc, invoice, fullXmlFilePath);
+        File file = defaultXmlInvoiceCreatorScript.createFile(doc, invoice, fullXmlFilePath);
         if (file != null) {
             invoice.setXmlFilename(xmlFileName);
         }
@@ -161,6 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     @Deprecated
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
-        return ((XmlInvoiceCreatorScript) defaultXmlInvoiceCreatorScript).createDocument(invoice, isVirtual, true);
+        return defaultXmlInvoiceCreatorScript.createDocument(invoice, isVirtual, true);
     }
 }

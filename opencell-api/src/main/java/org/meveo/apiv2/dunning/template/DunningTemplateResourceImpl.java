@@ -8,13 +8,18 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.dunning.DunningTemplate;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.service.payments.impl.DunningTemplateService;
 
 public class DunningTemplateResourceImpl implements DunningTemplateResource{
     @Inject
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
+    @Inject
     private DunningTemplateService dunningTemplateService;
     @Override
     public Response createDunningTemplate(DunningTemplate dunningTemplate) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningTemplate dunningTemplateEntity = dunningTemplate.toEntity();
         dunningTemplateService.create(dunningTemplateEntity);
         return Response.ok()
@@ -24,6 +29,7 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
 
     @Override
     public Response deleteDunningTemplate(Long dunningTemplateId) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningTemplate dunningTemplate = dunningTemplateService.findById(dunningTemplateId);
         if(dunningTemplate == null) {
             throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");
@@ -44,6 +50,7 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
 
     @Override
     public Response duplicateDunningTemplate(Long dunningTemplateId) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningTemplate dunningTemplate = dunningTemplateService.findById(dunningTemplateId);
         if(dunningTemplate == null) {
             throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");
@@ -56,6 +63,7 @@ public class DunningTemplateResourceImpl implements DunningTemplateResource{
 
     @Override
     public Response updateDunningTemplate(Long dunningTemplateId, DunningTemplate dunningTemplate) {
+        globalSettingsVerifier.checkActivateDunning();
         org.meveo.model.dunning.DunningTemplate dunningTemplateEntity = dunningTemplateService.findById(dunningTemplateId);
         if(dunningTemplateEntity == null) {
             throw new EntityDoesNotExistsException("dunning Template with id "+dunningTemplateId+" does not exist.");

@@ -389,6 +389,31 @@ public class KeycloakAdminClientService {
     }
 
     /**
+     * Search for a user in keycloak via username.
+     * 
+     * @param httpServletRequest http request
+     * @param username user name
+     * @return keycloak email
+     * @throws BusinessException business exception
+     */
+    public String findUserEmail(HttpServletRequest httpServletRequest, String username) throws BusinessException {
+        KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        Keycloak keycloak = getKeycloakClient(session, keycloakAdminClientConfig);
+
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        UsersResource usersResource = realmResource.users();
+        UserRepresentation userRepresentation = getUserRepresentationByUsername(usersResource, username);
+
+        try {
+            return userRepresentation.getEmail();
+        } catch (Exception e) {
+            return new String();
+        }
+
+    }
+
+    /**
      * List all the realm roles in keycloak.
      * 
      * @param httpServletRequest http servlet request

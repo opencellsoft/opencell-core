@@ -75,8 +75,9 @@ public class RecordedInvoice extends AccountOperation {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
-    
-    @Formula("concat(amount, due_date, customer_account_id)") 
+
+    // concat function on oracle accept just two parameters
+    @Formula("concat(concat(amount, due_date), customer_account_id)")
     private String agedReceivableReportKey;
 
     public Date getProductionDate() {

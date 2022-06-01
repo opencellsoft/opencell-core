@@ -31,7 +31,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
     @NotNull
     @PositiveOrZero
     @XmlAttribute(required = true)
-	private BigDecimal pricetWithoutTax;
+	private BigDecimal priceWithoutTax;
 
     @Schema(description = "The price plan matrix code")
 	private String pricePlanMatrixCode;
@@ -46,15 +46,19 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
     @Schema(description = "The priority")
 	private Integer priority;
+    
+    @Schema(description = "The Price EL")
+    private String priceEL;
 
 	public PricePlanMatrixLineDto() {
 	}
 
 	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.ppmLineId = pricePlanMatrixLine.getId();
-		this.pricetWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+		this.priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
 		this.description = pricePlanMatrixLine.getDescription();
 		this.priority = pricePlanMatrixLine.getPriority();
+		this.priceEL = pricePlanMatrixLine.getPriceEL();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
@@ -77,18 +81,14 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.ppmLineId = ppmLineId;
 	}
 
-	/**
-	 * @return the pricetWithoutTax
-	 */
-	public BigDecimal getPricetWithoutTax() {
-		return pricetWithoutTax;
+
+
+	public BigDecimal getPriceWithoutTax() {
+		return priceWithoutTax;
 	}
 
-	/**
-	 * @param pricetWithoutTax the pricetWithoutTax to set
-	 */
-	public void setPricetWithoutTax(BigDecimal pricetWithoutTax) {
-		this.pricetWithoutTax = pricetWithoutTax;
+	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
+		this.priceWithoutTax = priceWithoutTax;
 	}
 
 	/**
@@ -136,6 +136,13 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
-	
+
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }    
 	
 }

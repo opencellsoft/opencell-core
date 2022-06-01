@@ -46,8 +46,8 @@ public class OrderAttributeService extends AttributeValueService<OrderAttribute>
     		if(orderAttribute.getOrderOffer() != null 
     				&&  orderAttribute.getOrderOffer().getOfferTemplate() != null ) {
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(orderAttribute, orderAttribute.getOrderOffer().getOfferTemplate());
-	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 				if(offerTemplatMandatoryEl.isPresent()) {
+	    			var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 					super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), offerTempalteAttribute.getValidationPattern(), offerTempalteAttribute.getValidationLabel(),
 							orderAttribute, 
 							offerTemplatMandatoryEl.get().getMandatoryWithEl(), 

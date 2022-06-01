@@ -140,6 +140,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         CustomEntityTemplate cet = convertCustomEntityTemplateFromDTO(dto, null);
         customEntityTemplateService.createWithoutPermissions(cet);
+        
+        // Flush CE info to DB, so CFT creation would recognize it as a valid CFT.appliesTo value
+        customEntityTemplateService.commit();
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {

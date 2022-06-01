@@ -36,6 +36,8 @@ import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -43,23 +45,17 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.*;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.document.DocumentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The CRUD Api for PaymentMethod.
@@ -99,8 +95,7 @@ public class PaymentMethodApi extends BaseApi {
      * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("deprecation")
-	public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
         validate(paymentMethodDto, true);
 
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
@@ -117,6 +112,17 @@ public class PaymentMethodApi extends BaseApi {
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
         	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
+		// populate customFields
+		try {
+			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, true, true);
+
+		} catch (MissingParameterException | InvalidParameterException e) {
+			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw e;
+		}        	
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
@@ -141,6 +147,10 @@ public class PaymentMethodApi extends BaseApi {
         if (paymentMethod == null) {
             throw new EntityDoesNotExistsException(PaymentMethod.class, paymentMethodDto.getId());
         }
+        
+        if(!paymentMethod.getPaymentType().equals(paymentMethodDto.getPaymentMethodType())) {
+            throw new BusinessApiException("The payment method type can not be changed.");
+        }
 
         if (Objects.nonNull(paymentMethodDto.getReferenceDocumentCode())) {
             if (StringUtils.isBlank(paymentMethodDto.getReferenceDocumentCode())) {
@@ -153,6 +163,17 @@ public class PaymentMethodApi extends BaseApi {
                 paymentMethod.setReferenceDocument(document);
             }
         }
+		// populate customFields
+		try {
+			populateCustomFields(paymentMethodDto.getCustomFields(), paymentMethod, false, true);
+
+		} catch (MissingParameterException | InvalidParameterException e) {
+			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw e;
+		}
         paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
     }
 
@@ -218,8 +239,8 @@ public class PaymentMethodApi extends BaseApi {
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         if (totalCount > 0) {
             List<PaymentMethod> PaymentMethods = paymentMethodService.list(paginationConfig);
-            for (PaymentMethod paymentMethod : PaymentMethods) {
-                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            for (PaymentMethod paymentMethod : PaymentMethods) {               
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod, entityToDtoConverter.getCustomFieldsDTO(paymentMethod, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
         return result;
@@ -288,7 +309,7 @@ public class PaymentMethodApi extends BaseApi {
         if (paymentMethod == null) {
             throw new EntityDoesNotExistsException(PaymentMethod.class, id);
         }
-        return new PaymentMethodDto(paymentMethod);
+        return new PaymentMethodDto(paymentMethod, entityToDtoConverter.getCustomFieldsDTO(paymentMethod, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
     }
 
@@ -338,7 +359,6 @@ public class PaymentMethodApi extends BaseApi {
         BankCoordinatesDto bankCoordinates = paymentMethodDto.getBankCoordinates();
         
         if (paymentMethodDto.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
-        	boolean fullInfos = false;
             // Start compatibility with pre-4.6 versions
             if (paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
                 throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
@@ -363,9 +383,6 @@ public class PaymentMethodApi extends BaseApi {
                 if (StringUtils.isBlank(bankCoordinates.getIban())) {
                     throw new InvalidDTOException("Missing IBAN.");
                 }
-                if(paymentMethodDto.getMandateIdentification()!=null && ! StringUtils.isBlank(paymentMethodDto.getMandateIdentification())&& paymentMethodDto.getMandateDate() != null) {
-                	fullInfos = true;
-                }
             } else {
                 if (StringUtils.isBlank(paymentMethodDto.getMandateIdentification())) {
                     throw new InvalidDTOException("Missing mandate identification.");
@@ -375,10 +392,7 @@ public class PaymentMethodApi extends BaseApi {
                 }
             }
             // End of compatibility with pre-4.6 versions
-            
-            paymentMethodDto.setPreferred(fullInfos);
         }
-
     }
 
     /**

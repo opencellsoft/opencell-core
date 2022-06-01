@@ -99,6 +99,9 @@ public class CustomerDto extends AccountDto {
     @XmlElement
     @Schema(description = "check the threshold per entity/invoice")
     private Boolean thresholdPerEntity;
+
+    /** The termination date. */
+    private Date anonymizationDate;
     
 
     /** information GDPR **/
@@ -112,6 +115,14 @@ public class CustomerDto extends AccountDto {
 	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
+
+    public Date getAnonymizationDate() {
+        return anonymizationDate;
+    }
+
+    public void setAnonymizationDate(Date anonymizationDate) {
+        this.anonymizationDate = anonymizationDate;
+    }
 
     /**
      * Instantiates a new customer dto.
@@ -167,6 +178,13 @@ public class CustomerDto extends AccountDto {
             setCheckThreshold(e.getCheckThreshold());
             setThresholdPerEntity(e.isThresholdPerEntity());
         }
+
+        if(e.getIsCompany() != null)
+        {
+            setIsCompany(e.getIsCompany());
+        }
+
+        setAnonymizationDate(e.getAnonymizationDate());
     }
 	
 	public CustomerDto(Customer e, List<GDPRInfoDto> customField) {

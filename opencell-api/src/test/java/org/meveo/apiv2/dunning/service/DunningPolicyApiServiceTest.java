@@ -5,6 +5,7 @@ import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -45,11 +46,14 @@ public class DunningPolicyApiServiceTest {
 
     private DunningPolicy dunningPolicy = new DunningPolicy();
 
+    @Mock
+    private GlobalSettingsVerifier globalSettingsVerifier;
+
     @Before
     public void setUp() {
         dunningPolicy.setId(1L);
         dunningPolicy.setPolicyName("policy");
-        dunningPolicy.setDefaultPolicy(TRUE);
+        dunningPolicy.setIsDefaultPolicy(TRUE);
         dunningPolicy.setPolicyDescription("Description");
         DunningLevel dunningLevel = new DunningLevel();
         dunningLevel.setId(1L);
@@ -85,9 +89,10 @@ public class DunningPolicyApiServiceTest {
         dunningPolicy.setDunningLevels(dunningPolicyLevels);
         dunningPolicy.setTotalDunningLevels(1);
 
-        when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel)).thenReturn(dunningLevel);
         when(dunningLevelService.refreshOrRetrieve(dunningLevel1)).thenReturn(dunningLevel1);
+        when(dunningPolicyService.update(any())).thenReturn(dunningPolicy);
+        doNothing().when(globalSettingsVerifier).checkActivateDunning();
     }
 
     @Test
@@ -95,18 +100,18 @@ public class DunningPolicyApiServiceTest {
         Optional<DunningPolicy> dunningPolicyUpdated = dunningPolicyApiService.update(1L, dunningPolicy);
         assertTrue(dunningPolicyUpdated.isPresent());
         DunningPolicy dunningPolicy1 = dunningPolicyUpdated.get();
-        assertEquals(1, dunningPolicy1.getTotalDunningLevels().intValue());
+        assertEquals(2, dunningPolicy1.getTotalDunningLevels().intValue());
     }
 
     @Test
     public void shouldArchiveDunningPolicy() {
         DunningPolicy policy = new DunningPolicy();
-        policy.setActivePolicy(FALSE);
+        policy.setIsActivePolicy(FALSE);
         policy.setId(1L);
         when(dunningPolicyService.update(any())).thenReturn(policy);
         Optional<DunningPolicy> dunningPolicyArchived = dunningPolicyApiService.archiveDunningPolicy(dunningPolicy);
         assertTrue(dunningPolicyArchived.isPresent());
         DunningPolicy dunningPolicy1 = dunningPolicyArchived.get();
-        assertEquals(FALSE, dunningPolicy1.getActivePolicy());
+        assertEquals(FALSE, dunningPolicy1.getIsActivePolicy());
     }
 }

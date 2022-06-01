@@ -101,7 +101,7 @@
         	<column name="created" valueDate="${db.current.time}"></column>
         	<column name="creator" value="applicationInitializer"></column>
         	<column name="attribute_category" value="BUSINESS"></column>
-        	<column name="el_value" value="${quote.getValidationDate()}"></column>
+        	<column name="el_value" value="${sub.getSubscriptionDate()}"></column>
         	<column name="uuid" value="subscription date" />
         	<column name="attribute_type" value="DATE"></column>
         	<column name="id" valueNumeric="-8"></column>
@@ -440,6 +440,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.004" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="EUR" />
+            <column name="symbol" value="€" />
             <column name="description_en" value="Euro" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -792,6 +793,7 @@
             <column name="created" valueDate="2015-03-19 00:04:00.955" />
             <column name="version" valueNumeric="1" />
             <column name="currency_code" value="USD" />
+            <column name="symbol" value="$US"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
@@ -7233,7 +7235,7 @@
             <column name="multilanguage_flag" valueNumeric="1" />
             <column name="prepaid_resrv_delay_ms" valueNumeric="60000" />
             <column name="country_id" valueNumeric="1" />
-            <column name="currency_id" valueNumeric="1" />
+            <column name="currency_id"/>
             <column name="language_id" valueNumeric="1" />
             <column name="uuid" value="DEMO" />
             <column name="rounding_mode" value="NEAREST" />
@@ -7927,14 +7929,28 @@
             <column name="inh_as_def_value" value="0"/>
             <column name="cf_protectable" value="0"/>
         </insert>
+	    <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_AggregationPerUnitAmount"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="aggregation per unit amount"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="AggregationOptions"/>
-            <column name="description" value="Aggregation options"/>
-            <column name="field_type" value="STRING"/>
+            <column name="code" value="JobInstance_InvoiceLinesJob_ILDateAggregationOptions"/>
+            <column name="description" value="date aggregation options"/>
+            <column name="field_type" value="LIST"/>
             <column name="value_required" value="0"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="versionable" value="0"/>
@@ -8047,7 +8063,7 @@
             <column name="code" value="INV_CRN" />
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
-        </insert>        
+        </insert>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
@@ -8195,6 +8211,20 @@
     <changeSet id="#INTRD-1589_2021_14_09" author="ZBariki" />
     <changeSet id="1589_20210930" author="YoussefIZEM" />
      <changeSet id="INTRD-2143_20211006" author="TarikFA." />
+     
+    <changeSet id="#4044_30122021_counter_period_job" author="Mbarek-Ay">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-49" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2021-12-30 00:00:00.000" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="CounterPeriodJob" />
+            <column name="code" value="CounterPeriodJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Counter period job"/>
+            <column name="uuid" value="CounterPeriodJob" />
+        </insert>
+    </changeSet>
     
     <changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
     
@@ -8282,7 +8312,7 @@
 			<column name="version" valueNumeric="1" />
 			<column name="max_dunning_levels" valueNumeric="5" />
 			<column name="max_days_outstanding" valueNumeric="3" />
-			<column name="dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="dunning_mode" value="INVOICE_LEVEL" />
 		</insert>
 		<insert tableName="dunning_pause_reasons">
 			<column name="id" valueSequenceNext="dunning_pause_reasons_seq"/>
@@ -8459,14 +8489,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
                 <![CDATA[
-<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoiceInvoiceNumber} and more specifically its payment that was due on the #{invoiceDueDate}. You can find a copy of the invoice attached to this email.</p>
 <p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
 <p>Best regards,</p>
                 ]]>
@@ -8481,25 +8511,25 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoiceInvoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
 			    <![CDATA[
-#{billingAccount.description}<br>
-#{billingAccount.address.address1}<br>
-#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
-#{billingAccount.contactInformation.phone}<br>
+#{billingAccountDescription}<br>
+#{billingAccountAddressAddress1}<br>
+#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+#{billingAccountContactInformationPhone}<br>
 <br>
-#{customerAccount.description} / #{customerAccount.name.firstName}<br>
-#{customerAccount.address.address1}<br>
-#{customerAccount.address.zipCode}<br>
-#{customerAccount.address.city}<br>
+#{customerAccountDescription} / #{customerAccountFirstName}<br>
+#{customerAccountAddressAddress1}<br>
+#{customerAccountAddressZipCode}<br>
+#{customerAccountAddressCity}<br>
 
-<p>#{billingAccount.address.city}, on #{day.date}</p>
-<p>#{customerAccount.legalEntityType.code},</p>
-<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>#{billingAccountAddressCity}, on #{dayDate}</p>
+<p>#{customerAccountLegalEntityTypeCode},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}</p>
 <p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
 <p>You will find a copy of the invoice attached to this letter.</p>
 <p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
@@ -8518,14 +8548,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
 			    <![CDATA[
-<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>We are reaching out to you in regards of your invoice #{invoice.invoiceNumber} and more specifically its payment that was due on the #{invoice.dueDate}. You can find a copy of the invoice attached to this email.</p>
+<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>We are reaching out to you in regards of your invoice #{invoiceInvoiceNumber} and more specifically its payment that was due on the #{invoiceDueDate}. You can find a copy of the invoice attached to this email.</p>
 <p>Please make sure to pay the invoice in full as soon as possible. If you have any additional question, do not hesitate to contact our services or your point of contact in our company.</p>
 <p>Best regards,</p>	
                 ]]>
@@ -8540,14 +8570,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Reminder – Past due invoice #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Reminder – Past due invoice #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
 			    <![CDATA[
-<p>Hello #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>We are following up on our email dated on the #{dunningCollectionPlan.lastActionDate} where we informed you that invoice #{invoice.invoiceNumber} was overdue for payment since #{invoice.dueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
+<p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>We are following up on our email dated on the #{dunningCollectionPlanLastActionDate} where we informed you that invoice #{invoiceInvoiceNumber} was overdue for payment since #{invoiceDueDate}. We regret to inform you that we have not yet received payment from you for this matter.</p>
 <p>We ask that you proceed with the payment of the invoice as soon as possible and invite you to contact our customer support if you have any difficulties in paying this invoice.</p>
 <p>You will find a copy of the invoice attached.</p>
 <p>Kind regards,</p>
@@ -8563,25 +8593,25 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Dunning Letter for Invoice #{invoice.invoiceNumber}" />
+            <column name="subject" value="Dunning Letter for Invoice #{invoiceInvoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-1" />
             <column name="htmlcontent">
 			    <![CDATA[
-#{billingAccount.description}<br>
-#{billingAccount.address.address1}<br>
-#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
-#{billingAccount.contactInformation.phone}<br>
+#{billingAccountDescription}<br>
+#{billingAccountAddressAddress1}<br>
+#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+#{billingAccountContactInformationPhone}<br>
 <br>
-#{customerAccount.legalEntityType.code}   #{customerAccount.description}<br>
-#{customerAccount.address.address1}<br>
-#{customerAccount.address.zipCode}<br>
-#{customerAccount.address.city}<br>
+#{customerAccountLegalEntityTypeCode}   #{customerAccountDescription}<br>
+#{customerAccountAddressAddress1}<br>
+#{customerAccountAddressZipCode}<br>
+#{customerAccountAddressCity}<br>
 
-<p>#{billingAccount.address.city}, on #{day.date}</p> 
-<p>#{customerAccount.legalEntityType.code},</p>
-<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoice.invoiceNumber} for an amount of #{invoice.amountWithTax}</p>
+<p>#{billingAccountAddressCity}, on #{dayDate}</p>
+<p>#{customerAccountLegalEntityTypeCode},</p>
+<p>By a first email dated (Date of 1st reminder), then a second one dated (Date of 2nd reminder), we asked you to proceed to the payment of the invoice #{invoiceInvoiceNumber} for an amount of #{invoiceTotal}</p>
 <p>Unless we are mistaken, we regret to say that we have not yet received payment of invoice. We therefore ask you to proceed immediately to its payment.</p>
 <p>You will find a copy of the invoice attached to this letter.</p>
 <p>Please disregard this letter if your payment has been sent to us prior to receiving this letter letter.</p>
@@ -8600,14 +8630,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
 			    <![CDATA[
-<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoiceInvoiceNumber} qui est en retard de paiement depuis le #{invoiceDueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
 <p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
 <p>Bien à vous,</p>
                 ]]>
@@ -8622,25 +8652,25 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoiceInvoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
 			    <![CDATA[
-#{billingAccount.description}<br>
-#{billingAccount.address.address1}<br>
-#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
-#{billingAccount.contactInformation.phone}<br>
+#{billingAccountDescription}<br>
+#{billingAccountAddressAddress1}<br>
+#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+#{billingAccountContactInformationPhone}<br>
 <br>
-#{customerAccount.description} / #{customerAccount.name.firstName}<br>
-#{customerAccount.address.address1}<br>
-#{customerAccount.address.zipCode}<br>
-#{customerAccount.address.city}<br>
+#{customerAccountDescription} / #{customerAccountFirstName}<br>
+#{customerAccountAddressAddress1}<br>
+#{customerAccountAddressZipCode}<br>
+#{customerAccountAddressCity}<br>
 
-<p>#{billingAccount.address.city}, le #{day.date}</p>
-<p>#{customerAccount.legalEntityType.code},</p>
-<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>#{billingAccountAddressCity}, le #{dayDate}</p>
+<p>#{customerAccountLegalEntityTypeCode},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).</p>
 <p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
 <p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
 <p>Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
@@ -8658,14 +8688,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
 			    <![CDATA[
-<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>Nous vous contactons concernant votre facture #{invoice.invoiceNumber} qui est en retard de paiement depuis le #{invoice.dueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
+<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>Nous vous contactons concernant votre facture #{invoiceInvoiceNumber} qui est en retard de paiement depuis le #{invoiceDueDate}. Vous trouverez une copie de la facture en pièce jointe.</p>
 <p>Merci de procéder au règlement de la facture dans les plus brefs délais. Si vous souhaitez avoir davantage d’informations, merci de prendre contact avec nos services ou votre interlocuteur habituel afin de trouver une solution.</p>
 <p>Bien à vous,</p>
                 ]]>            </column>
@@ -8679,14 +8709,14 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Règlement facture #{invoice.invoiceNumber} - #{billingAccount.description}" />
+            <column name="subject" value="Règlement facture #{invoiceInvoiceNumber} - #{billingAccountDescription}" />
             <column name="is_active" value="1" />
             <column name="channel" value="EMAIL" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
 			    <![CDATA[
-<p>Bonjour #{customerAccount.legalEntityType.code} #{customerAccount.name.lastName},</p>
-<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlan.lastActionDate}  où nous vous informions que votre facture #{invoice.invoiceNumber} était en retard de paiement depuis le #{invoice.dueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p> 
+<p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+<p>Nous faisons suite à notre courriel en date du #{dunningCollectionPlanLastActionDate}  où nous vous informions que votre facture #{invoiceInvoiceNumber} était en retard de paiement depuis le #{invoiceDueDate}. Nous sommes dans le regret de vous informer que nous n’avons toujours pas reçu de paiement de votre part à ce sujet.</p>
 <p>Nous vous demandons de procéder au règlement de la facture dans les meilleurs délais et nous invitons à contacter au plus vite notre assistance client si vous éprouvez des difficultés à régler cette facture.</p>
 <p>Vous trouverez à nouveau une copie de la facture en pièce jointe.</p>
 <p>Bien à vous,</p>
@@ -8702,25 +8732,25 @@
             <column name="type" value="DUNNING" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="Lettre de relance pour la facture #{invoice.invoiceNumber}" />
+            <column name="subject" value="Lettre de relance pour la facture #{invoiceInvoiceNumber}" />
             <column name="is_active" value="1" />
             <column name="channel" value="LETTER" />
             <column name="trading_language_id" value="-2" />
             <column name="htmlcontent">
 			    <![CDATA[
-#{billingAccount.description}<br>
-#{billingAccount.address.address1}<br>
-#{billingAccount.address.zipCode}; #{billingAccount.address.city}<br>
-#{billingAccount.contactInformation.phone}<br>
+#{billingAccountDescription}<br>
+#{billingAccountAddressAddress1}<br>
+#{billingAccountAddressZipCode}; #{billingAccountAddressCity}<br>
+#{billingAccountContactInformationPhone}<br>
 <br>
-#{customerAccount.legalEntityType.code} , #{customerAccount.description}<br>
-#{customerAccount.address.address1}<br>
-#{customerAccount.address.zipCode}<br>
-#{customerAccount.address.city}<br>
+#{customerAccountLegalEntityTypeCode} , #{customerAccountDescription}<br>
+#{customerAccountAddressAddress1}<br>
+#{customerAccountAddressZipCode}<br>
+#{customerAccountAddressCity}<br>
 
-<p>#{billingAccount.address.city}, le #{day.date}</p>
-<p>#{customerAccount.legalEntityType.code},</p>
-<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoice.invoiceNumber}) d’un montant de #{invoice.amountWithTax}).</p>
+<p>#{billingAccountAddressCity}, le #{dayDate}</p>
+<p>#{customerAccountLegalEntityTypeCode},</p>
+<p>Par un premier courriel en date du (Date de la 1ère relance), puis un second en date du (Date de la 2ème relance), nous vous avions demandé de procéder au paiement de la facture #{invoiceInvoiceNumber}) d’un montant de #{invoiceTotal}).</p>
 <p>Sauf erreur de notre part, nous sommes au regret de constater que nous n’avons, à ce jour, toujours pas reçu le paiement de ladite facture. Nous vous demandons donc de bien vouloir procéder immédiatement à son règlement.</p>
 <p>Vous trouverez en pièce jointe de ce courrier une copie de la facture en question.</p>
 Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été adressé avant la réception du présent courrier.</p>
@@ -9687,8 +9717,323 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="INTRD-3316_20211215_query_notification_template" author="TarikRabeh" />
     <changeSet id="INTRD-3678_20211214" author="AmineBENAICHA" />
     <changeSet id="INTRD-3751_20211216" author="AmineBENAICHA" />
+	<changeSet author="ZBariki" id="INTRD-4227_20220110" />
+	<changeSet id="#4082_20190404" author="SaidRamli" />
+	<changeSet id="INTRD-3432_21012022_Manual_refund_by_card_KO" author="anasseh"/>
 
-    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+	<changeSet id="#INTRD-4950-20220208" author="MohammedSTITANE">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="code" value="ACCOUNTING_SCHEMES"/>
+			<column name="description" value="Accounting schemes"/>
+		</insert>
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="accounting_scheme_sequence" />
+			<column name="description" value="AccountingScheme sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="AccountingScheme" />
+			<column name="code_el" value="#{sequenceNextValue}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="INTRD-3507_20220218" author="HatimOUDAD">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="PAYMENT" />
+			<column name="job_template" value="AutoRefundSecurityDepositJob" />
+			<column name="code" value="AutoRefundSecurityDepositJob_Job" />
+
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AutoRefundSecurityDepositJob_Job" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="INTRD-5669_20220324" author="HichamHANINE">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="2022-02-18 00:04:19.913" />
+			<column name="job_category" value="UTILS" />
+			<column name="job_template" value="AutoUpdateCurrentRateJob" />
+			<column name="code" value="AutoUpdateCurrentRateJob_Job" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-3" />
+			<column name="uuid" value="AutoUpdateCurrentRateJob_Job" />
+		</insert>
+	</changeSet>
+
+    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="NO_DATE_AGGREGATION"/>
+            <column name="listvalues_key" value="NO_DATE_AGGREGATION"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="MONTH_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="MONTH_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="WEEK_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="WEEK_OF_USAGE_DATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
+            <column name="listvalues" value="DAY_OF_USAGE_DATE"/>
+            <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
+        </insert>
+    </changeSet>
+
+	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza"/>
+
+	<changeSet id="INTRD-4285-20220317" author="AmineBENAICHA">
+		<!-- Grant role "query_manager" to role "administrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+        
+        <!-- Grant role "query_manager" to role "superAdministrateur" -->
+		<insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-2" />
+            <column name="child_role_id" valueNumeric="-121" />
+        </insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
+
+	<changeSet id="#INTRD-5830_20220324" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Default Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleAccountingSchemeScript extends DefaultAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5955_20220324" author="aelmalki">
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Dual entry scheme" />
+			<column name="description" value="Default Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript')"/>
+			<column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]></column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5958_20220328" author="aelmalki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2022-03-28 00:00:00.000" />
+			<column name="job_category" value="ACCOUNTING" />
+			<column name="job_template" value="AccountingSchemesJob" />
+			<column name="code" value="AccountingSchemesJob" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="AccountingSchemesJob" />
+			<column name="cf_values" value='{"nbRuns": [{"long": 1}], "waitingMillis": [{"long": 0}], "onlyClosedPeriods": [{"boolean": false}]}'/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-5992_20220329" author="aelmalki">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Invoice accounting scheme script"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SampleInvoiceAccountingSchemeScript extends InvoiceAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Invoice and Credit Note" />
+			<column name="description" value="Invoice accounting scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
+			<column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit des lignes d'écritures pour une facture ou un avoir (ci-dessous \"document\") :</p><ul><li>Une ligne unique pour le total TTC du document, sur le compte client (de la catégorie de client ou à défaut du type d'opération de compte).</li></ul><p class=\"ql-indent-1\">Le sens est celui de l'opération de compte (pour une facture : DEBIT, pour un avoir : CREDIT).</p><ul><li>Des lignes de contrepartie (au moins une) pour les montants HT pour les comptes de revenus, en utilisant les codes comptables des articles liés aux lignes du document.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p><ul><li>S'il y a lieu, des lignes pour les montants des différentes taxes appliquées au document, en utilisant les codes comptables de ces taxes.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p>","ENG":"<p>This scheme produces entries for an invoice or credit note (here after \"document\"):</p><ul><li>A single entry with the document total amount with tax using the customer accounting code (from the customer category, or if not set from the account operation type). </li></ul><p class=\"ql-indent-1\">Line direction is the one from the account operation type (for invoice: DEBIT, for credit note: CREDIT).</p><ul><li>\"Contra\" entries (at least one) with the amounts without tax for revenue accounts, using the accounting codes from the article linked to the document lines. </li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p><ul><li>\"Contra\" entries (if applies) with the tax amounts for the different taxes applied on the document, using the accounting codes from these taxes.</li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p>"}]]></column>
+		</insert>
+		<update tableName="ar_occ_template">
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='Invoice and Credit Note')" />
+			<where> code IN ('INV_STD', 'INV_CRN')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-6075_20220330" author="aelmalki">
+		<update tableName="meveo_script_instance">
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+			<where> code IN ('org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript', 'org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-5924-20220401" author="ZBariki">
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="discount_plan_item_seq" />
+			<column name="description" value="Discount plan item sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="org.meveo.model.catalog.DiscountPlanItem" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence_id"
+					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-6638_20220422" author="aelmalki">
+		<!-- Add Payment Script -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Payment Journal entry builder, from AccountOperation"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script.accountingscheme;
+						public class SamplePaymentAccountingSchemeScript extends PaymentAccountingSchemeScript {}
+				]]>
+			</column>
+		</insert>
+
+		<!-- Add Scheme -->
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="Payment entry scheme" />
+			<column name="description" value="Payment Accounting Scheme"/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
+		</insert>
+
+		<!-- Add New 419100000 AccountinCode -->
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-45" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="419100000" />
+			<column name="description" value="Unidentified customer" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-7144_05162022" author="ZBariki">
+		<insert tableName="billing_article_mapping">
+			<column name="id" valueSequenceNext="billing_article_mapping_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="DEFAULT_ARTICLE_MAPPING" />
+			<column name="description" value="Default article mapping" />
+		</insert>
+	</changeSet>
+
+    <changeSet id="#INTRD-6664_20220519" author="ZBariki">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="onlyClosedPeriods"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Only closed periods"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:2"/>
+		</insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_AccountingSchemesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;field:0"/>
+        </insert>
+    </changeSet>
+
+	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
+	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
+	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
+
+	<changeSet id="INTRD-6305-07042022" author="Abdelkader.Bouazza"/>
+	<changeSet id="INTRD-5691-20220315" author="ZBariki"/>
+	<changeSet id="#INTRD-6961_20220511" author="aelmalki" />
+
+	<changeSet id="#6023_130522" author="AbdelkaderBouazza"/>
+	<changeSet id="#INTRD-7375_20220523" author="ZBariki" />
+	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>

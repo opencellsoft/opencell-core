@@ -33,39 +33,51 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		return createAccountingPeriod(entity, isUseSubAccountingPeriods);
 	}
 
-	public AccountingPeriod update(AccountingPeriod entity, Date startDateInput, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
-		return updateAccountingPeriod(entity, startDateInput, endDateInput, isUseSubAccountingPeriods, subAccountingPeriodType);
+	public AccountingPeriod update(AccountingPeriod entity, AccountingPeriod newValue) {
+		return updateAccountingPeriod(entity, newValue);
 	}
 	
 	public AccountingPeriod createAccountingPeriod(AccountingPeriod entity, Boolean isUseSubAccountingPeriods) {
-
 		validateInputs(entity, isUseSubAccountingPeriods, entity.getSubAccountingPeriodType());
-		if(entity.getAccountingPeriodYear()==null) {
+		if(entity.getAccountingPeriodYear() == null) {
 			entity.setAccountingPeriodYear(getAccountingPeriodYear(entity.getStartDate(), entity.getEndDate()));
+		}
+		if(entity.getStartDate() == null) {
+			entity.setStartDate(new Date());
 		}
 		create(entity);
 		generateSubAccountingPeriods(entity);
 		return entity;
 	}
 
-	public AccountingPeriod updateAccountingPeriod(AccountingPeriod entity, Date startDateInput, Date endDateInput, Boolean isUseSubAccountingPeriods, String subAccountingPeriodType) {
-	    if (startDateInput != null && entity.getStartDate().compareTo(startDateInput) != 0) {
+	public AccountingPeriod updateAccountingPeriod(AccountingPeriod entity, AccountingPeriod newValue) {
+	    if (newValue.getStartDate() != null && entity.getStartDate().compareTo(newValue.getStartDate() ) != 0) {
             throw new ValidationException("Once the start date is set, it CANNOT be modified");
         }
-	    if (endDateInput != null && entity.getEndDate().compareTo(endDateInput) != 0) {
+	    if (newValue.getEndDate()  != null && entity.getEndDate().compareTo(newValue.getEndDate() ) != 0) {
 			throw new ValidationException("Once the end date is set, it CANNOT be modified");
 		}
-		if (entity.isUseSubAccountingCycles() && !Boolean.TRUE.equals(isUseSubAccountingPeriods)) {
+		if (entity.isUseSubAccountingCycles() && Boolean.FALSE.equals(newValue.isUseSubAccountingCycles())) {
 			throw new ValidationException("Use sub-accounting cycles CANNOT be modified");
 		} else
-			Optional.ofNullable(isUseSubAccountingPeriods).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(isUseSubAccountingPeriods)));
+			Optional.ofNullable(newValue.isUseSubAccountingCycles()).ifPresent(b -> entity.setUseSubAccountingCycles(Boolean.TRUE.equals(newValue.isUseSubAccountingCycles())));
 
-		validateInputs(entity, isUseSubAccountingPeriods, subAccountingPeriodType);
 
-		if (isUsedOnAccountingOperations(entity)) {
+		if (!entity.getSubAccountingPeriodType().equals(newValue.getSubAccountingPeriodType()) && isUsedOnAccountingOperations(entity)) {
 			throw new ValidationException("sub-accounting cycles type CANNOT be modified because the sub dates is used in the account operations");
 		} else
-			Optional.ofNullable(subAccountingPeriodType).ifPresent(subAP -> entity.setSubAccountingPeriodType(SubAccountingPeriodTypeEnum.valueOf(subAP)));
+			Optional.ofNullable(newValue.getSubAccountingPeriodType()).ifPresent(subAP -> entity.setSubAccountingPeriodType(newValue.getSubAccountingPeriodType()));
+
+	entity.setAccountingOperationAction(newValue.getAccountingOperationAction());
+	entity.setCustomLockNumberDays(newValue.getCustomLockNumberDays());
+	entity.setCustomLockOption(newValue.getCustomLockOption());
+	entity.setForceCustomDay(newValue.getForceCustomDay());
+	entity.setForceOption(newValue.getForceOption());
+	entity.setRegularUserLockOption(newValue.getRegularUserLockOption());
+	entity.setSubAccountingPeriodType(newValue.getSubAccountingPeriodType());
+
+
+	validateInputs(entity, newValue.isUseSubAccountingCycles(), newValue.getSubAccountingPeriodType());
 		update(entity);
 		subAccountingPeriodService.updateSubAccountingPeriods(entity, entity.getSubAccountingPeriodType());
 		return entity;

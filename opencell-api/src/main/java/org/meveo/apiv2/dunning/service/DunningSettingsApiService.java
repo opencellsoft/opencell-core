@@ -17,7 +17,9 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
 public class DunningSettingsApiService implements ApiService<DunningSettings> {
-	
+	@Inject
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
 	@Inject
 	private DunningSettingsService dunningSettingsService;
 	@Inject
@@ -43,10 +45,11 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 
 	@Override
 	public DunningSettings create(DunningSettings baseEntity) {
+		globalSettingsVerifier.checkActivateDunning();
 		if(dunningSettingsService.findByCode(baseEntity.getCode()) != null)
 			throw new EntityAlreadyExistsException(DunningSettings.class, baseEntity.getCode());
 		if(baseEntity.getDunningMode() == null)
-			baseEntity.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
+			baseEntity.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
 		if(baseEntity.getMaxDunningLevels() == null)
 			baseEntity.setMaxDunningLevels(15);
 		if(baseEntity.getAccountingArticle() != null && baseEntity.getAccountingArticle().getId() != null) {
@@ -61,6 +64,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 
 	@Override
 	public Optional<DunningSettings> update(Long id, DunningSettings dunningSettings) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettingsUpdate = findById(id).orElseThrow(() -> new BadRequestException(No_DUNNING_FOUND + id));
 		if(dunningSettings.getAccountingArticle() != null) {
 			var accountingArticle = accountingArticleService.findById(dunningSettings.getAccountingArticle().getId());
@@ -88,6 +92,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 
 	@Override
 	public Optional<DunningSettings> delete(Long id) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettings = findById(id).orElseThrow(() -> new BadRequestException(No_DUNNING_FOUND + id));
 		dunningSettingsService.remove(dunningSettings);
 		return Optional.ofNullable(dunningSettings);
@@ -102,6 +107,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	}
 	
 	public DunningSettings duplicate(String dunningCode) {
+		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettings = findByCode(dunningCode).get();
 		return dunningSettingsService.duplicate(dunningSettings);
 	}

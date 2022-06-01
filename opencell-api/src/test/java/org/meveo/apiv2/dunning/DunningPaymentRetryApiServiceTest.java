@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.dunning.service.DunningPaymentRetryApiService;
+import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningPaymentRetry;
 import org.meveo.model.dunning.PayRetryFrequencyUnitEnum;
@@ -40,6 +41,9 @@ public class DunningPaymentRetryApiServiceTest {
 
 	private DunningPaymentRetry dunningPaymentRetry;
 
+	@Mock
+	private GlobalSettingsVerifier globalSettingsVerifier;
+
 	@Before
 	public void setup() {
 		dunningPaymentRetry = new DunningPaymentRetry();
@@ -48,6 +52,7 @@ public class DunningPaymentRetryApiServiceTest {
 		dunningPaymentRetry.setNumPayRetries(2);
 		dunningPaymentRetry.setPayRetryFrequencyUnit(PayRetryFrequencyUnitEnum.DAY);
 		dunningPaymentRetry.setPayRetryFrequency(5);
+		doNothing().when(globalSettingsVerifier).checkActivateDunning();
 	}
 
 	@Test

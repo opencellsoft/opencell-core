@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -23,7 +24,12 @@ import org.meveo.model.quote.QuoteProduct;
 @Table(name = "cpq_quote_attribute")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
-@NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId")
+@NamedQueries({
+	@NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId"),
+	@NamedQuery(name = "QuoteAttribute.findByQuoteVersionAndTotalType", query = "select q from QuoteAttribute q left join q.quoteOffer qo left join q.attribute a"
+			+ " where qo.quoteVersion.id=:quoteVersionId and a.attributeType = org.meveo.model.cpq.enums.AttributeTypeEnum.TOTAL"),
+	@NamedQuery(name = "QuoteAttribute.getSumDoubleByVersionAndAttribute", query = "select SUM(q.doubleValue) from QuoteAttribute q left join q.quoteOffer qo left join q.attribute a where qo.quoteVersion.id=:quoteVersionId and a.id=:attributeId")
+})
 public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 
 	

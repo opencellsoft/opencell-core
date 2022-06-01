@@ -1,28 +1,40 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.async.SynchronizedIterator;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.InvoiceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import static java.util.Arrays.asList;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
+
 @Stateless
 public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
+
+    private static final long serialVersionUID = 595704895612703257L;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     @Inject
     private InvoiceService invoiceService;
 
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
+    
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
@@ -52,6 +64,16 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
                 jobExecutionResult.addErrorReport(e.getMessage());
             }
         }
+        
+        if (billingRunId != null) {
+            BillingRun billingRun = billingRunService.findById(billingRunId);
+            if (billingRun != null) {
+                billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId,
+                        jobExecutionResult.getId(), null);
+                billingRunService.refreshOrRetrieve(billingRun);
+            }
+        }
+
         List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(statusList, billingRunId);
         return of(new SynchronizedIterator<>(invoiceIds));
     }

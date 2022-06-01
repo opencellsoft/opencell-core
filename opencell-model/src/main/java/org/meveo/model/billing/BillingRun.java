@@ -72,7 +72,9 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @NamedQueries({
         @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
         @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids order by br.id asc"),        
-        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
+        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
+        @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
+        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
@@ -308,7 +310,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
-    private boolean skipValidationScript = false;
+    private Boolean skipValidationScript = false;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -386,9 +388,24 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "run_type")
     private BillingRunTypeEnum runType;
 
+    @Column(name = "xml_job_execution_result_id")
+    private Long xmlJobExecutionResultId;
 
+    @Column(name = "pdf_job_execution_result_id")
+    private Long pdfJobExecutionResultId;
 
-    public BillingRun getNextBillingRun() {
+    /**
+     * i18n Description
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;
+	
+	@Type(type = "numeric_boolean")
+    @Column(name = "is_quarantine")
+    private Boolean isQuarantine;
+	
+	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
 
@@ -736,9 +753,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     }
 
-    public String getReferenceCode() {
-        return id + "/" + billingCycle.getCode();
-    }
+	public String getReferenceCode() {
+		final String bcCode = billingCycle == null ? "" : "/" + billingCycle.getCode();
+		return id + bcCode;
+	}
 
     public void setReferenceCode(Object value) {
         String id = null;
@@ -792,8 +810,12 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.suspectAutoAction = autoSuspectAction;
 	}
 
-	public boolean isSkipValidationScript() {
+	public Boolean getSkipValidationScript() {
 		return skipValidationScript;
+	}
+	
+	public boolean isSkipValidationScript() {
+		return skipValidationScript.booleanValue();
 	}
 
 	public void setSkipValidationScript(boolean skipValidationScript) {
@@ -900,5 +922,37 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
 	public void setRunType(BillingRunTypeEnum runType) {
 		this.runType = runType;
+	}
+
+    public Long getXmlJobExecutionResultId() {
+        return xmlJobExecutionResultId;
+    }
+
+    public void setXmlJobExecutionResultId(Long xmlJobExecutionResultId) {
+        this.xmlJobExecutionResultId = xmlJobExecutionResultId;
+    }
+
+    public Long getPdfJobExecutionResultId() {
+        return pdfJobExecutionResultId;
+    }
+
+    public void setPdfJobExecutionResultId(Long pdfJobExecutionResultId) {
+        this.pdfJobExecutionResultId = pdfJobExecutionResultId;
+    }
+
+	public Map<String, String> getDescriptionI18n() {
+		return descriptionI18n;
+	}
+
+	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+		this.descriptionI18n = descriptionI18n;
+	}
+
+	public Boolean getIsQuarantine() {
+		return isQuarantine;
+	}
+
+	public void setIsQuarantine(Boolean isQuarantine) {
+		this.isQuarantine = isQuarantine;
 	}
 }

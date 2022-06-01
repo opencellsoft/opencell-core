@@ -2,7 +2,11 @@ package org.meveo.service.payments.impl;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dunning.DunningActionInstance;
+import org.meveo.model.dunning.DunningActionInstanceStatusEnum;
+import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.service.base.PersistenceService;
+
+import java.util.Arrays;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -10,9 +14,11 @@ import javax.persistence.NoResultException;
 @Stateless
 public class DunningActionInstanceService extends PersistenceService<DunningActionInstance> {
 	
-	public DunningActionInstance findByCode(String code) {
-		QueryBuilder qb = new QueryBuilder(DunningActionInstance.class, "d");
-		qb.addCriterion("code", "=", code, true);
+
+	public DunningActionInstance findByCodeAndDunningLevelInstance(String code, Long dunningLevelInstance) {
+		QueryBuilder qb = new QueryBuilder(DunningActionInstance.class, "d", Arrays.asList("dunningLevelInstance"));
+		qb.addCriterion("d.code", "=", code, true);
+		qb.addCriterion("d.dunningLevelInstance.id", "=", dunningLevelInstance, false);
 
         try {
             return (DunningActionInstance) qb.getQuery(getEntityManager()).getSingleResult();
@@ -21,4 +27,11 @@ public class DunningActionInstanceService extends PersistenceService<DunningActi
         }
 	}
 
+	public int updateStatus(DunningActionInstanceStatusEnum actionStatus, DunningLevelInstance dunningLevelInstance) {
+        return getEntityManager()
+                .createNamedQuery("DunningActionInstance.updateStatus")
+                .setParameter("actionStatus", actionStatus)
+                .setParameter("dunningLevelInstance", dunningLevelInstance)
+                .executeUpdate();
+    }
 }
