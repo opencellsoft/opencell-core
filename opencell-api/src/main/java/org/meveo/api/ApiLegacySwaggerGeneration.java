@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ import javax.ws.rs.core.UriInfo;
 @Path("/openapi.{type:json|yaml}")
 public class ApiLegacySwaggerGeneration extends BaseOpenApiResource {
 
-    private static OpenAPI oasStandardApi;
+    private OpenAPI oasStandardApi;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @GET
@@ -38,9 +39,11 @@ public class ApiLegacySwaggerGeneration extends BaseOpenApiResource {
     public Response getOpenApi(@Context HttpHeaders headers, @Context UriInfo uriInfo, @PathParam("type") String type) {
 
         try {
-            JaxrsOpenApiContextBuilder<JaxrsOpenApiContextBuilder> ctx = new JaxrsOpenApiContextBuilder<>();
-            ctx.ctxId("apiv0").configLocation("/openapi-configuration-apiv0.json");
-            oasStandardApi = ctx.buildContext(true).read();
+            OpenApiContext ctx = new JaxrsOpenApiContextBuilder<>()
+                    .ctxId("apiv0")
+                    .configLocation("/openapi-configuration-apiv0.json")
+                    .buildContext(true);
+            oasStandardApi = ctx.read();
 
             Paths newPaths = new Paths();
             for (String aKey : oasStandardApi.getPaths().keySet()) {
