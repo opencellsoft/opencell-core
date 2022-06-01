@@ -42,7 +42,7 @@ public class OpenOrderTemplateApiService {
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
 
-    public void create(OpenOrderTemplateInput  input)
+    public OpenOrderTemplateInput create(OpenOrderTemplateInput  input)
     {
 
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
@@ -53,12 +53,13 @@ public class OpenOrderTemplateApiService {
         if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
          checkParameters(openOrderTemplate);
 
-        openOrderTemplateService.create(openOrderTemplate);
+         openOrderTemplateService.create(openOrderTemplate);
+         return openOrderTemplateMapper.toResource(openOrderTemplate);
     }
 
 
 
-    public void update(String code, OpenOrderTemplateInput input)
+    public OpenOrderTemplateInput update(String code, OpenOrderTemplateInput input)
     {
         OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
         if(null == openOrderTemplate)
@@ -73,7 +74,7 @@ public class OpenOrderTemplateApiService {
         if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
          checkParameters(openOrderTemplate);
 
-        openOrderTemplateService.update(openOrderTemplate);
+       return openOrderTemplateMapper.toResource(openOrderTemplateService.update(openOrderTemplate));
 
 
     }
