@@ -448,17 +448,17 @@
                                                 <hftl:formField label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="renewFor" size="2"
                                                     required="true" listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}"
                                                     actionListenerMethod="updateSubscribedTillDate"
-                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}"
+                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.autoRenew and subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}"
                                                     disabled="#{subscriptionBean.entity.renewed}" />
                                                 <hftl:formField label="#{messages['subscription.renewForUnit']}" field="subscriptionRenewal" childField="renewForUnit"
                                                     required="true" listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}"
                                                     actionListenerMethod="updateSubscribedTillDate"
-                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}"
+                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.autoRenew and subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}"
                                                     disabled="#{subscriptionBean.entity.renewed}" />
                                                 <hftl:formField label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="calendarRenewFor"
                                                     listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}"
                                                     actionListenerMethod="updateSubscribedTillDate" valueLabelField="code" popup="false" listBean="#{calendarBean}"
-                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.CALENDAR}" />
+                                                    rendered="#{subscriptionBean.entity.subscriptionRenewal.autoRenew and subscriptionBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.CALENDAR}" />
                                                 <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal"
                                                     size="2" minValue="1" rendered="#{subscriptionBean.entity.subscriptionRenewal.autoRenew}" />
                                                 <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal"
