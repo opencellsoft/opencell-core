@@ -13134,4 +13134,14 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
 
+
+    <changeSet id="#INTRD-7537_20220531" author="TarikRabeh">
+        <addColumn tableName="billing_billing_run">
+            <column name="origin_billing_run_id" type="bigint" />
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
+
 </databaseChangeLog>
