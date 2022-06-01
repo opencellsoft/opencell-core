@@ -40,9 +40,6 @@ import org.meveo.service.cpq.AttributeService;
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 
-	private static final String SCORE_1 = "1";
-	private static final String SCORE_0 = "0";
-	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
 	@Inject
