@@ -370,8 +370,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -1339,8 +1338,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -2353,7 +2351,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\" violates not-null constraint\");"
+											"pm.variables.set(\"message\", \"ERROR: null value in column \\\"description_en\\\"\");"
 										],
 										"type": "text/javascript"
 									}
@@ -4827,8 +4825,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -6198,8 +6195,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -13480,7 +13476,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"newValidFrom\": \"{{valid_from}}\",\r\n    \"newValidTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate",
@@ -15937,8 +15933,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
@@ -16913,8 +16908,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"code ne peut pas être nul\");"
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: code\");"
 										],
 										"type": "text/javascript"
 									}
