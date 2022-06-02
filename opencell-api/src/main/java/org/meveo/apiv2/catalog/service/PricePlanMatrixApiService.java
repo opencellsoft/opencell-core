@@ -3,7 +3,6 @@ package org.meveo.apiv2.catalog.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +94,6 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
             throw new MissingParameterException("fileToImport");
         }
 
-
         String importRootDir = paramBeanFactory.getDefaultChrootDir() + File.separator + "/imports/priceplan_versions";
         String importTempDir = importRootDir + File.separator + "temp" + System.currentTimeMillis();
         File zipFile = new File(importRootDir + File.separator + importPricePlanVersionsDto.getFileToImport());
@@ -109,7 +107,7 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
         try {
             FileUtils.deleteDirectory(new File(importTempDir));
             zipFile.delete();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
         }
 
