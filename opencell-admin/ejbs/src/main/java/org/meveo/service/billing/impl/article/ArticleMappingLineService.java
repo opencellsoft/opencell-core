@@ -27,9 +27,6 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class ArticleMappingLineService extends BusinessService<ArticleMappingLine> {
 
-	@Inject 
-	private ArticleMappingLineService articleMappingLineService;
-
 	@Inject
 	private ArticleMappingService articleMappingService;
 
@@ -61,7 +58,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		Set<Long> idsMapping = lists.stream().map(aml -> aml.getAttributesMapping()).flatMap(Collection::stream).map(AttributeMapping::getId).collect(Collectors.toSet());
 		Set<Long> ids =  new HashSet<>(lists).stream().map(ArticleMappingLine::getId).collect(Collectors.toSet());
 		if(!idsMapping.isEmpty())
-			articleMappingLineService.remove(idsMapping);
+			remove(idsMapping);
 		if(!ids.isEmpty())
 			remove(ids);
 	}
@@ -75,8 +72,10 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		ArticleMappingLine articleMappingLineUpdated = findById(id, true);
 		if (articleMappingLineUpdated == null) return Optional.empty();
 
-		AccountingArticle accountingArticle = (AccountingArticle) tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-		articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
+		AccountingArticle accountingArticle = tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+		if(articleMappingLineUpdated.getArticleMapping() == null) {
+			articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
+		}
 		articleMappingLine.setAccountingArticle(accountingArticle);
 		populateArticleMappingLine(articleMappingLine);
 
@@ -93,7 +92,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
 					.stream()
 					.map(am -> {
-						Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
+						Attribute attribute = tryToFindByCodeOrId(am.getAttribute());
 
 						AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
 						attributeMapping.setArticleMappingLine(articleMappingLineUpdated);
@@ -110,11 +109,11 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	
 	private void populateArticleMappingLine(ArticleMappingLine articleMappingLine) {
     	if(articleMappingLine.getOfferTemplate() != null){
-            OfferTemplate offerTemplate = (OfferTemplate) tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
+            OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
             articleMappingLine.setOfferTemplate(offerTemplate);
         }
         if(articleMappingLine.getProduct() != null){
-        	Product product = (Product) tryToFindByCodeOrId(articleMappingLine.getProduct());
+        	Product product = tryToFindByCodeOrId(articleMappingLine.getProduct());
         	articleMappingLine.setProduct(product);
         }
         if(articleMappingLine.getChargeTemplate() != null){
@@ -128,13 +127,13 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	 * @return ArticleMappingLine
 	 */
 	 public ArticleMappingLine validateAndCreate(ArticleMappingLine articleMappingLine) {
-        AccountingArticle accountingArticle = (AccountingArticle) tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+        AccountingArticle accountingArticle = tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
         articleMappingLine.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
                     .stream()
                     .map(am -> {
-                        Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
+                        Attribute attribute = tryToFindByCodeOrId(am.getAttribute());
                         AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
                         attributeMapping.setArticleMappingLine(articleMappingLine);
                         return attributeMapping;
@@ -153,7 +152,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	 	if(articleMappingLine.getArticleMapping() != null) {
 			try {
 				articleMapping = tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-			} catch (Exception exception) { }
+			} catch (Exception exception) {
+				log.debug("Default article mapping line will be used");
+			}
 		}
 	 	if(articleMapping == null) {
 			articleMapping = articleMappingService.findByCode(DEFAULT_ARTICLE_MAPPING_CODE);
