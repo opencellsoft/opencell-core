@@ -10222,4 +10222,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>quote_default_validity_delay is null</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-7573_20220602" author="TarikFA.">
+		<update tableName="billing_invoice_cat">
+			<column name="version" value="0" />
+			<where>code='ICAT_SECURITY_DEPOSIT'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
