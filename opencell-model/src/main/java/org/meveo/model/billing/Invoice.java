@@ -623,6 +623,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "dunning_collection_plan_triggered")
     private boolean dunningCollectionPlanTriggered;
+    
+    /**
+     * The exchange rate that converted amounts of the invoice.
+     */
+    @Column(name = "last_applied_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal lastAppliedRate;
+    
+    /**
+     * The date of exchange rate applied to amounts of the invoice.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_applied_rate_date")
+    private Date lastAppliedRateDate = new Date();
 
     public Invoice() {
 	}
@@ -1636,5 +1649,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setDunningCollectionPlanTriggered(boolean dunningCollectionPlanTriggered) {
         this.dunningCollectionPlanTriggered = dunningCollectionPlanTriggered;
+    }
+
+    /**
+     * @return the lastAppliedRate
+     */
+    public BigDecimal getLastAppliedRate() {
+        return lastAppliedRate;
+    }
+
+    /**
+     * @param lastAppliedRate the lastAppliedRate to set
+     */
+    public void setLastAppliedRate(BigDecimal lastAppliedRate) {
+        this.lastAppliedRate = lastAppliedRate;
+    }
+
+    /**
+     * @return the lastAppliedRateDate
+     */
+    public Date getLastAppliedRateDate() {
+        return lastAppliedRateDate;
+    }
+
+    /**
+     * @param lastAppliedRateDate the lastAppliedRateDate to set
+     */
+    public void setLastAppliedRateDate(Date lastAppliedRateDate) {
+        this.lastAppliedRateDate = lastAppliedRateDate;
     }
 }

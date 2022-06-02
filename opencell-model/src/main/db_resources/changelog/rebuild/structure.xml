@@ -2955,6 +2955,8 @@
             <column name="is_reminder_level_triggered" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="related_dunning_collection_plan_id" type="bigint" />
             <column name="dunning_collection_plan_triggered" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="last_applied_rate" type="numeric(23, 12)" />
+            <column name="last_applied_rate_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -17761,6 +17763,7 @@
     <changeSet id="#INTRD-5725_20220524" author="HichamELHALOUI" />
     <changeSet id="#INTRD-7422_20220525" author="ZBariki" />
     <changeSet id="#INTRD-7537_20220531" author="TarikRabeh" />          
+    <changeSet id="INTRD-5570_20220601" author="AbdelmounaimAkadid" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
