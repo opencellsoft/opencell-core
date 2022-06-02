@@ -71,6 +71,8 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
@@ -105,6 +107,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
@@ -163,7 +167,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             }
             String pathName = importTempDir + File.separator + importItem.getFileName();
             if (!new File(pathName).exists()) {
-                throw new BusinessApiException("The file: '" + pathName + "' does not exist");
+                throw new BusinessApiException("The file: '" + importItem.getFileName() + "' does not exist");
             }
             
             if (StringUtils.isBlank(importItem.getChargeCode())) {
@@ -189,24 +193,29 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     Date oldFrom = validity.getFrom();
                     Date oldTo = validity.getTo();
                     
-                    if (newFrom.compareTo(oldFrom) <= 0 && ((oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
+                    if (newFrom.compareTo(oldFrom) <= 0 && ((newTo != null && oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
                         remove(pv);
                     }
                     // Scenario 8
-                    else if (newFrom.compareTo(oldFrom) > 0 && oldTo != null && newTo.compareTo(oldTo) < 0) {
+                    else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {
                         pv.setValidity(new DatePeriod(oldFrom, newFrom));
                         update(pv);
                         PricePlanMatrixVersion duplicatedPv = duplicate(pv, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED);
                         lastCurrentVersion = duplicatedPv.getCurrentVersion();
                     }
                     else {
+                        boolean validityHasChanged = false;
                         if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
                             validity.setTo(newFrom);
+                            validityHasChanged = true;
                         }
                         if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(validity.getTo()) < 0) {
                             validity.setFrom(newTo);
+                            validityHasChanged = true;
                         }
-                        update(pv);
+                        if (validityHasChanged) {
+                            update(pv);
+                        }
                     }
                 }
             }
@@ -233,18 +242,22 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     create(newPv);
 
                 } else if (StringUtils.isNotBlank(header)) {
+                    // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
+                    // date time stamp]_-_[end date time stamp]
+                    String[] split = importItem.getFileName().split("_-_");
                     newPv.setMatrix(true);
+                    newPv.setLabel(split.length >= 4 ? split[3] : null);
                     create(newPv);
                     String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
                     PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.createColumnsAndPopulateLinesAndValues(pricePlanMatrix.getCode(), data, newPv);
                     pricePlanMatrixLineService.updatePricePlanMatrixLines(newPv, pricePlanMatrixLinesDto);
-                    update(newPv);
                 }
             }
             catch (Exception e) {
                 throw e;
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             resultDto.setStatus(ActionStatusEnum.FAIL);
             resultDto.setMessage(e.getMessage());
         }
