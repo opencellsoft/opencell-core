@@ -9,11 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InvalidELException;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
@@ -59,4 +60,16 @@ public class AttributeService extends BusinessService<Attribute>{
         return res;
     }
 
+    public Attribute findByDescription(String description) {
+
+        TypedQuery<Attribute> query = getEntityManager().createQuery("select a from Attribute a where lower(a.description)=:code", entityClass)
+            .setParameter("code", description.toLowerCase()).setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of description {} found", entityClass.getSimpleName(), description);
+            return null;
+        }
+    }
 }

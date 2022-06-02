@@ -146,10 +146,20 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
-                    var pricePlanMatrixColumns = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
-                    if (pricePlanMatrixColumns.isEmpty())
-                        throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
-                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumns.get(0));
+                    
+                    PricePlanMatrixColumn pricePlanMatrixColumn = null;
+                    var columnSet = pricePlanMatrixLine.getPricePlanMatrixVersion().getColumns();
+                    if (!columnSet.isEmpty()) {
+                        pricePlanMatrixColumn = columnSet.stream().filter(c -> c.getCode().equals(value.getPpmColumnCode())).findAny().orElseThrow();
+                    }
+                    else {
+                        var columnList = pricePlanMatrixColumnService.findByCodeAndPricePlanMatrixVersion(value.getPpmColumnCode(), pricePlanMatrixLine.getPricePlanMatrixVersion());
+                        if (columnList.isEmpty()) {
+                            throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
+                        }
+                        pricePlanMatrixColumn = columnList.get(0);
+                    }
+                    pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
                     pricePlanMatrixValue.setDoubleValue(value.getDoubleValue());
                     pricePlanMatrixValue.setLongValue(value.getLongValue());
                     pricePlanMatrixValue.setStringValue(value.getStringValue());
@@ -249,10 +259,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
     
     public void updatePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-        ppmVersion.getLines().clear();
+        
         Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
-        for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
             pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
@@ -265,7 +275,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
             lines.add(pricePlanMatrixLine);
         }
-        ppmVersion.getLines().addAll(lines);
+        
+        ppmVersion.setLines(lines);
     }
 
     public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
