@@ -31,6 +31,9 @@ public class OpenOrderTemplateApiServiceTest {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private OpenOrderTemplateService openOrderTemplateService;
     @Mock
     private AccountingArticleService accountingArticleService;
 
@@ -48,6 +51,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new Product()).when(productService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -72,6 +76,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -99,6 +104,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {
             openOrderTemplateApiService.create(input);
@@ -128,6 +134,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {
             openOrderTemplateApiService.create(input);
