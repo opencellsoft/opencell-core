@@ -198,6 +198,9 @@ public class BillingAccountApi extends AccountEntityApi {
                 missingParameters.add("emailTemplate");
             }
         }
+        if (StringUtils.isBlank(postData.getTradingCurrency())) {
+            missingParameters.add("tradingCurrency");
+        }
 
         handleMissingParameters(postData);
 
