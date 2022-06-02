@@ -1,6 +1,7 @@
 package org.meveo.apiv2.ordering.services;
 
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapper;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
@@ -45,6 +46,8 @@ public class OpenOrderTemplateApiService {
     public OpenOrderTemplateInput create(OpenOrderTemplateInput  input)
     {
 
+        checkParameters(input);
+
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
         openOrderTemplate.setCode(openOrderTemplate.getTemplateName());
          if(null != input.getThresholds() ) openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
@@ -61,6 +64,7 @@ public class OpenOrderTemplateApiService {
 
     public OpenOrderTemplateInput update(String code, OpenOrderTemplateInput input)
     {
+        checkParameters(input);
         OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
         if(null == openOrderTemplate)
         {
@@ -76,6 +80,15 @@ public class OpenOrderTemplateApiService {
 
        return openOrderTemplateMapper.toResource(openOrderTemplateService.update(openOrderTemplate));
 
+
+    }
+
+    private void checkParameters(OpenOrderTemplateInput openOrderTemplateInput) {
+        if(openOrderTemplateInput.getTemplateName() == null || openOrderTemplateInput.getTemplateName().isEmpty()
+                || openOrderTemplateInput.getOpenOrderType() == null )
+            throw new InvalidParameterException("The following fields are required: Template name, Open order type");
+        if(openOrderTemplateService.findByCode(openOrderTemplateInput.getTemplateName()) != null)
+             throw new InvalidParameterException(String.format("Template name %s already exists", openOrderTemplateInput.getTemplateName()));
 
     }
 
