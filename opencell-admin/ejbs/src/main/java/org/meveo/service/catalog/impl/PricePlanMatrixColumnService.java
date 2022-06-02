@@ -18,12 +18,12 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.NotFoundException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
@@ -33,12 +33,16 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.cpq.AttributeService;
 
 @Stateless
 public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatrixColumn> {
 
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
+
+    @Inject
+    private AttributeService attributeService;
 
     public List<PricePlanMatrixColumn> findByAttributes(List<Attribute> attributes) {
         try {
@@ -90,40 +94,98 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
             return this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.findByVersion", entityClass)
                                                                             .setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId()).getResultList();
     }
+    
+    public PricePlanMatrixLinesDto createColumnsAndPopulateLinesAndValues(String pricePlanMatrixCode, String data,
+            PricePlanMatrixVersion pricePlanMatrixVersion) {
+        Scanner scanner = new Scanner(data);
+        List<Map.Entry<String, Optional<Attribute> >> columns = new LinkedList<>();
+        
+        /*
+        File format example:
+        id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);priceWithoutTax(number)
+        252;true;;3XL|Bleu;;0;20
+        */
+        
+        // Get columns types
+        createColumns(pricePlanMatrixVersion, scanner, columns);
+        
+        // Populate lines
+        PricePlanMatrixLinesDto pricePlanMatrixLinesDto = populateLines(pricePlanMatrixCode, pricePlanMatrixVersion,
+                scanner, columns);
+        scanner.close();
+        
+        return pricePlanMatrixLinesDto;
+    }
+	
+	private void createColumns(PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
+        String line = scanner.nextLine();
+        String[] firstLine = line.split(";");
+        for (int i = 0; i < firstLine.length; i++) {
+            String column = firstLine[i].split("\\[")[0];
+            boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
+            if (StringUtils.isNotBlank(column) && isValidColumn(column)) {
+                
+                Attribute attribute = attributeService.findByDescription(column);
+                if (attribute == null) {
+                    throw new NotFoundException("Attribute with description= " + column + " does not exists");
+                }
+                ColumnTypeEnum columnType = attribute.getAttributeType().getColumnType(isRange);
+                
+                PricePlanMatrixColumn newPricePlanMatrixColumn = new PricePlanMatrixColumn();
+                newPricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
+                newPricePlanMatrixColumn.setPosition(i);
+                newPricePlanMatrixColumn.setType(columnType);
+                newPricePlanMatrixColumn.setElValue(attribute.getElValue());
+                newPricePlanMatrixColumn.setAttribute(attribute);
+                newPricePlanMatrixColumn.setRange(isRange);
+                newPricePlanMatrixColumn.setCode(column);
+                create(newPricePlanMatrixColumn);
+                pricePlanMatrixVersion.getColumns().add(newPricePlanMatrixColumn);
+                
+                AttributeTypeEnum attributeType = attribute.getAttributeType();
 
-	public PricePlanMatrixLinesDto populateLinesAndValues(String pricePlanMatrixCode, String data,
-			PricePlanMatrixVersion pricePlanMatrixVersion) {
-		Scanner scanner = new Scanner(data);
-		List<Map.Entry<String, Optional<Attribute> >> columns = new LinkedList<>();
-		
-		/*
-		File format example:
-		id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);priceWithoutTax(number)
-		252;true;;3XL|Bleu;;0;20
-		*/
-		
-		// Get columns types
-		populateColumns(pricePlanMatrixVersion, scanner, columns);
-		
-		// populate lines
-		List<PricePlanMatrixLineDto> pricePlanMatrixLines = populateLines(pricePlanMatrixCode, pricePlanMatrixVersion,
-				scanner, columns);
-		scanner.close();
-		
-		PricePlanMatrixLinesDto pricePlanMatrixLinesDto = new PricePlanMatrixLinesDto();
-		pricePlanMatrixLinesDto.setPricePlanMatrixCode(pricePlanMatrixCode);
-		pricePlanMatrixLinesDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
-		pricePlanMatrixLinesDto.setPricePlanMatrixLines(pricePlanMatrixLines);
-		return pricePlanMatrixLinesDto;
-	}
+                if (attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_TEXT) || attributeType.equals(
+                        AttributeTypeEnum.LIST_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_TEXT)) {
+                    columns.add(Map.entry(column + "|List|" + newPricePlanMatrixColumn.getRange(), Optional.of(newPricePlanMatrixColumn.getAttribute())));
 
+                } else {
+                    columns.add(Map.entry(column + "|" + columnType.toString() + "|" + newPricePlanMatrixColumn.getRange(), Optional.of(newPricePlanMatrixColumn.getAttribute())));
+                }
+            } else {
+                columns.add(Map.entry(column, Optional.empty()));
+            }
+        }
+    }
+	
+    public PricePlanMatrixLinesDto populateLinesAndValues(String pricePlanMatrixCode, String data,
+            PricePlanMatrixVersion pricePlanMatrixVersion) {
+        Scanner scanner = new Scanner(data);
+        List<Map.Entry<String, Optional<Attribute> >> columns = new LinkedList<>();
+        
+        /*
+        File format example:
+        id(text);Booléen(BOOLEAN);Nombres(LIST_MULTIPLE_NUMERIC);Valeurs(LIST_MULTIPLE_TEXT);description(text);priority(number);priceWithoutTax(number)
+        252;true;;3XL|Bleu;;0;20
+        */
+        
+        // Get columns types
+        populateColumns(pricePlanMatrixVersion, scanner, columns);
+        
+        // populate lines
+        PricePlanMatrixLinesDto pricePlanMatrixLinesDto = populateLines(pricePlanMatrixCode, pricePlanMatrixVersion,
+            scanner, columns);
+        scanner.close();
+        
+        return pricePlanMatrixLinesDto;
+    }
+	
     private void populateColumns(PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
 		String line = scanner.nextLine();
 		String[] firstLine = line.split(";");
 		for (int i = 0; i < firstLine.length; i++) {
 			String column = firstLine[i].split("\\[")[0];
 			boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
-			if (!(column.equals("id") || column.equals("description") || column.equals("priority") || column.equals("priceWithoutTax"))) {
+			if (StringUtils.isNotBlank(column) && isValidColumn(column)) {
 				List<PricePlanMatrixColumn> pricePlanMatrixColumnList = findByCodeAndPricePlanMatrixVersion(column, pricePlanMatrixVersion);
 				if (pricePlanMatrixColumnList.isEmpty()) {
 					throw new NotFoundException("PricePlanMatrixColumn with code= " + column + " does not exists");
@@ -145,9 +207,14 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 			}
 		}
 	}
-	
-	private List<PricePlanMatrixLineDto> populateLines(String pricePlanMatrixCode,
-			PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
+    
+    private boolean isValidColumn(String column) {
+        return !(column.equals("id") || column.equals("description") || column.equals("priority") 
+                || column.equals("priceWithoutTax") || column.equals("priceEL"));
+    }
+    
+	private PricePlanMatrixLinesDto populateLines(String pricePlanMatrixCode,
+	        PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
 		String line;
 		List<PricePlanMatrixLineDto> pricePlanMatrixLines = new ArrayList<>();
 			
@@ -227,14 +294,20 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						}
 					}
 				}
-			
 			}
+
 			pricePlanMatrixLineDto.setPricePlanMatrixCode(pricePlanMatrixCode);
 			pricePlanMatrixLineDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
 			pricePlanMatrixLineDto.setPricePlanMatrixValues(pricePlanMatrixValueDtoList);
 			pricePlanMatrixLines.add(pricePlanMatrixLineDto);
 		}
-		return pricePlanMatrixLines;
+		
+		PricePlanMatrixLinesDto pricePlanMatrixLinesDto = new PricePlanMatrixLinesDto();
+        pricePlanMatrixLinesDto.setPricePlanMatrixCode(pricePlanMatrixCode);
+        pricePlanMatrixLinesDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
+        pricePlanMatrixLinesDto.setPricePlanMatrixLines(pricePlanMatrixLines);
+		
+		return pricePlanMatrixLinesDto;
 	}
 
 	private boolean inAllowedValues(Set<String> allowedValues, String value)
