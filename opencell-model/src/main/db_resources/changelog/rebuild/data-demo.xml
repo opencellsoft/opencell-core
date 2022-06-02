@@ -2480,6 +2480,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
+			<column name="version" valueNumeric="0" />
 		</insert>
 		<insert tableName="billing_invoice_sub_cat">
 			<column name="id" value='-4'/>
