@@ -13143,5 +13143,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
+    
+    <changeSet id="INTRD-5570_20220601" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_invoice">
+            <column name="last_applied_rate" type="numeric(23, 12)" />
+            <column name="last_applied_rate_date" type="datetime" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
