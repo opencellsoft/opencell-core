@@ -128,7 +128,7 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	private List<QuoteOffer> quoteOffers=new ArrayList<QuoteOffer>();
     
     
-    @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteArticleLine> quoteArticleLines=new ArrayList<QuoteArticleLine>();
     

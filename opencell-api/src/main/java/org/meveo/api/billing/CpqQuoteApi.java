@@ -145,7 +145,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1457,8 +1456,9 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .filter(article -> article.getQuotePrices().stream().noneMatch(price -> BooleanUtils.isTrue(price.getPriceOverCharged())))
                     .collect(Collectors.toList());
+
+            articleToRemove.forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
             quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
-            quoteVersionService.update(quoteVersion);
         }
     }
     
@@ -1469,8 +1469,9 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .filter(article -> article.getQuoteProduct().getQuoteOffer().getId()==quoteOffer.getId())
                     .collect(Collectors.toList());
+
+            articleToRemove.forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
             quoteVersion.getQuoteArticleLines().removeAll(articleToRemove);
-            quoteVersionService.update(quoteVersion);
         }
     }
 
