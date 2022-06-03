@@ -13151,4 +13151,15 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-7428_20220601" author="ZBariki">
+        <addDefaultValue tableName="finance_settings" columnName="auxiliary_account_code_el"
+                         defaultValue="#{gca.code.substring(0, 3)}#{ca.description}"/>
+        <addDefaultValue tableName="finance_settings" columnName="auxiliary_account_label_el"
+                         defaultValue="#{ca.description}"/>
+    </changeSet>
+
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
+        <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
+    </changeSet>
+    
 </databaseChangeLog>
