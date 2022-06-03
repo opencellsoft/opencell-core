@@ -34,7 +34,7 @@ public class SubAccountingPeriod extends AuditableEntity {
      */
     private static final long serialVersionUID = 4444444770355105322L;
 
-    @Column(name = "number")
+    @Column(name = "period_number")
     private Integer number;
 
     @Temporal(TemporalType.TIMESTAMP)
