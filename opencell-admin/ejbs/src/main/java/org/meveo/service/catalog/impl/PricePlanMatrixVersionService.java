@@ -148,8 +148,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ImportResultDto importPricePlanVersion(String importTempDir, ImportPricePlanVersionsItem importItem) {
 
-        Date newFrom = importItem.getStartDate();
-        Date newTo = importItem.getEndDate();
+        Date newFrom = DateUtils.truncateTime(importItem.getStartDate());
+        Date newTo = DateUtils.truncateTime(importItem.getEndDate());
         String newChargeCode = importItem.getChargeCode();
 
         ImportResultDto resultDto = new ImportResultDto();
@@ -190,8 +190,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 for (PricePlanMatrixVersion pv : pvs) {
                     
                     DatePeriod validity = pv.getValidity();
-                    Date oldFrom = validity.getFrom();
-                    Date oldTo = validity.getTo();
+                    Date oldFrom = DateUtils.truncateTime(validity.getFrom());
+                    Date oldTo = DateUtils.truncateTime(validity.getTo());
                     
                     if (newFrom.compareTo(oldFrom) <= 0 && ((newTo != null && oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
                         remove(pv);
@@ -209,7 +209,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                             validity.setTo(newFrom);
                             validityHasChanged = true;
                         }
-                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(validity.getTo()) < 0) {
+                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(DateUtils.truncateTime(validity.getTo())) < 0) {
                             validity.setFrom(newTo);
                             validityHasChanged = true;
                         }
@@ -268,7 +268,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if (newFrom == null) {
             throw new BusinessApiException("The start date name is mandatory");
         }
-        if (newFrom != null && newFrom.before(DateUtils.setTimeToZero(new Date()))) {
+        if (newFrom != null && newFrom.before(DateUtils.truncateTime(new Date()))) {
             throw new BusinessApiException("Uploaded PV cannot start before today");
         }
         if (newFrom != null && newTo != null && newTo.before(newFrom)) {
