@@ -47,6 +47,9 @@ public class OpenOrderTemplateApiService {
     {
 
         checkParameters(input);
+        if(openOrderTemplateService.findByCode(input.getTemplateName()) != null)
+             throw new InvalidParameterException(String.format("Template name %s already exists", input.getTemplateName()));
+
 
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
         openOrderTemplate.setCode(openOrderTemplate.getTemplateName());
@@ -66,10 +69,19 @@ public class OpenOrderTemplateApiService {
     {
         checkParameters(input);
         OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
+
         if(null == openOrderTemplate)
         {
             throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
         }
+
+        if(!code.equals(input.getTemplateName())) {
+            if ( openOrderTemplateService.findByCode(input.getTemplateName()) != null)
+                throw new InvalidParameterException(String.format("Template name %s already exists", input.getTemplateName()));
+            openOrderTemplate.setCode(input.getTemplateName());
+
+        }
+
         openOrderTemplateMapper.fillEntity(openOrderTemplate, input);
         thresholdService.deleteThresholdsByOpenOrderTemplateId(openOrderTemplate.getId());
          openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
@@ -87,9 +99,6 @@ public class OpenOrderTemplateApiService {
         if(openOrderTemplateInput.getTemplateName() == null || openOrderTemplateInput.getTemplateName().isEmpty()
                 || openOrderTemplateInput.getOpenOrderType() == null )
             throw new InvalidParameterException("The following fields are required: Template name, Open order type");
-        if(openOrderTemplateService.findByCode(openOrderTemplateInput.getTemplateName()) != null)
-             throw new InvalidParameterException(String.format("Template name %s already exists", openOrderTemplateInput.getTemplateName()));
-
     }
 
     public void disableOpenOrderTemplate(String code)
