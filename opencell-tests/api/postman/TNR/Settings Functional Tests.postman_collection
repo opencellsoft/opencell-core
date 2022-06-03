@@ -12616,8 +12616,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"errorCode\",\"INVALID_PARAMETER\");\r",
-											"pm.variables.set(\"message\",\"calendar ne peut pas être nul\");"
+											"pm.variables.set(\"message\",\"The following parameters are required or contain invalid values: calendar\");"
 										],
 										"type": "text/javascript"
 									}
