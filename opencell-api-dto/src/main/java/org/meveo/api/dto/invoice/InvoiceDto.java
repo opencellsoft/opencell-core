@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -407,6 +410,18 @@ public class InvoiceDto extends AuditableEntityDto {
     @XmlElement
     @Schema(description = "Discount plan code")
     private String discountPlanCode;
+    
+    /**
+     * The exchange rate that converted amounts of the invoice.
+     */
+    @Schema(description = "The exchange rate that converted amounts of the invoice.")
+    private BigDecimal lastAppliedRate;
+    
+    /**
+     * The date of exchange rate applied to amounts of the invoice.
+     */
+    @Schema(description = "The date of exchange rate applied to amounts of the invoice.")
+    private Date lastAppliedRateDate;
 
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
@@ -1242,6 +1257,33 @@ public class InvoiceDto extends AuditableEntityDto {
 	public void setDiscountPlanCode(String discountPlanCode) {
 		this.discountPlanCode = discountPlanCode;
 	}
-    
+
+    /**
+     * @return the lastAppliedRate
+     */
+    public BigDecimal getLastAppliedRate() {
+        return lastAppliedRate;
+    }
+
+    /**
+     * @param lastAppliedRate the lastAppliedRate to set
+     */
+    public void setLastAppliedRate(BigDecimal lastAppliedRate) {
+        this.lastAppliedRate = lastAppliedRate;
+    }
+
+    /**
+     * @return the lastAppliedRateDate
+     */
+    public Date getLastAppliedRateDate() {
+        return lastAppliedRateDate;
+    }
+
+    /**
+     * @param lastAppliedRateDate the lastAppliedRateDate to set
+     */
+    public void setLastAppliedRateDate(Date lastAppliedRateDate) {
+        this.lastAppliedRateDate = lastAppliedRateDate;
+    }
     
 }
