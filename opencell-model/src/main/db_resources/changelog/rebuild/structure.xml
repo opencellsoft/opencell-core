@@ -16045,6 +16045,7 @@
     <changeSet id="#INTRD-828_20210902" author="AbdelmounaimAkadid" dbms="postgresql"/>
     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius"/>
     <changeSet id="INTRD-6608_20220420" author="AkadidAbdelmounaim"/>
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
