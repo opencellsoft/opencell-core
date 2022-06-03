@@ -56,6 +56,7 @@ public class OpenOrderTemplateApiService {
         if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
          checkParameters(openOrderTemplate);
 
+         openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.Draft);
          openOrderTemplateService.create(openOrderTemplate);
          return openOrderTemplateMapper.toResource(openOrderTemplate);
     }
