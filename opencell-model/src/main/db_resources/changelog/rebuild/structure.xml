@@ -14829,7 +14829,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="number" type="int4" />
+            <column name="period_number" type="int4" />
             <column name="start_date" type="datetime" />
 			<column name="end_date" type="datetime" />
             <column name="regular_users_sub_period_status" type="varchar(255)"/>
