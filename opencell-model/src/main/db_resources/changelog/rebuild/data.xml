@@ -10022,7 +10022,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="gui_position" value="tab:Configuration:0;field:0"/>
         </insert>
     </changeSet>
-
+	
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
