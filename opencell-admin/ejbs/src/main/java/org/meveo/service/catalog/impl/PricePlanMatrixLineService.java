@@ -260,7 +260,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     
     public void updatePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
         
-        Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
+        Set<PricePlanMatrixLine> lines = new HashSet<>();
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
