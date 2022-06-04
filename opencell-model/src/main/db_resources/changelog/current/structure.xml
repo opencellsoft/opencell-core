@@ -13157,5 +13157,11 @@ order by date_trunc('month', i.invoice_date) DESC
         <addDefaultValue tableName="finance_settings" columnName="auxiliary_account_label_el"
                          defaultValue="#{ca.description}"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-7629_20220603" author="HatimOUDAD">
+    	<addColumn tableName="cpq_order_product">
+            <column name="instance_status" type="varchar(10)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
