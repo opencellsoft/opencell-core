@@ -211,7 +211,8 @@ public abstract class BaseApi {
                 if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                     throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
                 }
-            } finally {
+            } catch(Exception e) {
+                log.error("clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke", e);
                 missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
             }
         }
