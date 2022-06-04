@@ -6,10 +6,10 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +36,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -93,7 +92,6 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
-
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -216,7 +214,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
                 invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
             } else {
-                //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
                 BigDecimal taxPercent = invoiceLine.getTaxRate();
                 if(invoiceLine.getAccountingArticle() != null) {
                 	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoice.getInvoiceDate(), false, false);
@@ -242,10 +239,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return invoiceLineDiscountAmount;
     }
     
-   // private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
-     //   addDiscountPlanInvoiceWithInvoiceSource(discount, entity, billingAccount, invoice, invoice, accountingArticle, seller, invoiceLine);
-   // }
-    
    private void addDiscountPlanInvoiceWithInvoiceSource(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, Invoice invoiceSource, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
         var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null,null,null, null, invoiceSource.getInvoiceDate(), invoiceLine);
         if(isDiscountApplicable) {
@@ -267,7 +260,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     if(discountAmount != null) {
                         DiscountLineAmount = DiscountLineAmount.add(discountAmount);
                     }
-                    if(InvoiceLineTaxModeEnum.RATE.equals(invoiceLine.getTaxMode()) 
+                    if(RATE.equals(invoiceLine.getTaxMode())
                             || InvoiceLineTaxModeEnum.TAX.equals(invoiceLine.getTaxMode()))
                     {
                         taxPercent = invoiceLine.getTaxRate();
@@ -692,7 +685,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         
 
-		if(invoiceLine.getTax()==null  && accountingArticle != null && invoiceLine.getBillingAccount()!=null)  {
+		if(invoiceLine.getTax()==null  && accountingArticle != null
+                && invoiceLine.getBillingAccount() != null && !invoiceLine.getTaxMode().equals(RATE))  {
 			BillingAccount  billingAccount = billingAccountService.refreshOrRetrieve(invoiceLine.getBillingAccount());
 			Boolean isExonerated = billingAccount.isExoneratedFromtaxes();
 	        if (isExonerated == null) {
@@ -716,7 +710,24 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setCommercialOrder((CommercialOrder) tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
         invoiceLine.setBillingRun((BillingRun) tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
 
+        if(resource.getTaxMode() != null && resource.getTaxMode().equals(RATE.name())) {
+            invoiceLine.setTax(findTaxByTaxRate(resource.getTaxRate()));
+            invoiceLine.setTaxRate(resource.getTaxRate());
+        }
+
         return invoiceLine;
+    }
+
+    public Tax findTaxByTaxRate(BigDecimal taxRate) {
+        Tax tax = taxService.findTaxByRate(new BigDecimal(taxRate.intValue()));
+        if(tax == null) {
+            tax = new Tax();
+            tax.setPercent(taxRate);
+            tax.setCode("TAX_" + taxRate.intValue());
+            tax.setUuid("TAX_" + taxRate);
+            taxService.create(tax);
+        }
+        return tax;
     }
 
     private BigDecimal getRateForInvoice(InvoiceLine invoiceLine) {
@@ -908,18 +919,18 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
-        for (Map<String, Object> record : groupedRTs) {
-            invoiceLine = linesFactory.create(record, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
+        for (Map<String, Object> groupedRT : groupedRTs) {
+            invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
             create(invoiceLine);
             commit();
-            associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             basicStatistics.setCount(associatedRtIds.size());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
-            if(record.get("rated_transaction_ids") != null) {
-            	var ratedTransIds = Arrays.asList( ((String) record.get("rated_transaction_ids")).split(","));
+            if(groupedRT.get("rated_transaction_ids") != null) {
+            	var ratedTransIds = Arrays.asList( ((String) groupedRT.get("rated_transaction_ids")).split(","));
             	for(String id: ratedTransIds) {
             		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
             	}

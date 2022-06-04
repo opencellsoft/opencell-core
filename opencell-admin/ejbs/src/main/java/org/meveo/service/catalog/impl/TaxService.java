@@ -80,7 +80,16 @@ public class TaxService extends BusinessService<Tax> {
             throw new BusinessException("No tax defined with " + percent.intValue() + " %");
         }
     }
-    
+    public Tax findTaxByRate(BigDecimal taxRate) {
+        try {
+            return getEntityManager().createNamedQuery("Tax.getTaxByPercent", Tax.class)
+                    .setParameter("percent", taxRate)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
     
     
     

@@ -190,7 +190,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
              Date from = null;
              Date to =null;
              
-             if(!StringUtils.isBlank(periodDto)) {
+             if(periodDto != null) {
             	 from=periodDto.getValidity().getFrom();
             	 to = periodDto.getValidity().getTo();
              }
@@ -206,7 +206,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                  } 
              }
              
-            DatePeriod validity=new DatePeriod(from, to);
+            DatePeriod validity=new DatePeriod(DateUtils.truncateTime(from), DateUtils.truncateTime(to));
             
             PricePlanMatrix pricePlanMatrix =  pricePlanMatrixVersion.getPricePlanMatrix(); 
             pricePlanMatrix.getVersions()
