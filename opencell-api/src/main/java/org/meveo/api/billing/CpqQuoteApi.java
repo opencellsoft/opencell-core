@@ -1467,7 +1467,7 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion.getQuoteArticleLines() != null) {
             List<QuoteArticleLine> articleToRemove = quoteVersion.getQuoteArticleLines()
                     .stream()
-                    .filter(article -> article.getQuoteProduct().getQuoteOffer().getId()==quoteOffer.getId())
+                    .filter(article -> article.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
                     .collect(Collectors.toList());
 
             articleToRemove.forEach(quoteArticleLine -> quoteArticleLineService.remove(quoteArticleLine));
