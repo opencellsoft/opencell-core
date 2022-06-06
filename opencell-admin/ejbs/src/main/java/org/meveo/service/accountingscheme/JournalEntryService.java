@@ -230,22 +230,18 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             log.warn("No OCCTemplate found for AccountOperation [id={}]", ao.getId());
             throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
         }
-
         if (occT.getAccountingCode() == null) {
-            log.warn("Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
+            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
-
         if ((isDefaultCheck || isPaymentCheck) && occT.getContraAccountingCode() == null) {
-            log.warn("Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
-        }
-
+            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
+        }        
         if (isPaymentCheck && occT.getContraAccountingCode2() == null) {
-            log.warn("Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", occT.getId());
-            throw new BusinessException("Mandatory ContraAccountingCode2 not found for OCCTemplate id=" + occT.getId());
+            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", occT.getId());
+            throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id=" + occT.getId());
         }
-
     }
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
