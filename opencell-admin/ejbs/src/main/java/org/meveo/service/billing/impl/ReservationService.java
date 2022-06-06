@@ -145,7 +145,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 
         // #3 Create the reserved wallet operation. Not associated to charge,
         // status=RESERVED, associated to the reservation, amount=servicesSum.
-        TradingCurrency currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
+		TradingCurrency currency = userAccount.getBillingAccount().getTradingCurrency();
         WalletReservation walletReservation = new WalletReservation();
         walletReservation.setCode(sellerCode + "_" + userAccountCode + "_" + offerCode);
         walletReservation.setReservation(reservation);
