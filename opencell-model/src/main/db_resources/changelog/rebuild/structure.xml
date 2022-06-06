@@ -323,6 +323,8 @@
         <createSequence sequenceName="accounting_accountingcode_mapping_seq" startValue="1"/>
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
       	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
+        <createSequence sequenceName="billing_invoice_line_conversion_seq"/>
+        <createSequence sequenceName="billing_invoice_conversion_seq"/>
     </changeSet>
 
 
@@ -11227,7 +11229,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="number" type="int4" />
+            <column name="period_number" type="int4" />
             <column name="start_date" type="date" />
 			<column name="end_date" type="date" />
             <column name="regular_users_sub_period_status" type="varchar(255)"/>
@@ -11811,6 +11813,55 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-7642_20220603_rebuild" author="ZBariki">
+        <createTable tableName="billing_invoice_line_conversion">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_invoice_line_conversion"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="invoice_line_id" type="bigint"/>
+            <column name="invoice_id" type="bigint"/>
+            <column name="invoice_conversion_id" type="bigint"/>
+            <column name="applied_rate" type="numeric(23, 12)"/>
+            <column name="applied_rate_date" type="datetime"/>
+            <column name="invoice_currency_id" type="bigint"/>
+            <column name="unit_price" type="numeric(23, 12)"/>
+            <column name="amount_with_tax" type="numeric(23, 12)"/>
+            <column name="amount_without_tax" type="numeric(23, 12)"/>
+            <column name="amount_tax" type="numeric(23, 12)"/>
+            <column name="discount_amount" type="numeric(23, 12)"/>
+            <column name="raw_amount" type="numeric(23, 12)"/>
+        </createTable>
+
+        <createTable tableName="billing_invoice_conversion">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_invoice_conversion"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="invoice_id" type="bigint"/>
+            <column name="applied_rate" type="numeric(23, 12)"/>
+            <column name="applied_rate_date" type="datetime"/>
+            <column name="invoice_currency_id" type="bigint"/>
+            <column name="amount_with_tax" type="numeric(23, 12)"/>
+            <column name="amount_without_tax" type="numeric(23, 12)"/>
+            <column name="amount_tax" type="numeric(23, 12)"/>
+            <column name="discount_amount" type="numeric(23, 12)"/>
+            <column name="raw_amount" type="numeric(23, 12)"/>
+        </createTable>
     </changeSet>
 
     <!-- end tables -->
@@ -16095,7 +16146,34 @@
         <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
-    
+
+    <changeSet id="#INTRD-7642_20220603_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_line_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_line_id_fk"
+                                 referencedTableName="billing_invoice_line"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_conversion_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_conversion_id_fk"
+                                 referencedTableName="billing_invoice_conversion"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_currency_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_conversion" baseColumnNames="invoice_id"
+                                 constraintName="billing_invoice_conversion_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_conversion" baseColumnNames="invoice_currency_id"
+                                 constraintName="billing_invoice_conversion_invoice_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17769,7 +17847,8 @@
     <changeSet id="INTRD-5570_20220601" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-7428_20220601" author="ZBariki" />
     <changeSet id="#INTRD-7629_20220603" author="HatimOUDAD"/>
-
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-7642_20220603" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

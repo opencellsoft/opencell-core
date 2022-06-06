@@ -198,6 +198,9 @@ public class BillingAccountApi extends AccountEntityApi {
                 missingParameters.add("emailTemplate");
             }
         }
+        if (StringUtils.isBlank(postData.getTradingCurrency())) {
+            missingParameters.add("tradingCurrency");
+        }
 
         handleMissingParameters(postData);
 
@@ -409,14 +412,12 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
-        if (!StringUtils.isBlank(postData.getTradingCurrency())) {
+        if (postData.getTradingCurrency() != null) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getTradingCurrency());
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
             }
             billingAccount.setTradingCurrency(tradingCurrency);
-        }else {
-            billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
         }
         
         if (Objects.nonNull(postData.getPaymentMethod())) {

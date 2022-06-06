@@ -26,6 +26,7 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
                 .products(entity.getProducts() == null ? null : entity.getProducts().stream().map(product -> product.getCode()).collect(Collectors.toList()))
                 .articles(entity.getArticles() == null ? null : entity.getArticles().stream().map(accountingArticle -> accountingArticle.getCode()).collect(Collectors.toList()))
                 .tags(entity.getTags() == null ? null : entity.getTags().stream().map(tag -> tag.getCode()).collect(Collectors.toList()))
+                .status(entity.getStatus())
                 .build();
     }
 
