@@ -12986,4 +12986,9 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
+        <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -52,8 +52,7 @@ import org.meveo.model.billing.Subscription;
 @Table(name = "rating_edr")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "500") })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
-
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_'),case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
         @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e where e.status='OPEN' order by e.id"),
         @NamedQuery(name = "EDR.findByIdWithSubscription", query = "SELECT e from EDR e left join fetch e.subscription where e.status='OPEN' and e.id=:id "),
         @NamedQuery(name = "EDR.findByIdsWithSubscription", query = "SELECT e from EDR e left join fetch e.subscription where e.status='OPEN' and e.id in :ids order by e.id"),

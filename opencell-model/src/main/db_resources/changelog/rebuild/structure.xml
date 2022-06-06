@@ -11223,7 +11223,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="number" type="int4" />
+            <column name="period_number" type="int4" />
             <column name="start_date" type="date" />
 			<column name="end_date" type="date" />
             <column name="regular_users_sub_period_status" type="varchar(255)"/>
@@ -17736,6 +17736,7 @@
 	<changeSet id="#INTRD-6672_20220511" author="HichamHANINE" />
 	<changeSet id="INTRD-6608_20220420-fix" author="AkadidAbdelmounaim" />
     <changeSet id="#INTRD-7157_20220523" author="ZBariki" />
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
