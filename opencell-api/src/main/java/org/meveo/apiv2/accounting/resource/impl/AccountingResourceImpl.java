@@ -23,7 +23,6 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
@@ -51,9 +50,8 @@ public class AccountingResourceImpl implements AccountingResource {
                         .orElseThrow(() -> new NotFoundException("Customer account not found"));
         FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
                 .orElseThrow(() -> new NotFoundException("No finance settings found"));
-        AuxiliaryAccounting auxiliaryAccounting = ofNullable(financeSettings.getAuxiliaryAccounting())
-                .orElseThrow(() -> new NotFoundException("Auxiliary accounting not configured for finance settings"));
-        if(auxiliaryAccounting.isUseAuxiliaryAccounting()) {
+        AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
+        if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {
             try {
                 return ok()
                         .entity(generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting))
@@ -64,7 +62,9 @@ public class AccountingResourceImpl implements AccountingResource {
                         .build();
             }
         } else {
-            throw new BadRequestException("Auxiliary accounting is not configured for finance settings");
+            return ok()
+                    .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Auxiliary accounts are not configured from finance settings\"}}")
+                    .build();
         }
     }
 
