@@ -18,6 +18,8 @@
 
 package org.meveo.admin.job;
 
+import static java.util.Arrays.asList;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -56,7 +58,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
     private static final String APIV2_FULL_ACCESS = "APIv2_FULL_ACCESS";
 
     @Inject
-    private Logger log;
+    private Logger logger;
 
     @Inject
     private RoleService roleService;
@@ -67,12 +69,13 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
     /**
      * APIv2 super role
      */
-    private Role apiv2SuperRole;
+    private Role apiV2SuperRole;
 
     /**
      * All newest created permissions
      */
     private List<Permission> allCreatedPermissions;
+    private static final List<String> fieldsToFetch = asList("permissions");
 
     /**
      * Job execution method
@@ -82,12 +85,12 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
     @Interceptors({JobLoggingInterceptor.class, PerformanceInterceptor.class})
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Job {}: Start synchronisation between APIv2 permissions " +
+        logger.debug("Job {}: Start synchronisation between APIv2 permissions " +
                 "and existing entities", jobInstance.getCode());
 
         try {
             int entitiesAffectedCount = 0;
-            apiv2SuperRole = getApiv2SuperRole();
+            apiV2SuperRole = getApiV2SuperRole();
             allCreatedPermissions = new ArrayList<>();
 
             Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
@@ -104,7 +107,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
                     String entityName = entityFullName.substring(entityFullName.lastIndexOf(".") + 1);
                     Set<String> entityOperationList = permissionsByEntities != null ? permissionsByEntities.get(entityName) : null;
 
-                    log.debug("Check existing permissions and create missed ones for entity {}", entityName);
+                    logger.debug("Check existing permissions and create missed ones for entity {}", entityName);
                     boolean entityAffected = false;
 
                     // if at min one permission is created then mark it to update
@@ -134,7 +137,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
                 }
                 // Update thematic role to persist its new attached permissions if needed
                 if (newPermissionsCreated) {
-                    log.debug("Update role {} with newest created permissions", thematicRole);
+                    logger.debug("Update role {} with newest created permissions", thematicRole);
                     roleService.update(thematicRole);
                 }
             }
@@ -142,8 +145,8 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
             // Attach all created permissions with the APIv2 super role
             String resultMsg;
             if (!allCreatedPermissions.isEmpty()) {
-                apiv2SuperRole.getPermissions().addAll(allCreatedPermissions);
-                roleService.update(apiv2SuperRole);
+                apiV2SuperRole.getPermissions().addAll(allCreatedPermissions);
+                roleService.update(apiV2SuperRole);
                 resultMsg = allCreatedPermissions.size() + " permissions in total are created for "
                         + entitiesAffectedCount + " affected entities";
             } else {
@@ -155,7 +158,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
             result.setNbItemsCorrectlyProcessed(allCreatedPermissions.size());
 
         } catch (Exception e) {
-            log.error("Failed to run APIv2 permissions synchronisation job ", e);
+            logger.error("Failed to run APIv2 permissions synchronisation job ", e);
             result.registerError(e.getMessage());
         }
     }
@@ -165,8 +168,8 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
      *
      * @return super APIv2 role
      */
-    private Role getApiv2SuperRole() {
-        Role apiv2SuperRole = roleService.findByName(APIV2_FULL_ACCESS);
+    private Role getApiV2SuperRole() {
+        Role apiv2SuperRole = roleService.findByName(APIV2_FULL_ACCESS, fieldsToFetch);
 
         if (apiv2SuperRole == null) {
             apiv2SuperRole = new Role();
@@ -174,7 +177,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
             apiv2SuperRole.setDescription("API v2 full access");
 
             roleService.create(apiv2SuperRole);
-            log.debug("{} super role just created", APIV2_FULL_ACCESS);
+            logger.debug("{} super role just created", APIV2_FULL_ACCESS);
         }
         return apiv2SuperRole;
     }
@@ -216,14 +219,14 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
      */
     private Role getOrCreateThematicRole(String subPackage) {
         // Create thematicRole if doesn't exist
-        Role thematicRole = roleService.findByName(subPackage);
+        Role thematicRole = roleService.findByName(subPackage, fieldsToFetch);
 
         if (thematicRole == null) {
             thematicRole = new Role();
             thematicRole.setName(subPackage);
             thematicRole.setDescription(subPackage);
             roleService.create(thematicRole);
-            log.debug("New thematic Role {} is created", subPackage);
+            logger.debug("New thematic Role {} is created", subPackage);
         }
         return thematicRole;
     }
@@ -253,7 +256,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
 
             entitiesByPackages.computeIfAbsent(subPackageName, key -> new HashSet<>()).add(entityName);
         }
-        log.debug("{} Entity classes are found under {} model sub-packages", managedEntities.size(), entitiesByPackages.size());
+        logger.debug("{} Entity classes are found under {} model sub-packages", managedEntities.size(), entitiesByPackages.size());
 
         return entitiesByPackages;
     }
@@ -266,9 +269,9 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
      * @return All APIv2 existing permissions/operations mapped by entities name
      */
     private Map<String, Set<String>> getAllAPIv2Permissions() {
-        Set<Permission> apiv2AllPermissions = apiv2SuperRole.getPermissions();
+        Set<Permission> apiv2AllPermissions = apiV2SuperRole.getPermissions();
         if (CollectionUtils.isEmpty(apiv2AllPermissions)) {
-            log.debug("No APIv2 permissions have been created yet. They will be in next steps...");
+            logger.debug("No APIv2 permissions have been created yet. They will be in next steps...");
             return null;
         }
         // Split each permission to entity name and operation,
@@ -286,7 +289,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
 
             permissionsByEntities.computeIfAbsent(entityName, key -> new HashSet<>()).add(operation);
         }
-        log.debug("{} APIv2 permissions are already existing, and which are belonging to {} entities",
+        logger.debug("{} APIv2 permissions are already existing, and which are belonging to {} entities",
                 apiv2AllPermissions.size(), permissionsByEntities.size());
 
         return permissionsByEntities;
