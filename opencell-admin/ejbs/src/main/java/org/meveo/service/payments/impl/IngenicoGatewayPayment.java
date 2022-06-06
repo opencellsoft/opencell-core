@@ -18,7 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -673,7 +673,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			Long id = hostedCheckoutInput.getCustomerAccountId();
 			String timeMillisWithcustomerAccountId = System.currentTimeMillis() + "_-_" + id;
 			
-			log.info("\n\n\n\n hostedCheckoutInput.isOneShotPayment(): "+ hostedCheckoutInput.isOneShotPayment());
+			log.info("hostedCheckoutInput.isOneShotPayment(): "+ hostedCheckoutInput.isOneShotPayment());
 			
 			if(hostedCheckoutInput.isOneShotPayment()) {
 				timeMillisWithcustomerAccountId = "oneShot_"+timeMillisWithcustomerAccountId;
@@ -686,10 +686,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			hostedCheckoutSpecificInput.setVariant(hostedCheckoutInput.getVariant());
 			hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
 			hostedCheckoutSpecificInput.setIsRecurring(false);
-			
+						
 			PaymentProductFiltersHostedCheckout dd =  new PaymentProductFiltersHostedCheckout(); 
 			PaymentProductFilter cc = new PaymentProductFilter();
-			cc.setProducts(Arrays.asList(1));
+			cc.setProducts(getListProductIds());
 			dd.setRestrictTo(cc);
 			hostedCheckoutSpecificInput.setPaymentProductFilters(dd);
 			
@@ -753,7 +753,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		}
 	}
 
-    @Override
+    private List<Integer> getListProductIds() {
+    	List<Integer> listProduct = new ArrayList<Integer>();
+
+		String productFilter =  paramBean().getProperty("ingenico.HostedCheckout.ProductFilter", "1,2,3,122,114,119,130");
+		for(String s : productFilter.split(",")) {
+			listProduct.add(Integer.valueOf(s));
+		}
+		return listProduct;
+	}
+
+	@Override
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
