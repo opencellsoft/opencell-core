@@ -130,41 +130,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
-import org.meveo.model.billing.IInvoiceable;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceLinesGroup;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceProcessTypeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -175,7 +141,6 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
@@ -3649,7 +3614,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Create category aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
-            List<InvoiceLine> erronedLines = scAggregate.getInvoiceLinesToAssociate().stream().filter(x -> x.getTax() == null).collect(Collectors.toList());
+            List<InvoiceLine> erronedLines = scAggregate.getInvoiceLinesToAssociate()
+                    .stream()
+                    .filter(invoiceLine -> invoiceLine.getTax() == null && !invoiceLine.getTaxMode().equals(InvoiceLineTaxModeEnum.RATE))
+                    .collect(Collectors.toList());
             if (!erronedLines.isEmpty()) {
                 String message = erronedLines.stream().map(x -> x.getAccountingArticle().getCode()).collect(Collectors.joining(", "));
                 throw new BusinessException("the articles " + message + " has no corresponding tax ");
@@ -5425,6 +5393,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
 
+                    if(invoiceLineGroupToInvoiceMap != null && invoiceLinesGroup.getInvoiceLines() != null) {
+                        List<Long> invoiceLineIds = invoiceLinesGroup.getInvoiceLines()
+                                .stream()
+                                .filter(invoiceLine ->
+                                        invoiceLine.getTaxMode().equals(InvoiceLineTaxModeEnum.RATE) && invoiceLine.getTax() != null)
+                                .map(InvoiceLine::getId)
+                                .collect(Collectors.toList());
+                        if(invoiceLineIds != null && !invoiceLineIds.isEmpty()) {
+                            em.createNamedQuery("InvoiceLine.updateTaxForRateTaxMode")
+                                    .setParameter("invoiceLinesIds", invoiceLineIds)
+                                    .executeUpdate();
+                        }
+                    }
                     em.flush();
 
                     Date now = new Date();
@@ -5558,6 +5539,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 scaKey = (invoiceLine.getSubscription().getUserAccount() != null ? invoiceLine.getSubscription().getUserAccount().getId() : "") + "_" + scaKey;
             }
 
+            if(invoiceLine.getTax() == null && invoiceLine.getTaxMode().equals(InvoiceLineTaxModeEnum.RATE)) {
+                invoiceLine.setTax(invoiceLinesService.findTaxByTaxRate(invoiceLine.getTaxRate()));
+            }
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
 

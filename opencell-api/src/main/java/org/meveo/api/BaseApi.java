@@ -1245,8 +1245,6 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
-<<<<<<< HEAD
-=======
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1273,7 +1271,6 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
->>>>>>> integration
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1699,11 +1696,10 @@ public abstract class BaseApi {
                     Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
                     for (String key : mapVal.keySet()) {
                         Object cfValue = mapVal.get(key);
-                        String[] fieldInfo = key.split(" ");
-                        String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                        ExpressionParser fieldInfo = new ExpressionParser(key.split(" "));
                         Class dataClass = null;
                         CustomFieldStorageTypeEnum storageType = null;
-                        for (String f : fields) {
+                        for (String f : fieldInfo.getAllFields()) {
                             CustomFieldTemplate customFieldTemplate = cfts.get(f);
                             if (customFieldTemplate == null) {
                                 throw new BusinessException("No custom field found with name :" + f);
@@ -1718,7 +1714,8 @@ public abstract class BaseApi {
                                 }
                             }
                         }
-                        Object valueConverted = castFilterValue(cfValue, dataClass, expectedList, cfts, true);
+                        String condition = fieldInfo.getCondition();
+                        Object valueConverted = castFilterValue(cfValue, dataClass, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts, true);
                         if (valueConverted == null) {
                             if (!CustomFieldStorageTypeEnum.SINGLE.equals(storageType)) {
                                 throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '" + key + "'");
