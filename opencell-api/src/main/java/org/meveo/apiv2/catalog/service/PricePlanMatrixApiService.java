@@ -96,6 +96,12 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
 
         String importRootDir = paramBeanFactory.getDefaultChrootDir() + File.separator + "/imports/priceplan_versions";
         String importTempDir = importRootDir + File.separator + "temp" + System.currentTimeMillis();
+        
+        File f = new File(importTempDir);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        
         File zipFile = new File(importRootDir + File.separator + importPricePlanVersionsDto.getFileToImport());
         unzipFile(importTempDir, zipFile);
 
