@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -784,5 +785,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     public void create(AccountOperation entity) {
         fillOperationNumber(entity);
         super.create(entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> findByCustomerAccount(Set<Long> aoIds, Long customerAccountId) {
+        return getEntityManager().createNamedQuery("AccountOperation.findByCustomerAccount")
+                .setParameter("AO_IDS", aoIds)
+                .setParameter("CUSTOMERACCOUNT_ID", customerAccountId)
+                .getResultList();
+
     }
 }

@@ -17,13 +17,43 @@
  */
 package org.meveo.service.payments.impl;
 
+import org.meveo.apiv2.payments.PaymentPlanDto;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Stateless
-public class PaymentPlanService extends BusinessService<CustomerAccount> {
+public class PaymentPlanService extends PersistenceService<PaymentPlan> {
+
+    public void create(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount) {
+        // To entity
+        PaymentPlan paymentPlan = new PaymentPlan();
+
+        paymentPlan.setCustomerAccount(customerAccount);
+        paymentPlan.setAccountOperations(new HashSet<>(aos));
+
+        paymentPlan.setStatus(paymentPlanDto.getStatus());
+        paymentPlan.setRecurringUnit(paymentPlanDto.getRecurringUnit());
+        paymentPlan.setActionOnRemainingAmount(paymentPlanDto.getActionOnRemainingAmount());
+
+        paymentPlan.setEndDate(paymentPlanDto.getEndDate());
+        paymentPlan.setStartDate(paymentPlanDto.getStartDate());
+
+        paymentPlan.setNumberOfInstallments(paymentPlanDto.getNumberOfInstallments());
+        paymentPlan.setAmountPerInstallment(paymentPlanDto.getAmountPerInstallment());
+        paymentPlan.setAmountToRecover(paymentPlanDto.getAmountToRecover());
+        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount());
+
+        super.create(paymentPlan);
+
+    }
 
 
 }

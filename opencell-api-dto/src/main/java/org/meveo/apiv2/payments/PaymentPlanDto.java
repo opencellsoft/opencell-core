@@ -17,7 +17,7 @@ import java.util.Set;
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutablePaymentPlanDto.class)
-interface PaymentPlanDto {
+public interface PaymentPlanDto {
 
     @NotNull
     BigDecimal getAmountToRecover();
@@ -46,9 +46,9 @@ interface PaymentPlanDto {
     @NotNull
     PaymentPlanStatusEnum getStatus();
 
-    @Schema(description = "List of AccountOperation and Sequence for matching")
+    @Schema(description = "List of Installment AccountOperation")
     @NotEmpty
-    Set<AccountOperation> getAccountOperations();
+    Set<InstallmentAccountOperation> getInstallmentAccountOperations();
 
     @NotNull
     Long getCustomerAccount();

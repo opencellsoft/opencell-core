@@ -2,7 +2,6 @@ package org.meveo.apiv2.payments.resource;
 
 import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.apiv2.payments.PaymentPlanDto;
-import org.meveo.apiv2.payments.resource.PaymentPlanResource;
 import org.meveo.apiv2.payments.service.PaymentPlanApi;
 
 import javax.inject.Inject;

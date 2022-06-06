@@ -19,6 +19,7 @@ package org.meveo.model.payments.plan;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.CustomerAccount;
