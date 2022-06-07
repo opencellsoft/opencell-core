@@ -298,8 +298,6 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         if(hostedCheckoutInput.isOneShotPayment()) {
         	transactionReference = "oneShot"+transactionReference;
 		}
-        
-        
 
         String data ="amount="+hostedCheckoutInput.getAmount()+
         		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
