@@ -1135,7 +1135,8 @@ public interface PaymentRs extends IBaseRs {
                                                                  @QueryParam("allowedActions") String allowedActions,
                                                                  @QueryParam("returnContext") String returnContext,
                                                                  @QueryParam("authenticationAmount") String authenticationAmount,
-                                                                 @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions
+                                                                 @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions,
+                                                                 @DefaultValue("false") @QueryParam("isOneShotPayment") Boolean isOneShotPayment
     );
 
     
