@@ -62,9 +62,7 @@ public class AccountingResourceImpl implements AccountingResource {
                         .build();
             }
         } else {
-            return ok()
-                    .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Auxiliary accounts are not configured from finance settings\"}}")
-                    .build();
+            throw new NotFoundException("Auxiliary accounts are not set in Finance settings");
         }
     }
 
