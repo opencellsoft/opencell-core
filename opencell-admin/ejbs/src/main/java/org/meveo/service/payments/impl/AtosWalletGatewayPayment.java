@@ -292,6 +292,12 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
         String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
+        
+        String transactionReference = System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId();
+        
+        if(hostedCheckoutInput.isOneShotPayment()) {
+        	transactionReference = "oneShot"+transactionReference;
+		}               
 
         String data ="amount="+hostedCheckoutInput.getAmount()+
         		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
@@ -299,7 +305,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         		"|merchantId="+paymentGateway.getMarchandId() +
         		"|normalReturnUrl="+returnUrl+
         		"|orderChannel="+OrderChannel.INTERNET.name()+
-        		"|transactionReference="+System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId()+
+        		"|transactionReference="+transactionReference+
         		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
                 "|normalReturnUrl=" + returnUrl +
                 "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
