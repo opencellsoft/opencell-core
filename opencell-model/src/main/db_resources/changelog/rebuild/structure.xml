@@ -10179,6 +10179,7 @@
             <column name="production_action_type" type="varchar(10)" />
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
+            <column name="instance_status" type="varchar(10)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
@@ -17845,6 +17846,7 @@
     <changeSet id="#INTRD-7537_20220531" author="TarikRabeh" />
     <changeSet id="INTRD-5570_20220601" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-7428_20220601" author="ZBariki" />
+    <changeSet id="#INTRD-7629_20220603" author="HatimOUDAD"/>
     <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-7642_20220603" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
