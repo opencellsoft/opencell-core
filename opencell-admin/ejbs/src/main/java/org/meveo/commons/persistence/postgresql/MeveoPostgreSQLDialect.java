@@ -34,6 +34,8 @@ import org.hibernate.dialect.function.StandardSQLFunction;
  * <li>timestampFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Date type custom field</li>
  * <li>booleanFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Boolean type custom field</li>
  * <li>entityFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Entity type custom field. Returns EntityReferenceWrapper.code field value.</li>
+ * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type </li>
+ * <li>listFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;,&lt;property name&gt;,&lt;position&gt;,&lt;value to search for&gt;) - for search in String type custom field of List storage type </li>
  * </ul>
  * 
  * @author M.ELAZZOUZI
@@ -50,6 +52,7 @@ public class MeveoPostgreSQLDialect extends PostgreSQL94Dialect {
         registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
         registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
         registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+        registerFunction("listFromJson", new ListPostgreSQLJsonSearchFunction());
         registerColumnType(Types.BOOLEAN, "int4");
     }
 }

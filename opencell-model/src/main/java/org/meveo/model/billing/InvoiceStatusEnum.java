@@ -49,7 +49,7 @@ public enum InvoiceStatusEnum {
     /**
      * invoice has been canceled (all related rated transactions are released. This is a final status)
      */
-    CANCELED(5, "invoiceStatusEnum.canceled", new InvoiceStatusEnum[]{NEW, SUSPECT, REJECTED}),
+    CANCELED(5, "invoiceStatusEnum.canceled", new InvoiceStatusEnum[]{NEW, SUSPECT, REJECTED, DRAFT}),
     
     /**
      * invoice is validated and cannot be edited anymore (this a final status)

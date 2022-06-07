@@ -52,8 +52,7 @@ import org.meveo.model.billing.Subscription;
 @Table(name = "rating_edr")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "500") })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
-
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_'),case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select e.status, count(e.id) from EDR e group by e.status"),
 
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),

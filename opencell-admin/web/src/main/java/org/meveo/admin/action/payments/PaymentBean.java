@@ -27,7 +27,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.AutomatedPayment;
-import org.meveo.model.payments.Payment;
+    import org.meveo.model.payments.Payment;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
@@ -73,8 +73,13 @@ public class PaymentBean extends CustomFieldBean<Payment> {
 	@Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		accountOperationService.refreshOrRetrieve(entity.getCustomerAccount().getAccountOperations()).add(entity);
-		return super.saveOrUpdate(killConversation);
+	    entity = paymentService.refreshOrRetrieve(entity);
+        accountOperationService.refreshOrRetrieve(entity.getCustomerAccount().getAccountOperations()).add(entity);
+		String outcome = super.saveOrUpdate(killConversation);
+        if (outcome != null) {
+            return getEditViewName();
+        }
+        return null;
 	}
 
 	/**

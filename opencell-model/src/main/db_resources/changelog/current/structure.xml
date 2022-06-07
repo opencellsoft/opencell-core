@@ -9857,5 +9857,8 @@ public class OrderAdvancement extends ModuleScript {
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
+        <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
+    </changeSet>
     
 </databaseChangeLog>

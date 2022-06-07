@@ -63,7 +63,4 @@ public class APIv2PermissionsSyncJob  extends Job {
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.UTILS;
     }
-
-
-
 }

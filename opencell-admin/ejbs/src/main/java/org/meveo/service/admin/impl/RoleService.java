@@ -53,15 +53,7 @@ public class RoleService extends PersistenceService<Role> {
     }
 
     public Role findByName(String role) {
-        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
-
-        try {
-            qb.addCriterion("name", "=", role, true);
-            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
-            return null;
-        }
+        return findByName(role, null);
     }
 
     @Override
@@ -87,5 +79,17 @@ public class RoleService extends PersistenceService<Role> {
         currentUserProvider.invalidateRoleToPermissionMapping();
 
         clusterEventPublisher.publishEvent(role, CrudActionEnum.remove);
+    }
+
+    public Role findByName(String role, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r", fetchFields);
+
+        try {
+            qb.addCriterion("name", "=", role, true);
+            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException | NonUniqueResultException e) {
+            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+            return null;
+        }
     }
 }
