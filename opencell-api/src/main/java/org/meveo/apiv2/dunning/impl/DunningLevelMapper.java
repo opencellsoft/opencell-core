@@ -40,7 +40,7 @@ public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.D
 	}
 
 	private List<DunningAction> getDunningActionsFromCodes(List<String> actionsCodes) {
-		if (actionsCodes == null || actionsCodes.isEmpty()) {
+		if (actionsCodes == null) {
 			return null;
 		}
 
