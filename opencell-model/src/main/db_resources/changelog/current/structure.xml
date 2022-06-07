@@ -13266,7 +13266,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="action_on_remaining_amount" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="number_of_installments" type="numeric(23, 12)">
+            <column name="number_of_installments" type="int4">
                 <constraints nullable="false" />
             </column>
             <column name="start_date" type="datetime">

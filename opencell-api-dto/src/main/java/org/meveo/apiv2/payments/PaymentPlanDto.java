@@ -3,7 +3,6 @@ package org.meveo.apiv2.payments;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.RecurrenceUnitEnum;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
@@ -11,7 +10,7 @@ import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 
 @Value.Immutable
@@ -32,13 +31,12 @@ public interface PaymentPlanDto {
     ActionOnRemainingAmountEnum getActionOnRemainingAmount();
 
     @NotNull
-    BigDecimal getNumberOfInstallments();
+    Integer getNumberOfInstallments();
 
     @NotNull
-    LocalDate getStartDate();
+    Date getStartDate();
 
-    @NotNull
-    LocalDate getEndDate();
+    Date getEndDate();
 
     @NotNull
     RecurrenceUnitEnum getRecurringUnit();

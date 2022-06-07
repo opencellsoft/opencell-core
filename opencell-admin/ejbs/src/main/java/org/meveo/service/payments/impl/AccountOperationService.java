@@ -788,7 +788,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> findByCustomerAccount(Set<Long> aoIds, Long customerAccountId) {
+    public List<AccountOperation> findByCustomerAccount(List<Long> aoIds, Long customerAccountId) {
         return getEntityManager().createNamedQuery("AccountOperation.findByCustomerAccount")
                 .setParameter("AO_IDS", aoIds)
                 .setParameter("CUSTOMERACCOUNT_ID", customerAccountId)

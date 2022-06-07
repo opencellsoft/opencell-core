@@ -53,6 +53,6 @@ public interface PaymentPlanResource {
                             )
                     )}
     )
-    PaymentActionStatus create(PaymentPlanDto paymentPlanDto);
+    void create(PaymentPlanDto paymentPlanDto);
 
 }

@@ -19,7 +19,6 @@ package org.meveo.model.payments.plan;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -36,9 +35,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "ar_payment_plan")
@@ -60,13 +59,13 @@ public class PaymentPlan extends AuditableEntity {
     public ActionOnRemainingAmountEnum actionOnRemainingAmount = ActionOnRemainingAmountEnum.FIRST;
 
     @Column(name = "number_of_installments", nullable = false)
-    public BigDecimal numberOfInstallments;
+    public Integer numberOfInstallments;
 
     @Column(name = "start_date", nullable = false)
-    public LocalDate startDate;
+    public Date startDate;
 
     @Column(name = "end_date", nullable = false)
-    public LocalDate endDate;
+    public Date endDate;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "recurring_unit", nullable = false)
@@ -80,7 +79,7 @@ public class PaymentPlan extends AuditableEntity {
     @JoinTable(name = "ar_payment_plan_acc_operations",
             joinColumns = @JoinColumn(name = "payment_plan_id"),
             inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
-    private Set<AccountOperation> accountOperations = new HashSet<>();
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**
      * Customer account for account operation
@@ -121,27 +120,27 @@ public class PaymentPlan extends AuditableEntity {
         this.actionOnRemainingAmount = actionOnRemainingAmount;
     }
 
-    public BigDecimal getNumberOfInstallments() {
+    public Integer getNumberOfInstallments() {
         return numberOfInstallments;
     }
 
-    public void setNumberOfInstallments(BigDecimal numberOfInstallments) {
+    public void setNumberOfInstallments(Integer numberOfInstallments) {
         this.numberOfInstallments = numberOfInstallments;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -161,11 +160,11 @@ public class PaymentPlan extends AuditableEntity {
         this.status = status;
     }
 
-    public Set<AccountOperation> getAccountOperations() {
+    public List<AccountOperation> getAccountOperations() {
         return accountOperations;
     }
 
-    public void setAccountOperations(Set<AccountOperation> accountOperations) {
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
     }
 

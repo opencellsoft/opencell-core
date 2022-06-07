@@ -1,6 +1,5 @@
 package org.meveo.apiv2.payments.resource;
 
-import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.apiv2.payments.PaymentPlanDto;
 import org.meveo.apiv2.payments.service.PaymentPlanApi;
 
@@ -12,7 +11,7 @@ public class PaymentPlanResourceImpl implements PaymentPlanResource {
     private PaymentPlanApi paymentPlanApi;
 
     @Override
-    public PaymentActionStatus create(PaymentPlanDto paymentPlanDto) {
-        return null;
+    public void create(PaymentPlanDto paymentPlanDto) {
+        paymentPlanApi.create(paymentPlanDto);
     }
 }
