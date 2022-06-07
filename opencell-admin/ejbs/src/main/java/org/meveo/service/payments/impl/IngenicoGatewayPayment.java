@@ -45,6 +45,7 @@ import org.meveo.model.payments.MandatStateEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
 
@@ -142,6 +143,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     
     private ScriptInstanceService scriptInstanceService = null;
 
+    private ProviderService providerService = null;
+
     /**
      * Connect.
      */
@@ -174,6 +177,15 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     	scriptInstanceService = (ScriptInstanceService) EjbUtils.getServiceInterface(ScriptInstanceService.class.getSimpleName());
     	return scriptInstanceService;
     }
+
+    private ProviderService getProviderService() {
+    	if(providerService != null) {
+    		return providerService;
+    	}
+    	providerService = (ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName());
+    	return providerService;
+    }
+
     /**
      * Gets the client.
      *
@@ -485,8 +497,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
-			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
-
+			amountOfMoney.setCurrencyCode(getProviderService().getProvider().getCurrency().getCurrencyCode());
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount));
 			if("true".equals(paramBean().getProperty("ingenico.CreatePayment.includeDeviceData", "true"))) {
@@ -737,7 +748,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CustomerAccount customerAccount = paymentToken.getCustomerAccount();
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
-			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+			amountOfMoney.setCurrencyCode(getProviderService().getProvider().getCurrency().getCurrencyCode());
 
 			Address address = getBillingAddress(customerAccount);
 
