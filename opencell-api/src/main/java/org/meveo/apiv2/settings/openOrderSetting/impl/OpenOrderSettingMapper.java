@@ -29,8 +29,9 @@ public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput
         entity.setId(resource.getId());
         entity.setUseOpenOrders(resource.getUseOpenOrders());
         if(entity.getUseOpenOrders() == true) {
-
-            entity.setCode(resource.getCode());
+            if(resource.getCode() != null && !resource.getCode().isBlank()) {
+                entity.setCode(resource.getCode());
+            }
             entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
             entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
             entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
