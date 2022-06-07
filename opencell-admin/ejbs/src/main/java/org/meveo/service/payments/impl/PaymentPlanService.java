@@ -56,11 +56,11 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         // if endDate is given, check that value is correct and throw exception if not. If null, calculate it. endDate=startDate.addMonths(numberOfInstallments-1)
         LocalDate start = paymentPlanDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         if (paymentPlanDto.getEndDate() == null) {
-            paymentPlan.setEndDate(Date.from(start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            paymentPlan.setEndDate(Date.from(start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1L).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         } else {
             LocalDate end = paymentPlanDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-            if (!end.equals(start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1))) {
+            if (!end.equals(start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1L))) {
                 throw new BusinessApiException("Invalid end date '" + DateUtils.formatAsDate(paymentPlanDto.getEndDate()) + "', which should be equal to startDate.addMonths(numberOfInstallments-1)");
             }
 
