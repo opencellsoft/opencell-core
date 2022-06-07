@@ -12,9 +12,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
-import org.meveo.model.settings.OpenOrderSetting;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -49,5 +47,4 @@ public interface FinanceSettings extends Resource {
 
     @Nullable
     OpenOrderSettingInput getOpenOrderSetting();
-
 }
