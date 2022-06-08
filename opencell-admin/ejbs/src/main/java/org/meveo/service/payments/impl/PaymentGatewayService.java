@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -41,6 +42,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * The Class PaymentGatewayService.
@@ -50,6 +52,9 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class PaymentGatewayService extends BusinessService<PaymentGateway> {
 
+	@Inject
+	private ProviderService providerService;
+	
     /**
      * Gets the payment gateway.
      *
@@ -120,7 +125,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             
             log.info("paymenTypeValueIN:"+(paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType()));
             log.info("countryValueIN:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry()));
-            log.info("tradingCurrencyValueIN:"+(customerAccount.getTradingCurrency()));
+            log.info("tradingCurrencyValueIN:"+(providerService.getProvider().getCurrency()));
             log.info("cardTypeValueIN:"+(cardTypeToCheck));
             log.info("sellerIN:"+(seller == null ?  null : seller.getCode()));
             
