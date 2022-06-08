@@ -54,7 +54,7 @@ public enum InvoiceStatusEnum {
     /**
      * invoice is validated and cannot be edited anymore (this a final status)
      */
-    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT});
+    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT, REJECTED});
 
     
     private Integer id;
