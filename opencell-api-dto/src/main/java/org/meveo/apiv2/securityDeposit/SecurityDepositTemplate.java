@@ -18,7 +18,7 @@ public interface SecurityDepositTemplate extends Resource {
     @NotNull String getTemplateName();
 
     @Schema(description = "The Currency")
-    @NotNull
+    @Nullable
     Resource getCurrency();
 
     @Schema(description = "The Allow Validity Date")

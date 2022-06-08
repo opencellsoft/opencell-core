@@ -45,7 +45,7 @@ public class SecurityDeposit extends BusinessCFEntity {
     private SecurityDepositTemplate template;
 
     @ManyToOne
-    @JoinColumn(name = "currency_id", nullable = false)
+    @JoinColumn(name = "currency_id")
     private Currency currency;
 
     @ManyToOne

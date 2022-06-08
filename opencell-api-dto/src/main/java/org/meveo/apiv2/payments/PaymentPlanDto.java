@@ -7,6 +7,7 @@ import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.RecurrenceUnitEnum;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -36,13 +37,8 @@ public interface PaymentPlanDto {
     @NotNull
     Date getStartDate();
 
-    Date getEndDate();
-
     @NotNull
     RecurrenceUnitEnum getRecurringUnit();
-
-    @NotNull
-    PaymentPlanStatusEnum getStatus();
 
     @Schema(description = "List of Installment AccountOperation")
     @NotEmpty
@@ -50,4 +46,10 @@ public interface PaymentPlanDto {
 
     @NotNull
     Long getCustomerAccount();
+
+    @Nullable
+    PaymentPlanStatusEnum getStatus();
+
+    @Nullable
+    Date getEndDate();
 }

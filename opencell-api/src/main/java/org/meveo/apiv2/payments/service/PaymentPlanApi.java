@@ -27,6 +27,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -58,10 +59,18 @@ public class PaymentPlanApi extends BaseApi {
     @Inject
     private ProviderService providerService;
 
-    public void create(PaymentPlanDto paymentPlanDto) {
+    public Long create(PaymentPlanDto paymentPlanDto) {
         Provider provider = providerService.getProvider();
 
         // dto validation
+        if (!provider.isPaymentPlan()) {
+            throw new BusinessApiException("PaymentPlan not allowed");
+        }
+
+        if (paymentPlanDto.getNumberOfInstallments() <= 0) {
+            throw new BusinessApiException("Number of installments must be greater than 0");
+        }
+
         // 1- Remove duplicated AOs IDs if exists : done by field type java.util.Set
 
         // 1.1- Find CustomerAccount
@@ -83,7 +92,7 @@ public class PaymentPlanApi extends BaseApi {
         if (foundedAoIds.size() != aoIds.size()) {
             List<Long> diffs = new ArrayList<>(aoIds);
             diffs.removeAll(foundedAoIds);
-            throw new EntityDoesNotExistsException("Missing AOs on for customerAccount " + paymentPlanDto.getCustomerAccount() + " : " + diffs);
+            throw new EntityDoesNotExistsException("Missing AOs for customerAccount " + paymentPlanDto.getCustomerAccount() + " : " + diffs);
         }
 
         BigDecimal sumAmoutAos = BigDecimal.ZERO;
@@ -92,21 +101,21 @@ public class PaymentPlanApi extends BaseApi {
             // 4- For all AccoutingOperations :
 
             // 4.1- Amount > 0
-            if (ao.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new BusinessApiException("AcccountOperation " + ao.getId() + " amount should be greater than 0");
+            if (ao.getUnMatchingAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessApiException("AcccountOperation '" + ao.getCode() + "' amount should be greater than 0");
             }
 
             // 4.2- MatchingStatus in ("O","P")
             if (!(ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)) {
-                throw new BusinessApiException("AcccountOperation " + ao.getId() + " have an invalid matching status. Expected O or P given " + ao.getMatchingStatus());
+                throw new BusinessApiException("AcccountOperation '" + ao.getCode() + "' have an invalid matching status. Expected O or P given " + ao.getMatchingStatus());
             }
 
-            sumAmoutAos = sumAmoutAos.add(ao.getAmount());
+            sumAmoutAos = sumAmoutAos.add(ao.getUnMatchingAmount());
         }
 
         // 5- Sum of AO amounts must be equals to 'amountToRecover'
         if (sumAmoutAos.compareTo(paymentPlanDto.getAmountToRecover()) != 0) {
-            throw new BusinessApiException("Amount to recover must be equals to aos amount [AmountToRecover=" + paymentPlanDto.getAmountToRecover() + " - sum AOs amount=" + sumAmoutAos + "]");
+            throw new BusinessApiException("Amount to recover must be equal to AOs amount [AmountToRecover=" + paymentPlanDto.getAmountToRecover() + " - sum AOs amount=" + sumAmoutAos + "]");
         }
 
         // 6- 'amountToRecover' must be between minimumAllowedOriginalReceivableAmount and maximumAllowedOriginalReceivableAmount
@@ -119,16 +128,30 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         // 7- check that: amountToRecover = (amountPerInstallment* numberOfInstallments) + remaining
-        if (!Objects.equals(paymentPlanDto.getAmountToRecover(), paymentPlanDto.getAmountPerInstallment().multiply(BigDecimal.valueOf(paymentPlanDto.getNumberOfInstallments())).add(paymentPlanDto.getRemainingAmount()))) {
-            throw new BusinessApiException("Amount to recover '" + paymentPlanDto.getAmountToRecover() + "' must be equals this formula : amountToRecover = (amountPerInstallment * numberOfInstallments) + remaining");
+        BigDecimal expectedAmount = paymentPlanDto.getAmountPerInstallment().multiply(BigDecimal.valueOf(paymentPlanDto.getNumberOfInstallments())).add(paymentPlanDto.getRemainingAmount());
+        if (!Objects.equals(paymentPlanDto.getAmountToRecover(), expectedAmount)) {
+            throw new BusinessApiException("Amount to recover '" + paymentPlanDto.getAmountToRecover() + "' must be equal '" + expectedAmount + "'");
         }
 
         // 8- check that numberOfInstallments is less than the maximumPaymentPlanDuration
         if (paymentPlanDto.getNumberOfInstallments() > provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration()) {
-            throw new BusinessApiException("Number of installments '" + paymentPlanDto.getNumberOfInstallments() + " must be less than MaxPaymentPlanDuration '" + provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration() + "'");
+            throw new BusinessApiException("Number of installments '" + paymentPlanDto.getNumberOfInstallments() + "' must be less than MaxPaymentPlanDuration '" + provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration() + "'");
         }
 
-        paymentPlanService.create(paymentPlanDto, aos, customerAccount);
+        // if endDate is given, check that value is correct and throw exception if not. If null, calculate it. endDate=startDate.addMonths(numberOfInstallments-1)
+        LocalDate start = paymentPlanDto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date end = paymentPlanDto.getEndDate();
+        if (end == null) {
+            end = Date.from(start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1L).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } else {
+            LocalDate endDate = paymentPlanDto.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate expectedDate = start.plusMonths(paymentPlanDto.getNumberOfInstallments() - 1L);
+            if (!endDate.equals(expectedDate)) {
+                throw new BusinessApiException("Invalid end date '" + DateUtils.formatAsDate(paymentPlanDto.getEndDate()) + "', correct end date is '" + expectedDate + "'");
+            }
+        }
+
+        return paymentPlanService.create(paymentPlanDto, aos, customerAccount, end);
     }
 
 

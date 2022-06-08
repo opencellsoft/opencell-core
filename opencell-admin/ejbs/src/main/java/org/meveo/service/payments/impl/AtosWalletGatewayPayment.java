@@ -92,6 +92,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private RequestConfig requestConfig;   
     private PaymentMethodService paymentMethodService;
     private ScriptInstanceService scriptInstanceService = null;
+    private ProviderService providerService;
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expiryDate, String issueNumber,
@@ -364,7 +365,10 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion,boolean isPayment) {
 		WalletOrderRequest request = new WalletOrderRequest();
 		request.setAmount(String.valueOf(amount));
-		request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
+
+		Provider provider = providerService().getProvider();
+        
+        request.setCurrencyCode(Currency.valueOf(provider.getCurrency().getCurrencyCode()).getCode());
 		request.setMerchantId(paymentGateway.getMarchandId());
 		request.setOrderChannel(OrderChannel.INTERNET.name());
 		if(isPayment) {
@@ -530,6 +534,14 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         }
 
         return paymentMethodService;
+    }
+
+    private ProviderService providerService() {
+        if (providerService == null) {
+        	providerService = (ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName());
+        }
+
+        return providerService;
     }
 
 	@Override

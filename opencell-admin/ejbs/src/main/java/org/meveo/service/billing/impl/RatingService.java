@@ -707,32 +707,31 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-        BigDecimal priceTax = null;
         
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
         if (ppmVersion != null) {
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
-                    priceTax = ppmVersion.getAmountWithoutTax();
+                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
                 } else {
-                    priceTax = ppmVersion.getAmountWithTax();
+                	priceWithoutTax = ppmVersion.getAmountWithTax();
                 }
                 if (ppmVersion.getPriceEL() != null) {
-                    priceTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceTax);
-                    if (priceTax == null) {
+                	priceWithoutTax = evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                    if (priceWithoutTax == null) {
                         throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getPriceEL());
                     }
                 }
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
-                    priceTax = pricePlanMatrixLine.getPriceWithoutTax();
+                	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                     String amountEL = ppmVersion.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                        priceTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceTax);
+                    	priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
-                if (priceTax == null) {
+                if (priceWithoutTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }

@@ -11,7 +11,7 @@ public class PaymentPlanResourceImpl implements PaymentPlanResource {
     private PaymentPlanApi paymentPlanApi;
 
     @Override
-    public void create(PaymentPlanDto paymentPlanDto) {
-        paymentPlanApi.create(paymentPlanDto);
+    public Long create(PaymentPlanDto paymentPlanDto) {
+        return paymentPlanApi.create(paymentPlanDto);
     }
 }
