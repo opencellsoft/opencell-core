@@ -109,7 +109,7 @@ public abstract class BaseCrudVersionedApi<E extends BusinessEntity, T extends B
 
         handleMissingParameters();
 
-        BusinessEntity entity = ps.findByCodeBestValidityMatch(code, validFrom, validTo);
+        BusinessEntity entity = ps.findByCode(code, validFrom, validTo);
         if (entity == null) {
             String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(entityClass,

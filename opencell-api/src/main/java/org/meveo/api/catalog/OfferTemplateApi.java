@@ -237,7 +237,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         handleMissingParametersAndValidate(postData);
 
-        OfferTemplate offerTemplate = findOfferTemplate(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
+        if (offerTemplate == null) {
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
+                    + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
+        }
 
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getNewValidFrom(), postData.getNewValidTo(), offerTemplate.getId(),
             true);
@@ -706,7 +711,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             handleMissingParameters();
         }
 
-        OfferTemplate offerTemplate = findOfferTemplate(code, validFrom, validTo);
+        OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
+        if (offerTemplate == null) {
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class,
+                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
+        }
 
         return fromOfferTemplate(offerTemplate, inheritCF,Boolean.TRUE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan,Boolean.FALSE,Boolean.FALSE,null);
     }
@@ -1027,7 +1037,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
-    	OfferTemplate offerTemplate = findOfferTemplate(offerTemplateCode, validFrom, validTo);
+    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
@@ -1038,8 +1048,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         if (status == null)
             missingParameters.add("status");
         handleMissingParameters();
-        OfferTemplate offerTemplate = findOfferTemplate(offerTemplateCode, validFrom, validTo);
-
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
+        if (offerTemplate == null)
+            throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
         if(LifeCycleStatusEnum.ACTIVE.equals(status)) {
         	if(offerTemplate.getOfferComponents().isEmpty()) {
     			throw new MeveoApiException("Offer Template code " + offerTemplateCode + " doesn't have product");
@@ -1149,10 +1160,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private OfferTemplate findOfferTemplate(String offerCode, Date validFrom, Date validTo) {
-    	var offerTemplate = offerTemplateService.findByCodeBestValidityMatch(offerCode, validFrom, validTo);
+    	var offerTemplate = offerTemplateService.findByCode(offerCode, validFrom, validTo);
     	String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
         if(offerTemplate == null)
-        	 throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode + "and validity dates from:" + DateUtils.formatDateWithPattern(validFrom, datePattern) + " - to: "
+        	 throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / "
                      + DateUtils.formatDateWithPattern(validTo, datePattern));
         return offerTemplate;
     }
