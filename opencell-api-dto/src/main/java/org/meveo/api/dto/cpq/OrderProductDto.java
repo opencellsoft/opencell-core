@@ -93,7 +93,7 @@ public class OrderProductDto extends BaseEntityDto{
     private ProductActionTypeEnum actionType;
 	
 	@Schema(description = "The Instance Status Enum")
-    private InstanceStatusEnum instanceStatus;
+    private InstanceStatusEnum status;
     
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
 
@@ -121,7 +121,7 @@ public class OrderProductDto extends BaseEntityDto{
 		actionType=orderProduct.getProductActionType();
 		terminationReasonCode=orderProduct.getTerminationReason()!=null?orderProduct.getTerminationReason().getCode():null;
 		terminationDate=orderProduct.getTerminationDate();
-		instanceStatus=orderProduct.getStatus();
+		status=orderProduct.getStatus();
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -347,12 +347,12 @@ public class OrderProductDto extends BaseEntityDto{
 
 
 	public InstanceStatusEnum getInstanceStatus() {
-		return instanceStatus;
+		return status;
 	}
 
 
-	public void setInstanceStatus(InstanceStatusEnum instanceStatus) {
-		this.instanceStatus = instanceStatus;
+	public void setInstanceStatus(InstanceStatusEnum status) {
+		this.status = status;
 	}
 	
 }
