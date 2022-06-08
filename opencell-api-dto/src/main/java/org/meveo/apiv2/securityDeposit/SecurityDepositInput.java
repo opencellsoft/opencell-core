@@ -26,7 +26,7 @@ public interface SecurityDepositInput extends Resource {
     @NotNull
     Resource getTemplate();
 
-    @NotNull
+    @Nullable
     Resource getCurrency();
 
     @NotNull

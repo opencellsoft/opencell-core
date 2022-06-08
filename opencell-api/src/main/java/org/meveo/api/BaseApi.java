@@ -238,7 +238,7 @@ public abstract class BaseApi {
 
         handleMissingParameters();
     }
-    
+
     protected void checkAllowEntityCodeUpdate(BaseEntityDto dto) throws MeveoApiException {
         if (dto instanceof BusinessEntityDto) {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
@@ -695,7 +695,15 @@ public abstract class BaseApi {
             sb.delete(sb.length() - 1, sb.length());
 
             try {
-                throw new InvalidParameterException(sb.toString());
+                if (sb.indexOf(" must not be null") != -1) {
+                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" must not be null")));
+                }
+                else if (sb.indexOf(" ne peut pas être nul") != -1) {
+                    throw new MissingParameterException(sb.substring(0, sb.indexOf(" ne peut pas être nul")));
+                }
+                else {
+                    throw new InvalidParameterException(sb.toString());
+                }
             } finally {
                 missingParameters.clear(); // when exception, clear missingParameters bag to avoid inconsistency MISSING_PARAM exception for next invoke
             }
