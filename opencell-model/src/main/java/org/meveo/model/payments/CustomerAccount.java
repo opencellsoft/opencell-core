@@ -23,8 +23,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -66,6 +68,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.payments.plan.PaymentPlan;
 
 /**
  * Customer Account
@@ -258,6 +261,12 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "general_client_account_id")
 	private AccountingCode generalClientAccount;
+
+	/**
+	 * Associated accountingScheme.AccountingEntry
+	 */
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+	private Set<PaymentPlan> paymentPlans = new HashSet<>();
 
 	/**
 	 * This method is called implicitly by hibernate, used to enable encryption for
@@ -787,5 +796,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
 	public void setGeneralClientAccount(AccountingCode generalClientAccount) {
 		this.generalClientAccount = generalClientAccount;
+	}
+
+	public Set<PaymentPlan> getPaymentPlans() {
+		return paymentPlans;
+	}
+
+	public void setPaymentPlans(Set<PaymentPlan> paymentPlans) {
+		this.paymentPlans = paymentPlans;
 	}
 }

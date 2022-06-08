@@ -53,6 +53,6 @@ public interface PaymentPlanResource {
                             )
                     )}
     )
-    void create(PaymentPlanDto paymentPlanDto);
+    Long create(PaymentPlanDto paymentPlanDto);
 
 }

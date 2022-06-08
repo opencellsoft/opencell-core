@@ -368,7 +368,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         reloadOperation.setCode("RELOAD");
         reloadOperation.setOperationDate(new Date());
         reloadOperation.setQuantity(BigDecimal.ONE);
-        reloadOperation.setCurrency(entity.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrency());
+        reloadOperation.setCurrency(entity.getBillingAccount().getTradingCurrency().getCurrency());
         reloadOperation.setWallet(entity.getWalletInstance(selectedWalletCode));
         reloadOperation.setDescription("reload");
         reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());

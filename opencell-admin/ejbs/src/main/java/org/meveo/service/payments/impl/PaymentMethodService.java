@@ -45,6 +45,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * PaymentMethod service implementation.
@@ -75,6 +76,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
 	@Inject
 	private SellerService sellerService;
+
+	@Inject
+	private ProviderService providerService;
 
 	private boolean automaticMandateCreation;
 
@@ -402,8 +406,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 			}
 		}
 
-        if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
-            hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+        if ( ( providerService.getProvider().getCurrency() != null ) && (!StringUtils.isBlank(providerService.getProvider().getCurrency().getCurrencyCode()))) {
+            hostedCheckoutInput.setCurrencyCode(providerService.getProvider().getCurrency().getCurrencyCode());
         }
         if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
