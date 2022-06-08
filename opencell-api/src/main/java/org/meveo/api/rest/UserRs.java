@@ -222,6 +222,8 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all users.",
+            tags = { "User management" })
     UsersDto list();
 
     /**
