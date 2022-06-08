@@ -10244,4 +10244,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='ICAT_SECURITY_DEPOSIT'</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-7750_20220608" author="ZBariki">
+		<update tableName="open_order_template">
+			<column name="status" valueComputed="upper(status)"/>
+			<where>status IS NOT NULL</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
