@@ -292,8 +292,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
 			if(dunningLevelInstance.isPresent() && pauseUntil != null && pauseDate.isAfter(endDate)) {
-                throw new BusinessApiException("Collection Plan with id " + collectionPlanToPause.getId()
-                        + " cannot be paused, the pause until date is after the planned trigger date of the last level");
+                throw new BusinessApiException("Collection Plan cannot be paused, the pause until date is after the planned date for the last dunning level");
 			}
 		}
 		
