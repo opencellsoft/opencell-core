@@ -80,6 +80,7 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderContactService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
@@ -158,6 +159,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private ProviderContactService providerContactService;
 
+    @Inject
+    private ProviderService providerService;
+    
     @Inject
     private TagService tagService;
     
@@ -415,8 +419,13 @@ public class BillingAccountApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
             }
             billingAccount.setTradingCurrency(tradingCurrency);
-        }else {
+        }else if(billingAccount.getCustomerAccount().getTradingCurrency() != null) {
             billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
+        }else {
+        	if(providerService.getProvider().getCurrency() != null) {
+                TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(providerService.getProvider().getCurrency().getCurrencyCode());
+                billingAccount.setTradingCurrency(tradingCurrency);
+        	}
         }
         
         if (Objects.nonNull(postData.getPaymentMethod())) {

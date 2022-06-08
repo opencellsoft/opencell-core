@@ -80,7 +80,6 @@ public class BillingAccountDto extends AccountDto {
     protected String country;
 
     /** The currency. */
-    @XmlElement(required = true)
     @Schema(description = "The trading currency")
     private String tradingCurrency;
     
