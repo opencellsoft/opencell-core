@@ -68,7 +68,7 @@ public class ProductChargeInstance extends ChargeInstance {
         this.subscription = productInstance.getSubscription();
         this.setSeller(productInstance.getSeller());
         this.setCountry(userAccount.getBillingAccount().getTradingCountry());
-        this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
+        this.setCurrency(userAccount.getBillingAccount().getTradingCurrency());
         this.productInstance = productInstance;
         this.status = InstanceStatusEnum.ACTIVE;
         this.setQuantity(productInstance.getQuantity() == null ? BigDecimal.ONE : productInstance.getQuantity());
