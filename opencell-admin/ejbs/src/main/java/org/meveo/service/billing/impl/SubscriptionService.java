@@ -346,6 +346,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
                 serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber);
+                // INTRD-5666: for services with subscription dates in futurs, they should be passed to terminated
+                // immediately since the whole sub is terminated
+                if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+                    serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                    serviceInstanceService.update(serviceInstance);
+                }
+
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
