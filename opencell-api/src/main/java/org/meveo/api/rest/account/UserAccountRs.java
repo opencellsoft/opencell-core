@@ -152,6 +152,8 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all user accounts.",
+            tags = { "User account management" })
     UserAccountsResponseDto listGetAll();
 
     /**
