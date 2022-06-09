@@ -79,13 +79,6 @@ public interface InvoiceLine extends Resource {
 	BigDecimal getUnitPrice();
 
 	/**
-	 * @return the functionalUnitPrice
-	 */
-	@Schema(description = "The functional unit price")
-	@Nullable
-	BigDecimal getFunctionalUnitPrice();
-
-	/**
 	 * @return the discountRate
 	 */
 	@Schema(description = "The discount rate")

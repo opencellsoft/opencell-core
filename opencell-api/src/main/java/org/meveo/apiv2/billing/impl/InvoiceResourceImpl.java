@@ -131,21 +131,6 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
 
-		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
-				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
-				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
-						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
-						.map(matchingCode -> matchingCode.getMatchingAmounts())
-						.flatMap(Collection::stream)
-						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
-						.collect(Collectors.toSet())
-				)
-				.flatMap(Collection::stream)
-				.distinct()
-				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
-				.collect(Collectors.toSet());
-		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();*/
-
 		Set<InvoiceMatchedOperation> result = new HashSet<>();
 
 		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
@@ -246,7 +231,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
-		if(invoiceLineInput.getSkipValidation()==null || !invoiceLineInput.getSkipValidation()) {
+		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
@@ -382,7 +367,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
     @Override
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<>();
         for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }

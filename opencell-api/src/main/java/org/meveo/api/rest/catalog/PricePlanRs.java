@@ -152,6 +152,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all price plans.",
+            tags = { "Price Plan" })
     PricePlanMatrixesResponseDto listGetAll();
 
     /**
