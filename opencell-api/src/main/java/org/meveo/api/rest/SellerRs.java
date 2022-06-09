@@ -159,11 +159,11 @@ public interface SellerRs extends IBaseRs {
     @GET
     @Path("/list")
 	@Operation(
-			summary=" Search for seller with a given code.  ",
-			description=" Search for seller with a given code.  ",
+			summary="List all sellers.",
+			description="List all sellers.",
 			operationId="    GET_Seller_list",
 			responses= {
-				@ApiResponse(description=" list of seller ",
+				@ApiResponse(description=" list of sellers ",
 						content=@Content(
 									schema=@Schema(
 											implementation= SellerResponseDto.class
