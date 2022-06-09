@@ -1,6 +1,5 @@
 package org.meveo.apiv2.ordering.resource.openOrderTemplate;
 
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
 
@@ -10,27 +9,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResource{
+public class OpenOrderTemplateResourceImpl implements OpenOrderTemplateResource {
 
     @Inject
     private OpenOrderTemplateApiService openOrderTemplateApiService;
 
-
-
     @Override
-    public Response createOpenOrderTemplate(OpenOrderTemplateInput openOrderTemplateInput){
+    public Response createOpenOrderTemplate(OpenOrderTemplateInput openOrderTemplateInput) {
 
         OpenOrderTemplateInput openOrderTemplate = openOrderTemplateApiService.create(openOrderTemplateInput);
         return buildResponse(openOrderTemplate);
     }
 
-
-
     @Override
-    public Response updateOpenOrderTemplate( String code, OpenOrderTemplateInput openOrderTemplateInput){
-        OpenOrderTemplateInput openOrderTemplate =  openOrderTemplateApiService.update(code, openOrderTemplateInput);
-         return buildResponse(openOrderTemplate);
+    public Response updateOpenOrderTemplate(String code, OpenOrderTemplateInput openOrderTemplateInput) {
+        OpenOrderTemplateInput openOrderTemplate = openOrderTemplateApiService.update(code, openOrderTemplateInput);
+        return buildResponse(openOrderTemplate);
     }
 
     @Override
@@ -41,10 +35,8 @@ public class  OpenOrderTemplateResourceImpl  implements OpenOrderTemplateResourc
 
     private Response buildResponse(OpenOrderTemplateInput openOrderTemplateInput) {
         Map<String, Object> response = new HashMap<>();
-        response.put("actionStatus", Collections.singletonMap("status","SUCCESS"));
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
         response.put("openOrderTemplate", openOrderTemplateInput);
         return Response.ok().entity(response).build();
     }
-
-
 }

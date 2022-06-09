@@ -91,9 +91,9 @@ public class RealtimeChargingService {
     public Amounts getApplicationPrice(Seller seller, BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal quantity, String param1, String param2,
             String param3) throws BusinessException {
 
-        TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
+        TradingCurrency currency = ba.getTradingCurrency();
         if (currency == null) {
-            throw new IncorrectChargeTemplateException("no currency exists for customerAccount id=" + ba.getCustomerAccount().getId());
+            throw new IncorrectChargeTemplateException("no currency exists for billingAccount id=" + ba.getId());
         }
 
         TradingCountry tradingCountry = ba.getTradingCountry();
@@ -189,7 +189,7 @@ public class RealtimeChargingService {
             throws BusinessException {
 
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(), ba.getTradingCountry(),
-            ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
+				ba.getTradingCurrency(), chargeTemplate);
 
         Date nextApplicationDate = recurringRatingService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
 

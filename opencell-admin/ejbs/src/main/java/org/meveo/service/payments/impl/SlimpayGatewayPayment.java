@@ -45,6 +45,7 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,8 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
     
+    private ProviderService providerService = (ProviderService) EjbUtils.getServiceInterface("providerService");
+
     private PaymentGateway paymentGateway = null; 
 
     private String getApiUrl() {
@@ -226,7 +229,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         try {
             String label = additionalParams != null ? (String) additionalParams.get("invoiceNumber") : null;
             log.trace("doPaymentSepaOrRefundSepa request:" + (getSepaPaymentRequest(getUserId(), paymentToken.getMandateIdentification(), ctsAmount,
-                paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), getScheme(), label).toString()));
+            		providerService.getProvider().getCurrency().getCurrencyCode(), getScheme(), label).toString()));
 
             if (isCheckMandatBeforePayment()) {
                 MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification(), null);
@@ -239,7 +242,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
             String operationName = isPayment ? "create-payins" : "create-payouts";
             Follow follow = new Follow.Builder(new CustomRel(getRelns() + operationName)).setMethod(Method.POST)
                 .setMessageBody(EntityConverter.jsonToStringEntity(getSepaPaymentRequest(getUserId(), paymentToken.getMandateIdentification(), ctsAmount,
-                    paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), getScheme(), label)))
+                		providerService.getProvider().getCurrency().getCurrencyCode(), getScheme(), label)))
                 .build();
 
             try {

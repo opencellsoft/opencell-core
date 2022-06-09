@@ -286,7 +286,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         this.subscription = subscription;
         this.seller = subscription.getSeller();
         this.country = userAccount.getBillingAccount().getTradingCountry();
-        this.currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
+        this.currency = userAccount.getBillingAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;
         this.status = status != null ? status : InstanceStatusEnum.ACTIVE;
         this.orderNumber = subscription.getOrderNumber();

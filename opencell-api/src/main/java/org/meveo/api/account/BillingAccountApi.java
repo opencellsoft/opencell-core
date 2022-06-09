@@ -80,6 +80,7 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderContactService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
@@ -159,6 +160,9 @@ public class BillingAccountApi extends AccountEntityApi {
     private ProviderContactService providerContactService;
 
     @Inject
+    private ProviderService providerService;
+    
+    @Inject
     private TagService tagService;
     
     @Inject
@@ -197,9 +201,6 @@ public class BillingAccountApi extends AccountEntityApi {
             if (postData.getMailingType() != null && StringUtils.isBlank(postData.getEmailTemplate())) {
                 missingParameters.add("emailTemplate");
             }
-        }
-        if (StringUtils.isBlank(postData.getTradingCurrency())) {
-            missingParameters.add("tradingCurrency");
         }
 
         handleMissingParameters(postData);
@@ -412,12 +413,19 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
-        if (postData.getTradingCurrency() != null) {
+        if (!StringUtils.isBlank(postData.getTradingCurrency())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getTradingCurrency());
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
             }
             billingAccount.setTradingCurrency(tradingCurrency);
+        }else if(billingAccount.getCustomerAccount().getTradingCurrency() != null) {
+            billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
+        }else {
+        	if(providerService.getProvider().getCurrency() != null) {
+                TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(providerService.getProvider().getCurrency().getCurrencyCode());
+                billingAccount.setTradingCurrency(tradingCurrency);
+        	}
         }
         
         if (Objects.nonNull(postData.getPaymentMethod())) {

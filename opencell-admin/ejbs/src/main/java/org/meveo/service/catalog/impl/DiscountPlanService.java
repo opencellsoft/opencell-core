@@ -320,7 +320,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	                discountWalletOperation.setDescription(discountDescription);
 	                discountWalletOperation.setChargeInstance(chargeInstance);
 	                discountWalletOperation.setInputQuantity(quantity);
-	                discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+	                discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getTradingCurrency().getCurrency());
 	                if(!isVirtual) {
 	                	if(walletOperation != null && walletOperation.getId() != null)
 	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());

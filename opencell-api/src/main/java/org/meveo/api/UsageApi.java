@@ -82,7 +82,7 @@ public class UsageApi extends BaseApi {
 			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
 		}
 		UsageChargeAggregateResponseDto  response = new UsageChargeAggregateResponseDto();
-		String currencyCode = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode();
+		String currencyCode = userAccount.getBillingAccount().getTradingCurrency().getCurrencyCode();
 		List<Object[]>  rows = walletOperationService.openWalletOperationsByCharge(userAccount.getWallet());
 		for(Object[] row : rows){
 			try{
