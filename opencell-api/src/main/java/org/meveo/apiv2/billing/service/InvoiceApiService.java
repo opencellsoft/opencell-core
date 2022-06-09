@@ -101,13 +101,13 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Override
 	public Optional<Invoice> update(Long id, Invoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Optional<Invoice> patch(Long id, Invoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
@@ -297,7 +297,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
-        List<String> idsInvoiceLineNotFound = new ArrayList<String>();
+        List<String> idsInvoiceLineNotFound = new ArrayList<>();
         for(Long lineId : invoiceLineIds) {
             org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.findById(lineId);
             if (invoiceLine == null) {                
@@ -369,10 +369,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			if (filter == null && StringUtils.isBlank(filterDto.getInputXml())) {
 				throw new NotFoundException("Filter with code does not exists : " + filterDto.getCode());
 			}
-			if (filter != null && !filter.getShared()) {
-				if (!filter.getAuditable().isCreator(currentUser)) {
-					throw new BadRequestException("INVALID_FILTER_OWNER");
-				}
+			if (filter != null && !filter.getShared() && !filter.getAuditable().isCreator(currentUser)) {
+				throw new BadRequestException("INVALID_FILTER_OWNER");
 			}
 		}
 		return filter;
@@ -415,9 +413,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 	public Long quarantineInvoice(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {       
-        Long nextBillingRun = invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
-        return nextBillingRun;
+        return invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
     }
-
-
 }
