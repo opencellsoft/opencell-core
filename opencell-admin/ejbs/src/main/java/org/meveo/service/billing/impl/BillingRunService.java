@@ -1381,11 +1381,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	    	            	
 			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle=" + 
 			            													(billingCycle != null ? billingCycle.getDescription() : " ") + 
-			            													"; invoice date="+billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "" +")");  
+			            													"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "") +")");  
 			            	
 			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ 
 			            													(billingCycle != null ? billingCycle.getDescription() : " ") +
-			            													"; invoice date="+billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : ""+")"); 
+			            													"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "") +")"); 
 	    	            	
 	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
@@ -1428,10 +1428,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		            	
 		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ 
 														            	(billingCycle != null ? billingCycle.getDescription() : " ") +
-														            	"; invoice date="+billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : ""+")");  
+														            	"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")");  
 		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ 
 														            	(billingCycle != null ? billingCycle.getDescription() : " ") +
-														            	"; invoice date="+billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : ""+")"); 
+														            	"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
 		            	
 		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 		            	newDescriptionsTranslated.add(languageDescriptionEn);
