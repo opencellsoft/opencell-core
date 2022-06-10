@@ -76,7 +76,7 @@ public class TradingCurrency extends EnableEntity {
     @Transient
     String currencyCode;
 
-    @Column(name = "symbol", length = 255)
+    @Column(name = "symbol")
     @Size(max = 255)
     private String symbol;
 

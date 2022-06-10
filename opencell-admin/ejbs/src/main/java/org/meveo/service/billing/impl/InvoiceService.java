@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
+import static java.math.BigDecimal.ONE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -143,7 +144,6 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
@@ -4665,6 +4665,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Long> excludePrepaidInvoices(Collection<Long> invoicesIds) {
         return getEntityManager().createNamedQuery("Invoice.excludePrpaidInvoices").setParameter("invoicesIds", invoicesIds).getResultList();
 
+    }
+
+    /**
+     * Refresh invoice amounts and invoice lines amounts
+     * @param invoice invoice to refresh
+     * @param currentRate current rate
+     * @param currentRateFromDate current rate from date
+     * @return Refreshed invoice
+     */
+    public Invoice refreshAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
+        if(currentRate != null) {
+            invoice.setLastAppliedRate(currentRate);
+        } else {
+            invoice.setLastAppliedRate(ONE);
+        }
+        if(currentRateFromDate != null) {
+            invoice.setLastAppliedRateDate(currentRateFromDate);
+        } else {
+            invoice.setLastAppliedRateDate(invoice.getInvoiceDate());
+        }
+        invoice.getInvoiceLines()
+                .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
+        return update(invoice);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -70,7 +71,7 @@ public class PaymentPlanCreateApiTest {
 
         List<AccountOperation> aos = new ArrayList<>();
         aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
@@ -94,8 +95,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
@@ -119,8 +120,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(null);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -148,8 +149,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), new HashSet<>());
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -177,8 +178,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, false));
@@ -206,8 +207,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -235,8 +236,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -264,8 +265,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(-1), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(-1), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -293,8 +294,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(0), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(0), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -322,8 +323,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.C,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.C, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
@@ -350,8 +351,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(500), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(500), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
@@ -379,8 +380,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(250), new BigDecimal(1000), 360, true));
@@ -408,8 +409,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(200), 360, true));
@@ -437,8 +438,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
@@ -466,8 +467,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 9, true));
@@ -495,8 +496,8 @@ public class PaymentPlanCreateApiTest {
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O,"A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P,"B"));
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
@@ -528,6 +529,17 @@ public class PaymentPlanCreateApiTest {
                     });
                 });
         return new PaymentPlanDto() {
+            @Override
+            public String getCode() {
+                return "CODE-PP";
+            }
+
+            @Nullable
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
             @Override
             public BigDecimal getAmountToRecover() {
                 return amountToRecover;
@@ -574,7 +586,7 @@ public class PaymentPlanCreateApiTest {
             }
 
             @Override
-            public Set<InstallmentAccountOperation> getInstallmentAccountOperations() {
+            public Set<InstallmentAccountOperation> getTargetedAos() {
                 return aos;
             }
 
