@@ -13246,7 +13246,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="#INTRD-7399_20220603" author="aelmalki">
+    <changeSet id="#INTRD-7399_20220603" author="aelmalki" failOnError="false">
         <createSequence sequenceName="ar_payment_plan_seq"/>
         <createTable tableName="ar_payment_plan">
             <!-- Generic fields -->
