@@ -25,6 +25,7 @@ import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         paymentPlan.setNumberOfInstallments(paymentPlanDto.getNumberOfInstallments());
         paymentPlan.setAmountPerInstallment(paymentPlanDto.getAmountPerInstallment());
         paymentPlan.setAmountToRecover(paymentPlanDto.getAmountToRecover());
-        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount());
+        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount() == null ? BigDecimal.ZERO : paymentPlanDto.getRemainingAmount());
     }
 
 
