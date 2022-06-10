@@ -18,7 +18,7 @@
 package org.meveo.model.payments.plan;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -43,7 +43,7 @@ import java.util.List;
 @Table(name = "ar_payment_plan")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {@org.hibernate.annotations.Parameter(name = "sequence_name", value = "ar_payment_plan_seq")})
-public class PaymentPlan extends AuditableEntity {
+public class PaymentPlan extends BusinessEntity {
 
     @Column(name = "amount_to_recover", nullable = false)
     public BigDecimal amountToRecover;
@@ -76,10 +76,16 @@ public class PaymentPlan extends AuditableEntity {
     public PaymentPlanStatusEnum status = PaymentPlanStatusEnum.DRAFT;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ar_payment_plan_acc_operations",
+    @JoinTable(name = "ar_payment_plan_created_aos",
             joinColumns = @JoinColumn(name = "payment_plan_id"),
             inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
-    private List<AccountOperation> accountOperations = new ArrayList<>();
+    private List<AccountOperation> createdAos = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "ar_payment_plan_targeted_aos",
+            joinColumns = @JoinColumn(name = "payment_plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
+    private List<AccountOperation> targetedAos = new ArrayList<>();
 
     /**
      * Customer account for account operation
@@ -160,14 +166,6 @@ public class PaymentPlan extends AuditableEntity {
         this.status = status;
     }
 
-    public List<AccountOperation> getAccountOperations() {
-        return accountOperations;
-    }
-
-    public void setAccountOperations(List<AccountOperation> accountOperations) {
-        this.accountOperations = accountOperations;
-    }
-
     public CustomerAccount getCustomerAccount() {
         return customerAccount;
     }
@@ -176,4 +174,19 @@ public class PaymentPlan extends AuditableEntity {
         this.customerAccount = customerAccount;
     }
 
+    public List<AccountOperation> getCreatedAos() {
+        return createdAos;
+    }
+
+    public void setCreatedAos(List<AccountOperation> createdAos) {
+        this.createdAos = createdAos;
+    }
+
+    public List<AccountOperation> getTargetedAos() {
+        return targetedAos;
+    }
+
+    public void setTargetedAos(List<AccountOperation> targetedAos) {
+        this.targetedAos = targetedAos;
+    }
 }

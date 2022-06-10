@@ -25,6 +25,7 @@ import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -35,10 +36,33 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         // To entity
         PaymentPlan paymentPlan = new PaymentPlan();
 
-        paymentPlan.setCustomerAccount(customerAccount);
-        paymentPlan.setAccountOperations(aos);
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+        paymentPlan.setStatus(PaymentPlanStatusEnum.DRAFT); // Default status
 
-        paymentPlan.setStatus(PaymentPlanStatusEnum.DRAFT);
+        super.create(paymentPlan);
+
+        return paymentPlan.getId();
+
+    }
+
+    public Long update(Long id, PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
+        // To entity
+        PaymentPlan paymentPlan = findById(id);
+
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+
+        super.update(paymentPlan);
+
+        return paymentPlan.getId();
+
+    }
+
+    private void build(PaymentPlan paymentPlan, PaymentPlanDto paymentPlanDto, CustomerAccount customerAccount, List<AccountOperation> aos, Date end) {
+        paymentPlan.setCode(paymentPlanDto.getCode());
+        paymentPlan.setDescription(paymentPlanDto.getDescription());
+        paymentPlan.setCustomerAccount(customerAccount);
+        paymentPlan.setTargetedAos(aos);
+
         paymentPlan.setRecurringUnit(paymentPlanDto.getRecurringUnit());
         paymentPlan.setActionOnRemainingAmount(paymentPlanDto.getActionOnRemainingAmount());
 
@@ -48,12 +72,7 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         paymentPlan.setNumberOfInstallments(paymentPlanDto.getNumberOfInstallments());
         paymentPlan.setAmountPerInstallment(paymentPlanDto.getAmountPerInstallment());
         paymentPlan.setAmountToRecover(paymentPlanDto.getAmountToRecover());
-        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount());
-
-        super.create(paymentPlan);
-
-        return paymentPlan.getId();
-
+        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount() == null ? BigDecimal.ZERO : paymentPlanDto.getRemainingAmount());
     }
 
 

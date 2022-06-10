@@ -20,12 +20,18 @@ import java.util.Set;
 public interface PaymentPlanDto {
 
     @NotNull
+    String getCode();
+
+    @Nullable
+    String getDescription();
+
+    @NotNull
     BigDecimal getAmountToRecover();
 
     @NotNull
     BigDecimal getAmountPerInstallment();
 
-    @NotNull
+    @Nullable
     BigDecimal getRemainingAmount();
 
     @NotNull
@@ -42,7 +48,7 @@ public interface PaymentPlanDto {
 
     @Schema(description = "List of Installment AccountOperation")
     @NotEmpty
-    Set<InstallmentAccountOperation> getInstallmentAccountOperations();
+    Set<InstallmentAccountOperation> getTargetedAos();
 
     @NotNull
     Long getCustomerAccount();
