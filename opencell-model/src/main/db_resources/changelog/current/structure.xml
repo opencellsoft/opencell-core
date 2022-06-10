@@ -13424,7 +13424,6 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
-</databaseChangeLog>
     <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius">
         <addColumn tableName="dwh_chart">
             <column name="role" type="varchar(50)"/>           
@@ -13457,7 +13456,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <renameColumn tableName="adm_secured_entity" oldColumnName="code" newColumnName="entity_code" columnDataType="varchar(255)"/>
         
         <sql>update ${db.schema.adapted}adm_secured_entity set id=nextval('adm_secured_entity_seq'), permission ='DELETE', user_name= (select u.username from ${db.schema.adapted}adm_user u where u.id=user_id)</sql>
-        <sql>insert into ${db.schema.adapted}adm_secured_entity (id, role_name, entity_code, entity_class, permission, disabled) (select nextval('adm_secured_entity_seq'), r.username, se.code, se.entity_class, 'DELETE', disabled from ${db.schema.adapted}adm_role u join ${db.schema.adapted}adm_role_secured_entity se on r.id=se.role_id)</sql>
+        <sql>insert into ${db.schema.adapted}adm_secured_entity (id, role_name, entity_code, entity_class, permission, disabled) (select nextval('adm_secured_entity_seq'), r.role_name, se.code, se.entity_class, 'DELETE', disabled from ${db.schema.adapted}adm_role r join ${db.schema.adapted}adm_role_secured_entity se on r.id=se.role_id)</sql>
                 
         <dropColumn tableName="adm_secured_entity" columnName="user_id"/>
         <addNotNullConstraint tableName="adm_secured_entity" columnName="id"/>
@@ -13490,7 +13489,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
         <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
-        <dropColumn tableName="adm_role" columnName="	"/>
+        <dropColumn tableName="adm_role" columnName="role_description"/>
         
     </changeSet>
 </databaseChangeLog>

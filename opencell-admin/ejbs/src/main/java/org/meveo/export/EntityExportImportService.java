@@ -131,7 +131,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.LazyDataModel;
@@ -210,9 +209,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
-
-    @Inject
-    private ElasticSearchIndexPopulationService esPopulationService;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -2413,7 +2409,6 @@ public class EntityExportImportService implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
-        esPopulationService.refreshCache(null);
         scriptInstanceService.refreshCache(null);
     }
 

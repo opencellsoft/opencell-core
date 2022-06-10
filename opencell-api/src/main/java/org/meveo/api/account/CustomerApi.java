@@ -18,10 +18,29 @@
 
 package org.meveo.api.account;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
-import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -34,10 +53,17 @@ import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -65,25 +91,18 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.*;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.tax.TaxCategoryService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * @author Edward P. Legaspi
@@ -237,7 +256,7 @@ public class CustomerApi extends AccountEntityApi {
 
         boolean isNew = customer.getId() == null;
 
-        if (!Strings.isEmpty(postData.getCustomerCategory())) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getCustomerCategory())) {
             CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
             if (customerCategory == null) {
                 throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
@@ -245,7 +264,7 @@ public class CustomerApi extends AccountEntityApi {
             customer.setCustomerCategory(customerCategory);
         }
 
-        if (!Strings.isEmpty(postData.getCustomerBrand())) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getCustomerBrand())) {
             if (StringUtils.isBlank(postData.getCustomerBrand())) {
                 customer.setCustomerBrand(null);
             } else {
@@ -257,7 +276,7 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        if (!Strings.isEmpty(postData.getSeller())) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
             Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());

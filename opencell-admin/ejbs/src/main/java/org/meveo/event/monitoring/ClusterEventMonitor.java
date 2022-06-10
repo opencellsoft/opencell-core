@@ -34,8 +34,6 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.index.ElasticClientConnection;
-import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -76,12 +74,6 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private JobExecutionService jobExecutionService;
-
-    @Inject
-    private ElasticClientConnection esConnection;
-
-    @Inject
-    private ElasticSearchIndexPopulationService esPopulationService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -140,18 +132,10 @@ public class ClusterEventMonitor implements MessageListener {
 
             if (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.enable) {
                 CustomEntityTemplate cet = customEntityTemplateService.findByCode(eventDto.getCode()); // Find by code instead of ID, so it would be added to a cache
-                if (esConnection.isEnabled()) {
-                    esPopulationService.addToIndexAndTypeCache(cet);
-                }
 
             } else if (eventDto.getAction() == CrudActionEnum.update) {
                 CustomEntityTemplate cet = customEntityTemplateService.findByCode(eventDto.getCode()); // Find by code instead of ID, so it would be added to a cache
-
-            } else if ((eventDto.getAction() == CrudActionEnum.remove || eventDto.getAction() == CrudActionEnum.disable) && esConnection.isEnabled()) {
-                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId()); // No need to add to cache, so just find by id
-                esPopulationService.removeFromIndexAndTypeCache(cet);
             }
-
         }
     }
 }

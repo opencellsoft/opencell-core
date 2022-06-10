@@ -47,7 +47,6 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.index.ElasticClient;
 
 /**
  * @author Wassim Drira
@@ -63,9 +62,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     @Inject
     private CustomTableCreatorService customTableCreatorService;
@@ -170,10 +166,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             }
         }
 
-        if (cet.isStoreInES()) {
-            elasticClient.createCETMapping(cet);
-        }
-
         if (createPermissions) {
             try {
                 roleService.create( new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
@@ -191,8 +183,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
         ParamBean paramBean = paramBeanFactory.getInstance();
         CustomEntityTemplate cetUpdated = super.update(cet);
-
-        elasticClient.createOrRemoveCETMapping(cet);
 
         customFieldsCache.addUpdateCustomEntityTemplate(cet, true);
 
@@ -223,9 +213,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         }
 
         customFieldsCache.removeCustomEntityTemplate(cet);
-
-        // Remove from ES
-        elasticClient.removeCETMapping(cet);
 
         clusterEventPublisher.publishEvent(cet, CrudActionEnum.remove);
 

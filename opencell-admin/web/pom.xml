@@ -313,6 +313,24 @@
         <dependency>
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-admin-ejbs</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.mail</groupId>
+                    <artifactId>jakarta.mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.spec.javax.xml.bind</groupId>
+                    <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.opencellsoft</groupId>
@@ -326,8 +344,15 @@
         <!-- Libraries included in JBoss -->
 
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -351,27 +376,40 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.ejb</groupId>
             <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.el</groupId>
             <artifactId>jboss-el-api_3.0_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
+
+
+      <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -379,10 +417,9 @@
         </dependency>
 
         <dependency>
-            <!-- <groupId>com.sun.faces</groupId> -->
-            <!-- <artifactId>jsf-api</artifactId> -->
             <groupId>org.jboss.spec.javax.faces</groupId>
             <artifactId>jboss-jsf-api_2.3_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -393,6 +430,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>antlr</groupId>
@@ -402,13 +440,16 @@
                     <groupId>org.javassist</groupId>
                     <artifactId>javassist</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-            <scope>provided</scope>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
         </dependency>
 
         <dependency>
@@ -425,8 +466,14 @@
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
+            <artifactId>resteasy-client</artifactId>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.spec.javax.xml.bind</groupId>
+                    <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -462,6 +509,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- <dependency> -->
@@ -524,7 +572,8 @@
 
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -533,9 +582,14 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.22</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -553,7 +607,7 @@
             <version>2.4.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Micro profile dependencies included in WF 18 -->
+        <!-- Micro profile dependencies included in WF 26 -->
         <dependency>
             <groupId>org.eclipse.microprofile.metrics</groupId>
             <artifactId>microprofile-metrics-api</artifactId>

@@ -25,7 +25,6 @@ import java.util.List;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -282,7 +281,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
+            if (t.getCause() instanceof BusinessException) {
                 log.info("delete was unsuccessful because entity is used in the system", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
             } else {

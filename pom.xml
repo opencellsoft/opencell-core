@@ -22,23 +22,21 @@
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ingenico-connect-sdk>6.25.0</version.ingenico-connect-sdk>
-        <version.paypal-sdk>LATEST</version.paypal-sdk>
-        <version.keycloak>17.0.0</version.keycloak>
-        <version.pdfbox>2.0.17</version.pdfbox>
+        <version.ingenico-connect-sdk>6.31.0</version.ingenico-connect-sdk>
+        <version.paypal-sdk>1.14.0</version.paypal-sdk>
+        <version.keycloak>18.0.0</version.keycloak>
+        <version.pdfbox>2.0.26</version.pdfbox>
         <version.barcode>2.1</version.barcode>
-        <version.stripe-sdk>18.4.0</version.stripe-sdk>
+        <version.stripe-sdk>20.124.0</version.stripe-sdk>
         <version.sips-payment-sdk>1.4.0</version.sips-payment-sdk>
-
         <jackson.version>2.11.3</jackson.version> <!-- wildfly 22 -->
         <dbtype>generic</dbtype>
 
-        <elasticsearch.version>6.6.2</elasticsearch.version>
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
-        <swagger.version>2.0.7</swagger.version>
-        <springfox.swagger.version>2.8.0</springfox.swagger.version>
-        <swagger.ui.version>2.8.0</swagger.ui.version>
+        <swagger.version>2.2.0</swagger.version>
+        <springfox.swagger.version>3.0.0</springfox.swagger.version>
+        <swagger.ui.version>3.0.0</swagger.ui.version>
 
         <sonar.projectKey>opencell-core</sonar.projectKey>
         <sonar.organization>opencellsoft</sonar.organization>
@@ -55,10 +53,10 @@
     </scm>
 
     <repositories>
-        <repository>
-            <id>jboss-repo</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-        </repository>
+        <!-- <repository> -->
+        <!-- <id>jboss-repo</id> -->
+        <!-- <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url> -->
+        <!-- </repository> -->
         <repository>
             <id>opencell-repo</id>
             <url>http://libs.opencellsoft.com/</url>
@@ -139,28 +137,29 @@
                 <artifactId>opencell-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.11</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-                <scope>provided</scope>
-            </dependency>
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
-                <version>2.1</version>
+                <version>2.9.0</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs-client</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -178,16 +177,23 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.2</version>
+                <scope>provided</scope> <!-- org.jboss.logging.commons-logging-jboss-logging equivalent -->
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.5.1</version>
+                <version>1.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.10</version>
+                <version>1.15</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -198,7 +204,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.19</version>
+                <version>1.21</version>
             </dependency>
             <dependency>
                 <groupId>org.beanio</groupId>
@@ -206,15 +212,9 @@
                 <version>2.1.0</version>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>2.0.1.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>javax.mail-api</artifactId>
-                <version>1.6.2</version>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
+                <version>1.6.5</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -237,7 +237,6 @@
                 <artifactId>reflections</artifactId>
                 <version>0.9.10</version>
             </dependency>
-
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections-maven</artifactId>
@@ -254,31 +253,31 @@
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
-                <version>3.5</version>
+                <version>3.8.0</version>
             </dependency>
 
             <dependency>
                 <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
-                <version>0.1.54</version>
+                <version>0.1.55</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ftpserver</groupId>
                 <artifactId>ftpserver-core</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
             </dependency>
 
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.16</version>
+                <version>1.4.19</version>
             </dependency>
 
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream-hibernate</artifactId>
-                <version>1.4.16</version>
+                <version>1.4.19</version>
             </dependency>
 
             <dependency>
@@ -295,28 +294,26 @@
             <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-vfs</artifactId>
-                <version>3.2.12.Final</version>
+                <version>3.2.15.Final</version>
                 <scope>provided</scope>
             </dependency>
-
-
 
             <dependency>
                 <groupId>org.mozilla</groupId>
                 <artifactId>rhino</artifactId>
-                <version>1.7.7.1</version>
+                <version>1.7.14</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>4.1.0</version>
+                <version>5.2.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>4.1.0</version>
+                <version>5.2.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
@@ -328,7 +325,7 @@
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
-                <version>6.8.0</version>
+                <version>6.19.1</version>
             </dependency>
 
             <dependency>
@@ -348,6 +345,7 @@
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
                 <version>1.1.6</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -389,33 +387,16 @@
             <dependency>
                 <groupId>com.lapis.jsfexporter</groupId>
                 <artifactId>export-source-primefaces</artifactId>
-                <version>1.0.2.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>6.6.1</version>
+                <version>1.0.3.Final</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>1.7</version>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>2.2</version>
+                <scope>provided</scope>
             </dependency>
 
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-csv</artifactId>
@@ -425,12 +406,6 @@
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-smile</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -448,6 +423,7 @@
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
@@ -457,14 +433,7 @@
             <dependency>
                 <groupId>javax.interceptor</groupId>
                 <artifactId>javax.interceptor-api</artifactId>
-                <version>1.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.ejb3</groupId>
-                <artifactId>jboss-ejb3-ext-api</artifactId>
-                <version>2.3.0.Final</version>
-                <scope>provided</scope>
+                <version>1.2.2</version>
             </dependency>
 
             <dependency>
@@ -487,27 +456,6 @@
                 <version>3.2.1</version>
             </dependency>
 
-            <!-- For testing -->
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>2.3.4</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.19.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>2.5.3</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
@@ -518,107 +466,27 @@
                 <artifactId>barcode4j</artifactId>
                 <version>${version.barcode}</version>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>2.23.0</version>
-            </dependency>
 
-            <!-- Added after migration of JEE8 and WF17, dependencies version is needed -->
-            <dependency>
-                <groupId>org.jboss.spec.javax.ws.rs</groupId>
-                <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-                <version>1.0.1.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>javax.persistence-api</artifactId>
-                <version>2.2</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>6.0.16.Final</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>5.3.20.Final</version>
-                <!-- DO NOT SET as provided scope as maven will fail -->
-            </dependency>
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
                 <version>0.9.6</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.servlet</groupId>
-                <artifactId>jboss-servlet-api_4.0_spec</artifactId>
-                <version>1.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
 
-            <dependency>
-                <groupId>org.jboss.spec.javax.faces</groupId>
-                <artifactId>jboss-jsf-api_2.3_spec</artifactId>
-                <version>2.3.9.SP02</version>
-                <scope>provided</scope>
-            </dependency>
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.lucene</groupId> -->
+            <!-- <artifactId>lucene-core</artifactId> -->
+            <!-- <version>7.6.0</version> -->
+            <!-- </dependency> -->
 
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>7.6.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>2.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.el</groupId>
-                <artifactId>jboss-el-api_3.0_spec</artifactId>
-                <version>2.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.spec.javax.ejb</groupId>
-                <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-                <version>2.0.0.Final</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.4.14</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
                 <version>4.4.14</version>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
@@ -632,27 +500,16 @@
                 </exclusions>
             </dependency>
 
-            <!-- Added after migration to JDK 11 -->
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.3.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
                 <version>1.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.jws</groupId>
-                <artifactId>javax.jws-api</artifactId>
-                <version>1.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
-                <version>2.3.1</version>
+                <version>2.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -662,7 +519,6 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- Micro profile dependencies included in WF 18 -->
             <dependency>
                 <groupId>org.eclipse.microprofile.metrics</groupId>
                 <artifactId>microprofile-metrics-api</artifactId>
@@ -696,6 +552,11 @@
                 <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -712,21 +573,101 @@
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
-                <version>2.7.4</version>
+                <version>2.9.0</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-multipart-provider</artifactId>
-                <version>3.11.2.Final</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>1.26</version>
+                <scope>provided</scope>
             </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+
+
+           <dependency>
+             <groupId>org.jboss.resteasy</groupId>
+             <artifactId>resteasy-client</artifactId>
+             <version>3.14.0.Final</version>
+             <scope>provided</scope>
+           </dependency>
+
+      <dependency>
+        <groupId>jakarta.jws</groupId>
+        <artifactId>jakarta.jws-api</artifactId>
+        <version>2.1.0</version>
+      </dependency>
+
+<dependency>
+    <groupId>org.wildfly.core</groupId>
+    <artifactId>wildfly-server</artifactId>
+    <version>14.0.1.Final</version>
+             <scope>provided</scope>
+</dependency>
+
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron-credential-store</artifactId>
+            <version>1.14.1.Final</version>
+             <scope>provided</scope>
+        </dependency>
+
+<dependency>
+    <groupId>com.jayway.jsonpath</groupId>
+    <artifactId>json-path</artifactId>
+    <version>2.4.0</version>
+</dependency>
+
+            <!-- For testing -->
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.6.1</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.23.1</version>
+                <scope>provided</scope>
+                <!-- DO NOT SET as test scope as EJB module use @VisibleForTesting annotation -->
+            </dependency>
+
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>2.7.3</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>4.6.0</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.12.10</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -772,10 +713,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.10.1</version>
                     <configuration>
                         <release>${java.version}</release>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
+                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     </configuration>
                 </plugin>
                 <plugin>

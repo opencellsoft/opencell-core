@@ -36,7 +36,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;

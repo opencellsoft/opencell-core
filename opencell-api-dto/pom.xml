@@ -29,7 +29,6 @@
 			<artifactId>jackson-annotations</artifactId>
             <scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -40,17 +39,24 @@
 			<artifactId>jackson-core</artifactId>
             <scope>provided</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>provided</scope>
 		</dependency>
         
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
+            <artifactId>resteasy-client</artifactId>
+            <scope>provided</scope>
         </dependency>
         
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -60,17 +66,22 @@
 			<groupId>org.immutables</groupId>
 			<artifactId>value</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-annotations</artifactId>
-			<version>2.0.7</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-multipart-provider</artifactId>
             <scope>provided</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.1</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -79,17 +90,12 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     	<release>11</release>
                     </configuration>
-                   	<dependencies>
-                    	<dependency>
-								<groupId>org.ow2.asm</groupId>
-								<artifactId>asm</artifactId>
-								<version>7.2</version>
-							</dependency>
-					</dependencies>
                 </plugin>         
                 
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>

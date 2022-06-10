@@ -2216,18 +2216,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
-
-	<navigation-case>
-		<from-outcome>indexing</from-outcome>
-		<to-view-id>/pages/index/index.xhtml
-		</to-view-id>
-		<redirect include-view-params="true" />
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>fullTextSearch</from-outcome>
-		<to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
-		<redirect include-view-params="true" />
-	</navigation-case>
 	<navigation-case>
 		<from-outcome>orderDetail</from-outcome>
 		<to-view-id>/pages/order/orders/orderDetail.xhtml
@@ -2434,12 +2422,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<from-outcome>mm_userDetail</from-outcome>
 		<to-view-id>/pages/admin/meveoUsers/userDetail.xhtml</to-view-id>
 		<redirect />
-	</navigation-case>
-
-	<navigation-case>
-		<from-outcome>mm_fullTextSearch</from-outcome>
-		<to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
-		<redirect include-view-params="true" />
 	</navigation-case>
 	
 	<navigation-case>

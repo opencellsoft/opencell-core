@@ -19,19 +19,23 @@
 package org.meveo.api.catalog;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.xml.bind.ValidationException;
 
-import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -39,8 +43,6 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
-
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -108,7 +110,7 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
             chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         }
         
-        if(!Strings.isEmpty(postData.getUsageQuantityAttributeCode())) {
+        if(!org.apache.commons.lang3.StringUtils.isEmpty(postData.getUsageQuantityAttributeCode())) {
         	chargeTemplate.setUsageQuantityAttribute(loadEntityByCode(attributeService, postData.getUsageQuantityAttributeCode(), Attribute.class));
         }
 

@@ -1,6 +1,5 @@
 package org.meveo.apiv2.dunning.service;
 
-import org.assertj.core.util.Lists;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningPaymentRetry;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
+
+import java.util.ArrayList;
 
 public class DunningPaymentRetryApiService implements ApiService<DunningPaymentRetry> {
 
@@ -32,7 +33,7 @@ public class DunningPaymentRetryApiService implements ApiService<DunningPaymentR
 
 	@Override
 	public List<DunningPaymentRetry> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return Lists.emptyList();
+		return new ArrayList<DunningPaymentRetry>();
 	}
 
 	@Override

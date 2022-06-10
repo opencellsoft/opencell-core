@@ -251,10 +251,7 @@
 			<p:menuitem id="auditLog" outcome="auditLog" value="#{messages['menu.auditLogs']}" />
 		</p:submenu>
 		<p:menuitem id="cache" outcome="caches" value="#{messages['menu.cacheInfo']}" />
-		<p:submenu id="index" label="#{messages['menu.fullTextSearch']}">
-			<p:menuitem id="ESSearch" outcome="fullTextSearch" value="#{messages['menu.fullTextSearch.search']}" />
-			<p:menuitem id="reindexES" outcome="indexing" value="#{messages['menu.fullTextSearch.index']}" />
-		</p:submenu>
+
 
 		<p:menuitem id="providers" outcome="providers" value="#{messages['menu.tenants']}" rendered="#{ currentUser.providerCode==null and paramBean.isMultitenancyEnabled()}" />
 	</p:submenu>

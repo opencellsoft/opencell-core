@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
 import org.meveo.api.BaseApi;

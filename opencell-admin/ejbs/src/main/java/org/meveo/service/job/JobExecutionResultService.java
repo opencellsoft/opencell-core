@@ -27,7 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
