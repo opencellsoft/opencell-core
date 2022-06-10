@@ -50,7 +50,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
     /**
      * The apply agreement immediately.
      */
-    private boolean applyAgreementImmediately;
+    private boolean invoiceAgreementImmediately;
 
     /**
      * The apply reimbursment.
@@ -89,7 +89,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
     public TerminationReasonDto(SubscriptionTerminationReason subscriptionTerminationReason) {
         super(subscriptionTerminationReason);
         applyAgreement = subscriptionTerminationReason.isApplyAgreement();
-        applyAgreementImmediately = subscriptionTerminationReason.isApplyAgreementImmediately();
+        invoiceAgreementImmediately = subscriptionTerminationReason.isInvoiceAgreementImmediately();
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
         overrideProrata = subscriptionTerminationReason.getOverrideProrata();
@@ -115,12 +115,12 @@ public class TerminationReasonDto extends BusinessEntityDto {
         this.applyAgreement = applyAgreement;
     }
 
-    public boolean isApplyAgreementImmediately() {
-        return applyAgreementImmediately;
+    public boolean isInvoiceAgreementImmediately() {
+        return invoiceAgreementImmediately;
     }
 
-    public void setApplyAgreementImmediately(boolean applyAgreementImmediately) {
-        this.applyAgreementImmediately = applyAgreementImmediately;
+    public void setInvoiceAgreementImmediately(boolean invoiceAgreementImmediately) {
+        this.invoiceAgreementImmediately = invoiceAgreementImmediately;
     }
 
     /**
@@ -197,7 +197,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
 
     @Override
     public String toString() {
-        return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", applyAgreementImmediately=" + applyAgreementImmediately + ", applyReimbursment=" + applyReimbursment
+        return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", invoiceAgreementImmediately=" + invoiceAgreementImmediately + ", applyReimbursment=" + applyReimbursment
                 + ", applyTerminationCharges=" + applyTerminationCharges + "]";
     }
 
