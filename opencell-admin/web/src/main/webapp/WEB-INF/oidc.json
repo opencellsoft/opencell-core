@@ -1,0 +1,7 @@
+{
+  "provider-url": "${opencell.keycloak.url:http://localhost:8180/}",
+  "ssl-required": "external",
+  "client-id": "${opencell.keycloak.client:opencell-web}",
+  "public-client": true,
+  "confidential-port": 0
+}

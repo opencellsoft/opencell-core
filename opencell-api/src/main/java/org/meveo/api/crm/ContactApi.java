@@ -62,6 +62,8 @@ import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 
+import com.opencsv.exceptions.CsvException;
+
 /**
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -471,7 +473,7 @@ public class ContactApi extends BaseApi {
         return result;
     }
 
-    public ContactsDto importCSVText(String context) throws IOException {
+    public ContactsDto importCSVText(String context) throws IOException, CsvException {
         List<Contact> failedToPersist = new ArrayList<Contact>();
         List<Contact> contacts = null;
         List<String> failedToPersistLog = new ArrayList<String>();

@@ -3,7 +3,7 @@ package org.meveo.api.cpq;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.TagDto;

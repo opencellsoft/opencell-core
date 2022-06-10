@@ -276,8 +276,9 @@
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
-		<auth-method>KEYCLOAK</auth-method>
-		<realm-name>opencell</realm-name>
+        <auth-method>OIDC</auth-method>
+<!-- 		<auth-method>KEYCLOAK</auth-method> -->
+<!-- 		<realm-name>opencell</realm-name> -->
 	</login-config>
 	<security-role>
 		<role-name>apiAccess</role-name>

@@ -25,8 +25,8 @@ public class JobExecutionInterceptor {
      */
     private static final Logger log = LoggerFactory.getLogger(JobExecutionInterceptor.class);
 
-    @Inject
-    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+//    @Inject
+//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     /**
@@ -70,7 +70,7 @@ public class JobExecutionInterceptor {
      * @param name the name of metric
      */
     private void counterInc(JobInstance jobInstance, String name, Long value) {
-        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).reusable().build();
+        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
         if (value != null) {

@@ -47,7 +47,6 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
-import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
@@ -77,9 +76,6 @@ public class CacheBean implements Serializable {
 
     @Inject
     private TenantCacheContainerProvider tenantCacheContainerProvider;
-
-    @Inject
-    private ElasticSearchIndexPopulationService esPopulationService;
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -149,7 +145,6 @@ public class CacheBean implements Serializable {
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
             caches.putAll(jobCacheContainerProvider.getCaches());
             caches.putAll(tenantCacheContainerProvider.getCaches());
-            caches.putAll(esPopulationService.getCaches());
             caches.putAll(scriptInstanceService.getCaches());
             caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
 
@@ -172,7 +167,6 @@ public class CacheBean implements Serializable {
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches.putAll(jobCacheContainerProvider.getCaches());
         caches.putAll(tenantCacheContainerProvider.getCaches());
-        caches.putAll(esPopulationService.getCaches());
         caches.putAll(scriptInstanceService.getCaches());
         caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
         caches = new TreeMap<String, Cache>(caches);
@@ -200,7 +194,6 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(cacheName);
         customFieldsCacheContainerProvider.refreshCache(cacheName);
         jobCacheContainerProvider.refreshCache(cacheName);
-        esPopulationService.refreshCache(cacheName);
         scriptInstanceService.refreshCache(cacheName);
         metricsConfigurationCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
@@ -212,7 +205,6 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
-        esPopulationService.refreshCache(null);
         scriptInstanceService.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -79,8 +79,9 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, groupedAttributeDto.getCode());
 		}
-		if(!Strings.isEmpty(groupedAttributeDto.getDescription()))
+		if(!StringUtils.isEmpty(groupedAttributeDto.getDescription())) {
 			groupedAttribute.setDescription(groupedAttributeDto.getDescription());
+		}
 		addToGroup(groupedAttribute, groupedAttributeDto.getAttributeCodes(), false);
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
@@ -117,7 +118,7 @@ public class GroupedAttributesApi extends BaseApi{
 	}
 	
 	private void checkParams(GroupedAttributeDto groupedAttributeDto) {
-		if(Strings.isEmpty(groupedAttributeDto.getCode())) {
+		if(StringUtils.isEmpty(groupedAttributeDto.getCode())) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();

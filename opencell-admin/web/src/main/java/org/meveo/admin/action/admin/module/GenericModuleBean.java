@@ -50,7 +50,6 @@ import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.event.FileUploadEvent;
@@ -84,9 +83,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     @Inject
     @ViewBean
     protected ScriptInstanceBean scriptInstanceBean;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     private BusinessEntity moduleItemEntity;
 
@@ -256,11 +252,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             @Override
             protected List<String> getListFieldsToFetchImpl() {
                 return getListFieldsToFetch();
-            }
-
-            @Override
-            protected ElasticClient getElasticClientImpl() {
-                return elasticClient;
             }
         };
 

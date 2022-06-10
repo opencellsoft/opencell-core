@@ -17,17 +17,20 @@
  */
 package org.meveo.admin.action.admin;
 
-import org.meveo.model.admin.User;
-import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.util.view.ServiceBasedLazyDataModel;
-import org.meveo.util.view.LazyDataModelWSize;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
-import java.util.*;
+
+import org.meveo.model.admin.User;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
@@ -87,11 +90,6 @@ public class UserListBean extends UserBean {
 				@Override
 				protected IPersistenceService<User> getPersistenceServiceImpl() {
 					return userService;
-				}
-
-				@Override
-				protected ElasticClient getElasticClientImpl() {
-					return null;
 				}
 			};
 			

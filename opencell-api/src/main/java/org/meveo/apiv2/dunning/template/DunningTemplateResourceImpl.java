@@ -3,7 +3,7 @@ package org.meveo.apiv2.dunning.template;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;

@@ -28,7 +28,7 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.meveo.admin.listener.ApplicationInitializer;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
@@ -94,7 +94,7 @@ public class TenantRegistry {
         try {
             Provider tenantInfo = (Provider) timer.getInfo();
 
-            applicationInitializer.initializeTenant(tenantInfo, false, true);
+            applicationInitializer.initializeTenant(tenantInfo, false);
 
         } catch (Exception e) {
             log.error("Failed to launch create tenant timer", e);

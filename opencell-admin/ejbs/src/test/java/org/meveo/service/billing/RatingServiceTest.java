@@ -21,7 +21,7 @@ package org.meveo.service.billing;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
 import org.junit.Test;

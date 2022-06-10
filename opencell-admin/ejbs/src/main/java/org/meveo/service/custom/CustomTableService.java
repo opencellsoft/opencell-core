@@ -35,7 +35,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,11 +58,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.meveo.admin.async.SubListCreator;
@@ -71,6 +66,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -82,13 +78,10 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.service.index.ElasticSearchClassInfo;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -114,9 +107,6 @@ public class CustomTableService extends NativePersistenceService {
     private static final int MAX_DISPLAY_COLUMNS = 5;
 
     @Inject
-    private ElasticClient elasticClient;
-
-    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
     @EJB
@@ -136,7 +126,6 @@ public class CustomTableService extends NativePersistenceService {
 
         Long id = super.create(tableName, values, true, true); // Force to return ID as we need it to retrieve data for Elastic Search population
         values.put("id", id);
-        elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
     }
@@ -154,10 +143,7 @@ public class CustomTableService extends NativePersistenceService {
         for (Map<String, Object> value : values) {
             Long id = super.create(tableName, value, true, fireNotifications); // Force to return ID as we need it to retrieve data for Elastic Search population
             value.put("id", id);
-            elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
         }
-
-        elasticClient.flushChanges();
     }
 
     /**
@@ -166,8 +152,8 @@ public class CustomTableService extends NativePersistenceService {
      * @param tableName Table name to insert values to
      * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
      * @param values Values to insert
-     * @param updateESAndTriggerNotifications Should Elastic search be updated during record creation and notifications be fired for each record. If false, ES population must be
-     *        done outside this call and Notifications have to be handled by some other means
+     * @param updateESAndTriggerNotifications Should Elastic search be updated during record creation and notifications be fired for each record. If false, ES population must be done outside this call and Notifications
+     *        have to be handled by some other means
      * @throws BusinessException General exception
      */
     @JpaAmpNewTx
@@ -186,7 +172,6 @@ public class CustomTableService extends NativePersistenceService {
 
     public void update(String tableName, Map<String, Object> values) throws BusinessException {
         super.update(tableName, values, true);
-        elasticClient.createOrUpdate(CustomTableRecord.class, tableName, values.get(NativePersistenceService.FIELD_ID), values, false, true);
     }
 
     /**
@@ -200,35 +185,28 @@ public class CustomTableService extends NativePersistenceService {
 
         for (Map<String, Object> value : values) {
             super.update(tableName, value, true);
-            elasticClient.createOrUpdate(CustomTableRecord.class, tableName, value.get(NativePersistenceService.FIELD_ID), value, false, false);
         }
-        elasticClient.flushChanges();
     }
 
     @Override
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
         super.updateValue(tableName, id, fieldName, value);
-        elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, MapUtils.putAll(new HashMap<String, Object>(), new Object[] { fieldName, value }), true, true);
     }
 
     @Override
     public void disable(String tableName, Long id) throws BusinessException {
         super.disable(tableName, id);
-        elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
-
         super.disable(tableName, ids);
-        elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
     }
 
     @Override
     public void enable(String tableName, Long id) throws BusinessException {
         super.enable(tableName, id);
         Map<String, Object> values = findById(tableName, id);
-        elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
     }
 
     @Override
@@ -236,16 +214,13 @@ public class CustomTableService extends NativePersistenceService {
         super.enable(tableName, ids);
         for (Long id : ids) {
             Map<String, Object> values = findById(tableName, id);
-            elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, false);
         }
-        elasticClient.flushChanges();
     }
 
     @Override
     public int remove(String tableName, Long id) throws BusinessException {
         // validateExistance(tableName, Arrays.asList(id));
         int nrDeleted = super.remove(tableName, id);
-        elasticClient.remove(CustomTableRecord.class, tableName, id, true);
         return nrDeleted;
     }
 
@@ -255,7 +230,6 @@ public class CustomTableService extends NativePersistenceService {
             return 0;
         }
         int nrDeleted = super.remove(tableName, ids);
-        elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
         return nrDeleted;
     }
 
@@ -275,7 +249,6 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public int remove(String tableName) throws BusinessException {
         int nrDeleted = super.remove(tableName);
-        elasticClient.remove(CustomTableRecord.class, tableName);
         return nrDeleted;
     }
 
@@ -482,11 +455,6 @@ public class CustomTableService extends NativePersistenceService {
             values = convertValues(values, cftsMap, false);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
-            // Re-populate ES index
-            if (!updateESImediately) {
-                elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
-            }
-
             log.info("Imported {} lines to {} table", importedLinesTotal, tableName);
 
         } catch (RuntimeJsonMappingException e) {
@@ -572,11 +540,6 @@ public class CustomTableService extends NativePersistenceService {
         valuesPartial = convertValues(valuesPartial, cftsMap, false);
         customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
-        // Repopulate ES index
-        if (!updateESImediately) {
-            elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
-        }
-
         return importedLinesTotal;
     }
 
@@ -622,53 +585,58 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Execute a search on given fields for given query values. See ElasticClient.search() for a query format.
+     * Execute a search on given fields for given query values.
      *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param queryValues Fields and values to match
      * @param from Pagination - starting record. Defaults to 0.
-     * @param size Pagination - number of records per page. Defaults to ElasticClient.DEFAULT_SEARCH_PAGE_SIZE.
-     * @param sortFields - Fields to sort by. If omitted, will sort by score. If search query contains a 'closestMatch' expression, sortFields and sortOrder will be overwritten
-     *        with a corresponding field and descending order.
+     * @param size Pagination - number of records per page.
+     * @param sortFields - Fields to sort by. If omitted, will sort by score. If search query contains a 'closestMatch' expression, sortFields and sortOrder will be overwritten with a corresponding field and descending
+     *        order.
      * @param sortOrders Sorting orders
-     * @param returnFields Return only certain fields - see Elastic Search documentation for details
+     * @param fieldsToReturn Return only certain fields
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public List<Map<String, Object>> search(String cetCodeOrTablename, Map<String, Object> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields)
+    public List<Map<String, Object>> search(String cetCodeOrTablename, Map<String, Object> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] fieldsToReturn)
             throws BusinessException {
 
-        ElasticSearchClassInfo classInfo = new ElasticSearchClassInfo(CustomTableRecord.class, cetCodeOrTablename);
-        SearchResponse searchResult = elasticClient.search(queryValues, from, size, sortFields, sortOrders, returnFields, Arrays.asList(classInfo));
+        removeEmptyKeys(queryValues);
 
-        if (searchResult == null) {
-            return new ArrayList<>();
+        Object[] sortingInfo = null;
+        if (sortFields != null) {
+            sortingInfo = new Object[sortFields.length * 2];
+            for (int i = 0; i < sortFields.length; i++) {
+                sortingInfo[i * 2] = sortFields[i];
+                sortingInfo[i * 2 + 1] = sortOrders[i];
+            }
         }
 
-        List<Map<String, Object>> responseValues = new ArrayList<>();
+        PaginationConfiguration pagination = new PaginationConfiguration(from, size, queryValues, null, null, sortingInfo);
+        List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
-        searchResult.getHits().forEach(hit -> {
-            Map<String, Object> values = new HashMap<>();
-            responseValues.add(values);
+        if (results == null || results.isEmpty()) {
+            return null;
 
-            if (hit.getFields() != null && hit.getFields().values() != null && !hit.getFields().values().isEmpty()) {
-                for (DocumentField field : hit.getFields().values()) {
-                    if (field.getValues() != null) {
-                        if (field.getValues().size() > 1) {
-                            values.put(field.getName(), field.getValues());
-                        } else {
-                            values.put(field.getName(), field.getValue());
-                        }
+        } else {
+            if (fieldsToReturn == null) {
+                return results;
+            }
+            List<Map<String, Object>> returnValues = new ArrayList<Map<String, Object>>();
+            Map<String, Object> filteredValues = new HashMap<String, Object>();
+
+            for (Map<String, Object> rowValues : results) {
+
+                for (String fieldToReturn : fieldsToReturn) {
+                    if (rowValues.containsKey(fieldToReturn)) {
+                        filteredValues.put(fieldToReturn, rowValues.get(fieldToReturn));
                     }
                 }
 
-            } else if (hit.getSourceAsMap() != null) {
-                values.putAll(hit.getSourceAsMap());
+                returnValues.add(filteredValues);
             }
-        });
-
-        // log.debug("AKK ES search result values are {}", responseValues);
-        return responseValues;
+            return returnValues;
+        }
     }
 
     /**
@@ -682,8 +650,9 @@ public class CustomTableService extends NativePersistenceService {
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) throws BusinessException {
         removeEmptyKeys(queryValues);
-        Map<String, Object> values = new HashMap<>(queryValues);
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, new String[] { fieldToReturn });
+
+        PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_ID, SortOrder.DESCENDING);
+        List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -708,11 +677,12 @@ public class CustomTableService extends NativePersistenceService {
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {
 
-        Map<String, Object> values = new HashMap<>(queryValues);
-        values.put("minmaxRange valid_from valid_to", date);
+        queryValues.put("minmaxRange valid_from valid_to", date);
+        removeEmptyKeys(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID }, new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC },
-            new String[] { fieldToReturn });
+        PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_VALID_PRIORITY, SortOrder.DESCENDING, FIELD_VALID_FROM, SortOrder.DESCENDING, FIELD_ID,
+            SortOrder.DESCENDING);
+        List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -732,14 +702,24 @@ public class CustomTableService extends NativePersistenceService {
      */
     public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Map<String, Object> queryValues) throws BusinessException {
 
-        Map<String, Object> values = new HashMap<>(queryValues);
+        removeEmptyKeys(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, fieldsToReturn);
+        PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_ID, SortOrder.DESCENDING);
+        List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
             return null;
+
         } else {
-            return results.get(0);
+            Map<String, Object> values = results.get(0);
+            Map<String, Object> valuesToReturn = new HashMap<String, Object>();
+
+            for (String fieldToReturn : fieldsToReturn) {
+                if (values.containsKey(fieldToReturn)) {
+                    valuesToReturn.put(fieldToReturn, values.get(fieldToReturn));
+                }
+            }
+            return valuesToReturn;
         }
     }
 
@@ -755,16 +735,26 @@ public class CustomTableService extends NativePersistenceService {
      */
     public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {
 
-        Map<String, Object> values = new HashMap<>(queryValues);
-        values.put("minmaxRange valid_from valid_to", date);
+        queryValues.put("minmaxRange valid_from valid_to", date);
+        removeEmptyKeys(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID }, new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC },
-            fieldsToReturn);
+        PaginationConfiguration pagination = new PaginationConfiguration(null, 1, queryValues, null, null, FIELD_VALID_PRIORITY, SortOrder.DESCENDING, FIELD_VALID_FROM, SortOrder.DESCENDING, FIELD_ID,
+            SortOrder.DESCENDING);
+        List<Map<String, Object>> results = super.list(cetCodeOrTablename, pagination);
 
         if (results == null || results.isEmpty()) {
             return null;
+
         } else {
-            return results.get(0);
+            Map<String, Object> values = results.get(0);
+            Map<String, Object> valuesToReturn = new HashMap<String, Object>();
+
+            for (String fieldToReturn : fieldsToReturn) {
+                if (values.containsKey(fieldToReturn)) {
+                    valuesToReturn.put(fieldToReturn, values.get(fieldToReturn));
+                }
+            }
+            return valuesToReturn;
         }
     }
 
@@ -826,8 +816,8 @@ public class CustomTableService extends NativePersistenceService {
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
-     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
-     *        standard date and time and then date only patterns will be applied.
+     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a standard date and time and then date only
+     *        patterns will be applied.
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
@@ -852,8 +842,8 @@ public class CustomTableService extends NativePersistenceService {
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
-     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
-     *        standard date and time and then date only patterns will be applied.
+     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a standard date and time and then date only
+     *        patterns will be applied.
      * @param classNames
      * @param regexpFields
      * @return Converted values with db field name as a key and field value as value.
@@ -902,7 +892,7 @@ public class CustomTableService extends NativePersistenceService {
                     valuesConverted.put(key, cft.getDefaultValueConverted());
 
                 } else if (FIELD_DISABLED.equals(key) && checkValue(value)) {
-                    if(value instanceof Boolean) {
+                    if (value instanceof Boolean) {
                         valuesConverted.put(key, TRUE);
                     } else {
                         valuesConverted.put(key, 1);
@@ -930,13 +920,13 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     private boolean checkValue(Object value) {
-        if(value instanceof Boolean && value != FALSE) {
+        if (value instanceof Boolean && value != FALSE) {
             return true;
         }
-        if(value instanceof Long && value != valueOf(0)) {
+        if (value instanceof Long && value != valueOf(0)) {
             return true;
         }
-        if(value instanceof BigDecimal && value != ZERO) {
+        if (value instanceof BigDecimal && value != ZERO) {
             return true;
         }
         return false;
@@ -1023,8 +1013,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity, but return a map of values if the wrapped object is
-     * a reference to a custom table
+     * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity, but return a map of values if the wrapped object is a reference to a custom table
      * 
      * @param referenceWrapper
      * @return

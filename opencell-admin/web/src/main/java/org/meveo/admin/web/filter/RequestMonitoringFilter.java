@@ -19,9 +19,9 @@
 package org.meveo.admin.web.filter;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
@@ -30,8 +30,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.base.Strings;
 
 import org.eclipse.microprofile.metrics.Histogram;
 import org.eclipse.microprofile.metrics.Metadata;
@@ -43,13 +41,15 @@ import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 @WebFilter(urlPatterns = "/*")
 public class RequestMonitoringFilter extends HttpFilter {
 
     private Logger log = LoggerFactory.getLogger(RequestMonitoringFilter.class);
 
-    @Inject
-    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+//    @Inject
+//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     @Inject
@@ -115,12 +115,13 @@ public class RequestMonitoringFilter extends HttpFilter {
 
     private void createTimerMetrics(String name, long start, String unit) {
         long end = System.currentTimeMillis();
-        long duration = end - start;
+        long durationInMs = end - start;
         Metadata metadata = new MetadataBuilder()
                 .withName(name)
                 .withUnit(unit)
                 .build();
         Timer timer = registry.timer(metadata);
-        timer.update(duration, TimeUnit.MILLISECONDS);
+        Duration duration = Duration.ofMillis(durationInMs);
+        timer.update(duration);
     }
 }

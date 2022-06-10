@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -45,7 +46,6 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
-import liquibase.util.StringUtils;
 
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.

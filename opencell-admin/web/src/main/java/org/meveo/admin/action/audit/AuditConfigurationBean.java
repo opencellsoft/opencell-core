@@ -29,7 +29,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
@@ -103,7 +103,7 @@ public class AuditConfigurationBean implements Serializable {
             cm.setClassName(selectedClass.getName());
 
             for (Object methodName : methods.getTarget()) {
-                cm.addMethod(StringEscapeUtils.unescapeHtml((String) methodName));
+                cm.addMethod(StringEscapeUtils.unescapeHtml4((String) methodName));
             }
 
             if (!selectedClassAndMethods.contains(cm)) {

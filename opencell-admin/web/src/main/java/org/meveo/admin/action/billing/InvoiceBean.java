@@ -68,7 +68,6 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
@@ -315,11 +314,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                         @Override
                         protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
                             return ratedTransactionService;
-                        }
-
-                        @Override
-                        protected ElasticClient getElasticClientImpl() {
-                            return null;
                         }
                     };
 

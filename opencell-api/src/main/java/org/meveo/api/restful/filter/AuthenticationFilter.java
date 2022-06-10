@@ -1,8 +1,8 @@
 package org.meveo.api.restful.filter;
 
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,9 +13,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/api/rest/v1/*" })
 public class AuthenticationFilter implements Filter {
@@ -27,7 +28,7 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        httpClient = new ResteasyClientBuilder().build();
+        httpClient = new ResteasyClientBuilderImpl().build();
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 
         if ( httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION) != null ) {

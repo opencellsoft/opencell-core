@@ -19,8 +19,16 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.application.FacesMessage;
@@ -32,7 +40,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -62,9 +70,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
@@ -123,9 +129,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     @Inject
     protected FacesContext facesContext;
@@ -1007,21 +1010,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 protected List<String> getListFieldsToFetchImpl() {
                     return getListFieldsToFetch();
                 }
-
-                @Override
-                protected ElasticClient getElasticClientImpl() {
-                    return elasticClient;
-                }
-
-                @Override
-                protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-                    String fullTextValue = super.getFullTextSearchValue(loadingFilters);
-                    if (fullTextValue == null) {
-                        return (String) filters.get(ESBasedDataModel.FILTER_FULL_TEXT);
-                    }
-                    return fullTextValue;
-                }
-
             };
         }
 

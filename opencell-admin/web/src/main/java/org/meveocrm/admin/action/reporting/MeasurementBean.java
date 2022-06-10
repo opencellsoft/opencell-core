@@ -17,8 +17,17 @@
  */
 package org.meveocrm.admin.action.reporting;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.service.base.local.IPersistenceService;
@@ -26,16 +35,6 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Wassim Drira
@@ -97,7 +96,7 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
                 if (result) {
                     messages.info(new BundleKey("messages", "update.successful"));
                 }
-            } catch (EntityExistsException e) {
+            } catch (BusinessException e) {
                 log.error("Fail to update Price plan {}. Reason {}", entity.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
                 messages.info(new BundleKey("messages", "pricePlanMatrix.codeExistedFail"), entity.getCode());
             } catch (Exception e) {

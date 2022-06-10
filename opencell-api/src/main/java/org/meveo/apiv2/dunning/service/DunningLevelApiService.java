@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.assertj.core.util.Lists;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -290,7 +289,7 @@ public class DunningLevelApiService implements ApiService<DunningLevel> {
 
     @Override
     public List<DunningLevel> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return Lists.emptyList();
+        return new ArrayList<DunningLevel>();
     }
 
     @Override

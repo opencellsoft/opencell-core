@@ -2,14 +2,15 @@
 
 package org.meveo.apiv2.ordering.resource.order;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)

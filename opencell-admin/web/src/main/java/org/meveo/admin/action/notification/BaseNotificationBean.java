@@ -27,7 +27,6 @@ import java.util.List;
 import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.ml.job.config.Job;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;

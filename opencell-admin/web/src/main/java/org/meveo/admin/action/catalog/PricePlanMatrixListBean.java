@@ -20,9 +20,9 @@ package org.meveo.admin.action.catalog;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.primefaces.component.datatable.DataTable;
@@ -45,7 +45,7 @@ public class PricePlanMatrixListBean extends PricePlanMatrixBean {
 				if(result){
 					messages.info(new BundleKey("messages", "update.successful"));
 				}
-			}catch(EntityExistsException e){
+			}catch(BusinessException e){
 				log.error("Fail to update Price plan {}. Reason {}",entity.getCode(),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
 				messages.info(new BundleKey("messages", "pricePlanMatrix.codeExistedFail"),entity.getCode());
 			}catch(Exception e){

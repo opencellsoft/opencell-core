@@ -147,7 +147,7 @@ public final class CopyRow {
      */
     @SuppressWarnings("deprecation")
     private static void setCellDataType(Cell oldCell, Cell newCell) {
-        newCell.setCellType(oldCell.getCellTypeEnum());
+        newCell.setCellType(oldCell.getCellType());
     }
 
     /**
@@ -156,9 +156,8 @@ public final class CopyRow {
      * @param oldCell old Excel cell
      * @param newCell target Excel cell
      */
-    @SuppressWarnings("deprecation")
     private static void setCellDataValue(Cell oldCell, Cell newCell) {
-        switch (oldCell.getCellTypeEnum()) {
+        switch (oldCell.getCellType()) {
         case STRING:
             newCell.setCellValue(oldCell.getStringCellValue());
             break;

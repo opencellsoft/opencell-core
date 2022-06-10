@@ -36,9 +36,11 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.EjbUtils;
@@ -56,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class MonitoringBean implements Serializable {
 
     private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     @Inject
     protected FacesContext facesContext;
 
@@ -95,7 +97,7 @@ public class MonitoringBean implements Serializable {
 
                         if (sb.toString().isEmpty()) {
                             addressByNetwork.put(network.getName(), sb.toString());
-                            
+
                         }
 
                         if (sb.toString().isEmpty() && firstInterface == null) {
@@ -116,18 +118,19 @@ public class MonitoringBean implements Serializable {
     public JSONObject sendCommand(String url, String content) {
         JSONObject result = null;
         try {
-            JSONParser jsonParser = new JSONParser();
-            ClientRequest request = new ClientRequest(url);
-            request.body("application/json", jsonParser.parse(content));
-            request.accept("application/json");
 
-            ClientResponse<String> response = request.post(String.class);
+            Client client = ClientBuilder.newClient();
+            Builder builder = client.target(url).request("application/json").accept("application/json");
+            Response response = builder.get();
+
             String jsonResponse = "";
             if (response.getStatus() != 201) {
                 log.debug("command {} to url {} Failed : HTTP error code : {}", content, url, response.getStatus());
+
             } else {
-                jsonResponse = response.getEntity();
-                log.debug("command reponse : " + jsonResponse);
+                JSONParser jsonParser = new JSONParser();
+                jsonResponse = response.getEntity().toString();
+                log.debug("command reponse : " + response.getEntity().toString());
                 result = (JSONObject) jsonParser.parse(jsonResponse);
             }
         } catch (Exception e) {
@@ -185,17 +188,15 @@ public class MonitoringBean implements Serializable {
                 /*
                  * Dont add any fields in this json object if needed , so add idd it first in the remote service
                  */
-                String input = "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #productName#: #" + "Meveo" + "#," + "	  #productVersion#: #"
-                        + productVersion + "#," + "	  #owner#: #" + "OpenCell" + "#," + "	  #productInfo#: {" + "					    #md5#: #" + md5 + "#,"
-                        + "					    #creationDate#: #" + creationDate + "#," + "					    #updateDate#: #" + updateDate + "#,"
-                        + "					    #keyEntreprise#: #" + keyEntreprise + "#" + "	  				}," + "	  #machineInfo#: {" + "					    #macAddress#: #"
-                        + macAddress + "#," + "					    #ipAddress#: ##," + "	  				}," + "	  #machinePhysicalInfo#: {"
-                        + "					    #nbCores#: #" + nbCores + "#," + "					    #memory#: #" + memory + "#," + "					    #hdSize#: #"
-                        + hdSize + "#" + "	  				}," + "	  #machineSoftwareInfo#: {" + "					    #osName#: #" + osName + "#,"
-                        + "					    #osVersion#: #" + osVersion + "#," + "					    #osArch#: #" + osArch + "#," + "					    #javaVendor#: #"
-                        + javaVendor + "#," + "					    #javaVersion#: #" + javaSpecVersion + "#," + "					    #javaVmVersion#: #" + javaVmVersion + "#,"
-                        + "					    #javaVmName#: #" + javaVmName + "#," + "					    #asName#: #" + asName + "#,"
-                        + "					    #asVersion#: #" + asVersion + "#" + "	  				}" + "}";
+                String input = "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #productName#: #" + "Meveo" + "#," + "	  #productVersion#: #" + productVersion + "#," + "	  #owner#: #"
+                        + "OpenCell" + "#," + "	  #productInfo#: {" + "					    #md5#: #" + md5 + "#," + "					    #creationDate#: #" + creationDate + "#,"
+                        + "					    #updateDate#: #" + updateDate + "#," + "					    #keyEntreprise#: #" + keyEntreprise + "#" + "	  				}," + "	  #machineInfo#: {"
+                        + "					    #macAddress#: #" + macAddress + "#," + "					    #ipAddress#: ##," + "	  				}," + "	  #machinePhysicalInfo#: {"
+                        + "					    #nbCores#: #" + nbCores + "#," + "					    #memory#: #" + memory + "#," + "					    #hdSize#: #" + hdSize + "#" + "	  				},"
+                        + "	  #machineSoftwareInfo#: {" + "					    #osName#: #" + osName + "#," + "					    #osVersion#: #" + osVersion + "#," + "					    #osArch#: #" + osArch
+                        + "#," + "					    #javaVendor#: #" + javaVendor + "#," + "					    #javaVersion#: #" + javaSpecVersion + "#," + "					    #javaVmVersion#: #"
+                        + javaVmVersion + "#," + "					    #javaVmName#: #" + javaVmName + "#," + "					    #asName#: #" + asName + "#," + "					    #asVersion#: #" + asVersion
+                        + "#" + "	  				}" + "}";
                 input = input.replaceAll("#", "\"");
                 // log.debug("Request Check Update ={}",input);
 
@@ -234,8 +235,8 @@ public class MonitoringBean implements Serializable {
                 String currentPage = "";
                 String destinationPage = "";
                 String productVersion = Version.appVersion;
-                String input = "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #productVersion#: #" + productVersion + "#," + "	  #macAddress#: #"
-                        + macAddress + "#," + "     #keyEntreprise#: #" + keyEntreprise + "#" + "	  #currentPage#: #" + currentPage + "#," + "}";
+                String input = "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #productVersion#: #" + productVersion + "#," + "	  #macAddress#: #" + macAddress + "#," + "     #keyEntreprise#: #"
+                        + keyEntreprise + "#" + "	  #currentPage#: #" + currentPage + "#," + "}";
                 input = input.replaceAll("#", "\"");
                 // log.debug("Request Documentation url ={}",input);
 

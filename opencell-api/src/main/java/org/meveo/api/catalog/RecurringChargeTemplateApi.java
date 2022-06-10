@@ -19,18 +19,22 @@
 package org.meveo.api.catalog;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
-import org.elasticsearch.common.Strings;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.RecurringChargeTemplateResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
@@ -41,9 +45,6 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
-
-import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  * @author Edward P. Legaspi
@@ -128,10 +129,10 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
             chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         }
 
-        if (!Strings.isEmpty(postData.getAttributeCalendarCode())) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getAttributeCalendarCode())) {
             chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
         }
-        if (!Strings.isEmpty(postData.getAttributeDurationCode())) {
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getAttributeDurationCode())) {
             chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
         }
 
