@@ -13260,6 +13260,10 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_payment_plan_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
 
             <!-- Simple fields -->
             <column name="amount_to_recover" type="numeric(23, 12)">
@@ -13299,11 +13303,17 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="fk_payment_plan_customer_account" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
 
-        <createTable tableName="ar_payment_plan_acc_operations">
+        <createTable tableName="ar_payment_plan_created_aos">
             <column name="payment_plan_id" type="bigint" />
             <column name="account_operation_id" type="bigint" />
         </createTable>
-        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_acc_operations_pkey" tableName="ar_payment_plan_acc_operations" />
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_created_aos_pkey" tableName="ar_payment_plan_created_aos" />
+
+        <createTable tableName="ar_payment_plan_targeted_aos">
+            <column name="payment_plan_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_targeted_aos_pkey" tableName="ar_payment_plan_targeted_aos" />
     </changeSet>
 
 </databaseChangeLog>

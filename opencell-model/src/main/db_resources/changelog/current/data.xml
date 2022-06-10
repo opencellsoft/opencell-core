@@ -10251,4 +10251,29 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>status IS NOT NULL</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-7402_20220608" author="aelmalki">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-62" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PPL_CREATION" />
+			<column name="description" value="Payment plan Creation" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="journal_id" value="-3" />
+		</insert>
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-63" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="accounting_code_id" valueNumeric="-6" />
+			<column name="code" value="PPL_INSTALLMENT" />
+			<column name="description" value="Payment plan Installment" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="journal_id" value="-3" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

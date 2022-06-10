@@ -35,10 +35,33 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         // To entity
         PaymentPlan paymentPlan = new PaymentPlan();
 
-        paymentPlan.setCustomerAccount(customerAccount);
-        paymentPlan.setAccountOperations(aos);
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+        paymentPlan.setStatus(PaymentPlanStatusEnum.DRAFT); // Default status
 
-        paymentPlan.setStatus(PaymentPlanStatusEnum.DRAFT);
+        super.create(paymentPlan);
+
+        return paymentPlan.getId();
+
+    }
+
+    public Long update(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
+        // To entity
+        PaymentPlan paymentPlan = findById(paymentPlanDto.getId());
+
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+
+        super.update(paymentPlan);
+
+        return paymentPlan.getId();
+
+    }
+
+    private void build(PaymentPlan paymentPlan, PaymentPlanDto paymentPlanDto, CustomerAccount customerAccount, List<AccountOperation> aos, Date end) {
+        paymentPlan.setCode(paymentPlanDto.getCode());
+        paymentPlan.setDescription(paymentPlanDto.getDescription());
+        paymentPlan.setCustomerAccount(customerAccount);
+        paymentPlan.setCreatedAos(aos);
+
         paymentPlan.setRecurringUnit(paymentPlanDto.getRecurringUnit());
         paymentPlan.setActionOnRemainingAmount(paymentPlanDto.getActionOnRemainingAmount());
 
@@ -49,11 +72,6 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         paymentPlan.setAmountPerInstallment(paymentPlanDto.getAmountPerInstallment());
         paymentPlan.setAmountToRecover(paymentPlanDto.getAmountToRecover());
         paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount());
-
-        super.create(paymentPlan);
-
-        return paymentPlan.getId();
-
     }
 
 

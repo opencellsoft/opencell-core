@@ -19,13 +19,22 @@ import java.util.Set;
 @JsonDeserialize(as = ImmutablePaymentPlanDto.class)
 public interface PaymentPlanDto {
 
+    @Nullable
+    Long getId();
+
+    @NotNull
+    String getCode();
+
+    @Nullable
+    String getDescription();
+
     @NotNull
     BigDecimal getAmountToRecover();
 
     @NotNull
     BigDecimal getAmountPerInstallment();
 
-    @NotNull
+    @Nullable
     BigDecimal getRemainingAmount();
 
     @NotNull
