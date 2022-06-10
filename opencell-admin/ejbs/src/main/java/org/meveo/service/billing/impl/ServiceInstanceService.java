@@ -545,7 +545,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
                     recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination,
-                            terminationReason.isApplyAgreementImmediately(), terminationDate);
+                            terminationReason.isInvoiceAgreementImmediately(), terminationDate);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
