@@ -1112,12 +1112,12 @@
         <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
                                  baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
 		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_code TO code;</sql>
 		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_description TO description;</sql>
     </changeSet>
-    
+
     <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
 	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_code code varchar(255);</sql>
 	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_description description varchar(255);</sql>
@@ -1817,7 +1817,7 @@
         <dropTable tableName="billing_usage_charge_inst"/>
 
     </changeSet>
-    
+
     <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql">
 
         <dropColumn tableName="billing_wallet_operation" columnName="created"/>
@@ -3764,9 +3764,9 @@ END $$;]]>
 			FROM
 				${db.schema.adapted}rating_edr_other
 		</sql>
-		
+
 		<dropTable tableName="rating_edr_other"/>
-		
+
 		<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_other (
 			  id bigint NOT NULL DEFAULT nextval('rating_edr_seq'),
@@ -3805,34 +3805,34 @@ END $$;]]>
 			  times_tried int4
 			) partition by list (status)
 		</sql>
-		
+
 		<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_rejected PARTITION OF ${db.schema.adapted}rating_edr_other
 				FOR VALUES IN ('REJECTED')
 		</sql>
-		
+
 		<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_duplicated PARTITION OF ${db.schema.adapted}rating_edr_other
 				FOR VALUES IN ('DUPLICATED')
 		</sql>
-		
+
 		<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_other_default PARTITION OF ${db.schema.adapted}rating_edr_other DEFAULT
 		</sql>
-		
+
 		<sql>
 			ALTER TABLE ${db.schema.adapted}rating_edr ATTACH PARTITION ${db.schema.adapted}rating_edr_other DEFAULT
 		</sql>
-		
+
 		<sql>insert into ${db.schema.adapted}rating_edr
 		     (select *
 				from ${db.schema.adapted}rating_edr_other_tmp
 			  )
 		</sql>
-		
+
 		<dropTable tableName="rating_edr_other_tmp"/>
     </changeSet>
-    
+
     <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
     	<sql>
     		update ${db.schema.adapted}meveo_job_instance
@@ -3876,7 +3876,7 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
                                  onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
-    
+
     <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
 	    <sql>
             ALTER TABLE ${db.schema.adapted}billing_wallet_operation ALTER COLUMN charge_instance_id DROP NOT NULL
@@ -4055,15 +4055,6 @@ END $$;]]>
         <addColumn tableName="crm_customer">
             <column name="anonymization_date" type="datetime" />
         </addColumn>
-    </changeSet>
-
-    <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA">
-        <addColumn tableName="billing_subscrip_termin_reason">
-            <column name="invoice_agreement_immediately" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>update ${db.schema.adapted}billing_subscrip_termin_reason set invoice_agreement_immediately = 0</sql>
     </changeSet>
 
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA">
