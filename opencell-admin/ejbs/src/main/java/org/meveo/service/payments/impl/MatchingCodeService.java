@@ -50,6 +50,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * MatchingCode service implementation.
@@ -68,6 +69,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     @Updated
@@ -148,6 +152,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
                     } else if (fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if (!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
@@ -213,6 +218,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
                     } else if(fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if(!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }

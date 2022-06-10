@@ -178,6 +178,8 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -3606,14 +3608,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     private void applyDiscountPlanItem(Invoice invoice) {
-    	
+
     	 Subscription subscription = invoice.getSubscription();
          BillingAccount billingAccount = invoice.getBillingAccount();
          CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-         
+
          List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
          List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
-         
+
          if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
              subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItemsV11(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
          }
@@ -3629,14 +3631,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
                          invoice.getInvoiceLines().forEach(invoiceLine -> {
                         	 invoiceLinesService.addDiscountPlanInvoiceLine(billingAccountApplicableDiscountPlanItems, invoiceLine, invoice, billingAccount, seller);
                          });
-                        
+
                      }
             	 });
              }
          }
-         
+
     }
-    
+
     private void addDiscountCategoryAndTaxAggregates(Invoice invoice, Collection<SubCategoryInvoiceAgregate> subCategoryAggregates) throws BusinessException {
 
         Subscription subscription = invoice.getSubscription();
