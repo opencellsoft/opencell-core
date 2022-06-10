@@ -73,9 +73,14 @@ public class PaymentBean extends CustomFieldBean<Payment> {
 	@Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		accountOperationService.refreshOrRetrieve(entity.getCustomerAccount().getAccountOperations()).add(entity);
-		return super.saveOrUpdate(killConversation);
-	}
+        entity = paymentService.refreshOrRetrieve(entity);
+        accountOperationService.refreshOrRetrieve(entity.getCustomerAccount().getAccountOperations()).add(entity);
+        String outcome = super.saveOrUpdate(killConversation);
+        if (outcome != null) {
+            return getEditViewName();
+        }
+        return null;
+    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
