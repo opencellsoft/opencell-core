@@ -13306,4 +13306,52 @@ order by date_trunc('month', i.invoice_date) DESC
         <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_acc_operations_pkey" tableName="ar_payment_plan_acc_operations" />
     </changeSet>
 
+    <changeSet id="#INTRD-7644_20220606" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_line_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_conversion_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_currency_id_fk"/>
+
+        <dropForeignKeyConstraint baseTableName="billing_invoice_conversion"
+                                  constraintName="billing_invoice_conversion_invoice_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_conversion"
+                                  constraintName="billing_invoice_conversion_invoice_currency_id_fk"/>
+
+        <dropSequence sequenceName="billing_invoice_conversion_seq"/>
+        <dropSequence sequenceName="billing_invoice_line_conversion_seq"/>
+
+        <dropTable tableName="billing_invoice_conversion"/>
+        <dropTable tableName="billing_invoice_line_conversion"/>
+
+        <dropColumn tableName="billing_invoice_line">
+            <column name="functional_unit_price" />
+        </dropColumn>
+
+        <addColumn tableName="billing_invoice_line">
+            <column name="converted_unit_price" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_rate" type="numeric(23, 12)" />
+            <column name="converted_discount_rate" type="numeric(23, 12)" />
+            <column name="converted_amount_tax" type="numeric(23, 12)" />
+            <column name="converted_discount_amount" type="numeric(23, 12)" />
+            <column name="converted_raw_amount" type="numeric(23, 12)" />
+        </addColumn>
+
+        <addColumn tableName="billing_invoice">
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_tax" type="numeric(23, 12)" />
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="converted_discount_rate" type="numeric(23, 12)" />
+            <column name="converted_discount_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

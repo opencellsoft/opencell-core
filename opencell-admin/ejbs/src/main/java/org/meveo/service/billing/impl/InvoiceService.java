@@ -143,12 +143,12 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dunning.DunningCollectionPlanStatus;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.order.Order;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
@@ -168,6 +168,8 @@ import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -371,7 +373,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
+
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
 
     @PostConstruct
     private void init() {
@@ -6195,6 +6202,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun != null) {
             BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId(), quarantineBillingRunDto.getDescriptionsTranslated());
             getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            getEntityManager().createNamedQuery("InvoiceLine.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+            
             return nextBR.getId();
         }else {
             throw new BusinessException("Invoice with invoice id " + invoice.getId() + " doesn't have a billing run.");
@@ -6210,6 +6221,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     	}else{
     		applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount));
     	}
+    }
+
+    public void triggersCollectionPlanLevelsJob(Invoice invoice){
+        if(InvoicePaymentStatusEnum.PAID.equals(invoice.getPaymentStatus())){
+            JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob_Job");
+            if(triggerCollectionPlanLevelsJob_job != null){
+                jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
+            }
+        }
     }
 
 }

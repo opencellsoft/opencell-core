@@ -17,6 +17,10 @@
  */
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -232,14 +236,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * IBAN number. Deprecated in 5.3 for not use.
      */
     @Deprecated
-    @Column(name = "iban", length = 255)
+    @Column(name = "iban")
     @Size(max = 255)
     private String iban;
 
     /**
      * Alias
      */
-    @Column(name = "alias", length = 255)
+    @Column(name = "alias")
     @Size(max = 255)
     private String alias;
 
@@ -310,8 +314,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Accumulated custom field values in JSON format
      */
-//    @Type(type = "cfjson")
-//    @Column(name = "cf_values_accum", columnDefinition = "TEXT")
     @Transient
     private CustomFieldValues cfAccumulatedValues;
 
@@ -353,14 +355,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * XML file name. Might contain subdirectories relative to directory where all XML files are located.
      */
-    @Column(name = "xml_filename", length = 255)
+    @Column(name = "xml_filename")
     @Size(max = 255)
     private String xmlFilename;
 
     /**
      * PDF file name. Might contain subdirectories relative to directory where all PDF files are located.
      */
-    @Column(name = "pdf_filename", length = 255)
+    @Column(name = "pdf_filename")
     @Size(max = 255)
     private String pdfFilename;
 
@@ -409,7 +411,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * External reference
      */
-    @Column(name = "external_ref", length = 255)
+    @Column(name = "external_ref")
     @Size(max = 255)
     private String externalRef;
     
@@ -487,7 +489,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      *      -With or without tax depending on provider setting (isEnterprise).
      */
     @Column(name = "raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal rawAmount= BigDecimal.ZERO;
+    private BigDecimal rawAmount= ZERO;
 
     /**
      * Discount rate to apply (in %).
@@ -502,7 +504,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	 * discountAmount has precedence over discountRate
      */
     @Column(name = "discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal discountAmount=BigDecimal.ZERO;
+    private BigDecimal discountAmount= ZERO;
 
     /**
      * Indicates if the invoicing minimum has already been applied
@@ -637,6 +639,54 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "last_applied_rate_date")
     private Date lastAppliedRateDate = new Date();
 
+    /**
+     * Converted amount without tax
+     */
+    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithoutTax;
+
+    /**
+     * Converted amount with tax
+     */
+    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithTax;
+
+    /**
+     * Converted amount tax
+     */
+    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountTax;
+
+    /**
+     * converted total amount to pay
+     */
+    @Column(name = "converted_net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedNetToPay;
+
+    /**
+     * Converted raw amount
+     */
+    @Column(name = "converted_raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedRawAmount= ZERO;
+
+    /**
+     * Converted discount rate
+     */
+    @Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedDiscountRate;
+
+    /**
+     * Converted discount amount
+     */
+    @Column(name = "converted_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedDiscountAmount = ZERO;
+
+    /**
+     * Converted amount without tax before discount
+     */
+    @Column(name = "converted_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal convertedAmountWithoutTaxBeforeDiscount;
+
     public Invoice() {
 	}
 
@@ -674,8 +724,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.invoiceNumber = null;
 		this.temporaryInvoiceNumber = null;
 		this.comment = null;
-		this.linkedInvoices = new HashSet<Invoice>();
-		this.orders = new ArrayList<Order>();
+		this.linkedInvoices = new HashSet<>();
+		this.orders = new ArrayList<>();
 		this.xmlFilename = null;
 		this.pdfFilename = null;
 		this.rejectReason = null;
@@ -684,8 +734,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.pdfDate = null;
 		this.emailSentDate = null;
 		this.paymentStatusDate = null;
-		this.invoiceLines = new ArrayList<InvoiceLine>();
-		this.invoiceAgregates = new ArrayList<InvoiceAgregate>();
+		this.invoiceLines = new ArrayList<>();
+		this.invoiceAgregates = new ArrayList<>();
 		this.isReminderLevelTriggered = copy.isReminderLevelTriggered;
 		this.relatedDunningCollectionPlan = copy.relatedDunningCollectionPlan;
 	}
@@ -715,6 +765,25 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
+        BigDecimal appliedRate =
+                this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
+        this.convertedAmountTax = this.amountTax != null
+                ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedAmountWithoutTax = this.amountWithoutTax != null
+                ? this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedAmountWithTax = this.amountWithTax != null
+                ? this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedDiscountAmount = this.discountAmount != null
+                ? this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedDiscountRate = this.discountRate != null
+                ? this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedNetToPay = this.netToPay != null
+                ? this.netToPay.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedRawAmount = this.rawAmount != null
+                ? this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedAmountWithoutTaxBeforeDiscount =
+                this.amountWithoutTaxBeforeDiscount != null
+                        ? this.amountWithoutTaxBeforeDiscount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
     }
 
     public String getInvoiceNumber() {
@@ -842,7 +911,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void addAmountWithTax(BigDecimal amountToAdd) {
         if (amountWithTax == null) {
-            amountWithTax = BigDecimal.ZERO;
+            amountWithTax = ZERO;
         }
         if (amountToAdd != null) {
             amountWithTax = amountWithTax.add(amountToAdd);
@@ -851,7 +920,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void addAmountWithoutTax(BigDecimal amountToAdd) {
         if (amountWithoutTax == null) {
-            amountWithoutTax = BigDecimal.ZERO;
+            amountWithoutTax = ZERO;
         }
         if (amountToAdd != null) {
             amountWithoutTax = amountWithoutTax.add(amountToAdd);
@@ -860,7 +929,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void addAmountTax(BigDecimal amountToAdd) {
         if (amountTax == null) {
-            amountTax = BigDecimal.ZERO;
+            amountTax = ZERO;
         }
         if (amountToAdd != null) {
             amountTax = amountTax.add(amountToAdd);
@@ -1127,19 +1196,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
         return aggregates;
     }
-//
-//    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
-//
-//        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
-//
-//        for (RatedTransaction ratedTransaction : ratedTransactions) {
-//            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
-//                ratedTransactionsMatched.add(ratedTransaction);
-//            }
-//
-//        }
-//        return ratedTransactionsMatched;
-//    }
 
     /**
      * @return Quote that invoice was produced for
@@ -1677,5 +1733,69 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     public void setLastAppliedRateDate(Date lastAppliedRateDate) {
         this.lastAppliedRateDate = lastAppliedRateDate;
+    }
+
+    public BigDecimal getConvertedAmountWithoutTax() {
+        return convertedAmountWithoutTax;
+    }
+
+    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+        this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+    }
+
+    public BigDecimal getConvertedAmountWithTax() {
+        return convertedAmountWithTax;
+    }
+
+    public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+        this.convertedAmountWithTax = convertedAmountWithTax;
+    }
+
+    public BigDecimal getConvertedAmountTax() {
+        return convertedAmountTax;
+    }
+
+    public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+        this.convertedAmountTax = convertedAmountTax;
+    }
+
+    public BigDecimal getConvertedNetToPay() {
+        return convertedNetToPay;
+    }
+
+    public void setConvertedNetToPay(BigDecimal convertedNetToPay) {
+        this.convertedNetToPay = convertedNetToPay;
+    }
+
+    public BigDecimal getConvertedRawAmount() {
+        return convertedRawAmount;
+    }
+
+    public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
+        this.convertedRawAmount = convertedRawAmount;
+    }
+
+    public BigDecimal getConvertedDiscountRate() {
+        return convertedDiscountRate;
+    }
+
+    public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
+        this.convertedDiscountRate = convertedDiscountRate;
+    }
+
+    public BigDecimal getConvertedDiscountAmount() {
+        return convertedDiscountAmount;
+    }
+
+    public void setConvertedDiscountAmount(BigDecimal convertedDiscountAmount) {
+        this.convertedDiscountAmount = convertedDiscountAmount;
+    }
+
+    public BigDecimal getConvertedAmountWithoutTaxBeforeDiscount() {
+        return convertedAmountWithoutTaxBeforeDiscount;
+    }
+
+    public void setConvertedAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
+        this.convertedAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
     }
 }
