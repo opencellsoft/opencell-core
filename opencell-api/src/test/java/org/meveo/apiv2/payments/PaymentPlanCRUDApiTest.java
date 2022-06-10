@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.payments.service.PaymentPlanApi;
 import org.meveo.model.crm.Provider;
@@ -11,8 +12,10 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.payments.RecurrenceUnitEnum;
+import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.AccountOperationService;
@@ -39,7 +42,7 @@ import java.util.Set;
 import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PaymentPlanCreateApiTest {
+public class PaymentPlanCRUDApiTest {
 
     @InjectMocks
     private PaymentPlanApi paymentPlanApi;
@@ -51,6 +54,10 @@ public class PaymentPlanCreateApiTest {
     private ProviderService providerService;
     @Mock
     private PaymentPlanService paymentPlanService;
+
+    // ************************************************************
+    // *********************** CREATE *****************************
+    // ************************************************************
 
     @Test
     public void createNominal() {
@@ -65,8 +72,8 @@ public class PaymentPlanCreateApiTest {
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2023, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -76,7 +83,7 @@ public class PaymentPlanCreateApiTest {
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.of(2023, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
+        Mockito.when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.create(dto);
 
@@ -90,7 +97,7 @@ public class PaymentPlanCreateApiTest {
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, null,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 null,
                 customerAccount.getId(), Set.of(1L, 2L));
 
@@ -101,22 +108,22 @@ public class PaymentPlanCreateApiTest {
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.of(2023, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
+        Mockito.lenient().when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.create(dto);
 
     }
 
     @Test(expected = EntityDoesNotExistsException.class)
-    public void customerNotExistErrCase() {
+    public void customerNotExistErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(-1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -137,15 +144,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test(expected = EntityDoesNotExistsException.class)
-    public void invalidAoErrCase() {
+    public void invalidAoErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), new HashSet<>());
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -165,16 +172,46 @@ public class PaymentPlanCreateApiTest {
 
     }
 
+    @Test(expected = EntityAlreadyExistsException.class)
+    public void ppAlreadyExistErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(-1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                2,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(null);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findByCode(any())).thenReturn(new PaymentPlan());
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "PaymentPlan with code=CODE-PP already exists.");
+        }
+
+    }
+
     @Test
-    public void policyPaymentPlanDisabledErrCase() {
+    public void policyPaymentPlanDisabledErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -195,15 +232,75 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void numberInstallmentsErrCase() {
+    public void startDateBeforeNowErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                2,
+                Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
+
+        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Payment plan cannot start in the past. Please update start date");
+        }
+
+    }
+
+    @Test
+    public void creditAoErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                2,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        AccountOperation ao1 = buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A");
+        ao1.setTransactionCategory(OperationCategoryEnum.CREDIT);
+        aos.add(ao1);
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
+
+        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "AcccountOperation 'A' should be DEBIT");
+        }
+
+    }
+
+    @Test
+    public void numberInstallmentsErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 0,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -224,15 +321,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void amountToRecoverErrCase() {
+    public void amountToRecoverErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -253,15 +350,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoAmountLess0ErrCase() {
+    public void aoAmountLess0Err() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -282,15 +379,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoAmountEqual0ErrCase() {
+    public void aoAmountEqual0Err() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -311,15 +408,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoStatusNotExpectedErrCase() {
+    public void aoStatusNotExpectedErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
-                Date.from(LocalDate.of(2022, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -339,15 +436,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoSumAmountErrCase() {
+    public void aoSumAmountErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -368,15 +465,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoAmountToRecoverLessMinPolicyErrCase() {
+    public void aoAmountToRecoverLessMinPolicyErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -397,15 +494,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void aoAmountToRecoverGreaterMinPolicyErrCase() {
+    public void aoAmountToRecoverGreaterMinPolicyErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -433,8 +530,8 @@ public class PaymentPlanCreateApiTest {
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(400),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -462,8 +559,8 @@ public class PaymentPlanCreateApiTest {
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2022, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -484,15 +581,15 @@ public class PaymentPlanCreateApiTest {
     }
 
     @Test
-    public void invalidEndDateErrCase() {
+    public void invalidEndDateErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
         PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
-                Date.from(LocalDate.of(2022, 6, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.of(2025, 3, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 customerAccount.getId(), Set.of(1L, 2L));
 
         List<AccountOperation> aos = new ArrayList<>();
@@ -507,10 +604,249 @@ public class PaymentPlanCreateApiTest {
             paymentPlanApi.create(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Invalid end date '2025-03-01', correct end date is '2023-03-01'");
+            Assert.assertTrue(e.getMessage().startsWith("Invalid end date"));
         }
 
     }
+
+    // ************************************************************
+    // *********************** UPDATE *****************************
+    // ************************************************************
+    @Test
+    public void updateNominal() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+        existingPP.setCode("CODE-PP");
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.when(paymentPlanService.update(1L, dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
+
+        paymentPlanApi.update(1L, dto);
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void updatePPNotFoundErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(null);
+
+        try {
+            paymentPlanApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "No Payment plan found with id 1");
+        }
+
+    }
+
+    @Test
+    public void updateAmountChangedErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(241));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
+
+        try {
+            paymentPlanApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Payment plan amount should not be updated");
+        }
+
+    }
+
+    @Test
+    public void updateCodeChangedErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+        existingPP.setCode("UPDATED-CODE");
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
+
+        try {
+            paymentPlanApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Payment plan code should not be updated");
+        }
+
+    }
+
+    // ************************************************************
+    // ************************ DELETE ****************************
+    // ************************************************************
+    @Test
+    public void deleteNominal() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+
+        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.doNothing().when(paymentPlanService).remove(1L);
+
+        paymentPlanApi.delete(1L);
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void deletePPNotFoundErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+
+        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(null);
+        Mockito.lenient().doNothing().when(paymentPlanService).remove(1L);
+
+        try {
+            paymentPlanApi.delete(1L);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "No Payment plan found with id 1");
+        }
+
+    }
+
+    @Test
+    public void deleteNotDraftErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(241));
+        existingPP.setStatus(PaymentPlanStatusEnum.ACTIVE);
+
+        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.lenient().doNothing().when(paymentPlanService).remove(1L);
+
+        try {
+            paymentPlanApi.delete(1L);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Cannot remove PaymentPlan with status ACTIVE");
+        }
+
+    }
+
+
+    // ************************************************************
+    // ************************ TOOLS *****************************
+    // ************************************************************
 
     private PaymentPlanDto buildDto(BigDecimal amountToRecover, BigDecimal amountPerInstallment, BigDecimal remainingAmount,
                                     ActionOnRemainingAmountEnum action, RecurrenceUnitEnum unit, PaymentPlanStatusEnum status,
@@ -618,6 +954,7 @@ public class PaymentPlanCreateApiTest {
         ao.setCustomerAccount(customerAccount);
         ao.setUnMatchingAmount(amout);
         ao.setMatchingStatus(status);
+        ao.setTransactionCategory(OperationCategoryEnum.DEBIT);
 
         return ao;
     }

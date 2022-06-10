@@ -20,6 +20,7 @@ package org.meveo.apiv2.payments.service;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.payments.InstallmentAccountOperation;
 import org.meveo.apiv2.payments.PaymentPlanDto;
@@ -114,8 +115,12 @@ public class PaymentPlanApi extends BaseApi {
             throw new EntityDoesNotExistsException("No Payment plan found with id " + id);
         }
 
-        if (existingPP.getAmountToRecover().compareTo(paymentPlanDto.getAmountToRecover()) > 0) {
-            throw new BusinessApiException("No Payment plan found with id " + id);
+        if (existingPP.getAmountToRecover().compareTo(paymentPlanDto.getAmountToRecover()) != 0) {
+            throw new BusinessApiException("Payment plan amount should not be updated");
+        }
+
+        if (!existingPP.getCode().equalsIgnoreCase(paymentPlanDto.getCode())) {
+            throw new BusinessApiException("Payment plan code should not be updated");
         }
 
         validate(paymentPlanDto, customerAccount, aoIds, aos);
@@ -134,7 +139,7 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         if (existingPP.getStatus() != PaymentPlanStatusEnum.DRAFT) {
-            throw new BusinessApiException("Cannot remove PaymentPlan with status " + existingPP.getStatus()); // TODO Message
+            throw new BusinessApiException("Cannot remove PaymentPlan with status " + existingPP.getStatus());
         }
 
         paymentPlanService.remove(id);
@@ -149,7 +154,7 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         if (paymentPlan.getStatus() != PaymentPlanStatusEnum.DRAFT) {
-            throw new BusinessApiException("Cannot activate PaymentPlan with status " + paymentPlan.getStatus()); // TODO Message
+            throw new BusinessApiException("Cannot activate PaymentPlan with status " + paymentPlan.getStatus());
         }
 
         if (!paymentPlan.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) {
@@ -217,6 +222,10 @@ public class PaymentPlanApi extends BaseApi {
     private void validate(PaymentPlanDto dto, CustomerAccount customerAccount, List<Long> aoIds, List<AccountOperation> aos) {
         Provider provider = providerService.getProvider();
 
+        if (paymentPlanService.findByCode(dto.getCode()) != null) {
+            throw new EntityAlreadyExistsException(PaymentPlan.class, dto.getCode());
+        }
+
         // dto validation
         if (!provider.isPaymentPlan()) {
             throw new BusinessApiException("PaymentPlan not allowed");
@@ -226,7 +235,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Number of installments must be greater than 0");
         }
 
-        if (!dto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) {
+        if (dto.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) {
             throw new BusinessApiException("Payment plan cannot start in the past. Please update start date");
         }
 
