@@ -4841,6 +4841,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
     }
 
+    public void cancelRejectedInvoicesByBR(BillingRun billingRun) {
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.REJECTED));
+        invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+    }
+    
+    public void quarantineRejectedInvoicesByBR(BillingRun billingRun) {
+        BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null, null);
+        getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", Arrays.asList(InvoiceStatusEnum.REJECTED)).executeUpdate();
+    }
+
     /**
      * Find by invoice number and invoice type id.
      *

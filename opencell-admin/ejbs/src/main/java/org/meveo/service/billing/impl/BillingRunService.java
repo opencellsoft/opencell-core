@@ -842,6 +842,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
+    /**
+     * Invoicing process for the billingRun, launched by invoicingJob.
+     *
+     * @param billingRun the billing run to process
+     * @throws Exception the exception
+     */
+    public void applyRejectAutomaticValidationActions(BillingRun billingRun) {
+        if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) {
+            invoiceService.quarantineRejectedInvoicesByBR(billingRun);
+        }
+        if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
+            invoiceService.cancelRejectedInvoicesByBR(billingRun);
+        }
+    }
+    
     public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
         if(validationStatus == BillingRunStatusEnum.INVOICES_GENERATED || BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
             BillingRunStatusEnum status = validationStatus != null ? validationStatus : BillingRunStatusEnum.POSTINVOICED;
