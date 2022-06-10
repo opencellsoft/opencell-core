@@ -245,7 +245,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null,null, accountingArticle, null, new Date());
             BigDecimal totalDiscountAmount = BigDecimal.ZERO; 
             for (DiscountPlanItem discountPlanItem : discountItems) {
-                BigDecimal DiscountLineAmount = BigDecimal.ZERO;
+                BigDecimal discountLineAmount = BigDecimal.ZERO;
                 InvoiceLine discountInvoice = new InvoiceLine(entity, invoice);
                 discountInvoice.setStatus(entity.getStatus());
                 if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
@@ -258,16 +258,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     }
                     BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(entity.getUnitPrice(), discountPlanItem,null, Collections.emptyList());
                     if(discountAmount != null) {
-                        DiscountLineAmount = DiscountLineAmount.add(discountAmount);
+                        discountLineAmount = discountLineAmount.add(discountAmount);
                     }
                     if(RATE.equals(invoiceLine.getTaxMode())
                             || InvoiceLineTaxModeEnum.TAX.equals(invoiceLine.getTaxMode()))
                     {
                         taxPercent = invoiceLine.getTaxRate();
                     }
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(DiscountLineAmount, DiscountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountLineAmount, discountLineAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     var quantity = entity.getQuantity();
-                    discountInvoice.setUnitPrice(DiscountLineAmount);
+                    discountInvoice.setUnitPrice(discountLineAmount);
                     discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                     discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
                     totalDiscountAmount = totalDiscountAmount.add(discountInvoice.getAmountWithoutTax().abs());
@@ -433,11 +433,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
         if (billableEntity instanceof Order) {
             if (calculateAndUpdateTotalAmounts) {
-                totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
+                computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
             }
         } else  if (billableEntity instanceof CpqQuote) {
     		if (calculateAndUpdateTotalAmounts) {
-    			totalInvoiceableAmounts = computeTotalQuoteAmount((CpqQuote) billableEntity, new Date(0), lastTransactionDate);
+    			computeTotalQuoteAmount((CpqQuote) billableEntity, new Date(0), lastTransactionDate);
     		}
     	}else {
             BillingAccount billingAccount =
@@ -576,17 +576,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	}
 
 	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
-		boolean isFunctionalUnitPriceModified = false;
 		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
-		}else {
-			isFunctionalUnitPriceModified = invoiceLine.getFunctionalUnitPrice() != resource.getFunctionalUnitPrice();
 		}
-		
 		ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
 		ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
 		ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
-		ofNullable(resource.getFunctionalUnitPrice()).ifPresent(invoiceLine::setFunctionalUnitPrice);
 		ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
 		ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
 		ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
@@ -614,25 +609,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(invoiceLine.getQuantity() == null) {
             invoiceLine.setQuantity(new BigDecimal(1));
         }
-		
-		BigDecimal currentRate = getRateForInvoice(invoiceLine);
 
-		if(invoiceLine.getUnitPrice() == null || isFunctionalUnitPriceModified) {
-			if(invoiceLine.getFunctionalUnitPrice() == null && accountingArticle != null) {
-				invoiceLine.setFunctionalUnitPrice(accountingArticle.getUnitPrice());
-			}
-			invoiceLine.setUnitPrice(invoiceLine.getFunctionalUnitPrice().divide(currentRate,BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-		}else {
-			invoiceLine.setFunctionalUnitPrice(invoiceLine.getUnitPrice().multiply(currentRate));
-		}
-
-		if(resource.getUnitPrice() != null) {
-		    invoiceLine.setUnitPrice(resource.getUnitPrice());
-        }
-		
-		if(invoiceLine.getUnitPrice() == null) {
-			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
-		} else {
+        if(invoiceLine.getUnitPrice() == null) {
+            if (accountingArticle != null && accountingArticle.getUnitPrice() != null) {
+                invoiceLine.setUnitPrice(accountingArticle.getUnitPrice());
+                if(resource.getQuantity() != null) {
+                    invoiceLine.setAmountWithoutTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
+                    invoiceLine.setAmountWithTax(accountingArticle.getUnitPrice().multiply(resource.getQuantity()));
+                }
+            } else {
+                throw new BusinessException("You cannot create an invoice line without a price " +
+                        "if unit price is not set on article with code : " + resource.getAccountingArticleCode());
+            }
+        } else {
             invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
             invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
                     invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
@@ -768,9 +757,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromResource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
