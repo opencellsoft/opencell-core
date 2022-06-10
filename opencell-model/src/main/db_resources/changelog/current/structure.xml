@@ -8229,8 +8229,8 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#6122_20210524" author="AbdelmounaimAkadid" dbms="postgresql">
-    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values::TEXT, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
-    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values::TEXT, '"string":"FinalOnly"', '"listString":["VALIDATED"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = to_json(REPLACE(cf_values::TEXT, '"string":"DraftOnly"', '"listString":["DRAFT"]')) where job_template = 'XMLInvoiceGenerationJob';</sql>
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = to_json(REPLACE(cf_values::TEXT, '"string":"FinalOnly"', '"listString":["VALIDATED"]')) where job_template = 'XMLInvoiceGenerationJob';</sql>
    	</changeSet>
 
    	<changeSet   id="#20210123_540_281_1" author="TarikFA.">
@@ -9856,9 +9856,6 @@ public class OrderAdvancement extends ModuleScript {
             from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
-    </changeSet>
-    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
-        <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
     </changeSet>
 
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA">
