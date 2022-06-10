@@ -56,7 +56,7 @@ public interface PaymentPlanResource {
     Response create(PaymentPlanDto paymentPlanDto);
 
     @PUT
-    @Path("/")
+    @Path("/{id}")
     @Operation(
             summary = "Update Payment plan",
             description = "Update Payment plan",
@@ -65,7 +65,7 @@ public interface PaymentPlanResource {
                     @ApiResponse(description = "Id of updated Payment plan"
                     )}
     )
-    Response update(PaymentPlanDto paymentPlanDto);
+    Response update(@Parameter(description = "Payment plan id", required = true) @PathParam("id") Long id, PaymentPlanDto paymentPlanDto);
 
     @DELETE
     @Path("/{id}")

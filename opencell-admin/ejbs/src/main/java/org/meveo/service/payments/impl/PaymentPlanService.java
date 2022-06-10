@@ -45,9 +45,9 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
 
     }
 
-    public Long update(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
+    public Long update(Long id, PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
         // To entity
-        PaymentPlan paymentPlan = findById(paymentPlanDto.getId());
+        PaymentPlan paymentPlan = findById(id);
 
         build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
 
@@ -61,7 +61,7 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
         paymentPlan.setCode(paymentPlanDto.getCode());
         paymentPlan.setDescription(paymentPlanDto.getDescription());
         paymentPlan.setCustomerAccount(customerAccount);
-        paymentPlan.setCreatedAos(aos);
+        paymentPlan.setTargetedAos(aos);
 
         paymentPlan.setRecurringUnit(paymentPlanDto.getRecurringUnit());
         paymentPlan.setActionOnRemainingAmount(paymentPlanDto.getActionOnRemainingAmount());

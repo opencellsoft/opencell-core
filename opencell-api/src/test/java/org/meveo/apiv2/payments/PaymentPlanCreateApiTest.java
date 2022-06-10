@@ -529,12 +529,6 @@ public class PaymentPlanCreateApiTest {
                     });
                 });
         return new PaymentPlanDto() {
-            @Nullable
-            @Override
-            public Long getId() {
-                return null;
-            }
-
             @Override
             public String getCode() {
                 return "CODE-PP";
@@ -592,7 +586,7 @@ public class PaymentPlanCreateApiTest {
             }
 
             @Override
-            public Set<InstallmentAccountOperation> getInstallmentAccountOperations() {
+            public Set<InstallmentAccountOperation> getTargetedAos() {
                 return aos;
             }
 

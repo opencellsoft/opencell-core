@@ -28,8 +28,8 @@ public class PaymentPlanResourceImpl implements PaymentPlanResource {
     }
 
     @Override
-    public Response update(PaymentPlanDto paymentPlanDto) {
-        Long updatedPPId = paymentPlanApi.update(paymentPlanDto);
+    public Response update(Long id, PaymentPlanDto paymentPlanDto) {
+        Long updatedPPId = paymentPlanApi.update(id, paymentPlanDto);
 
         ActionStatus updatedStatus = new ActionStatus();
         updatedStatus.setStatus(ActionStatusEnum.SUCCESS);

@@ -19,9 +19,6 @@ import java.util.Set;
 @JsonDeserialize(as = ImmutablePaymentPlanDto.class)
 public interface PaymentPlanDto {
 
-    @Nullable
-    Long getId();
-
     @NotNull
     String getCode();
 
@@ -51,7 +48,7 @@ public interface PaymentPlanDto {
 
     @Schema(description = "List of Installment AccountOperation")
     @NotEmpty
-    Set<InstallmentAccountOperation> getInstallmentAccountOperations();
+    Set<InstallmentAccountOperation> getTargetedAos();
 
     @NotNull
     Long getCustomerAccount();

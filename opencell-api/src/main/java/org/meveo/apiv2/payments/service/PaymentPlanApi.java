@@ -81,7 +81,7 @@ public class PaymentPlanApi extends BaseApi {
         // Prepare object use in validation/process
         CustomerAccount customerAccount = customerAccountService.findById(paymentPlanDto.getCustomerAccount());
 
-        List<Long> aoIds = paymentPlanDto.getInstallmentAccountOperations().stream()
+        List<Long> aoIds = paymentPlanDto.getTargetedAos().stream()
                 .map(InstallmentAccountOperation::getId)
                 .collect(Collectors.toList());
 
@@ -96,11 +96,11 @@ public class PaymentPlanApi extends BaseApi {
         return paymentPlanService.create(paymentPlanDto, aos, customerAccount, end);
     }
 
-    public Long update(PaymentPlanDto paymentPlanDto) {
+    public Long update(Long id, PaymentPlanDto paymentPlanDto) {
         // Prepare object use in validation/process
         CustomerAccount customerAccount = customerAccountService.findById(paymentPlanDto.getCustomerAccount());
 
-        List<Long> aoIds = paymentPlanDto.getInstallmentAccountOperations().stream()
+        List<Long> aoIds = paymentPlanDto.getTargetedAos().stream()
                 .map(InstallmentAccountOperation::getId)
                 .collect(Collectors.toList());
 
@@ -108,21 +108,21 @@ public class PaymentPlanApi extends BaseApi {
         List<AccountOperation> aos = accountOperationService.findByCustomerAccount(aoIds, paymentPlanDto.getCustomerAccount());
 
         // Find payment plan by given id
-        PaymentPlan existingPP = paymentPlanService.findById(paymentPlanDto.getId());
+        PaymentPlan existingPP = paymentPlanService.findById(id);
 
         if (existingPP == null) {
-            throw new EntityDoesNotExistsException("No Payment plan found with id " + paymentPlanDto.getId());
+            throw new EntityDoesNotExistsException("No Payment plan found with id " + id);
         }
 
         if (existingPP.getAmountToRecover().compareTo(paymentPlanDto.getAmountToRecover()) > 0) {
-            throw new BusinessApiException("No Payment plan found with id " + paymentPlanDto.getId());
+            throw new BusinessApiException("No Payment plan found with id " + id);
         }
 
         validate(paymentPlanDto, customerAccount, aoIds, aos);
 
         Date end = getPPEndDate(paymentPlanDto);
 
-        return paymentPlanService.update(paymentPlanDto, aos, customerAccount, end);
+        return paymentPlanService.update(id, paymentPlanDto, aos, customerAccount, end);
     }
 
     public void delete(Long id) {
@@ -156,7 +156,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Payment plan cannot start in the past. Please update start date");
         }
 
-        validateAOsAmount(paymentPlan.getAmountToRecover(), paymentPlan.getCreatedAos());
+        validateAOsAmount(paymentPlan.getAmountToRecover(), paymentPlan.getTargetedAos());
 
         // PaymentPlan status must move to 'ACTIVE'
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
@@ -171,7 +171,7 @@ public class PaymentPlanApi extends BaseApi {
         // All creationAccountOperations must be matched with this new AO.
         List<Long> aosToMatch = new ArrayList<>();
         aosToMatch.add(aoPPC.getId()); // CREDIT in first
-        aosToMatch.addAll(paymentPlan.getCreatedAos().stream()
+        aosToMatch.addAll(paymentPlan.getTargetedAos().stream()
                 .map(AccountOperation::getId)
                 .collect(Collectors.toList()));
 
@@ -208,7 +208,7 @@ public class PaymentPlanApi extends BaseApi {
 
         // Update PaymentPlan
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
-        paymentPlan.setTargetedAos(newAoPPIs);
+        paymentPlan.setCreatedAos(newAoPPIs);
 
         paymentPlanService.update(paymentPlan);
 
