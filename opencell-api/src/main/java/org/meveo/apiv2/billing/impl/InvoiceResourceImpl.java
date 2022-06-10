@@ -354,13 +354,13 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response createAdjustment(@NotNull Long id, @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToReplicate);
-        return Response.ok().entity(buildSuccessResponse(invoiceMapper.toResource(adjInvoice))).build();
+        return Response.ok().entity(buildSuccessResponse("invoice", invoiceMapper.toResource(adjInvoice))).build();
     }
 
-    private Map<String, Object> buildSuccessResponse(org.meveo.apiv2.billing.Invoice invoiceResource) {
+    private Map<String, Object> buildSuccessResponse(String label, Object object) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-        response.put("invoice", invoiceResource);
+        response.put(label, object);
         return response;
     }
     
@@ -406,6 +406,18 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("quarantineBillingRunId", quarantineBillingRunId);
         return Response.ok(response).build();
 	}
-    
-    
+
+	@Override
+	public Response refreshRate(Long invoiceId) {
+		Optional<Invoice> refreshedInvoice = invoiceApiService.refreshRate(invoiceId);
+		Map<String, Object> response;
+		if(refreshedInvoice.isPresent()) {
+			response = buildSuccessResponse("message",
+					"Exchange rate successfully refreshed");
+		} else {
+			response = buildSuccessResponse("message",
+					"Last applied rate and trading currency current rate are equals");
+		}
+		return Response.ok(response).build();
+	}
 }
