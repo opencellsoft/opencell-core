@@ -227,7 +227,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					//Create Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.CREATE) {
 						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);	
-					}else {
+					}
+					//Modify Action type
+					if(product.getProductActionType() == ProductActionTypeEnum.MODIFY) {
 						updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 					}
 					//Activate Action type
@@ -244,6 +246,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						} else {
 							List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
 				            if (services.size() > 0) {
+				            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 				            	ServiceInstance serviceInstanceToActivate = services.get(0);
 								if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
 									serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
@@ -257,6 +260,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
 						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE);
 			            if (services.size() > 0) {
+			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 			            	ServiceInstance serviceInstanceToSuspend = services.get(0);
 							serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
 			            }
@@ -265,6 +269,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
 						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
 			            if (services.size() > 0) {
+			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 			            	ServiceInstance serviceInstanceToTerminate = services.get(0);
 							serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
 				            }
