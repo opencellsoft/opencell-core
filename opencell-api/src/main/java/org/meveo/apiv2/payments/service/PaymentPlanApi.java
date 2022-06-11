@@ -89,7 +89,7 @@ public class PaymentPlanApi extends BaseApi {
         // List AO by customerAccount ID and AO IDs
         List<AccountOperation> aos = accountOperationService.findByCustomerAccount(aoIds, paymentPlanDto.getCustomerAccount());
 
-        validate(paymentPlanDto, customerAccount, aoIds, aos);
+        validate(paymentPlanDto, customerAccount, aoIds, aos, true);
 
         // if endDate is given, check that value is correct and throw exception if not. If null, calculate it. endDate=startDate.addMonths(numberOfInstallments-1)
         Date end = getPPEndDate(paymentPlanDto);
@@ -115,6 +115,11 @@ public class PaymentPlanApi extends BaseApi {
             throw new EntityDoesNotExistsException("No Payment plan found with id " + id);
         }
 
+        PaymentPlan ppWithSameCode = paymentPlanService.findByCode(paymentPlanDto.getCode());
+        if (ppWithSameCode != null && !ppWithSameCode.getId().equals(id)) {
+            throw new EntityAlreadyExistsException(PaymentPlan.class, paymentPlanDto.getCode());
+        }
+
         if (existingPP.getAmountToRecover().compareTo(paymentPlanDto.getAmountToRecover()) != 0) {
             throw new BusinessApiException("Payment plan amount should not be updated");
         }
@@ -123,7 +128,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Payment plan code should not be updated");
         }
 
-        validate(paymentPlanDto, customerAccount, aoIds, aos);
+        validate(paymentPlanDto, customerAccount, aoIds, aos, false);
 
         Date end = getPPEndDate(paymentPlanDto);
 
@@ -219,16 +224,16 @@ public class PaymentPlanApi extends BaseApi {
 
     }
 
-    private void validate(PaymentPlanDto dto, CustomerAccount customerAccount, List<Long> aoIds, List<AccountOperation> aos) {
+    private void validate(PaymentPlanDto dto, CustomerAccount customerAccount, List<Long> aoIds, List<AccountOperation> aos, boolean isCreation) {
         Provider provider = providerService.getProvider();
-
-        if (paymentPlanService.findByCode(dto.getCode()) != null) {
-            throw new EntityAlreadyExistsException(PaymentPlan.class, dto.getCode());
-        }
 
         // dto validation
         if (!provider.isPaymentPlan()) {
             throw new BusinessApiException("PaymentPlan not allowed");
+        }
+
+        if (isCreation && paymentPlanService.findByCode(dto.getCode()) != null) {
+            throw new EntityAlreadyExistsException(PaymentPlan.class, dto.getCode());
         }
 
         if (dto.getNumberOfInstallments() <= 0) {
