@@ -157,7 +157,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Cannot activate PaymentPlan with status " + paymentPlan.getStatus());
         }
 
-        if (!paymentPlan.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) {
+        if (paymentPlan.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) {
             throw new BusinessApiException("Payment plan cannot start in the past. Please update start date");
         }
 

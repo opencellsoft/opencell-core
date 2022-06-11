@@ -108,7 +108,6 @@ public class PaymentPlanCRUDApiTest {
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.lenient().when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.create(dto);
 
@@ -132,7 +131,7 @@ public class PaymentPlanCRUDApiTest {
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(null);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
             paymentPlanApi.create(dto);
@@ -190,7 +189,7 @@ public class PaymentPlanCRUDApiTest {
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(null);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findByCode(any())).thenReturn(new PaymentPlan());
 
         try {
@@ -218,9 +217,9 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, false));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
             paymentPlanApi.create(dto);
@@ -247,9 +246,9 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
             paymentPlanApi.create(dto);
@@ -278,9 +277,9 @@ public class PaymentPlanCRUDApiTest {
         aos.add(ao1);
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
             paymentPlanApi.create(dto);
@@ -307,9 +306,9 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
             paymentPlanApi.create(dto);
@@ -662,7 +661,6 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setAmountToRecover(new BigDecimal(240));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(null);
 
@@ -695,9 +693,8 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setAmountToRecover(new BigDecimal(241));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
 
         try {
             paymentPlanApi.update(1L, dto);
@@ -729,9 +726,8 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setCode("UPDATED-CODE");
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
 
         try {
             paymentPlanApi.update(1L, dto);
@@ -764,9 +760,6 @@ public class PaymentPlanCRUDApiTest {
         PaymentPlan existingPP = new PaymentPlan();
         existingPP.setAmountToRecover(new BigDecimal(240));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
         Mockito.doNothing().when(paymentPlanService).remove(1L);
 
@@ -793,11 +786,7 @@ public class PaymentPlanCRUDApiTest {
         PaymentPlan existingPP = new PaymentPlan();
         existingPP.setAmountToRecover(new BigDecimal(240));
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(null);
-        Mockito.lenient().doNothing().when(paymentPlanService).remove(1L);
 
         try {
             paymentPlanApi.delete(1L);
@@ -828,11 +817,7 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setAmountToRecover(new BigDecimal(241));
         existingPP.setStatus(PaymentPlanStatusEnum.ACTIVE);
 
-        Mockito.lenient().when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.lenient().when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
-        Mockito.lenient().when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.lenient().when(paymentPlanService.findById(any())).thenReturn(existingPP);
-        Mockito.lenient().doNothing().when(paymentPlanService).remove(1L);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
 
         try {
             paymentPlanApi.delete(1L);
