@@ -124,7 +124,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Payment plan amount should not be updated");
         }
 
-        if (!existingPP.getCode().equalsIgnoreCase(paymentPlanDto.getCode())) {
+        if (existingPP.getStatus() != PaymentPlanStatusEnum.DRAFT && !existingPP.getCode().equalsIgnoreCase(paymentPlanDto.getCode())) {
             throw new BusinessApiException("Payment plan code should not be updated");
         }
 

@@ -641,6 +641,37 @@ public class PaymentPlanCRUDApiTest {
 
     }
 
+    @Test
+    public void updateNominalWithChaingingCode() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        PaymentPlan existingPP = new PaymentPlan();
+        existingPP.setAmountToRecover(new BigDecimal(240));
+        existingPP.setCode("CODE-UPDATE");
+        existingPP.setStatus(PaymentPlanStatusEnum.DRAFT);
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+        Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
+        Mockito.when(paymentPlanService.update(1L, dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
+
+        paymentPlanApi.update(1L, dto);
+
+    }
+
     @Test(expected = EntityDoesNotExistsException.class)
     public void updatePPNotFoundErr() {
         CustomerAccount customerAccount = new CustomerAccount();
@@ -724,6 +755,7 @@ public class PaymentPlanCRUDApiTest {
         PaymentPlan existingPP = new PaymentPlan();
         existingPP.setAmountToRecover(new BigDecimal(240));
         existingPP.setCode("UPDATED-CODE");
+        existingPP.setStatus(PaymentPlanStatusEnum.ACTIVE);
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
