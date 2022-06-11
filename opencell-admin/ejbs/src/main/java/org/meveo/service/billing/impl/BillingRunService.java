@@ -852,7 +852,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) {
             invoiceService.quarantineRejectedInvoicesByBR(billingRun);
         }
-        if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
+        if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
             invoiceService.cancelRejectedInvoicesByBR(billingRun);
         }
     }
