@@ -116,8 +116,6 @@ import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.CurrencyService;
-import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.script.ScriptInstanceService;
