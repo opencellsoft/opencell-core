@@ -271,7 +271,7 @@ public class PaymentPlanApi extends BaseApi {
         // check that: amountToRecover = (amountPerInstallment * numberOfInstallments) + remaining
         BigDecimal remaningToProcess = dto.getRemainingAmount() != null ? dto.getRemainingAmount() : BigDecimal.ZERO;
         BigDecimal expectedAmount = dto.getAmountPerInstallment().multiply(BigDecimal.valueOf(dto.getNumberOfInstallments())).add(remaningToProcess);
-        if (!Objects.equals(dto.getAmountToRecover(), expectedAmount)) {
+        if (dto.getAmountToRecover().compareTo(expectedAmount) != 0) {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be equal '" + expectedAmount + "'");
         }
 
