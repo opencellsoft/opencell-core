@@ -308,7 +308,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         }
 
         String idsInvoiceLineNotFoundStr = "";
-        if (idsInvoiceLineNotFound.size() > 0) {
+        if (!idsInvoiceLineNotFound.isEmpty()) {
             for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
                 idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
             }

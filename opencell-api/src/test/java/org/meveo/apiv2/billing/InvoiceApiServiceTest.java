@@ -9,7 +9,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.model.billing.Invoice;
@@ -34,6 +36,9 @@ public class InvoiceApiServiceTest {
 
     @Mock
     private InvoiceService invoiceService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private static final List<String> fieldToFetch = asList("tradingCurrency", "invoiceLines");
 
@@ -107,14 +112,17 @@ public class InvoiceApiServiceTest {
         assertTrue(result.isEmpty());
     }
 
-
-    @Test(expected = NotFoundException.class)
+    @Test
     public void shouldThrowNotFoundExceptionIfInvoiceNotFound() {
         when(invoiceService.findById(invoiceId, fieldToFetch)).thenReturn(null);
+
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage("Invoice not found");
+
         invoiceApiService.refreshRate(invoiceId);
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test
     public void shouldThrowForbiddenExceptionIfStatusNotAllowed() {
         Invoice invoice = new Invoice();
         invoice.setId(1L);
@@ -122,6 +130,10 @@ public class InvoiceApiServiceTest {
         invoice.setStatus(VALIDATED);
 
         when(invoiceService.findById(invoiceId, fieldToFetch)).thenReturn(invoice);
+
+        expectedException.expect(ForbiddenException.class);
+        expectedException.expectMessage("Refresh rate only allowed for invoices with status : NEW or DRAFT");
+
         invoiceApiService.refreshRate(invoiceId);
     }
 }
