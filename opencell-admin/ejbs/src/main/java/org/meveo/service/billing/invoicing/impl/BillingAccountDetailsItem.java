@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -203,7 +204,7 @@ public class BillingAccountDetailsItem {
 	 * @param invoicingItems the invoicingItems to set
 	 */
 	public void setInvoicingItems(List<InvoicingItem> invoicingItems) {
-		this.totalRTs=invoicingItems.stream().mapToInt(InvoicingItem::getCount).sum();
+		this.totalRTs = CollectionUtils.isEmpty(invoicingItems) ? 0 : invoicingItems.stream().mapToInt(InvoicingItem::getCount).sum();
 		this.invoicingItems = invoicingItems;
 	}
 
