@@ -22,7 +22,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
 import java.math.BigDecimal;
@@ -30,10 +30,9 @@ import java.util.Date;
 import java.util.List;
 
 @Stateless
-public class PaymentPlanService extends PersistenceService<PaymentPlan> {
+public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     public Long create(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
-        // To entity
         PaymentPlan paymentPlan = new PaymentPlan();
 
         build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
@@ -46,7 +45,6 @@ public class PaymentPlanService extends PersistenceService<PaymentPlan> {
     }
 
     public Long update(Long id, PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
-        // To entity
         PaymentPlan paymentPlan = findById(id);
 
         build(paymentPlan, paymentPlanDto, customerAccount, aos, end);

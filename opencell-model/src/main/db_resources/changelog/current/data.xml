@@ -10252,7 +10252,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-7402_20220608" author="aelmalki">
+	<changeSet id="#INTRD-7402_20220608" author="aelmalki" failOnError="false">
+		<!-- failOnError because some one added thos occ_templae manualy in dev env -->
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-62" />
 			<column name="version" valueNumeric="0" />
