@@ -34,7 +34,7 @@
           <module name="org.jboss.as.server" />
           <module name="org.eclipse.microprofile.metrics.api" />
           <module name="org.keycloak.keycloak-core" />
-          
+          <module name="com.google.code.gson" />
         </dependencies>          
 	</deployment>
 </jboss-deployment-structure>
