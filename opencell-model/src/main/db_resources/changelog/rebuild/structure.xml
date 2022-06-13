@@ -11372,6 +11372,9 @@
             <column name="determine_level_by" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
         <createTable tableName="dunning_policy_rule">
@@ -17864,6 +17867,7 @@
     <changeSet id="#INTRD-7642_20220603" author="ZBariki" />
     <changeSet id="#INTRD-7399_20220603" author="aelmalki" />
     <changeSet id="#INTRD-7644_20220606" author="ZBariki" />
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
