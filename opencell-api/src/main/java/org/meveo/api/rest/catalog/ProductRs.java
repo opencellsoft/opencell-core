@@ -58,9 +58,9 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode="200", description = "the product successfully created",
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "the product with code is missing"),
-            @ApiResponse(responseCode = "302", description = "the product already existe with the given code"),
-            @ApiResponse(responseCode = "400", description = "Internat error"),
-            @ApiResponse(responseCode = "404", description = "one of the entites doesn't exist : ")
+            @ApiResponse(responseCode = "409", description = "the product already exists with the given code"),
+            @ApiResponse(responseCode = "400", description = "Bad request error"),
+            @ApiResponse(responseCode = "404", description = "one of the entities doesn't exist : ")
     })
 	Response createProduct(@Parameter(description = "product dto for a new insertion", required = true) ProductDto productDto);
 	

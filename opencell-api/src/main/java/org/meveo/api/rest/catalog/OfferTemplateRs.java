@@ -89,22 +89,17 @@ public interface OfferTemplateRs extends IBaseRs {
 			operationId="    POST_OfferTemplate_create",
 			responses= {
 				@ApiResponse(
-						responseCode = "200",
-			description=" Create offer template.  ",
-						content=@Content(
-									schema=@Schema(
-											implementation= ActionStatus.class
-											)
-								)
-						),
-				@ApiResponse(
-								responseCode = "302", 
-								description = "Offer template already existe", 
-								content = @Content(
-											schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+								responseCode = "201",
+								description=" Create offer template.  ",
+								content=@Content(
+											schema=@Schema(
+													implementation= ActionStatus.class
+													)
+										)
+								),
 				@ApiResponse(
 								responseCode = "400", 
-								description = "An offer with period date from and to  already exist ", 
+								description = "An offer with period date from and to already exist ",
 								content = @Content(
 											schema = @Schema(implementation = InvalidParameterException.class))),
 				@ApiResponse(
@@ -125,7 +120,12 @@ public interface OfferTemplateRs extends IBaseRs {
 								description = "Failed creating/deleting image", 
 								content = @Content(
 											schema = @Schema(
-														implementation = InvalidImageData.class)))
+														implementation = InvalidImageData.class))),
+				@ApiResponse(
+								responseCode = "409",
+								description = "Offer template already exists",
+								content = @Content(
+										schema = @Schema(implementation = EntityAlreadyExistsException.class))),
 				}
 	)
     ActionStatus create(OfferTemplateDto postData);
@@ -144,18 +144,15 @@ public interface OfferTemplateRs extends IBaseRs {
 			description=" Update offer template.  ",
 			operationId="    PUT_OfferTemplate_update",
 			responses= {
-				@ApiResponse(description=" Update offer template.  ",
-						content=@Content(
+				@ApiResponse(
+								responseCode = "200",
+								description=" Update successfully offer template.  ",
+								content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
 											)
 								)
 				),
-				@ApiResponse(
-								responseCode = "302", 
-								description = "Offer template already existe", 
-								content = @Content(
-											schema = @Schema(implementation = EntityAlreadyExistsException.class))),
 				@ApiResponse(
 								responseCode = "400", 
 								description = "An offer with period date from and to  already exist ", 

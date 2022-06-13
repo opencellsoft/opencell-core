@@ -2,7 +2,9 @@
  * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
- * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * Public License as published by the Free Software Foundation, either version 3
+ *
+ *  of the License, or (at your option)
  * any later version.
  *
  * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
@@ -311,8 +313,8 @@ public interface PricePlanRs extends IBaseRs {
             responses = {
                     @ApiResponse(responseCode = "201", description = "the price plan column successfully created"),
                     @ApiResponse(responseCode = "412", description = "the price plan column with code is missing"),
-                    @ApiResponse(responseCode = "302", description = "the price plan column already existe with the given code"),
-                    @ApiResponse(responseCode = "400", description = "Internat error")
+                    @ApiResponse(responseCode = "409", description = "the price plan column already exists with the given code"),
+                    @ApiResponse(responseCode = "400", description = "Bad request error")
             })
     Response create(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
                     @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, PricePlanMatrixColumnDto postData);
