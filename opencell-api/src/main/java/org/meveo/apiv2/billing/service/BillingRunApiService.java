@@ -17,6 +17,7 @@ import javax.ws.rs.BadRequestException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
@@ -153,6 +154,11 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     billingRun.setPdfJobExecutionResultId(null);
                     billingRun = billingRunService.update(billingRun);
                 }
+                
+                if(billingRunService.isBillingRunContainingRejectedInvoices(billingRunId)){
+               		billingRunService.applyRejectAutomaticValidationActions(billingRun);
+                }
+                
                 if (executeInvoicingJob) {
                     Map<String, Object> jobParams = new HashMap<>();
                     jobParams.put(INVOICING_JOB_PARAMETERS,
