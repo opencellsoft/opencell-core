@@ -11352,6 +11352,9 @@
             <column name="determine_level_by" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
         <createTable tableName="dunning_policy_rule">
@@ -17737,6 +17740,7 @@
 	<changeSet id="INTRD-6608_20220420-fix" author="AkadidAbdelmounaim" />
     <changeSet id="#INTRD-7157_20220523" author="ZBariki" />
     <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
