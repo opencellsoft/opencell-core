@@ -7,7 +7,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 
-import javax.persistence.*;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -19,12 +19,8 @@ public interface ThresholdInput extends Resource {
     @NotNull
     Integer getSequence();
 
-
-    @NotNull
+    @Nullable
     Integer getPercentage();
 
-
     List<ThresholdRecipientsEnum> getRecipients();
-
-
 }

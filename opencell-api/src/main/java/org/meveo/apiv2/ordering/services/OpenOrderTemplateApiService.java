@@ -44,7 +44,7 @@ public class OpenOrderTemplateApiService {
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
 
-    public OpenOrderTemplateInput create(OpenOrderTemplateInput  input) {
+    public OpenOrderTemplateInput create(OpenOrderTemplateInput input) {
         checkParameters(input);
         if (openOrderTemplateService.findByCode(input.getTemplateName()) != null)
             throw new InvalidParameterException(String.format("Template name %s already exists", input.getTemplateName()));
@@ -110,7 +110,8 @@ public class OpenOrderTemplateApiService {
         if (!isNullOrEmpty(thresholds)) {
             thresholds
                     .stream()
-                    .filter(threshold -> threshold.getPercentage() < 1 || threshold.getPercentage() > 100)
+                    .filter(threshold -> threshold.getPercentage() == null
+                            || threshold.getPercentage() < 1 || threshold.getPercentage() > 100)
                     .findAny()
                     .ifPresent(threshold -> {
                         throw new BusinessApiException("Threshold should be between 1 and 100");
