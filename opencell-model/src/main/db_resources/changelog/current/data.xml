@@ -10277,4 +10277,23 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="journal_id" value="-3" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-7632_20220611" author="HatimOUDAD">
+		<update tableName="cpq_order_product">
+			<column name="instance_status" value="ACTIVE" />
+			<where> instance_status is null and production_action_type = 'ACTIVATE'</where>
+		</update>
+		<update tableName="cpq_order_product">
+			<column name="instance_status" value="INACTIVE" />
+			<where> instance_status is null and production_action_type = 'CREATE'</where>
+		</update>
+		<update tableName="cpq_order_product">
+			<column name="instance_status" value="SUSPENDED" />
+			<where> instance_status is null and production_action_type = 'SUSPEND'</where>
+		</update>
+		<update tableName="cpq_order_product">
+			<column name="instance_status" value="TERMINATED" />
+			<where> instance_status is null and production_action_type = 'TERMINATE'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
