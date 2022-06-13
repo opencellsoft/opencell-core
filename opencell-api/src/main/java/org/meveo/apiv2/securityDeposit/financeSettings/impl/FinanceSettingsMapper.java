@@ -9,6 +9,11 @@ import org.meveo.model.securityDeposit.FinanceSettings;
 public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.securityDeposit.FinanceSettings, FinanceSettings> {
 
     private OpenOrderSettingMapper openOrderSettingMapper = new OpenOrderSettingMapper();
+
+    protected static final String AUXILIARY_ACCOUNTING_CODE_DEFAULT_EL =
+            "#{gca.code.substring(0, 3)}#{ca.isCompany ? ca.description : ca.name.lastName}";
+    protected static final String AUXILIARY_ACCOUNTING_DEFAULT_LABEL_EL =
+            "#{ca.isCompany ? ca.description : ca.name.firstName.concat(' ').concat(ca.name.lastName)}";
     @Override protected org.meveo.apiv2.securityDeposit.FinanceSettings toResource(FinanceSettings entity) {
         ImmutableFinanceSettings.Builder builder = ImmutableFinanceSettings.builder()
                 .id(entity.getId())
@@ -41,6 +46,16 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          auxiliaryAccounting.setUseAuxiliaryAccounting(resource.getUseAuxiliaryAccounting());
          auxiliaryAccounting.setAuxiliaryAccountCodeEl(resource.getAuxiliaryAccountCodeEl());
          auxiliaryAccounting.setAuxiliaryAccountLabelEl(resource.getAuxiliaryAccountLabelEl());
+         if(auxiliaryAccounting.isUseAuxiliaryAccounting()
+                 && (auxiliaryAccounting.getAuxiliaryAccountCodeEl() == null
+                 || auxiliaryAccounting.getAuxiliaryAccountCodeEl().isBlank())) {
+             auxiliaryAccounting.setAuxiliaryAccountCodeEl(AUXILIARY_ACCOUNTING_CODE_DEFAULT_EL);
+         }
+         if(auxiliaryAccounting.isUseAuxiliaryAccounting()
+                 && (auxiliaryAccounting.getAuxiliaryAccountLabelEl() == null
+                 || auxiliaryAccounting.getAuxiliaryAccountLabelEl().isBlank())) {
+             auxiliaryAccounting.setAuxiliaryAccountLabelEl(AUXILIARY_ACCOUNTING_DEFAULT_LABEL_EL);
+         }
          financeSettings.setAuxiliaryAccounting(auxiliaryAccounting);
          return financeSettings;
     }
