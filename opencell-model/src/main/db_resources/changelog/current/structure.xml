@@ -13363,5 +13363,12 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza">
+        <addColumn tableName="dunning_policy">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
