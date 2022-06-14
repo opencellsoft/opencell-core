@@ -50,6 +50,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	private MatchingCodeService matchingCodeService;
 
 	@Inject
+	private PaymentPlanService paymentPlanService;
+
+	@Inject
 	private SecurityDepositTransactionService securityDepositTransactionService;
 
 	@Override
@@ -233,6 +236,11 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 					matchingResult.getPartialMatchingOcc().add(p);
 				}
 			}
+
+			// update PaymentPlan
+			List<Long> debitAos = new ArrayList<>(aoIds);
+			debitAos.remove(creditAoId);
+			paymentPlanService.toComplete(debitAos);
 
 			return matchingResult;
 

@@ -33,7 +33,6 @@ import java.util.List;
 @JsonDeserialize(as = ImmutableOpenOrderTemplateInput.class)
 public interface OpenOrderTemplateInput extends Resource {
 
-
     @Nullable
     OpenOrderTypeEnum getOpenOrderType();
 
@@ -58,6 +57,4 @@ public interface OpenOrderTemplateInput extends Resource {
 
     @Nullable
     OpenOrderTemplateStatusEnum getStatus();
-
-
 }

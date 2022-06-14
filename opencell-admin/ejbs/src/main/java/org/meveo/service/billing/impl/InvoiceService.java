@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static java.math.BigDecimal.ONE;
@@ -42,21 +43,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -70,6 +58,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.ws.rs.ForbiddenException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -4683,7 +4672,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(currentRateFromDate != null) {
             invoice.setLastAppliedRateDate(currentRateFromDate);
         } else {
-            invoice.setLastAppliedRateDate(invoice.getInvoiceDate());
+            invoice.setLastAppliedRateDate(invoice.getAuditable().getCreated());
         }
         invoice.getInvoiceLines()
                 .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));

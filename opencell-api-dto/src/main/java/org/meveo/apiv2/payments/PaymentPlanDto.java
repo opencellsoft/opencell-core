@@ -31,9 +31,6 @@ public interface PaymentPlanDto {
     @NotNull
     BigDecimal getAmountPerInstallment();
 
-    @Nullable
-    BigDecimal getRemainingAmount();
-
     @NotNull
     ActionOnRemainingAmountEnum getActionOnRemainingAmount();
 
