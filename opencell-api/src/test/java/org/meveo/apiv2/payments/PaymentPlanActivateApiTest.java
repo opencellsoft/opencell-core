@@ -279,12 +279,6 @@ public class PaymentPlanActivateApiTest {
                 return amountPerInstallment;
             }
 
-            @Nullable
-            @Override
-            public BigDecimal getRemainingAmount() {
-                return null;
-            }
-
             @Override
             public ActionOnRemainingAmountEnum getActionOnRemainingAmount() {
                 return action;
