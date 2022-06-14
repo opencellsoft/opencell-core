@@ -201,20 +201,29 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.READ)
     public boolean isShouldJobContinue(Long jobInstanceId) {
-        String currentProvider = currentUser.getProviderCode();
-        if (jobInstanceId == null) {
-            return false;
+
+        try {
+
+            String currentProvider = currentUser.getProviderCode();
+            if (jobInstanceId == null) {
+                return false;
+            }
+            JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+            if (jobExecutionStatus == null || jobExecutionStatus.isRequestedToStop()) {
+                return false;
+
+            } else {
+
+                String nodeToCheck = EjbUtils.getCurrentClusterNode();
+
+                return jobExecutionStatus.isRunning(nodeToCheck);
+            }
+
+        } catch (NullPointerException e) {
+            log.error("AKKK NPE in job running CU is null{} ", currentUser == null, e);
+            return true;
         }
-        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
-        if (jobExecutionStatus == null || jobExecutionStatus.isRequestedToStop()) {
-            return false;
 
-        } else {
-
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-
-            return jobExecutionStatus.isRunning(nodeToCheck);
-        }
     }
 
     /**
