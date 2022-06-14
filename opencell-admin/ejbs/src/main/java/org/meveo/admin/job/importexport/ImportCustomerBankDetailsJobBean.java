@@ -123,9 +123,7 @@ public class ImportCustomerBankDetailsJobBean {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, CloneNotSupportedException {
-        customerBankDetailsImport = new CustomerBankDetailsImportHisto();
-        customerBankDetailsImport.setExecutionDate(new Date());
-        customerBankDetailsImport.setFileName(fileName);
+        createCustomerBankDetailsImport(fileName);
 
         if (file.length() < 100) {
             createHistory();
@@ -142,6 +140,13 @@ public class ImportCustomerBankDetailsJobBean {
         }
 
         int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        paymentMethodeDepartArrivee(jobInstance, customerBankDetails, i, checkJobStatusEveryNr);    
+        
+        createHistory();
+        log.info("end import file ");
+    }
+
+    private void paymentMethodeDepartArrivee(JobInstance jobInstance, Document customerBankDetails, int i, int checkJobStatusEveryNr) throws CloneNotSupportedException {
         for (Modification newModification : customerBankDetails.getMessageBanqueEmetteur().getModification()) {
             if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
@@ -170,10 +175,13 @@ public class ImportCustomerBankDetailsJobBean {
                     nbModificationsIgnored++;
                 }
             }            
-        }    
-        
-        createHistory();
-        log.info("end import file ");
+        }
+    }
+
+    private void createCustomerBankDetailsImport(String fileName) {
+        customerBankDetailsImport = new CustomerBankDetailsImportHisto();
+        customerBankDetailsImport.setExecutionDate(new Date());
+        customerBankDetailsImport.setFileName(fileName);
     }
 
     private void dupDDPaymentMethode(String ibanArrivee, String bicArrivee, PaymentMethod paymentMethod) throws CloneNotSupportedException {
