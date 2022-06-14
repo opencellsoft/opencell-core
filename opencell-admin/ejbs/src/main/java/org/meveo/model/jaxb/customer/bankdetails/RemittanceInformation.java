@@ -28,8 +28,5 @@ public class RemittanceInformation {
     }
     public void setStructured(List<Structured> structured) {
         this.structured = structured;
-    }
-
-    public RemittanceInformation() {
-    }    
+    }  
 }

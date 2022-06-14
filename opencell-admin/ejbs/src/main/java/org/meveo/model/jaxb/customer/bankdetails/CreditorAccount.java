@@ -19,7 +19,4 @@ public class CreditorAccount {
     public void setIdentification(Identification identification) {
         this.identification = identification;
     }
-
-    public CreditorAccount() {
-    }
 }

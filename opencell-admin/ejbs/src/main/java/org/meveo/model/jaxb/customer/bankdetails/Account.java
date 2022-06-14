@@ -19,7 +19,4 @@ public class Account {
     public void setiBAN(String iBAN) {
         this.iBAN = iBAN;
     }
-
-    public Account() {
-    }
 }

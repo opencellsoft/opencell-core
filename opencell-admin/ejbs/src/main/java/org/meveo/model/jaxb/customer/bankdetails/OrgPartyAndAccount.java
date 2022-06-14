@@ -42,8 +42,5 @@ public class OrgPartyAndAccount {
     }
     public void setAgent(Agent agent) {
         this.agent = agent;
-    }
-
-    public OrgPartyAndAccount() {
-    }    
+    }  
 }

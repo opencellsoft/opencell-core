@@ -27,7 +27,8 @@ public class Modification {
     
     public String getId() {
         return id;
-    }    public void setId(String id) {
+    }    
+    public void setId(String id) {
         this.id = id;
     }
     public AccountSwitchingRef getAccountSwitchingRef() {
@@ -59,8 +60,5 @@ public class Modification {
     }
     public void setTransactionReport(List<TransactionReport> transactionReport) {
         this.transactionReport = transactionReport;
-    }
-
-    public Modification() {
     }
 }

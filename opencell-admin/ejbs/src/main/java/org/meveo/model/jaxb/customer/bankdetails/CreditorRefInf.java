@@ -27,7 +27,4 @@ public class CreditorRefInf {
     public void setReference(String reference) {
         this.reference = reference;
     }
-
-    public CreditorRefInf() {
-    }
 }

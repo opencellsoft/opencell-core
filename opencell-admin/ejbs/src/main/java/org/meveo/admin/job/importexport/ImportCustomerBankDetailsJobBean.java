@@ -71,7 +71,6 @@ public class ImportCustomerBankDetailsJobBean {
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "bank_Mobility" + File.separator;
 
         String dirIN = importDir + "input";
-        log.info("dirIN=" + dirIN);
         String dirOK = importDir + "output";
         String dirKO = importDir + "reject";
         String prefix = paramBean.getProperty("importCustomerBankDetails.prefix", "acmt");
@@ -85,7 +84,13 @@ public class ImportCustomerBankDetailsJobBean {
         List<File> files = getFilesToProcess(dir, prefix, ext);
         int numberOfFiles = files.size();
         log.info("InputFiles job to import={}", numberOfFiles);
-
+        
+        nbModifications = 0;
+        nbModificationsError = 0;
+        nbModificationsTerminated = 0;
+        nbModificationsIgnored = 0;
+        nbModificationsCreated = 0;
+        
         for (File file : files) {
             if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
@@ -105,24 +110,20 @@ public class ImportCustomerBankDetailsJobBean {
                 log.error("Failed to import Customer Bank Details job", e);
             } finally {
                 if (currentFile != null)
+                {
                     currentFile.delete();
+                }
             }
         }
 
-        result.setNbItemsToProcess(nbModifications);
-        result.setNbItemsCorrectlyProcessed(nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
-        result.setNbItemsProcessedWithError(nbModificationsError);
+        result.setNbItemsToProcess((long) nbModifications);
+        result.setNbItemsCorrectlyProcessed((long) (nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored));
+        result.setNbItemsProcessedWithError((long) nbModificationsError);
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
-        log.info("start import file :" + fileName);
-
-        nbModifications = 0;
-        nbModificationsError = 0;
-        nbModificationsTerminated = 0;
-        nbModificationsIgnored = 0;
-        nbModificationsCreated = 0;
+        
 
         customerBankDetailsImport = new CustomerBankDetailsImportHisto();
         customerBankDetailsImport.setExecutionDate(new Date());
@@ -148,31 +149,36 @@ public class ImportCustomerBankDetailsJobBean {
                 break;
             }
             //IBAN du client et BIC dans l'établissement de départ
-            String iBAN_etablissement_depart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
-            String bicFi_etablissement_depart = newModification.getOrgPartyAndAccount().getAgent().getFinInstnId().getBicFi();
+            String ibanDepart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
+            String bicDepart = newModification.getOrgPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             //IBAN du client et BIC dans l'établissement d'arrivée
-            String iBAN_etablissement_arrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
-            String bicFi_etablissement_arrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
-            log.info("IBAN etablissement depart: [" + iBAN_etablissement_depart + "] - BICFI etablissement depart: [" + bicFi_etablissement_depart +
-                "] - IBAN etablissement arrivee: [" + iBAN_etablissement_arrivee + "] - BICFI etablissement arrivee: [" + bicFi_etablissement_arrivee + "]");
+            String ibanArrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
+            String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             
-            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(iBAN_etablissement_depart, bicFi_etablissement_depart);
-            if (paymentMethods != null) {
-                for (PaymentMethod paymentMethod : paymentMethods) {
-                    DDPaymentMethod dDPaymentMethod = (DDPaymentMethod) paymentMethod;
-                    DDPaymentMethod newDDPaymentMethod = new DDPaymentMethod();                    
-                    newDDPaymentMethod = dDPaymentMethod.clone();
-                    newDDPaymentMethod.getBankCoordinates().setIban(iBAN_etablissement_arrivee);
-                    newDDPaymentMethod.getBankCoordinates().setBic(bicFi_etablissement_arrivee);        
-                    paymentMethodService.create(newDDPaymentMethod);
-                    
-                    paymentMethod.setPreferred(false);            
-                    paymentMethod.setDisabled(true);
-                    paymentMethodService.update(paymentMethod);
-                    nbModificationsCreated++;
+            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
+            List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
+            if (paymentMethods != null && paymentMethodsArrivee != null) {
+                if(paymentMethodsArrivee.size() == 0) {
+                    for (PaymentMethod paymentMethod : paymentMethods) {
+                        DDPaymentMethod dDPaymentMethod = (DDPaymentMethod) paymentMethod;
+                        DDPaymentMethod newDDPaymentMethod = new DDPaymentMethod();                    
+                        newDDPaymentMethod = dDPaymentMethod.copieDDPaymentMethod();
+                        newDDPaymentMethod.getBankCoordinates().setIban(ibanArrivee);
+                        newDDPaymentMethod.getBankCoordinates().setBic(bicArrivee);        
+                        paymentMethodService.create(newDDPaymentMethod);
+                        
+                        paymentMethod.setPreferred(false);            
+                        paymentMethod.setDisabled(true);
+                        paymentMethodService.update(paymentMethod);
+                        nbModificationsCreated++;
+                    }
                 }
-                if(paymentMethods.size() == 0) {
+                else {
                     nbModificationsError++;
+                }
+                
+                if(paymentMethods.size() == 0) {
+                    nbModificationsIgnored++;
                 }
             }            
         }    
@@ -184,7 +190,7 @@ public class ImportCustomerBankDetailsJobBean {
     /**
      * @throws Exception exception
      */
-    private void createHistory() throws Exception {
+    private void createHistory() {
         customerBankDetailsImport.setLinesRead(nbModifications);
         customerBankDetailsImport.setLinesInserted(nbModificationsCreated);
         customerBankDetailsImport.setLinesRejected(nbModificationsError);

@@ -9,20 +9,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "organisationId", "privateIdentification", "Others", "iBAN" })
+@XmlType(name = "", propOrder = { "organisationId", "privateIdentification", "others", "iBAN" })
 @XmlRootElement(name = "Id")
 public class Identification { 
-    @XmlElement(name = "OrgId")//, required = true
+    @XmlElement(name = "OrgId")
     protected Organisation organisationId;
-    @XmlElement(name = "PrvtId")//, required = true
+    @XmlElement(name = "PrvtId")
     protected PrivateIdentification  privateIdentification;
-    @XmlElement(name = "Othr")//, required = true
-    protected List<Other> Others;
-    @XmlElement(name = "IBAN")//, required = true
+    @XmlElement(name = "Othr")
+    protected List<Other> others;
+    @XmlElement(name = "IBAN")
     protected String iBAN;
-    
-    public Identification() {
-    }
 
     public Organisation getOrganisationId() {
         return organisationId;
@@ -37,10 +34,10 @@ public class Identification {
         this.privateIdentification = privateIdentification;
     }
     public List<Other> getOthers() {
-        return Others;
+        return others;
     }
     public void setOthers(List<Other> others) {
-        Others = others;
+        this.others = others;
     }
     public String getiBAN() {
         return iBAN;

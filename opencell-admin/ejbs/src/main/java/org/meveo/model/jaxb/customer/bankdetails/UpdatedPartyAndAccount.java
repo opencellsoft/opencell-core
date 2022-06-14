@@ -42,8 +42,5 @@ public class UpdatedPartyAndAccount {
     }
     public void setAgent(Agent agent) {
         this.agent = agent;
-    }
-    
-    public UpdatedPartyAndAccount() {
-    }    
+    }  
 }

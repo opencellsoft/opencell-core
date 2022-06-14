@@ -26,8 +26,5 @@ public class UltimateCreditor {
     }
     public void setIdentification(Identification identification) {
         this.identification = identification;
-    }
-
-    public UltimateCreditor() {
-    }    
+    }  
 }

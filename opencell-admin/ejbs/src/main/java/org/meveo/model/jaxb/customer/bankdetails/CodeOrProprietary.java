@@ -19,7 +19,4 @@ public class CodeOrProprietary {
     public void setDocumentType3Code(String documentType3Code) {
         this.documentType3Code = documentType3Code;
     }
-
-    public CodeOrProprietary() {
-    }
 }

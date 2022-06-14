@@ -27,7 +27,4 @@ public class RelatedAgents {
     public void setCreditorAgent(CreditorAgent creditorAgent) {
         this.creditorAgent = creditorAgent;
     }
-
-    public RelatedAgents() {
-    }
 }

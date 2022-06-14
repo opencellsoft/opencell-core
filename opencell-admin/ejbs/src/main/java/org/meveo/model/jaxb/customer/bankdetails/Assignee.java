@@ -13,9 +13,6 @@ public class Assignee {
     @XmlElement(name = "Pty", required = true)
     protected Party party;
 
-    public Assignee() {
-    }
-
     public Party getParty() {
         return party;
     }

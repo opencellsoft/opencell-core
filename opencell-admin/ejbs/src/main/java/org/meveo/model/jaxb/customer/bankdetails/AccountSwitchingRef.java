@@ -29,7 +29,4 @@ public class AccountSwitchingRef {
     public void setDateOfSignature(Date dateOfSignature) {
         this.dateOfSignature = dateOfSignature;
     }
-    
-    public AccountSwitchingRef() {
-    }
 }

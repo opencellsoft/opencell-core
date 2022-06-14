@@ -13,9 +13,6 @@ public class Agent {
     @XmlElement(name = "FinInstnId", required = true)
     protected FinancialInstitution finInstnId;
 
-    public Agent() {
-    }
-
     public FinancialInstitution getFinInstnId() {
         return finInstnId;
     }

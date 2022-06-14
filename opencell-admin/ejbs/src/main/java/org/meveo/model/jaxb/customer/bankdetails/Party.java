@@ -26,8 +26,5 @@ public class Party {
     }
     public void setIdentification(Identification identification) {
         this.identification = identification;
-    }
-
-    public Party() {
-    }    
+    } 
 }

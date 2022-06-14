@@ -50,8 +50,5 @@ public class TransactionDetails {
     }
     public void setRemittanceInformation(RemittanceInformation remittanceInformation) {
         this.remittanceInformation = remittanceInformation;
-    }
-
-    public TransactionDetails() {
-    }    
+    }  
 }

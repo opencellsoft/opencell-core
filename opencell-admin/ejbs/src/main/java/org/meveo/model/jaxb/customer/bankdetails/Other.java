@@ -34,8 +34,5 @@ public class Other {
     }
     public void setIssuer(String issuer) {
         this.issuer = issuer;
-    }    
-    
-    public Other() {
-    }    
+    }     
 }

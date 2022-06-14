@@ -74,29 +74,23 @@ public class ImportCustomerBankDetailsJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
-
-        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode(CF_NB_RUNS);
-        customFieldNbRuns.setAppliesTo("JobInstance_ImportCustomerBankDetailsJob");
-        customFieldNbRuns.setActive(true);
-        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("-1");
-        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put(CF_NB_RUNS, customFieldNbRuns);
-
-        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
-        customFieldNbWaiting.setAppliesTo("JobInstance_ImportCustomerBankDetailsJob");
-        customFieldNbWaiting.setActive(true);
-        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbWaiting.setValueRequired(false);
-        customFieldNbWaiting.setDefaultValue("0");
-        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
-        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
+        generateCustomFields(result, CF_NB_RUNS, "jobExecution.nbRuns", "-1", "tab:Configuration:0;field:0");
+        generateCustomFields(result, Job.CF_WAITING_MILLIS, "jobExecution.waitingMillis", "0", "tab:Configuration:0;field:1");
 
         return result;
     }
+    
+    private void generateCustomFields(Map<String, CustomFieldTemplate> result, String code, String description, String defaultVaue, String guiPosition) {
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode(code);
+        customFieldNbRuns.setAppliesTo("JobInstance_ImportCustomerBankDetailsJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString(description));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue(defaultVaue);
+        customFieldNbRuns.setGuiPosition(guiPosition);
+        result.put(code, customFieldNbRuns);
+    }
+    
 }

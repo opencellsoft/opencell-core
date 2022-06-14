@@ -13,9 +13,6 @@ public class FinancialInstitution {
     @XmlElement(name = "BICFI")
     protected String bicFi;
 
-    public FinancialInstitution() {
-    }
-
     public String getBicFi() {
         return bicFi;
     }

@@ -15,9 +15,6 @@ public class Debtor {
     @XmlElement(name = "Id", required = true)
     protected Identification id;   
 
-    public Debtor() {
-    }
-
     public String getName() {
         return name;
     }

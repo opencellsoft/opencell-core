@@ -27,7 +27,4 @@ public class Creditor {
     public void setIdentification(Identification identification) {
         this.identification = identification;
     }
-    
-    public Creditor() {
-    }
 }

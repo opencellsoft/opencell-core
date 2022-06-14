@@ -27,7 +27,4 @@ public class Family {
     public void setSubFamilyCode(String subFamilyCode) {
         this.subFamilyCode = subFamilyCode;
     }
-
-    public Family() {
-    }
 }

@@ -27,7 +27,4 @@ public class Domain {
     public void setFamily(Family family) {
         this.family = family;
     }
-
-    public Domain() {
-    }
 }

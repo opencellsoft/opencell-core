@@ -19,7 +19,4 @@ public class CreditorAgent {
     public void setFinInstnId(FinancialInstitution finInstnId) {
         this.finInstnId = finInstnId;
     }
-
-    public CreditorAgent() {
-    }
 }

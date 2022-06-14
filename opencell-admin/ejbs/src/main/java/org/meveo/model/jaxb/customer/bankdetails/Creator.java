@@ -13,9 +13,6 @@ public class Creator {
     @XmlElement(name = "Agt", required = true)
     protected Agent agt;
 
-    public Creator() {
-    }
-
     public Agent getAgt() {
         return agt;
     }

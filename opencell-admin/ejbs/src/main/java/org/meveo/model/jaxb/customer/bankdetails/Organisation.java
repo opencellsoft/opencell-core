@@ -17,9 +17,6 @@ public class Organisation {
     @XmlElement(name = "Othr")
     protected List<Other> other;    
 
-    public Organisation() {
-    }
-
     public String getAnyBIC() {
         return anyBIC;
     }

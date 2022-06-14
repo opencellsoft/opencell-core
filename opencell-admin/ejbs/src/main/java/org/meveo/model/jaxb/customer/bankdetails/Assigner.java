@@ -13,9 +13,6 @@ public class Assigner {
     @XmlElement(name = "Agt", required = true)
     protected Agent agt;
 
-    public Assigner() {
-    }
-
     public Agent getAgt() {
         return agt;
     }

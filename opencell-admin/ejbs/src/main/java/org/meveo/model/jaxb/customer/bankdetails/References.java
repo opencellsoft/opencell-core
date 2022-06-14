@@ -26,8 +26,5 @@ public class References {
     }
     public void setMandateId(String mandateId) {
         this.mandateId = mandateId;
-    }
-    
-    public References() {
-    }    
+    }  
 }

@@ -524,10 +524,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     }
 	
 	@SuppressWarnings("unchecked")
-    public List<PaymentMethod> listByIbanAndBicFi(String Iban, String bic) {
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic) {
         try {
             Query query = getEntityManager().createNamedQuery("PaymentMethod.listByIbanAndBicFi");
-            query.setParameter("Iban", Iban);
+            query.setParameter("Iban", iban);
             query.setParameter("Bic", bic);
 
             return query.getResultList();

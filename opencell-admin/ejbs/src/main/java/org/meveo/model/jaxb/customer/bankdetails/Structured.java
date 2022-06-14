@@ -18,8 +18,5 @@ public class Structured {
     }
     public void setCreditorRefInf(CreditorRefInf creditorRefInf) {
         this.creditorRefInf = creditorRefInf;
-    }
-
-    public Structured() {
-    }    
+    }   
 }

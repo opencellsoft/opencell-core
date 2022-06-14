@@ -143,8 +143,7 @@ public class DDPaymentMethod extends PaymentMethod {
 				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
 	}
 	
-	@Override
-    public DDPaymentMethod clone() throws CloneNotSupportedException {   
+    public DDPaymentMethod copieDDPaymentMethod() throws CloneNotSupportedException {   
         DDPaymentMethod clone = new DDPaymentMethod();
         clone.setPaymentType(this.getPaymentType());
         clone.setPreferred(this.isPreferred());

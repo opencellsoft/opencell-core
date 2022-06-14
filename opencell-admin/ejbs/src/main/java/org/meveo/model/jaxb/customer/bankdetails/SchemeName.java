@@ -26,8 +26,5 @@ public class SchemeName {
     }
     public void setProprietary(String proprietary) {
         this.proprietary = proprietary;
-    }    
-    
-    public SchemeName() {
-    } 
+    }
 }

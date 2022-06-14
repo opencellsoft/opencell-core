@@ -18,8 +18,5 @@ public class Type {
     }
     public void setCodeOrProprietary(CodeOrProprietary codeOrProprietary) {
         this.codeOrProprietary = codeOrProprietary;
-    }
-    
-    public Type() {
-    }    
+    }  
 }

@@ -23,9 +23,6 @@ public class Assignment {
     @XmlElement(name = "Assgne", required = true)
     protected Assignee assignee;
 
-    public Assignment() {
-    }
-
     public String getMsgId() {
         return msgId;
     }

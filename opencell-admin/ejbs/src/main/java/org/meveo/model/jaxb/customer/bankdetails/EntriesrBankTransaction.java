@@ -29,7 +29,4 @@ public class EntriesrBankTransaction {
     public void setBankTransactionCode(BankTransactionCode bankTransactionCode) {
         this.bankTransactionCode = bankTransactionCode;
     }
-
-    public EntriesrBankTransaction() {
-    }
 }

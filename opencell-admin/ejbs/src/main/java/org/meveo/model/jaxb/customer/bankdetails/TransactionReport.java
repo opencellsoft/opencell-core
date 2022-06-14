@@ -29,7 +29,4 @@ public class TransactionReport {
     public void setTransactionDetails(List<TransactionDetails> transactionDetails) {
         this.transactionDetails = transactionDetails;
     }
-    
-    public TransactionReport() {
-    }
 }

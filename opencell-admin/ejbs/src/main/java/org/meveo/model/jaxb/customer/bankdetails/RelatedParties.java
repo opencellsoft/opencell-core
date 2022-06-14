@@ -59,8 +59,5 @@ public class RelatedParties {
     }
     public void setDebtorAccount(DebtorAccount debtorAccount) {
         this.debtorAccount = debtorAccount;
-    }
-    
-    public RelatedParties() {
-    }    
+    }  
 }

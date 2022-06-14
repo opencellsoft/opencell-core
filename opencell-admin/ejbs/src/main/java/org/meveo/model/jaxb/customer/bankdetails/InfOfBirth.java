@@ -37,7 +37,4 @@ public class InfOfBirth {
     public void setCountryOfBirth(String countryOfBirth) {
         this.countryOfBirth = countryOfBirth;
     }
-
-    public InfOfBirth() {
-    }
 }

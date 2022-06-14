@@ -19,7 +19,4 @@ public class BankTransactionCode {
     public void setDomain(Domain domain) {
         this.domain = domain;
     }
-    
-    public BankTransactionCode() {
-    }
 }

@@ -29,7 +29,4 @@ public class PrivateIdentification {
     public void setOthers(List<Other> others) {
         Others = others;
     }
-    
-    public PrivateIdentification() {
-    }   
 }

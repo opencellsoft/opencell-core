@@ -20,8 +20,5 @@ public class TransactionsSummary {
     }
     public void setListTEntriesrBankTransaction(List<EntriesrBankTransaction> listTEntriesrBankTransaction) {
         this.listTEntriesrBankTransaction = listTEntriesrBankTransaction;
-    }
-
-    public TransactionsSummary() {
-    }    
+    }  
 }

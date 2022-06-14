@@ -29,7 +29,4 @@ public class MsgBankEmetteur {
     public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
     }
-    
-    public MsgBankEmetteur() {
-    }
 }
