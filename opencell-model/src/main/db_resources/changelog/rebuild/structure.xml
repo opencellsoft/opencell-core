@@ -11758,7 +11758,6 @@
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
             <column name="status" type="varchar(255)" />
-             <column name="number_instantiation" type="int" />
               <column name="template_name" type="varchar(100)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
@@ -17864,6 +17863,7 @@
     <changeSet id="#INTRD-7642_20220603" author="ZBariki" />
     <changeSet id="#INTRD-7399_20220603" author="aelmalki" />
     <changeSet id="#INTRD-7644_20220606" author="ZBariki" />
+    <changeSet id="#INTRD-7352_20220614" author="HatimOUDAD" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

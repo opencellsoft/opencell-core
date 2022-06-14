@@ -52,10 +52,6 @@ public interface OpenOrderTemplateInput extends Resource {
     @Nullable
     List<String> getArticles();
 
-    @Schema(description = "The Number Of Instantiation")
-    @Nullable
-    Integer getNumberOfInstantiation();
-
     @Schema(description = "The Template Name")
     @Nullable
      String getTemplateName();
