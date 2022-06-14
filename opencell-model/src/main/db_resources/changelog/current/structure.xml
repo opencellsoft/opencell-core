@@ -13364,4 +13364,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-7770_20220613" author="aelmalki">
+        <addColumn tableName="billing_invoice">
+            <column name="payment_plan_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_plan_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_payment_plan_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_plan" />
+    </changeSet>
+
 </databaseChangeLog>

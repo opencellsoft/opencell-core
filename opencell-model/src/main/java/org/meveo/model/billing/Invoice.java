@@ -56,6 +56,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 
@@ -686,6 +687,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "converted_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal convertedAmountWithoutTaxBeforeDiscount;
+
+    /**
+     * Payment plan
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_plan_id")
+    private PaymentPlan paymentPlan;
 
     public Invoice() {
 	}
@@ -1797,5 +1805,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setConvertedAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
         this.convertedAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
+    }
+
+    public PaymentPlan getPaymentPlan() {
+        return paymentPlan;
+    }
+
+    public void setPaymentPlan(PaymentPlan paymentPlan) {
+        this.paymentPlan = paymentPlan;
     }
 }

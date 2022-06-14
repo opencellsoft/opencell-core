@@ -17,25 +17,40 @@
  */
 package org.meveo.service.payments.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.apiv2.payments.PaymentPlanDto;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Stateless
 public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
-    public Long create(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
+    @Inject
+    private InvoiceService invoiceService;
+
+    public Long create(PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end, BigDecimal remainingAmount) {
         PaymentPlan paymentPlan = new PaymentPlan();
 
-        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end, remainingAmount);
         paymentPlan.setStatus(PaymentPlanStatusEnum.DRAFT); // Default status
 
         super.create(paymentPlan);
@@ -44,10 +59,10 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     }
 
-    public Long update(Long id, PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end) {
+    public Long update(Long id, PaymentPlanDto paymentPlanDto, List<AccountOperation> aos, CustomerAccount customerAccount, Date end, BigDecimal remainingAmount) {
         PaymentPlan paymentPlan = findById(id);
 
-        build(paymentPlan, paymentPlanDto, customerAccount, aos, end);
+        build(paymentPlan, paymentPlanDto, customerAccount, aos, end, remainingAmount);
 
         super.update(paymentPlan);
 
@@ -55,7 +70,9 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     }
 
-    private void build(PaymentPlan paymentPlan, PaymentPlanDto paymentPlanDto, CustomerAccount customerAccount, List<AccountOperation> aos, Date end) {
+    private void build(PaymentPlan paymentPlan, PaymentPlanDto paymentPlanDto,
+                       CustomerAccount customerAccount, List<AccountOperation> aos,
+                       Date end, BigDecimal remainingAmount) {
         paymentPlan.setCode(paymentPlanDto.getCode());
         paymentPlan.setDescription(paymentPlanDto.getDescription());
         paymentPlan.setCustomerAccount(customerAccount);
@@ -70,7 +87,90 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
         paymentPlan.setNumberOfInstallments(paymentPlanDto.getNumberOfInstallments());
         paymentPlan.setAmountPerInstallment(paymentPlanDto.getAmountPerInstallment());
         paymentPlan.setAmountToRecover(paymentPlanDto.getAmountToRecover());
-        paymentPlan.setRemainingAmount(paymentPlanDto.getRemainingAmount() == null ? BigDecimal.ZERO : paymentPlanDto.getRemainingAmount());
+        paymentPlan.setRemainingAmount(remainingAmount == null ? BigDecimal.ZERO : remainingAmount);
+    }
+
+    public void activate(PaymentPlan paymentPlan) {
+        paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
+        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PP);
+
+        super.update(paymentPlan);
+
+    }
+
+    // Check for different matched AOS, if the Plan shall be moved to COMPLETE status
+    public void toComplete(List<Long> aos) {
+        if (CollectionUtils.isNotEmpty(aos)) {
+            // Find PaymentPlan of AOS
+            List<PaymentPlan> pps = getEntityManager().createNamedQuery("PaymentPlan.findByCreatedAos")
+                    .setParameter("AOS_ID", aos).getResultList();
+
+            // For each PaymentPlan, get the matching status of the rest of AO
+            Optional.ofNullable(pps).orElse(Collections.emptyList())
+                    .forEach(paymentPlan -> {
+                        List<Long> createdAosId = paymentPlan.getCreatedAos().stream()
+                                .map(AccountOperation::getId)
+                                .collect(Collectors.toList());
+
+                        createdAosId.removeAll(aos);
+
+                        // Check for PaymentPlan if the status shall be moved to COMPLETE
+                        Set<MatchingStatusEnum> aoMatchingStatus = new HashSet<>(getEntityManager().createNamedQuery("PaymentPlan.findOtherLinkedAOSMatchingStatus")
+                                .setParameter("AOS_ID", aos)
+                                .setParameter("PP_ID", paymentPlan.getId())
+                                .getResultList());
+
+                        if (aoMatchingStatus.size() == 1 && aoMatchingStatus.contains(MatchingStatusEnum.L)) {
+                            // Change PP status to COMPLETED if all AO are marched
+                            paymentPlan.setStatus(PaymentPlanStatusEnum.COMPLETED);
+                            super.update(paymentPlan);
+                            log.info("PaymentPlan [id={}] passed to {} status", paymentPlan.getId(), paymentPlan.getStatus());
+
+                            // Change Invoice status to PAID
+                            changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PAID);
+                        } else {
+                            log.info("PaymentPlan [id={}] still in {} due to founded MatchingStatus {} for Aos {}",
+                                    paymentPlan.getId(), paymentPlan.getStatus(), aoMatchingStatus, aos);
+                        }
+                    });
+        }
+
+    }
+
+    // When at least one AccountOperation are passed to unmatch, related PaymentPlans shall be moved to ACTIVATE status
+    public void toActivate(List<Long> aos) {
+        if (CollectionUtils.isEmpty(aos)) {
+            return;
+        }
+        // Find PaymentPlan of AOS
+        List<PaymentPlan> pps = getEntityManager().createNamedQuery("PaymentPlan.findByCreatedAos")
+                .setParameter("AOS_ID", aos).getResultList();
+
+        Optional.ofNullable(pps).orElse(Collections.emptyList())
+                .forEach(paymentPlan -> {
+                    if (paymentPlan.getStatus() == PaymentPlanStatusEnum.COMPLETED) {
+                        paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
+                        super.update(paymentPlan);
+                        log.info("PaymentPlan [id={}] passed to {} status", paymentPlan.getId(), paymentPlan.getStatus());
+
+                        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PP);
+                    }
+                });
+
+    }
+
+    private void changeInvoicePaymentStatus(PaymentPlan paymentPlan, InvoicePaymentStatusEnum paymentStatus) {
+        // Change Invoice status to PAID
+        paymentPlan.getTargetedAos().forEach(accountOperation -> {
+            if (accountOperation instanceof RecordedInvoice) {
+                Invoice inv = ((RecordedInvoice) accountOperation).getInvoice();
+                inv.setPaymentStatus(paymentStatus);
+                inv.setPaymentPlan(paymentPlan);
+                invoiceService.update(inv);
+                log.info("Invoice '{}' changed to '{}' since all linked AO of PaymentPlan '{}' are matched",
+                        inv.getCode(), inv.getPaymentStatus(), paymentPlan.getCode());
+            }
+        });
     }
 
 

@@ -69,7 +69,7 @@ public class PaymentPlanCRUDApiTest {
         // Integer numberOfInstallments,
         // Date start, Date end,
         // Long customerId, Set<Long> idAos)
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(23),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -83,7 +83,6 @@ public class PaymentPlanCRUDApiTest {
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-        Mockito.when(paymentPlanService.create(dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.create(dto);
 
@@ -94,7 +93,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(23),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, null,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -118,7 +117,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(-1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -147,7 +146,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -176,7 +175,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(-1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -206,7 +205,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -235,7 +234,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -264,7 +263,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -291,11 +290,43 @@ public class PaymentPlanCRUDApiTest {
     }
 
     @Test
+    public void invalidAoTypeErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(200), new BigDecimal(100),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                2,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        AccountOperation ao1 = buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "PPL_INSTALLMENT");
+        ao1.setTransactionCategory(OperationCategoryEnum.DEBIT);
+        ao1.setType("OCC");
+        aos.add(ao1);
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "AcccountOperation 'PPL_INSTALLMENT' with type OCC, cannot be part of a Payment plan");
+        }
+
+    }
+
+    @Test
     public void numberInstallmentsErr() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 0,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -324,7 +355,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -353,7 +384,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -382,7 +413,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -411,7 +442,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123), new BigDecimal(123),
+        PaymentPlanDto dto = buildDto(new BigDecimal(123), new BigDecimal(123),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 2,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -439,7 +470,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -468,7 +499,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -497,7 +528,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -522,40 +553,11 @@ public class PaymentPlanCRUDApiTest {
     }
 
     @Test
-    public void amountNotConsistentErrCode() {
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setId(1L);
-
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(400),
-                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
-                10,
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                customerAccount.getId(), Set.of(1L, 2L));
-
-        List<AccountOperation> aos = new ArrayList<>();
-        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
-        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
-
-        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
-        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
-
-        try {
-            paymentPlanApi.create(dto);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Amount to recover '240' must be equal '600'");
-        }
-
-    }
-
-    @Test
     public void numberInstallmentsErrCode() {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -584,7 +586,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -608,6 +610,36 @@ public class PaymentPlanCRUDApiTest {
 
     }
 
+
+    @Test
+    public void remainingGreaterThanAmountPerInstallment() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(200), new BigDecimal(10),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, null,
+                2,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                null,
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(100), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertTrue(e.getMessage().startsWith("Remaining amount '180' should be less than or equals Amount per installment '10'"));
+        }
+
+    }
+
     // ************************************************************
     // *********************** UPDATE *****************************
     // ************************************************************
@@ -616,7 +648,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(23),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -635,7 +667,6 @@ public class PaymentPlanCRUDApiTest {
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
-        Mockito.when(paymentPlanService.update(1L, dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.update(1L, dto);
 
@@ -646,7 +677,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(23),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -666,7 +697,6 @@ public class PaymentPlanCRUDApiTest {
         Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
-        Mockito.when(paymentPlanService.update(1L, dto, aos, customerAccount, Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()))).thenReturn(1L);
 
         paymentPlanApi.update(1L, dto);
 
@@ -677,7 +707,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -709,7 +739,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -741,7 +771,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -778,7 +808,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -804,7 +834,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -834,7 +864,7 @@ public class PaymentPlanCRUDApiTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setId(1L);
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
                 ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
                 10,
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -865,7 +895,7 @@ public class PaymentPlanCRUDApiTest {
     // ************************ TOOLS *****************************
     // ************************************************************
 
-    private PaymentPlanDto buildDto(BigDecimal amountToRecover, BigDecimal amountPerInstallment, BigDecimal remainingAmount,
+    private PaymentPlanDto buildDto(BigDecimal amountToRecover, BigDecimal amountPerInstallment,
                                     ActionOnRemainingAmountEnum action, RecurrenceUnitEnum unit, PaymentPlanStatusEnum status,
                                     Integer numberOfInstallments,
                                     Date start, Date end,
@@ -903,9 +933,10 @@ public class PaymentPlanCRUDApiTest {
                 return amountPerInstallment;
             }
 
+            @Nullable
             @Override
             public BigDecimal getRemainingAmount() {
-                return remainingAmount;
+                return null;
             }
 
             @Override
@@ -964,12 +995,12 @@ public class PaymentPlanCRUDApiTest {
         return p;
     }
 
-    private AccountOperation buildAo(Long id, CustomerAccount customerAccount, BigDecimal amout, MatchingStatusEnum status, String code) {
+    private AccountOperation buildAo(Long id, CustomerAccount customerAccount, BigDecimal amount, MatchingStatusEnum status, String code) {
         AccountOperation ao = new AccountOperation();
         ao.setId(id);
         ao.setCode(code);
         ao.setCustomerAccount(customerAccount);
-        ao.setUnMatchingAmount(amout);
+        ao.setUnMatchingAmount(amount);
         ao.setMatchingStatus(status);
         ao.setTransactionCategory(OperationCategoryEnum.DEBIT);
 
