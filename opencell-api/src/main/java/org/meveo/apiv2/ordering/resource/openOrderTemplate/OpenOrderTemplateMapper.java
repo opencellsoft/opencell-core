@@ -19,7 +19,6 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
         return ImmutableOpenOrderTemplateInput.builder()
                 .id(entity.getId())
                 .templateName(entity.getTemplateName())
-                .numberOfInstantiation(entity.getNumberOfInstantiation())
                 .openOrderType(entity.getOpenOrderType())
                 .thresholds(thresholdMapper.toResource(entity.getThresholds()))
                 .description(entity.getDescription())
@@ -37,7 +36,6 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
         openOrderTemplate.setId(resource.getId());
         openOrderTemplate.setDescription(resource.getDescription());
         openOrderTemplate.setOpenOrderType(resource.getOpenOrderType());
-        openOrderTemplate.setNumberOfInstantiation(resource.getNumberOfInstantiation());
         openOrderTemplate.setTemplateName(resource.getTemplateName());
         return openOrderTemplate;
     }
@@ -48,7 +46,6 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
         entity.setDescription(input.getDescription());
         entity.setOpenOrderType(input.getOpenOrderType());
         entity.setTemplateName(input.getTemplateName());
-        entity.setNumberOfInstantiation(input.getNumberOfInstantiation());
     }
 
 
