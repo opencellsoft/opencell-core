@@ -12820,7 +12820,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
 		<addForeignKeyConstraint baseColumnNames="target_tax_id" baseTableName="billing_invoice_line" constraintName="fk_billing_invoice_line_target_tax_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-6616_20220421" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
@@ -12874,13 +12874,13 @@ order by date_trunc('month', i.invoice_date) DESC
             FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
-    
+
     <changeSet id="INTRD-6012-07042022" author="Abdelkader.Bouazza">
         <addColumn tableName="global_settings">
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
@@ -12971,7 +12971,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="default_starting_date_of_plan" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-6608_20220420-fix" author="AkadidAbdelmounaim" failOnError="false">
         <createView viewName="billing_wallet_operation_period">
             select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
@@ -12990,6 +12990,13 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
         <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
     </changeSet>
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza">
+        <addColumn tableName="dunning_policy">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA">
         <addColumn tableName="billing_subscrip_termin_reason">
@@ -12999,5 +13006,5 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <sql>update ${db.schema.adapted}billing_subscrip_termin_reason set invoice_agreement_immediately = 0</sql>
     </changeSet>
-    
+
 </databaseChangeLog>
