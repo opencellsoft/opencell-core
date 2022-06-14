@@ -67,31 +67,30 @@ public class ImportCustomerBankDetailsJobBean {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobExecutionResultImpl result) {
         ParamBean paramBean = paramBeanFactory.getInstance();
-
-        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "bank_Mobility" + File.separator;
-
-        String dirIN = importDir + "input";
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "bank_Mobility" + File.separator;        
+        initialiserCompteur();        
         String dirOK = importDir + "output";
-        String dirKO = importDir + "reject";
-        String prefix = paramBean.getProperty("importCustomerBankDetails.prefix", "acmt");
-        String ext = paramBean.getProperty("importCustomerBankDetails.extension", "");
-
-        File dir = new File(dirIN);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        List<File> files = getFilesToProcess(dir, prefix, ext);
-        int numberOfFiles = files.size();
-        log.info("InputFiles job to import={}", numberOfFiles);
-        
-        initialiserCompteur();
-        
+        String dirKO = importDir + "reject";        
+        List<File> files = getFilesFromInput(paramBean, importDir);
         traitementFiles(result, dirOK, dirKO, files);
 
         result.setNbItemsToProcess(nbModifications);
         result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
         result.setNbItemsProcessedWithError(nbModificationsError);
+    }
+
+    private List<File> getFilesFromInput(ParamBean paramBean, String importDir) {
+        String dirIN = importDir + "input";
+        String prefix = paramBean.getProperty("importCustomerBankDetails.prefix", "acmt");
+        String ext = paramBean.getProperty("importCustomerBankDetails.extension", "");
+        File dir = new File(dirIN);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        List<File> files = getFilesToProcess(dir, prefix, ext);
+        int numberOfFiles = files.size();
+        log.info("InputFiles job to import={}", numberOfFiles);
+        return files;
     }
 
     private void traitementFiles(JobExecutionResultImpl result, String dirOK, String dirKO, List<File> files) {
