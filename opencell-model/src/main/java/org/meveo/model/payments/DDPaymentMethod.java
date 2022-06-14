@@ -142,5 +142,19 @@ public class DDPaymentMethod extends PaymentMethod {
 				+ ",  bank_name = " + bc.getBankName() + "," + " bic = " + bc.getBic() + ", iban = " + bc.getIban()
 				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
 	}
+	
+	@Override
+    public DDPaymentMethod clone() throws CloneNotSupportedException {   
+        DDPaymentMethod clone = new DDPaymentMethod();
+        clone.setPaymentType(this.getPaymentType());
+        clone.setPreferred(this.isPreferred());
+        clone.setAlias(this.getAlias());
+        clone.setMandateIdentification(this.getMandateIdentification());
+        clone.setMandateDate(this.getMandateDate());
+        clone.setBankCoordinates((BankCoordinates) this.getBankCoordinates().clone());
+        clone.setCustomerAccount(this.getCustomerAccount());        
+        
+        return clone;
+    }
 
 }
