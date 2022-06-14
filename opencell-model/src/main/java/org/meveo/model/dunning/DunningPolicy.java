@@ -5,7 +5,7 @@ import static javax.persistence.FetchType.LAZY;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.Currency;
 
 import javax.persistence.*;
@@ -20,7 +20,7 @@ import java.util.List;
         @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName"),
         @NamedQuery(name = "DunningPolicy.listPoliciesByIsActive", query = "SELECT DISTINCT dp FROM DunningPolicy dp left join fetch dp.dunningLevels dpl left join fetch dpl.dunningLevel dl where dp.isActivePolicy=:active"),
         @NamedQuery(name = "DunningPolicy.DeactivateDunningPolicies", query = "UPDATE DunningPolicy dp SET dp.isActivePolicy=false WHERE dp.id IN (:ids)")})
-public class DunningPolicy extends AuditableEntity {
+public class DunningPolicy extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
 
