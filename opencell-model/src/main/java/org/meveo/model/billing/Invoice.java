@@ -1814,4 +1814,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setPaymentPlan(PaymentPlan paymentPlan) {
         this.paymentPlan = paymentPlan;
     }
+    
+    public boolean canBeRefreshed() {
+        return this.status == InvoiceStatusEnum.NEW || this.status == InvoiceStatusEnum.DRAFT
+                && (this.lastAppliedRate != null
+                && !this.lastAppliedRate.equals(this.tradingCurrency.getCurrentRate()));
+    }
 }
