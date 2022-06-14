@@ -1168,15 +1168,8 @@ public class EntityExportImportService implements Serializable {
         IEntity entityFound = null;
 
         // Check by id
-        if (lookupById && entityToSave.getId() != null) {
-            entityFound = getEntityManagerForImport().find(entityToSave.getClass(), entityToSave.getId());
-        }else if( lookupByCode)
-        {
-            entityFound = findEntityByCode(entityToSave);
-        }
-        else {
-            entityFound = findEntityByAttributes(entityToSave);
-        }
+
+        entityFound = identifyEntity(entityToSave, lookupById, lookupByCode);
 
         if (entityFound == null && updateExistingOnly) {
             log.debug("No existing entity was found. Entity will be saved by other means (cascading probably).");
@@ -1220,6 +1213,29 @@ public class EntityExportImportService implements Serializable {
         importStats.updateSummary(entityToSave.getClass(), 1);
 
         return entityFound == null ? entityToSave : entityFound;
+    }
+
+    private IEntity identifyEntity(IEntity entityToSave, boolean lookupById, boolean lookupByCode) {
+
+        if (lookupById && entityToSave.getId() != null) {
+           IEntity entityFound = getEntityManagerForImport().find(entityToSave.getClass(), entityToSave.getId());
+           if(entityFound != null ) return  entityFound;
+       }
+         if(lookupByCode)
+       {
+           IEntity entityFound = findEntityByCode(entityToSave);
+           if(entityFound != null ) return  entityFound;
+       }
+        if(entityToSave.getClass().getDeclaredAnnotation(ExportIdentifier.class) != null){
+           String[] exportIds = entityToSave.getClass().getDeclaredAnnotation(ExportIdentifier.class).value();
+           IEntity entityFound = findEntityByAttributes(entityToSave, exportIds );
+           if(entityFound != null ) return  entityFound;
+       }
+       else {
+         return findEntityByAttributes(entityToSave, exportIdMapping.get(entityToSave.getClass()));
+       }
+
+       return null;
     }
 
     /**
@@ -1657,8 +1673,8 @@ public class EntityExportImportService implements Serializable {
      * @param entityToSave Entity to match
      * @return Entity found in target DB
      */
-    private IEntity findEntityByAttributes(IEntity entityToSave) {
-        String[] attributes = exportIdMapping.get(entityToSave.getClass());
+    private IEntity findEntityByAttributes(IEntity entityToSave, String[] attributes) {
+
         if (attributes == null) {
             return null;
         }
