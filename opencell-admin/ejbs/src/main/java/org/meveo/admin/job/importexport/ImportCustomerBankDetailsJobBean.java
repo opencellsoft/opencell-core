@@ -105,9 +105,7 @@ public class ImportCustomerBankDetailsJobBean {
                 log.info("InputFiles job {} done.", file.getName());
             } catch (Exception e) {
                 log.error("failed to import Customer Bank Details", e);
-                log.info("InputFiles job {} failed.", file.getName());
                 FileUtils.moveFile(dirKO, currentFile, file.getName());
-                log.error("Failed to import Customer Bank Details job", e);
             } finally {
                 if (currentFile != null)
                 {
@@ -117,7 +115,7 @@ public class ImportCustomerBankDetailsJobBean {
         }
 
         result.setNbItemsToProcess(nbModifications);
-        result.setNbItemsCorrectlyProcessed(nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
+        result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
         result.setNbItemsProcessedWithError(nbModificationsError);
     }
 
@@ -162,7 +160,7 @@ public class ImportCustomerBankDetailsJobBean {
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             if (paymentMethods != null && paymentMethodsArrivee != null) {
                 dupPmDepartArrivee(ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
-            }            
+            }
         }
     }
 
