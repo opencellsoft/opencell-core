@@ -161,20 +161,25 @@ public class ImportCustomerBankDetailsJobBean {
             List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             if (paymentMethods != null && paymentMethodsArrivee != null) {
-                if(paymentMethodsArrivee.isEmpty()) {
-                    for (PaymentMethod paymentMethod : paymentMethods) {
-                        dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
-                        nbModificationsCreated++;
-                    }
-                }
-                else {
-                    nbModificationsError++;
-                }
-                
-                if(paymentMethods.isEmpty()) {
-                    nbModificationsIgnored++;
-                }
+                dupPmDepartArrivee(ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
             }            
+        }
+    }
+
+    private void dupPmDepartArrivee(String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
+            throws CloneNotSupportedException {
+        if(paymentMethodsArrivee.isEmpty()) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
+                nbModificationsCreated++;
+            }
+        }
+        else {
+            nbModificationsError++;
+        }
+        
+        if(paymentMethods.isEmpty()) {
+            nbModificationsIgnored++;
         }
     }
 
