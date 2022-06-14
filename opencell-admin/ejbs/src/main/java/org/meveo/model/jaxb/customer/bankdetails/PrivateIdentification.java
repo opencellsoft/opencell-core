@@ -9,13 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "dtAndPlcOfBirth", "Others" })
+@XmlType(name = "", propOrder = { "dtAndPlcOfBirth", "others" })
 @XmlRootElement(name = "PrvtId")
 public class PrivateIdentification { 
     @XmlElement(name = "DtAndPlcOfBirth")
     protected InfOfBirth dtAndPlcOfBirth;
     @XmlElement(name = "Othr")
-    protected List<Other> Others;
+    protected List<Other> others;
     
     public InfOfBirth getDtAndPlcOfBirth() {
         return dtAndPlcOfBirth;
@@ -24,9 +24,9 @@ public class PrivateIdentification {
         this.dtAndPlcOfBirth = dtAndPlcOfBirth;
     }
     public List<Other> getOthers() {
-        return Others;
+        return others;
     }
     public void setOthers(List<Other> others) {
-        Others = others;
+        this.others = others;
     }
 }

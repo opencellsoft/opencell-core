@@ -85,12 +85,16 @@ public class ImportCustomerBankDetailsJobBean {
         int numberOfFiles = files.size();
         log.info("InputFiles job to import={}", numberOfFiles);
         
-        nbModifications = 0;
-        nbModificationsError = 0;
-        nbModificationsTerminated = 0;
-        nbModificationsIgnored = 0;
-        nbModificationsCreated = 0;
+        initialiserCompteur();
         
+        traitementFiles(result, dirOK, dirKO, files);
+
+        result.setNbItemsToProcess(nbModifications);
+        result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
+        result.setNbItemsProcessedWithError(nbModificationsError);
+    }
+
+    private void traitementFiles(JobExecutionResultImpl result, String dirOK, String dirKO, List<File> files) {
         for (File file : files) {
             if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
@@ -113,10 +117,14 @@ public class ImportCustomerBankDetailsJobBean {
                 }
             }
         }
+    }
 
-        result.setNbItemsToProcess(nbModifications);
-        result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
-        result.setNbItemsProcessedWithError(nbModificationsError);
+    private void initialiserCompteur() {
+        nbModifications = 0;
+        nbModificationsError = 0;
+        nbModificationsTerminated = 0;
+        nbModificationsIgnored = 0;
+        nbModificationsCreated = 0;
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
