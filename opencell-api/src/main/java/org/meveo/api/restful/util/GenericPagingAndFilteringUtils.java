@@ -8,6 +8,7 @@ import org.meveo.api.restful.pagingFiltering.ImmutablePagingAndFilteringRest;
 import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.model.IEntity;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.*;
@@ -85,22 +86,22 @@ public class GenericPagingAndFilteringUtils {
         for ( int i = 0; i < allSortFieldsSplit.length - 1; i++ ) {
             if ( allSortFieldsSplit[i].charAt(0) == DESCENDING_SIGN ) {
                 // Remove the sign '-' in case of DESCENDING
-                sortFields.append( allSortFieldsSplit[i].substring(1) + BLANK_SPACE
-                        + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                sortFields.append(allSortFieldsSplit[i].substring(1)).append(BLANK_SPACE).append(DESCENDING_ORDER)
+                        .append(MULTI_SORTING_DELIMITER).append(BLANK_SPACE);
             }
             else {
-                sortFields.append( allSortFieldsSplit[i] + BLANK_SPACE
-                        + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                sortFields.append(allSortFieldsSplit[i]).append(BLANK_SPACE).append(ASCENDING_ORDER)
+                        .append(MULTI_SORTING_DELIMITER).append(BLANK_SPACE);
             }
         }
         if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
             // Remove the sign '-' in case of DESCENDING
-            sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) + BLANK_SPACE
-                    + DESCENDING_ORDER );
+            sortFields.append(allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1)).append(BLANK_SPACE)
+                    .append(DESCENDING_ORDER);
         }
         else {
-            sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] + BLANK_SPACE
-                    + ASCENDING_ORDER );
+            sortFields.append(allSortFieldsSplit[allSortFieldsSplit.length - 1]).append(BLANK_SPACE)
+                    .append(ASCENDING_ORDER);
         }
         pagingAndFiltering.setSortBy( sortFields.toString() );
 
@@ -137,25 +138,25 @@ public class GenericPagingAndFilteringUtils {
                     if ( allSortFieldsSplit[i].charAt(0) == DESCENDING_SIGN ) {
                         sortOrders.append( DESCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         // Remove the sign '-' in case of DESCENDING
-                        sortFields.append( allSortFieldsSplit[i].substring(1) + BLANK_SPACE
-                                + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                        sortFields.append(allSortFieldsSplit[i].substring(1)).append(BLANK_SPACE)
+                                .append(DESCENDING_ORDER).append(MULTI_SORTING_DELIMITER).append(BLANK_SPACE);
                     }
                     else {
                         sortOrders.append( ASCENDING_ORDER + MULTI_SORTING_DELIMITER );
-                        sortFields.append( allSortFieldsSplit[i] + BLANK_SPACE
-                                + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                        sortFields.append(allSortFieldsSplit[i]).append(BLANK_SPACE).append(ASCENDING_ORDER)
+                                .append(MULTI_SORTING_DELIMITER).append(BLANK_SPACE);
                     }
                 }
                 if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
                     sortOrders.append( DESCENDING_ORDER );
                     // Remove the sign '-' in case of DESCENDING
-                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) + BLANK_SPACE
-                            + DESCENDING_ORDER );
+                    sortFields.append(allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1))
+                            .append(BLANK_SPACE).append(DESCENDING_ORDER);
                 }
                 else {
                     sortOrders.append( ASCENDING_ORDER );
-                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] + BLANK_SPACE
-                            + ASCENDING_ORDER );
+                    sortFields.append(allSortFieldsSplit[allSortFieldsSplit.length - 1]).append(BLANK_SPACE)
+                            .append(ASCENDING_ORDER);
                 }
                 pagingAndFiltering.setMultiSortOrder( sortOrders.toString() );
                 pagingAndFiltering.setSortBy( sortFields.toString() );
@@ -187,27 +188,12 @@ public class GenericPagingAndFilteringUtils {
         return pagingAndFiltering;
     }
 
-//    public PaginationConfiguration getPaginationConfiguration(){
-//        PaginationConfiguration aPagingConfig = paginationConfig;
-//        reinitializePaginationConfiguration();
-//        return aPagingConfig;
-//    }
-//
-//    public void reinitializePaginationConfiguration(){
-//        paginationConfig = new PaginationConfiguration(null );
-//    }
-//
-//    public PagingAndFiltering getPagingAndFiltering(){
-//        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
-//        reinitializePagingAndFiltering();
-//        return aPagingAndFiltering;
-//    }
-//
-//    public void reinitializePagingAndFiltering(){
-//        pagingAndFiltering = new PagingAndFiltering();
-//    }
+    public PagingAndFiltering getPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest){
+        constructPagingAndFiltering(pagingAndFilteringRest);
+        return pagingAndFiltering;
+    }
 
-    public void generatePagingConfig(Class entityClass){
+    public PaginationConfiguration generatePagingConfig(Class<? extends IEntity> entityClass){
         Map<String, Object> filters = pagingAndFiltering.getFilters();
 
         if ( filters == null )
@@ -218,9 +204,11 @@ public class GenericPagingAndFilteringUtils {
         else {
             GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
             paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
-                    genericRequestMapper.evaluateFilters( filters, entityClass ), pagingAndFiltering.getFullTextFilter(),
+                    genericRequestMapper.evaluateFilters(filters, entityClass), pagingAndFiltering.getFullTextFilter(),
                     Collections.emptyList(), pagingAndFiltering.getSortBy(),
                     pagingAndFiltering.getMultiSortOrder());
         }
+
+        return paginationConfig;
     }
 }
