@@ -126,6 +126,28 @@ public class DiscountPlanItemApi extends BaseApi {
 
     /**
      * updates the description of an existing discount plan item.
+     *
+     * @param postData posted data to API containing discount plan infos
+     *
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
+     */
+    public DiscountPlanItem update(String code, DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
+        DiscountPlanItem entity = discountPlanItemService.findByCode(code);
+
+        if (entity != null) {
+            // set code in postData with parameter code
+            postData.setCode(code);
+
+            return update(postData);
+        }
+        else {
+            throw new EntityDoesNotExistsException(DiscountPlanItem.class, code);
+        }
+    }
+
+    /**
+     * updates the description of an existing discount plan item.
      * 
      * @param postData posted data to API containing discount plan infos
      * 
@@ -260,7 +282,8 @@ public class DiscountPlanItemApi extends BaseApi {
         DiscountPlanItemsResponseDto result = new DiscountPlanItemsResponseDto();
         result.setPaging( pagingAndFiltering );
 
-        List<DiscountPlanItem> discountPlanItems = discountPlanItemService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        List<DiscountPlanItem> discountPlanItems = discountPlanItemService.list(
+                GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(DiscountPlanItem.class));
         if (discountPlanItems != null) {
             for (DiscountPlanItem discountPlanItem : discountPlanItems) {
                 result.getDiscountPlanItems().add(new DiscountPlanItemDto(discountPlanItem,
