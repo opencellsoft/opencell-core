@@ -238,7 +238,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     String[] split = firstLine.split(";");
                     newPv.setMatrix(false);
                     newPv.setLabel(split[1]);
-                    newPv.setAmountWithoutTax(new BigDecimal(split[2]));
+                    newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[2])));
                     create(newPv);
 
                 } else if (StringUtils.isNotBlank(header)) {
@@ -264,6 +264,23 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return resultDto;
     }
 	
+	private String convertToDecimalFormat(String str) {
+        str = str.replace(" ", "");
+        int commaPos = str.indexOf(',');
+        int dotPos = str.indexOf('.');
+        if (commaPos > 0 && dotPos > 0) {
+            if (commaPos < dotPos) {
+                str = str.replace(",", "");
+            } else {
+                str = str.replace(".", "");
+                str = str.replace(",", ".");
+            }
+        } else {
+            str = str.replace(",", ".");
+        }
+		return str;
+	}
+
 	private void validateDates(Date newFrom, Date newTo) {
         if (newFrom == null) {
             throw new BusinessApiException("The start date name is mandatory");
