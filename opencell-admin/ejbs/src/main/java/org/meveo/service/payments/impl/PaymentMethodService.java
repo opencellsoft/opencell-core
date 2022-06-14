@@ -17,6 +17,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -533,7 +534,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by Iban and BicFi", e);
-            return null;
+            return new ArrayList<>();
         }
     }
 }

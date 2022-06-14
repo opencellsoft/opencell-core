@@ -49,9 +49,6 @@ public class CustomerBankDetailsImportHisto extends JobHistory {
     @Column(name = "nb_customer_accounts_created")
     private Integer nbCustomerAccountsCreated;
 
-    public CustomerBankDetailsImportHisto() {
-
-    }
 
     /**
      * @return the fileName

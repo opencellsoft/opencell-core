@@ -116,15 +116,13 @@ public class ImportCustomerBankDetailsJobBean {
             }
         }
 
-        result.setNbItemsToProcess((long) nbModifications);
-        result.setNbItemsCorrectlyProcessed((long) (nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored));
-        result.setNbItemsProcessedWithError((long) nbModificationsError);
+        result.setNbItemsToProcess(nbModifications);
+        result.setNbItemsCorrectlyProcessed(nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
+        result.setNbItemsProcessedWithError(nbModificationsError);
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
-        
-
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, CloneNotSupportedException {
         customerBankDetailsImport = new CustomerBankDetailsImportHisto();
         customerBankDetailsImport.setExecutionDate(new Date());
         customerBankDetailsImport.setFileName(fileName);
@@ -158,18 +156,9 @@ public class ImportCustomerBankDetailsJobBean {
             List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             if (paymentMethods != null && paymentMethodsArrivee != null) {
-                if(paymentMethodsArrivee.size() == 0) {
+                if(paymentMethodsArrivee.isEmpty()) {
                     for (PaymentMethod paymentMethod : paymentMethods) {
-                        DDPaymentMethod dDPaymentMethod = (DDPaymentMethod) paymentMethod;
-                        DDPaymentMethod newDDPaymentMethod = new DDPaymentMethod();                    
-                        newDDPaymentMethod = dDPaymentMethod.copieDDPaymentMethod();
-                        newDDPaymentMethod.getBankCoordinates().setIban(ibanArrivee);
-                        newDDPaymentMethod.getBankCoordinates().setBic(bicArrivee);        
-                        paymentMethodService.create(newDDPaymentMethod);
-                        
-                        paymentMethod.setPreferred(false);            
-                        paymentMethod.setDisabled(true);
-                        paymentMethodService.update(paymentMethod);
+                        dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
                         nbModificationsCreated++;
                     }
                 }
@@ -177,7 +166,7 @@ public class ImportCustomerBankDetailsJobBean {
                     nbModificationsError++;
                 }
                 
-                if(paymentMethods.size() == 0) {
+                if(paymentMethods.isEmpty()) {
                     nbModificationsIgnored++;
                 }
             }            
@@ -185,6 +174,18 @@ public class ImportCustomerBankDetailsJobBean {
         
         createHistory();
         log.info("end import file ");
+    }
+
+    private void dupDDPaymentMethode(String ibanArrivee, String bicArrivee, PaymentMethod paymentMethod) throws CloneNotSupportedException {
+        DDPaymentMethod dDPaymentMethod = (DDPaymentMethod) paymentMethod;
+        DDPaymentMethod newDDPaymentMethod = dDPaymentMethod.copieDDPaymentMethod();              
+        newDDPaymentMethod.getBankCoordinates().setIban(ibanArrivee);
+        newDDPaymentMethod.getBankCoordinates().setBic(bicArrivee);        
+        paymentMethodService.create(newDDPaymentMethod);
+        
+        paymentMethod.setPreferred(false);            
+        paymentMethod.setDisabled(true);
+        paymentMethodService.update(paymentMethod);
     }
 
     /**
