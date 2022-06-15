@@ -15,46 +15,18 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.service.admin.impl;
 
-package org.meveo.apiv2.ordering.resource.order;
+import javax.ejb.Stateless;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.immutables.value.Value;
-import org.meveo.apiv2.models.Resource;
-import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
-import org.meveo.model.ordering.OpenOrderTypeEnum;
+import org.meveo.model.admin.CustomerBankDetailsImportHisto;
+import org.meveo.service.base.PersistenceService;
 
-import javax.annotation.Nullable;
-import java.util.List;
+/**
+ * Customer Import batch History Service.
+ */
+@Stateless
+public class CustomerBankDetailsImportHistoService extends
+        PersistenceService<CustomerBankDetailsImportHisto> {
 
-@Value.Immutable
-@Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableOpenOrderTemplateInput.class)
-public interface OpenOrderTemplateInput extends Resource {
-
-    @Nullable
-    OpenOrderTypeEnum getOpenOrderType();
-
-    @Nullable
-    String getDescription();
-
-    @Nullable
-    List<String> getTags();
-
-    @Nullable
-    List<ThresholdInput> getThresholds();
-
-    @Nullable
-    List<String> getProducts();
-
-    @Nullable
-    List<String> getArticles();
-
-    @Schema(description = "The Template Name")
-    @Nullable
-     String getTemplateName();
-
-    @Nullable
-    OpenOrderTemplateStatusEnum getStatus();
 }

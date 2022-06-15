@@ -17,6 +17,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -520,6 +521,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by customerAccount", e);
             return null;
+        }
+    }
+	
+	@SuppressWarnings("unchecked")
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic) {
+        try {
+            Query query = getEntityManager().createNamedQuery("PaymentMethod.listByIbanAndBicFi");
+            query.setParameter("Iban", iban);
+            query.setParameter("Bic", bic);
+
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list PaymentMethod by Iban and BicFi", e);
+            return new ArrayList<>();
         }
     }
 }
