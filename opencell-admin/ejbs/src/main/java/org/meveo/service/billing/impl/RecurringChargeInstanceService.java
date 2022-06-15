@@ -38,16 +38,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.RatingResult;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.ChargeApplicationModeEnum;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
@@ -534,8 +525,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
         //INTRD-4424: if invoiceAgreementImmediately then the agreement charges rating
         // should appear in the next invoice following the sub's termination date
-        if (invoiceAgreementImmediately && !wos.isEmpty()) {
-            for (WalletOperation wo : wos) {
+        if (invoiceAgreementImmediately && !ratingResult.getWalletOperations().isEmpty()) {
+            for (WalletOperation wo : ratingResult.getWalletOperations()) {
                 wo.setOperationDate(terminationDate);
                 walletOperationService.updateNoCheck(wo);
             }
