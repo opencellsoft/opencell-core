@@ -86,7 +86,7 @@ public class ServiceInstanceServiceTest {
 
 		serviceInstance = serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, null);
 		// Do not apply a rating during the suspend period
-		verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any());
+		verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any(), terminationReason.isInvoiceAgreementImmediately(), terminationDate);
 	}
 
 	@Test
@@ -119,6 +119,6 @@ public class ServiceInstanceServiceTest {
 		
 		serviceInstance = serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, null);
 		// Do not apply a rating during the suspend period even with charge never been applied before (chargedToDate = null)
-		verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any());
+		verify(recurringChargeInstanceService, never()).applyRecuringChargeToEndAgreementDate(any(), any(), terminationReason.isInvoiceAgreementImmediately(), terminationDate);
 	}
 }
