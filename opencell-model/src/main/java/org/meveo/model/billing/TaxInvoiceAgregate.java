@@ -17,6 +17,10 @@
  */
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -25,6 +29,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreUpdate;
+import javax.persistence.PrePersist;
 
 @Entity
 @DiscriminatorValue("T")
@@ -42,6 +48,24 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * Aggregate converted amount without tax
+     */
+    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal convertedAmountWithoutTax = ZERO;
+
+    /**
+     * Aggregate converted tax amount
+     */
+    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal convertedAmountTax = ZERO;
+
+    /**
+     * Aggregate converted amount with tax
+     */
+    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal convertedAmountWithTax = ZERO;
 
     /**
      * Instantiates a new tax aggregate
@@ -109,6 +133,30 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
         this.accountingCode = accountingCode;
     }
 
+    public BigDecimal getConvertedAmountWithoutTax() {
+        return convertedAmountWithoutTax;
+    }
+
+    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+        this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+    }
+
+    public BigDecimal getConvertedAmountTax() {
+        return convertedAmountTax;
+    }
+
+    public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+        this.convertedAmountTax = convertedAmountTax;
+    }
+
+    public BigDecimal getConvertedAmountWithTax() {
+        return convertedAmountWithTax;
+    }
+
+    public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+        this.convertedAmountWithTax = convertedAmountWithTax;
+    }
+
     @Override
     public boolean equals(Object obj) {
 
@@ -129,5 +177,17 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
         }
 
         return this.getTax().getId().equals(other.getTax().getId()) && this.getTaxPercent().compareTo(other.getTaxPercent()) == 0;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+        this.convertedAmountWithoutTax = this.amountWithoutTax != null
+                ? this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedAmountTax = this.amountTax != null
+                ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+        this.convertedAmountWithTax = this.amountWithTax != null
+                ? this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
     }
 }
