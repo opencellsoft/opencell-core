@@ -31,6 +31,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.admin.impl.SellerService;
@@ -117,6 +118,20 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
 
         return chargeTemplate;
+    }
+
+    public OneShotChargeTemplate update(String code, OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
+        OneShotChargeTemplate entity = oneShotChargeTemplateService.findByCode(code);
+
+        if (entity != null) {
+            // set code in postData with parameter code
+            postData.setCode(code);
+
+            return update(postData);
+        }
+        else {
+            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
+        }
     }
 
     @Override
