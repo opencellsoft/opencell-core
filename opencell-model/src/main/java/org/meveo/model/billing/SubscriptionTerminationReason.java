@@ -61,6 +61,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     private boolean applyAgreement;
 
     /**
+     * invoice agreement immediately by setting WO's operation date to termination date
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "invoice_agreement_immediately")
+    private boolean invoiceAgreementImmediately;
+
+    /**
      * Reimburse
      */
     @Type(type = "numeric_boolean")
@@ -94,6 +101,14 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
 
     public void setApplyAgreement(boolean applyAgreement) {
         this.applyAgreement = applyAgreement;
+    }
+
+    public boolean isInvoiceAgreementImmediately() {
+        return invoiceAgreementImmediately;
+    }
+
+    public void setInvoiceAgreementImmediately(boolean invoiceAgreementImmediately) {
+        this.invoiceAgreementImmediately = invoiceAgreementImmediately;
     }
 
     public boolean isApplyReimbursment() {
