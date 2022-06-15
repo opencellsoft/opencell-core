@@ -10352,4 +10352,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                             WHERE converted_discount_amount IS NULL</sql>
 		<sql>UPDATE billing_invoice_line SET converted_raw_amount = raw_amount WHERE converted_raw_amount IS NULL</sql>
 	</changeSet>
+
+	<changeSet id="#INTRD-7872_20220615" author="ZBariki">
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_without_tax = amount_without_tax
+                                WHERE converted_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_with_tax = amount_with_tax
+                                WHERE converted_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_tax = amount_tax
+                                WHERE converted_amount_tax IS NULL</sql>
+	</changeSet>
 </databaseChangeLog>

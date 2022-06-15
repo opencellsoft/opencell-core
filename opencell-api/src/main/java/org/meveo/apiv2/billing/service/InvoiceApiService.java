@@ -419,7 +419,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
     }
 
 	public Optional<Invoice> refreshRate(Long invoiceId) {
-		Invoice invoice = ofNullable(invoiceService.findById(invoiceId, asList("tradingCurrency", "invoiceLines")))
+		Invoice invoice = ofNullable(invoiceService.findById(invoiceId, asList("tradingCurrency")))
 				.orElseThrow(() -> new NotFoundException("Invoice not found"));
 		if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
 			throw new ForbiddenException("Refresh rate only allowed for invoices with status : NEW or DRAFT");

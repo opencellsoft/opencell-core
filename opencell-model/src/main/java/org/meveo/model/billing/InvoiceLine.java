@@ -822,9 +822,7 @@ public class InvoiceLine extends AuditableEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
-		BigDecimal appliedRate =
-				this.invoice != null && this.invoice.getLastAppliedRate() != null
-						&& !this.invoice.getLastAppliedRate().equals(ZERO) ? this.invoice.getLastAppliedRate() : ONE;
+		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
 				this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedAmountWithTax = this.amountWithTax != null ?

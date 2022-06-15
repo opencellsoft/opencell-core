@@ -40,7 +40,7 @@ public class InvoiceApiServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private static final List<String> fieldToFetch = asList("tradingCurrency", "invoiceLines");
+    private static final List<String> fieldToFetch = asList("tradingCurrency");
 
     private BigDecimal netToPay = new BigDecimal(11);
     private BigDecimal rate = new BigDecimal(0.96);
