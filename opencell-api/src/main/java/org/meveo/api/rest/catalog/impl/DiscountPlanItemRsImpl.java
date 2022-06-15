@@ -70,6 +70,20 @@ public class DiscountPlanItemRsImpl extends BaseRs implements DiscountPlanItemRs
     }
 
     @Override
+    public ActionStatus updateRF(String code, DiscountPlanItemDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            DiscountPlanItem discountPlanItem = discountPlanItemApi.update(code, postData);
+            result.setEntityId(discountPlanItem.getId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public DiscountPlanItemResponseDto find(String discountPlanItemCode) {
         DiscountPlanItemResponseDto result = new DiscountPlanItemResponseDto();
 

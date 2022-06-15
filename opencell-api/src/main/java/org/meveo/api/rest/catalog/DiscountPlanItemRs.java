@@ -92,9 +92,35 @@ public interface DiscountPlanItemRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				)},
+			deprecated = true
 	)
     ActionStatus update(DiscountPlanItemDto postData);
+
+	/**
+	 * update an existed discount plan item.
+	 *
+	 * @param postData A discount plan item's data
+	 * @return Request processing status
+	 */
+	@PUT
+	@Path("/{discountPlanItemCode}")
+	@Operation(
+			summary=" update an existed discount plan item.  ",
+			description=" update an existed discount plan item.  ",
+			operationId="    PUT_DiscountPlanItem_update",
+			responses= {
+					@ApiResponse(description=" Request processing status ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)},
+			deprecated = true
+	)
+	ActionStatus updateRF(@Parameter(description = "code of the discount plan item", required = true) @PathParam("discountPlanItemCode") String discountPlanItemCode,
+							DiscountPlanItemDto postData);
 
     /**
      * Find a discount plan item with a given code.
