@@ -48,6 +48,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
@@ -534,8 +535,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
         //INTRD-4424: if invoiceAgreementImmediately then the agreement charges rating
         // should appear in the next invoice following the sub's termination date
-        if (invoiceAgreementImmediately && !wos.isEmpty()) {
-            for (WalletOperation wo : wos) {
+        if (invoiceAgreementImmediately && !ratingResult.getWalletOperations().isEmpty()) {
+            for (WalletOperation wo : ratingResult.getWalletOperations()) {
                 wo.setOperationDate(terminationDate);
                 walletOperationService.updateNoCheck(wo);
             }
