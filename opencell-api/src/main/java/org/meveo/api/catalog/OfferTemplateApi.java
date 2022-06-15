@@ -79,6 +79,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -221,6 +222,20 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplateService.create(offerTemplate);
 
         return offerTemplate;
+    }
+
+    public OfferTemplate update(String code, OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+        OfferTemplate entity = offerTemplateService.findByCode(code);
+
+        if (entity != null) {
+            // set code in postData with parameter code
+            postData.setCode(code);
+
+            return update(postData);
+        }
+        else {
+            throw new EntityDoesNotExistsException(DiscountPlanItem.class, code);
+        }
     }
 
     @Override
