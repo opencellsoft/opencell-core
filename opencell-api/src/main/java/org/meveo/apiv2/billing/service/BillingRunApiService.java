@@ -155,10 +155,6 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     billingRun = billingRunService.update(billingRun);
                 }
                 
-                if(billingRunService.isBillingRunContainingRejectedInvoices(billingRunId)){
-               		billingRunService.applyRejectAutomaticValidationActions(billingRun);
-                }
-                
                 if (executeInvoicingJob) {
                     Map<String, Object> jobParams = new HashMap<>();
                     jobParams.put(INVOICING_JOB_PARAMETERS,
