@@ -13394,6 +13394,15 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <sql>update ${db.schema.adapted}billing_subscrip_termin_reason set invoice_agreement_immediately = 0</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-7954_20220616" author="AbdelmounaimAkadid">
+     	<createIndex indexName="idx_billing_invoice_line__invoice_id" tableName="billing_invoice_line">
+	      	<column name="invoice_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx_billing_user_account__parent_useraccount_id" tableName="billing_user_account">
+	      	<column name="parent_useraccount_id"/>
+	  	</createIndex>
+    </changeSet>
 
     <changeSet id="#INTRD-7872_20220615" author="ZBariki">
         <addColumn tableName="billing_invoice_agregate">
