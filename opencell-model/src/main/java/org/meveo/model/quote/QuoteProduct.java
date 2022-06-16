@@ -82,9 +82,9 @@ public class QuoteProduct extends AuditableCFEntity {
 	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
     
 
-    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("id")
-    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<QuoteArticleLine>();
+    private List<QuoteArticleLine> quoteArticleLines = new ArrayList<>();
     
 	/**
 	 * discountPlan attached to this quoteProduct
