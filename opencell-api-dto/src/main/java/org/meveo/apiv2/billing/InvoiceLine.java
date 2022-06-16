@@ -270,4 +270,8 @@ public interface InvoiceLine extends Resource {
 	@Schema(description = "The Tax Mode")
     @Nullable
     String getTaxMode();
+	
+	@Schema(description = "The Tax Accounting Code")
+    @Nullable
+    String getTaxAccountingCode();
 }
