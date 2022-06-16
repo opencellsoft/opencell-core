@@ -37,8 +37,8 @@ import javax.inject.Named;
 public class ClusterInformation {
     private String clusterNodeName;
 
-//    @Inject
-//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     @PostConstruct

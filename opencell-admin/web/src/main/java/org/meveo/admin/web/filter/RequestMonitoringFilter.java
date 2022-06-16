@@ -48,8 +48,8 @@ public class RequestMonitoringFilter extends HttpFilter {
 
     private Logger log = LoggerFactory.getLogger(RequestMonitoringFilter.class);
 
-//    @Inject
-//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     @Inject

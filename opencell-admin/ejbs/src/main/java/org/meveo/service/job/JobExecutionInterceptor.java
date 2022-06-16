@@ -25,8 +25,8 @@ public class JobExecutionInterceptor {
      */
     private static final Logger log = LoggerFactory.getLogger(JobExecutionInterceptor.class);
 
-//    @Inject
-//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     /**

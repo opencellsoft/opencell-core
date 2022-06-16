@@ -20,19 +20,19 @@ package org.meveo.security.keycloak;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.SessionContext;
 
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.AccessToken.Access;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wildfly.security.http.oidc.AccessToken;
+import org.wildfly.security.http.oidc.IDToken;
+import org.wildfly.security.http.oidc.RealmAccessClaim;
 
 /**
  * Current Meveo user implementation when integrated with Keycloak authentication server
@@ -54,9 +54,66 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      */
     private SessionContext securityContext;
 
-    Logger log = LoggerFactory.getLogger(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     public MeveoUserKeyCloakImpl() {
+    }
+
+    /**
+     * Current user constructor
+     * 
+     * @param idToken ID token
+     * @param Access token Access token
+     * @param additionalRoles Additional roles to assign
+     * @param roleToPermissionMapping Role to permission mapping
+     */
+    public MeveoUserKeyCloakImpl(IDToken idToken, AccessToken accessToken, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
+
+        log.trace("Produced user from Access token from principal is {}, {}, {}, {}", accessToken.getSubject(), idToken.getName(),
+            accessToken.getRealmAccessClaim() != null ? accessToken.getRealmAccessClaim().getRoles() : null, accessToken.getClaimNames());
+
+        this.subject = idToken.getSubject();
+        this.userName = idToken.getPreferredUsername();
+        this.fullName = idToken.getName();
+        this.authenticatedAt = idToken.getIssuedAt();
+        this.authenticationTokenId = idToken.getID();
+        this.email = idToken.getEmail();
+        this.providerCode = (String) idToken.getClaimValueAsString(CLAIM_PROVIDER);
+
+        // Import realm roles
+        if (accessToken.getRealmAccessClaim() != null) {
+            this.roles.addAll(accessToken.getRealmAccessClaim().getRoles());
+        }
+
+        // Import client roles
+        String clientName = System.getProperty("opencell.keycloak.client");
+        if (accessToken.getResourceAccessClaim(clientName) != null) {
+            this.roles.addAll(accessToken.getResourceAccessClaim(clientName).getRoles());
+        }
+
+        this.locale = idToken.getLocale();
+        this.authenticated = true;
+
+        // Resolve roles to permissions. At the end this.roles will contain both role and permission names.
+        if (additionalRoles != null) {
+            this.roles.addAll(additionalRoles);
+        }
+
+        Set<String> rolesToResolve = new HashSet<>(this.roles);
+
+        if (roleToPermissionMapping != null) {
+            for (String roleName : rolesToResolve) {
+                if (roleToPermissionMapping.containsKey(roleName)) {
+                    this.roles.addAll(roleToPermissionMapping.get(roleName));
+                }
+            }
+        }
+
+        // log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
+
+        // if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
+        // throw new RuntimeException("User has no provider assigned");
+        // }
     }
 
     /**
@@ -68,60 +125,19 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * @param additionalRoles Additional roles to assign
      * @param roleToPermissionMapping Role to permission mapping
      */
-    @SuppressWarnings("rawtypes")
     public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, String forcedProvider, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
 
-        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            
-            AccessToken accessToken = keycloakSecurityContext.getToken();
+        this.securityContext = securityContext;
 
-            // log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", accessToken.getSubject(),
-            // accessToken.getName(),
-            // accessToken.getRealmAccess() != null ? accessToken.getRealmAccess().getRoles() : null,
-            // accessToken.getResourceAccess(RESOURCE_PROVIDER) != null ? accessToken.getResourceAccess(RESOURCE_PROVIDER).getRoles()
-            // : null,
-            // accessToken.getOtherClaims());
-            
-            this.subject = accessToken.getSubject();
-            this.userName = accessToken.getPreferredUsername();
-            this.fullName = accessToken.getName();
-            this.authenticatedAt = accessToken.getIssuedAt();
-            this.authenticationTokenId = accessToken.getSessionState();
-            this.email = accessToken.getEmail();
+        log.trace("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
 
-            if (accessToken.getOtherClaims() != null) {
-                this.providerCode = (String) accessToken.getOtherClaims().get(CLAIM_PROVIDER);
-            }
+        this.subject = securityContext.getCallerPrincipal().getName();
 
-            // Import realm roles
-            if (accessToken.getRealmAccess() != null) {
-                this.roles.addAll(accessToken.getRealmAccess().getRoles());
-            }
-
-            // Import client roles
-            String clientName = System.getProperty("opencell.keycloak.client");
-            if (accessToken.getResourceAccess(clientName) != null) {
-                this.roles.addAll(accessToken.getResourceAccess(clientName).getRoles());
-            }
-
-            this.locale = accessToken.getLocale();
-            this.authenticated = true;
-
-        } else {
-            this.securityContext = securityContext;
-
-            log.trace("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
-
-            this.subject = securityContext.getCallerPrincipal().getName();
-
-            if (forcedUserName != null) {
-                this.userName = forcedUserName;
-                this.providerCode = forcedProvider;
-                forcedAuthentication = true;
-                authenticated = true;
-            }
+        if (forcedUserName != null) {
+            this.userName = forcedUserName;
+            this.providerCode = forcedProvider;
+            forcedAuthentication = true;
+            authenticated = true;
         }
 
         // Resolve roles to permissions. At the end this.roles will contain both role and permission names.
@@ -141,9 +157,9 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
 
         // log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
 
-        if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
-            // throw new RuntimeException("User has no provider assigned");
-        }
+        // if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
+        // throw new RuntimeException("User has no provider assigned");
+        // }
     }
 
     @Override
@@ -163,76 +179,59 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
     }
 
     /**
-     * Extract username from autentication token - applies to Keycloak implementation only, or default to a forced username
+     * Extract username from authentication ID token. Applies only in case when user is authenticated by OIDC.
      * 
      * @param securityContext Security context
-     * @param forcedUserName Forced username if not available from authentication token
      * @return Username
      */
-    @SuppressWarnings("rawtypes")
-    protected static String extractUsername(SessionContext securityContext, String forcedUserName) {
+    protected static String extractUsername(IDToken idToken) {
 
-        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            return keycloakSecurityContext.getToken().getPreferredUsername();
-
-        } else {
-            return forcedUserName;
+        if (idToken != null) {
+            return idToken.getPreferredUsername();
         }
+        return null;
     }
 
     /**
-     * Extract provider code from autentication token. Applies to Keycloak implementation only.
+     * Extract provider code from authentication ID token. Applies only in case when user is authenticated by OIDC.
      * 
-     * @param securityContext Security context
+     * @param idToken ID token
      * @return Provider code if set
      */
-    @SuppressWarnings("rawtypes")
-    protected static String extractProviderCode(SessionContext securityContext) {
+    protected static String extractProviderCode(IDToken idToken) {
 
-        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
-                return (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
-            }
-
+        if (idToken == null) {
+            return null;
         }
-        return null;
+        return idToken.getClaimValueAsString(CLAIM_PROVIDER);
     }
 
     /**
-     * Get roles by application. Applies to Keycloak implementation only.
+     * Get roles by application from Access token. Applies only in case when user is authenticated by OIDC.
      * 
-     * @param securityContext Security context
+     * @param accessToken Access token
      * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm".
      */
-    protected static Map<String, Set<String>> getRolesByApplication(SessionContext securityContext) {
+    protected static Map<String, List<String>> getRolesByApplication(AccessToken accessToken) {
 
-        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
-
-            Map<String, Set<String>> rolesByApplication = new HashMap<String, Set<String>>();
-            @SuppressWarnings("rawtypes")
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            AccessToken accessToken = keycloakSecurityContext.getToken();
-
-            // Realm roles
-            Set<String> realmRoles = null;
-            if (accessToken.getRealmAccess() != null) {
-                realmRoles = accessToken.getRealmAccess().getRoles();
-                rolesByApplication.put("realm", realmRoles);
-            }
-
-            // Client roles
-            for (Entry<String, Access> client : accessToken.getResourceAccess().entrySet()) {
-                rolesByApplication.put(client.getKey(), client.getValue().getRoles());
-
-            }
-
-            return rolesByApplication;
+        if (accessToken == null) {
+            return null;
         }
-        return null;
+        Map<String, List<String>> rolesByApplication = new HashMap<String, List<String>>();
+
+        // Realm roles
+        List<String> realmRoles = null;
+        if (accessToken.getRealmAccessClaim() != null) {
+            realmRoles = accessToken.getRealmAccessClaim().getRoles();
+            rolesByApplication.put("realm", realmRoles);
+        }
+
+        // Client roles
+        for (Entry<String, RealmAccessClaim> client : accessToken.getResourceAccessClaim().entrySet()) {
+            rolesByApplication.put(client.getKey(), client.getValue().getRoles());
+
+        }
+
+        return rolesByApplication;
     }
 }

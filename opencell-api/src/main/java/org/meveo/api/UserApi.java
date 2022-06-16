@@ -427,7 +427,7 @@ public class UserApi extends BaseApi {
 
     public CurrentUserDto getCurrentUser() throws MeveoApiException, BusinessException {
 
-        Map<String, Set<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
+        Map<String, List<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
         CurrentUserDto dto = new CurrentUserDto(currentUser, rolesByApplication);
 
         return dto;

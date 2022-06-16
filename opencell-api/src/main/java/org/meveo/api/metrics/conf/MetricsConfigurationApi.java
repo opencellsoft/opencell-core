@@ -60,8 +60,8 @@ public class MetricsConfigurationApi extends BaseCrudApi<MetricsConfiguration, M
     @Inject
     MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
-//    @Inject
-//    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry registry;
 
     @Override

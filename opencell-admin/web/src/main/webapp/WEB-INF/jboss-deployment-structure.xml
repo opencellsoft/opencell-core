@@ -29,10 +29,8 @@
           <module name="org.apache.commons.lang3" />
           <module name="javax.validation.api"/>
           <module name="org.jboss.ejb3"/>
-<!--           <module name="org.keycloak.keycloak-adapter-core" /> -->
           <module name="org.joda.time" />
           <module name="org.jboss.as.server" />
-          <module name="org.eclipse.microprofile.metrics.api" />
           <module name="org.keycloak.keycloak-core" />
           <module name="com.google.code.gson" />
         </dependencies>          

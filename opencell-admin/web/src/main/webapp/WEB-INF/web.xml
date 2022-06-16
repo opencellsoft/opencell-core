@@ -120,7 +120,7 @@
 			<url-pattern>/index.xhtml</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>guiAccess</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
@@ -137,7 +137,7 @@
 			<http-method-omission>OPTIONS</http-method-omission>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>apiAccess</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
@@ -272,19 +272,15 @@
 			<http-method>POST</http-method>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>apiAccess</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
-	<login-config>
-        <auth-method>OIDC</auth-method>
-<!-- 		<auth-method>KEYCLOAK</auth-method> -->
-<!-- 		<realm-name>opencell</realm-name> -->
-	</login-config>
+
 	<security-role>
-		<role-name>apiAccess</role-name>
+		<role-name>*</role-name>
 	</security-role>
 	<security-role>
-		<role-name>guiAccess</role-name>
+		<role-name>*</role-name>
 	</security-role>
 	<error-page>
 		<error-code>403</error-code>

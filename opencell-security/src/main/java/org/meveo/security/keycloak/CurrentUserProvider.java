@@ -18,24 +18,22 @@
 
 package org.meveo.security.keycloak;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 
-import org.keycloak.KeycloakPrincipal;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
+import org.wildfly.security.http.oidc.OidcPrincipal;
 
 /**
  * Provides methods to deal with currently authenticated user
@@ -47,8 +45,12 @@ public class CurrentUserProvider {
 
     @Inject
     private UserInfoManagement userInfoManagement;
+
     @Resource
     private SessionContext ctx;
+
+    @Inject
+    private Instance<HttpServletRequest> requestInst;
 
     @Inject
     private Logger log;
@@ -74,10 +76,23 @@ public class CurrentUserProvider {
      * @param userName User name
      * @param providerCode Provider code
      */
+    @SuppressWarnings("rawtypes")
     public void forceAuthentication(String userName, String providerCode) {
-        // Current user is already authenticated, can't overwrite it
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            log.warn("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
+
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        // Current user is already authenticated via OIDC, can't overwrite it
+        if (oidcPrincipal != null) {
+            log.warn("Current user is already authenticated, can't overwrite it OIDC principal: {}", oidcPrincipal.getName());
             return;
         }
 
@@ -92,15 +107,27 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired
-     * trigger (scheduled jobs, other timed event expirations), current user might be lost, thus there is a need to reestablish.
+     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     * expirations), current user might be lost, thus there is a need to reestablish.
      * 
      * @param lastCurrentUser Last authenticated user. Note: Pass a unproxied version of MeveoUser (currentUser.unProxy()), as otherwise it will access CurrentUser producer method
      */
+    @SuppressWarnings("rawtypes")
     public void reestablishAuthentication(MeveoUser lastCurrentUser) {
 
-        // Current user is already authenticated, can't overwrite it
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        // Current user is already authenticated via OIDC, can't overwrite it
+        if (oidcPrincipal == null) {
 
             if (lastCurrentUser.getProviderCode() == null) {
                 MDC.remove("providerCode");
@@ -119,12 +146,25 @@ public class CurrentUserProvider {
      * 
      * @return Current provider's code
      */
+    @SuppressWarnings("rawtypes")
     public String getCurrentUserProviderCode() {
+
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
 
         String providerCode = null;
 
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+        // Currently authenticated user via OIDC, get provider code from user properties
+        if (oidcPrincipal != null) {
+            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(oidcPrincipal.getOidcSecurityContext().getIDToken());
 
             if (providerCode == null) {
                 MDC.remove("providerCode");
@@ -162,19 +202,40 @@ public class CurrentUserProvider {
      * 
      * @return Current user implementation
      */
+    @SuppressWarnings({ "rawtypes" })
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
 
+        String username = null;
         MeveoUser user = null;
 
-        // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername.get() != null) {
+        // Authenticated via OIDC
+        if (oidcPrincipal != null) {
+
+            username = MeveoUserKeyCloakImpl.extractUsername(oidcPrincipal.getOidcSecurityContext().getIDToken());
+            user = new MeveoUserKeyCloakImpl(oidcPrincipal.getOidcSecurityContext().getIDToken(), oidcPrincipal.getOidcSecurityContext().getToken(), userInfoManagement.getAdditionalRoles(username, em),
+                userInfoManagement.getRoleToPermissionMapping(providerCode, em));
+
+            // User was forced authenticated, so need to lookup the rest of user information
+        } else if (forcedUserUsername.get() != null) {
+            username = forcedUserUsername.get();
             user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername.get(), getCurrentTenant(), userInfoManagement.getAdditionalRoles(username, em), userInfoManagement.getRoleToPermissionMapping(providerCode, em));
 
         } else {
+            username = ctx.getCallerPrincipal().getName();
             user = new MeveoUserKeyCloakImpl(ctx, null, null, userInfoManagement.getAdditionalRoles(username, em), userInfoManagement.getRoleToPermissionMapping(providerCode, em));
         }
+
         // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
         // getCurrentTenant());
         if (!userInfoManagement.supplementUserInApp(user, em, forcedUserUsername.get())) {
@@ -193,12 +254,6 @@ public class CurrentUserProvider {
      * @param currentUser Authenticated current user
      */
 
-
-
-
-
-
-
     /**
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
@@ -216,8 +271,8 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or
-     * initialize current provider value instead.
+     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or initialize current provider value
+     * instead.
      * 
      * @return Current provider code
      */
@@ -236,22 +291,34 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Get roles by application. Applies to Keycloak implementation only.
+     * Get roles by application. Applies only in case when user is authenticated via OIDC.
      *
      * @param currentUser Currently logged-in user
-     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains
-     *         a mix or realm roles, client roles, roles defined in opencell and their resolution to permissions.
+     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains a mix or realm roles, client roles,
+     *         roles defined in opencell and their resolution to permissions.
      */
-    public Map<String, Set<String>> getRolesByApplication(MeveoUser currentUser) {
+    @SuppressWarnings("rawtypes")
+    public Map<String, List<String>> getRolesByApplication(MeveoUser currentUser) {
 
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            Map<String, Set<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
+        OidcPrincipal oidcPrincipal = null;
+        try {
+            HttpServletRequest request = null;
+            request = requestInst.get();
+            if (request != null && request.getUserPrincipal() instanceof OidcPrincipal) {
+                oidcPrincipal = (OidcPrincipal) request.getUserPrincipal();
+            }
+        } catch (Exception e) {
+            // Ignore. Its the only way to inject request outside the http code trace
+        }
+
+        if (oidcPrincipal != null) {
+            Map<String, List<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(oidcPrincipal.getOidcSecurityContext().getToken());
 
             // Supplement admin application roles with ones resolved in a current user,
             String adminClientName = System.getProperty("opencell.keycloak.client");
-            Set<String> adminRoles = rolesByApplication.get(adminClientName);
+            List<String> adminRoles = rolesByApplication.get(adminClientName);
             if (adminRoles == null) {
-                adminRoles = new HashSet<String>();
+                adminRoles = new ArrayList<String>();
             }
             adminRoles.addAll(currentUser.getRoles());
             rolesByApplication.put(adminClientName, adminRoles);
