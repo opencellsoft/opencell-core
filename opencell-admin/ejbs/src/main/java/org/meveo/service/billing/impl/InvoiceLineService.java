@@ -710,7 +710,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return invoiceLine;
     }
 
-	public Tax findTaxByTaxRateAndAccountingCode(BigDecimal taxRate, String accountingCodeStr) {        
+	
+	/**
+     * get entity Taxe by TaxeRate and Accounting Code
+     * 
+	 * @param taxRate
+	 * @param accountingCodeStr
+	 * @return Tax
+	 */
+	private Tax findTaxByTaxRateAndAccountingCode(BigDecimal taxRate, String accountingCodeStr) {
         AccountingCode accountingCode = null;
         String parCodeAccountingCode = "";
 
