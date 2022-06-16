@@ -28,6 +28,6 @@
         <jaxb />
         <jaxws />
         <docs docsSubdir="api"  />
-        <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger" disabled="true" />
+        <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger" disabled="false" />
     </modules>
 </enunciate>
