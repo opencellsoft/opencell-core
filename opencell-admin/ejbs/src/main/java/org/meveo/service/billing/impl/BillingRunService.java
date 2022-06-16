@@ -819,13 +819,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
-        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
+        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
+            List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
             List<InvoiceStatusEnum> toCancel = new ArrayList<>();
+            
             if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.REJECTED);
             } else {
-                toMove.add(InvoiceStatusEnum.REJECTED);
+            	toQuarantine.add(InvoiceStatusEnum.REJECTED);
             }
 
             if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
@@ -833,27 +835,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 toMove.add(InvoiceStatusEnum.SUSPECT);
             }
+            
             if (CollectionUtils.isNotEmpty(toMove)) {
                 invoiceService.moveInvoicesByStatus(billingRun, toMove);
+            }
+            if (CollectionUtils.isNotEmpty(toQuarantine)) {
+                invoiceService.quarantineRejectedInvoicesByBR(billingRun);
             }
             if (CollectionUtils.isNotEmpty(toCancel)) {
                 invoiceService.cancelInvoicesByStatus(billingRun, toCancel);
             }
-        }
-    }
-
-    /**
-     * Invoicing process for the billingRun, launched by invoicingJob.
-     *
-     * @param billingRun the billing run to process
-     * @throws Exception the exception
-     */
-    public void applyRejectAutomaticValidationActions(BillingRun billingRun) {
-        if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)) {
-            invoiceService.quarantineRejectedInvoicesByBR(billingRun);
-        }
-        if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
-            invoiceService.cancelRejectedInvoicesByBR(billingRun);
         }
     }
     
