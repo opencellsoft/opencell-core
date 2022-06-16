@@ -5435,20 +5435,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             }
                         }
                     }
-
-                    if(invoiceLineGroupToInvoiceMap != null && invoiceLinesGroup.getInvoiceLines() != null) {
-                        List<Long> invoiceLineIds = invoiceLinesGroup.getInvoiceLines()
-                                .stream()
-                                .filter(invoiceLine ->
-                                        invoiceLine.getTaxMode().equals(InvoiceLineTaxModeEnum.RATE) && invoiceLine.getTax() != null)
-                                .map(InvoiceLine::getId)
-                                .collect(Collectors.toList());
-                        if(invoiceLineIds != null && !invoiceLineIds.isEmpty()) {
-                            em.createNamedQuery("InvoiceLine.updateTaxForRateTaxMode")
-                                    .setParameter("invoiceLinesIds", invoiceLineIds)
-                                    .executeUpdate();
-                        }
-                    }
                     em.flush();
 
                     Date now = new Date();
@@ -5582,9 +5568,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 scaKey = (invoiceLine.getSubscription().getUserAccount() != null ? invoiceLine.getSubscription().getUserAccount().getId() : "") + "_" + scaKey;
             }
 
-            if(invoiceLine.getTax() == null && invoiceLine.getTaxMode().equals(InvoiceLineTaxModeEnum.RATE)) {
-                invoiceLine.setTax(invoiceLinesService.findTaxByTaxRate(invoiceLine.getTaxRate()));
-            }
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
 
