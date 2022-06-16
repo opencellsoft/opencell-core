@@ -56,6 +56,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 
@@ -687,6 +688,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "converted_amount_without_tax_before_discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal convertedAmountWithoutTaxBeforeDiscount;
 
+    /**
+     * Payment plan
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_plan_id")
+    private PaymentPlan paymentPlan;
+
     public Invoice() {
 	}
 
@@ -765,8 +773,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
-        BigDecimal appliedRate =
-                this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
+        BigDecimal appliedRate = getAppliedRate();
         this.convertedAmountTax = this.amountTax != null
                 ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedAmountWithoutTax = this.amountWithoutTax != null
@@ -1797,5 +1804,23 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setConvertedAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
         this.convertedAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
+    }
+
+    public PaymentPlan getPaymentPlan() {
+        return paymentPlan;
+    }
+
+    public void setPaymentPlan(PaymentPlan paymentPlan) {
+        this.paymentPlan = paymentPlan;
+    }
+    
+    public boolean canBeRefreshed() {
+        return this.status == InvoiceStatusEnum.NEW || this.status == InvoiceStatusEnum.DRAFT
+                && (this.lastAppliedRate != null
+                && !this.lastAppliedRate.equals(this.tradingCurrency.getCurrentRate()));
+    }
+
+    public BigDecimal getAppliedRate() {
+        return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
 }

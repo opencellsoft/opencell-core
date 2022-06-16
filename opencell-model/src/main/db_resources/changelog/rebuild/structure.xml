@@ -2966,6 +2966,7 @@
             <column name="converted_discount_rate" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
+            <column name="payment_plan_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3017,6 +3018,9 @@
             <column name="discount_plan_code" type="varchar(50)" />
             <column name="discount_plan_item_code" type="varchar(50)" />
             <column name="discount_plan_item_id" type="bigint" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)"/>
+            <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
+            <column name="converted_amount_tax" type="numeric(23, 12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-178">
@@ -11372,6 +11376,9 @@
             <column name="determine_level_by" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
 
         <createTable tableName="dunning_policy_rule">
@@ -11758,7 +11765,6 @@
             <column name="description" type="varchar(255)"/>
             <column name="open_order_type" type="varchar(50)"/>
             <column name="status" type="varchar(255)" />
-             <column name="number_instantiation" type="int" />
               <column name="template_name" type="varchar(100)" />
         </createTable>
         <createTable tableName="open_order_template_tags">
@@ -16661,6 +16667,10 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_payment_plan_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
 
             <!-- Simple fields -->
             <column name="amount_to_recover" type="numeric(23, 12)">
@@ -16703,12 +16713,25 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
     </changeSet>
 
-    <changeSet id="#INTRD-7399_20220603-rebuild-joined-table" author="aelmalki">
-        <createTable tableName="ar_payment_plan_acc_operations">
+    <changeSet id="#INTRD-7399_20220603-rebuild-joined-table-created-aos" author="aelmalki">
+        <createTable tableName="ar_payment_plan_created_aos">
             <column name="payment_plan_id" type="bigint" />
             <column name="account_operation_id" type="bigint" />
         </createTable>
-        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_acc_operations_pkey" tableName="ar_payment_plan_acc_operations" />
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_created_aos_pkey" tableName="ar_payment_plan_created_aos" />
+    </changeSet>
+
+    <changeSet id="#INTRD-7399_20220603-rebuild-joined-table-targeted-aos" author="aelmalki">
+        <createTable tableName="ar_payment_plan_targeted_aos">
+            <column name="payment_plan_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_targeted_aos_pkey" tableName="ar_payment_plan_targeted_aos" />
+    </changeSet>
+
+    <changeSet id="#INTRD-7770_20220613-rebuild-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="payment_plan_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_payment_plan_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_plan" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17852,6 +17875,10 @@
     <changeSet id="#INTRD-7642_20220603" author="ZBariki" />
     <changeSet id="#INTRD-7399_20220603" author="aelmalki" />
     <changeSet id="#INTRD-7644_20220606" author="ZBariki" />
+    <changeSet id="#INTRD-7352_20220614" author="HatimOUDAD" />
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-7770_20220613" author="aelmalki" />
+    <changeSet id="#INTRD-7872_20220615" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

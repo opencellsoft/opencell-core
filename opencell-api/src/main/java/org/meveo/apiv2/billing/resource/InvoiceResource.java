@@ -347,6 +347,16 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "200", description = "invoice successfully quarantined"),
 	@ApiResponse(responseCode = "403", description = "Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") })
 	Response quarantineInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-            @Parameter(description = "Quarantine billing run")  QuarantineBillingRunDto quarantineBillingRunDto);         
+            @Parameter(description = "Quarantine billing run")  QuarantineBillingRunDto quarantineBillingRunDto);
+
+	@PUT
+	@Path("{id}/refreshRate")
+	@Operation(summary = "Refresh rate",  description = "Refresh invoice exchange rate",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Exchange rate successfully refreshed"),
+					@ApiResponse(responseCode = "403",
+							description = "Refresh rate only allowed on invoices with status : NEW or DRAFT"),
+					@ApiResponse(responseCode = "404", description = "Invoice not found") })
+	Response refreshRate(@Parameter(description = "Invoice identifier", required = true) @PathParam("id") Long invoiceId);
             
 }

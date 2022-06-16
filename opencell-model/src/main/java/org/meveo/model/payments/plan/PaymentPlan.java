@@ -18,7 +18,7 @@
 package org.meveo.model.payments.plan;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.ActionOnRemainingAmountEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -33,6 +33,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,9 +43,14 @@ import java.util.List;
 
 @Entity
 @Table(name = "ar_payment_plan")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {@org.hibernate.annotations.Parameter(name = "sequence_name", value = "ar_payment_plan_seq")})
-public class PaymentPlan extends AuditableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@org.hibernate.annotations.Parameter(name = "sequence_name", value = "ar_payment_plan_seq")})
+@NamedQueries({
+        @NamedQuery(name = "PaymentPlan.findByCreatedAos", query = "SELECT pp FROM PaymentPlan pp JOIN pp.createdAos ao WHERE ao.id in (:AOS_ID)" +
+                " AND ao.transactionCategory='DEBIT' AND ao.code='PPL_INSTALLMENT'"),
+        @NamedQuery(name = "PaymentPlan.findOtherLinkedAOSMatchingStatus", query = "SELECT ao.matchingStatus FROM PaymentPlan pp JOIN pp.createdAos ao" +
+                " WHERE ao.id not in (:AOS_ID) AND pp.id = :PP_ID")
+})
+public class PaymentPlan extends BusinessEntity {
 
     @Column(name = "amount_to_recover", nullable = false)
     public BigDecimal amountToRecover;
@@ -76,10 +83,12 @@ public class PaymentPlan extends AuditableEntity {
     public PaymentPlanStatusEnum status = PaymentPlanStatusEnum.DRAFT;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ar_payment_plan_acc_operations",
-            joinColumns = @JoinColumn(name = "payment_plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
-    private List<AccountOperation> accountOperations = new ArrayList<>();
+    @JoinTable(name = "ar_payment_plan_created_aos", joinColumns = @JoinColumn(name = "payment_plan_id"), inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
+    private List<AccountOperation> createdAos = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "ar_payment_plan_targeted_aos", joinColumns = @JoinColumn(name = "payment_plan_id"), inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
+    private List<AccountOperation> targetedAos = new ArrayList<>();
 
     /**
      * Customer account for account operation
@@ -160,14 +169,6 @@ public class PaymentPlan extends AuditableEntity {
         this.status = status;
     }
 
-    public List<AccountOperation> getAccountOperations() {
-        return accountOperations;
-    }
-
-    public void setAccountOperations(List<AccountOperation> accountOperations) {
-        this.accountOperations = accountOperations;
-    }
-
     public CustomerAccount getCustomerAccount() {
         return customerAccount;
     }
@@ -176,4 +177,19 @@ public class PaymentPlan extends AuditableEntity {
         this.customerAccount = customerAccount;
     }
 
+    public List<AccountOperation> getCreatedAos() {
+        return createdAos;
+    }
+
+    public void setCreatedAos(List<AccountOperation> createdAos) {
+        this.createdAos = createdAos;
+    }
+
+    public List<AccountOperation> getTargetedAos() {
+        return targetedAos;
+    }
+
+    public void setTargetedAos(List<AccountOperation> targetedAos) {
+        this.targetedAos = targetedAos;
+    }
 }

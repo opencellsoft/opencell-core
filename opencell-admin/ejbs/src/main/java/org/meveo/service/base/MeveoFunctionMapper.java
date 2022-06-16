@@ -65,6 +65,11 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
  * <ul>
@@ -297,6 +302,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getLocalizedDescription", MeveoFunctionMapper.class.getMethod("getLocalizedDescription", IEntity.class, String.class));
             addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
             addFunction("mv", "getProductAttributeValue", MeveoFunctionMapper.class.getMethod("getProductAttributeValue", ServiceInstance.class, String.class));
+            
+            addFunction("mv", "parseJSON", MeveoFunctionMapper.class.getMethod("parseJSON", String.class, String.class));
 
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -2101,6 +2108,13 @@ public class MeveoFunctionMapper extends FunctionMapper {
     		}
     	
     	return null;
+    }
+    
+    public static String parseJSON(String textJson, String jsonPath) {
+    	if(StringUtils.isEmpty(jsonPath) || StringUtils.isEmpty(textJson)) return null;
+    	Configuration conf = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL, Option.SUPPRESS_EXCEPTIONS).build();
+    	Object result = JsonPath.using(conf).parse(textJson).read(jsonPath);
+    	return result != null ? result.toString() : null;
     }
       
     

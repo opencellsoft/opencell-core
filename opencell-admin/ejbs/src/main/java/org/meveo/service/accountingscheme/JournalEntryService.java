@@ -18,9 +18,7 @@
 package org.meveo.service.accountingscheme;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Map.of;
 import static java.util.Optional.ofNullable;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
@@ -298,23 +296,12 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .orElseThrow(() -> new NotFoundException("Auxiliary accounting not configured for finance settings"));
         if(auxiliaryAccounting.isUseAuxiliaryAccounting()) {
             try {
-                return evaluateAccountingELs(customerAccount, auxiliaryAccounting);
+                return financeSettingsService.generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting);
             } catch (Exception exception) {
                 log.error(exception.getMessage());
             }
         }
         return emptyMap();
-    }
-
-    private Map<String, String> evaluateAccountingELs(CustomerAccount customerAccount,
-                                                          AuxiliaryAccounting auxiliaryAccounting) {
-        Map<Object, Object> context =
-                of("ca", customerAccount, "gca", customerAccount.getGeneralClientAccount());
-        String auxiliaryAccountCode =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountCodeEl(), context, String.class);
-        String auxiliaryAccountLabel =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountLabelEl(), context, String.class);
-        return of("auxiliaryAccountCode", auxiliaryAccountCode, "auxiliaryAccountLabel", auxiliaryAccountLabel);
     }
 
     private void buildTaxesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {

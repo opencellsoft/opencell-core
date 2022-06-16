@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "fa59bff3-d0d8-4dfc-bb2b-87ac3bbfbe75",
+		"name": "PaymentPlan_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"targetedAos\": [\r\n\t\t{\r\n\t\t\t\"id\": 44364\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id\": 44365\r\n\t\t}\r\n\t],\r\n\t\"code\": \"CODE-6\",\r\n\t\"customerAccount\": 2,\r\n\t\"amountToRecover\": 240,\r\n\t\"numberOfInstallments\": 10,\r\n\t\"amountPerInstallment\": 24,\r\n\t\"actionOnRemainingAmount\": \"FIRST\",\r\n\t\"startDate\": \"2022-06-11\",\r\n\t\"recurringUnit\": \"MONTH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/payment-plan",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"payment-plan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find generic",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"genericFields\": [],\r\n    \"nestedEntities\": [\r\n        \"createdAos\",\r\n        \"targetedAos\"\r\n    ],\r\n    \"limit\": 10,\r\n    \"offset\": 0,\r\n    \"sortBy\": \"id\",\r\n    \"sortOrder\": \"ASCENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/generic/PaymentPlan/6",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"generic",
+						"PaymentPlan",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create With EndDate",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"targetedAos\": [\r\n\t\t{\r\n\t\t\t\"id\": 44364\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id\": 44365\r\n\t\t}\r\n\t],\r\n\t\"code\": \"CODE-6\",\r\n\t\"customerAccount\": 2,\r\n\t\"amountToRecover\": 240,\r\n\t\"numberOfInstallments\": 10,\r\n\t\"amountPerInstallment\": 24,\r\n\t\"actionOnRemainingAmount\": \"FIRST\",\r\n\t\"startDate\": \"2022-06-11\",\r\n\t\"endDate\": \"2023-03-11\",\r\n\t\"recurringUnit\": \"MONTH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/payment-plan",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"payment-plan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"targetedAos\": [\r\n\t\t{\r\n\t\t\t\"id\": 44364\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id\": 44365\r\n\t\t}\r\n\t],\r\n\t\"code\": \"CODE-6\",\r\n    \"description\" : \"Desc for PP CODE-6\",\r\n\t\"customerAccount\": 2,\r\n\t\"amountToRecover\": 240,\r\n\t\"numberOfInstallments\": 10,\r\n\t\"amountPerInstallment\": 24,\r\n\t\"actionOnRemainingAmount\": \"FIRST\",\r\n\t\"startDate\": \"2022-06-11\",\r\n\t\"recurringUnit\": \"MONTH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/payment-plan/3",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"payment-plan",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Activate",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/payment-plan/3/activate",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"payment-plan",
+						"3",
+						"activate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
