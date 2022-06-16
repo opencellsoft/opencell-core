@@ -2506,9 +2506,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only reject invoices in statuses NEW/DRAFT/SUSPECT. current invoice status is :" + status.name());
         }
-        if(invoice.getBillingRun() == null) {
+        BillingRun billingRun = invoice.getBillingRun();
+        if(billingRun == null) {
             throw new BusinessException("Invoice not related to a billing run");
+        }else {
+            billingRun = billingRunService.retrieveIfNotManaged(billingRun);
         }
+
         if(InvoiceStatusEnum.DRAFT.equals(status)) {
             invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
         }else {
@@ -2516,6 +2520,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         update(invoice);
+        
+        if(InvoiceStatusEnum.REJECTED.equals(invoice.getStatus()) && billingRun.getRejectAutoAction() == null ){
+        	billingRun.setStatus(BillingRunStatusEnum.REJECTED);
+        	billingRunService.update(billingRun);
+        }
     }
 
     /**
