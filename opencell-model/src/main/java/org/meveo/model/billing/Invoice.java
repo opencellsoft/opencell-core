@@ -773,8 +773,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
-        BigDecimal appliedRate =
-                this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
+        BigDecimal appliedRate = getAppliedRate();
         this.convertedAmountTax = this.amountTax != null
                 ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedAmountWithoutTax = this.amountWithoutTax != null
@@ -1819,5 +1818,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return this.status == InvoiceStatusEnum.NEW || this.status == InvoiceStatusEnum.DRAFT
                 && (this.lastAppliedRate != null
                 && !this.lastAppliedRate.equals(this.tradingCurrency.getCurrentRate()));
+    }
+
+    public BigDecimal getAppliedRate() {
+        return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
 }
