@@ -43,6 +43,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -125,9 +126,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private TaxService taxService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     @Inject
-
     private InvoiceService invoiceService;
 
     @Inject
@@ -700,20 +703,36 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         invoiceLine.setBillingRun((BillingRun) tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
 
         if(resource.getTaxMode() != null && resource.getTaxMode().equals(RATE.name())) {
-            invoiceLine.setTax(findTaxByTaxRate(resource.getTaxRate()));
+            invoiceLine.setTax(findTaxByTaxRateAndAccountingCode(resource.getTaxRate(), resource.getTaxAccountingCode()));
             invoiceLine.setTaxRate(resource.getTaxRate());
         }
 
         return invoiceLine;
     }
 
-    public Tax findTaxByTaxRate(BigDecimal taxRate) {
-        Tax tax = taxService.findTaxByRate(new BigDecimal(taxRate.intValue()));
+	
+	/**
+     * get entity Taxe by TaxeRate and Accounting Code
+     * 
+	 * @param taxRate
+	 * @param accountingCodeStr
+	 * @return Tax
+	 */
+	private Tax findTaxByTaxRateAndAccountingCode(BigDecimal taxRate, String accountingCodeStr) {
+        AccountingCode accountingCode = null;
+        String parCodeAccountingCode = "";
+
+        if(accountingCodeStr != null) {
+            accountingCode = accountingCodeService.findByCode(accountingCodeStr);
+            parCodeAccountingCode = "_" + accountingCodeStr;
+        }
+        Tax tax = taxService.findTaxByRateAndAccountingCode(taxRate, accountingCode);
         if(tax == null) {
             tax = new Tax();
             tax.setPercent(taxRate);
-            tax.setCode("TAX_" + taxRate.intValue());
-            tax.setUuid("TAX_" + taxRate);
+            tax.setCode("TAX_" + taxRate + parCodeAccountingCode);
+            tax.setUuid("TAX_" + taxRate + parCodeAccountingCode);
+            tax.setAccountingCode(accountingCode);
             taxService.create(tax);
         }
         return tax;
