@@ -63,6 +63,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
+    private static final String PPL_CREATION = "PPL_CREATION";
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -102,6 +103,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withWriteOff = false;
         boolean withRefund = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
+
+        // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
+        // Specially for this case, Invoice will pass to PENDING_PLAN status
+        boolean isPplCreationCreditAo = false;
+
         
         for (AccountOperation accountOperation : listOcc) {
             if (accountOperation instanceof WriteOff) {
@@ -137,6 +143,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     amountCredit = BigDecimal.ZERO;
                 }
 
+                if (PPL_CREATION.equals(accountOperation.getCode())) {
+                    isPplCreationCreditAo = true;
+                }
+
             } else {
                 if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
@@ -156,6 +166,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
                     } else if (withRefund) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                    } else if (isPplCreationCreditAo) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PENDING_PLAN);
                     } else if (fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
                         invoiceService.triggersCollectionPlanLevelsJob(invoice);

@@ -263,12 +263,16 @@ public class PaymentPlanApi extends BaseApi {
 
         validateAOs(dto.getAmountToRecover(), aos);
 
+        if (dto.getAmountPerInstallment().compareTo(provider.getPaymentPlanPolicy().getMinInstallmentAmount()) < 0) {
+            throw new BusinessApiException("Amount per installment '" + dto.getAmountPerInstallment() + "' must be greater than MinInstallmentAmount '" + provider.getPaymentPlanPolicy().getMinInstallmentAmount() + "'");
+        }
+
         // 'amountToRecover' must be between minimumAllowedOriginalReceivableAmount and maximumAllowedOriginalReceivableAmount
         if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMinAllowedReceivableAmount()) < 0) {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be greater than MinAllowedReceivableAmount '" + provider.getPaymentPlanPolicy().getMinAllowedReceivableAmount() + "'");
         }
 
-        if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount()) > 0) {
+        if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount()) >= 0) {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be less than MaxAllowedReceivableAmount '" + provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount() + "'");
         }
 
