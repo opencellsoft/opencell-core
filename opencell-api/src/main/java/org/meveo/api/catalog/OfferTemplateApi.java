@@ -811,12 +811,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			        										return result;
 			        									}).collect(Collectors.toSet()); 
 		    									getProductVersionResponse.setAttributes(attributes);
-                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
-                                                        .stream()
-                                                        .map(GroupedAttributeDto::new)
-                                                        .collect(Collectors.toSet());
-                                            getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
-        									}
+        								}
+        								if(productVersion.getGroupedAttributes()!= null && !productVersion.getGroupedAttributes().isEmpty()) {
+                                        Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
+                                                    .stream()
+                                                    .map(d -> {
+                                                    	GroupedAttributeDto result =attributeApi.populateGroupedAttributToDto(d);
+		        										return result;
+		        									})
+                                                    .collect(Collectors.toSet());
+                                        getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
+    								}
         								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}
         						}

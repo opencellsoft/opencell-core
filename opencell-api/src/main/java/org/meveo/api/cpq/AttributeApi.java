@@ -22,6 +22,7 @@ import org.meveo.api.dto.cpq.OfferContextConfigDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.dto.response.cpq.GetGroupedAttributesResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -30,6 +31,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -320,6 +322,26 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		GetProductDtoResponse result = new GetProductDtoResponse(product);   
 		result.setCurrentProductVersion(getProductVersionResponse);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
+		return result;
+	}
+	
+	public GroupedAttributeDto populateGroupedAttributToDto(GroupedAttributes groupedAttribute) throws MeveoApiException {
+		if (groupedAttribute == null) {
+			missingParameters.add("groupedAttribute");
+			handleMissingParameters();
+		}
+
+		Set<String> attributeCodes= new HashSet<>();
+		attributeCodes = Optional.ofNullable(groupedAttribute.getAttributes()).orElse(Collections.emptyList())
+					.stream()
+					.map(v -> v.getCode())
+					.collect(Collectors.toSet());
+		
+
+		GroupedAttributeDto result = new GroupedAttributeDto(groupedAttribute);
+		result.setAttributeCodes(attributeCodes);
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(groupedAttribute));
+
 		return result;
 	}
 
