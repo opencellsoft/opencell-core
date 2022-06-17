@@ -19,9 +19,12 @@
 package org.meveo.api.dto.module;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
+import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
@@ -71,27 +74,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
     private ScriptInstanceDto script;
 
     /** The module items. */
-    @JsonDeserialize(using = ModuleItemListDeserializer.class)
-    @XmlElementWrapper(name = "moduleItems")
-    @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class), @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
-            @XmlElement(name = "filter", type = FilterDto.class), @XmlElement(name = "jobInstance", type = JobInstanceDto.class),
-            @XmlElement(name = "script", type = ScriptInstanceDto.class), @XmlElement(name = "notification", type = ScriptNotificationDto.class),
-            @XmlElement(name = "timerEntity", type = TimerEntityDto.class), @XmlElement(name = "emailNotif", type = EmailNotificationDto.class),
-            @XmlElement(name = "jobTrigger", type = JobTriggerDto.class), @XmlElement(name = "webhookNotif", type = WebHookDto.class),
-            @XmlElement(name = "counter", type = CounterTemplateDto.class), @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class),
-            @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessProductModel", type = BusinessProductModelDto.class),
-            @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class), @XmlElement(name = "subModule", type = MeveoModuleDto.class),
-            @XmlElement(name = "measurableQuantity", type = MeasurableQuantityDto.class), @XmlElement(name = "pieChart", type = PieChartDto.class),
-            @XmlElement(name = "lineChart", type = LineChartDto.class), @XmlElement(name = "barChart", type = BarChartDto.class),
-            @XmlElement(name = "recurringChargeTemplate", type = RecurringChargeTemplateDto.class), @XmlElement(name = "usageChargeTemplate", type = UsageChargeTemplateDto.class),
-            @XmlElement(name = "oneShotChargeTemplate", type = OneShotChargeTemplateDto.class), @XmlElement(name = "productChargeTemplate", type = ProductChargeTemplateDto.class),
-            @XmlElement(name = "counterTemplate", type = CounterTemplateDto.class), @XmlElement(name = "pricePlanMatrix", type = PricePlanMatrixDto.class),
-            @XmlElement(name = "entityCustomAction", type = EntityCustomActionDto.class), @XmlElement(name = "workflow", type = WorkflowDto.class),
-            @XmlElement(name = "offerTemplate", type = OfferTemplateDto.class), @XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
-            @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
-            @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), @XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class),
-            @XmlElement(name = "ddRequestBuilder", type = DDRequestBuilderDto.class),})
-    private List<BaseEntityDto> moduleItems;
+    private ModuleItemsDto moduleItems;
 
     /**
      * Instantiates a new meveo module dto.
@@ -108,7 +91,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
         super(meveoModule);
         this.license = meveoModule.getLicense();
         this.logoPicture = meveoModule.getLogoPicture();
-        this.moduleItems = new ArrayList<>();
+        this.moduleItems = new ModuleItemsDto(new ArrayList<>());
         if (meveoModule.getScript() != null) {
             this.setScript(new ScriptInstanceDto(meveoModule.getScript()));
         }
@@ -173,7 +156,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      *
      * @return the module items
      */
-    public List<BaseEntityDto> getModuleItems() {
+    public ModuleItemsDto getModuleItems() {
         return moduleItems;
     }
 
@@ -182,7 +165,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      *
      * @param moduleItems the new module items
      */
-    public void setModuleItems(List<BaseEntityDto> moduleItems) {
+    public void setModuleItems(ModuleItemsDto moduleItems) {
         this.moduleItems = moduleItems;
     }
 
@@ -192,8 +175,8 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      * @param item the item
      */
     public void addModuleItem(BaseEntityDto item) {
-        if (!moduleItems.contains(item)) {
-            moduleItems.add(item);
+        if (!moduleItems.getModuleItems().contains(item)) {
+            moduleItems.getModuleItems().add(item);
         }
     }
 
@@ -230,13 +213,13 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      */
     public boolean isCodeOnly() {
         return StringUtils.isBlank(getDescription()) && license == null && StringUtils.isBlank(logoPicture) && logoPictureFile == null && script == null
-                && (moduleItems == null || moduleItems.isEmpty());
+                && (moduleItems.getModuleItems() == null || moduleItems.getModuleItems().isEmpty());
     }
     
     @Override
     public String toString() {
         final int maxLen = 10;
         return String.format("ModuleDto [code=%s, license=%s, description=%s, logoPicture=%s, logoPictureFile=%s, moduleItems=%s, script=%s]", getCode(), license, getDescription(),
-            logoPicture, logoPictureFile, moduleItems != null ? moduleItems.subList(0, Math.min(moduleItems.size(), maxLen)) : null, script);
+            logoPicture, logoPictureFile, moduleItems != null ? moduleItems.getModuleItems().subList(0, Math.min(moduleItems.getModuleItems().size(), maxLen)) : null, script);
     }
 }

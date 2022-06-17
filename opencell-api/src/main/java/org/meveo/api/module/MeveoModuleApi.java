@@ -596,7 +596,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
             meveoModule.getModuleItems().clear();
 
-            for (BaseEntityDto dto : moduleDto.getModuleItems()) {
+            for (BaseEntityDto dto : moduleDto.getModuleItems().getModuleItems()) {
 
                 try {
 

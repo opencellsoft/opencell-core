@@ -152,7 +152,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                     return module;
                 }
 
-                for (BaseEntityDto itemDto : dto.getModuleItems()) {
+                for (BaseEntityDto itemDto : dto.getModuleItems().getModuleItems()) {
                     TreeNode classNode = getOrCreateNodeByClass(itemDto.getClass().getName());
                     new DefaultTreeNode("item", itemDto, classNode);
                 }
