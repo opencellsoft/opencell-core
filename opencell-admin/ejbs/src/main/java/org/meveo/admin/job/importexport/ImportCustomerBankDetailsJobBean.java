@@ -64,8 +64,8 @@ public class ImportCustomerBankDetailsJobBean {
     private ParamBeanFactory paramBeanFactory;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobExecutionResultImpl result) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, String parameter) {
         ParamBean paramBean = paramBeanFactory.getInstance();
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "bank_Mobility" + File.separator;        
         initialiserCompteur();        
@@ -75,8 +75,10 @@ public class ImportCustomerBankDetailsJobBean {
         traitementFiles(result, dirOK, dirKO, files);
 
         result.setNbItemsToProcess(nbModifications);
-        result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
+        result.setNbItemsCorrectlyProcessed(nbModificationsCreated);
         result.setNbItemsProcessedWithError(nbModificationsError);
+        result.setNbItemsProcessedWithWarning(nbModificationsIgnored);
+        result.setReport("wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika");
     }
 
     private List<File> getFilesFromInput(ParamBean paramBean, String importDir) {
@@ -163,7 +165,7 @@ public class ImportCustomerBankDetailsJobBean {
             String ibanArrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
             String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             
-            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
+            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             if (paymentMethods != null && paymentMethodsArrivee != null) {
                 dupPmDepartArrivee(ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
@@ -178,13 +180,12 @@ public class ImportCustomerBankDetailsJobBean {
                 dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
                 nbModificationsCreated++;
             }
+            if(paymentMethods.isEmpty()) {
+                nbModificationsIgnored++;
+            }
         }
         else {
             nbModificationsError++;
-        }
-        
-        if(paymentMethods.isEmpty()) {
-            nbModificationsIgnored++;
         }
     }
 
@@ -212,10 +213,11 @@ public class ImportCustomerBankDetailsJobBean {
     private void createHistory() {
         customerBankDetailsImport.setLinesRead(nbModifications);
         customerBankDetailsImport.setLinesInserted(nbModificationsCreated);
-        customerBankDetailsImport.setLinesRejected(nbModificationsError);
+        customerBankDetailsImport.setLinesRejected(nbModificationsIgnored);
         customerBankDetailsImport.setNbCustomerAccountsIgnored(nbModificationsIgnored);
         customerBankDetailsImport.setNbCustomerAccountsError(nbModificationsError);
-        customerBankDetailsImport.setNbCustomerAccountsCreated(nbModificationsTerminated);
+        customerBankDetailsImport.setNbCustomerAccountsCreated(nbModificationsCreated);
+        customerBankDetailsImport.setNbCustomerAccounts(nbModifications);
         customerBankDetailsImportHistoService.create(customerBankDetailsImport);
     }
 

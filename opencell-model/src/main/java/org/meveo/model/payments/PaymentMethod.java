@@ -64,7 +64,8 @@ import org.meveo.model.document.Document;
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
         @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
         @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "PaymentMethod.listByIbanAndBicFi", query = "select m from PaymentMethod m where m.bankCoordinates.iban=:Iban and m.bankCoordinates.bic=:Bic and m.disabled is false"),
+        @NamedQuery(name = "PaymentMethod.listByIbanAndBicFi", query = "select m from PaymentMethod m where m.bankCoordinates.iban=:Iban and m.bankCoordinates.bic=:Bic and m.disabled is :Disable"),
+        @NamedQuery(name = "PaymentMethod.listByIbanAndBicFiAll", query = "select m from PaymentMethod m where m.bankCoordinates.iban=:Iban and m.bankCoordinates.bic=:Bic"),
         @NamedQuery(name = "PaymentMethod.isReferenced", query = "select count(pm) from PaymentMethod pm " +
                 "left join Subscription sub on sub.paymentMethod.id = pm.id " +
                 "left join BillingAccount ba on ba.paymentMethod.id = pm.id " +
