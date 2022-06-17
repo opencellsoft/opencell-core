@@ -165,9 +165,7 @@ public class ImportCustomerBankDetailsJobBean {
             log.debug("paymentMethodsDepart.size(): {}", paymentMethods.size());
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             log.debug("paymentMethodsArrivee.size(): {}", paymentMethodsArrivee.size());
-            if (paymentMethods != null && paymentMethodsArrivee != null) {
-                dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
-            }
+            dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
         }
     }
 
