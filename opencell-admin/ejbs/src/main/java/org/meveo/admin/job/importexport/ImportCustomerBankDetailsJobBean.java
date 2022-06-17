@@ -142,31 +142,30 @@ public class ImportCustomerBankDetailsJobBean {
 
         int i = -1;
         nbModifications = customerBankDetails.getMessageBanqueEmetteur().getModification().size();
+        log.debug("nbModifications: {}", nbModifications);
         if (nbModifications == 0) {
             return;
         }
 
-        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-        paymentMethodeDepartArrivee(jobInstance, customerBankDetails, i, checkJobStatusEveryNr);    
-        
+        paymentMethodeDepartArrivee(jobInstance, customerBankDetails);    
         createHistory();
         log.info("end import file ");
     }
 
-    private void paymentMethodeDepartArrivee(JobInstance jobInstance, Document customerBankDetails, int i, int checkJobStatusEveryNr) throws CloneNotSupportedException {
+    private void paymentMethodeDepartArrivee(JobInstance jobInstance, Document customerBankDetails) throws CloneNotSupportedException {
         for (Modification newModification : customerBankDetails.getMessageBanqueEmetteur().getModification()) {
-            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
-                break;
-            }
             //IBAN du client et BIC dans l'établissement de départ
             String ibanDepart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
             String bicDepart = newModification.getOrgPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             //IBAN du client et BIC dans l'établissement d'arrivée
             String ibanArrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
             String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
-            
+            log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}])"
+                , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
             List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
+            log.debug("paymentMethodsDepart.size(): {}", paymentMethods.size());
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
+            log.debug("paymentMethodsArrivee.size(): {}", paymentMethodsArrivee.size());
             if (paymentMethods != null && paymentMethodsArrivee != null) {
                 dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
             }
@@ -179,15 +178,19 @@ public class ImportCustomerBankDetailsJobBean {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
                 nbModificationsCreated++;
+                log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] - OK)"
+                    , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
             }
             if(paymentMethods.isEmpty()) {
                 nbModificationsIgnored++;
                 msgModifications += "[(Warning) Original bank account (iban=" + ibanDepart + "; bic=" + bicDepart + ") does not exist in opencell]  ";
+                log.debug("(Warning) Original bank account iban: [{}] bic: [{}] does not exist in opencell..", ibanDepart, bicDepart);
             }
         }
         else {
             msgModifications += "[(ko) Arrival bank account (iban=" + ibanArrivee + "; bic=" + bicArrivee + ") Already exists in opencell]  ";
             nbModificationsError++;
+            log.debug("(ko) Arrival bank account iban: [{}] bic: [{}] Already exists in opencell..", ibanArrivee, bicArrivee);
         }
     }
 
