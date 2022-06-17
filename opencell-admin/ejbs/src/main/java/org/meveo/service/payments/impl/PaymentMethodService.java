@@ -523,14 +523,24 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             return null;
         }
     }
+
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic) {
+	    return listByIbanAndBicFi(iban, bic, null);
+    }
 	
 	@SuppressWarnings("unchecked")
-    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic) {
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic, Boolean disable) {
         try {
-            Query query = getEntityManager().createNamedQuery("PaymentMethod.listByIbanAndBicFi");
+            String nameQuery = "PaymentMethod.listByIbanAndBicFi";
+            if (disable ==null) {
+                nameQuery = "PaymentMethod.listByIbanAndBicFiAll";
+            }
+            Query query = getEntityManager().createNamedQuery(nameQuery);
             query.setParameter("Iban", iban);
             query.setParameter("Bic", bic);
-
+            if (disable !=null) {
+                query.setParameter("Disable", disable);
+            }
             return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by Iban and BicFi", e);
