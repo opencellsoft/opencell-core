@@ -280,11 +280,6 @@ public class PaymentPlanActivateApiTest {
             }
 
             @Override
-            public BigDecimal getRemainingAmount() {
-                return remainingAmount;
-            }
-
-            @Override
             public ActionOnRemainingAmountEnum getActionOnRemainingAmount() {
                 return action;
             }
@@ -327,12 +322,12 @@ public class PaymentPlanActivateApiTest {
 
     }
 
-    private AccountOperation buildAo(Long id, CustomerAccount customerAccount, BigDecimal amout, MatchingStatusEnum status, String code) {
+    private AccountOperation buildAo(Long id, CustomerAccount customerAccount, BigDecimal amount, MatchingStatusEnum status, String code) {
         AccountOperation ao = new AccountOperation();
         ao.setId(id);
         ao.setCode(code);
         ao.setCustomerAccount(customerAccount);
-        ao.setUnMatchingAmount(amout);
+        ao.setUnMatchingAmount(amount);
         ao.setMatchingStatus(status);
         ao.setTransactionCategory(OperationCategoryEnum.DEBIT);
 

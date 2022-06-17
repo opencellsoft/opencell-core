@@ -51,7 +51,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -94,7 +93,9 @@ public class PaymentPlanApi extends BaseApi {
         // if endDate is given, check that value is correct and throw exception if not. If null, calculate it. endDate=startDate.addMonths(numberOfInstallments-1)
         Date end = getPPEndDate(paymentPlanDto);
 
-        return paymentPlanService.create(paymentPlanDto, aos, customerAccount, end);
+        BigDecimal remainingAmount = validateAndGetRemaining(paymentPlanDto);
+
+        return paymentPlanService.create(paymentPlanDto, aos, customerAccount, end, remainingAmount);
     }
 
     public Long update(Long id, PaymentPlanDto paymentPlanDto) {
@@ -132,7 +133,10 @@ public class PaymentPlanApi extends BaseApi {
 
         Date end = getPPEndDate(paymentPlanDto);
 
-        return paymentPlanService.update(id, paymentPlanDto, aos, customerAccount, end);
+        // Calculate remainingAmount
+        BigDecimal remainingAmount = validateAndGetRemaining(paymentPlanDto);
+
+        return paymentPlanService.update(id, paymentPlanDto, aos, customerAccount, end, remainingAmount);
     }
 
     public void delete(Long id) {
@@ -166,7 +170,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Payment plan cannot start in the past. Please update start date");
         }
 
-        validateAOsAmount(paymentPlan.getAmountToRecover(), paymentPlan.getTargetedAos());
+        validateAOs(paymentPlan.getAmountToRecover(), paymentPlan.getTargetedAos());
 
         // PaymentPlan status must move to 'ACTIVE'
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
@@ -195,9 +199,11 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         // A list of AOs of type PPI is created, and linked to the PaymentPlan using this process:
-        MathContext rounding = new MathContext(12, RoundingMode.HALF_UP);
+        MathContext rounding = new MathContext(12, RoundingMode.DOWN);
         BigDecimal remaningToProcess = paymentPlan.getRemainingAmount() != null ? paymentPlan.getRemainingAmount() : BigDecimal.ZERO;
-        BigDecimal ppiUnitAmount = paymentPlan.getAmountToRecover().divide(BigDecimal.valueOf(paymentPlan.getNumberOfInstallments()), rounding);
+        BigDecimal ppiUnitAmount = paymentPlan.getAmountToRecover()
+                .divide(BigDecimal.valueOf(paymentPlan.getNumberOfInstallments()), rounding)
+                .setScale(2, RoundingMode.DOWN);
 
         List<AccountOperation> newAoPPIs = new ArrayList<>();
 
@@ -217,10 +223,8 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         // Update PaymentPlan
-        paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
         paymentPlan.setCreatedAos(newAoPPIs);
-
-        paymentPlanService.update(paymentPlan);
+        paymentPlanService.activate(paymentPlan);
 
     }
 
@@ -257,7 +261,7 @@ public class PaymentPlanApi extends BaseApi {
             throw new EntityDoesNotExistsException("Missing AOs for customerAccount " + dto.getCustomerAccount() + " : " + diffs);
         }
 
-        validateAOsAmount(dto.getAmountToRecover(), aos);
+        validateAOs(dto.getAmountToRecover(), aos);
 
         // 'amountToRecover' must be between minimumAllowedOriginalReceivableAmount and maximumAllowedOriginalReceivableAmount
         if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMinAllowedReceivableAmount()) < 0) {
@@ -268,21 +272,20 @@ public class PaymentPlanApi extends BaseApi {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be less than MaxAllowedReceivableAmount '" + provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount() + "'");
         }
 
-        // check that: amountToRecover = (amountPerInstallment * numberOfInstallments) + remaining
-        BigDecimal remaningToProcess = dto.getRemainingAmount() != null ? dto.getRemainingAmount() : BigDecimal.ZERO;
-        BigDecimal expectedAmount = dto.getAmountPerInstallment().multiply(BigDecimal.valueOf(dto.getNumberOfInstallments())).add(remaningToProcess);
-        if (dto.getAmountToRecover().compareTo(expectedAmount) != 0) {
-            throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be equal '" + expectedAmount + "'");
-        }
-
         // check that numberOfInstallments is less than the maximumPaymentPlanDuration
         if (dto.getNumberOfInstallments() > provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration()) {
             throw new BusinessApiException("Number of installments '" + dto.getNumberOfInstallments() + "' must be less than MaxPaymentPlanDuration '" + provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration() + "'");
         }
 
+        // check that: amountToRecover = (amountPerInstallment * numberOfInstallments) + remaining
+        BigDecimal expectedAmount = dto.getAmountPerInstallment().multiply(BigDecimal.valueOf(dto.getNumberOfInstallments()));
+        if (dto.getAmountToRecover().compareTo(expectedAmount) < 0) {
+            throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be greater then '" + expectedAmount + "'");
+        }
+
     }
 
-    private void validateAOsAmount(BigDecimal amountToRecover, List<AccountOperation> aos) {
+    private void validateAOs(BigDecimal amountToRecover, List<AccountOperation> aos) {
         BigDecimal sumAmoutAos = BigDecimal.ZERO;
 
         for (AccountOperation ao : aos) {
@@ -301,6 +304,11 @@ public class PaymentPlanApi extends BaseApi {
             // AO must be DEBIT
             if (ao.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 throw new BusinessApiException("AcccountOperation '" + ao.getCode() + "' should be DEBIT");
+            }
+
+            // Avoid to add plan over AOS PPL_INSTALLMENT
+            if ("OCC".equals(ao.getType()) && "PPL_INSTALLMENT".equals(ao.getCode())) {
+                throw new BusinessApiException("AcccountOperation '" + ao.getCode() + "' with type OCC, cannot be part of a Payment plan");
             }
 
             sumAmoutAos = sumAmoutAos.add(ao.getUnMatchingAmount());
@@ -337,6 +345,18 @@ public class PaymentPlanApi extends BaseApi {
             }
         }
         return end;
+    }
+
+    private BigDecimal validateAndGetRemaining(PaymentPlanDto paymentPlanDto) {
+        // Calculate remainingAmount
+        BigDecimal expectedAmount = paymentPlanDto.getAmountPerInstallment().multiply(BigDecimal.valueOf(paymentPlanDto.getNumberOfInstallments()));
+        BigDecimal remainingAmount = paymentPlanDto.getAmountToRecover().subtract(expectedAmount);
+
+        if (remainingAmount.compareTo(paymentPlanDto.getAmountPerInstallment()) >= 0) {
+            throw new BusinessApiException("Remaining amount '" + remainingAmount + "' should be less than or equals Amount per installment '" + paymentPlanDto.getAmountPerInstallment() + "'");
+        }
+
+        return remainingAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
 

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -61,6 +62,8 @@ import org.meveo.service.billing.impl.InvoiceService;
 @Stateless
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
+    private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
+
     @Inject
     private CustomerAccountService customerAccountService;
 
@@ -72,6 +75,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private InvoiceService invoiceService;
+
+    @Inject
+    private PaymentPlanService paymentPlanService;
 
     @Inject
     @Updated
@@ -249,6 +255,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
             }
         }
+
+        // send matched PPL Aos to check if PaymentPlan shall be passed to COMPLETE status
+        paymentPlanService.toComplete(listOcc.stream()
+                .filter(accountOperation -> PPL_INSTALLMENT.equals(accountOperation.getCode()) && MatchingStatusEnum.L == accountOperation.getMatchingStatus())
+                .map(AccountOperation::getId)
+                .collect(Collectors.toList()));
 
     }
 

@@ -33,6 +33,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,8 +43,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "ar_payment_plan")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {@org.hibernate.annotations.Parameter(name = "sequence_name", value = "ar_payment_plan_seq")})
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@org.hibernate.annotations.Parameter(name = "sequence_name", value = "ar_payment_plan_seq")})
+@NamedQueries({
+        @NamedQuery(name = "PaymentPlan.findByCreatedAos", query = "SELECT pp FROM PaymentPlan pp JOIN pp.createdAos ao WHERE ao.id in (:AOS_ID)" +
+                " AND ao.transactionCategory='DEBIT' AND ao.code='PPL_INSTALLMENT'"),
+        @NamedQuery(name = "PaymentPlan.findOtherLinkedAOSMatchingStatus", query = "SELECT ao.matchingStatus FROM PaymentPlan pp JOIN pp.createdAos ao" +
+                " WHERE ao.id not in (:AOS_ID) AND pp.id = :PP_ID")
+})
 public class PaymentPlan extends BusinessEntity {
 
     @Column(name = "amount_to_recover", nullable = false)
@@ -76,15 +83,11 @@ public class PaymentPlan extends BusinessEntity {
     public PaymentPlanStatusEnum status = PaymentPlanStatusEnum.DRAFT;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ar_payment_plan_created_aos",
-            joinColumns = @JoinColumn(name = "payment_plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
+    @JoinTable(name = "ar_payment_plan_created_aos", joinColumns = @JoinColumn(name = "payment_plan_id"), inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
     private List<AccountOperation> createdAos = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ar_payment_plan_targeted_aos",
-            joinColumns = @JoinColumn(name = "payment_plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
+    @JoinTable(name = "ar_payment_plan_targeted_aos", joinColumns = @JoinColumn(name = "payment_plan_id"), inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
     private List<AccountOperation> targetedAos = new ArrayList<>();
 
     /**

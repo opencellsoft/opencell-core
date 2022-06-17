@@ -24,8 +24,10 @@ import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -86,6 +88,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.PaymentPlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +103,8 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
+
+    private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
 
     /** The customer account service. */
     @Inject
@@ -130,6 +135,9 @@ public class AccountOperationApi extends BaseApi {
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
+
+    @Inject
+    private PaymentPlanService paymentPlanService;
 
     /**
      * Create account operation.
@@ -472,12 +480,16 @@ public class AccountOperationApi extends BaseApi {
             }
         }
 
+        // PPL Aos id : used to update payment plan and invoice status, if umatch operation is made on a createdAos
+        List<Long> pplAosIds = new ArrayList<>();
+
         for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
             if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && !postData.getMatchingAmountIds().contains(matchingAmount.getId())) {
                 continue;
             } else {
                 MatchingCode matchingCode = matchingAmount.getMatchingCode();
                 if (matchingCode != null) {
+                    pplAosIds = getUmatchedPPLAosId(matchingCode);
                     matchingCodesToUnmatch.add(matchingCode.getId());
                 }
             }
@@ -486,6 +498,18 @@ public class AccountOperationApi extends BaseApi {
         for (Long matchingCodeId : matchingCodesToUnmatch) {
             matchingCodeService.unmatching(matchingCodeId);
         }
+
+        // Update PaymentPlan/Invoice related to those for which the unmatching is made
+        paymentPlanService.toActivate(pplAosIds);
+
+    }
+
+    private List<Long> getUmatchedPPLAosId(MatchingCode matchingCode) {
+        return Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+                .stream().filter(ma -> PPL_INSTALLMENT.equals(ma.getAccountOperation().getCode()))
+                .map(matchingAmount -> matchingAmount.getAccountOperation().getId())
+                .collect(Collectors.toList());
+
     }
 
     /**

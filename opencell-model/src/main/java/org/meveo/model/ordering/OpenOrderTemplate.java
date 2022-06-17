@@ -42,9 +42,6 @@ public class OpenOrderTemplate extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
     private OpenOrderTemplateStatusEnum status;
 
-    @Column(name = "number_instantiation")
-    private Integer numberOfInstantiation;
-
      @Column(name = "template_name", nullable = false)
     private String templateName;
 
@@ -94,14 +91,6 @@ public class OpenOrderTemplate extends BusinessEntity {
 
     public void setStatus(OpenOrderTemplateStatusEnum status) {
         this.status = status;
-    }
-
-    public Integer getNumberOfInstantiation() {
-        return numberOfInstantiation;
-    }
-
-    public void setNumberOfInstantiation(Integer numberOfInstantiation) {
-        this.numberOfInstantiation = numberOfInstantiation;
     }
 
     public String getTemplateName() {
