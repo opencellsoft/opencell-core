@@ -3372,6 +3372,8 @@
             <column name="minimum_article_id" type="bigint" />
             <column name="reactivation_date" type="datetime" />
             <column name="delivery_date" type="datetime" />
+            <column name="price_version_date_setting" type="varchar(255)" />
+            <column name="price_version_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -8859,6 +8861,9 @@
             <column name="product_version_id" type="bigint" />
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="product_model_id" type="bigint"/>
+            <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 
@@ -17892,6 +17897,7 @@
     <changeSet id="#INTRD-7770_20220613" author="aelmalki" />
     <changeSet id="#INTRD-7872_20220615" author="ZBariki" />
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
+    <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
