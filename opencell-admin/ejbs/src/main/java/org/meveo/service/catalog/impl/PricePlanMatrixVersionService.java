@@ -642,7 +642,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-
 			Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
 			ppv.getLines().stream()
 				.forEach(line -> {
@@ -652,7 +651,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					
 					CSVLineRecord.put("id", line.getId());
 					CSVLineRecordPosition.put("id", 0);
-//					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
 								
@@ -662,25 +660,23 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 										value);
 
 								CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']', ppmv.getPricePlanMatrixColumn().getPosition());
-								
-//								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
-								
 
 							});
+					CSVLineRecord.put("description[text]", line.getDescription());
+					CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					CSVLineRecordPosition.put("priceWithoutTax[number]",  Integer.MAX_VALUE);
 					CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
 				});
 			return CSVLineRecords;
 		}
 		
-		/////////
 		private LinkedHashMap<String, Object> copyToSortedMap(Map<String, Object> originMap, Map<String, Integer> mapPosition){
 			LinkedHashMap<String, Object> sortedMap = new LinkedHashMap<>();
 			mapPosition.entrySet().stream().sorted(Map.Entry.comparingByValue())
-	        .forEachOrdered(x -> sortedMap.put(x.getKey(), originMap.get(x.getKey())));
-			
+	        	.forEachOrdered(x -> sortedMap.put(x.getKey(), originMap.get(x.getKey())));
 			return sortedMap;
 		}
-/////////////////		
 
 		private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
 			switch (attributeType){
@@ -798,14 +794,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
 		    
-		    Set<String> dynamicColumns = new HashSet<>();
+		    List<String> dynamicColumns = new ArrayList();
 		    if (!records.isEmpty()) {
-		        Set<String> columns = records.stream()
+		        List<String> columns = records.stream()
 						.map(record -> record.keySet())
 						.flatMap(Collection::stream)
-						.collect(Collectors.toSet());
-	            dynamicColumns = columns.stream()
-	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+						.collect(Collectors.toList());
+	            dynamicColumns = columns.stream().distinct()
+	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toList());
             }
 			return CsvSchema.builder()
 					.addColumn(new CsvSchema.Column(0, "id"))
