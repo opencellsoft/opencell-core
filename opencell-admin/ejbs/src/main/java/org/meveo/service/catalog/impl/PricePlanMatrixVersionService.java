@@ -19,15 +19,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -636,25 +641,41 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return null;
 		}
 
-		private Set<Map<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-			Set<Map<String, Object>> CSVLineRecords = new HashSet<>();
+		private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+			Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
 			ppv.getLines().stream()
 				.forEach(line -> {
 					Map<String, Object> CSVLineRecord = new HashMap<>();
+					
+					LinkedHashMap<String, Integer> CSVLineRecordPosition = new LinkedHashMap<>();
+					
 					CSVLineRecord.put("id", line.getId());
-					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					CSVLineRecordPosition.put("id", 0);
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
+								
 								String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
 								String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
 								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
 										value);
-								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
+
+								CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']', ppmv.getPricePlanMatrixColumn().getPosition());
 
 							});
-					CSVLineRecords.add(CSVLineRecord);
+					CSVLineRecord.put("description[text]", line.getDescription());
+					CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					CSVLineRecordPosition.put("priceWithoutTax[number]",  Integer.MAX_VALUE);
+					CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
 				});
 			return CSVLineRecords;
+		}
+		
+		private LinkedHashMap<String, Object> copyToSortedMap(Map<String, Object> originMap, Map<String, Integer> mapPosition){
+			LinkedHashMap<String, Object> sortedMap = new LinkedHashMap<>();
+			mapPosition.entrySet().stream().sorted(Map.Entry.comparingByValue())
+	        	.forEachOrdered(x -> sortedMap.put(x.getKey(), originMap.get(x.getKey())));
+			return sortedMap;
 		}
 
 		private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
@@ -733,7 +754,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv) {
-			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
+			Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
 			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
@@ -755,8 +776,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			}
 		}
 
-		private Map<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
-			Map<String, Object> CSVLineRecords = new HashMap<>();
+		private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
+			LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
 			CSVLineRecords.put("id", ppv.getId());
 			CSVLineRecords.put("label", ppv.getLabel());
 			CSVLineRecords.put("amount", ppv.getAmountWithoutTax());
@@ -771,16 +792,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<Map<String, Object>> records) {
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
 		    
-		    Set<String> dynamicColumns = new HashSet<>();
+		    List<String> dynamicColumns = new ArrayList();
 		    if (!records.isEmpty()) {
-		        Set<String> columns = records.stream()
+		        List<String> columns = records.stream()
 						.map(record -> record.keySet())
 						.flatMap(Collection::stream)
-						.collect(Collectors.toSet());
-	            dynamicColumns = columns.stream()
-	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+						.collect(Collectors.toList());
+	            dynamicColumns = columns.stream().distinct()
+	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toList());
             }
 			return CsvSchema.builder()
 					.addColumn(new CsvSchema.Column(0, "id"))
