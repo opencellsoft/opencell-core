@@ -19,6 +19,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,6 +60,9 @@ public class ProductDto extends BaseEntityDto{
 	protected Boolean discountFlag=Boolean.FALSE;
 	@Schema(description = "Indicate if the product packaged", defaultValue = "false")
 	protected Boolean packageFlag=Boolean.FALSE;
+	@Schema(description = "Price version date setting")
+	protected PriceVersionDateSettingEnum priceVersionDateSetting;
+	
     /** The custom fields. */
 	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
@@ -118,6 +122,7 @@ public class ProductDto extends BaseEntityDto{
 				.collect(Collectors.toSet()); 
     	if(p.getProductModel() != null)
     		this.productModelCode = p.getProductModel().getCode();
+    	this.priceVersionDateSetting = p.getPriceVersionDateSetting();
     }
 	/**
 	 * @return the status
@@ -271,6 +276,20 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	public void setPackageFlag(Boolean packageFlag) {
 		this.packageFlag = packageFlag;
+	}
+
+	/**
+	 * @return the priceVersionDateSetting
+	 */
+	public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting to set priceVersionDateSetting
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
 	}
 
 	/**

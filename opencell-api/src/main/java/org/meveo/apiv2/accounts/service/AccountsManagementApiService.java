@@ -1,6 +1,7 @@
 package org.meveo.apiv2.accounts.service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +11,9 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.api.dto.RecurringChargeDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.ConsumerInput;
@@ -20,6 +23,8 @@ import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
@@ -32,8 +37,12 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
@@ -77,6 +86,15 @@ public class AccountsManagementApiService {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+    @Inject
+    private UsageChargeInstanceService usageChargeInstanceService;
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
     /**
      * Transfer the subscription from a consumer to an other consumer (UA)
@@ -166,12 +184,28 @@ public class AccountsManagementApiService {
         // Attache to new user account
         subscription.setUserAccount(newOwner);
         subscriptionService.updateOwner(subscription, newOwner);
+        
+        var usageServiceInstance = usageChargeInstanceService.findUsageChargeInstanceBySubscriptionId(subscription.getId());
+        changeToNewUserAccount(usageServiceInstance, newOwner);
+        var oneshotServiceInstance = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
+        changeToNewUserAccount(oneshotServiceInstance, newOwner);
+        var recurringServiceInstance = recurringChargeInstanceService.findRecurringChargeInstanceBySubscriptionId(subscription.getId());
+        changeToNewUserAccount(recurringServiceInstance, newOwner);
 
         // The change must be logged (audit log + make Subscription.userAccount into auditable field)
         createAuditLog(Subscription.class.getName());
         auditableFieldService.createFieldHistory(subscription, "userAccount", AuditChangeTypeEnum.OTHER, oldUserAccount, newOwner.getCode());
-
         return count;
+    }
+    
+    private void changeToNewUserAccount(List<? extends ChargeInstance> serviceInstances, UserAccount newUserAccount) {
+        if(!CollectionUtils.isEmpty(serviceInstances)) {
+        	for (ChargeInstance chargeInstance : serviceInstances) {
+        			chargeInstance.setUserAccount(newUserAccount);
+        			chargeInstanceService.update(chargeInstance);
+			}
+        			
+        }
     }
 
     /**

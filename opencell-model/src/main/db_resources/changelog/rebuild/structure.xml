@@ -3372,6 +3372,8 @@
             <column name="minimum_article_id" type="bigint" />
             <column name="reactivation_date" type="datetime" />
             <column name="delivery_date" type="datetime" />
+            <column name="price_version_date_setting" type="varchar(255)" />
+            <column name="price_version_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -3403,6 +3405,9 @@
             </column>
             <column name="description_i18n" type="${type.json}">
                 <constraints nullable="true" />
+            </column>
+            <column name="invoice_agreement_immediately" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
             </column>
         </createTable>
     </changeSet>
@@ -8856,6 +8861,9 @@
             <column name="product_version_id" type="bigint" />
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="product_model_id" type="bigint"/>
+            <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 
@@ -16467,6 +16475,15 @@
         </sql>
     </changeSet>
     
+    <changeSet id="#INTRD-7954_20220616" author="AbdelmounaimAkadid">
+     	<createIndex indexName="idx_billing_invoice_line__invoice_id" tableName="billing_invoice_line">
+	      	<column name="invoice_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx_billing_user_account__parent_useraccount_id" tableName="billing_user_account">
+	      	<column name="parent_useraccount_id"/>
+	  	</createIndex>
+    </changeSet>
+    
       <changeSet id="#INTRD-5529_20220304_build" author="TarikFA.">
 	     <addForeignKeyConstraint baseColumnNames="discounted_invoice_line" baseTableName="billing_invoice_line" constraintName="fk_discounted_invoice_line" deferrable="false"
 	     											initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_line" />
@@ -17879,6 +17896,9 @@
     <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-7770_20220613" author="aelmalki" />
     <changeSet id="#INTRD-7872_20220615" author="ZBariki" />
+    <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
+    <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

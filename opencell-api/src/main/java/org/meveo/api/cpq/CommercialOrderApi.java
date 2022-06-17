@@ -1113,7 +1113,10 @@ public class CommercialOrderApi extends BaseApi {
 			throw new MeveoApiException("The quantity is required");
 		}
 		orderProduct.setQuantity(orderProductDto.getQuantity());
-		orderProduct.setProductActionType(orderProductDto.getActionType());
+		
+		if(orderProductDto.getActionType() != null) {
+			orderProduct.setProductActionType(orderProductDto.getActionType());
+		}
 		
 		SubscriptionTerminationReason terminationReason = null;
 		if(!StringUtils.isBlank(orderProductDto.getTerminationReasonCode())) {

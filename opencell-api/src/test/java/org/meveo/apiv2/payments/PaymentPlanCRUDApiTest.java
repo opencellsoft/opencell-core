@@ -81,7 +81,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         paymentPlanApi.create(dto);
@@ -105,7 +105,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         paymentPlanApi.create(dto);
@@ -129,7 +129,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(null);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -158,7 +158,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -187,7 +187,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(null);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findByCode(any())).thenReturn(new PaymentPlan());
 
@@ -217,7 +217,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, false));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, false));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -246,7 +246,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -277,7 +277,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -309,7 +309,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -338,7 +338,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -367,7 +367,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -375,6 +375,35 @@ public class PaymentPlanCRUDApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "Amount to recover must be equal to AOs amount [AmountToRecover=123 - sum AOs amount=200]");
+        }
+
+    }
+
+    @Test
+    public void minAmountInstallmentErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(23),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(24), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Amount per installment '23' must be greater than MinInstallmentAmount '24'");
         }
 
     }
@@ -396,7 +425,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -425,7 +454,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -454,7 +483,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 10, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 10, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -482,7 +511,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -511,7 +540,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(250), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(250), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -540,7 +569,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(200), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(200), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -548,6 +577,35 @@ public class PaymentPlanCRUDApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "Amount to recover '240' must be less than MaxAllowedReceivableAmount '200'");
+        }
+
+    }
+
+    @Test
+    public void aoAmountToRecoverGreaterMinPolicyOrEqualsErr() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+
+        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20),
+                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
+                10,
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                customerAccount.getId(), Set.of(1L, 2L));
+
+        List<AccountOperation> aos = new ArrayList<>();
+        aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
+        aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
+
+        Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(240), new BigDecimal(10), 360, true));
+        Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
+
+        try {
+            paymentPlanApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Amount to recover '240' must be less than MaxAllowedReceivableAmount '240'");
         }
 
     }
@@ -569,7 +627,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 9, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 9, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -598,7 +656,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -628,7 +686,7 @@ public class PaymentPlanCRUDApiTest {
         aos.add(buildAo(2L, customerAccount, new BigDecimal(100), MatchingStatusEnum.P, "B"));
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
 
         try {
@@ -664,7 +722,7 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setCode("CODE-PP");
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
 
@@ -694,7 +752,7 @@ public class PaymentPlanCRUDApiTest {
         existingPP.setStatus(PaymentPlanStatusEnum.DRAFT);
 
         Mockito.when(customerAccountService.findById(any())).thenReturn(customerAccount);
-        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), 360, true));
+        Mockito.when(providerService.getProvider()).thenReturn(buildProvider(new BigDecimal(10), new BigDecimal(1000), new BigDecimal(10), 360, true));
         Mockito.when(accountOperationService.findByCustomerAccount(any(), any())).thenReturn(aos);
         Mockito.when(paymentPlanService.findById(any())).thenReturn(existingPP);
 
@@ -976,13 +1034,14 @@ public class PaymentPlanCRUDApiTest {
 
     }
 
-    private Provider buildProvider(BigDecimal minAllowed, BigDecimal maxAllowed, Integer maxPayPlan, boolean isPaymentPlan) {
+    private Provider buildProvider(BigDecimal minAllowed, BigDecimal maxAllowed, BigDecimal minInstallmentAllowed, Integer maxPayPlan, boolean isPaymentPlan) {
         Provider p = new Provider();
         PaymentPlanPolicy pp = new PaymentPlanPolicy();
         p.setPaymentPlanPolicy(pp);
         p.setPaymentPlan(isPaymentPlan);
 
         pp.setMinAllowedReceivableAmount(minAllowed);
+        pp.setMinInstallmentAmount(minInstallmentAllowed);
         pp.setMaxAllowedReceivableAmount(maxAllowed);
         pp.setMaxPaymentPlanDuration(maxPayPlan);
 

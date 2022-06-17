@@ -27,6 +27,8 @@ import java.util.Map;
 @Stateless
 public class FinanceSettingsService extends BusinessService<FinanceSettings> {
 
+    public static final String AUXILIARY_ACCOUNT_CODE = "auxiliaryAccountCode";
+    public static final String AUXILIARY_ACCOUNT_LABEL = "auxiliaryAccountLabel";
     @Inject
     private OCCTemplateService occTemplateService;
 
@@ -78,7 +80,7 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
                 evaluateExpression(auxiliaryAccountCodeEl, context, String.class);
         String auxiliaryAccountLabel =
                 evaluateExpression(auxiliaryAccountLabelEl, context, String.class);
-        return of("auxiliaryAccountCode", auxiliaryAccountCode, "auxiliaryAccountLabel", auxiliaryAccountLabel);
+        return of(AUXILIARY_ACCOUNT_CODE, auxiliaryAccountCode, AUXILIARY_ACCOUNT_LABEL, auxiliaryAccountLabel);
     }
 
     private AccountingCode getGeneralClientAccounting(CustomerAccount customerAccount) {
