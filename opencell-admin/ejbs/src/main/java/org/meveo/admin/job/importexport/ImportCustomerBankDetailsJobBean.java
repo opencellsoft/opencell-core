@@ -184,11 +184,11 @@ public class ImportCustomerBankDetailsJobBean {
             }
             if(paymentMethods.isEmpty()) {
                 nbModificationsIgnored++;
-                msgModifications += "[(Ignored) Original bank account (iban=" + ibanDepart + "; bic=" + bicDepart + ") does not exist in opencell]  ";
+                msgModifications += "[(Warning) Original bank account (iban=" + ibanDepart + "; bic=" + bicDepart + ") does not exist in opencell]  ";
             }
         }
         else {
-            msgModifications += "[(Error) Arrival bank account (iban=" + ibanArrivee + "; bic=" + bicArrivee + ") Already exists in opencell]  ";
+            msgModifications += "[(ko) Arrival bank account (iban=" + ibanArrivee + "; bic=" + bicArrivee + ") Already exists in opencell]  ";
             nbModificationsError++;
         }
     }
