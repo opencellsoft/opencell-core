@@ -773,6 +773,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
         }
+        if(this.id == null) {
+            if(this.lastAppliedRate == null) {
+                this.lastAppliedRate = this.tradingCurrency != null ? this.tradingCurrency.getCurrentRate() : ONE;
+            }
+            if(this.lastAppliedRateDate == null) {
+                this.lastAppliedRateDate = new Date();
+            }
+        }
         BigDecimal appliedRate = getAppliedRate();
         this.convertedAmountTax = this.amountTax != null
                 ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
@@ -1813,13 +1821,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setPaymentPlan(PaymentPlan paymentPlan) {
         this.paymentPlan = paymentPlan;
     }
-    
+
+    /**
+     * Check if an invoice can be refreshed
+     * @return refresh check result
+     */
     public boolean canBeRefreshed() {
         return this.status == InvoiceStatusEnum.NEW || this.status == InvoiceStatusEnum.DRAFT
                 && (this.lastAppliedRate != null
                 && !this.lastAppliedRate.equals(this.tradingCurrency.getCurrentRate()));
     }
 
+    /**
+     * Get applied rate for an invoice
+     * @return last applied rate
+     */
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
