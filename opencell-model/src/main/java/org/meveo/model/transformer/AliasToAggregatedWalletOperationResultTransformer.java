@@ -108,7 +108,9 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
     }
 
     private void populateCustomField(Object result, Setter setterCustomField, Map<String, Object> cfValues) {
-        setterCustomField.set(result, cfValues, null);
+        if (setterCustomField != null) {
+            setterCustomField.set(result, cfValues, null);
+        }
     }
 
     private Object getSetterValueAsObject(String field, Object value)
