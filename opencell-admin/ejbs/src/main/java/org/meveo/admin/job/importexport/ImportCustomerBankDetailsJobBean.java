@@ -54,9 +54,9 @@ public class ImportCustomerBankDetailsJobBean {
     
     private int nbModifications;
     private int nbModificationsError;
-    private int nbModificationsTerminated;
     private int nbModificationsIgnored;
     private int nbModificationsCreated;
+    private String msgModifications;
 
     private CustomerBankDetailsImportHisto customerBankDetailsImport;
 
@@ -78,7 +78,7 @@ public class ImportCustomerBankDetailsJobBean {
         result.setNbItemsCorrectlyProcessed(nbModificationsCreated);
         result.setNbItemsProcessedWithError(nbModificationsError);
         result.setNbItemsProcessedWithWarning(nbModificationsIgnored);
-        result.setReport("wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika wa chnika");
+        result.setReport(msgModifications);
     }
 
     private List<File> getFilesFromInput(ParamBean paramBean, String importDir) {
@@ -123,9 +123,9 @@ public class ImportCustomerBankDetailsJobBean {
     private void initialiserCompteur() {
         nbModifications = 0;
         nbModificationsError = 0;
-        nbModificationsTerminated = 0;
         nbModificationsIgnored = 0;
         nbModificationsCreated = 0;
+        msgModifications = "";
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -168,12 +168,12 @@ public class ImportCustomerBankDetailsJobBean {
             List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             if (paymentMethods != null && paymentMethodsArrivee != null) {
-                dupPmDepartArrivee(ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
+                dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
             }
         }
     }
 
-    private void dupPmDepartArrivee(String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
+    private void dupPmDepartArrivee(String ibanDepart, String bicDepart, String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
             throws CloneNotSupportedException {
         if(paymentMethodsArrivee.isEmpty()) {
             for (PaymentMethod paymentMethod : paymentMethods) {
@@ -182,9 +182,11 @@ public class ImportCustomerBankDetailsJobBean {
             }
             if(paymentMethods.isEmpty()) {
                 nbModificationsIgnored++;
+                msgModifications += "[(Warning) Original bank account (iban=" + ibanDepart + "; bic=" + bicDepart + ") does not exist in opencell]  ";
             }
         }
         else {
+            msgModifications += "[(ko) Arrival bank account (iban=" + ibanArrivee + "; bic=" + bicArrivee + ") Already exists in opencell]  ";
             nbModificationsError++;
         }
     }
