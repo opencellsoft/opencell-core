@@ -27,17 +27,19 @@ public class OpenOrderSettingService extends BusinessService<OpenOrderSetting> {
 
     public void checkParameters(OpenOrderSetting entity) {
 
-        if (BooleanUtils.isTrue(entity.getApplyMaximumValidity()) && entity.getApplyMaximumValidityValue() == null)
-            throw new InvalidParameterException("Apply Maximum Validity  must hold a value");
+        if(entity.getUseOpenOrders() == true) {
+            if (BooleanUtils.isTrue(entity.getApplyMaximumValidity()) && entity.getApplyMaximumValidityValue() == null)
+                throw new InvalidParameterException("Apply maximum validity must not be null");
 
-        if (BooleanUtils.isTrue(entity.getDefineMaximumValidity())  && entity.getDefineMaximumValidityValue() == null)
-            throw new InvalidParameterException("Define Maximum Validity must hold a value");
+            if (BooleanUtils.isTrue(entity.getDefineMaximumValidity()) && entity.getDefineMaximumValidityValue() == null)
+                throw new InvalidParameterException("Define maximum validity must not be null");
 
-        if (entity.getApplyMaximumValidityValue() != null && entity.getApplyMaximumValidityValue() < 1)
-            throw new InvalidParameterException("Apply Maximum Validity  must be a value greater than 0");
+            if (entity.getApplyMaximumValidityValue() != null && entity.getApplyMaximumValidityValue() < 1)
+                throw new InvalidParameterException("Apply maximum validity must be greater than 0");
 
-        if (entity.getDefineMaximumValidityValue() != null && entity.getDefineMaximumValidityValue().longValue() < 1)
-            throw new InvalidParameterException("Define Maximum Validity must be a value greater than 0");
+            if (entity.getDefineMaximumValidityValue() != null && entity.getDefineMaximumValidityValue().longValue() < 1)
+                throw new InvalidParameterException("Define maximum validity must be greater than 0");
+        }
     }
 
 

@@ -192,6 +192,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all customers.",
+            tags = { "Customer management" })
     CustomersResponseDto list();
 
     /**

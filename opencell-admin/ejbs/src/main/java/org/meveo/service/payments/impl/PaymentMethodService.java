@@ -17,6 +17,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * PaymentMethod service implementation.
@@ -75,6 +77,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
 	@Inject
 	private SellerService sellerService;
+
+	@Inject
+	private ProviderService providerService;
 
 	private boolean automaticMandateCreation;
 
@@ -402,8 +407,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 			}
 		}
 
-        if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
-            hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+        if ( ( providerService.getProvider().getCurrency() != null ) && (!StringUtils.isBlank(providerService.getProvider().getCurrency().getCurrencyCode()))) {
+            hostedCheckoutInput.setCurrencyCode(providerService.getProvider().getCurrency().getCurrencyCode());
         }
         if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
@@ -516,6 +521,30 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by customerAccount", e);
             return null;
+        }
+    }
+
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic) {
+	    return listByIbanAndBicFi(iban, bic, null);
+    }
+	
+	@SuppressWarnings("unchecked")
+    public List<PaymentMethod> listByIbanAndBicFi(String iban, String bic, Boolean disable) {
+        try {
+            String nameQuery = "PaymentMethod.listByIbanAndBicFi";
+            if (disable ==null) {
+                nameQuery = "PaymentMethod.listByIbanAndBicFiAll";
+            }
+            Query query = getEntityManager().createNamedQuery(nameQuery);
+            query.setParameter("Iban", iban);
+            query.setParameter("Bic", bic);
+            if (disable !=null) {
+                query.setParameter("Disable", disable);
+            }
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list PaymentMethod by Iban and BicFi", e);
+            return new ArrayList<>();
         }
     }
 }

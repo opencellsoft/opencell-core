@@ -150,6 +150,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all customer accounts.",
+            tags = { "Customer account management" })
     CustomerAccountsResponseDto listGetAll();
 
     /**

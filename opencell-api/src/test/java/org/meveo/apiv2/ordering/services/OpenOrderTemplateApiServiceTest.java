@@ -31,6 +31,9 @@ public class OpenOrderTemplateApiServiceTest {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private OpenOrderTemplateService openOrderTemplateService;
     @Mock
     private AccountingArticleService accountingArticleService;
 
@@ -41,13 +44,13 @@ public class OpenOrderTemplateApiServiceTest {
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
                         .templateName("some name")
-                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .products(Collections.singleton("product 1"))
 
                         .build();
         doReturn(new Product()).when(productService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -65,13 +68,13 @@ public class OpenOrderTemplateApiServiceTest {
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
                         .templateName("some name")
-                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.PRODUCTS)
                         .articles(Collections.singleton("article 1"))
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -89,7 +92,6 @@ public class OpenOrderTemplateApiServiceTest {
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
                         .templateName("some name")
-                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .articles(Collections.singleton("article 1"))
@@ -99,6 +101,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {
             openOrderTemplateApiService.create(input);
@@ -117,7 +120,6 @@ public class OpenOrderTemplateApiServiceTest {
                 ImmutableOpenOrderTemplateInput.builder()
                         .code("OOT1")
                         .templateName("some name")
-                        .numberOfInstantiation(10)
                         .description("desc")
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .articles(Collections.singleton("article 1"))
@@ -128,6 +130,7 @@ public class OpenOrderTemplateApiServiceTest {
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {
             openOrderTemplateApiService.create(input);

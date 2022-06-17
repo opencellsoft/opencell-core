@@ -1,6 +1,9 @@
 package org.meveo.apiv2.ordering.services;
 
+import static org.meveo.admin.util.CollectionUtil.isNullOrEmpty;
+
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapper;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
@@ -24,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.meveo.admin.util.CollectionUtil.isNullOrEmpty;
 @Stateless
 public class OpenOrderTemplateApiService {
 
@@ -42,77 +44,83 @@ public class OpenOrderTemplateApiService {
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
 
-    public void create(OpenOrderTemplateInput  input)
-    {
+    public OpenOrderTemplateInput create(OpenOrderTemplateInput input) {
+        checkParameters(input);
+        if (openOrderTemplateService.findByCode(input.getTemplateName()) != null)
+            throw new InvalidParameterException(String.format("Template name %s already exists", input.getTemplateName()));
+
 
         OpenOrderTemplate openOrderTemplate = openOrderTemplateMapper.toEntity(input);
         openOrderTemplate.setCode(openOrderTemplate.getTemplateName());
-         if(null != input.getThresholds() ) openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
+        if (null != input.getThresholds())
+            openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
-        if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
-        if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
-         checkParameters(openOrderTemplate);
+        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
+        checkParameters(openOrderTemplate);
 
+        openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.DRAFT);
         openOrderTemplateService.create(openOrderTemplate);
+        return openOrderTemplateMapper.toResource(openOrderTemplate);
     }
 
-
-
-    public void update(String code, OpenOrderTemplateInput input)
-    {
+    public OpenOrderTemplateInput update(String code, OpenOrderTemplateInput input) {
+        checkParameters(input);
         OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
-        if(null == openOrderTemplate)
-        {
+        if (null == openOrderTemplate) {
             throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
         }
+        if (!code.equals(input.getTemplateName())) {
+            if (openOrderTemplateService.findByCode(input.getTemplateName()) != null)
+                throw new InvalidParameterException(String.format("Template name %s already exists", input.getTemplateName()));
+            openOrderTemplate.setCode(input.getTemplateName());
+        }
+
         openOrderTemplateMapper.fillEntity(openOrderTemplate, input);
         thresholdService.deleteThresholdsByOpenOrderTemplateId(openOrderTemplate.getId());
-         openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
+        openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
-        if (null != input.getProducts())  openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
-        if (null != input.getTags())  openOrderTemplate.setTags(fetchTags(input.getTags()));
-         checkParameters(openOrderTemplate);
-
-        openOrderTemplateService.update(openOrderTemplate);
-
-
+        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
+        checkParameters(openOrderTemplate);
+        return openOrderTemplateMapper.toResource(openOrderTemplateService.update(openOrderTemplate));
     }
 
-    public void disableOpenOrderTemplate(String code)
-    {
+    private void checkParameters(OpenOrderTemplateInput openOrderTemplateInput) {
+        if(openOrderTemplateInput.getTemplateName() == null || openOrderTemplateInput.getTemplateName().isEmpty()
+                || openOrderTemplateInput.getOpenOrderType() == null )
+            throw new InvalidParameterException("The following fields are required: Template name, Open order type");
+    }
+
+    public void disableOpenOrderTemplate(String code) {
         OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
-        if(null == openOrderTemplate)
-        {
+        if (null == openOrderTemplate) {
             throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
         }
-        openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.Archived);
+        openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.ARCHIVED);
         openOrderTemplateService.update(openOrderTemplate);
-
     }
-
-
 
     private void checkParameters(OpenOrderTemplate openOrderTemplate) {
         checkOpenOrderType(openOrderTemplate);
         checkThresholds(openOrderTemplate.getThresholds());
-
-
     }
 
     private void checkThresholds(List<Threshold> thresholds) {
-        if(!isNullOrEmpty(thresholds)){
+        if (!isNullOrEmpty(thresholds)) {
             thresholds
                     .stream()
-                    .filter(threshold -> threshold.getPercentage() < 1 || threshold.getPercentage() > 100)
+                    .filter(threshold -> threshold.getPercentage() == null
+                            || threshold.getPercentage() < 1 || threshold.getPercentage() > 100)
                     .findAny()
-                    .ifPresent(threshold -> { throw new BusinessApiException("Threshold should be between 1 and 100");});
+                    .ifPresent(threshold -> {
+                        throw new BusinessApiException("Threshold should be between 1 and 100");
+                    });
 
             List<Threshold> sortedThresholds = thresholds.stream().sorted(Comparator.comparingInt(Threshold::getSequence)).collect(Collectors.toList());
 
-            for(int i=1; i < sortedThresholds.size(); i ++)
-            {
-                if(thresholds.get(i).getPercentage() < thresholds.get(i-1).getPercentage())
-                {
+            for (int i = 1; i < sortedThresholds.size(); i++) {
+                if (thresholds.get(i).getPercentage() < thresholds.get(i - 1).getPercentage()) {
                     throw new BusinessApiException("Threshold sequence and percentage dosn’t match, threshold with high sequence number should contain the highest percentage");
                 }
             }
@@ -120,28 +128,22 @@ public class OpenOrderTemplateApiService {
 
     }
 
-    private void checkOpenOrderType(OpenOrderTemplate openOrderTemplate){
-        if(openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.ARTICLES && !isNullOrEmpty(openOrderTemplate.getProducts()))
-        {
+    private void checkOpenOrderType(OpenOrderTemplate openOrderTemplate) {
+        if (openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.ARTICLES && !isNullOrEmpty(openOrderTemplate.getProducts())) {
             throw new BusinessApiException("Open order template of type ARTICLE can not be applied on products");
         }
 
-        if(openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.PRODUCTS && !isNullOrEmpty(openOrderTemplate.getArticles()))
-        {
+        if (openOrderTemplate.getOpenOrderType() == OpenOrderTypeEnum.PRODUCTS && !isNullOrEmpty(openOrderTemplate.getArticles())) {
             throw new BusinessApiException("Open order template of type PRODUCT can not be applied on articles");
         }
     }
 
 
-
     private List<Product> fetchProducts(List<String> productsCodes) {
-
-        List<Product> products= new ArrayList<>();
-        for(String productCode : productsCodes)
-        {
+        List<Product> products = new ArrayList<>();
+        for (String productCode : productsCodes) {
             Product product = productService.findByCode(productCode);
-            if( null == product)
-            {
+            if (null == product) {
                 throw new BusinessApiException(String.format("Product with code %s doesn't exist", productCode));
 
             }
@@ -151,12 +153,10 @@ public class OpenOrderTemplateApiService {
     }
 
     private List<AccountingArticle> fetchArticles(List<String> articlesCodes) {
-        List<AccountingArticle> articles= new ArrayList<>();
-        for(String articleCode : articlesCodes)
-        {
+        List<AccountingArticle> articles = new ArrayList<>();
+        for (String articleCode : articlesCodes) {
             AccountingArticle article = accountingArticleService.findByCode(articleCode);
-            if( null == article)
-            {
+            if (null == article) {
                 throw new BusinessApiException(String.format("Article with code %s doesn't exist", articleCode));
 
             }
@@ -166,14 +166,11 @@ public class OpenOrderTemplateApiService {
     }
 
     private List<Tag> fetchTags(List<String> tagsCodes) {
-        List<Tag> tags= new ArrayList<>();
-        for(String tagCode : tagsCodes)
-        {
+        List<Tag> tags = new ArrayList<>();
+        for (String tagCode : tagsCodes) {
             Tag tag = tagService.findByCode(tagCode);
-            if( null == tag)
-            {
+            if (null == tag) {
                 throw new BusinessApiException(String.format("Tag with code %s doesn't exist", tagCode));
-
             }
             tags.add(tag);
         }

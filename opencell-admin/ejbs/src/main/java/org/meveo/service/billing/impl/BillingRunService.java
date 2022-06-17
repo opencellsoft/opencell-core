@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -818,13 +819,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
-        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
+        if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
+            List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
             List<InvoiceStatusEnum> toCancel = new ArrayList<>();
+            
             if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.REJECTED);
             } else {
-                toMove.add(InvoiceStatusEnum.REJECTED);
+            	toQuarantine.add(InvoiceStatusEnum.REJECTED);
             }
 
             if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
@@ -832,15 +835,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 toMove.add(InvoiceStatusEnum.SUSPECT);
             }
+            
             if (CollectionUtils.isNotEmpty(toMove)) {
                 invoiceService.moveInvoicesByStatus(billingRun, toMove);
+            }
+            if (CollectionUtils.isNotEmpty(toQuarantine)) {
+                invoiceService.quarantineRejectedInvoicesByBR(billingRun);
             }
             if (CollectionUtils.isNotEmpty(toCancel)) {
                 invoiceService.cancelInvoicesByStatus(billingRun, toCancel);
             }
         }
     }
-
+    
     public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
         if(validationStatus == BillingRunStatusEnum.INVOICES_GENERATED || BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
             BillingRunStatusEnum status = validationStatus != null ? validationStatus : BillingRunStatusEnum.POSTINVOICED;
@@ -1372,14 +1379,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	            BillingRun quarantineBillingRun = findById(quarantineBRId);
 
 	            if (quarantineBillingRun != null) {
-	            	if(quarantineBillingRun.getIsQuarantine()) {
+	            	if(quarantineBillingRun.getIsQuarantine() && BillingRunStatusEnum.REJECTED.equals(quarantineBillingRun.getStatus())) {
 	    	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
 	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
 	    	            }else {
 	    	            	BillingCycle billingCycle = billingRun.getBillingCycle();
 	    	            	
-			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
-			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+			            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle=" + 
+			            													(billingCycle != null ? billingCycle.getDescription() : " ") + 
+			            													"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "") +")");  
+			            	
+			            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ 
+			            													(billingCycle != null ? billingCycle.getDescription() : " ") +
+			            													"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "") +")"); 
 	    	            	
 	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
@@ -1412,6 +1424,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	               quarantineBillingRun.setInvoices(new ArrayList<>());
 	               quarantineBillingRun.setStatus(BillingRunStatusEnum.REJECTED);
 	               quarantineBillingRun.setIsQuarantine(Boolean.TRUE);
+	               quarantineBillingRun.setOriginBillingRun(billingRun);
 	               quarantineBillingRun.setId(null);
 	               
 	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
@@ -1419,8 +1432,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		            }else {
 		            	BillingCycle billingCycle = billingRun.getBillingCycle();
 		            	
-		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")");  
-		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ (billingCycle != null ? billingCycle.getDescription() : " ") +"; invoice date="+billingRun.getInvoiceDate()+")"); 
+		            	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+ 
+														            	(billingCycle != null ? billingCycle.getDescription() : " ") +
+														            	"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")");  
+		            	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+ 
+														            	(billingCycle != null ? billingCycle.getDescription() : " ") +
+														            	"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
 		            	
 		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
 		            	newDescriptionsTranslated.add(languageDescriptionEn);

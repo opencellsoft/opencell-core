@@ -25,6 +25,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.BusinessService;
 
@@ -81,7 +82,21 @@ public class TaxService extends BusinessService<Tax> {
         }
     }
     
-    
-    
-    
+    public Tax findTaxByRateAndAccountingCode(BigDecimal taxRate, AccountingCode accCode) {
+        try {
+            if (accCode == null) {
+                return getEntityManager().createNamedQuery("Tax.getTaxByRateAndAccountingCodeNull", Tax.class)
+                        .setParameter("percent", taxRate)
+                        .setMaxResults(1)
+                        .getSingleResult();
+            }
+            return getEntityManager().createNamedQuery("Tax.getTaxByRateAndAccountingCode", Tax.class)
+                    .setParameter("percent", taxRate)
+                    .setParameter("accountingCode", accCode)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }    
 }

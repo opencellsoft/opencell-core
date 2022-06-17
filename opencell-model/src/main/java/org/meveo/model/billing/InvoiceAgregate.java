@@ -87,7 +87,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     /**
      * Description
      */
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     @Size(max = 255)
     protected String description;
 
@@ -141,7 +141,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
      * Deprecated in 5.3 for not use
      */
     @Deprecated
-    @Column(name = "pr_description", length = 255)
+    @Column(name = "pr_description")
     @Size(max = 255)
     protected String prDescription;
 

@@ -28,6 +28,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
@@ -100,7 +101,7 @@ public class OrderProduct extends AuditableCFEntity {
     /**production action type */
     @Enumerated(EnumType.STRING)
     @Column(name = "production_action_type", length = 10)
-   	private ProductActionTypeEnum productActionType;
+   	private ProductActionTypeEnum productActionType = ProductActionTypeEnum.MODIFY;
     
     /** termination timestamp. */
     @Temporal(TemporalType.TIMESTAMP)
@@ -111,6 +112,11 @@ public class OrderProduct extends AuditableCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
+    
+    /** Current product status */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "instance_status", length = 10)
+   	private InstanceStatusEnum status;
 	
 	
 	public void update(OrderProduct other) {
@@ -301,6 +307,12 @@ public class OrderProduct extends AuditableCFEntity {
 		this.terminationReason = terminationReason;
 	}
 	
-	
-		
+	public InstanceStatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(InstanceStatusEnum status) {
+		this.status = status;
+	}
+			
 }

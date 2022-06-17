@@ -12502,7 +12502,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="updated" type="datetime"/>
             <column name="creator" type="varchar(100)"/>
             <column name="updater" type="varchar(100)"/>
-            <column name="quote_default_validity_delay" type="int">
+            <column name="quote_default_validity_delay" type="int" defaultValueNumeric="30">
             	<constraints nullable="false" />
             </column>
         </createTable>
@@ -12890,7 +12890,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-7179_20220524" author="HichamHANINE">    	
+    <changeSet id="#INTRD-7179_20220524" author="HichamHANINE">
         <addColumn tableName="cpq_price_plan_version">
             <column name="price_el" type="varchar(255)" />
         </addColumn>
@@ -12898,11 +12898,11 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="price_el" type="varchar(255)" />
         </addColumn>
         <sql>UPDATE cpq_price_plan_version SET price_el = amount_with_tax_el WHERE amount_with_tax_el is not null</sql>
-		<sql>UPDATE cpq_price_plan_version SET price_el = amount_without_tax_el WHERE amount_without_tax_el is not null</sql>			
+		<sql>UPDATE cpq_price_plan_version SET price_el = amount_without_tax_el WHERE amount_without_tax_el is not null</sql>
 		<dropColumn columnName="amount_without_tax_el" tableName="cpq_price_plan_version" />
         <dropColumn columnName="amount_with_tax_el" tableName="cpq_price_plan_version" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA" dbms="postgres">
 		<sql>
 			ALTER SEQUENCE ${db.schema.adapted}account_operation_number_seq RESTART WITH 1;
@@ -12960,7 +12960,7 @@ order by date_trunc('month', i.invoice_date) DESC
 			UPDATE billing_invoice_line set tax_mode = 'ARTICLE' where tax_mode is null
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-6923_20220505" author="hatimOUDAD">
         <dropNotNullConstraint tableName="cpq_commercial_order" columnName="order_type_id"/>
     </changeSet>
@@ -13029,7 +13029,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <addUniqueConstraint columnNames="code" constraintName="uk_open_order_template_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="open_order_template" />
 
     </changeSet>
-    
+
     <!--  fix for forgotten FK in current -->
     <changeSet id="INTRD-5311_20220518-fix" author="AkadidAbdelmounaim" failOnError="false">
     	<addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_template_id"
@@ -13069,7 +13069,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedTableName="billing_accounting_article"
                                  referencedColumnNames="id"/>
     </changeSet>
-                                 
+
     <changeSet id="INTRD-5312_20220518" author="HichamELHALOUI">
         <addColumn tableName="open_order_template">
             <column name="status" type="varchar(255)" />
@@ -13083,14 +13083,14 @@ order by date_trunc('month', i.invoice_date) DESC
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dunning_collection_plan" />
     </changeSet>
-    
+
     <!--  was split to deblock deploy -->
     <changeSet id="INTRD-7031-18052022-split" author="AbdelmounaimAkadid" failOnError="false">
         <sql>update ${db.schema.adapted}billing_invoice as invoice set related_dunning_collection_plan_id = (SELECT dc.id FROM dunning_collection_plan as dc WHERE dc.related_invoice_id=invoice.id)
         </sql>
     </changeSet>
 
-    
+
     <changeSet id="INTRD-7040_18052022" author="TarikRabeh">
         <dropColumn tableName="billing_billing_run">
             <column name="description"></column>
@@ -13132,6 +13132,296 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseColumnNames="general_client_account_id" baseTableName="ar_customer_account"
                                  constraintName="fk_general_client_account" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
+
+    <changeSet id="#INTRD-7537_20220531" author="TarikRabeh">
+        <addColumn tableName="billing_billing_run">
+            <column name="origin_billing_run_id" type="bigint" />
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
+              					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+    </changeSet>
+
+    <changeSet id="INTRD-5570_20220601" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_invoice">
+            <column name="last_applied_rate" type="numeric(23, 12)" />
+            <column name="last_applied_rate_date" type="datetime" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7428_20220601" author="ZBariki">
+        <addDefaultValue tableName="finance_settings" columnName="auxiliary_account_code_el"
+                         defaultValue="#{gca.code.substring(0, 3)}#{ca.description}"/>
+        <addDefaultValue tableName="finance_settings" columnName="auxiliary_account_label_el"
+                         defaultValue="#{ca.description}"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-7629_20220603" author="HatimOUDAD">
+    	<addColumn tableName="cpq_order_product">
+            <column name="instance_status" type="varchar(10)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-7479_20220603" author="AndriusKarpavicius">
+        <renameColumn tableName="sub_accounting_period" oldColumnName="number" newColumnName="period_number"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-7642_20220603" author="ZBariki">
+        <createSequence sequenceName="billing_invoice_line_conversion_seq"/>
+        <createSequence sequenceName="billing_invoice_conversion_seq"/>
+
+        <createTable tableName="billing_invoice_line_conversion">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_invoice_line_conversion"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="invoice_line_id" type="bigint"/>
+            <column name="invoice_id" type="bigint"/>
+            <column name="invoice_conversion_id" type="bigint"/>
+            <column name="applied_rate" type="numeric(23, 12)"/>
+            <column name="applied_rate_date" type="datetime"/>
+            <column name="invoice_currency_id" type="bigint"/>
+            <column name="unit_price" type="numeric(23, 12)"/>
+            <column name="amount_with_tax" type="numeric(23, 12)"/>
+            <column name="amount_without_tax" type="numeric(23, 12)"/>
+            <column name="amount_tax" type="numeric(23, 12)"/>
+            <column name="discount_amount" type="numeric(23, 12)"/>
+            <column name="raw_amount" type="numeric(23, 12)"/>
+        </createTable>
+
+        <createTable tableName="billing_invoice_conversion">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_invoice_conversion"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="invoice_id" type="bigint"/>
+            <column name="applied_rate" type="numeric(23, 12)"/>
+            <column name="applied_rate_date" type="datetime"/>
+            <column name="invoice_currency_id" type="bigint"/>
+            <column name="amount_with_tax" type="numeric(23, 12)"/>
+            <column name="amount_without_tax" type="numeric(23, 12)"/>
+            <column name="amount_tax" type="numeric(23, 12)"/>
+            <column name="discount_amount" type="numeric(23, 12)"/>
+            <column name="raw_amount" type="numeric(23, 12)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_line_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_line_id_fk"
+                                 referencedTableName="billing_invoice_line"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_conversion_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_conversion_id_fk"
+                                 referencedTableName="billing_invoice_conversion"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_line_conversion" baseColumnNames="invoice_currency_id"
+                                 constraintName="billing_invoice_line_conversion_invoice_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_invoice_conversion" baseColumnNames="invoice_id"
+                                 constraintName="billing_invoice_conversion_invoice_id_fk"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice_conversion" baseColumnNames="invoice_currency_id"
+                                 constraintName="billing_invoice_conversion_invoice_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-7399_20220603" author="aelmalki" failOnError="false">
+        <createSequence sequenceName="ar_payment_plan_seq"/>
+        <createTable tableName="ar_payment_plan">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ar_payment_plan_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+            <!-- Simple fields -->
+            <column name="amount_to_recover" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount_per_installment" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="remaining_amount" type="numeric(23, 12)" />
+            <column name="action_on_remaining_amount" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="number_of_installments" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="end_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="recurring_unit" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <!-- Dependencies -->
+            <column name="customer_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_plan"
+                                 constraintName="fk_payment_plan_customer_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+
+        <createTable tableName="ar_payment_plan_created_aos">
+            <column name="payment_plan_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_created_aos_pkey" tableName="ar_payment_plan_created_aos" />
+
+        <createTable tableName="ar_payment_plan_targeted_aos">
+            <column name="payment_plan_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="payment_plan_id, account_operation_id" constraintName="ar_payment_plan_targeted_aos_pkey" tableName="ar_payment_plan_targeted_aos" />
+    </changeSet>
+
+    <changeSet id="#INTRD-7644_20220606" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_line_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_conversion_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_line_conversion"
+                                  constraintName="billing_invoice_line_conversion_invoice_currency_id_fk"/>
+
+        <dropForeignKeyConstraint baseTableName="billing_invoice_conversion"
+                                  constraintName="billing_invoice_conversion_invoice_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_conversion"
+                                  constraintName="billing_invoice_conversion_invoice_currency_id_fk"/>
+
+        <dropSequence sequenceName="billing_invoice_conversion_seq"/>
+        <dropSequence sequenceName="billing_invoice_line_conversion_seq"/>
+
+        <dropTable tableName="billing_invoice_conversion"/>
+        <dropTable tableName="billing_invoice_line_conversion"/>
+
+        <dropColumn tableName="billing_invoice_line">
+            <column name="functional_unit_price" />
+        </dropColumn>
+
+        <addColumn tableName="billing_invoice_line">
+            <column name="converted_unit_price" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_rate" type="numeric(23, 12)" />
+            <column name="converted_discount_rate" type="numeric(23, 12)" />
+            <column name="converted_amount_tax" type="numeric(23, 12)" />
+            <column name="converted_discount_amount" type="numeric(23, 12)" />
+            <column name="converted_raw_amount" type="numeric(23, 12)" />
+        </addColumn>
+
+        <addColumn tableName="billing_invoice">
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="converted_amount_tax" type="numeric(23, 12)" />
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="converted_discount_rate" type="numeric(23, 12)" />
+            <column name="converted_discount_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+    
+     <changeSet id="#INTRD-7352_20220614" author="HatimOUDAD" >
+         <dropColumn tableName="open_order_template">
+            <column name="number_instantiation" />
+        </dropColumn>
+	</changeSet>
+	
+    <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza">
+        <addColumn tableName="dunning_policy">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7770_20220613" author="aelmalki">
+        <addColumn tableName="billing_invoice">
+            <column name="payment_plan_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_plan_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_payment_plan_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_plan" />
+    </changeSet>
+
+    <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="invoice_agreement_immediately" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ${db.schema.adapted}billing_subscrip_termin_reason set invoice_agreement_immediately = 0</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-7954_20220616" author="AbdelmounaimAkadid">
+     	<createIndex indexName="idx_billing_invoice_line__invoice_id" tableName="billing_invoice_line">
+	      	<column name="invoice_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx_billing_user_account__parent_useraccount_id" tableName="billing_user_account">
+	      	<column name="parent_useraccount_id"/>
+	  	</createIndex>
+    </changeSet>
+
+    <changeSet id="#INTRD-7872_20220615" author="ZBariki">
+        <addColumn tableName="billing_invoice_agregate">
+            <column name="converted_amount_without_tax" type="numeric(23, 12)"/>
+            <column name="converted_amount_with_tax" type="numeric(23, 12)"/>
+            <column name="converted_amount_tax" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7605_20220617" author="TarikRabeh">
+        <addColumn tableName="cpq_product">
+            <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="price_version_date_setting" type="varchar(255)" />
+            <column name="price_version_date" type="datetime" />
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

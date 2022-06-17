@@ -4,13 +4,13 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
 import org.meveo.apiv2.accounting.ImmutableAuxiliaryAccount;
 import org.meveo.apiv2.accounting.resource.AccountingResource;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
+
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
@@ -18,11 +18,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class AccountingResourceImpl implements AccountingResource {
@@ -40,12 +38,13 @@ public class AccountingResourceImpl implements AccountingResource {
                         .orElseThrow(() -> new NotFoundException("Customer account not found"));
         FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
                 .orElseThrow(() -> new NotFoundException("No finance settings found"));
-        AuxiliaryAccounting auxiliaryAccounting = ofNullable(financeSettings.getAuxiliaryAccounting())
-                .orElseThrow(() -> new NotFoundException("Auxiliary accounting not configured for finance settings"));
-        if(auxiliaryAccounting.isUseAuxiliaryAccounting()) {
+        AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
+        if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {
             try {
+                Map<String, String> result =
+                        financeSettingsService.generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting);
                 return ok()
-                        .entity(generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting))
+                        .entity(buildResponse(customerAccount, result))
                         .build();
             } catch (Exception exception) {
                 return serverError()
@@ -53,32 +52,19 @@ public class AccountingResourceImpl implements AccountingResource {
                         .build();
             }
         } else {
-            throw new BadRequestException("Auxiliary accounting is not configured for finance settings");
+            throw new NotFoundException("Auxiliary accounts are not set in Finance settings");
         }
     }
 
-    private AuxiliaryAccount generateAuxiliaryAccountInfo(CustomerAccount customerAccount,
-                                                          AuxiliaryAccounting auxiliaryAccounting) {
-        Map<Object, Object> context = new HashMap<>();
-        context.put("ca", customerAccount);
-        context.put("gca", customerAccount.getGeneralClientAccount());
-        String auxiliaryAccountCode =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountCodeEl(), context, String.class);
-        String auxiliaryAccountLabel =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountLabelEl(), context, String.class);
-        return buildResponse(customerAccount, auxiliaryAccountCode, auxiliaryAccountLabel);
-    }
-
-    private AuxiliaryAccount buildResponse(CustomerAccount customerAccount,
-                                           String auxiliaryAccountCode, String auxiliaryAccountLabel) {
+    private AuxiliaryAccount buildResponse(CustomerAccount customerAccount, Map<String, String> accountingResult) {
         Resource customerAccountResource = ImmutableResource.builder()
                 .id(customerAccount.getId())
                 .code(customerAccount.getCode())
                 .build();
         return ImmutableAuxiliaryAccount.builder()
                 .customerAccount(customerAccountResource)
-                .auxiliaryAccountCode(auxiliaryAccountCode)
-                .auxiliaryAccountLabel(auxiliaryAccountLabel)
+                .auxiliaryAccountCode(accountingResult.get("auxiliaryAccountCode"))
+                .auxiliaryAccountLabel(accountingResult.get("auxiliaryAccountLabel"))
                 .build();
     }
 }
