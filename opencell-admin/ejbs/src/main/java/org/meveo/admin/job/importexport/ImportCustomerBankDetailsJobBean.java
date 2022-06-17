@@ -54,7 +54,6 @@ public class ImportCustomerBankDetailsJobBean {
     
     private int nbModifications;
     private int nbModificationsError;
-    private int nbModificationsTerminated;
     private int nbModificationsIgnored;
     private int nbModificationsCreated;
     private String msgModifications;
@@ -124,7 +123,6 @@ public class ImportCustomerBankDetailsJobBean {
     private void initialiserCompteur() {
         nbModifications = 0;
         nbModificationsError = 0;
-        nbModificationsTerminated = 0;
         nbModificationsIgnored = 0;
         nbModificationsCreated = 0;
         msgModifications = "";
