@@ -13412,4 +13412,19 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-7605_20220617" author="TarikRabeh">
+        <addColumn tableName="cpq_product">
+            <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7605_20220617" author="TarikRabeh">
+        <addColumn tableName="billing_service_instance">
+            <column name="price_version_date_setting" type="varchar(255)" />
+            <column name="price_version_date" type="datetime" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

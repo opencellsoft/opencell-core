@@ -48,6 +48,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -73,6 +74,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
@@ -86,6 +88,14 @@ import org.meveo.model.shared.DateUtils;
  * @author akadid abdelmounaim
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
+ */
+/**
+ * @author Famille
+ *
+ */
+/**
+ * @author Famille
+ *
  */
 @Entity
 @WorkflowedEntity
@@ -175,6 +185,18 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+	/**
+	 * status of product type of {@link PriceVersionDateSettingEnum}
+	 */
+	@Column(name = "price_version_date_setting")
+	@Enumerated(EnumType.STRING)
+	private PriceVersionDateSettingEnum priceVersionDateSetting;
+
+    /** price Version Date timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "price_version_date")
+    private Date priceVersionDate;
+    
     /**
      * Charges instances associated with a service instance
      */
@@ -979,8 +1001,36 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-
+    
     /**
+     * @return the priceVersionDateSetting
+     */
+    public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting to set priceVersionDateSetting
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
+	}
+
+	/**
+	 * @return the priceVersionDate
+	 */
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+
+	/**
+	 * @param priceVersionDate to set priceVersionDate
+	 */
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
+	}
+
+	/**
      * Gets the amount PS.
      *
      * @return the amountPS

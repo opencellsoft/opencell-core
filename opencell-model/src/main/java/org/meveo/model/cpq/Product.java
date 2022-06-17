@@ -53,6 +53,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
@@ -200,6 +201,13 @@ public class Product extends ServiceCharge {
     @NotNull
     private boolean packageFlag;
     
+	/**
+	 * status of product type of {@link PriceVersionDateSettingEnum}
+	 */
+	@Column(name = "price_version_date_setting", nullable = false)
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private PriceVersionDateSettingEnum priceVersionDateSetting = PriceVersionDateSettingEnum.DELIVERY;
 	
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
@@ -522,6 +530,20 @@ public class Product extends ServiceCharge {
 				&& Objects.equals(modelChildren, other.modelChildren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
+	}
+
+	/**
+	 * @return the priceVersionDateSetting
+	 */
+	public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting the priceVersionDateSetting to set
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
 	}
 
 
