@@ -140,19 +140,18 @@ public class ImportCustomerBankDetailsJobBean {
         Document customerBankDetails = (Document) JAXBUtils.unmarshaller(Document.class, file);        
         log.debug("parsing file ok");
 
-        int i = -1;
         nbModifications = customerBankDetails.getMessageBanqueEmetteur().getModification().size();
         log.debug("nbModifications: {}", nbModifications);
         if (nbModifications == 0) {
             return;
         }
 
-        paymentMethodeDepartArrivee(jobInstance, customerBankDetails);    
+        paymentMethodeDepartArrivee(customerBankDetails);    
         createHistory();
         log.info("end import file ");
     }
 
-    private void paymentMethodeDepartArrivee(JobInstance jobInstance, Document customerBankDetails) throws CloneNotSupportedException {
+    private void paymentMethodeDepartArrivee(Document customerBankDetails) throws CloneNotSupportedException {
         for (Modification newModification : customerBankDetails.getMessageBanqueEmetteur().getModification()) {
             //IBAN du client et BIC dans l'établissement de départ
             String ibanDepart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
