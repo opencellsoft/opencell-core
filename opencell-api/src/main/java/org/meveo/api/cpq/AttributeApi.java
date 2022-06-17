@@ -326,6 +326,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	}
 	
 	public GroupedAttributeDto populateGroupedAttributToDto(GroupedAttributes groupedAttribute) throws MeveoApiException {
+		log.debug("populateGroupedAttributToDto groupedAttribute={}",groupedAttribute!=null?groupedAttribute.getCode():null);
 		if (groupedAttribute == null) {
 			missingParameters.add("groupedAttribute");
 			handleMissingParameters();
@@ -337,10 +338,12 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 					.map(v -> v.getCode())
 					.collect(Collectors.toSet());
 		
-
+		log.debug("populateGroupedAttributToDto attributeCodes={}",attributeCodes);
+		
 		GroupedAttributeDto result = new GroupedAttributeDto(groupedAttribute);
 		result.setAttributeCodes(attributeCodes);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(groupedAttribute));
+		log.debug("populateGroupedAttributToDto CustomFields={}",result.getCustomFields()!=null && result.getCustomFields().getCustomField()!=null?result.getCustomFields().getCustomField().size():null);
 
 		return result;
 	}
