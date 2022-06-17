@@ -2766,15 +2766,19 @@ public class SubscriptionApi extends BaseApi {
 
         lastSubscription.setToValidity(null);
         subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
-        reactivateServices(lastSubscription);
+        reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
         versionRemovedEvent.fire(lastSubscription);
     }
 
-    private void reactivateServices(Subscription lastSubscription) {
+    private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
         for(ServiceInstance serviceInstance : lastSubscription.getServiceInstances()){
-            serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
+            Date changeOfferDateAtStartDay = DateUtils.setDateToStartOfDay(changeOfferDate);
+            if (serviceInstance.getTerminationDate() != null
+                    && serviceInstance.getTerminationDate().before(changeOfferDateAtStartDay)) {
+                serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
+            }
         }
     }
 }
