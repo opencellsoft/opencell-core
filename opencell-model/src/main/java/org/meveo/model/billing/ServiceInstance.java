@@ -89,14 +89,6 @@ import org.meveo.model.shared.DateUtils;
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
-/**
- * @author Famille
- *
- */
-/**
- * @author Famille
- *
- */
 @Entity
 @WorkflowedEntity
 @ObservableEntity
