@@ -92,7 +92,6 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     public void activate(PaymentPlan paymentPlan) {
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
-        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PP);
 
         super.update(paymentPlan);
 
@@ -127,7 +126,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
                             log.info("PaymentPlan [id={}] passed to {} status", paymentPlan.getId(), paymentPlan.getStatus());
 
                             // Change Invoice status to PAID
-                            changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PAID);
+                             changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PAID);
                         } else {
                             log.info("PaymentPlan [id={}] still in {} due to founded MatchingStatus {} for Aos {}",
                                     paymentPlan.getId(), paymentPlan.getStatus(), aoMatchingStatus, aos);
@@ -153,7 +152,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
                         super.update(paymentPlan);
                         log.info("PaymentPlan [id={}] passed to {} status", paymentPlan.getId(), paymentPlan.getStatus());
 
-                        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PP);
+                         changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PLAN);
                     }
                 });
 
