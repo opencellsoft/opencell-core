@@ -775,7 +775,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         }
         if(this.id == null) {
             if(this.lastAppliedRate == null) {
-                this.lastAppliedRate = this.tradingCurrency != null ? this.tradingCurrency.getCurrentRate() : ONE;
+                this.lastAppliedRate = this.tradingCurrency != null && this.tradingCurrency.getCurrentRate() != null
+                        ? this.tradingCurrency.getCurrentRate() : ONE;
             }
             if(this.lastAppliedRateDate == null) {
                 this.lastAppliedRateDate = new Date();
