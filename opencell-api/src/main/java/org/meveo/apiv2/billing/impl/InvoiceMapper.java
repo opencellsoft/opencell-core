@@ -12,6 +12,7 @@ import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableGenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
@@ -33,7 +34,13 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 					.discountPlan(buildById(entity.getDiscountPlan()))
 					.tradingLanguage(buildById(entity.getTradingLanguage())).quote(buildById(entity.getQuote()))
 					.paymentMethod(buildById(entity.getPaymentMethod()))
-					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x->x.getId()).collect(Collectors.toList()))
+					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x -> x.getId()).collect(Collectors.toList()))
+                    .invoiceLines(entity.getInvoiceLines() == null ? null : entity.getInvoiceLines().stream().map(il -> {
+                        return ImmutableInvoiceLine.builder()
+                        .id(il.getId())
+                        .accountingArticleCode(il.getAccountingArticle().getCode())
+                        .build();
+                    }).collect(Collectors.toList()))
 					.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder())).build();
 		} catch (Exception e) {
 			throw new BusinessException(e);

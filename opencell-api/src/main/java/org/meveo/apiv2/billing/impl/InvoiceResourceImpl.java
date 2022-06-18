@@ -5,7 +5,10 @@ import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -17,7 +20,18 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.apiv2.billing.*;
+import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.GenerateInvoiceInput;
+import org.meveo.apiv2.billing.GenerateInvoiceResult;
+import org.meveo.apiv2.billing.ImmutableFile;
+import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.InvoiceInput;
+import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToRemove;
+import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
@@ -238,4 +252,19 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		List<GenerateInvoiceResult> invoices = invoiceApiService.generate(invoiceRequest, input.getIsDraft()).get();
 		return Response.ok().entity(invoices).build();
 	}
+	
+	@Override
+    public Response createAdjustment(@NotNull Long id, @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToReplicate);
+        return Response.ok().entity(buildSuccessResponse(invoiceMapper.toResource(adjInvoice))).build();
+
+    }
+
+    private Map<String, Object> buildSuccessResponse(org.meveo.apiv2.billing.Invoice invoiceResource) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("invoice", invoiceResource);
+        return response;
+    }
 }
