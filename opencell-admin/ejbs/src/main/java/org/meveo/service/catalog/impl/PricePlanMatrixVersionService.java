@@ -4,9 +4,11 @@ import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -23,16 +25,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -44,6 +43,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -67,7 +69,6 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -608,18 +609,20 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		auditLogService.create(auditLog);
 	}
 
-	public String export(List<Long> ids, FormatEnum fileType) {
+	public String export(List<Long> ids, String fileType) {
 		Set<PricePlanMatrixVersion> fetchedPricePlanMatrixVersions = (Set<PricePlanMatrixVersion>) this.getEntityManager()
 				.createNamedQuery("PricePlanMatrixVersion.getPricePlanVersionsByIds", entityClass)
 				.setParameter("ids", ids)
 				.getResultStream().collect(Collectors.toSet());
 		if(!fetchedPricePlanMatrixVersions.isEmpty()){
 			CSVPricePlanExportManager csvPricePlanExportManager = new CSVPricePlanExportManager();
-			return csvPricePlanExportManager.export(fetchedPricePlanMatrixVersions);
+			return csvPricePlanExportManager.export(fetchedPricePlanMatrixVersions, fileType);
 		}
 		log.info("No PricePlanMatrixVersions was exported.");
 		return null;
 	}
+	
+	
 
 	class CSVPricePlanExportManager {
 		private final String PATH_STRING_FOLDER  = "exports" + File.separator + "priceplan_versions";
@@ -628,10 +631,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		public CSVPricePlanExportManager(){
 			saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
 		}
-		public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions){
+		public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions, String fileType){
 			if(pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
 				Set<Path> filePaths = pricePlanMatrixVersions.stream()
-						.map(ppv  -> saveAsRecord(buildFileName(ppv), ppv))
+						.map(ppv  -> saveAsRecord(buildFileName(ppv), ppv, fileType))
 						.collect(Collectors.toSet());
 				if(filePaths.size() > 1) {
 					return archiveFiles(filePaths);
@@ -641,35 +644,96 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return null;
 		}
 
+		/** 
+		 * @param file
+		 * @param CSVLineRecords
+		 * @param isMatrix
+		 * @throws IOException
+		 */
+		private void writeExcelFile(File file, Set<LinkedHashMap<String, Object>> CSVLineRecords, boolean isMatrix) throws IOException {
+            try (FileWriter fw = new FileWriter(file, true); BufferedWriter bw = new BufferedWriter(fw)) {
+                var wb = new XSSFWorkbook();
+                    XSSFSheet sheet = wb.createSheet();
+                    int i = 0;
+                    
+                    String key1 = "label";
+                    String key2 = "amount";                    
+                    if(isMatrix){
+                        key1 = "description[text]";
+                        key2 = "priceWithoutTax[number]";
+                    }
+                    
+                    //Header
+                    var rowHeader = sheet.createRow(i++);
+                    Cell cell = rowHeader.createCell(0);
+                    cell.setCellValue("id");
+                    cell = rowHeader.createCell(1);
+                    cell.setCellValue(key1);
+                    cell = rowHeader.createCell(2);
+                    cell.setCellValue(key2);
+                    
+                    //Cell
+                    for(LinkedHashMap<String, Object> cSVLineRecord : CSVLineRecords) {                
+                        rowHeader = sheet.createRow(i++);
+                        for(String key : cSVLineRecord.keySet()) {
+                            Object ret = cSVLineRecord.get(key);
+                            if (ret == null) ret = "";
+                            if (key == "id") {
+                                cell = rowHeader.createCell(0);
+                                cell.setCellValue((Long)ret);
+                            }
+                            if (key == key1) {
+                                cell = rowHeader.createCell(1);
+                                cell.setCellValue(ret+ "");
+                            }
+                            if (key == key2) {
+                                cell = rowHeader.createCell(2);
+                                cell.setCellValue(ret + "");
+                            }
+                        }
+                    }
+
+                    FileOutputStream fileOut = new FileOutputStream(file);
+                    wb.write(fileOut);
+                    fileOut.close();
+                wb.close();
+            }
+        }
+		
+		/**
+		 * @param ppv
+		 * @return
+		 */
 		private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-			Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
-			ppv.getLines().stream()
-				.forEach(line -> {
-					Map<String, Object> CSVLineRecord = new HashMap<>();
-					
-					LinkedHashMap<String, Integer> CSVLineRecordPosition = new LinkedHashMap<>();
-					
-					CSVLineRecord.put("id", line.getId());
-					CSVLineRecordPosition.put("id", 0);
-					line.getPricePlanMatrixValues().iterator()
-							.forEachRemaining(ppmv -> {
-								
-								String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
-								String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
-								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
-										value);
+            Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
+            ppv.getLines().stream()
+                .forEach(line -> {
+                    Map<String, Object> CSVLineRecord = new HashMap<>();
+                    
+                    LinkedHashMap<String, Integer> CSVLineRecordPosition = new LinkedHashMap<>();
+                    
+                    CSVLineRecord.put("id", line.getId());
+                    CSVLineRecordPosition.put("id", 0);
+                    line.getPricePlanMatrixValues().iterator()
+                            .forEachRemaining(ppmv -> {
+                                
+                                String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
+                                String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
+                                CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
+                                        value);
 
-								CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']', ppmv.getPricePlanMatrixColumn().getPosition());
+                                CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']', ppmv.getPricePlanMatrixColumn().getPosition());
 
-							});
-					CSVLineRecord.put("description[text]", line.getDescription());
-					CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
-					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
-					CSVLineRecordPosition.put("priceWithoutTax[number]",  Integer.MAX_VALUE);
-					CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
-				});
-			return CSVLineRecords;
-		}
+                            });
+                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecordPosition.put("priceWithoutTax[number]",  Integer.MAX_VALUE);
+                    CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
+                });
+            return CSVLineRecords;
+        }
+		
 		
 		private LinkedHashMap<String, Object> copyToSortedMap(Map<String, Object> originMap, Map<String, Integer> mapPosition){
 			LinkedHashMap<String, Object> sortedMap = new LinkedHashMap<>();
@@ -749,33 +813,54 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				}
 			}
 			return File.separator + fileName
-				.append(".csv").toString()
+			    .toString()
 				.replaceAll("null","").replaceAll("[/: ]", "-");
 		}
-
-		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv) {
-			Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
-			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
-			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
-			try {
-				if(!Files.exists(Path.of(saveDirectory))){
-					Files.createDirectories(Path.of(saveDirectory));
-				}
-				File csvFile = new File(saveDirectory + fileName);
-				OutputStream fileOutputStream = new FileOutputStream(csvFile);
-				fileOutputStream.write('\ufeef');
-				fileOutputStream.write('\ufebb');
-				fileOutputStream.write('\ufebf');
-				csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
-				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
-				return Path.of(saveDirectory, fileName);
-			} catch (IOException e) {
-				log.error("error exporting PricePlanMatrix version " + fileName);
-				throw new RuntimeException("error during file writing : ", e);
-			}
-		}
-
+		
+		/**
+		 * @param fileName
+		 * @param ppv
+		 * @param fileType
+		 * @return
+		 */
+		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType) {
+            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
+            String extensionFile = ".csv";
+            try {
+                if(fileType.equals("CSV")) {
+                    CsvMapper csvMapper = new CsvMapper();
+                    CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
+                    csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
+                    if(!Files.exists(Path.of(saveDirectory))){
+                        Files.createDirectories(Path.of(saveDirectory));
+                    }
+                    File csvFile = new File(saveDirectory + fileName + extensionFile);
+                    OutputStream fileOutputStream = new FileOutputStream(csvFile);
+                    fileOutputStream.write('\ufeef');
+                    fileOutputStream.write('\ufebb');
+                    fileOutputStream.write('\ufebf');
+                    csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
+                    
+                    log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName + extensionFile);
+                    return Path.of(saveDirectory, fileName + extensionFile);
+                }
+                if(fileType.equals("EXCEL")) {
+                    extensionFile = ".xlsx";
+                    File outputExcelFile = new File(saveDirectory + fileName + extensionFile);
+                    writeExcelFile(outputExcelFile, records, ppv.isMatrix());
+                    return Path.of(saveDirectory + fileName + extensionFile);
+                }
+            } catch (IOException e) {
+                log.error("error exporting PricePlanMatrix version " + fileName + extensionFile);
+                throw new RuntimeException("error during file writing : ", e);
+            }
+            return null;            
+        }
+		
+		/**
+		 * @param ppv
+		 * @return
+		 */
 		private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
 			LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
 			CSVLineRecords.put("id", ppv.getId());
@@ -784,6 +869,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return CSVLineRecords;
 		}
 
+		/**
+		 * @return
+		 */
 		private CsvSchema buildPricePlanVersionCsvSchema() {
 			return CsvSchema.builder()
 					.addColumn("id", CsvSchema.ColumnType.STRING)
@@ -792,8 +880,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
-		    
+		/**
+		 * @param records
+		 * @return
+		 */
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {		    
 		    List<String> dynamicColumns = new ArrayList();
 		    if (!records.isEmpty()) {
 		        List<String> columns = records.stream()
@@ -811,6 +902,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
+		/**
+		 * @param filesPath
+		 * @return
+		 */
 		private String archiveFiles(Set<Path> filesPath){
 			DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 					.appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)

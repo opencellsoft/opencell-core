@@ -65,7 +65,15 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
         if(payload.get("ids") == null || (ids = toLong(payload.get("ids"))).isEmpty()){
             throw new BadRequestException("ids of the price plan matrix version is required.");
         }
-        String filePath = pricePlanMatrixVersionService.export(ids, FormatEnum.CSV);
+        if(payload.get("format") == null){
+            throw new BadRequestException("format of the price plan matrix version is required.");
+        }
+        String typeFile = "" + payload.get("format");
+        typeFile = typeFile.toUpperCase();
+        if(!typeFile.equals("CSV") && !typeFile.equals("EXCEL")){
+            throw new BadRequestException("format of the price plan matrix version can be only equals (CSV or EXCEL).");
+        }
+        String filePath = pricePlanMatrixVersionService.export(ids, typeFile);
         if(StringUtils.isBlank(filePath)) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\": \"there was a problem during export operation\"}}")
