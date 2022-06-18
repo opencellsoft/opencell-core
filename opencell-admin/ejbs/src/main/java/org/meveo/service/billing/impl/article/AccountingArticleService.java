@@ -221,7 +221,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		List<AccountingCodeMapping> codeMappings = getEntityManager().createNamedQuery("AccountingCodeMapping.findByAccountingArticle")
 				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
 
-		if (codeMappings == null || !codeMappings.isEmpty()) {
+		if (codeMappings != null && !codeMappings.isEmpty()) {
 			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
 
 			if (accountingCode != null) {
@@ -274,13 +274,33 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 		mappings.forEach(map -> {
 
-			int mappingScore = 0;
-			mappingScore += ((map.getBillingCountry() == null && billingCountry == null) || (map.getBillingCountry() != null && billingCountry == null)) ? 0 : (map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId()) ? 1000 : -1000;
-			mappingScore += ((map.getBillingCurrency() == null && billingCurrency == null) || (map.getBillingCurrency() != null && billingCurrency == null))  ? 0 : (map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId()) ? 500 : -500;
-			mappingScore += ((map.getSellerCountry() == null && sellerCountry == null) || (map.getSellerCountry() != null && sellerCountry == null))  ? 0 : (map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId()) ? 250 : -250;
-			mappingScore += ((map.getSeller() == null && seller == null) || (map.getSeller() != null && seller == null))  ? 0 : (map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId()) ? 150 : -150;
-			mappingScore += ((map.getCriteriaElValue() == null && StringUtils.isBlank(columCriteriaEL) || map.getCriteriaElValue() != null && StringUtils.isBlank(columCriteriaEL))) ? 0 : (map.getCriteriaElValue() != null && map.getCriteriaElValue().equals(columCriteriaEL)) ? 50 : -50;
+			int billCountryScore = map.getBillingCountry() == null && billingCountry == null ? 0
+					: map.getBillingCountry() != null && billingCountry == null ? -1000
+					: (map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId())	? 1000
+					: map.getBillingCountry() == null && billingCountry != null ? -1000
+					: -9999;
+			int billCurrencyScore = map.getBillingCurrency() == null && billingCurrency == null ? 0
+					: map.getBillingCurrency() != null && billingCurrency == null ? -500
+					: (map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId())	? 500
+					: map.getBillingCurrency() == null && billingCurrency != null ? -500
+					: -9999;
+			int sellerCountryScore = map.getSellerCountry() == null && sellerCountry == null ? 0
+					: map.getSellerCountry() != null && sellerCountry == null ? -250
+					: (map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId())	? 250
+					: map.getSellerCountry() == null && sellerCountry != null ? -250
+					: -9999;
+			int sellerScore = map.getSeller() == null && seller == null ? 0
+					: map.getSeller() != null && seller == null ? -150
+					: (map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId())	? 150
+					: map.getSeller() == null && seller != null ? -150
+					: -9999;
+			int columCriteriaELScore = StringUtils.isBlank(map.getCriteriaElValue()) && StringUtils.isBlank(columCriteriaEL) ? 0
+					: StringUtils.isNotBlank(map.getCriteriaElValue()) && StringUtils.isBlank(columCriteriaEL) ? 0 // If no "Column criteria EL" is set, the "Criteria EL value" column is ignored
+					: (StringUtils.isNotBlank(map.getCriteriaElValue()) && StringUtils.isNotBlank(columCriteriaEL)) && map.getCriteriaElValue().equals(columCriteriaEL)	? 50
+					: StringUtils.isBlank(map.getCriteriaElValue()) && StringUtils.isNotBlank(columCriteriaEL) ? -50
+					: -9999;
 
+			int mappingScore = billCountryScore + billCurrencyScore + sellerCountryScore + sellerScore + columCriteriaELScore;
 			if (mappingScore > 0) {
 				matchingScore.put(map.getId(), mappingScore);
 			}
