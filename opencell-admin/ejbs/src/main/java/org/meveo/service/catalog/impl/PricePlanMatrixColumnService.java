@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -270,8 +272,10 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 						pricePlanMatrixValueDtoList.add(pricePlanMatrixValueDto);
 						columns.get(columnIndex).getValue().ifPresent(
 								attribute -> {
-									if(!inAllowedValues(attribute.getAllowedValues(), pricePlanMatrixValueDto.getStringValue()))
-										throw new BusinessException("not allowed values");
+								    boolean isNumericType = attribute.getAttributeType() == AttributeTypeEnum.LIST_NUMERIC || attribute.getAttributeType() == AttributeTypeEnum.LIST_MULTIPLE_NUMERIC;
+									String value = pricePlanMatrixValueDto.getStringValue();
+                                    if(!inAllowedValues(isNumericType, attribute.getAllowedValues(), value))
+										throw new BusinessException(value + " is not allowed in column " + attribute.getDescription() + " " + attribute.getAllowedValues());
 								}
 						);break;
 					default:
@@ -310,17 +314,27 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		return pricePlanMatrixLinesDto;
 	}
 
-	private boolean inAllowedValues(Set<String> allowedValues, String value)
+	private boolean inAllowedValues(boolean isNumericType, Set<String> allowedValues, String value)
 	{
 		if(value != null && !value.isEmpty() && allowedValues!= null && !allowedValues.isEmpty())
 		{
 			List<String> values = Arrays.asList(value.split("\\|"));
+			if (isNumericType) {
+			    Collection<Double> numericAllowedValues = convertValuesToDouble(allowedValues);
+			    Collection<Double> numericValues = convertValuesToDouble(values);
+			    return numericAllowedValues.containsAll(numericValues);
+            }
 			return allowedValues.containsAll(values);
 		}
 
 		return true;
-
 	}
+	
+	private Collection<Double> convertValuesToDouble(Collection<String> listOfString) {
+        return listOfString.stream()
+            .map(Double::parseDouble)
+            .collect(Collectors.toList());
+    }
 
 	private void extractDateRange(String[] nextLine, int columnIndex, PricePlanMatrixValueDto pricePlanMatrixValueDto, String columnCode, boolean isRange) {
 		pricePlanMatrixValueDto.setPpmColumnCode(columnCode);
