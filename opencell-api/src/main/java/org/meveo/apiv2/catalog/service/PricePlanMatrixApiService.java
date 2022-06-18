@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -101,7 +102,15 @@ public class PricePlanMatrixApiService implements ApiService<PricePlanMatrix> {
 
         List<ImportResultDto> resultDtos = new ArrayList<>();
         for (ImportPricePlanVersionsItem importItem : importPricePlanVersionsDto.getPricePlanVersions()) {
-            resultDtos.add(pricePlanMatrixVersionService.importPricePlanVersion(importTempDir, importItem));
+            ImportResultDto resultDto = new ImportResultDto(importItem);
+            try {
+                pricePlanMatrixVersionService.importPricePlanVersion(importTempDir, importItem);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                resultDto.setStatus(ActionStatusEnum.FAIL);
+                resultDto.setMessage(e.getMessage());
+            }
+            resultDtos.add(resultDto);
         }
 
         try {
