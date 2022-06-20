@@ -59,7 +59,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            result.setMessage(accountOperationApi.create(postData).toString());
+            result.setEntityId(accountOperationApi.create(postData));
         } catch (Exception e) {
             processException(e, result);
         }
