@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -723,7 +724,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         String parCodeAccountingCode = "";
 
         if(accountingCodeStr != null) {
-            accountingCode = accountingCodeService.findByCode(accountingCodeStr);
+            accountingCode = Optional.ofNullable(accountingCodeService.findByCode(accountingCodeStr))
+                .orElseThrow(() -> new EntityDoesNotExistsException(AccountingCode.class, accountingCodeStr));
+
             parCodeAccountingCode = "_" + accountingCodeStr;
         }
         Tax tax = taxService.findTaxByRateAndAccountingCode(taxRate, accountingCode);
