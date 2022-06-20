@@ -16,7 +16,9 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.admin;
+package org.meveo.admin.action.admin;
+
+import org.meveo.model.admin.SecuredEntity;
 
 public class DetailedSecuredEntity extends SecuredEntity {
 
@@ -28,7 +30,9 @@ public class DetailedSecuredEntity extends SecuredEntity {
     }
 
     public DetailedSecuredEntity(SecuredEntity entity) {
-        super(entity);
+        super(entity.getEntityId(), entity.getEntityCode(), entity.getEntityClass(), entity.getPermission());
+        this.setId(entity.getId());
+        this.setDisabled(entity.isDisabled());
     }
 
     public String getDescription() {
@@ -38,5 +42,4 @@ public class DetailedSecuredEntity extends SecuredEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-
 }

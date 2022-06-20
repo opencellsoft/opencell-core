@@ -18,15 +18,6 @@
 
 package org.meveo.api.rest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -50,7 +41,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
 /**
- * REST API for managing {@link Role}.
+ * REST API for managing roles.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 6.0
  */
@@ -66,9 +58,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/") 
-    @Operation(summary = "Create role",
-    tags = { "Roles management" })
+    @Path("/")
+    @Operation(summary = "Create role", tags = { "Roles management" })
     ActionStatus create(RoleDto postData);
 
     /**
@@ -78,9 +69,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status.
      */
     @PUT
-    @Path("/") 
-    @Operation(summary = "Update role",
-    tags = { "Roles management" })
+    @Path("/")
+    @Operation(summary = "Update role", tags = { "Roles management" })
     ActionStatus update(RoleDto postData);
 
     /**
@@ -91,8 +81,7 @@ public interface RoleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{roleName}")
-    @Operation(summary = "Remove role.",
-    tags = { "Roles management" })
+    @Operation(summary = "Remove role.", tags = { "Roles management" })
     ActionStatus remove(@Parameter(description = "role name to be deleting", required = true) @PathParam("roleName") String roleName);
 
     /**
@@ -103,11 +92,10 @@ public interface RoleRs extends IBaseRs {
      * @return found role
      */
     @GET
-    @Path("/") 
-    @Operation(summary = "Search role.", deprecated = true,
-    tags = { "Deprecated" })
-    GetRoleResponse find(@Parameter(description = "role name", required = true)  @QueryParam("roleName") String roleName, 
-    					@Parameter(description = "indicate if the list of secured entties will be included") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
+    @Path("/")
+    @Operation(summary = "Search role.", deprecated = true, tags = { "Deprecated" })
+    GetRoleResponse find(@Parameter(description = "role name", required = true) @QueryParam("roleName") String roleName,
+            @Parameter(description = "indicate if the list of secured entties will be included") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Search role.
@@ -118,10 +106,9 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/{roleName}")
-    @Operation(summary = "Search role.",
-            tags = { "Roles management" })
-    GetRoleResponse findV2(@Parameter(description = "role name", required = true) @PathParam("roleName") String roleName, 
-    						@Parameter(description = "indicate if the list of secured entties will be included") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
+    @Operation(summary = "Search role.", tags = { "Roles management" })
+    GetRoleResponse findV2(@Parameter(description = "role name", required = true) @PathParam("roleName") String roleName,
+            @Parameter(description = "indicate if the list of secured entties will be included") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Create or update role.
@@ -130,9 +117,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/createOrUpdate") 
-    @Operation(summary = "Create or update role.", deprecated = true,
-    tags = { "Deprecated" })
+    @Path("/createOrUpdate")
+    @Operation(summary = "Create or update role.", deprecated = true, tags = { "Deprecated" })
     ActionStatus createOrUpdate(RoleDto postData);
 
     /**
@@ -148,14 +134,13 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    @Operation(summary = "List roles matching a given criteria.", deprecated = true,
-    tags = { "Deprecated" })
-    RolesDto listGet(@Parameter(description = "query Search criteria", example = "filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query, 
-			  @Parameter(description = "fields Data retrieval options/fieldnames separated by a comma. Specify \"permissions\" in fields to include the permissions. Specify \"roles\" to include child roles") @QueryParam("fields") String fields,
-			  @Parameter(description = "offset Pagination - from record number")  @QueryParam("offset") Integer offset,
-			  @Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
-			  @Parameter(description = "sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("name") @QueryParam("sortBy") String sortBy,
-			  @Parameter(description = "sortOrder Sorting - sort order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    @Operation(summary = "List roles matching a given criteria.", deprecated = true, tags = { "Deprecated" })
+    RolesDto listGet(@Parameter(description = "query Search criteria", example = "filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query,
+            @Parameter(description = "fields Data retrieval options/fieldnames separated by a comma. Specify \"permissions\" in fields to include the permissions. Specify \"roles\" to include child roles") @QueryParam("fields") String fields,
+            @Parameter(description = "offset Pagination - from record number") @QueryParam("offset") Integer offset,
+            @Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+            @Parameter(description = "sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("name") @QueryParam("sortBy") String sortBy,
+            @Parameter(description = "sortOrder Sorting - sort order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List roles matching a given criteria.
@@ -170,14 +155,13 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/filtering")
-    @Operation(summary = "List roles matching a given criteria.",
-            tags = { "Roles management" })
-    RolesDto listGetV2(@Parameter(description = "query Search criteria", example = "filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query, 
-    				  @Parameter(description = "fields Data retrieval options/fieldnames separated by a comma. Specify \"permissions\" in fields to include the permissions. Specify \"roles\" to include child roles") @QueryParam("fields") String fields,
-    				  @Parameter(description = "offset Pagination - from record number")  @QueryParam("offset") Integer offset,
-    				  @Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
-    				  @Parameter(description = "sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("name") @QueryParam("sortBy") String sortBy,
-    				  @Parameter(description = "sortOrder Sorting - sort order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    @Operation(summary = "List roles matching a given criteria.", tags = { "Roles management" })
+    RolesDto listGetV2(@Parameter(description = "query Search criteria", example = "filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query,
+            @Parameter(description = "fields Data retrieval options/fieldnames separated by a comma. Specify \"permissions\" in fields to include the permissions. Specify \"roles\" to include child roles") @QueryParam("fields") String fields,
+            @Parameter(description = "offset Pagination - from record number") @QueryParam("offset") Integer offset,
+            @Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+            @Parameter(description = "sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("name") @QueryParam("sortBy") String sortBy,
+            @Parameter(description = "sortOrder Sorting - sort order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List roles matching a given criteria.
@@ -186,9 +170,8 @@ public interface RoleRs extends IBaseRs {
      * @return A list of roles
      */
     @POST
-    @Path("/list") 
-    @Operation(summary = "List roles matching a given criteria.", deprecated = true,
-    tags = { "Deprecated" })
+    @Path("/list")
+    @Operation(summary = "List roles matching a given criteria.", deprecated = true, tags = { "Deprecated" })
     RolesDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -199,28 +182,27 @@ public interface RoleRs extends IBaseRs {
      */
     @POST
     @Path("/filtering")
-    @Operation(summary = "List roles matching a given criteria.",
-            tags = { "Roles management" })
+    @Operation(summary = "List roles matching a given criteria.", tags = { "Roles management" })
     RolesDto listPostV2(PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * List external roles.
+     * 
      * @return list of external roles
      */
     @GET
     @Path("/external")
-    @Operation(summary = "List external roles.", deprecated = true,
-    tags = { "Deprecated" })
+    @Operation(summary = "List external roles.", deprecated = true, tags = { "Deprecated" })
     RolesDto listExternalRoles();
 
     /**
      * List external roles.
+     * 
      * @return list of external roles
      */
     @GET
     @Path("/externals")
-    @Operation(summary = "List external roles.",
-            tags = { "Roles management" })
+    @Operation(summary = "List external roles.", tags = { "Roles management" })
     RolesDto listExternalRolesV2();
 
 }

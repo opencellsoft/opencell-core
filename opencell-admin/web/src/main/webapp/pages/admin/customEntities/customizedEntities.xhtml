@@ -31,7 +31,7 @@
                     <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
                 </p:commandButton>
                 <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="customizedEntity"
-                    rendered="#{currentUser.hasRole('administrationManagement')}">
+                    rendered="#{customEntityTemplateListBean.canUserUpdateEntity()}">
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                     <f:param name="edit" value="true" />
                 </p:button>
@@ -45,10 +45,10 @@
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="30,50"
                     lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['customizedEntities.entityName']}" sortBy="#{entity.classnameToDisplayHuman}">
-                        <c:if test="#{!currentUser.hasRole('administrationManagement')}">
+                        <c:if test="#{!customEntityTemplateListBean.canUserUpdateEntity()}">
                             <h:outputText value="#{entity.classnameToDisplayHuman}" />
                         </c:if>
-                        <c:if test="#{currentUser.hasRole('administrationManagement')}">
+                        <c:if test="#{customEntityTemplateListBean.canUserUpdateEntity()}">
                             <h:link outcome="customizedEntity" rendered="#{entity.customEntity}">
                                 <h:outputText value="#{entity.classnameToDisplayHuman}" />
                                 <f:param name="entityClass" value="#{entity.entityClass.name}" />

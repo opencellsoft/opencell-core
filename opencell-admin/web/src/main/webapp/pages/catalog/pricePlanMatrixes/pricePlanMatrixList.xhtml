@@ -389,7 +389,7 @@
             </p:button>
             <p:commandButton update="@form" icon="ui-icon-trash"
                              action="#{pricePlanMatrixBean.delete(entity.id)}"
-                             rendered="#{pricePlanMatrixBean.canUserUpdateEntity()}">
+                             rendered="#{pricePlanMatrixBean.canUserDeleteEntity()}">
                 <p:confirm header="#{messages['commons.confirmationHeader']}"
                            message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
             </p:commandButton>

@@ -13,5 +13,12 @@
 	"enable-cors" : "${opencell.keycloak.enable-cors:false}",
 	"cors-allowed-methods" : "${opencell.keycloak.cors-allowed-methods:POST, PUT, DELETE, GET, PATCH}",
 	"register-node-at-startup": "${opencell.keycloak.register-node-at-startup:false}",
-	"register-node-period": 600
+	"register-node-period": 600,
+	"policy-enforcer": {
+		"path-cache": {
+			"lifespan": 0,
+			"max-entries": 0
+		},
+		"http-method-as-scope": true
+}
 }

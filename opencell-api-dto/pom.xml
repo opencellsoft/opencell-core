@@ -18,6 +18,11 @@
 			<groupId>com.opencellsoft</groupId>
 			<artifactId>opencell-model</artifactId>
 		</dependency>
+        
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-security</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

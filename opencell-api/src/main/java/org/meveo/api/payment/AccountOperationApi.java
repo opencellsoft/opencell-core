@@ -61,7 +61,6 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
@@ -670,25 +669,10 @@ public class AccountOperationApi extends BaseApi {
         if (accountOperation.getStatus().equals(EXPORTED)) {
             throw new BusinessException("Can not update accounting date, account operation is EXPORTED");
         }
-        if(!hasPermission(currentUser.getUserName())) {
-            throw new BusinessException("Operation not allowed for "
-                    + currentUser.getUserName() + ", user does not have financeManagement permission");
-        }
         accountOperation.setAccountingDate(accountingDate);
         accountOperation.setReason(AccountOperationRejectionReason.FORCED);
         
         return accountOperationService.update(accountOperation);
-    }
-
-    private boolean hasPermission(String userName) {
-        User user = ofNullable(userService.findByUsername(userName))
-                .orElseThrow(() -> new BusinessException(userName + "not found"));
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            return false;
-        }
-        return user.getRoles()
-                .stream()
-                .anyMatch(role -> role.getPermissions() != null && role.hasPermission("financeManagement"));
     }
 
 	/**

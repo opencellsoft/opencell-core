@@ -21,73 +21,158 @@ package org.meveo.model.admin;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.IEnable;
+import org.meveo.model.IEntity;
 
 /**
  * Entity accessibility rules
  */
-@Embeddable
-public class SecuredEntity implements Serializable {
+@Entity
+@Table(name = "adm_secured_entity")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_secured_entity_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "SecuredEntity.listByRoleName", query = "SELECT s from org.meveo.model.admin.SecuredEntity s where s.roleName=:roleName", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "SecuredEntity.listByUserName", query = "SELECT s from org.meveo.model.admin.SecuredEntity s where lower(s.userName)=:userName", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "SecuredEntity.validateByRoleName", query = "SELECT count(*) from org.meveo.model.admin.SecuredEntity s where s.roleName=:roleName and entity_code=:entityCode and entity_class=:entityClass"),
+        @NamedQuery(name = "SecuredEntity.validateByUserName", query = "SELECT count(*) from org.meveo.model.admin.SecuredEntity s where lower(s.userName)=:userName and entity_code=:entityCode and entity_class=:entityClass"),
+        @NamedQuery(name = "SecuredEntity.listForCurrentUser", query = "SELECT new org.meveo.security.SecuredEntity(s.entityId, s.entityCode, s.entityClass, s.permission) from org.meveo.model.admin.SecuredEntity s where s.disabled=false and (lower(s.userName)=:userName or s.roleName in :roleNames)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
+public class SecuredEntity implements Serializable, IEntity, IEnable {
 
     private static final long serialVersionUID = 84222776645282176L;
 
     /**
+     * Record/entity identifier
+     */
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
+    private Long id;
+
+    /**
+     * Secured entity is for a role
+     */
+    @Column(name = "role_name", length = 255)
+    @Size(max = 255)
+    private String roleName;
+
+    /**
+     * Secured entity is for a user
+     */
+    @Column(name = "user_name", length = 255)
+    @Size(max = 255)
+    private String userName;
+
+    /**
+     * Accessible entity id
+     */
+    @Column(name = "entity_id")
+    private Long entityId;
+
+    /**
      * Accessible entity code
      */
-    @Column(name = "code", nullable = false, length = 255)
+    @Column(name = "entity_code", nullable = false, length = 255)
     @Size(max = 255, min = 1)
     @NotNull
-    private String code;
+    private String entityCode;
 
     /**
      * Accessible entity type/class
      */
     @Column(name = "entity_class", length = 255)
     @Size(max = 255)
+    @NotNull
     private String entityClass;
 
+    /**
+     * Allowed action to perform on the entity
+     */
+    @Column(name = "permission", length = 6)
+    @Enumerated(EnumType.STRING)
+    private SecuredEntityPermissionEnum permission = SecuredEntityPermissionEnum.READ;
+
+    @Type(type = "numeric_boolean")
     @Column(name = "disabled", nullable = false)
-    private int disabled = 0;
+    @NotNull
+    private boolean disabled;
 
     public SecuredEntity() {
-    }
-
-    public SecuredEntity(BusinessEntity businessEntity) {
-        this.setCode(businessEntity.getCode());
-        this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getName()));
-    }
-
-    public SecuredEntity(SecuredEntity securedEntity) {
-        this.setCode(securedEntity.getCode());
-        this.setEntityClass(securedEntity.getEntityClass());
-        this.setDisabled(securedEntity.getDisabled());
     }
 
     /**
      * Constructor
      * 
-     * @param entityClass Secured entity class
-     * @param code Secured entity code
+     * @param entityId Accessible entity id
+     * @param entityCode Accessible entity code
+     * @param entityClass Accessible entity type/class
+     * @param permission Allowed action to perform on the entity
      */
-    public SecuredEntity(String entityClass, String code) {
-        super();
-        this.code = code;
+    public SecuredEntity(Long entityId, String entityCode, String entityClass, SecuredEntityPermissionEnum permission) {
+
+        this.entityId = entityId;
+        this.entityCode = entityCode;
         this.entityClass = entityClass;
+        this.permission = permission == null ? SecuredEntityPermissionEnum.READ : permission;
     }
 
-    public String getCode() {
-        return code;
+    public Long getId() {
+        return id;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Accessible entity ID
+     */
+    public Long getEntityId() {
+        return entityId;
+    }
+
+    /**
+     * @param entityId Accessible entity ID
+     */
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
+    }
+
+    /**
+     * @return Accessible entity code
+     */
+    public String getEntityCode() {
+        return entityCode;
+    }
+
+    /**
+     * @param code Accessible entity code
+     */
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode;
     }
 
     public String getEntityClass() {
@@ -105,72 +190,131 @@ public class SecuredEntity implements Serializable {
         return "";
     }
 
+    /**
+     * 
+     * @return Allowed action to perform on the entity
+     */
+    public SecuredEntityPermissionEnum getPermission() {
+        return permission;
+    }
+
+    /**
+     * @param permission Allowed action to perform on the entity
+     */
+    public void setPermission(SecuredEntityPermissionEnum permission) {
+        this.permission = permission;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || (!(obj instanceof SecuredEntity))) {
             return false;
         }
-        boolean isSecuredEntity = obj instanceof SecuredEntity;
-        boolean isBusinessEntity = obj instanceof BusinessEntity;
-        if (!isSecuredEntity && !isBusinessEntity) {
-            return false;
-        }
-
-        String thatCode = null;
-        String thatClass = null;
-        if (isSecuredEntity) {
-            thatCode = ((SecuredEntity) obj).getCode();
-            thatClass = ((SecuredEntity) obj).getEntityClass();
-        }
-        if (isBusinessEntity) {
-            thatCode = ((BusinessEntity) obj).getCode();
-            thatClass = ReflectionUtils.getCleanClassName(obj.getClass().getName());
-        }
-
-        thatCode = thatClass + "-_-" + thatCode;
-        String thisCode = this.getEntityClass() + "-_-" + this.getCode();
-
-        if (!thisCode.equals(thatCode)) {
-            return false;
-        }
-        return true;
+        final SecuredEntity other = (SecuredEntity) obj;
+        return Objects.equals(this.toStringWoutId(), other.toStringWoutId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getCode(), this.getEntityClass());
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.toStringWoutId());
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return entityClass + ":" + entityId + ":" + entityCode + (permission != null ? ":" + permission : "") + disabled;
+    }
+
+    public String toStringWoutId() {
+        return entityClass + ":" + entityCode + (permission != null ? ":" + permission : "") + disabled;
     }
 
     /**
-     * @return Is configuration disabled. 1=true, 0=false
+     * @return Is secured entity configuration disabled
      */
-    public int getDisabled() {
+    public boolean isDisabled() {
         return disabled;
     }
 
     /**
-     * @param disabled the disabled to set
+     * @param disabled Is secured entity configuration disabled
      */
-    public void setDisabled(int disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
 
     /**
-     * @return the disabled value as a boolean
+     * @return Is secured entity configuration active
      */
-    @Transient
-    public boolean getDisabledAsBoolean() {
-        return disabled == 1;
+    public boolean isActive() {
+        return !disabled;
     }
 
     /**
-     * @param disabled The disabled value as a boolean
+     * @param active Is secured entity configuration active
      */
-    @Transient
-    public void setDisabledAsBoolean(boolean disabled) {
-        this.disabled = disabled ? 1 : 0;
+    public void setActive(boolean active) {
+        setDisabled(!active);
+    }
+
+    /**
+     * @return Role name to link secured entity to
+     */
+    public String getRoleName() {
+        return roleName;
+    }
+
+    /**
+     * @param roleName Role name to link secured entity to
+     */
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    /**
+     * @return User name to link secured entity to
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName User name to link secured entity to
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Override
+    public boolean isTransient() {
+        return id == null;
+    }
+
+    /**
+     * Permission to perform an action on a Secured entity
+     */
+    public enum SecuredEntityPermissionEnum {
+        /**
+         * Permission to list/find
+         */
+        READ,
+
+        /**
+         * Permission to update
+         */
+        UPDATE,
+
+        /**
+         * Permission to delete
+         */
+        DELETE;
+
+        public String getLabel() {
+            return this.getClass().getSimpleName() + "." + this.name();
+        }
     }
 }

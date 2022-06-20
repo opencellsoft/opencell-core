@@ -64,8 +64,8 @@
         <createSequence sequenceName="adm_language_seq" startValue="34" />
         <createSequence sequenceName="adm_notif_history_seq" />
         <createSequence sequenceName="adm_notification_seq" />
-        <createSequence sequenceName="adm_permission_seq" startValue="18" />
         <createSequence sequenceName="adm_role_seq" startValue="5" />
+        <createSequence sequenceName="adm_secured_entity_seq" startValue="1" />
         <createSequence sequenceName="adm_title_seq" startValue="38" />
         <createSequence sequenceName="adm_user_seq" startValue="3" />
         <createSequence sequenceName="ar_account_operation_seq" />
@@ -454,18 +454,18 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}adm_notification_seq values(1)</sql>
-        <createTable tableName="adm_permission_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_permission_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}adm_permission_seq values(18)</sql>
         <createTable tableName="crm_address_book_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_seq_pk" />
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}crm_address_book_seq values(1)</sql>
+        <createTable tableName="adm_secured_entity_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_secured_entity_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_secured_entity_seq values(1)</sql>
         <createTable tableName="crm_customer_sequence_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_sequence_seq_pk" />
@@ -1810,28 +1810,12 @@
             <column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
         </createTable>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-138">
-        <createTable tableName="adm_permission">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_permission_pkey" />
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="permission" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-139">
         <createTable tableName="adm_role">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="role_description" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
             <column name="role_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1846,17 +1830,6 @@
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
         </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-140">
-        <createTable tableName="adm_role_permission">
-            <column name="role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="permission_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="role_id, permission_id" constraintName="adm_role_permission_pkey" tableName="adm_role_permission" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-141">
         <createTable tableName="adm_title">
@@ -1889,32 +1862,14 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="email" type="varchar(100)" />
-            <column name="firstname" type="varchar(100)" />
-            <column name="lastname" type="varchar(100)" />
             <column name="username" type="varchar(50)" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="title_id" type="bigint" />
-            <column name="hierarchy_level_id" type="bigint" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="last_login_date" type="datetime" />
-            <column name="crm_address_book_id" type="bigint" />
         </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
-        <createTable tableName="adm_user_role">
-            <column name="user_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="user_id, role_id" constraintName="adm_user_role_pkey" tableName="adm_user_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-145">
         <createTable tableName="ar_account_operation">
@@ -5390,7 +5345,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="msr_qty_id" type="bigint" />
-            <column name="role_id" type="bigint" />
+            <column name="role" type="varchar(50)" />
             <column name="width" type="varchar(10)" />
             <column name="height" type="varchar(10)" />
             <column name="visible" type="${type.boolean}" defaultValueNumeric="0" />
@@ -6269,38 +6224,27 @@
             <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
         </createTable>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-304">
-        <createTable tableName="adm_role_role">
-            <column name="role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="child_role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="role_id, child_role_id" constraintName="adm_role_role_pkey" tableName="adm_role_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-306">
         <createTable tableName="adm_script_exec_role">
             <column name="script_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="role_id" type="bigint">
+            <column name="role" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
+        <addPrimaryKey columnNames="script_instance_id, role" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-307">
         <createTable tableName="adm_script_sourc_role">
             <column name="script_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="role_id" type="bigint">
+            <column name="role" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
+        <addPrimaryKey columnNames="script_instance_id, role" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-308">
         <createTable tableName="cat_offer_template_category">
@@ -6569,10 +6513,13 @@
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-321">
         <createTable tableName="adm_secured_entity">
-            <column name="user_id" type="bigint">
+            <column name="id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="code" type="varchar(255)">
+            <column name="user_name" type="varchar(255)"/>
+            <column name="role_name" type="varchar(255)"/>
+            <column name="entity_id" type="bigint"/>
+            <column name="entity_code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="entity_class" type="varchar(255)">
@@ -6581,8 +6528,9 @@
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
+            <column name="permission" type="varchar(6)"/>
         </createTable>
-        <addPrimaryKey columnNames="user_id, code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
+        <addPrimaryKey columnNames="id" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-322">
@@ -6859,7 +6807,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="status_message" type="varchar(2000)" />
-            <column name="routed_to_user_group_id" type="bigint" />
+            <column name="routed_to_user_group" type="varchar(50)" />
             <column name="received_from" type="varchar(50)" />
             <column name="start_date" type="datetime" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -7036,7 +6984,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="status_message" type="varchar(2000)" />
-            <column name="routed_to_user_group_id" type="bigint" />
+            <column name="routed_to_user_group" type="varchar(50)" />
             <column name="received_from" type="varchar(50)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -8182,25 +8130,6 @@
         </createTable>
         <addPrimaryKey columnNames="offer_tmpl_id, discount_plan_id" constraintName="cat_offer_tmpl_discount_plan_pkey" tableName="cat_offer_tmpl_discount_plan" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-395">
-	    <createTable tableName="adm_role_secured_entity">
-			<column name="role_id" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="code" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="entity_class" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0" >
-                <constraints nullable="false" />
-            </column>
-		</createTable>
-		<addPrimaryKey columnNames="role_id, code, entity_class"
-			constraintName="adm_role_secured_entity_pkey"
-			tableName="adm_role_secured_entity" />
-	</changeSet>
 	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-396">
 	    <createTable tableName="adm_file_format">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -12318,10 +12247,6 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_charge_instance" constraintName="fk_4anpnb5ta9fic7bjqoi393850" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-536">
-        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="adm_role_permission" constraintName="fk_4au8lqa3bc46gks4dmpb4h4l6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_permission" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-537">
         <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="crm_provider" constraintName="fk_4ek32592buri3max5vqhj1u3t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
@@ -12514,10 +12439,6 @@
         <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="ar_customer_account" constraintName="fk_aaptbcu3lj7b87m97em457i3w" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-644">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="adm_user_role" constraintName="fk_adtro5wh9g4byvy0pxpwwboxq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-646">
         <addForeignKeyConstraint baseColumnNames="counter_instance_id" baseTableName="billing_counter_period" constraintName="fk_ah6awbukub9hunnmg30i5qgfd" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
@@ -12661,10 +12582,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-723">
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="billing_counter" constraintName="fk_f3e8vebhfnmyikf3xwui2eqn5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-724">
-        <addForeignKeyConstraint baseColumnNames="title_id" baseTableName="adm_user" constraintName="fk_f3ptnqm19vwtactrn9asu7kex" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-726">
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="rating_edr" constraintName="fk_f5tulmo519cm4il45bhborgq1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -12838,10 +12755,6 @@
         <addForeignKeyConstraint baseColumnNames="pr_language_id" baseTableName="billing_billing_run" constraintName="fk_kh24jie5tlw4y93g44d4aq4es" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_language" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-834">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="dwh_chart" constraintName="fk_kjno1ku2jpqxlh7s4tpekd40k" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-837">
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="cat_price_plan_matrix" constraintName="fk_kwd24d6mb0ac27a9smche8u8u" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
@@ -12960,10 +12873,6 @@
         <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cat_price_plan_matrix" constraintName="fk_qfuhf684i6lsatohaxe9m2f61" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-931">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_user_role" constraintName="fk_qm8p95secwfawo60ydmfexipj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-932">
         <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="crm_provider" constraintName="fk_qnko98glwxl0fa47s3a2c13ib" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
@@ -13015,10 +12924,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-955">
         <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="cat_calendar_days" constraintName="fk_rwouj86saa1b0ox91xjgs05ea" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-958">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_role_permission" constraintName="fk_s1wxui3m4sv9x5mbyi8gp77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-966">
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="ar_customer_account" constraintName="fk_sj9gf0r8v1hjihl7qosbtnfdp" deferrable="false" initiallyDeferred="false"
@@ -13179,17 +13084,9 @@
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_exec_role" constraintName="fk_sc_exc_role_sc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1051">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_exec_role" constraintName="fk_sc_exc_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1052">
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_sourc_role" constraintName="fk_sc_src_role_sc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1053">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_sourc_role" constraintName="fk_sc_src_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1057">
         <addForeignKeyConstraint baseColumnNames="offer_template_category_id" baseTableName="cat_offer_template_category" constraintName="fk_offer_cat_template_offer_cat_template" deferrable="false"
@@ -13353,10 +13250,6 @@
         <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_hierarchy_entity" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1131">
-        <addForeignKeyConstraint baseColumnNames="hierarchy_level_id" baseTableName="adm_user" constraintName="fk_hierarchy_level_adm_user_hierarchy_entity" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1135">
         <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_transition_decision_rule" constraintName="fk_transition_id_wf_transition" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
@@ -13392,10 +13285,6 @@
         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
          -->
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
-        <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1151">
         <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_ord_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -16170,7 +16059,6 @@
         <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
         <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
         <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
-        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema.adapted}adm_script_sourc_role(role_id);</sql>
         <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
         <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
         <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
@@ -16216,7 +16104,6 @@
        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
         <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX adm_user_title_index ON ${db.schema.adapted}adm_user(title_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code)</sql>
@@ -16340,6 +16227,8 @@
         <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
        	<sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
        	<sql>CREATE INDEX idx_ar_payment_history_external_payment_id ON ${db.schema.adapted}ar_payment_history (external_payment_id )</sql>
+        <sql>CREATE INDEX adm_secured_entity_username_index ON ${db.schema.adapted}adm_secured_entity(lower(user_name))</sql>
+        <sql>CREATE INDEX adm_secured_entity_rolename_index ON ${db.schema.adapted}adm_secured_entity(role_name)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-998" dbms="mysql">
@@ -17898,6 +17787,7 @@
     <changeSet id="#INTRD-7872_20220615" author="ZBariki" />
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
+    <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

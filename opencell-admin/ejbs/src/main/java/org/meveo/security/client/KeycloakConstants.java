@@ -16,35 +16,17 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api;
+package org.meveo.security.client;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+/**
+ * @author Edward P. Legaspi
+ * @since 10 Nov 2017
+ **/
+public class KeycloakConstants {
 
-import org.meveo.api.dto.PermissionDto;
-import org.meveo.api.dto.PermissionsDto;
-import org.meveo.model.security.Permission;
-import org.meveo.service.admin.impl.PermissionService;
-
-@Stateless
-public class PermissionApi extends BaseApi {
-
-    @Inject
-    private PermissionService permissionService;
-
-    public PermissionsDto list() {
-        PermissionsDto permissionsDto = new PermissionsDto();
-
-        List<Permission> permissions = permissionService.list();
-        if (permissions != null && !permissions.isEmpty()) {
-            for (Permission p : permissions) {
-                PermissionDto pd = new PermissionDto(p);
-                permissionsDto.getPermission().add(pd);
-            }
-        }
-
-        return permissionsDto;
-    }
+    public static final String ROLE_ADMINISTRATEUR = "administrateur";
+    public static final String ROLE_USER_MANAGEMENT = "userManagement";
+    public static final ImmutableList<String> ROLE_KEYCLOAK_DEFAULT_EXCLUDED = ImmutableList.of("uma_authorization", "offline_access");
 }

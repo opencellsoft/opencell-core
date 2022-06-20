@@ -29,6 +29,6 @@ public interface ProviderResource {
                     @ApiResponse(responseCode = "400",
                             description = "Provider update failed")
             })
-    Response updateDunningTemplate(@Parameter(required = true, description = "provider Code") @PathParam("providerCode") String providerCode,
+    Response updateProvider(@Parameter(required = true, description = "provider Code") @PathParam("providerCode") String providerCode,
                                    @Parameter(required = true, description = "provider") Provider provider);
 }

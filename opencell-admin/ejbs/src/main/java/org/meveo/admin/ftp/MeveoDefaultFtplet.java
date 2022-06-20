@@ -107,7 +107,7 @@ public class MeveoDefaultFtplet extends DefaultFtplet {
 			MeveoFtpFile file = new MeveoFtpFile(ftp.getAbsolutePath(), ftp.getSize(), ftp.getLastModified());
 			User user = session.getUser();
 			file.setAction(action);
-			org.meveo.model.admin.User meveoUser = userService.findByUsername(user.getName());
+			org.meveo.model.admin.User meveoUser = userService.findByUsername(user.getName(), false);
 			log.debug("trace ftp file {}", file);
 			return file;
 		}

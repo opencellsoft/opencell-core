@@ -21,7 +21,7 @@
 	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{wfTransitionListBean}"   dataModel="#{wfTransitions}">
 	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
 				<hftl:column label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
-				 <hftl:actionsColumn permission="#{currentUser.hasRole('billingManagement')}" />   	
+				 <hftl:actionsColumn />   	
 		    </hftl:dataList >
 		
     </ui:define>

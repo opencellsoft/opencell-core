@@ -31,6 +31,7 @@
           <module name="javax.validation.api"/>
           <module name="org.jboss.ejb3"/>
           <module name="org.keycloak.keycloak-adapter-core" />
+          <module name="org.keycloak.keycloak-authz-client" services="import"/>   
           <module name="org.joda.time" />
           <module name="org.jboss.as.server" />
           

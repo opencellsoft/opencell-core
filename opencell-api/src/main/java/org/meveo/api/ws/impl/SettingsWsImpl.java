@@ -40,9 +40,7 @@ import org.meveo.api.InvoiceTypeApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MultiLanguageFieldApi;
 import org.meveo.api.OccTemplateApi;
-import org.meveo.api.PermissionApi;
 import org.meveo.api.ProviderApi;
-import org.meveo.api.RoleApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.TerminationReasonApi;
 import org.meveo.api.UserApi;
@@ -64,8 +62,6 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.RoleDto;
-import org.meveo.api.dto.RolesDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
@@ -76,8 +72,6 @@ import org.meveo.api.dto.billing.InvoiceSequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
-import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
-import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
@@ -96,7 +90,6 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
@@ -109,17 +102,14 @@ import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
-import org.meveo.api.dto.response.UserHierarchyLevelResponseDto;
 import org.meveo.api.dto.response.account.ProviderContactResponseDto;
 import org.meveo.api.dto.response.account.ProviderContactsResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
-import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
 import org.meveo.commons.utils.StringUtils;
@@ -178,11 +168,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     @Inject
     private CalendarApi calendarApi;
 
-    @Inject
-    private PermissionApi permissionApi;
-
-    @Inject
-    private RoleApi roleApi;
 
     @Inject
     private MultiLanguageFieldApi multilanguageFieldApi;
@@ -204,9 +189,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private MeveoInstanceApi meveoInstanceApi;
-
-    @Inject
-    private UserHierarchyLevelApi userHierarchyLevelApi;
 
     @Inject
     private ConfigurationApi configurationApi;
@@ -707,7 +689,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(getHttpServletRequest(), username));
+            result.setUser(userApi.find(username));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -717,41 +699,17 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus createExternalUser(UserDto postData) {
-        ActionStatus result = new ActionStatus();
-
-        try {
-            userApi.createExternalUser(getHttpServletRequest(), postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+        return createUser(postData);
     }
 
     @Override
     public ActionStatus updateExternalUser(UserDto postData) {
-        ActionStatus result = new ActionStatus();
-
-        try {
-            userApi.updateExternalUser(getHttpServletRequest(), postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+        return updateUser(postData);
     }
 
     @Override
     public ActionStatus deleteExternalUser(String username) {
-        ActionStatus result = new ActionStatus();
-
-        try {
-            userApi.deleteExternalUser(getHttpServletRequest(), username);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+        return removeUser(username);
     }
 
     @Override
@@ -760,7 +718,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         UsersDto result = new UsersDto();
 
         try {
-            result = userApi.list(getHttpServletRequest(), pagingAndFiltering);
+            result = userApi.list(pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1218,106 +1176,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
 
-    }
-
-    @Override
-    public PermissionResponseDto listPermissions() {
-        PermissionResponseDto result = new PermissionResponseDto();
-        try {
-            result.setPermissionsDto(permissionApi.list());
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus createRole(RoleDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            roleApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus updateRole(RoleDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            roleApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus removeRole(String name) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            roleApi.remove(name);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public GetRoleResponse findRole(String name, boolean includeSecuredEntities) {
-        GetRoleResponse result = new GetRoleResponse();
-        try {
-            result.setRoleDto(roleApi.find(name, includeSecuredEntities));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus createOrUpdateRole(RoleDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            roleApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public RolesDto listRoles(PagingAndFiltering pagingAndFiltering) {
-
-        RolesDto result = new RolesDto();
-
-        try {
-            result = roleApi.list(pagingAndFiltering);
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public RolesDto listExternalRoles() {
-        RolesDto result = new RolesDto();
-
-        try {
-            result.setRoles(roleApi.listExternalRoles(getHttpServletRequest()));
-
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
     }
 
     @Override
@@ -1899,84 +1757,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Override
-    public ActionStatus createUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            userHierarchyLevelApi.create(userHierarchyLevelDto);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus updateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            userHierarchyLevelApi.update(userHierarchyLevelDto);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-        return result;
-    }
-
-    @Override
-    public ActionStatus removeUserHierarchyLevel(String hierarchyLevelCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            userHierarchyLevelApi.remove(hierarchyLevelCode);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public UserHierarchyLevelResponseDto findUserHierarchyLevel(String hierarchyLevelCode) {
-        UserHierarchyLevelResponseDto result = new UserHierarchyLevelResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
-        try {
-            result.setUserHierarchyLevel(userHierarchyLevelApi.find(hierarchyLevelCode));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus createOrUpdateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            userHierarchyLevelApi.createOrUpdate(userHierarchyLevelDto);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-        return result;
-    }
-
-    @Override
-    public UserHierarchyLevelsDto listUserHierarchyLevels(PagingAndFiltering pagingAndFiltering) {
-
-        UserHierarchyLevelsDto result = new UserHierarchyLevelsDto();
-
-        try {
-            result = userHierarchyLevelApi.list(pagingAndFiltering);
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-
-    }
 
     @Override
     public ActionStatus setConfigurationProperty(String property, String value) {

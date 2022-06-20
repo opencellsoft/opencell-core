@@ -73,8 +73,6 @@ public class ImportExportResourceImpl implements ImportExportResource {
     @Override
     public ImportExportResponseDto importData(MultipartFormDataInput input) {
 
-            // Check user has utilities/remoteImport permission
-            checkPermissionsForImportingData();
             cleanupOldImportResults();
             InputPart inputPart = extractFileInputPart(input);
             boolean checkForStatus = extractCheckStatusFlag(input);
@@ -126,13 +124,6 @@ public class ImportExportResourceImpl implements ImportExportResource {
         }
 
         return dto;
-    }
-
-
-    private void checkPermissionsForImportingData() {
-        if (!currentUser.hasRole("remoteImport")) {
-            throw new RemoteAuthenticationException("User does not have utilities/remoteImport permission");
-        }
     }
 
     private InputPart extractFileInputPart(MultipartFormDataInput input) {

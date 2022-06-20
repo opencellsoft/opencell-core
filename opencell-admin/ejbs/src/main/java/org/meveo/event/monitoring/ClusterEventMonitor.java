@@ -30,7 +30,6 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
@@ -132,9 +131,6 @@ public class ClusterEventMonitor implements MessageListener {
             } else {
                 jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
             }
-
-        } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
-            currentUserProvider.invalidateRoleToPermissionMapping();
 
         } else if (eventDto.getClazz().equals(CustomFieldTemplate.class.getSimpleName())) {
             CustomFieldTemplate cft = customFieldTemplateService.findById(eventDto.getId());

@@ -35,13 +35,12 @@ import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.admin.wf.types.OrderWF;
-import org.meveo.model.hierarchy.HierarchyLevel;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
+import org.meveo.security.UserGroup;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -182,8 +181,8 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         WFTransition currentTransition = wfTransitionService.findById(entity.getId(), Arrays.asList("wfActions"), true);
         List<WFAction> actionList = currentTransition.getWfActions();
         if (this.userGroupSelectedNode != null) {
-            UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.userGroupSelectedNode.getData();
-            String actionEL = String.format(EL, userHierarchyLevel.getCode());
+            UserGroup userGroup = (UserGroup) this.userGroupSelectedNode.getData();
+            String actionEL = String.format(EL, userGroup.getName());
             if (CollectionUtils.isNotEmpty(actionList)) {
                 for (WFAction wfAction : actionList) {
                     WFAction action = wfActionService.findById(wfAction.getId());
@@ -473,14 +472,19 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         }
     }
 
+    /**
+     * Get user group selection data model
+     * 
+     * @return A tree representation of user groups
+     */
     public TreeNode getUserGroupRootNode() {
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
-            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots();
-            if (CollectionUtils.isNotEmpty(roots)) {
+            List<UserGroup> roots = new ArrayList<UserGroup>(userHierarchyLevelService.list(null));
+            if (!roots.isEmpty()) {
                 Collections.sort(roots);
-                for (UserHierarchyLevel userGroupTree : roots) {
-                    createTree(userGroupTree, userGroupRootNode, entity.getWfActions());
+                for (UserGroup userGroup : roots) {
+                    createTree(userGroup, userGroupRootNode, entity.getWfActions());
                 }
             }
         }
@@ -498,29 +502,35 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     public void setUserGroupSelectedNode(TreeNode userGroupSelectedNode) {
         this.userGroupSelectedNode = userGroupSelectedNode;
     }
-
-    // Recursive function to create tree with node checked if selected
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, List<WFAction> wfActions) {
-        TreeNode newNode = new DefaultTreeNode(hierarchyLevel, rootNode);
-        List<UserHierarchyLevel> subTree = new ArrayList<UserHierarchyLevel>(hierarchyLevel.getChildLevels());
+   
+    /**
+     * Recursive function to create tree with node checked if selected
+     * 
+     * @param userGroup User group to add
+     * @param rootNode A parent node to add to
+     * @param selectedUserGroupName A node that should be marked as selected
+     * @return A tree representation of user groups
+     */
+    private TreeNode createTree(UserGroup userGroup, TreeNode rootNode, List<WFAction> wfActions) {
+        TreeNode newNode = new DefaultTreeNode(userGroup, rootNode);
         newNode.setExpanded(true);
         if (wfActions != null) {
             for (WFAction wfAction1 : wfActions) {
-                if (wfAction1 != null && hierarchyLevel.getCode().equals(wfAction1.getUserGroupCode())) {
+                if (wfAction1 != null && userGroup.getName().equals(wfAction1.getUserGroupCode())) {
                     newNode.setSelected(true);
                 }
             }
         }
-        if (CollectionUtils.isNotEmpty(subTree)) {
-            Collections.sort(subTree);
-            for (HierarchyLevel userGroupTree : subTree) {
-                createTree(userGroupTree, newNode, wfActions);
+        if (userGroup.getChildGroups() != null && !userGroup.getChildGroups().isEmpty()) {
+            List<UserGroup> childGroups = new ArrayList<UserGroup>(userGroup.getChildGroups());
+            Collections.sort(childGroups);
+            for (UserGroup childGroup : childGroups) {
+                createTree(childGroup, newNode, wfActions);
             }
         }
         return newNode;
     }
-
+    
     public void changedRuleName(int indexRule) {
         List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(selectedRules.get(indexRule).getName());
         Collections.sort(list);

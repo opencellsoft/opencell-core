@@ -29,6 +29,15 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 	<view-handler>org.meveo.admin.web.handler.ScreenSizeChangeEventHandler</view-handler>
 </application>
 
+
+<component>
+    <component-type>org.primefaces.component.UIMenuItem</component-type>
+    <component-class>org.meveo.util.view.composite.UIMenuItem</component-class>
+</component>
+<component>
+    <component-type>org.primefaces.component.UISubmenu</component-type>
+    <component-class>org.meveo.util.view.composite.UISubmenu</component-class>
+</component>
 <component>
 	<component-type>org.primefaces.component.OpencellMenu</component-type>
 	<component-class>org.meveo.util.view.composite.OpencellMenu</component-class>
@@ -234,12 +243,17 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<from-outcome>roles</from-outcome>
 		<to-view-id>/pages/admin/userRoles/userRoles.xhtml</to-view-id>
 		<redirect />
-	</navigation-case>
+	</navigation-case>    
 	<navigation-case>
 		<from-outcome>roleDetail</from-outcome>
 		<to-view-id>/pages/admin/userRoles/userRoleDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+    <navigation-case>
+        <from-outcome>apiSecurity</from-outcome>
+        <to-view-id>/pages/admin/userRoles/apiSecurity.xhtml</to-view-id>
+        <redirect />
+    </navigation-case>
 	<navigation-case>
 		<from-outcome>medinaInputs</from-outcome>
 		<to-view-id>/pages/admin/medina/medinaInputs/medinaInputs.xhtml
@@ -2322,16 +2336,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<to-view-id>/pages/catalog/productChargeTemplates/productChargeTemplateDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>userGroupHierarchy</from-outcome>
-		<to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
-		<redirect />
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>userHierarchyLevelDetail</from-outcome>
-		<to-view-id>/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml</to-view-id>
-		<redirect />
 	</navigation-case>
 </navigation-rule>
 

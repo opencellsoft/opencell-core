@@ -25,7 +25,7 @@
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <hftl:column label="#{messages['filter.shared']}" isMessage="true" field="shared" />
             <hftl:column label="#{messages['enableEntity.active']}" isMessage="true" field="active" />
-            <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
+            <hftl:actionsColumn renderEnableLink="true" />
         </hftl:dataList>
 
     </ui:define>

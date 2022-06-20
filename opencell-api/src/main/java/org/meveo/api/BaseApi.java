@@ -95,12 +95,10 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
-import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessEntityService;
@@ -173,9 +171,6 @@ public abstract class BaseApi {
 
     @Inject
     protected BusinessEntityService businessEntityService;
-
-    @Inject
-    private RoleService roleService;
 
     @Inject
     private CustomTableService customTableService;
@@ -1680,20 +1675,6 @@ public abstract class BaseApi {
                     return businessEntity;
                 }
 
-            } else if (Role.class.isAssignableFrom(targetClass)) {
-                // special case
-                if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
-                    return stringVal;
-                }
-
-                if (stringVal != null) {
-                    Role role = roleService.findByName(stringVal);
-                    if (role == null) {
-                        // Did not find a way how to pass nonexistant entity to search sql
-                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
-                    }
-                    return role;
-                }
             } else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
                 if (mapVal != null) {
                     Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();

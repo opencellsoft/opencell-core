@@ -24,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>6.25.0</version.ingenico-connect-sdk>
         <version.paypal-sdk>LATEST</version.paypal-sdk>
-        <version.keycloak>8.0.0</version.keycloak>
+        <version.keycloak>17.0.0</version.keycloak>
         <version.pdfbox>2.0.17</version.pdfbox>
         <version.barcode>2.1</version.barcode>
         <version.stripe-sdk>18.4.0</version.stripe-sdk>
@@ -474,6 +474,13 @@
                 <scope>provided</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-authz-client</artifactId>
+                <version>${version.keycloak}</version>
+                <scope>provided</scope>
+            </dependency>
+            
             <dependency>
                 <groupId>org.iban4j</groupId>
                 <artifactId>iban4j</artifactId>

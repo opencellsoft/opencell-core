@@ -16,34 +16,54 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.rest.impl;
+package org.meveo.security.client;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+/**
+ * @author Edward P. Legaspi
+ * @since 10 Nov 2017
+ **/
+public class KeycloakAdminClientConfig {
 
-import org.meveo.api.PermissionApi;
-import org.meveo.api.dto.response.PermissionResponseDto;
-import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.PermissionRs;
+    private String serverUrl;
+    private String realm;
+    private String clientId;
+    private String clientSecret;
 
-@RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
-public class PermissionRsImpl extends BaseRs implements PermissionRs {
+    public String getServerUrl() {
+        return serverUrl;
+    }
 
-    @Inject
-    private PermissionApi permissionApi;
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 
     @Override
-    public PermissionResponseDto list() {
-        PermissionResponseDto result = new PermissionResponseDto();
-        try {
-            result.setPermissionsDto(permissionApi.list());
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
+    public String toString() {
+        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret=" + clientSecret + "]";
     }
 
 }

@@ -18,8 +18,23 @@
 
 package org.meveo.export;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,7 +127,6 @@ import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -339,14 +353,6 @@ public class EntityExportImportService implements Serializable {
                     exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
                 }
                 exportTemplate.getClassesToExportAsShort().add(Provider.class);
-            }
-            if (!Permission.class.isAssignableFrom(clazz)
-                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Permission.class))
-                    && (exportTemplate.getClassesToExportAsFull() == null || !exportTemplate.getClassesToExportAsFull().contains(Permission.class))) {
-                if (exportTemplate.getClassesToExportAsShort() == null) {
-                    exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
-                }
-                exportTemplate.getClassesToExportAsShort().add(Permission.class);
             }
         }
     }

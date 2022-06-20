@@ -40,7 +40,6 @@ import org.meveo.export.IEntityHibernateProxyConverter;
 import org.meveo.export.ImportFKNotFoundException;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.BusinessService;
@@ -90,7 +89,7 @@ public class BaseFilterTest {
 
         // base services
         result = result.addClasses(PersistenceService.class, IPersistenceService.class, BaseService.class, BusinessService.class, ProviderService.class, UserService.class,
-            RoleService.class, TitleService.class, PaginationConfiguration.class, QueryBuilder.class, ParamBean.class, FilteredQueryBuilder.class);
+            TitleService.class, PaginationConfiguration.class, QueryBuilder.class, ParamBean.class, FilteredQueryBuilder.class);
 
         result = result.addClasses(RemoteAuthenticationException.class, ExportImportConfig.class, ExportTemplate.class);
 

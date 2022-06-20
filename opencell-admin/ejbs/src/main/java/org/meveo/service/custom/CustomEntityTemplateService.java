@@ -43,7 +43,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.admin.impl.PermissionService;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.index.ElasticClient;
@@ -61,9 +62,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-    private PermissionService permissionService;
-
-    @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
 
     @Inject
@@ -74,6 +72,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
+    
+    @Inject
+    private RoleService roleService;
 
     private static boolean useCETCache = true;
 
@@ -175,8 +176,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         if (createPermissions) {
             try {
-                permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-                permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+                roleService.create( new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
+                roleService.create( new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -196,8 +197,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         customFieldsCache.addUpdateCustomEntityTemplate(cet, true);
 
         try {
-            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            roleService.create(new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
+            roleService.create(new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
 
         } catch (Exception e) {
             throw new RuntimeException(e);

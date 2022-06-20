@@ -70,7 +70,7 @@ public class ProviderResourceImpl implements ProviderResource {
     private DunningPauseReasonsService dunningPauseReasonsService;
 
     @Override
-    public Response updateDunningTemplate(String providerCode, Provider provider) {
+    public Response updateProvider(String providerCode, Provider provider) {
         org.meveo.model.crm.Provider providerByCode = providerService.findByCode(providerCode);
         if (providerByCode == null) {
             throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
