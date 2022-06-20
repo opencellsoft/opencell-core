@@ -121,10 +121,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         super.create(entity);
         logAction(entity, "CREATE");
     }
-
-
+    
 	public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
-
             List<PricePlanMatrixVersion> ppmVersions = this.getEntityManager()
                     .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", entityClass)
                     .setParameter("currentVersion", currentVersion)
