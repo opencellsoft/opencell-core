@@ -2774,9 +2774,8 @@ public class SubscriptionApi extends BaseApi {
 
     private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
         for(ServiceInstance serviceInstance : lastSubscription.getServiceInstances()){
-            Date changeOfferDateAtStartDay = DateUtils.setDateToStartOfDay(changeOfferDate);
             if (serviceInstance.getTerminationDate() != null
-                    && serviceInstance.getTerminationDate().before(changeOfferDateAtStartDay)) {
+                    && !serviceInstance.getTerminationDate().before(changeOfferDate)) {
                 serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
             }
         }
