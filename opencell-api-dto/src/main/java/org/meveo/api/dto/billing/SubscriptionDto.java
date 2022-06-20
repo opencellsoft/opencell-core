@@ -55,55 +55,70 @@ public class SubscriptionDto extends BusinessEntityDto {
     private static final long serialVersionUID = -6021918810749866648L;
 
     @XmlElement(required = true)
+    @Schema(description = "the version number")
     private Integer versionNumber;
 
+    @Schema(description = "the next version")
     private Long nextVersion;
 
+    @Schema(description = "the previous version")
     private Long previousVersion;
 
     /** The user account. */
     @XmlElement(required = true)
+    @Schema(description = "The user account.")
     private String userAccount;
 
     /** The offer template. */
     @XmlElement(required = true)
+    @Schema(description = "The offer template.")
     private String offerTemplate;
 
     /** The subscription date. */
     @XmlElement(required = true)
+    @Schema(description = "The subscription date.")
     private Date subscriptionDate;
 
     /** The termination date. */
+    @Schema(description = "The termination date.")
     private Date terminationDate;
 
     /** The end agreement date. */
+    @Schema(description = "The end agreement date.")
     private Date endAgreementDate;
 
     /** The status. */
+    @Schema(description = "The status.")
     private SubscriptionStatusEnum status;
 
     /** The status date. */
+    @Schema(description = "The status date.")
     private Date statusDate;
 
     /** The validity date. */
+    @Schema(description = "The validity date.")
     private Date validityDate;
 
     /** The custom fields. */
     @XmlElement(required = false)
+    @Schema(description = "The custom fields.")
     private CustomFieldsDto customFields;
 
     /** The accesses. */
     @XmlElement(required = false)
+    @Schema(description = "The accesses.")
     private AccessesDto accesses = new AccessesDto();
 
     /** The services. */
     @XmlElement(required = false)
+    @Schema(description = "The services.")
     private ServiceInstancesDto services = new ServiceInstancesDto();
 
     /**
      * Use in creation and update.
      */
     @XmlElement(required = false)
+    @Schema(description = "the products - Use in creation and update.")
     private ProductsDto products = new ProductsDto();
 
     /**
@@ -111,59 +126,71 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     @XmlElementWrapper(name = "productInstances")
     @XmlElement(name = "productInstances")
+    @Schema(description = "the product instances - Use in find.")
     private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
 
     /** The termination reason. */
+    @Schema(description = "The termination reason.")
     private String terminationReason;
 
     /** The order number. */
+    @Schema(description = "The order number.")
     private String orderNumber;
 
     /**
      * Expression to determine minimum amount value
      */
+    @Schema(description = "Expression to determine minimum amount value")
     private String minimumAmountEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
+    @Schema(description = "Expression to determine rated transaction description to reach minimum amount value")
     private String minimumLabelEl;
 
     /**
      * Corresponding to minimum invoice subcategory
      */
+    @Schema(description = "Corresponding to minimum invoice subcategory")
     @Deprecated
     private String minimumInvoiceSubCategory;
 
     /**
      * Corresponding to minimum one shot charge template code.
      */
+    @Schema(description = "Corresponding to minimum one shot charge template code.")
     private String minimumChargeTemplate;
 
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
      */
+    @Schema(description = "A date till which subscription is subscribed. After this date it will either be extended or terminated")
     private Date subscribedTillDate;
 
     /**
      * Was subscription renewed.
      */
+    @Schema(description = "Was subscription renewed.")
     private boolean renewed;
 
     /**
      * Was/when "endOfTerm" notification fired for soon to expire subscription.
      */
+    @Schema(description = "Was/when \"endOfTerm\" notification fired for soon to expire subscription.")
     private Date renewalNotifiedDate;
 
     /**
      * The renewal rule.
      */
+    @Schema(description = "The renewal rule.")
     private SubscriptionRenewalDto renewalRule;
 
     /**
      * The billing cycle.
      */
+    @Schema(description = "The billing cycle.")
     @XmlElement(required = true)
     private String billingCycle;
 
@@ -177,31 +204,38 @@ public class SubscriptionDto extends BusinessEntityDto {
     /**
      * The auto end of engagement.
      */
+    @Schema(description = "The auto end of engagement.")
     private Boolean autoEndOfEngagement;
 
     /**
      * String value matched in the usageRatingJob to group the EDRs for rating.
      */
+    @Schema(description = "String value matched in the usageRatingJob to group the EDRs for rating.")
     private String ratingGroup;
 
     /** The electronic billing. */
+    @Schema(description = "The electronic billing.")
     private Boolean electronicBilling;
 
     /** The email. */
+    @Schema(description = "The email.")
     private String email;
     /**
      * Mailing type
      */
+    @Schema(description = "Mailing type")
     private String mailingType;
 
     /**
      * Email Template code
      */
+    @Schema(description = "Email Template code")
     private String emailTemplate;
 
     /**
      * A list of emails separated by comma
      */
+    @Schema(description = "A list of emails separated by comma")
     private String ccedEmails;
 
 
@@ -209,11 +243,13 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
     @XmlElementWrapper(name = "discountPlansForInstantiation")
     @XmlElement(name = "discountPlanForInstantiation")
+    @Schema(description = "List of discount plans. Use in instantiating")
     private List<DiscountPlanDto> discountPlansForInstantiation;
 
     /** List of discount plans to be disassociated from subscription */
     @XmlElementWrapper(name = "discountPlansForTermination")
     @XmlElement(name = "discountPlanForTermination")
+    @Schema(description = "List of discount plans to be disassociated from subscription")
     private List<String> discountPlansForTermination;
 
     /**
@@ -221,14 +257,17 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     @XmlElementWrapper(name = "discountPlanInstances")
     @XmlElement(name = "discountPlanInstance")
+    @Schema(description = "Use to return the active discount plans for this entity.")
     private List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
      * Use to return the paymentMethod.
      */
     @XmlElement(name = "paymentMethod")
+    @Schema(description = "Use to return the paymentMethod.")
     private PaymentMethodDto paymentMethod;
-    
+
+    @Schema(description = "customer service")
     private String customerService;
 
     /**

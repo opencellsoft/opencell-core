@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
@@ -56,112 +57,140 @@ public class CustomerAccountDto extends AccountDto {
 
     /** The customer. */
     @XmlElement(required = true)
+    @Schema(description = "The customer.")
     private String customer;
 
     /** The currency. */
     @XmlElement(required = true)
+    @Schema(description = "The currency.")
     private String currency;
 
     /** The language. */
     @XmlElement(required = true)
+    @Schema(description = "The language.")
     private String language;
 
     /** The status. */
+    @Schema(description = "The status.")
     private CustomerAccountStatusEnum status;
 
     /** The credit category. */
+    @Schema(description = "The credit category.")
     private String creditCategory;
 
     /** The date status. */
+    @Schema(description = "The date status.")
     private Date dateStatus;
 
     /** The date dunning level. */
+    @Schema(description = "The date dunning level.")
     private Date dateDunningLevel;
 
     /** The dunning level. */
+    @Schema(description = "The dunning level.")
     @Deprecated
     private DunningLevelEnum dunningLevel;
     /**
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
      */
+    @Schema(description = "Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead")
     @Deprecated
     private String mandateIdentification;
     /**
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
      */
+    @Schema(description = "Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead")
     @Deprecated
     private Date mandateDate;
 
     /** Due balance up to today including litigation (status=O, P, I; useDueDate=true) */
+    @Schema(description = "Due balance up to today including litigation (status=O, P, I; useDueDate=true)")
     private BigDecimal balance = BigDecimal.ZERO;
 
     /** Due balance including litigation, irrelevant of due date (status=O, P, I; ) */
+    @Schema(description = "Due balance including litigation, irrelevant of due date (status=O, P, I; )")
     private BigDecimal totalBalance = BigDecimal.ZERO;
 
     /** Due balance excluding litigation, irrelevant of due date (status=O, P; ) */
+    @Schema(description = "Due balance excluding litigation, irrelevant of due date (status=O, P; )")
     private BigDecimal totalBalanceExigible = BigDecimal.ZERO;
 
     /** Due balance up to today without litigation (status=O, P; useDueDate=true) */
+    @Schema(description = "Due balance up to today without litigation (status=O, P; useDueDate=true)")
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
 
     /** Account balance by transaction date up to today (status=O, P, I; useDueDate=false) */
+    @Schema(description = "Account balance by transaction date up to today (status=O, P, I; useDueDate=false)")
     private BigDecimal accountBalance = BigDecimal.ZERO;
     /**
      * Credit balance (status=O, P, I; useDueDate=false; category=CREDIT)
      */
+    @Schema(description = "Credit balance (status=O, P, I; useDueDate=false; category=CREDIT)")
     private BigDecimal creditBalance = BigDecimal.ZERO;
 
     /** The termination date. */
+    @Schema(description = "The termination date.")
     // currently not use
     private Date terminationDate;
 
     /**
      * Expression to calculate Invoice due date delay value
      */
+    @Schema(description = "Expression to calculate Invoice due date delay value")
     private String dueDateDelayEL;
 
     /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "methodOfPayment")
+    @Schema(description = "The payment methods.")
     private List<PaymentMethodDto> paymentMethods;
 
     /** The excluded from payment. */
+    @Schema(description = "The excluded from payment.")
     private Boolean excludedFromPayment;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead.
      */
+    @Schema(description = "Field was deprecated in 4.6 version. Use 'paymentMethods' field instead.")
     @Deprecated
     private PaymentMethodEnum paymentMethod;
 
     /**
      * Use for GET / LIST only.
      */
+    @Schema(description = "Use for GET / LIST only.")
     private BillingAccountsDto billingAccounts = new BillingAccountsDto();
 
+    @Schema(description = "The account operations.")
     private List<AccountOperationDto> accountOperations;
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount.
      */
+    @Schema(description = "Invoicing threshold - do not invoice for a lesser amount.")
     private BigDecimal invoicingThreshold;
 
     /**
      * The option on how to check the threshold.
      */
+    @Schema(description = "The option on how to check the threshold.")
     private ThresholdOptionsEnum checkThreshold;
 
     /**
      * 
      * check the threshold per entity/invoice.
      */
+    @Schema(description = "check the threshold per entity/invoice.")
     @XmlElement
     private Boolean thresholdPerEntity;
 
     /** information GDPR **/
+    @Schema(description = "information GDPR")
     private List<GDPRInfoDto> infoGdpr;
 
     /** General client account code **/
+    @Schema(description = "General client account code")
     private String generalClientAccountCode;
 
     public Boolean isThresholdPerEntity() {

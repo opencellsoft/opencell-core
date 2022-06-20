@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
@@ -47,50 +48,64 @@ public class UserAccountDto extends AccountDto {
     private static final long serialVersionUID = -13552444627686818L;
     
     /** Parent user account. */
-    
+    @Schema(description = "Parent user account.")
 	private String parentUserAccountCode;
    
 	/** Sub user accounts. */
+    @Schema(description = "Sub user accounts.")
     List<String> userAccountCodes = new ArrayList<>();
     
     /** The billing account. */
     @XmlElement(required = true)
+    @Schema(description = "The billing account.")
     private String billingAccount;
     
     /** The billing account description. */
+    @Schema(description = "The billing account description.")
     private String billingAccountDescription;
     
     /** The customer account. */
+    @Schema(description = "The customer account.")
     private String customerAccount;
     
     /** The customer account description. */
+    @Schema(description = "The customer account description.")
     private String customerAccountDescription;
     
     /** The customer. */
+    @Schema(description = "The customer.")
     private String customer;
     
     /** The customer description. */
+    @Schema(description = "The customer description.")
     private String customerDescription;
 
     /** The subscription date. */
+    @Schema(description = "The subscription date.")
     private Date subscriptionDate;
     
     /** The termination date. */
+    @Schema(description = "The termination date.")
     private Date terminationDate;
     
     /** The status. */
+    @Schema(description = "The status.")
     private AccountStatusEnum status;
     
     /** The status date. */
+    @Schema(description = "The status date.")
     private Date statusDate;
     
     /** The termination reason. */
+    @Schema(description = "The termination reason.")
     private String terminationReason;
     
     /** Indicate if this is a consumer **/
+    @Schema(description = "Indicate if this is a consumer")
     protected Boolean isConsumer=Boolean.TRUE;
     
     /** List of GDPR information**/
+    @Schema(description = "List of GDPR information")
     private List<GDPRInfoDto> infoGdpr;
 
     /**
