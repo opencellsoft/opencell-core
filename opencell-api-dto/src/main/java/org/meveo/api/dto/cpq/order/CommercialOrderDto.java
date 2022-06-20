@@ -40,8 +40,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String quoteCode;
 	@Schema(description = "code of existing contract")
 	private String contractCode;
-	@NotNull
-	@Schema(description = "code of existing order type, must not be empty")
+	
+	@Schema(description = "code of existing order type, can be empty")
 	private String orderTypeCode;
 	@Schema(description = "code of existing invoicing plan")
 	private String invoicingPlanCode;

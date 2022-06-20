@@ -90,9 +90,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput, BigDecimal oldAmountSD) {
         FinanceSettings financeSettings = financeSettingsService.findLastOne();
-        if (securityDepositInput.getCurrency() == null) {
-            throw new EntityDoesNotExistsException("currency does not exist.");
-        }
+
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
         }

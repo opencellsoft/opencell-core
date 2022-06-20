@@ -48,7 +48,6 @@ import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -62,6 +61,8 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceCharge;
@@ -77,6 +78,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
@@ -151,6 +153,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Inject
     private CounterInstanceService counterInstanceService;
 
+    @Inject
+    private DiscountPlanService discountPlanService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -451,8 +455,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
      */
-    public void serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
-        serviceActivation(serviceInstance, true, true);
+    public RatingResult serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
+        return serviceActivation(serviceInstance, true, true);
     }
 
     /**
@@ -469,9 +473,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges)
+    public RatingResult serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
+        List<DiscountPlanItem> eligibleFixedDiscountItems = new ArrayList<DiscountPlanItem>();
 
         log.debug("Will activate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
@@ -507,6 +512,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 
+    	RatingResult ratingResult = new RatingResult();
         // apply subscription charges
         if (!serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (SubscriptionChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
@@ -515,8 +521,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
                 if (applySubscriptionCharges) {
 
-                    RatingResult ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, serviceInstance.getSubscriptionDate(),
+                    ratingResult = oneShotRatingService.rateOneShotCharge(oneShotChargeInstance, oneShotChargeInstance.getQuantity(), null, serviceInstance.getSubscriptionDate(),
                         serviceInstance.getOrderNumber(), ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
+                    if(ratingResult != null) {
+                    	eligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
+                    }
 
                     // Uncomment if want to rate with failSilently=true and there is a job that that will rate failed to rate one shot charges afterwards
 //                    // If failed to rate, charge instance status is left as active
@@ -544,9 +553,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             try {
                 if (applyRecurringCharges) {
-                    recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
-                        serviceInstance.getRateUntilDate() == null, false, null);
+                	RatingResult ratingResultRec = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
+                            serviceInstance.getRateUntilDate() == null, false, null);
+                    if(ratingResultRec != null) {
+                    	ratingResult.add(ratingResultRec);
+                    	eligibleFixedDiscountItems.addAll(ratingResultRec.getEligibleFixedDiscountItems());
+                    }
                 }
+
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
                 throw e; // e.getBusinessException();
@@ -582,6 +596,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate, serviceInstance);
         }
         }
+
+        if(!eligibleFixedDiscountItems.isEmpty()) {
+        	//TODO : v12 & dev change new Date() with delivered != null
+        	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
+            discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, null, DiscountPlanTypeEnum.PRODUCT);
+        }
+        
+        return ratingResult;
     }
 
     /**
@@ -638,7 +661,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             // chargedToDate is null means that charge was never charged
             if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
-                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
+                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination,
+                            terminationReason.isInvoiceAgreementImmediately(), terminationDate);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

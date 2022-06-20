@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -394,7 +395,25 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "pdf_job_execution_result_id")
     private Long pdfJobExecutionResultId;
 
-    public BillingRun getNextBillingRun() {
+    /**
+     * i18n Description
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;
+	
+	@Type(type = "numeric_boolean")
+    @Column(name = "is_quarantine")
+    private Boolean isQuarantine;
+	
+    /**
+     * The origin BillingRun from where draft/rejected/suspect invoice is from.
+     */
+    @OneToOne
+    @JoinColumn(name = "origin_billing_run_id")
+    private BillingRun originBillingRun;
+    
+	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
 
@@ -928,4 +947,30 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setPdfJobExecutionResultId(Long pdfJobExecutionResultId) {
         this.pdfJobExecutionResultId = pdfJobExecutionResultId;
     }
+
+	public Map<String, String> getDescriptionI18n() {
+		return descriptionI18n;
+	}
+
+	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+		this.descriptionI18n = descriptionI18n;
+	}
+
+	public Boolean getIsQuarantine() {
+		return isQuarantine;
+	}
+
+	public void setIsQuarantine(Boolean isQuarantine) {
+		this.isQuarantine = isQuarantine;
+	}
+
+	public BillingRun getOriginBillingRun() {
+		return originBillingRun;
+	}
+
+	public void setOriginBillingRun(BillingRun originBillingRun) {
+		this.originBillingRun = originBillingRun;
+	}
+	
+	
 }

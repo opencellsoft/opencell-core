@@ -149,6 +149,10 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	/** Quote line type */
     @Schema(description = "The quote line type")
 	private OfferLineTypeEnum quoteLineType;
+    
+    /** Subscription */
+	@Schema(description = "The code of the subscription")
+	private String subscriptionCode;
    
 	public QuoteOfferDTO() {
         super();
@@ -174,6 +178,9 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		deliveryDate = quoteOffer.getDeliveryDate();
 		userAccountCode=quoteOffer.getUserAccount()!=null?quoteOffer.getUserAccount().getCode():null;
 		quoteLineType = quoteOffer.getQuoteLineType();
+		if (quoteOffer.getSubscription() != null) {
+		    subscriptionCode = quoteOffer.getSubscription().getCode();
+		}
 	}
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -449,4 +456,13 @@ public class QuoteOfferDTO extends BusinessEntityDto {
     public void setQuoteLineType(OfferLineTypeEnum quoteLineType) {
         this.quoteLineType = quoteLineType;
     }
+
+	public String getSubscriptionCode() {
+		return subscriptionCode;
+	}
+
+	public void setSubscriptionCode(String subscriptionCode) {
+		this.subscriptionCode = subscriptionCode;
+	}
+    
 }

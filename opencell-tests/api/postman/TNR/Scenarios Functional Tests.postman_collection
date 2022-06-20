@@ -17084,7 +17084,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_CFT_EL_SCRIPT\",\n    \"description\": \"Field visible on entities with code starting 'EL_'\",\n    \"fieldType\": \"STRING\",\n    \"appliesTo\": \"ChargeTemplate\",\n    \"defaultValue\": \"KUKU\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": true,\n    \"applicableOnEl\": \"#{mv:executeScript(entity,'org.meveo.service.script.The{{baseEntityPrefix}}_ScriptEL', null, entity.auditable.creator)}\"\n}\n"
+									"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_CFT_EL_SCRIPT\",\n    \"description\": \"Field visible on entities with code starting 'EL_'\",\n    \"fieldType\": \"STRING\",\n    \"appliesTo\": \"ChargeTemplate\",\n    \"defaultValue\": \"KUKU\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": true,\n    \"applicableOnEl\": \"#{mv:executeScript(entity,'org.meveo.service.script.The{{baseEntityPrefix}}_ScriptEL', entity.auditable.creator)}\"\n}\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/entityCustomization/field/createOrUpdate",

@@ -48,6 +48,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -60,6 +61,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
@@ -72,11 +74,11 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -106,7 +108,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
         @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
-public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity, IDiscountable  {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -175,6 +177,18 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+	/**
+	 * status of product type of {@link PriceVersionDateSettingEnum}
+	 */
+	@Column(name = "price_version_date_setting")
+	@Enumerated(EnumType.STRING)
+	private PriceVersionDateSettingEnum priceVersionDateSetting;
+
+    /** price Version Date timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "price_version_date")
+    private Date priceVersionDate;
+    
     /**
      * Charges instances associated with a service instance
      */
@@ -341,6 +355,10 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     @Transient
     private List<UsageChargeInstance> usageChargeInstances;
+    
+
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<>();
 
     /**
      * Gets the end agreement date.
@@ -975,8 +993,36 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-
+    
     /**
+     * @return the priceVersionDateSetting
+     */
+    public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting to set priceVersionDateSetting
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
+	}
+
+	/**
+	 * @return the priceVersionDate
+	 */
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+
+	/**
+	 * @param priceVersionDate to set priceVersionDate
+	 */
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
+	}
+
+	/**
      * Gets the amount PS.
      *
      * @return the amountPS
@@ -1260,5 +1306,26 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 		}
 		return null;
 	}
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstance) {
+		this.discountPlanInstances = discountPlanInstance;
+	}
+
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if (this.getDiscountPlanInstances() == null) {
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
+        this.getDiscountPlanInstances().add(discountPlanInstance);
+    }
     
 }

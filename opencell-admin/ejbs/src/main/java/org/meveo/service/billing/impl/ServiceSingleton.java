@@ -30,10 +30,7 @@ import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
 import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -60,6 +57,7 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
@@ -71,6 +69,8 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -129,9 +129,16 @@ public class ServiceSingleton {
     @Inject
     private SequenceService sequenceService;
 
+    @Inject
+    private JobExecutionService jobExecutionService;
+    @Inject
+    private JobInstanceService jobInstanceService;
+
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
+
+    private static final String GENERATED_CODE_KEY = "generatedCode";
 
 
     /**
@@ -209,7 +216,6 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentNumber();
                 sequence.setCurrentNumber(sequence.getCurrentNumber() + incrementBy);
-                // invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
@@ -252,9 +258,7 @@ public class ServiceSingleton {
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-        return sequence;
-
+        return incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
         /*
          * try { sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence); return sequence; } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
          * NoSuchMethodException e) { throw new BusinessException("Failed to close invoice numbering sequence", e); }
@@ -401,17 +405,22 @@ public class ServiceSingleton {
     
     /**
      * Validate and assign invoice number to an invoice.
-     * @param invoice invoice
+     * @param invoiceId invoice identifier
+     * @param refreshExchangeRate refresh exchange rate
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice validateAndAssignInvoiceNumber(Long invoiceId) throws BusinessException {
+    public Invoice validateAndAssignInvoiceNumber(Long invoiceId, boolean refreshExchangeRate) throws BusinessException {
     	Invoice invoice = invoiceService.findById(invoiceId);
     	if (invoice == null) {
     		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	}
+        if(refreshExchangeRate && invoice.canBeRefreshed()) {
+            invoiceService.refreshAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
+                    invoice.getTradingCurrency().getCurrentRateFromDate());
+        }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
     	return assignInvoiceNumber(invoice, true);
     }
@@ -563,7 +572,15 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
+        triggersJobs();
         return invoice;
+    }
+
+    private void triggersJobs() {
+        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
+                .map(jobInstanceService::findByCode)
+                .filter(Objects::nonNull)
+                .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
     }
 
     /**
@@ -624,18 +641,18 @@ public class ServiceSingleton {
             Generex generex = new Generex(sequence.getSequencePattern());
             generatedCode = generex.random(sequence.getSequenceSize());
         }
-        context.put("generatedCode", generatedCode);
+        context.put(GENERATED_CODE_KEY, generatedCode);
         return prefixOverride == null ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
                 : prefixOverride + generatedCode;
     }
 
     private String formatCode(String formatEL, Map<Object, Object> context) {
         if (formatEL.isEmpty()) {
-            return (String) context.get("generatedCode");
+            return (String) context.get(GENERATED_CODE_KEY);
         }
         String resultCode = evaluateExpression(formatEL, context, String.class);
-        if(formatEL.contains("generatedCode")) {
-            return resultCode + context.get("generatedCode");
+        if(formatEL.contains(GENERATED_CODE_KEY)) {
+            return resultCode + context.get(GENERATED_CODE_KEY);
         }
         return resultCode;
     }

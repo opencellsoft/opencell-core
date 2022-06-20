@@ -21,11 +21,13 @@ package org.meveo.api.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -54,10 +56,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -69,6 +68,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -120,6 +120,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public CustomerAccount create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -301,12 +304,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
 
-        if (postData.getDateDunningLevel() != null) {
-            customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
-        } else if (isNew) {
-            customerAccount.setDateDunningLevel(new Date());
-        }
-
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
@@ -365,12 +362,18 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setAddressbook(addressBook);
         }
 
+        if(postData.getGeneralClientAccountCode() != null && !postData.getGeneralClientAccountCode().isBlank()) {
+            AccountingCode generalClientAccountingCode = Optional.ofNullable(accountingCodeService.findByCode(postData.getGeneralClientAccountCode()))
+                    .orElseThrow(() -> new NotFoundException("General client accounting code not found"));
+            customerAccount.setGeneralClientAccount(generalClientAccountingCode);
+        }
+
     }
 
     private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
 		if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
 			if (customerAccount.getPaymentMethods() == null) {
-				customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
+				customerAccount.setPaymentMethods(new ArrayList<>());
 			}else {
 				for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
 					paymentMethod.setPreferred(false);

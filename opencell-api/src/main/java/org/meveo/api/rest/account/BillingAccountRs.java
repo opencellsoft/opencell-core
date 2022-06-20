@@ -151,6 +151,8 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+    @Operation(summary = "List all billing accounts.",
+            tags = { "Billing account management" })
     BillingAccountsResponseDto listGetAll();
 
     /**

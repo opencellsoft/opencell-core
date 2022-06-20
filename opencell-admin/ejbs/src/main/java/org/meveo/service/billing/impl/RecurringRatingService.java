@@ -404,7 +404,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                         RatingResult localRatingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, operationDate, inputQuantity, null,
                             orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
-                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, null, forSchedule, false);
+                            prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, null, forSchedule, isVirtual);
 
                         ratingResult.add(localRatingResult);
 

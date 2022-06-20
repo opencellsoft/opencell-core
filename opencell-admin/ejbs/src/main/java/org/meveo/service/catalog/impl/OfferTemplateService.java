@@ -445,6 +445,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             duplicate.setCommercialRuleItems(commercialRuleItems);
             duplicate.setTargetOfferTemplate(offer);
             commercialRuleHeaderService.create(duplicate);
+            duplicate.setCode(duplicate.getCode() + "_" + duplicate.getId());
             commercialRuleHeaders.add(duplicate);
         }
         return commercialRuleHeaders;

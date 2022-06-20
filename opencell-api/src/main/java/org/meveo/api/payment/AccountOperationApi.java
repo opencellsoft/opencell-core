@@ -24,13 +24,16 @@ import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -51,6 +54,11 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -80,6 +88,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.PaymentPlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +103,8 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
+
+    private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
 
     /** The customer account service. */
     @Inject
@@ -124,6 +135,9 @@ public class AccountOperationApi extends BaseApi {
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
+
+    @Inject
+    private PaymentPlanService paymentPlanService;
 
     /**
      * Create account operation.
@@ -236,7 +250,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
-        accountOperation.setCollectionDate(postData.getCollectionDate());
+        accountOperation.setCollectionDate(postData.getCollectionDate() == null ? postData.getBankCollectionDate() : postData.getCollectionDate());
         
         if (!StringUtils.isBlank(postData.getJournalCode())) {
         	Journal journal = journalService.findByCode(postData.getJournalCode());
@@ -312,6 +326,8 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = AccountOperation.class) })
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
@@ -344,6 +360,7 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public AccountOperationsResponseDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -445,18 +462,54 @@ public class AccountOperationApi extends BaseApi {
         if (!customerAccount.getAccountOperations().contains(accountOperation)) {
             throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
         }
-        List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
-        Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
-        while (iterator.hasNext()) {
-            MatchingAmount matchingAmount = iterator.next();
-            MatchingCode matchingCode = matchingAmount.getMatchingCode();
-            if (matchingCode != null) {
-                matchingCodesToUnmatch.add(matchingCode.getId());
+
+        List<Long> matchingCodesToUnmatch = new ArrayList<>();
+
+        // Check if the postData.getMatchingAmountIds() value are contained in accountOperation.getMatchingAmounts()
+        // That should avoid pass invalid of incorrect id, and after unmatch all related matchingAmout for the AO
+        if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && CollectionUtils.isNotEmpty(accountOperation.getMatchingAmounts())) {
+            List<Long> requestMathchingAmountIds = new ArrayList<>(postData.getMatchingAmountIds());
+            List<Long> aoMatchingAmountIds = accountOperation.getMatchingAmounts().stream()
+                    .map(MatchingAmount::getId)
+                    .collect(Collectors.toList());
+
+            requestMathchingAmountIds.removeAll(aoMatchingAmountIds);
+
+            if (CollectionUtils.isNotEmpty(requestMathchingAmountIds)) {
+                throw new BusinessException("Those matchingAmoutIds " + requestMathchingAmountIds + " are not present for AO passed to unmatch=" + accountOperation.getId());
             }
         }
+
+        // PPL Aos id : used to update payment plan and invoice status, if umatch operation is made on a createdAos
+        List<Long> pplAosIds = new ArrayList<>();
+
+        for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
+            if (CollectionUtils.isNotEmpty(postData.getMatchingAmountIds()) && !postData.getMatchingAmountIds().contains(matchingAmount.getId())) {
+                continue;
+            } else {
+                MatchingCode matchingCode = matchingAmount.getMatchingCode();
+                if (matchingCode != null) {
+                    pplAosIds = getUmatchedPPLAosId(matchingCode);
+                    matchingCodesToUnmatch.add(matchingCode.getId());
+                }
+            }
+        }
+
         for (Long matchingCodeId : matchingCodesToUnmatch) {
             matchingCodeService.unmatching(matchingCodeId);
         }
+
+        // Update PaymentPlan/Invoice related to those for which the unmatching is made
+        paymentPlanService.toActivate(pplAosIds);
+
+    }
+
+    private List<Long> getUmatchedPPLAosId(MatchingCode matchingCode) {
+        return Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+                .stream().filter(ma -> PPL_INSTALLMENT.equals(ma.getAccountOperation().getCode()))
+                .map(matchingAmount -> matchingAmount.getAccountOperation().getId())
+                .collect(Collectors.toList());
+
     }
 
     /**

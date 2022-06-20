@@ -46,7 +46,8 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code")
+		@NamedQuery(name = "QuoteOffer.findByCodeAndQuoteVersion", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  where qv.id=:quoteVersionId and qf.code=:code"),
+		@NamedQuery(name = "QuoteOffer.findByStatusAndSubscription", query = "select oo from QuoteOffer oo left join oo.quoteVersion qv where oo.subscription.code=:subscriptionCode and oo.quoteLineType=:status")
 })
 public class QuoteOffer extends BusinessCFEntity {
 
@@ -67,6 +68,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.deliveryDate = copy.deliveryDate;
 		this.userAccount = copy.userAccount;
 		this.quoteLineType = copy.quoteLineType;
+		this.subscription = copy.subscription;
 	}
 
 

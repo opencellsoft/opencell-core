@@ -21,6 +21,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -31,8 +34,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
 @NamedQueries({
 	@NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum"),
-	@NamedQuery(name="QuotePrice.removeByQuoteOfferAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum")
-	})
+	@NamedQuery(name="QuotePrice.removeByQuoteOfferAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum"),
+	@NamedQuery(name="QuotePrice.loadByQuoteOfferAndArticleCodeAndPriceLevel", query = "from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum and qp.quoteArticleLine.accountingArticle.code = :accountingArticleCode")
+})
 public class QuotePrice extends AuditableEntity {
 
 	/**
@@ -62,6 +66,7 @@ public class QuotePrice extends AuditableEntity {
 		this.chargeTemplate = copy.chargeTemplate;
 		this.quantity = copy.quantity;
 		this.discountedQuotePrice = copy.discountedQuotePrice;
+		this.discountPlan=copy.discountPlan;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -120,13 +125,33 @@ public class QuotePrice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_offer_id")
 	private QuoteOffer quoteOffer;
-	
+
 	@Column(name = "quantity")
 	private BigDecimal quantity = BigDecimal.ONE;
 	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "discounted_quote_price")
 	private QuotePrice discountedQuotePrice;
+	
+
+	@Column(name = "uuid")
+	private String uuid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
+
+    @Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_plan_type", length = 50)
+    private DiscountPlanItemTypeEnum discountPlanType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
 	
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -270,6 +295,46 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setDiscountedQuotePrice(QuotePrice discountedQuotePrice) {
 		this.discountedQuotePrice = discountedQuotePrice;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
 	}
 
 	

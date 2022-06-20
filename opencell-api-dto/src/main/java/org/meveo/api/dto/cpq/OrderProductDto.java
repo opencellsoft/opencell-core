@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderProduct;
@@ -90,6 +91,9 @@ public class OrderProductDto extends BaseEntityDto{
 	
 	@Schema(description = "The action type")
     private ProductActionTypeEnum actionType;
+	
+	@Schema(description = "The Instance Status Enum")
+    private InstanceStatusEnum status;
     
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>();
 
@@ -117,6 +121,7 @@ public class OrderProductDto extends BaseEntityDto{
 		actionType=orderProduct.getProductActionType();
 		terminationReasonCode=orderProduct.getTerminationReason()!=null?orderProduct.getTerminationReason().getCode():null;
 		terminationDate=orderProduct.getTerminationDate();
+		status=orderProduct.getStatus();
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -339,6 +344,15 @@ public class OrderProductDto extends BaseEntityDto{
 	public void setActionType(ProductActionTypeEnum actionType) {
 		this.actionType = actionType;
 	}
-	
+
+
+	public InstanceStatusEnum getInstanceStatus() {
+		return status;
+	}
+
+
+	public void setInstanceStatus(InstanceStatusEnum status) {
+		this.status = status;
+	}
 	
 }

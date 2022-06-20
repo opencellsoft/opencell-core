@@ -23,8 +23,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,6 +59,7 @@ import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -65,6 +68,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.payments.plan.PaymentPlan;
 
 /**
  * Customer Account
@@ -252,6 +256,19 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	private String dueBalance;
 
 	/**
+	 * General accounting code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "general_client_account_id")
+	private AccountingCode generalClientAccount;
+
+	/**
+	 * Associated accountingScheme.AccountingEntry
+	 */
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+	private Set<PaymentPlan> paymentPlans = new HashSet<>();
+
+	/**
 	 * This method is called implicitly by hibernate, used to enable encryption for
 	 * custom fields of this entity
 	 */
@@ -335,6 +352,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {
 		this.dunningLevel = dunningLevel;
+        this.setDateDunningLevel(new Date());
 	}
 
 	public DunningLevelEnum getDunningLevel() {
@@ -673,9 +691,8 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		
+
 		setDateStatus(new Date(0));
-		setDateDunningLevel(new Date(0));
 		if(isNotEmpty(this.getPaymentMethods())) {
 			this.getPaymentMethods().forEach(payment -> payment.anonymize(code));
 		}
@@ -771,5 +788,21 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
 	public String getDueBalance() {
 		return dueBalance;
+	}
+
+	public AccountingCode getGeneralClientAccount() {
+		return generalClientAccount;
+	}
+
+	public void setGeneralClientAccount(AccountingCode generalClientAccount) {
+		this.generalClientAccount = generalClientAccount;
+	}
+
+	public Set<PaymentPlan> getPaymentPlans() {
+		return paymentPlans;
+	}
+
+	public void setPaymentPlans(Set<PaymentPlan> paymentPlans) {
+		this.paymentPlans = paymentPlans;
 	}
 }

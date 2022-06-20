@@ -330,10 +330,12 @@ public class UserBean extends CustomFieldBean<User> {
         String meterDirKO = importDir + "reject";
         String invoicePdfDir = getFilePath() + File.separator + "invoices" + File.separator + "pdf";
         String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
-        String jasperDir = getFilePath() + File.separator + "jasper";
+        String jasperDir = getFilePath() + File.separator + "jasper";        
+        String priceplanVersionsDir = getFilePath() + File.separator + "imports" + File.separator + "priceplan_versions";
+        
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
             accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-            invoiceXmlDir, jasperDir);
+            invoiceXmlDir, jasperDir, priceplanVersionsDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {

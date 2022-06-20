@@ -26,17 +26,24 @@ public class OpenOrderTemplate extends BusinessEntity {
     @JoinTable(name = "open_order_template_tags", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "open_order_template_id")
     private List<Threshold> thresholds;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "open_order_template_products", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
     private List<Product> products;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "open_order_template_articles", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"))
     private List<AccountingArticle> articles;
+
+    @Column(name = "status")
+	@Enumerated(EnumType.STRING)
+    private OpenOrderTemplateStatusEnum status;
+
+     @Column(name = "template_name", nullable = false)
+    private String templateName;
 
     public OpenOrderTypeEnum getOpenOrderType() {
         return openOrderType;
@@ -76,5 +83,21 @@ public class OpenOrderTemplate extends BusinessEntity {
 
     public void setArticles(List<AccountingArticle> articles) {
         this.articles = articles;
+    }
+
+    public OpenOrderTemplateStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(OpenOrderTemplateStatusEnum status) {
+        this.status = status;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 }

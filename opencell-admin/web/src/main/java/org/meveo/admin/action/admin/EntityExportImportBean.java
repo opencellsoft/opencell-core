@@ -339,7 +339,7 @@ public class EntityExportImportBean implements Serializable {
                     "." + FilenameUtils.getExtension(event.getFile().getFileName()));
                 FileUtils.copyInputStreamToFile(event.getFile().getInputstream(), tempFile);
 
-                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, null);
+                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, false, !requireFK, null, false);
                 messages.info(new BundleKey("messages", "export.import.inProgress"), event.getFile().getFileName());
 
             } catch (Exception e) {

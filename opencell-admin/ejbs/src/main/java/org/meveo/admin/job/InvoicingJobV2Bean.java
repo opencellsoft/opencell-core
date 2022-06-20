@@ -26,7 +26,9 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
@@ -34,6 +36,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -68,6 +71,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
+    
     private static BigDecimal amountTax = ZERO;
     private static BigDecimal amountWithTax = ZERO;
     private static BigDecimal amountWithoutTax = ZERO;
@@ -157,6 +163,15 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
+        
+        if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
+        		&& (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
+        				|| BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus()) 
+        				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
+            billingRunService.applyAutomaticValidationActions(billingRun);
+            billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
+        }
+
         if(billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
             billingRun.setStatus(VALIDATED);

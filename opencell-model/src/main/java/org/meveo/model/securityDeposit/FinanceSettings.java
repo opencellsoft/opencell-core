@@ -2,15 +2,14 @@ package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.settings.OpenOrderSetting;
 
 @Entity
 @Table(name = "finance_settings")
@@ -38,6 +37,13 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "auto_refund")
     private boolean autoRefund = false;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "open_order_settings_id")
+    private OpenOrderSetting openOrderSetting;
+
+    @Embedded
+    private AuxiliaryAccounting auxiliaryAccounting;
 
     public FinanceSettings() {
         super();
@@ -84,4 +90,19 @@ public class FinanceSettings extends BusinessEntity {
         this.autoRefund = autoRefund;
     }
 
+    public OpenOrderSetting getOpenOrderSetting() {
+        return openOrderSetting;
     }
+
+    public void setOpenOrderSetting(OpenOrderSetting openOrderSetting) {
+        this.openOrderSetting = openOrderSetting;
+    }
+
+    public AuxiliaryAccounting getAuxiliaryAccounting() {
+        return auxiliaryAccounting;
+    }
+
+    public void setAuxiliaryAccounting(AuxiliaryAccounting auxiliaryAccounting) {
+        this.auxiliaryAccounting = auxiliaryAccounting;
+    }
+}

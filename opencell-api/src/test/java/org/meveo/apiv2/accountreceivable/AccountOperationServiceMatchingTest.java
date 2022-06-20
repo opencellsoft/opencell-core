@@ -6,11 +6,11 @@ import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
-import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.PaymentPlanService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,14 +34,15 @@ public class AccountOperationServiceMatchingTest {
     private CustomerAccountService customerAccountService;
     @Mock
     private MatchingCodeService matchingCodeService;
+    @Mock
+    private PaymentPlanService paymentPlanService;
 
     @Test
     public void matchOperationsNominal() throws Exception {
         AccountOperation ao = buildAo("ABC", 1L);
-        MatchingReturnObject matchingResult = new MatchingReturnObject();
         Mockito.when(customerAccountService.findById(any())).thenReturn(ao.getCustomerAccount());
         Mockito.when(accountOperationService.findByIds(any())).thenReturn(List.of(ao));
-        Mockito.when(matchingCodeService.matchOperations(any(), any(), any(), any())).thenReturn(matchingResult);
+        Mockito.doNothing().when(paymentPlanService).toComplete(any());
 
         List<AccountOperationAndSequence> request = buildRequest(List.of(1L), List.of(0));
         accountOperationApiService.matchOperations(request); // no need to validate content, MatchingResult is mocked

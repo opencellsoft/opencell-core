@@ -24,6 +24,8 @@ import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ArConfig;
@@ -37,6 +39,7 @@ import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -55,6 +58,8 @@ public class PaynumFile extends AbstractDDRequestBuilder {
     /** The log. */
     Logger log = LoggerFactory.getLogger(PaynumFile.class);
 
+    @Inject
+    private ProviderService providerService;
 
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
@@ -150,7 +155,8 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         // montant en centimes
         lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue());
         // devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
-        lineAsArray[8] = ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getTradingCurrency().getCurrencyCode();
+        Provider provider = providerService.getProvider();
+        lineAsArray[8] = provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode() : "";
         // date émission (optionnel)
         lineAsArray[9] = "";
         // date échéance (optionnel)

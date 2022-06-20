@@ -516,11 +516,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA").setParameter("newWallet", newWallet).setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
+        							.setParameter("newWallet", newWallet)
+        							.setParameter("newUserAccount", newWallet.getUserAccount())
+        							.setParameter("subscription", subscription).executeUpdate();
     }
 
     public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA").setParameter("newWallet", wallet).setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
+        							.setParameter("newWallet", wallet)
+        							.setParameter("newUserAccount", wallet.getUserAccount())
+        							.setParameter("subscription", subscription).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
@@ -851,6 +857,25 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public void detachWOsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
+
+    
+    /**
+     * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
+     * 
+     * @param invoicingDate Invoicing date
+     * @param nbToRetrieve Number of items to retrieve for processing
+     * @return A list of Wallet operation ids
+     */
+    public List<WalletOperation> getDiscountWalletOperation(List<Long> woIds) {
+        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
+    }
+    
+    public WalletOperation findWoByRatedTransactionId(Long rtId) {
+        return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
+                .setParameter("rtId", rtId)
+                .setMaxResults(1)
+                .getSingleResult();
     }
 
 }

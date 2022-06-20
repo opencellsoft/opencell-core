@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -701,10 +703,13 @@ public class ProductApi extends BaseApi {
 	}
 
 	private void createProductChargeTemplateMappings(Product product, List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDtos) {
-    	product.getProductCharges().clear();
+		List<String> persistedChargesCodes = product.getProductCharges().stream().map(x->x.getChargeTemplate().getCode()).collect(Collectors.toList());
+		List<String> dtoChargesCodes = productChargeTemplateMappingDtos.stream().map(x->x.getChargeCode()).collect(Collectors.toList());
+		List<String> removedChargesCodes = persistedChargesCodes.stream().filter(x->!dtoChargesCodes.contains(x)).collect(Collectors.toList());
+		product.getProductCharges().removeIf(x->removedChargesCodes.contains(x.getChargeTemplate().getCode()));
 		//Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
-		List<ProductChargeTemplateMapping> productCharges = productChargeTemplateMappingDtos.stream()
-				.map(pctm -> {
+		product.getProductCharges().addAll(productChargeTemplateMappingDtos.stream()
+				.filter(pctm -> pctm != null && !persistedChargesCodes.contains(pctm.getChargeCode())).map(pctm -> {
 					ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
 					chargeTemplateProductChargeTemplateMapping.setProduct(product);
 					if(!Strings.isEmpty(pctm.getChargeCode()))
@@ -719,8 +724,7 @@ public class ProductApi extends BaseApi {
 					}
 					return chargeTemplateProductChargeTemplateMapping;
 
-				}).collect(Collectors.toList());
-		product.getProductCharges().addAll(productCharges);
+				}).collect(Collectors.toList()));
 	}
 
 	public void removeProduct(String codeProduct) {

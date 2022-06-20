@@ -321,6 +321,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         customerApi.create(customerDto);
+        customerService.getEntityManager().flush();
 
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
         String customerAccountCode = CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -381,7 +382,9 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
 
+        customerAccountDto.setGeneralClientAccountCode(postData.getGeneralClientAccountCode());
         customerAccountApi.create(customerAccountDto);
+        customerAccountService.getEntityManager().flush();
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
 
@@ -440,6 +443,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
+        billingAccountService.getEntityManager().flush();
         setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -629,6 +633,9 @@ public class AccountHierarchyApi extends BaseApi {
         }
         // End compatibility with pre-4.6 versions
 
+        if(postData.getGeneralClientAccountCode() != null) {
+            customerAccountDto.setGeneralClientAccountCode(postData.getGeneralClientAccountCode());
+        }
         customerAccountApi.createOrUpdate(customerAccountDto);
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
@@ -1291,6 +1298,7 @@ public class AccountHierarchyApi extends BaseApi {
                 }
             }
         }
+        billingAccountDto.setTradingCurrency(postData.getCurrency());
 
         return billingAccountDto;
     }

@@ -69,7 +69,7 @@ public class ArticleMappingLine extends BusinessEntity {
     private String parameter3;
 
     @Column(name = "mapping_key_el")
-    private String mappingKelEL;
+    private String mappingKeyEL;
 
     public ArticleMapping getArticleMapping() {
         return articleMapping;
@@ -143,11 +143,11 @@ public class ArticleMappingLine extends BusinessEntity {
         this.attributesMapping = attributesMapping;
     }
 
-    public String getMappingKelEL() {
-        return mappingKelEL;
+    public String getMappingKeyEL() {
+        return mappingKeyEL;
     }
 
-    public void setMappingKelEL(String mappingKelEL) {
-        this.mappingKelEL = mappingKelEL;
+    public void setMappingKeyEL(String mappingKelEL) {
+        this.mappingKeyEL = mappingKelEL;
     }
 }

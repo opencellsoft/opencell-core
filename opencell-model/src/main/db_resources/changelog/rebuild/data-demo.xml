@@ -280,7 +280,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="code" value="512000000"></column>
-            <column name="description" value="Cash"></column>
+            <column name="description" value="Banks"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
             <column name="chart_of_account_view_type" value="VIEW"></column>
         </insert>
@@ -365,7 +365,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511011000" />
-			<column name="description" value="CB à encaisser"></column>
+			<column name="description" value="Payment Card to collect"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -376,7 +376,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511002000" />
-			<column name="description" value="Paypal à encaisser"></column>
+			<column name="description" value="Payment Paypal to collect"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -387,7 +387,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511003000" />
-			<column name="description" value="Stripe à encaisser"></column>
+			<column name="description" value="Payment Stripe to collect"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -398,7 +398,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511000610" />
-			<column name="description" value="TIP à encaisser"></column>
+			<column name="description" value="Payment - TIP to collect"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -409,7 +409,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="531100000" />
-			<column name="description" value="Caisse en monnaie nationale"></column>
+			<column name="description" value="Cash in local currency"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -420,7 +420,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="511200000" />
-			<column name="description" value="Chèques à encaisser"></column>
+			<column name="description" value="Checks to collect"></column>
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
@@ -1173,7 +1173,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
-            <column name="description" value="United States" />
+            <column name="code" value="US"></column>
+            <column name="description" value="United States"></column>
+            <column name="uuid" value="Trading_Country_US"></column>
 
             <column name="country_id" valueNumeric="220" />
         </insert>
@@ -1182,7 +1184,9 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
-            <column name="description" value="France" />
+            <column name="code" value="FR"></column>
+            <column name="description" value="France"></column>
+            <column name="uuid" value="Trading_Country_FR"></column>
 
             <column name="country_id" valueNumeric="70" />
         </insert>
@@ -2476,6 +2480,7 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_invoice_cat_icat_security_deposit" />
+			<column name="version" valueNumeric="0" />
 		</insert>
 		<insert tableName="billing_invoice_sub_cat">
 			<column name="id" value='-4'/>
@@ -2563,6 +2568,7 @@
     <changeSet id="#INTRD-6291_20220406" author="AbdelmounaimAkadid"/>
     <changeSet id="INTRD-6162_20220407" author="TarikRabeh" />
     <changeSet id="#INTRD-6283_20220422" author="HichamELHALOUI" />
+    <changeSet id="INTRD-6908_20220503" author="HichamELHALOUI"/>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

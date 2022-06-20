@@ -40,6 +40,7 @@ import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -1107,11 +1108,15 @@ public class CommercialOrderApi extends BaseApi {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
+		orderProduct.setStatus(orderProductDto.getInstanceStatus());
 		if(orderProductDto.getQuantity() == null) {
 			throw new MeveoApiException("The quantity is required");
 		}
 		orderProduct.setQuantity(orderProductDto.getQuantity());
-		orderProduct.setProductActionType(orderProductDto.getActionType());
+		
+		if(orderProductDto.getActionType() != null) {
+			orderProduct.setProductActionType(orderProductDto.getActionType());
+		}
 		
 		SubscriptionTerminationReason terminationReason = null;
 		if(!StringUtils.isBlank(orderProductDto.getTerminationReasonCode())) {

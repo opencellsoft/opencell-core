@@ -75,7 +75,30 @@ public interface InvoicingRs extends IBaseRs {
 	)
     ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto);
 
-
+    /**
+     * Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.
+     * 
+     * @param createBillingRunDto The billing run's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/createOrUpdateBillingRun")
+	@Operation(
+			summary=" Create or Update billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			description=" Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			operationId="    POST_Invoicing_createBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus createOrUpdateBillingRun(CreateBillingRunDto createBillingRunDto);
+    
+    
     /**
      * Search for a billing run info with a given Id 
      * 

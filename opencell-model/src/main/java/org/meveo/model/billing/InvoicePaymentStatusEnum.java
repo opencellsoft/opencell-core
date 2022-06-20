@@ -30,7 +30,12 @@ public enum InvoicePaymentStatusEnum {
 	/**
 	 * AO created, due date is still in the future
 	 */
-	PENDING(1, "invoicePaymentStatusEnum.pending"), 
+	PENDING(1, "invoicePaymentStatusEnum.pending"),
+
+	/**
+	 * PaymentPlan created for DEBUT AO
+	 */
+	PENDING_PLAN(1, "invoicePaymentStatusEnum.pending_plan"),
 
 	/**
 	 * invoice has no payment status, no AO created.

@@ -53,6 +53,9 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
@@ -80,9 +83,9 @@ import org.meveo.model.tax.TaxClass;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), @Parameter(name = "increment_size", value = "500") })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
 
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumberInvoiceableData", query = "SELECT new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, w.walletTemplate is not null, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate)  order by r.billingAccount.id "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscriptionInvoiceableData", query = "SELECT  new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, w.walletTemplate is not null, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.subscription.id=:subscriptionId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountInvoiceableData", query = "SELECT  new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, w.walletTemplate is not null, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumberInvoiceableData", query = "SELECT new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, case when w.walletTemplate is not null then true else false end, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate)  order by r.billingAccount.id "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscriptionInvoiceableData", query = "SELECT  new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, case when w.walletTemplate is not null then true else false end, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.subscription.id=:subscriptionId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountInvoiceableData", query = "SELECT  new org.meveo.service.billing.impl.InvoiceableData(r.id, r.billingAccount.id, r.userAccount.id, r.seller.id, r.subscription.id, r.wallet.id, r.taxClass.id, r.orderNumber, r.unitAmountWithoutTax, r.unitAmountWithTax, r.unitAmountTax, r.amountWithoutTax, r.amountWithTax, r.amountTax, r.tax.id, r.taxPercent, case when w.walletTemplate is not null then true else false end, r.invoiceSubCategory.id) FROM RatedTransaction r left join r.wallet w where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountAndIDs", query = "SELECT r FROM RatedTransaction r where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND id in (:listOfIds) "),
 
@@ -166,7 +169,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r left join fetch r.wallet where r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate)  order by r.billingAccount.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r left join fetch r.wallet where r.subscription.id=:subscriptionId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r left join fetch r.wallet where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
-
+        @NamedQuery(name = "RatedTransaction.moveToQuarantineBRByInvoiceIds", query = "update RatedTransaction r set r.billingRun= :billingRun where r.invoice.id IN (:invoiceIds)"),
 
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                 + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
@@ -184,6 +187,7 @@ import org.meveo.model.tax.TaxClass;
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "update {h-schema}billing_rated_transaction rt set (status, updated, aggregate_id_f, billing_run_id, invoice_id) =  (select 'BILLED', now(), pending.aggregate_id_f, pending.billing_run_id, pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id) where status='OPEN' and rt.id in (select id from {h-schema}billing_rated_transaction_pending pending where pending.id=rt.id)"),
         @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from {h-schema}billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity, IInvoiceable {
@@ -565,6 +569,25 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "invoice_line_id")
     private InvoiceLine invoiceLine;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
+    
+    
+    @Column(name = "discounted_ratedtransaction_id")
+    private Long discountedRatedTransaction;
+    
+    @Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "discount_plan_type", length = 50)
+	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+    
     public RatedTransaction() {
         super();
     }
@@ -716,6 +739,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
         this.sortIndex = walletOperation.getSortIndex();
         this.cfValues = walletOperation.getCfValues();
+        this.discountPlan = walletOperation.getDiscountPlan();
     }
 
     public WalletInstance getWallet() {
@@ -1442,4 +1466,48 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setInvoiceLine(InvoiceLine invoiceLine) {
         this.invoiceLine = invoiceLine;
     }
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	public Long getDiscountedRatedTransaction() {
+		return discountedRatedTransaction;
+	}
+
+	public void setDiscountedRatedTransaction(Long discountedRatedTransaction) {
+		this.discountedRatedTransaction = discountedRatedTransaction;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	
+	
+	
 }

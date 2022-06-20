@@ -1,5 +1,8 @@
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -28,6 +31,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.persistence.PreUpdate;
+import javax.persistence.PrePersist;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -37,6 +42,8 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -106,7 +113,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listByBillingRunNotValidatedInvoices", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId and il.invoice.status <> 'VALIDATED'"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
 		@NamedQuery(name = "InvoiceLine.listDiscountLines", query = "SELECT il.id from InvoiceLine il WHERE il.discountedInvoiceLine.id = :invoiceLineId "),
-		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)")
+		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
+		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
+        @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)")
+
 	})
 public class InvoiceLine extends AuditableEntity {
 
@@ -150,9 +160,6 @@ public class InvoiceLine extends AuditableEntity {
     @Column(name = "unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
     private BigDecimal unitPrice;
-    
-    @Column(name = "functional_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal functionalUnitPrice;
     
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
@@ -251,6 +258,17 @@ public class InvoiceLine extends AuditableEntity {
 	@OneToMany(mappedBy = "invoiceLine", fetch = LAZY)
 	private List<RatedTransaction> ratedTransactions;
 
+	@Column(name = "discount_value")
+	private BigDecimal discountValue;
+    
+    @Enumerated(EnumType.STRING)
+ 	@Column(name = "discount_plan_type", length = 50)
+ 	private DiscountPlanItemTypeEnum discountPlanType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
 	 */
@@ -274,7 +292,59 @@ public class InvoiceLine extends AuditableEntity {
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
 	
+	@Enumerated(EnumType.STRING)
+    @Column(name = "tax_mode", nullable = false)
+    @NotNull
+    private InvoiceLineTaxModeEnum taxMode = InvoiceLineTaxModeEnum.ARTICLE;
 
+	/**
+	 * Converted unit price
+	 */
+	@Column(name = "converted_unit_price", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedUnitPrice;
+
+	/**
+	 * Converted amount without tax
+	 */
+	@Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedAmountWithoutTax;
+
+	/**
+	 * Converted amount with tax
+	 */
+	@Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedAmountWithTax;
+
+	/**
+	 * Converted tax rate
+	 */
+	@Column(name = "converted_tax_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedTaxRate;
+
+	/**
+	 * Converted discount rate
+	 */
+	@Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedDiscountRate = BigDecimal.ZERO;
+
+	/**
+	 * Converted amount tax
+	 */
+	@Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedAmountTax;
+
+	/**
+	 * Converted discount amount
+	 */
+	@Column(name = "converted_discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedDiscountAmount = BigDecimal.ZERO;
+
+	/**
+	 * Converted raw amount
+	 */
+	@Column(name = "converted_raw_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal convertedRawAmount = BigDecimal.ZERO;
+    
 	public InvoiceLine() {
 	}
 
@@ -303,7 +373,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.validity = copy.validity;
 		this.quantity = copy.quantity;
 		this.unitPrice = copy.unitPrice;
-		this.functionalUnitPrice = copy.functionalUnitPrice;
 		this.discountRate = copy.discountRate;
 		this.amountWithoutTax = copy.amountWithoutTax;
 		this.taxRate = copy.taxRate;
@@ -327,6 +396,7 @@ public class InvoiceLine extends AuditableEntity {
 		this.productVersion = copy.productVersion;
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
+		this.taxMode = copy.taxMode;
 		this.status = InvoiceLineStatusEnum.OPEN;
 	}
 
@@ -400,14 +470,6 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
-	}
-	
-	public BigDecimal getFunctionalUnitPrice() {
-		return functionalUnitPrice;
-	}
-
-	public void setFunctionalUnitPrice(BigDecimal functionalUnitPrice) {
-		this.functionalUnitPrice = functionalUnitPrice;
 	}
 
 	public BigDecimal getDiscountRate() {
@@ -660,7 +722,122 @@ public class InvoiceLine extends AuditableEntity {
 	public void setDiscountedInvoiceLine(InvoiceLine discountedInvoiceLine) {
 		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
 	
-	
-	
+	public InvoiceLineTaxModeEnum getTaxMode() {
+        return taxMode;
+    }
+
+    public void setTaxMode(InvoiceLineTaxModeEnum taxMode) {
+        this.taxMode = taxMode;
+    }
+
+	public BigDecimal getConvertedUnitPrice() {
+		return convertedUnitPrice;
+	}
+
+	public void setConvertedUnitPrice(BigDecimal convertedUnitPrice) {
+		this.convertedUnitPrice = convertedUnitPrice;
+	}
+
+	public BigDecimal getConvertedAmountWithoutTax() {
+		return convertedAmountWithoutTax;
+	}
+
+	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	}
+
+	public BigDecimal getConvertedAmountWithTax() {
+		return convertedAmountWithTax;
+	}
+
+	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+		this.convertedAmountWithTax = convertedAmountWithTax;
+	}
+
+	public BigDecimal getConvertedTaxRate() {
+		return convertedTaxRate;
+	}
+
+	public void setConvertedTaxRate(BigDecimal convertedTaxRate) {
+		this.convertedTaxRate = convertedTaxRate;
+	}
+
+	public BigDecimal getConvertedDiscountRate() {
+		return convertedDiscountRate;
+	}
+
+	public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
+		this.convertedDiscountRate = convertedDiscountRate;
+	}
+
+	public BigDecimal getConvertedAmountTax() {
+		return convertedAmountTax;
+	}
+
+	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
+		this.convertedAmountTax = convertedAmountTax;
+	}
+
+	public BigDecimal getConvertedDiscountAmount() {
+		return convertedDiscountAmount;
+	}
+
+	public void setConvertedDiscountAmount(BigDecimal convertedDiscountAmount) {
+		this.convertedDiscountAmount = convertedDiscountAmount;
+	}
+
+	public BigDecimal getConvertedRawAmount() {
+		return convertedRawAmount;
+	}
+
+	public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
+		this.convertedRawAmount = convertedRawAmount;
+	}
+
+	@PrePersist
+	@PreUpdate
+	public void prePersistOrUpdate() {
+		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
+				this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedAmountWithTax = this.amountWithTax != null ?
+				this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedAmountTax = this.amountTax !=null ?
+				this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedDiscountAmount = this.discountAmount != null ?
+				this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedDiscountRate = this.discountRate != null ?
+				this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedRawAmount = this.rawAmount != null ?
+				this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedTaxRate = this.taxRate != null ?
+				this.taxRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+		this.convertedUnitPrice = this.unitPrice != null ?
+				this.unitPrice.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+	}
 }

@@ -18,6 +18,8 @@
 
 package org.meveo.api.billing;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +27,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccountHierarchyApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.BillingRunDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
@@ -129,6 +133,11 @@ public class InvoicingApi extends BaseApi {
         if (dto.isComputeDatesAtValidation() != null) {
             billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
+        
+        if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
+        }
+        
         billingRunService.create(billingRun);
 
         // populate customFields
@@ -142,6 +151,107 @@ public class InvoicingApi extends BaseApi {
             throw e;
         }
 
+        if(dto.getDescriptionsTranslated() == null || dto.getDescriptionsTranslated().isEmpty()){
+        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
+        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+billingCycle.getDescription()+"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
+        	
+        	List<LanguageDescriptionDto> descriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+        	descriptionsTranslated.add(languageDescriptionEn);
+        	descriptionsTranslated.add(languageDescriptionFr);
+
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+        }
+
+        billingRunService.update(billingRun);
+        
+        return billingRun.getId();
+    }
+
+    public long updateBillingRun(CreateBillingRunDto dto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
+        BillingRun billingRun = billingRunService.findById(dto.getId());
+        if(billingRun == null) {
+            throw new BadRequestException("Billing run Entity with id "+dto.getId()+" not found");
+        }
+
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+        if(dto.getBillingCycleCode() != null) {
+            billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
+            }
+            billingRun.setBillingCycle(billingCycle);
+        }
+
+        billingRun.setBillingCycle(billingCycle);
+        if (dto.getBillingRunTypeEnum() != null) {
+            billingRun.setProcessType(dto.getBillingRunTypeEnum());
+        }
+        if(dto.getStartDate() != null) {
+            billingRun.setStartDate(dto.getStartDate());
+        }
+        if(dto.getEndDate() != null) {
+            billingRun.setEndDate(dto.getEndDate());
+        }
+        if(dto.getReferenceDate() != null) {
+            billingRun.setReferenceDate(dto.getReferenceDate());
+        }
+        if(dto.getInvoiceDate() != null) {
+            billingRun.setInvoiceDate(dto.getInvoiceDate());
+        }
+        if(dto.getLastTransactionDate() != null) {
+            billingRun.setLastTransactionDate(dto.getLastTransactionDate());
+        }
+        if(dto.getSkipValidationScript() != null) {
+            billingRun.setSkipValidationScript(dto.getSkipValidationScript());
+        }
+        if(dto.getRejectAutoAction() != null) {
+            billingRun.setRejectAutoAction(dto.getRejectAutoAction());
+        }
+        if(dto.getSuspectAutoAction() != null) {
+            billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
+        }
+
+        if(dto.getCollectionDate() != null) {
+            billingRun.setCollectionDate(dto.getCollectionDate());
+        }
+        
+        if (dto.isComputeDatesAtValidation() != null) {
+            billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        }
+
+        // populate customFields
+        if(dto.getCustomFields() != null) {
+            try {
+                populateCustomFields(dto.getCustomFields(), billingRun, true);
+            } catch (MissingParameterException | InvalidParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
+            }
+        }
+
+        if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
+        }else if (billingRun.getDescriptionI18n() == null){
+        	LanguageDescriptionDto languageDescriptionEn = new LanguageDescriptionDto("ENG", "Billing run (id="+billingRun.getId()+"; billing cycle="+
+													        (billingCycle != null ? billingCycle.getDescription() : " ")+
+													        "; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
+        	LanguageDescriptionDto languageDescriptionFr = new LanguageDescriptionDto("FRA", "Run de facturation (id="+billingRun.getId()+"; billing cycle="+
+													        (billingCycle != null ? billingCycle.getDescription() : " ")+
+													        "; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
+        	
+        	List<LanguageDescriptionDto> descriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+        	descriptionsTranslated.add(languageDescriptionEn);
+        	descriptionsTranslated.add(languageDescriptionFr);
+
+        	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
+        }
+
+        billingRunService.update(billingRun);
+        
         return billingRun.getId();
     }
 

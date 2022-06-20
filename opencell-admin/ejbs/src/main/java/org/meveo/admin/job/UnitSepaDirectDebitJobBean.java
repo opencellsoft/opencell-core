@@ -131,7 +131,7 @@ public class UnitSepaDirectDebitJobBean {
 				} else {
 					automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 							ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
-							DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddrequestItem.getDueDate(), new Date(),
+							new Date(), ddrequestItem.getDueDate(), new Date(),
 							ddrequestItem.getAccountOperations(), isToMatching, MatchingTypeEnum.A_DERICT_DEBIT);
 					if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
 						ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);
@@ -227,6 +227,7 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setBankLot(bankLot);
 		automatedPayment.setDepositDate(depositDate);
 		automatedPayment.setBankCollectionDate(bankCollectionDate);
+		automatedPayment.setCollectionDate(bankCollectionDate);
 		automatedPayment.setDueDate(dueDate);
 		automatedPayment.setTransactionDate(transactionDate);
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);

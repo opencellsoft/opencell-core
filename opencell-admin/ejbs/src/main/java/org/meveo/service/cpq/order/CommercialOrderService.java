@@ -1,6 +1,7 @@
 package org.meveo.service.cpq.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -25,8 +26,10 @@ import org.meveo.api.dto.cpq.xml.Offer;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
+import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -36,6 +39,8 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -51,6 +56,7 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -78,6 +84,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private OrderLotService orderLotService;
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -204,18 +212,24 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getDiscountPlan()!=null) {
 						discountPlans.add(product.getDiscountPlan());
 					}
-					processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);
+					processProductWithDiscount(subscription, product);
 				}
 				instanciateDiscountPlans(subscription, discountPlans);
 				subscriptionService.update(subscription);
-				subscriptionService.activateInstantiatedService(subscription);
+				RatingResult ratingResult = subscriptionService.activateInstantiatedService(subscription);
 				offer.setSubscription(subscription);
+				
+	            discountPlanService.calculateDiscountplanItems(new ArrayList<>(ratingResult.getEligibleFixedDiscountItems()), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+	            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), false, null, null,DiscountPlanTypeEnum.OFFER);
+				
 			}else if(offer.getOrderLineType() == OfferLineTypeEnum.AMEND) {
 				for (OrderProduct product : offer.getProducts()){
 					//Create Action type
 					if(product.getProductActionType() == ProductActionTypeEnum.CREATE) {
 						processProduct(offer.getSubscription(), product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null);	
-					}else {
+					}
+					//Modify Action type
+					if(product.getProductActionType() == ProductActionTypeEnum.MODIFY) {
 						updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 					}
 					//Activate Action type
@@ -232,6 +246,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						} else {
 							List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.INACTIVE, InstanceStatusEnum.PENDING, InstanceStatusEnum.SUSPENDED);
 				            if (services.size() > 0) {
+				            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 				            	ServiceInstance serviceInstanceToActivate = services.get(0);
 								if (serviceInstanceToActivate.getStatus() == InstanceStatusEnum.SUSPENDED) {
 									serviceInstanceService.serviceReactivation(serviceInstanceToActivate, product.getDeliveryDate(), true, false);					
@@ -245,6 +260,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.SUSPEND) {
 						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE);
 			            if (services.size() > 0) {
+			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 			            	ServiceInstance serviceInstanceToSuspend = services.get(0);
 							serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, product.getDeliveryDate());	
 			            }
@@ -253,6 +269,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					if(product.getProductActionType() == ProductActionTypeEnum.TERMINATE) {
 						List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(product.getProductVersion().getProduct().getCode(), offer.getSubscription(), InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
 			            if (services.size() > 0) {
+			            	updateProduct(offer, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes(), product, null, product.getProductVersion().getProduct().getCode());	
 			            	ServiceInstance serviceInstanceToTerminate = services.get(0);
 							serviceInstanceService.terminateService(serviceInstanceToTerminate, product.getTerminationDate(), product.getTerminationReason(), order.getOrderNumber());	
 				            }
@@ -262,6 +279,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				Subscription subscription = offer.getSubscription();
 				subscriptionService.terminateSubscription(subscription, offer.getTerminationDate(), offer.getTerminationReason(), order.getOrderNumber());
 			}
+
 		}
 		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
@@ -294,15 +312,34 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         return seller;
     }
 	
-	private void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
+	public void instanciateDiscountPlans(Subscription subscription,Set<DiscountPlan>  discountPlans) {
 	     // instantiate the discounts
             for (DiscountPlan dp : discountPlans) {
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
             }
         
 	}
+	
+	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
+		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
+		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
+		if(orderProduct.getDiscountPlan() != null) {
+			DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+			var discountPlan = orderProduct.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setServiceInstance(serviceInstance);
+			dpi.setSubscription(subscription);
+			discountPlanInstanceService.create(dpi, discountPlan);
+			serviceInstance.getDiscountPlanInstances().add(dpi);
+			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
+		}
+	}
 
-	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
+	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
@@ -361,6 +398,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
+		
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
@@ -385,6 +423,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);
 			}
 			subscription.addServiceInstance(serviceInstance);
+			return serviceInstance;
 	}
 	
 	public void updateProduct(OrderOffer offer, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate, String subscriptionCode) {
@@ -484,4 +523,5 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			return new Date();
 		}
 	}
+	
 }

@@ -101,6 +101,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update an existing job",
+            tags = { "Jobs management" })
     ActionStatus updatePut(JobInstanceDto putData);
 
     /**

@@ -311,6 +311,11 @@ public class CustomerApi extends AccountEntityApi {
             }
             customer.setAdditionalDetails(additionalDetails);
         }
+
+        if(postData.getIsCompany() != null)
+        {
+            customer.setIsCompany(postData.getIsCompany());
+        }
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))

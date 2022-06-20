@@ -138,6 +138,7 @@ public class OtherCreditAndChargeService extends
 
         occ.setType(OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value());
         accountOperationService.handleAccountingPeriods(occ);
+		accountOperationService.fillOperationNumber(occ);
         super.create(occ);
     }
 	

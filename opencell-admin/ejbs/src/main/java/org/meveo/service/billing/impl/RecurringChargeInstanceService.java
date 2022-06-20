@@ -48,6 +48,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
@@ -417,7 +418,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     revenueRecognitionScriptService.createRevenueSchedule(recurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), recurringChargeInstance);
                 }
             }
-
+            if (recurringChargeInstance.getNextChargeDate() == null) {
+                log.warn("Rating RecurringChargeInstance {} updates its next charge date to null. " +
+                        "It'll be no longer rated even is active!", recurringChargeInstance.getId());
+            }
             return ratingResult;
 
         } catch (Exception e) {
@@ -500,13 +504,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     /**
      * Apply missing recurring charges from the last charge date to the end agreement date
      *
-     * @param chargeInstance charge Instance
      * @param recurringChargeTemplate recurringCharge Template
+     * @param chargeInstance charge Instance
      * @param endAgreementDate end agreement date
+     * @param invoiceAgreementImmediately
+     * @param terminationDate
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate) throws BusinessException, RatingException {
+    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate,
+                                                                         boolean invoiceAgreementImmediately, Date terminationDate) throws BusinessException, RatingException {
 
         boolean chargeWasUpdated = true;
 
@@ -525,6 +532,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         if (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
+        }
+        //INTRD-4424: if invoiceAgreementImmediately then the agreement charges rating
+        // should appear in the next invoice following the sub's termination date
+        if (invoiceAgreementImmediately && !ratingResult.getWalletOperations().isEmpty()) {
+            for (WalletOperation wo : ratingResult.getWalletOperations()) {
+                wo.setOperationDate(terminationDate);
+                walletOperationService.updateNoCheck(wo);
+            }
         }
 
         return chargeInstance;

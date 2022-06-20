@@ -1,26 +1,47 @@
 package org.meveo.service.script.catalog;
 
-import java.util.*;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.article.*;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.article.ArticleMapping;
+import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.catalog.*;
-import org.meveo.model.cpq.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.ServiceChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.article.*;
-import org.meveo.service.catalog.impl.*;
-import org.meveo.service.cpq.*;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
+import org.meveo.service.billing.impl.article.ArticleMappingService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.tax.TaxClassService;
-import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 public class V11MigrationScript extends Script {
 	public static final String ARTICLE_MAPPING_ID = "mainArticleMapping";
@@ -95,14 +116,17 @@ public class V11MigrationScript extends Script {
 
 	public Product map(ServiceTemplate serviceTemplate) {
 		Product product = createProduct(serviceTemplate);
-		createArticle(product);
-		ProductVersion productVersion = createProductVersion(product);
-		List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate);
-		serviceInstances.forEach(serviceInstance -> {
-			serviceInstance.setProductVersion(productVersion);
-			serviceInstance.setServiceTemplate(null);
-			serviceInstanceService.update(serviceInstance);
-		});
+		if(product!=null) {
+			createArticle(product);
+			ProductVersion productVersion = createProductVersion(product);
+			List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate);
+			serviceInstances.forEach(serviceInstance -> {
+				serviceInstance.setProductVersion(productVersion);
+				serviceInstance.setServiceTemplate(null);
+				serviceInstanceService.update(serviceInstance);
+			});
+		}
+		
 		
 		return product;
 	}
@@ -113,8 +137,10 @@ public class V11MigrationScript extends Script {
 		for(OfferServiceTemplate offerServiceTemplate:offerTemplate.getOfferServiceTemplates()) {
 			OfferComponent offerComponent = new OfferComponent();
 			String productCode=offerServiceTemplate.getServiceTemplate().getCode().replaceAll("_OLD$", "");
+          System.out.println("productCode="+productCode);
 			product=productService.findByCode(productCode);
 			if(product!=null) {
+               System.out.println("productId="+product.getId());
 				offerComponent.setProduct(product);
 				offerComponent.setOfferTemplate(offerTemplate);
 				offerTemplate.getOfferComponents().add(offerComponent);
@@ -129,7 +155,10 @@ public class V11MigrationScript extends Script {
 	public ChargeTemplate map(ChargeTemplate chargeTemplate) {
 		List<PricePlanMatrix> ppmList=pricePlanMatrixService.listByChargeCode(chargeTemplate.getCode());
 		for(PricePlanMatrix ppm:ppmList) {
-			createPPMVersion(ppm);
+			if(ppm.getVersions().isEmpty()) {
+				createPPMVersion(ppm);
+			}
+			
 		}
 		return chargeTemplate;
 	}
@@ -163,7 +192,7 @@ public class V11MigrationScript extends Script {
 	}
 
 	private Product createProduct(ServiceTemplate serviceTemplate) {
-		Product product=productService.findByCode(serviceTemplate.getCode());
+		Product product=productService.findByCode(serviceTemplate.getCode().replaceAll("_OLD$", ""));
 		if(product==null) {
 			product = new Product();
 			product.setCode(serviceTemplate.getCode());
@@ -182,7 +211,8 @@ public class V11MigrationScript extends Script {
 			
 			serviceTemplateService.update(serviceTemplate);
 		}else {
-			log.warn("Product with code {} already exists",serviceTemplate.getCode());
+			log.warn("Product with code {} already exists",serviceTemplate.getCode().replaceAll("_OLD$", ""));
+			return null;
 		}
 		
 		return product;
@@ -208,9 +238,12 @@ public class V11MigrationScript extends Script {
 		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
 		ppmv.setPricePlanMatrix(ppm);
 		ppmv.setAmountWithoutTax(ppm.getAmountWithoutTax());
-		ppmv.setAmountWithoutTaxEL(ppm.getAmountWithoutTaxEL());
 		ppmv.setAmountWithTax(ppm.getAmountWithTax());
-		ppmv.setAmountWithTaxEL(ppm.getAmountWithTaxEL());
+		if(ppm.getAmountWithoutTaxEL() != null) {
+		    ppmv.setPriceEL(ppm.getAmountWithoutTaxEL());
+		} else {
+		    ppmv.setPriceEL(ppm.getAmountWithTaxEL());
+		}		
 		ppmv.setLabel(ppm.getDescription());
 		ppmv.setMatrix(false);
 		ppmv.setStatus(VersionStatusEnum.PUBLISHED);

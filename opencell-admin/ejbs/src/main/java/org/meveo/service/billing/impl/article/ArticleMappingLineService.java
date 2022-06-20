@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.article.AccountingArticle;
@@ -26,8 +27,10 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class ArticleMappingLineService extends BusinessService<ArticleMappingLine> {
 
-	@Inject 
-	private ArticleMappingLineService articleMappingLineService;
+	@Inject
+	private ArticleMappingService articleMappingService;
+
+	private static final String DEFAULT_ARTICLE_MAPPING_CODE = "DEFAULT_ARTICLE_MAPPING";
 
 	@SuppressWarnings("unchecked")
 	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate) {
@@ -55,7 +58,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		Set<Long> idsMapping = lists.stream().map(aml -> aml.getAttributesMapping()).flatMap(Collection::stream).map(AttributeMapping::getId).collect(Collectors.toSet());
 		Set<Long> ids =  new HashSet<>(lists).stream().map(ArticleMappingLine::getId).collect(Collectors.toSet());
 		if(!idsMapping.isEmpty())
-			articleMappingLineService.remove(idsMapping);
+			remove(idsMapping);
 		if(!ids.isEmpty())
 			remove(ids);
 	}
@@ -66,52 +69,51 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	 * @return
 	 */
 	public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
-		 ArticleMappingLine articleMappingLineUpdated = findById(id, true);
-	        if(articleMappingLineUpdated == null) return Optional.empty();
+		ArticleMappingLine articleMappingLineUpdated = findById(id, true);
+		if (articleMappingLineUpdated == null) return Optional.empty();
 
-	        AccountingArticle accountingArticle = (AccountingArticle) tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-	        if(articleMappingLine.getArticleMapping()!=null) {
-	        	ArticleMapping articleMapping = (ArticleMapping) tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-	        	articleMappingLineUpdated.setArticleMapping(articleMapping);
-	        }else {
-	        	articleMappingLineUpdated.setArticleMapping(null);
-	        }
-	        articleMappingLine.setAccountingArticle(accountingArticle);
-	        populateArticleMappingLine(articleMappingLine);
-	        
-	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
-	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
-	        articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
-	        
-	        articleMappingLineUpdated.setOfferTemplate(articleMappingLine.getOfferTemplate());
-	        articleMappingLineUpdated.setChargeTemplate(articleMappingLine.getChargeTemplate());
-	        articleMappingLineUpdated.setProduct(articleMappingLine.getProduct());
-	        
-	        articleMappingLineUpdated.getAttributesMapping().clear();
-	        if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
-	            List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
-	                    .stream()
-	                    .map(am -> {
-	                        Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
+		AccountingArticle accountingArticle = tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+		if(articleMappingLineUpdated.getArticleMapping() == null) {
+			articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
+		}
+		articleMappingLine.setAccountingArticle(accountingArticle);
+		populateArticleMappingLine(articleMappingLine);
 
-	                        AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
-	                        attributeMapping.setArticleMappingLine(articleMappingLineUpdated);
-	                        return attributeMapping;
-	                    })
-	                    .collect(Collectors.toList());
-	            articleMappingLineUpdated.getAttributesMapping().addAll(attributesMapping);
-	        }
-	        update(articleMappingLineUpdated);
-	        return Optional.of(articleMappingLineUpdated);
+		articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
+		articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
+		articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
+
+		articleMappingLineUpdated.setOfferTemplate(articleMappingLine.getOfferTemplate());
+		articleMappingLineUpdated.setChargeTemplate(articleMappingLine.getChargeTemplate());
+		articleMappingLineUpdated.setProduct(articleMappingLine.getProduct());
+
+		articleMappingLineUpdated.getAttributesMapping().clear();
+		if (articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()) {
+			List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
+					.stream()
+					.map(am -> {
+						Attribute attribute = tryToFindByCodeOrId(am.getAttribute());
+
+						AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
+						attributeMapping.setArticleMappingLine(articleMappingLineUpdated);
+						return attributeMapping;
+					})
+					.collect(Collectors.toList());
+			articleMappingLineUpdated.getAttributesMapping().addAll(attributesMapping);
+		}
+		articleMappingLineUpdated.setMappingKeyEL(articleMappingLine.getMappingKeyEL());
+		articleMappingLineUpdated.setDescription(articleMappingLine.getDescription());
+		update(articleMappingLineUpdated);
+		return Optional.of(articleMappingLineUpdated);
 	}
 	
 	private void populateArticleMappingLine(ArticleMappingLine articleMappingLine) {
     	if(articleMappingLine.getOfferTemplate() != null){
-            OfferTemplate offerTemplate = (OfferTemplate) tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
+            OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
             articleMappingLine.setOfferTemplate(offerTemplate);
         }
         if(articleMappingLine.getProduct() != null){
-        	Product product = (Product) tryToFindByCodeOrId(articleMappingLine.getProduct());
+        	Product product = tryToFindByCodeOrId(articleMappingLine.getProduct());
         	articleMappingLine.setProduct(product);
         }
         if(articleMappingLine.getChargeTemplate() != null){
@@ -122,20 +124,16 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 
 	/**
 	 * @param articleMappingLine
-	 * @return
+	 * @return ArticleMappingLine
 	 */
-	 public ArticleMappingLine valdiateAndCreate(ArticleMappingLine articleMappingLine) {
-
-        AccountingArticle accountingArticle = (AccountingArticle) tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-        if(articleMappingLine.getArticleMapping()!=null) {
-        	ArticleMapping articleMapping = (ArticleMapping) tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-        	articleMappingLine.setArticleMapping(articleMapping);
-        }
+	 public ArticleMappingLine validateAndCreate(ArticleMappingLine articleMappingLine) {
+        AccountingArticle accountingArticle = tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+        articleMappingLine.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
                     .stream()
                     .map(am -> {
-                        Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
+                        Attribute attribute = tryToFindByCodeOrId(am.getAttribute());
                         AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
                         attributeMapping.setArticleMappingLine(articleMappingLine);
                         return attributeMapping;
@@ -148,5 +146,22 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
         create(articleMappingLine);
         return articleMappingLine;
     }
-    
+
+    private ArticleMapping getArticleMappingFromMappingLine(ArticleMappingLine articleMappingLine) {
+		ArticleMapping articleMapping = null;
+	 	if(articleMappingLine.getArticleMapping() != null) {
+			try {
+				articleMapping = tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+			} catch (Exception exception) {
+				log.debug("Default article mapping line will be used");
+			}
+		}
+	 	if(articleMapping == null) {
+			articleMapping = articleMappingService.findByCode(DEFAULT_ARTICLE_MAPPING_CODE);
+			if(articleMapping == null) {
+				throw new NotFoundException("Default article mapping not found");
+			}
+		}
+	 	return articleMapping;
+	}
 }

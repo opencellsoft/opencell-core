@@ -4,9 +4,11 @@
 package org.meveo.apiv2.billing.service;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
@@ -100,13 +103,13 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Override
 	public Optional<Invoice> update(Long id, Invoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<Invoice> patch(Long id, Invoice baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
@@ -114,9 +117,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         Invoice invoice = invoiceService.findById(id);
         if(invoice != null) {
             invoiceService.remove(invoice);
-            return Optional.of(invoice);
+            return of(invoice);
         }
-        return Optional.empty();
+        return empty();
 	}
 
 	@Override
@@ -296,7 +299,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
-        List<String> idsInvoiceLineNotFound = new ArrayList<String>();
+        List<String> idsInvoiceLineNotFound = new ArrayList<>();
         for(Long lineId : invoiceLineIds) {
             org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.findById(lineId);
             if (invoiceLine == null) {                
@@ -305,7 +308,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         }
 
         String idsInvoiceLineNotFoundStr = "";
-        if (idsInvoiceLineNotFound.size() > 0) {
+        if (!idsInvoiceLineNotFound.isEmpty()) {
             for(int i=0; i< idsInvoiceLineNotFound.size() - 1; i++) {
                 idsInvoiceLineNotFoundStr += idsInvoiceLineNotFound.get(i) + ", ";
             }
@@ -368,10 +371,8 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			if (filter == null && StringUtils.isBlank(filterDto.getInputXml())) {
 				throw new NotFoundException("Filter with code does not exists : " + filterDto.getCode());
 			}
-			if (filter != null && !filter.getShared()) {
-				if (!filter.getAuditable().isCreator(currentUser)) {
-					throw new BadRequestException("INVALID_FILTER_OWNER");
-				}
+			if (filter != null && !filter.getShared() && !filter.getAuditable().isCreator(currentUser)) {
+				throw new BadRequestException("INVALID_FILTER_OWNER");
 			}
 		}
 		return filter;
@@ -411,5 +412,29 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         }
 	    
 	    return adjInvoice;
+	}
+
+	public Long quarantineInvoice(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {       
+        return invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
+    }
+
+	/**
+	 * Invoice refresh rate
+	 * @param invoiceId Invoice identifier
+	 * @return refresh result
+	 */
+	public Optional<Invoice> refreshRate(Long invoiceId) {
+		Invoice invoice = ofNullable(invoiceService.findById(invoiceId, asList("tradingCurrency")))
+				.orElseThrow(() -> new NotFoundException("Invoice not found"));
+		if(invoice.getStatus() != InvoiceStatusEnum.NEW && invoice.getStatus() != InvoiceStatusEnum.DRAFT) {
+			throw new ForbiddenException("Refresh rate only allowed for invoices with status : NEW or DRAFT");
+		}
+		BigDecimal currentRate = invoice.getTradingCurrency().getCurrentRate();
+		if(currentRate != null && currentRate.equals(invoice.getLastAppliedRate())) {
+			return empty();
+		} else {
+			return of(invoiceService.refreshAmounts(invoice,
+					currentRate, invoice.getTradingCurrency().getCurrentRateFromDate()));
+		}
 	}
 }

@@ -110,7 +110,8 @@ import org.meveo.model.finance.AccountingEntry;
         @NamedQuery(name = "AccountOperation.findAoClosedSubPeriodByStatus", query = "SELECT ao FROM AccountOperation ao" +
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
-        @NamedQuery(name = "AccountOperation.findAoByStatus", query = "SELECT ao FROM AccountOperation ao WHERE ao.status IN (:AO_STATUS)")
+        @NamedQuery(name = "AccountOperation.findAoByStatus", query = "SELECT ao FROM AccountOperation ao WHERE ao.status IN (:AO_STATUS)"),
+        @NamedQuery(name = "AccountOperation.findByCustomerAccount", query = "SELECT ao FROM AccountOperation ao WHERE ao.id in (:AO_IDS) AND ao.customerAccount.id = :CUSTOMERACCOUNT_ID")
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
@@ -446,7 +447,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Operation number
      */
-    @Column(name = "operation_number", insertable = false)
+    @Column(name = "operation_number")
     private Long operationNumber;
 
     public Date getDueDate() {

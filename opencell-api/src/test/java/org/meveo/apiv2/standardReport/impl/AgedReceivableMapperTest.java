@@ -37,11 +37,11 @@ public class AgedReceivableMapperTest {
     public void shouldReturnDynamicResponse() {
         int responseDtoSize = 1;
         List<Object[]> input = new ArrayList<>();
-        Object[] agedReceivable = new Object[] {"CA_CODE", ONE,
+        Object[] agedReceivable = new Object[] {1, ONE,
                 new BigDecimal(100), new BigDecimal(80), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100)};
+                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100), "CA_CODE"};
         input.add(agedReceivable);
         List<AgedReceivableDto> response = mapper.buildDynamicResponse(input, 2);
 
@@ -59,13 +59,13 @@ public class AgedReceivableMapperTest {
     public void shouldReturnDefaultResponse() {
         int responseDtoSize = 1;
         List<Object[]> input = new ArrayList<>();
-        Object[] agedReceivable = new Object[] {"CA_CODE", ONE,
+        Object[] agedReceivable = new Object[] {1, ONE,
                 new BigDecimal(100), new BigDecimal(80), new BigDecimal(20),
                 new BigDecimal(200), new BigDecimal(180), new BigDecimal(20),
                 new BigDecimal(300), new BigDecimal(280), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100)};
+                "CA_DESCRIPTION", new Date(), "EUR", 1L, "INV_1000", new BigDecimal(100), "CA_CODE"};
         input.add(agedReceivable);
 
         List<AgedReceivableDto> response = mapper.toEntityList(input);

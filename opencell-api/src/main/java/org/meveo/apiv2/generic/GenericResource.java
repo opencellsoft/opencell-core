@@ -95,6 +95,37 @@ public interface GenericResource {
     Response getVersions();
 
     @GET
+    @Path("/{entityName}/{id}")
+    @Operation(summary = "Generic single endpoint to retrieve resources by ID",
+            tags = { "Generic" },
+            description ="Use this method to get an entity. You need to specify the entity name, the record id, and as body, the list of the wanted fields",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
+            })
+    Response getEntity(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                       @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+                       @Parameter(description = "The id here is the database primary key of the wanted record", required = true) @PathParam("id") Long id,
+                       @Parameter(description = "requestDto carries the wanted fields ex: {fields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
+
+    @GET
+    @Path("/{entityName}")
+    @Operation(summary = "Generic single endpoint to retrieve paginated records of an entity",
+            tags = { "Generic" },
+            description = "Use this method to get the list of entities. You need to specify the entity name, and as body, the configuration of the research.\"\n" +
+                    "                    + \" also you can define the offset and the limit, you can order by a field and define the sort type\"\n" +
+                    "                    + \" see PagingAndFiltering doc for more details.",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
+            })
+    Response getAllEntities(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                            @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName,
+                            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
+
+    @GET
     @Path("/entities")
     @Operation(summary = "This endpoint is used to retrieve the full list of queryable entities",
             tags = { "Generic" },

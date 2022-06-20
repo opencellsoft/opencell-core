@@ -28,8 +28,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +77,6 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
@@ -91,6 +92,7 @@ import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -107,6 +109,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -132,6 +135,8 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringRatingService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -237,7 +242,7 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
-    
+
     @Inject
     private UserAccountService userAccountService;
 
@@ -259,6 +264,9 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private GlobalSettingsService globalSettingsService;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
 
 	public QuoteDTO createQuote(QuoteDTO quoteDto) {
 	    if(StringUtils.isBlank(quoteDto.getApplicantAccountCode())) {
@@ -927,6 +935,24 @@ public class CpqQuoteApi extends BaseApi {
         		throw new MeveoApiException("Delivery date should be in the future");	
         	}
         	quoteOffer.setDeliveryDate(quoteOfferDto.getDeliveryDate());
+        	
+        	if(quoteOfferDto.getQuoteLineType() == OfferLineTypeEnum.AMEND) {
+            	if (quoteOfferDto.getSubscriptionCode() == null) {
+    				throw new BusinessApiException("Subscription is missing");
+    			}
+            	List<QuoteOffer> quoteOffers = quoteOfferService.findBySubscriptionAndStatus(quoteOfferDto.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
+            	if(!quoteOffers.isEmpty()) {
+            		throw new BusinessApiException("Amendement order line already exists on subscription"+quoteOfferDto.getSubscriptionCode());
+            	}
+            	quoteOffer.setQuoteLineType(OfferLineTypeEnum.AMEND);
+            	Subscription subscription = subscriptionService.findByCode(quoteOfferDto.getSubscriptionCode());
+            	if(subscription == null) {
+            		throw new EntityDoesNotExistsException("Subscription with code "+quoteOfferDto.getSubscriptionCode()+" does not exist");
+            	}
+            	quoteOffer.setSubscription(subscription);
+            }else {
+            	quoteOffer.setQuoteLineType(OfferLineTypeEnum.CREATE);
+            }
             
             newPopulateProduct(quoteOfferDto, quoteOffer);
             newPopulateOfferAttribute(quoteOfferDto.getOfferAttributes(), quoteOffer);
@@ -996,6 +1022,23 @@ public class CpqQuoteApi extends BaseApi {
     	}
     	quoteOffer.setDeliveryDate(quoteOfferDTO.getDeliveryDate());
         quoteOffer.setQuoteLineType(quoteOfferDTO.getQuoteLineType());
+        
+        if(quoteOfferDTO.getQuoteLineType() == OfferLineTypeEnum.AMEND) {
+        	if (quoteOfferDTO.getSubscriptionCode() == null) {
+				throw new BusinessApiException("Subscription is missing");
+			}
+        	List<QuoteOffer> orderOffers = quoteOfferService.findBySubscriptionAndStatus(quoteOfferDTO.getSubscriptionCode(), OfferLineTypeEnum.AMEND);
+        	if(!orderOffers.isEmpty()) {
+        		throw new BusinessApiException("Amendement quote line already exists on subscription"+quoteOfferDTO.getSubscriptionCode());
+        	}
+        	
+        	Subscription subscription = subscriptionService.findByCode(quoteOfferDTO.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException("Subscription with code "+quoteOfferDTO.getSubscriptionCode()+" does not exist");
+        	}
+        	quoteOffer.setSubscription(subscription);
+        }
+       
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
@@ -1357,24 +1400,14 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         
         List<DiscountPlanItem> applicablePercentageDiscountItems = new ArrayList<>();
-        
         //calculate totalQuoteAttribute
         calculateTotalAttributes (quoteVersion);
-        
-        //get quote discountPlanitem of type percentage
-        if(quoteVersion.getDiscountPlan()!=null) {
-        	
- 
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(quoteVersion.getQuote().getBillableAccount(), quoteVersion.getDiscountPlan(), null, quoteVersion,null, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteVersion.getQuote().getQuoteDate(), null));
-        }
-
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer,applicablePercentageDiscountItems));
         } 
         Map<BigDecimal, List<QuotePrice>> pricesPerTaux = accountingArticlePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 
-        BigDecimal quoteTotalAmount = BigDecimal.ZERO;
         for (BigDecimal taux: pricesPerTaux.keySet()) {
 
 //            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
@@ -1392,11 +1425,10 @@ public class CpqQuoteApi extends BaseApi {
                     .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
-            quoteTotalAmount=prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
-        CpqQuote quote=quoteVersion.getQuote();
-        applyFixedDiscount(quoteVersion.getDiscountPlan(), quoteTotalAmount, quote.getSeller(),
-        		quote.getBillableAccount(), null, null,null, quoteVersion,quote.getQuoteDate());
+//        CpqQuote quote=quoteVersion.getQuote();
+//        applyFixedDiscount(quoteVersion.getDiscountPlan(), quoteTotalAmount, quote.getSeller(),
+//        		quote.getBillableAccount(), null, null,null, quoteVersion,quote.getQuoteDate());
 
         //Get the updated quote version and construct the DTO
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
@@ -1464,15 +1496,16 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer,List<DiscountPlanItem> applicablePercentageDiscountItems) {
+    	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
+    	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.PRODUCT);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        List<WalletOperation> walletOperations = quoteRating(subscription, true);
-        QuoteArticleLine quoteArticleLine = null;
-        Map<String, QuoteArticleLine> quoteArticleLines =
-                quoteArticleLineService.findByQuoteVersion(quoteOffer.getQuoteVersion());
-        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<>();
+        List<QuotePrice> fixedDiscountPrices = new ArrayList<>();
+        List<WalletOperation> walletOperations = quoteRating(subscription,quoteOffer,fixedDiscountPrices, true);
         List<QuotePrice> accountingPrices = new ArrayList<>();
-
+        QuoteArticleLine quoteArticleLine = null;
+        Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
+        Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<>();
         for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
             if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
                 quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
@@ -1481,28 +1514,24 @@ public class CpqQuoteApi extends BaseApi {
             }
 
         }
-        BillingAccount billingAccount=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
-        if(quoteOffer.getDiscountPlan()!=null) {
-        	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quoteOffer.getDiscountPlan(), null, quoteOffer.getQuoteVersion(),quoteOffer, null, DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate(), null));
-        }
         String accountingArticleCode = null;
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
-            Long quoteProductId=wo.getServiceInstance().getQuoteProduct().getId();
-            if (!quoteProductTotalAmount.containsKey(quoteProductId)) {
+            Long quoteProductId=wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct().getId() : null;
+            if (quoteProductId == null || !quoteProductTotalAmount.containsKey(quoteProductId)) {
             	quoteProductTotalAmount.put(quoteProductId, wo.getAmountWithoutTax());
             }else {
             	quoteProductAmount=quoteProductTotalAmount.get(quoteProductId);
             	quoteProductTotalAmount.put(quoteProductId,quoteProductAmount.add(wo.getAmountWithoutTax()));
             }
-            if (!quoteArticleLines.containsKey(accountingArticleCode)) {
+            if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
                 quoteArticleLine = new QuoteArticleLine();
                 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
                 quoteArticleLine.setQuantity(wo.getQuantity());
                 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
                 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
-                quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+                quoteArticleLine.setQuoteProduct(wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct() : null);
                 wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
                 quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                 quoteArticleLine.setQuoteVersion(quoteOffer.getQuoteVersion());
@@ -1521,48 +1550,41 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setCurrencyCode(wo.getCurrency() != null ? wo.getCurrency().getCurrencyCode() : null);
             quotePrice.setQuoteArticleLine(quoteArticleLine);
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
-            quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setQuantity(wo.getQuantity());
-            if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
-                RecurringChargeInstance chargeInstance = ((RecurringChargeInstance)  wo.getChargeInstance());
-                RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) chargeInstance.getChargeTemplate();
-                Calendar cal = null;
-                if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-                    cal = recurringRatingService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate, chargeInstance);
-                }
-                if (cal == null) {
-                    quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getCode());
-                } else {
-                    quotePrice.setRecurrencePeriodicity(cal.getCode());
-                }
-                Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
-                quotePrice.setRecurrenceDuration(recurrenceDuration);
-                overrideAmounts(quotePrice, recurrenceDuration);
-            } else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum())){
-            	 UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) wo.getChargeInstance().getChargeTemplate();
-                 Long quantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1, quoteOffer, wo.getServiceInstance().getQuoteProduct()));
-                 quotePrice.setRecurrenceDuration(quantity);
-                 overrideAmounts(quotePrice, quantity);
+            if(wo.getDiscountPlan() != null) {
+            	Optional<QuotePrice> optionalDiscounteQuotePrice = accountingPrices.stream().filter(qo ->  qo.getUuid().equals(wo.getUuid())).findFirst();
+            	if(optionalDiscounteQuotePrice.isPresent()) {
+	            	quotePrice.setDiscountedQuotePrice(optionalDiscounteQuotePrice.get());
+	            	quotePrice.setDiscountPlan(wo.getDiscountPlan());
+            	}
+            }else {
+              quotePrice.setUuid(wo.getUuid());
             }
-            quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
+            
+
+            ChargeInstance chargeInstance = wo.getChargeInstance();
+            quotePrice.setChargeTemplate(chargeInstance != null ? chargeInstance.getChargeTemplate() : null);
+            if (chargeInstance != null && PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
+                RecurringChargeTemplate recurringCharge = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate());
+
+                Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
+                quotePrice.setRecurrenceDuration(recurrenceDuration);
+                quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
+                overrideAmounts(quotePrice, recurrenceDuration);
+            } 
+            quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
-            if(quotePrice.getQuoteArticleLine()!=null && quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan()!=null) {
-            	applicablePercentageDiscountItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, quotePrice.getQuoteArticleLine().getQuoteProduct().getDiscountPlan(), null,quoteOffer.getQuoteVersion(), quoteOffer, quotePrice.getQuoteArticleLine().getQuoteProduct(), DiscountPlanItemTypeEnum.PERCENTAGE, quoteOffer.getQuoteVersion().getQuote().getQuoteDate(), null));
-
-            }
-            accountingPrices.addAll(applyPercentageDiscount(wo, quotePrice, applicablePercentageDiscountItems, billingAccount, quotePrice.getQuoteVersion()));
         }
         //Calculate totals by offer
 
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
-        quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
         log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
         pricesPerType
         .keySet()
@@ -1577,17 +1599,8 @@ public class CpqQuoteApi extends BaseApi {
             return pricesDTO;
         }).collect(Collectors.toList());
 
-        //apply fixed discounts on products
-        quoteProductTotalAmount.forEach((id, amount) -> {
-        	QuoteProduct quoteProduct=quoteProductService.findById(id);
-        	 applyFixedDiscount(quoteProduct.getDiscountPlan(), amount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
-             		(quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount()), quoteOffer, quoteProduct, null,quoteOffer.getQuoteVersion(),quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
-
-		});
-
-        BigDecimal offerTotalAmount = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
-        applyFixedDiscount(quoteOffer.getDiscountPlan(), offerTotalAmount, quoteOffer.getQuoteVersion().getQuote().getSeller(),
-        		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion(),quoteOffer.getQuoteVersion().getQuote().getQuoteDate());
+        
+        accountingPrices.addAll(fixedDiscountPrices);
         return accountingPrices;
     }
 
@@ -1647,10 +1660,19 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     @SuppressWarnings("unused")
-    public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> quoteRating(Subscription subscription, QuoteOffer quoteOffer, List<QuotePrice> accountingPrices, boolean isVirtual) throws BusinessException {
 
-        RatingResult ratingResult = new RatingResult();
+        List<WalletOperation> walletOperations = new ArrayList<>();
+        Set<DiscountPlanItem> eligibleFixedDiscountItems = new HashSet<DiscountPlanItem>();
         BillingAccount billingAccount = null;
+        AccountingArticle usageArticle =null;
+        Set<AccountingArticle> overrodeArticle = quoteOffer.getQuoteVersion().getQuoteArticleLines()
+                .stream()
+                .filter(articleLine -> articleLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId()))
+                .map(QuoteArticleLine::getAccountingArticle)
+                .collect(Collectors.toSet());
+        
+        RatingResult ratingResult = new RatingResult();
         if (subscription != null) {
 
             billingAccount = subscription.getUserAccount().getBillingAccount();
@@ -1676,9 +1698,11 @@ public class CpqQuoteApi extends BaseApi {
                     try {
                         RatingResult localRatingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                         ratingResult.add(localRatingResult);
+                        if(localRatingResult != null)
+                        	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes,null,null,null)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), attributes, wo)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate())));
                         }
 
@@ -1697,11 +1721,12 @@ public class CpqQuoteApi extends BaseApi {
                     try {
                         Date nextApplicationDate = recurringRatingService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
 
-                        RatingResult localRatingResult = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+                        RatingResult localRatingResult = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, nextApplicationDate, false, isVirtual, null);
                         ratingResult.add(localRatingResult);
-
+                        if(localRatingResult != null)
+                        	eligibleFixedDiscountItems.addAll(localRatingResult.getEligibleFixedDiscountItems());
                         for (WalletOperation wo : localRatingResult.getWalletOperations()) {
-                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,null,null,null)
+                            wo.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), attributes,wo)
                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate())));
                          }
 
@@ -1751,12 +1776,13 @@ public class CpqQuoteApi extends BaseApi {
 		                			ratingResult.add(localRatingResult);
 		                			if (localRatingResult != null) {
 		                				for(WalletOperation walletOperation:localRatingResult.getWalletOperations()) {
-		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes,edr.getParameter1(),edr.getParameter2(),edr.getParameter3())
+		                					walletOperation.setAccountingArticle(accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), usageCharge.getChargeTemplate(), attributes, walletOperation)
 		                							.orElseThrow(() -> new BusinessException(errorMsg+" and charge "+usageCharge.getChargeTemplate())));
 		                				}
 		
 		                			}
-                            }
+                                    break;
+                             }
                 		} catch (RatingException e) {
                 			log.trace("Quotation : Failed to rate EDR {}: {}", edr, e.getRejectionReason());
                 			throw new BusinessException("Failed to apply a subscription charge {}: {}"+usageCharge.getCode(),e); // e.getBusinessException();
@@ -1772,10 +1798,40 @@ public class CpqQuoteApi extends BaseApi {
                 	}
 
                 }
+                walletOperations.addAll(discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+						serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), serviceInstance, subscription, serviceInstance.getCode(), isVirtual, null, null, DiscountPlanTypeEnum.PRODUCT));
             }
 
+           var offerFixedDiscountWalletOperation = discountPlanService.calculateDiscountplanItems(new ArrayList<>(eligibleFixedDiscountItems), subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            		subscription.getOffer().getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, subscription.getOffer().getDescription(), isVirtual, null, null, DiscountPlanTypeEnum.OFFER);
+
+           for (WalletOperation wo : offerFixedDiscountWalletOperation) {
+        	   QuotePrice discountQuotePrice = new QuotePrice();
+               discountQuotePrice.setPriceLevelEnum(PriceLevelEnum.OFFER);
+               discountQuotePrice.setPriceTypeEnum(PriceTypeEnum.FIXED_DISCOUNT);
+               final AccountingArticle accountingArticle = wo.getAccountingArticle();
+               if (accountingArticle != null && accountingArticle.getTaxClass() != null) {
+            	   final TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), wo.getSeller() , billingAccount, null, wo.getOperationDate(), false, false);
+            	   if(taxInfo != null)
+            		   discountQuotePrice.setTaxRate(taxInfo.tax.getPercent());
+               }
+               discountQuotePrice.setAmountWithoutTax(wo.getAmountWithoutTax());
+               discountQuotePrice.setAmountWithTax(wo.getAmountWithTax());
+               discountQuotePrice.setTaxAmount(wo.getAmountTax());
+               discountQuotePrice.setCurrencyCode(wo.getCurrency() != null ? wo.getCurrency().getCurrencyCode() : null);
+               discountQuotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
+               discountQuotePrice.setQuoteOffer(quoteOffer);
+               discountQuotePrice.setQuantity(wo.getQuantity());
+               quotePriceService.create(discountQuotePrice);
+               accountingPrices.add(discountQuotePrice);
+           }
+
         }
-        return ratingResult.getWalletOperations();
+        walletOperations.addAll(ratingResult.getWalletOperations());
+        List<WalletOperation> sortedWalletOperations = walletOperations.stream()
+        		  .sorted(Comparator.comparing(WalletOperation::getUnitAmountWithoutTax).reversed())
+        		  .collect(Collectors.toList());
+        return sortedWalletOperations;
     }
 
     private Subscription instantiateVirtualSubscription(QuoteOffer quoteOffer) {
@@ -1818,16 +1874,43 @@ public class CpqQuoteApi extends BaseApi {
 //            }
 //        }
 
-
+        //TODO: add discountplan instance for quoteOffer
+        if(quoteOffer.getDiscountPlan() != null) {
+	        DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(subscription);
+			var discountPlan = quoteOffer.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setSubscription(subscription);
+			subscription.getDiscountPlanInstances().add(dpi);
+			quoteOffer.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
+        }
         // instantiate and activate services
         processProducts(subscription, quoteOffer.getQuoteProduct());
 
         return subscription;
     }
 
+    private void processProductWithDiscount(Subscription subscription, QuoteProduct quoteProduct, ServiceInstance serviceInstance) {
 
+		if(quoteProduct.getDiscountPlan() != null) {
+			DiscountPlanInstance dpi = new DiscountPlanInstance();
+			dpi.assignEntityToDiscountPlanInstances(serviceInstance);
+			var discountPlan = quoteProduct.getDiscountPlan();
+			dpi.setDiscountPlan(discountPlan);
+			dpi.copyEffectivityDates(discountPlan);
+			dpi.setDiscountPlanInstanceStatus(discountPlan);
+			dpi.setCfValues(discountPlan.getCfValues());
+			dpi.setServiceInstance(serviceInstance);
+			dpi.setSubscription(subscription);
+			serviceInstance.getDiscountPlanInstances().add(dpi);
+			quoteProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
+		}
+	}
     private void processProducts(Subscription subscription, List<QuoteProduct> products) {
-
+    	
         for (QuoteProduct quoteProduct : products) {
             commercialRuleHeaderService.processProductReplacementRule(quoteProduct);
             Product product = quoteProduct.getProductVersion().getProduct();
@@ -1851,6 +1934,8 @@ public class CpqQuoteApi extends BaseApi {
             }
 
             serviceInstance.setSubscription(subscription);
+            
+            processProductWithDiscount(subscription, quoteProduct, serviceInstance);
 
             AttributeInstance attributeInstance = null;
             for (QuoteAttribute quoteAttribute : quoteProduct.getQuoteAttributes()) {
@@ -1922,7 +2007,7 @@ public class CpqQuoteApi extends BaseApi {
     }
  
 
-    private void applyFixedDiscount( DiscountPlan discountPlan,BigDecimal amountToApplyDiscountOn, Seller seller, BillingAccount billingAccount, QuoteOffer quoteOffer,QuoteProduct quoteproduct,AccountingArticle accountingArticle,QuoteVersion quoteVersion,Date applicationDate) {
+ /*   private void applyFixedDiscount( DiscountPlan discountPlan,BigDecimal amountToApplyDiscountOn, Seller seller, BillingAccount billingAccount, QuoteOffer quoteOffer,QuoteProduct quoteproduct,AccountingArticle accountingArticle,QuoteVersion quoteVersion,Date applicationDate) {
     	log.debug("applyFixedDiscount discountPlan code={},amountToApplyDiscountOn={}",discountPlan!=null?discountPlan.getCode():null,amountToApplyDiscountOn);
     	if(discountPlan==null|| amountToApplyDiscountOn==null || amountToApplyDiscountOn.compareTo(BigDecimal.ZERO)<=0) {
     		return;
@@ -2100,7 +2185,7 @@ public class CpqQuoteApi extends BaseApi {
             	  }
  
         return discountPrices;
-    }
+    }*/
 
  
 

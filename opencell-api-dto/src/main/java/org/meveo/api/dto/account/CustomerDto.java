@@ -179,6 +179,11 @@ public class CustomerDto extends AccountDto {
             setThresholdPerEntity(e.isThresholdPerEntity());
         }
 
+        if(e.getIsCompany() != null)
+        {
+            setIsCompany(e.getIsCompany());
+        }
+
         setAnonymizationDate(e.getAnonymizationDate());
     }
 	

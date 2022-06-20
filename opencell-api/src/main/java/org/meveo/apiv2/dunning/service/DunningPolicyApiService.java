@@ -176,7 +176,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
         for (DunningPolicyLevel policyLevel : dunningPolicyLevels) {
             if(!policyLevel.getDunningLevel().isEndOfDunningLevel()
                     && policyLevel.getDunningLevel().getDaysOverdue() > endOfLevelDayOverDue) {
-                throw new BadRequestException("End of level must have the highest day over due");
+                throw new BadRequestException("End of dunning level must have the higher days overdue");
             }
         }
     }
@@ -237,7 +237,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
         globalSettingsVerifier.checkActivateDunning();
         dunningPolicy.setIsActivePolicy(FALSE);
-        auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
+        dunningPolicy.setDisabled(true);
+        auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("disabled"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
 

@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.meveo.api.rest.exception.NotAuthorizedException;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
@@ -23,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class StandardReportApiServiceTest {
         assertEquals(DunningLevelEnum.R1, agedReceivableResult[8]);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldThrowExceptionIfInvoiceNumberNotFound() {
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(null);
 
@@ -93,14 +93,14 @@ public class StandardReportApiServiceTest {
                 null, "INV_10000", 10, 2);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionIfStepInDaysIsMissing() {
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate,
                 null, "INV_10000", null, 2);
         expectedException.expectMessage("StepInDays parameter is mandatory when numberOfPeriods is provided");
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionIfNumberOfPeriodsIsMissing() {
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate,
                 null, "INV_10000", null, 2);

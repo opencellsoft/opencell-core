@@ -28,6 +28,9 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
     /** generate AO */
     private Boolean generateAO = FALSE;
 
+    /** Refresh exchange rate */
+    private Boolean refreshExchangeRate = FALSE;
+
     /**
      * Gets the invoice id.
      *
@@ -52,5 +55,13 @@ public class ValidateInvoiceRequestDto extends BaseEntityDto {
 
     public void setGenerateAO(Boolean generateAO) {
         this.generateAO = generateAO;
+    }
+
+    public Boolean getRefreshExchangeRate() {
+        return refreshExchangeRate;
+    }
+
+    public void setRefreshExchangeRate(Boolean refreshExchangeRate) {
+        this.refreshExchangeRate = refreshExchangeRate;
     }
 }

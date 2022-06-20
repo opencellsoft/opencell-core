@@ -34,8 +34,8 @@ public class ArticleMappingLineMapperTest {
         assertNotNull(resource);
         assertTrue(resource instanceof org.meveo.apiv2.article.ArticleMappingLine);
         assertNotNull(resource.getAccountingArticle());
-        assertEquals(resource.getParameter1(), "param01");
-        assertEquals(resource.getMappingKeyEL(), "Mapping EL");
+        assertEquals("param01", resource.getParameter1());
+        assertEquals("Mapping EL", resource.getMappingKeyEL());
         assertEquals(resource.getAccountingArticle().getId(), (Long) 1L);
     }
 
@@ -56,7 +56,7 @@ public class ArticleMappingLineMapperTest {
         articleMappingLine.setAccountingArticle(accountingArticle);
 
         articleMappingLine.setArticleMapping(articleMapping);
-        articleMappingLine.setMappingKelEL("Mapping EL");
+        articleMappingLine.setMappingKeyEL("Mapping EL");
 
         OfferTemplate offerTemplate = new OfferTemplate();
         offerTemplate.setId(1L);
@@ -77,9 +77,9 @@ public class ArticleMappingLineMapperTest {
 
         assertNotNull(articleMappingLineEntity);
         assertTrue(articleMappingLineEntity instanceof ArticleMappingLine);
-        assertEquals(articleMappingLineEntity.getParameter2(), "param02");
-        assertEquals(articleMappingLineEntity.getParameter3(), "param03");
-        assertEquals(articleMappingLineEntity.getMappingKelEL(), "Mapping EL");
+        assertEquals("param02", articleMappingLineEntity.getParameter2());
+        assertEquals("param03", articleMappingLineEntity.getParameter3());
+        assertEquals("Mapping EL", articleMappingLineEntity.getMappingKeyEL());
     }
 
     private org.meveo.apiv2.article.ArticleMappingLine buildArticleMappingLineResource() {

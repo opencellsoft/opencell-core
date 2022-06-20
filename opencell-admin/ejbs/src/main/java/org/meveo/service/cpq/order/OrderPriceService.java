@@ -7,6 +7,8 @@ import javax.ejb.Stateless;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -28,5 +30,14 @@ public class OrderPriceService extends BusinessService<OrderPrice> {
         return getEntityManager().createNamedQuery("OrderPrice.findByQuote", OrderPrice.class)
                 .setParameter("quote", quote)
                 .getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Object[]> getGroupedOrderPrices(Long orderId){
+    	  return getEntityManager().createNamedQuery("QuotePrice.sumPricesByArticle")
+                  .setParameter("orderId", orderId)
+                  .setParameter("priceType", PriceTypeEnum.ONE_SHOT_OTHER)
+                  .setParameter("priceLevel", PriceLevelEnum.PRODUCT)
+                  .getResultList();
     }
 }

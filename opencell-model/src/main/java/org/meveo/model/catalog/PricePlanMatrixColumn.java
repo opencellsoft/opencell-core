@@ -36,8 +36,8 @@ import org.meveo.model.cpq.Product;
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
         @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product"),
-        @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select pv from PricePlanMatrixColumn pv LEFT JOIN   pv.pricePlanMatrixVersion pp where pv.code=:code and pp.id=:pricePlanMatrixVersionId"),
-        @NamedQuery(name = "PricePlanMatrixColumn.deleteById", query = "delete from PricePlanMatrixColumn where id =:id"),
+        @NamedQuery(name = "PricePlanMatrixColumn.findByCodeAndVersion", query = "select p from PricePlanMatrixColumn p LEFT JOIN p.pricePlanMatrixVersion pv where p.code=:code and pv.id=:pricePlanMatrixVersionId"),
+        @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select p from PricePlanMatrixColumn p where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId"),
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 

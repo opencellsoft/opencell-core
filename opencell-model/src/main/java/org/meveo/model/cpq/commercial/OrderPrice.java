@@ -21,6 +21,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 
 @Entity
@@ -29,7 +30,10 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
         @Parameter(name = "sequence_name", value = "order_price_seq")})
 @NamedQueries({
 @NamedQuery(name="OrderPrice.findByOrder", query = "select o from OrderPrice o where o.order=:commercialOrder"),
-@NamedQuery(name="OrderPrice.findByQuote", query = "select o from OrderPrice o where o.order.quote=:quote")
+@NamedQuery(name="OrderPrice.findByQuote", query = "select o from OrderPrice o where o.order.quote=:quote"),
+@NamedQuery(name = "QuotePrice.sumPricesByArticle", query = "SELECT o.orderArticleLine.id,o.discountedOrderPrice.id,taxRate, sum(o.amountWithoutTax) as sumAmountWOTax, sum(o.amountWithTax), sum(o.taxAmount),"
+		+ "sum(o.quantity) FROM OrderPrice o WHERE o.order.id=:orderId AND o.priceTypeEnum=:priceType AND o.priceLevelEnum=:priceLevel GROUP BY o.orderArticleLine.id,o.discountedOrderPrice.id,o.taxRate order by sumAmountWOTax DESC"),
+
 })
 public class OrderPrice extends BusinessEntity {
 
@@ -95,6 +99,17 @@ public class OrderPrice extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id")
 	private OrderOffer orderOffer;
+	
+	@Column(name = "quantity")
+	private BigDecimal quantity = BigDecimal.ONE;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discounted_order_price")
+	private OrderPrice discountedOrderPrice;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -222,6 +237,30 @@ public class OrderPrice extends BusinessEntity {
 
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public OrderPrice getDiscountedOrderPrice() {
+		return discountedOrderPrice;
+	}
+
+	public void setDiscountedOrderPrice(OrderPrice discountedOrderPrice) {
+		this.discountedOrderPrice = discountedOrderPrice;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
     
     

@@ -8,14 +8,13 @@ import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -26,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.MeveoApiException;
@@ -130,20 +130,27 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
-		Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
-				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
-				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
-						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
-						.map(matchingCode -> matchingCode.getMatchingAmounts())
-						.flatMap(Collection::stream)
-						.filter(matchingAmount -> accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
-						.collect(Collectors.toSet())
-				)
-				.flatMap(Collection::stream)
-				.distinct()
-				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
-				.collect(Collectors.toSet());
-		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();
+
+		Set<InvoiceMatchedOperation> result = new HashSet<>();
+
+		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+				.forEach(accountOperation -> {
+					AccountOperation invoiceAo = accountOperationService.findById(accountOperation.getId(), List.of("matchingAmounts"));
+
+					Optional.ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
+							.forEach(matchingAmount -> {
+								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
+								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+										.forEach(matchingAmountAo -> {
+											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											}
+										});
+							});
+
+				});
+
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(result)).build();
 	}
 
 	private Map<String, Object> buildResponse(Set<InvoiceMatchedOperation> collect) {
@@ -158,14 +165,15 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		ImmutableInvoiceMatchedOperation.Builder builder = ImmutableInvoiceMatchedOperation.builder();
 		return builder
 				.paymentId(accountOperation.getId())
+				.matchingAmountId(matchingAmountPrimary.getId())
 				.paymentCode(accountOperation.getCode())
 				.paymentDescription(accountOperation.getDescription())
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
-				.paymentDate(accountOperation.getTransactionDate())
+				.paymentDate(matchingAmountPrimary.getMatchingCode().getMatchingDate())
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
 				.paymentRef(ofNullable(accountOperation.getReference()).orElse(""))
-				.amount(accountOperation.getMatchingAmount())
-				.percentageCovered(accountOperation.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
+				.amount(matchingAmountPrimary.getMatchingAmount())
+				.percentageCovered(matchingAmountPrimary.getMatchingAmount().divide(invoice.getAmountWithTax(), 12, RoundingMode.HALF_UP))
 				.matchingType(matchingCode.getMatchingType() != null ? matchingCode.getMatchingType().getLabel() : "")
 				.matchingDate(matchingCode.getMatchingDate())
 				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
@@ -223,7 +231,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
-		if(invoiceLineInput.getSkipValidation()==null || !invoiceLineInput.getSkipValidation()) {
+		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
@@ -346,20 +354,20 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response createAdjustment(@NotNull Long id, @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToReplicate);
-        return Response.ok().entity(buildSuccessResponse(invoiceMapper.toResource(adjInvoice))).build();
+        return Response.ok().entity(buildSuccessResponse("invoice", invoiceMapper.toResource(adjInvoice))).build();
     }
 
-    private Map<String, Object> buildSuccessResponse(org.meveo.apiv2.billing.Invoice invoiceResource) {
+    private Map<String, Object> buildSuccessResponse(String label, Object object) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-        response.put("invoice", invoiceResource);
+        response.put(label, object);
         return response;
     }
     
     @Override
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<>();
         for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }
@@ -380,4 +388,36 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("invoice", invoice);
         return Response.ok(response).build();
     }
+
+	@Override
+	public Response quarantineInvoice(Long id, QuarantineBillingRunDto quarantineBillingRunDto) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		if(!InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())
+                && !InvoiceStatusEnum.REJECTED.equals(invoice.getStatus())) {
+			throw new ActionForbiddenException("Only possible for invoices in DRAFT/REJECTED/SUSPECT statuses") ;
+		}
+
+		Long quarantineBillingRunId = invoiceApiService.quarantineInvoice(invoice, quarantineBillingRunDto);
+		
+		
+		Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        response.put("quarantineBillingRunId", quarantineBillingRunId);
+        return Response.ok(response).build();
+	}
+
+	@Override
+	public Response refreshRate(Long invoiceId) {
+		Optional<Invoice> refreshedInvoice = invoiceApiService.refreshRate(invoiceId);
+		Map<String, Object> response;
+		if(refreshedInvoice.isPresent()) {
+			response = buildSuccessResponse("message",
+					"Exchange rate successfully refreshed");
+		} else {
+			response = buildSuccessResponse("message",
+					"Last applied rate and trading currency current rate are equals");
+		}
+		return Response.ok(response).build();
+	}
 }

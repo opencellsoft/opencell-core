@@ -457,8 +457,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
-            if(userAccount.getId() == subscription.getUserAccount().getId()
-                    && userAccount.getCode().equals(subscription.getUserAccount().getCode())) {
+            if(userAccount == null
+                    || (userAccount.getId() == subscription.getUserAccount().getId()
+                    && userAccount.getCode().equals(subscription.getUserAccount().getCode()))) {
                 Element subscriptionTag = doc.createElement("subscription");
                 subscriptionTag.setAttribute("id", subscription.getId() + "");
                 subscriptionTag.setAttribute("code", subscription.getCode());
@@ -1509,7 +1510,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerAccountTag.setAttribute("description", customerAccount.getDescription());
         customerAccountTag.setAttribute("externalRef1", getDefaultIfNull(customerAccount.getExternalRef1(), ""));
         customerAccountTag.setAttribute("externalRef2", getDefaultIfNull(customerAccount.getExternalRef2(), ""));
-        customerAccountTag.setAttribute("currency", getDefaultIfNull(customerAccount.getTradingCurrency().getCurrencyCode(), ""));
+        customerAccountTag.setAttribute("currency", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getCurrencyCode(), ""));
         customerAccountTag.setAttribute("language", getDefaultIfNull(languageDescription, ""));
         customerAccountTag.setAttribute("jobTitle", getDefaultIfNull(customerAccount.getJobTitle(), ""));
         customerAccountTag.setAttribute("registrationNo", getDefaultIfNull(customerAccount.getRegistrationNo(), ""));
@@ -1698,7 +1699,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element amount = doc.createElement("amount");
         Element currency = doc.createElement("currency");
-        Text currencyTxt = this.createTextNode(doc, invoice.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode());
+        Text currencyTxt = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
         currency.appendChild(currencyTxt);
         amount.appendChild(currency);
         Element amountWithoutTax = doc.createElement("amountWithoutTax");

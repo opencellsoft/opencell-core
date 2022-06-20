@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,15 +26,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -60,6 +55,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.*;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -86,8 +82,8 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.*;
+import org.meveo.model.cpq.*;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -98,6 +94,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.article.*;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -181,6 +178,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private InvoiceLineService invoiceLineService;
 
+    @Inject
+    private AccountingArticleService accountingArticleService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -234,6 +234,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+
+    public List<WalletOperation> getWalletOperations(IBillableEntity entityToInvoice, Date invoicingDate) {
+        return walletOperationService.listToRate(entityToInvoice, invoicingDate);
+    }
+
+    public List<WalletOperation> getWalletOperations(List<Long> ids) {
+        return walletOperationService.listByIds(ids);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public RatedTransaction createRatedTransactionNewTx(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
+    	return createRatedTransaction(walletOperation, isVirtual);
+    }
+
     /**
      * Create Rated transaction from wallet operation.
      * 
@@ -257,7 +272,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Create Rated transaction from wallet operation.
      *
-     * @param walletOperation Wallet operation
+     * @param walletOperations Wallet operations
      * @return Rated transaction
      * @throws BusinessException business exception
      */
@@ -281,6 +296,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.clear();
             }
             RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+            if(ratedTransaction.getAccountingArticle() == null) {
+                getAccountingArticle(walletOperation).ifPresent(ratedTransaction::setAccountingArticle);
+            }
 
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
@@ -336,6 +354,35 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
+    }
+
+    private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
+        ServiceInstance serviceInstance = walletOperation.getServiceInstance() != null
+                ? serviceInstanceService.findById(walletOperation.getServiceInstance().getId()) : null;
+        ChargeInstance chargeInstance = walletOperation.getChargeInstance() != null
+                ? chargeInstanceService.findById(walletOperation.getChargeInstance().getId()) : null;
+        Product product = serviceInstance != null
+                ? serviceInstance.getProductVersion() != null
+                ? serviceInstance.getProductVersion().getProduct() : null : null;
+        ChargeTemplate charge = chargeInstance != null ? chargeInstance.getChargeTemplate() : null;
+        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+        Map<String, Object> attributes = fromAttributeValue(attributeValues);
+        return accountingArticleService.getAccountingArticle(product, charge, attributes, walletOperation);
+    }
+
+    private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+        if (serviceInstance == null) {
+            return Collections.emptyList();
+        }
+        return serviceInstance.getAttributeInstances().stream().map(attributeInstance -> (AttributeValue) attributeInstance).collect(toList());
+    }
+
+    private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {
+        return attributeValues
+                .stream()
+                .filter(attributeValue -> attributeValue.getAttribute().getAttributeType().getValue(attributeValue) != null)
+                .collect(toMap(key -> key.getAttribute().getCode(),
+                        value -> value.getAttribute().getAttributeType().getValue(value)));
     }
 
     /**
@@ -1391,8 +1438,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
         ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
 
-        TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date());
-        TaxClass taxClass = taxInfo.taxClass;
+        AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date(), accountingArticle);
+		TaxClass taxClass = taxInfo.taxClass;
 
         final BigDecimal taxPercent = taxInfo.tax.getPercent();
 		BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
@@ -1405,6 +1453,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
 				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
 				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
+		rt.setAccountingArticle(accountingArticle);
         create(rt);
         return rt;
     }
@@ -1463,12 +1512,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "                 rt.usageDate as usage_date, rt.startDate as start_date, rt.endDate as end_date,"
                 + "                 rt.orderNumber as order_number, rt.subscription.id as subscription_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                 + "                 rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id,"
-                + "                 rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id,rt.parameter1 as parameter_1,  rt.parameter2 as parameter_2, rt.parameter3 as parameter_3 "
+                + "                 rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction.id as discounted_ratedtransaction_id "
                 + " FROM RatedTransaction rt WHERE rt.id in (:ids) "
                 + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, "
                 + "         rt.unitAmountWithoutTax, rt.unitAmountWithTax, rt.offerTemplate.id, rt.serviceInstance.id, rt.usageDate, rt.startDate,"
                 + "         rt.endDate, rt.orderNumber, rt.subscription.id, rt.taxPercent, rt.tax.id, "
-                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter1, rt.parameter2, rt.parameter3";
+                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction.id";
         return getSelectQueryAsMap(query, params);
     }
 
@@ -1484,12 +1533,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "              rt.offer_id, rt.service_instance_id, "
                 + 				 usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id "
+                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id "
                 + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
                 + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
                 + "             rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id ";
+                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id order by unit_amount_without_tax desc  ";
         return executeNativeSelectQuery(query, params);
     }
 
@@ -1572,13 +1621,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         + usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, max(rt.endDate) as end_date, rt.orderNumber as order_number, "
                         + " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                         + " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, "
-                        + " rt.chargeInstance.id as charge_instance_id, rt.parameter1 as parameter_1,  rt.parameter2 as parameter_2, rt.parameter3 as parameter_3"
+                        + " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction as discounted_ratedtransaction_id"
                         + " FROM RatedTransaction rt left join rt.subscription s WHERE " + entityCondition
                         + " AND rt.status = 'OPEN' AND :firstTransactionDate <= rt.usageDate AND rt.usageDate < :lastTransactionDate"
                         + " and (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) "
                         + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, rt.offerTemplate.id, rt.serviceInstance.id, " + unitAmountGroupBy
                         + usageDateAggregation + ", rt.startDate, rt.endDate, rt.orderNumber, s.id,  s.order.id, rt.taxPercent, rt.tax.id, "
-                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter1, rt.parameter2, rt.parameter3";
+                        + " rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.parameter2, rt.accountingArticle.id, rt.discountedRatedTransaction";
         return getSelectQueryAsMap(query, params);
 	}
 

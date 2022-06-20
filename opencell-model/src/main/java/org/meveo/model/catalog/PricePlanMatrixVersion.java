@@ -33,6 +33,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
@@ -40,18 +41,19 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  * @version 10.0
  */
 @SuppressWarnings("serial")
+@ExportIdentifier({"pricePlanMatrix", "currentVersion"})
 @Entity
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq") })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl  where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.lastCurrentVersion", query = "select p.currentVersion from PricePlanMatrixVersion p where  p.pricePlanMatrix=:pricePlanMatrix order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids)"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findBeforeFromAndAfterVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.validity.from < :from and p.currentVersion > :currentVersion order by p.currentVersion asc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findAfterVersion", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:pricePlanMatrix and p.currentVersion > :currentVersion order by p.currentVersion asc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.deleteByIds", query = "delete from PricePlanMatrixVersion p where p.id in (:ids)") })
+        @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids) order by p.id desc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
+    })
 public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
@@ -91,11 +93,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
-    @Column(name = "amount_without_tax_el")
-    private String amountWithoutTaxEL;
-
-    @Column(name = "amount_with_tax_el")
-    private String amountWithTaxEL;
+    @Column(name = "price_el")
+    private String priceEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixLine> lines = new HashSet<>();
@@ -123,8 +122,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.isMatrix = copy.isMatrix;
         this.amountWithoutTax = copy.amountWithoutTax;
         this.amountWithTax = copy.amountWithTax;
-        this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
-        this.amountWithTaxEL = copy.amountWithTaxEL;
+        this.priceEL = copy.priceEL;
         this.lines = new HashSet<>();
         this.columns = new HashSet<>();
         this.priority = copy.priority;
@@ -234,22 +232,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public String getAmountWithoutTaxEL() {
-        return amountWithoutTaxEL;
-    }
-
-    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
-        this.amountWithoutTaxEL = amountWithoutTaxEL;
-    }
-
-    public String getAmountWithTaxEL() {
-        return amountWithTaxEL;
-    }
-
-    public void setAmountWithTaxEL(String amountWithTaxEL) {
-        this.amountWithTaxEL = amountWithTaxEL;
-    }
-
     /**
      * @return the priority
      */
@@ -280,13 +262,21 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public void setStatusChangeLog(String statusChangeLog) {
         this.statusChangeLog = statusChangeLog;
     }
+    
+    public String getPriceEL() {
+        return priceEL;
+    }
+
+    public void setPriceEL(String priceEL) {
+        this.priceEL = priceEL;
+    }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Objects.hash(amountWithTax, amountWithTaxEL, amountWithoutTax, amountWithoutTaxEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
-            priority, status, statusChangeLog, statusDate, validity);
+        result = prime * result + Objects.hash(amountWithTax, amountWithoutTax, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
+          priority, status, statusChangeLog, statusDate, validity);
         return result;
     }
 
@@ -299,8 +289,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
-        return Objects.equals(amountWithTax, other.amountWithTax) && Objects.equals(amountWithTaxEL, other.amountWithTaxEL)
-                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(amountWithoutTaxEL, other.amountWithoutTaxEL)
+        return Objects.equals(amountWithTax, other.amountWithTax) 
+                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(priceEL, other.priceEL)
                 && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);

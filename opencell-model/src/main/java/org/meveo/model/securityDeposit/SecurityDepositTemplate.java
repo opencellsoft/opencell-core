@@ -31,7 +31,7 @@ public class SecurityDepositTemplate extends BusinessEntity {
     private String templateName;
 
     @ManyToOne
-    @JoinColumn(name = "currency_id", nullable = false)
+    @JoinColumn(name = "currency_id")
     private Currency currency;
 
     @Type(type = "numeric_boolean")

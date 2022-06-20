@@ -37,7 +37,6 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -81,7 +80,6 @@ public class BillingAccountDto extends AccountDto {
     protected String country;
 
     /** The currency. */
-    @XmlElement(required = true)
     @Schema(description = "The trading currency")
     private String tradingCurrency;
     
@@ -261,7 +259,7 @@ public class BillingAccountDto extends AccountDto {
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     @Schema(description = "list of the code of tags")
-    protected Set<String> tagCodes = new HashSet<String>();
+    protected Set<String> tagCodes = new HashSet<>();
 
 
     /**

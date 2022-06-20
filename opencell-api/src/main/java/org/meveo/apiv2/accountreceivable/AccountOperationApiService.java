@@ -50,6 +50,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	private MatchingCodeService matchingCodeService;
 
 	@Inject
+	private PaymentPlanService paymentPlanService;
+
+	@Inject
 	private SecurityDepositTransactionService securityDepositTransactionService;
 
 	@Override
@@ -135,6 +138,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			}
 			accountOperation.setCustomerAccount(customerAccount);
 			accountOperation.setStatus(POSTED);
+			// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
+			accountOperationService.fillOperationNumber(accountOperation);
 			try {
 				accountOperationService.update(accountOperation);
 			} catch (Exception exception) {
@@ -196,10 +201,29 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
-			MatchingReturnObject matchingResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-					aoIds, aoIds.get(aoIds.size() - 1));
+			Long creditAoId = aoIds.get(0); // First AO is Credit, and shall be add with DEBIT to do unitary matching
 
-			if (matchingResult.getPartialMatchingOcc() == null || matchingResult.getPartialMatchingOcc().isEmpty()) {
+			MatchingReturnObject matchingResult = new MatchingReturnObject();
+			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
+			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
+
+			for (Long aoId : aoIds) {
+				if (aoId.equals(creditAoId)) {
+					// process only DEBIT AO
+					continue;
+				}
+				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+						List.of(creditAoId, aoId), aoId);
+
+				if (matchingResult.getPartialMatchingOcc() != null) {
+					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+				}
+
+				matchingResult.setOk(unitaryResult.isOk());
+
+			}
+
+			if (partialMatchingOcc.isEmpty()) {
 				// Reload AO to get updated MatchingStatus
 				List<AccountOperation> aoPartially = accountOperationService.findByIds(aoIds).stream()
 						.filter(accountOperation -> accountOperation.getMatchingStatus() == MatchingStatusEnum.P)
@@ -212,6 +236,11 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 					matchingResult.getPartialMatchingOcc().add(p);
 				}
 			}
+
+			// update PaymentPlan
+			List<Long> debitAos = new ArrayList<>(aoIds);
+			debitAos.remove(creditAoId);
+			paymentPlanService.toComplete(debitAos);
 
 			return matchingResult;
 
@@ -248,6 +277,15 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		aos.forEach(ao -> {
 			UnMatchingOperationRequestDto unM = new UnMatchingOperationRequestDto();
 			unM.setAccountOperationId(ao.getId());
+
+			UnMatchingAccountOperationDetail unMatchingAccountOperationDetail = accountOperations.stream()
+					.filter(aoRequest -> ao.getId().equals(aoRequest.getId()))
+					.findAny()
+					.orElse(null);
+
+			if (unMatchingAccountOperationDetail != null) {
+				unM.setMatchingAmountIds(unMatchingAccountOperationDetail.getMatchingAmountIds());
+			}
 			unM.setCustomerAccountCode(customerAccountService.findById(ao.getCustomerAccount().getId()).getCode());
 
 			toUnmatch.add(unM);

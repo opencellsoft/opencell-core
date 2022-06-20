@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -233,7 +235,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop);
+        create(aop);
         return aop.getId();
 
     }
@@ -771,5 +773,26 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     public void resetOperationNumberSequence() {
         getEntityManager().createNativeQuery("ALTER SEQUENCE account_operation_number_seq RESTART WITH 1").executeUpdate();
+    }
+
+    public void fillOperationNumber(AccountOperation accountOperation)
+    {
+        BigInteger operationNumber =(BigInteger) getEntityManager().createNativeQuery("select nextval('account_operation_number_seq')").getSingleResult();
+        accountOperation.setOperationNumber(operationNumber.longValue());
+    }
+
+    @Override
+    public void create(AccountOperation entity) {
+        fillOperationNumber(entity);
+        super.create(entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> findByCustomerAccount(List<Long> aoIds, Long customerAccountId) {
+        return getEntityManager().createNamedQuery("AccountOperation.findByCustomerAccount")
+                .setParameter("AO_IDS", aoIds)
+                .setParameter("CUSTOMERACCOUNT_ID", customerAccountId)
+                .getResultList();
+
     }
 }

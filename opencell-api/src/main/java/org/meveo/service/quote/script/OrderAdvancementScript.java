@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.meveo.admin.exception.BusinessException;
@@ -16,22 +15,22 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.model.cpq.commercial.OrderArticleLine;
+import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderPrice;
-import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderArticleLineService;
 import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.module.ModuleScript;
@@ -50,6 +49,7 @@ OrderAdvancementScript extends ModuleScript {
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
     private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
     private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(CustomFieldInstanceService.class.getSimpleName());
+    private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -78,34 +78,14 @@ OrderAdvancementScript extends ModuleScript {
                 return;
             }
 
-            AccountingArticle defaultAccountingArticle = getDefaultAccountingArticle();
-
-            BigDecimal totalAmountWithoutTax = pricesToBill.stream()
-                    .map(OrderPrice::getAmountWithoutTax)
-                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
-
-            BigDecimal totalAmountWithTax = pricesToBill.stream()
-                    .map(OrderPrice::getAmountWithTax)
-                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
-
-            BigDecimal totalTax = pricesToBill.stream()
-                    .map(OrderPrice::getTaxAmount)
-                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
-
-            BigDecimal totalTaxRate = pricesToBill.stream()
-                    .map(OrderPrice::getTaxRate)
-                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
-
-            OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
-
-
+            List<Object[]>  groupedPricesToBill = orderPriceService.getGroupedOrderPrices(commercialOrder.getId());
 
             if(orderProgress == 100) {
                 if(commercialOrder.getRateInvoiced() < 100) {
                     if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
-                        createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct, true);
+                    	createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate,true);
                     }
-                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                    generateGlobalInvoice(commercialOrder,groupedPricesToBill, nextDay, firstTransactionDate, invoiceDate);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
                 }
@@ -128,13 +108,9 @@ OrderAdvancementScript extends ModuleScript {
                     throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
                 }
                 if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
-                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                	generateGlobalInvoice(commercialOrder, groupedPricesToBill,nextDay, firstTransactionDate, invoiceDate);
                 }else {
-                    BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
-                    BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
-                    BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
-
-                    createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, orderProduct, true);
+                    createIlsAndInvoice(commercialOrder,groupedPricesToBill,invoicingPlanItem.getRateToBill(), nextDay, firstTransactionDate, invoiceDate, true);
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -145,8 +121,59 @@ OrderAdvancementScript extends ModuleScript {
 
     }
 
-    private void createAccountInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct, boolean isDepositInvoice) {
-        createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+//    private void createAccountInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct, boolean isDepositInvoice) {
+//        createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+//        List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, isDepositInvoice);
+//        invoices.stream()
+//                .forEach(
+//                        invoice -> {
+//                            customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
+//                            invoiceService.update(invoice);
+//                        }
+//                );
+//    }
+
+    private void createIlsAndInvoice(CommercialOrder commercialOrder, List<Object[]> groupedPricesToBill,BigDecimal rateToBill,Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isDepositInvoice) {
+    	BigDecimal taxRate=null;
+    	BigDecimal totalAmountWithoutTax=null;
+    	BigDecimal totalAmountWithTax=null;
+    	BigDecimal totalAmountTax =null;
+    	BigDecimal totalQuantity=null;
+    	Map<Long,InvoiceLine> orderToInvoiceLine=new HashMap<Long, InvoiceLine>();
+    	InvoiceLine discountedInvoiceLine=null;
+    	for (Object[] groupedOrderPrice : groupedPricesToBill) {
+			Long orderArticleLineId = (Long) groupedOrderPrice[0];
+			Long discountedOrderPriceId = (Long) groupedOrderPrice[1];
+			taxRate = (BigDecimal) groupedOrderPrice[2];
+			totalAmountWithoutTax = (BigDecimal) groupedOrderPrice[3];
+			totalAmountWithTax = (BigDecimal) groupedOrderPrice[4];
+			totalAmountTax = (BigDecimal) groupedOrderPrice[5];
+			totalQuantity = (BigDecimal) groupedOrderPrice[6];
+			OrderArticleLine orderArticleLine = null;
+            if(orderArticleLineId!=null) {
+            	orderArticleLine=orderArticleLineService.findById(orderArticleLineId);
+            }
+            if(rateToBill!=null && orderArticleLine!=null) {
+          	  totalAmountWithoutTax = rateToBill.divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
+                totalAmountWithTax= rateToBill.divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
+                totalAmountTax = rateToBill.divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountTax);
+                if(discountedOrderPriceId!=null) {
+                	log.warn("discountedOrderPrice discountedOrderPriceId={}",discountedOrderPriceId);
+                	 OrderPrice discountedOrderPrice=orderPriceService.findById(discountedOrderPriceId);
+                	 if(discountedOrderPrice!=null) {
+                		  discountedInvoiceLine=orderToInvoiceLine.get(discountedOrderPrice.getOrderArticleLine().getId());
+                	 }else {
+                		 log.warn("discountedOrderPrice does not exist id={}",discountedOrderPriceId);
+                	 }
+                	 
+                }
+                
+                InvoiceLine invoiceLine=createInvoiceLine(commercialOrder, orderArticleLine.getAccountingArticle(),orderArticleLine.getOrderProduct().getProductVersion(),orderArticleLine.getOrderProduct().getOrderOffer(), totalAmountWithoutTax, totalAmountWithTax, totalAmountTax, taxRate,discountedInvoiceLine!=null?discountedInvoiceLine.getId():null);
+                
+               orderToInvoiceLine.put(orderArticleLineId, invoiceLine);
+           
+           }
+        }  
         List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, isDepositInvoice);
         invoices.stream()
                 .forEach(
@@ -155,37 +182,24 @@ OrderAdvancementScript extends ModuleScript {
                             invoiceService.update(invoice);
                         }
                 );
+
     }
 
     private boolean isOneShot100Payment(List<InvoicingPlanItem> invoicingPlanItems) {
         return invoicingPlanItems.size() == 1 && invoicingPlanItems.get(0).getRateToBill().doubleValue() == BigDecimal.valueOf(100).doubleValue();
     }
 
-    private void generateGlobalInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        List<AttributeValue> orderAttributes = orderProduct.getOrderAttributes().stream().map(oa -> (AttributeValue)oa).collect(Collectors.toList());
-        for (AttributeValue orderAttribute : orderAttributes) {
-            Attribute attribute = orderAttribute.getAttribute();
-            Object value = attribute.getAttributeType().getValue(orderAttribute);
-            if (value != null) {
-                attributes.put(orderAttribute.getAttribute().getCode(), value);
-            }
-        }
-        Product product = orderProduct.getProductVersion().getProduct();
-        Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(product, attributes);
-        if (!accountingArticle.isPresent())
-            throw new BusinessException("No accounting article found for product code: " + product.getCode() + " and attributes: " + attributes.toString());
-
+    private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate) {
+        
         List<InvoiceLine> accounts = invoiceLinesService.findByCommercialOrder(commercialOrder);
         for(InvoiceLine account : accounts){
-            createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate());
+            createInvoiceLine(commercialOrder, account.getAccountingArticle(),account.getProductVersion(),account.getOrderOffer(),account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate(),null);
         }
 
-        createAccountInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, accountingArticle.get(), totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct, false);
+        createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate, false);
 
 
     }
-
     private AccountingArticle getDefaultAccountingArticle() {
         String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
 
@@ -195,8 +209,9 @@ OrderAdvancementScript extends ModuleScript {
         return accountingArticle;
     }
 
-    private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), orderProduct.getOrderOffer().getOfferTemplate(),orderProduct.getOrderOffer(), amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+
+    private InvoiceLine createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle,ProductVersion productVersion, OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate,Long discountedInvoiceLineId) {
+        return invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, productVersion,null,null,orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate,discountedInvoiceLineId);
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {

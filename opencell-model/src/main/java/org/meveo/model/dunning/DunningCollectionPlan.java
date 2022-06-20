@@ -75,8 +75,8 @@ public class DunningCollectionPlan extends AuditableEntity {
     /**
     * The collection plan related invoice
     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "related_invoice_id", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "related_invoice_id")
     private Invoice relatedInvoice;
     
     /**

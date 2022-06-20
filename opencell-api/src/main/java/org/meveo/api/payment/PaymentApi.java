@@ -72,6 +72,8 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -113,7 +115,10 @@ public class PaymentApi extends BaseApi {
     @Inject
     private PaymentHistoryService paymentHistoryService;
 
-    /**
+	@Inject
+	private JournalService journalService;
+
+	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
      * @throws NoAllOperationUnmatchedException no all operation un matched exception
@@ -145,6 +150,7 @@ public class PaymentApi extends BaseApi {
         }
 
         Payment payment = new Payment();
+		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
         payment.setAmount(paymentDto.getAmount());
         payment.setUnMatchingAmount(paymentDto.getAmount());
@@ -184,6 +190,7 @@ public class PaymentApi extends BaseApi {
             throw e;
         }
 
+		payment.setJournal(journalService.findByCode("BAN"));
         paymentService.create(payment);
 
         if (paymentDto.isToMatching()) {

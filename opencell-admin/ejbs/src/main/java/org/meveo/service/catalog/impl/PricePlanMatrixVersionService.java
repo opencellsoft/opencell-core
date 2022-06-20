@@ -6,45 +6,78 @@ import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import javax.persistence.NoResultException;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.ImportResultResponseDto.ImportResultDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.catalog.ImportPricePlanVersionsItem;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
@@ -57,7 +90,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
 
-    public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version is %s, it can not be updated nor removed";
+    private static final String STATUS_ERROR_MSG = "status of the price plan matrix version is %s, it can not be updated nor removed";
 
     @Inject 
 	private PricePlanMatrixColumnService pricePlanMatrixColumnService;
@@ -76,6 +109,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
     @Inject
     private AttributeInstanceService attributeInstanceService;
+    
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+    
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
@@ -94,28 +132,190 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 	
-	public List<PricePlanMatrixVersion> findBeforeFromAndAfterVersion(PricePlanMatrix pricePlanMatrix, Date from, int currentVersion) {
+	public List<PricePlanMatrixVersion> findEndDates(PricePlanMatrix pricePlanMatrix, Date date) {
+
 	    return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findBeforeFromAndAfterVersion", entityClass)
-            .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("from", from)
-            .setParameter("currentVersion", currentVersion)
-            .getResultList();
+	            .createNamedQuery("PricePlanMatrixVersion.findEndDates", entityClass)
+	            .setParameter("pricePlanMatrix", pricePlanMatrix)
+	            .setParameter("date", date)
+	            .getResultList();
 	}
-	
-	public List<PricePlanMatrixVersion> findAfterVersion(PricePlanMatrix pricePlanMatrix, int currentVersion) {
-        return this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.findAfterVersion", entityClass)
-            .setParameter("pricePlanMatrix", pricePlanMatrix)
-            .setParameter("currentVersion", currentVersion)
-            .getResultList();
+
+	public void remove(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        List<PricePlanMatrixLine> pricePlanMatrixLines = pricePlanMatrixLineService.findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+        for (PricePlanMatrixLine pricePlanMatrixLine : pricePlanMatrixLines) {
+            pricePlanMatrixLineService.remove(pricePlanMatrixLine);
+        }
+        super.remove(pricePlanMatrixVersion);
     }
 	
-	public void delete(List<Long> ids) {
-        this.getEntityManager()
-            .createNamedQuery("PricePlanMatrixVersion.deleteByIds")
-            .setParameter("ids", ids)
-            .executeUpdate();
+	@JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public ImportResultDto importPricePlanVersion(String importTempDir, ImportPricePlanVersionsItem importItem) {
+
+        Date newFrom = DateUtils.truncateTime(importItem.getStartDate());
+        Date newTo = DateUtils.truncateTime(importItem.getEndDate());
+        String newChargeCode = importItem.getChargeCode();
+
+        ImportResultDto resultDto = new ImportResultDto();
+        resultDto.setFileName(importItem.getFileName());
+        resultDto.setChargeCode(newChargeCode);
+        resultDto.setUploadAs(importItem.getStatus());
+        resultDto.setStartDate(newFrom);
+        resultDto.setEndDate(newTo);
+
+        try {
+            validateDates(newFrom, newTo);
+
+            if (StringUtils.isBlank(importItem.getFileName())) {
+                throw new BusinessApiException("The file name is mandatory");
+            }
+            String pathName = importTempDir + File.separator + importItem.getFileName();
+            if (!new File(pathName).exists()) {
+                throw new BusinessApiException("The file: '" + importItem.getFileName() + "' does not exist");
+            }
+            
+            if (StringUtils.isBlank(importItem.getChargeCode())) {
+                throw new BusinessApiException("The charge code is mandatory");
+            }
+
+            List<PricePlanMatrix> pricePlanMatrixs = pricePlanMatrixService.listByChargeCode(newChargeCode);
+            if (pricePlanMatrixs == null || pricePlanMatrixs.size() == 0) {
+                throw new BusinessApiException("No PricePlanMatrix related to the charge '" + newChargeCode + "'");
+            }
+            if (pricePlanMatrixs.size() > 1) {
+                throw new BusinessApiException("There are several PricePlanMatrix related to this charge");
+            }
+
+            Integer lastCurrentVersion = null;
+            PricePlanMatrix pricePlanMatrix = pricePlanMatrixs.get(0);
+            
+            if (importItem.getStatus() == VersionStatusEnum.PUBLISHED) {
+                List<PricePlanMatrixVersion> pvs = findEndDates(pricePlanMatrix, newFrom);
+                for (PricePlanMatrixVersion pv : pvs) {
+                    
+                    DatePeriod validity = pv.getValidity();
+                    Date oldFrom = DateUtils.truncateTime(validity.getFrom());
+                    Date oldTo = DateUtils.truncateTime(validity.getTo());
+                    
+                    if (newFrom.compareTo(oldFrom) <= 0 && ((newTo != null && oldTo != null && newTo.compareTo(oldTo) >= 0) || newTo == null)) {
+                        remove(pv);
+                    }
+                    // Scenario 8
+                    else if (newFrom.compareTo(oldFrom) > 0 && newTo != null && oldTo != null && newTo.compareTo(oldTo) < 0) {
+                        pv.setValidity(new DatePeriod(oldFrom, newFrom));
+                        update(pv);
+                        PricePlanMatrixVersion duplicatedPv = duplicate(pv, new DatePeriod(newTo, oldTo), VersionStatusEnum.PUBLISHED);
+                        lastCurrentVersion = duplicatedPv.getCurrentVersion();
+                    }
+                    else {
+                        boolean validityHasChanged = false;
+                        if (newFrom.compareTo(oldFrom) > 0 && ((oldTo != null && newFrom.compareTo(oldTo) < 0) || oldTo == null)) {
+                            validity.setTo(newFrom);
+                            validityHasChanged = true;
+                        }
+                        if (newTo != null && newTo.compareTo(oldFrom) > 0 && validity.getTo() != null && newTo.compareTo(DateUtils.truncateTime(validity.getTo())) < 0) {
+                            validity.setFrom(newTo);
+                            validityHasChanged = true;
+                        }
+                        if (validityHasChanged) {
+                            update(pv);
+                        }
+                    }
+                }
+            }
+
+            try (FileInputStream fs = new FileInputStream(pathName);
+                    InputStreamReader isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
+                    LineNumberReader lnr = new LineNumberReader(isr)) {
+
+                String header = eliminateBOM(lnr.readLine());
+
+                PricePlanMatrixVersion newPv = new PricePlanMatrixVersion();
+                newPv.setPricePlanMatrix(pricePlanMatrix);
+                newPv.setStatus(importItem.getStatus());
+                newPv.setStatusDate(new Date());
+                newPv.setValidity(new DatePeriod(importItem.getStartDate(), importItem.getEndDate()));
+                newPv.setCurrentVersion(lastCurrentVersion != null ? ++lastCurrentVersion : getLastVersion(pricePlanMatrix) + 1);
+
+                if ("id;label;amount".equals(header)) {
+                    String firstLine = lnr.readLine();
+                    String[] split = firstLine.split(";");
+                    newPv.setMatrix(false);
+                    newPv.setLabel(split[1]);
+                    newPv.setAmountWithoutTax(new BigDecimal(convertToDecimalFormat(split[2])));
+                    create(newPv);
+
+                } else if (StringUtils.isNotBlank(header)) {
+                    // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
+                    // date time stamp]_-_[end date time stamp]
+                    String[] split = importItem.getFileName().split("_-_");
+                    newPv.setMatrix(true);
+                    newPv.setLabel(split.length >= 4 ? split[3] : null);
+                    create(newPv);
+                    String data = new StringBuilder(header).append("\n").append(readAllLines(lnr)).toString();
+                    PricePlanMatrixLinesDto pricePlanMatrixLinesDto = pricePlanMatrixColumnService.createColumnsAndPopulateLinesAndValues(pricePlanMatrix.getCode(), data, newPv);
+                    pricePlanMatrixLineService.updatePricePlanMatrixLines(newPv, pricePlanMatrixLinesDto);
+                }
+            }
+            catch (Exception e) {
+                throw e;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            resultDto.setStatus(ActionStatusEnum.FAIL);
+            resultDto.setMessage(e.getMessage());
+        }
+        return resultDto;
+    }
+	
+	private String convertToDecimalFormat(String str) {
+        str = str.replace(" ", "");
+        int commaPos = str.indexOf(',');
+        int dotPos = str.indexOf('.');
+        if (commaPos > 0 && dotPos > 0) {
+            if (commaPos < dotPos) {
+                str = str.replace(",", "");
+            } else {
+                str = str.replace(".", "");
+                str = str.replace(",", ".");
+            }
+        } else {
+            str = str.replace(",", ".");
+        }
+		return str;
+	}
+
+	private void validateDates(Date newFrom, Date newTo) {
+        if (newFrom == null) {
+            throw new BusinessApiException("The start date name is mandatory");
+        }
+        if (newFrom != null && newFrom.before(DateUtils.truncateTime(new Date()))) {
+            throw new BusinessApiException("Uploaded PV cannot start before today");
+        }
+        if (newFrom != null && newTo != null && newTo.before(newFrom)) {
+            throw new BusinessApiException("Invalid validity period, the end date must be greather than the start date");
+        }
+    }
+	
+	private String eliminateBOM(String row) {
+        if (StringUtils.isNotBlank(row)) {
+            // Get the first character
+            String bom = row.substring(0, 1);
+            if (!bom.equals("i")) { // i for id;...
+                row = row.substring(1);
+            }
+        }
+        return row;
+    }
+	
+	private String readAllLines(LineNumberReader lnr) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String lineRead;
+        while ((lineRead = lnr.readLine()) != null) {
+            sb.append(lineRead).append("\n");
+        }
+        return sb.toString();
     }
 
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
@@ -125,7 +325,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         log.info("updating pricePlanMatrixVersion with pricePlanMatrix code={} and version={}",ppmCode, version);
         if(!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
             log.warn("the pricePlanMatrix with pricePlanMatrix code={} and version={}, it must be DRAFT status.", ppmCode, version);
-            throw new MeveoApiException(String.format(STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED, pricePlanMatrixVersion.getStatus().toString()));
+            throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         update(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
@@ -143,7 +343,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     public void removePriceMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
         if(!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
             log.warn("the status of version of the price plan matrix is not DRAFT, the current version is {}.Can not be deleted", pricePlanMatrixVersion.getStatus().toString());
-            throw new MeveoApiException(String.format(STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED, pricePlanMatrixVersion.getStatus().toString()));
+            throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
         }
         logAction(pricePlanMatrixVersion, "DELETE");
         this.remove(pricePlanMatrixVersion);
@@ -152,47 +352,56 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     public PricePlanMatrixVersion updateProductVersionStatus(PricePlanMatrixVersion pricePlanMatrixVersion, VersionStatusEnum status) {
         if(!pricePlanMatrixVersion.getStatus().equals(VersionStatusEnum.DRAFT) && !VersionStatusEnum.CLOSED.equals(status)) {
             log.warn("the pricePlanMatrix with pricePlanMatrix code={} and current version={}, it must be DRAFT status.", pricePlanMatrixVersion.getPricePlanMatrix().getCode(),pricePlanMatrixVersion.getCurrentVersion());
-            throw new MeveoApiException(String.format(STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED, pricePlanMatrixVersion.getStatus().toString()));
-        }else {
+            throw new MeveoApiException(String.format(STATUS_ERROR_MSG, pricePlanMatrixVersion.getStatus().toString()));
+        } else {
             pricePlanMatrixVersion.setStatus(status);
             pricePlanMatrixVersion.setStatusDate(Calendar.getInstance().getTime());
         }
         return  update(pricePlanMatrixVersion, "CHANGE_STATUS");
     }
+    
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity) {
+        return duplicate(pricePlanMatrixVersion, validity, null);
+    }
 
-
-	@Transactional(value = TxType.REQUIRED)
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, String pricePlanMatrixNewCode) {
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, DatePeriod validity, VersionStatusEnum status) {
     	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
     	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
     	
-    	
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
-        if(validity!=null) {
-         duplicate.setValidity(validity);	
+        if (validity != null) {
+            duplicate.setValidity(validity);	
         }
-            String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
-            Integer lastVersion = getLastVersion(ppmCode);
-            duplicate.setCurrentVersion(lastVersion + 1);
-        
+        if (status != null) {
+            duplicate.setStatus(status);    
+        }
+        duplicate.setCurrentVersion(getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix()) + 1);
         try {
             this.create(duplicate);
-        }catch(BusinessException e) {
+        } catch(BusinessException e) {
             throw new BusinessException(String.format("Can not duplicate the version of product from version product (%d)", duplicate.getId()), e);
         }
         
         var columnsIds = duplicateColumns(duplicate, columns);
         var lineIds = duplicateLines(duplicate, lines);
-
         duplicatePricePlanMatrixValue(columnsIds, lineIds);
+
         return duplicate;
     }
 
-    @SuppressWarnings("unchecked")
-	public Integer getLastVersion(String ppmCode) {
-    	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
-                												.setParameter("pricePlanMatrixCode", ppmCode).getResultList();
-        return pricesVersions.isEmpty() ? 0 : pricesVersions.get(0).getCurrentVersion();
+	public int getLastVersion(PricePlanMatrix pricePlanMatrix) {
+		Integer version = 0;
+        try {
+    		version =  this.getEntityManager()
+    		        .createNamedQuery("PricePlanMatrixVersion.lastCurrentVersion", Integer.class)
+    				.setParameter("pricePlanMatrix", pricePlanMatrix)
+    				.setMaxResults(1)
+    				.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No lastCurrentVersion for PricePlanMatrixVersion {} found", pricePlanMatrix.getId());
+        }
+		 return version;
     }
     
     public PricePlanMatrixVersionDto load(Long id) {
@@ -257,7 +466,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         		duplicatePricePlanMatrixColumn.setPricePlanMatrixVersion(entity);
         		pricePlanMatrixColumnService.create(duplicatePricePlanMatrixColumn);
         		
-        		ids.put(ppmc.getId().longValue(), duplicatePricePlanMatrixColumn);
+        		ids.put(ppmc.getId(), duplicatePricePlanMatrixColumn);
         		
         		entity.getColumns().add(duplicatePricePlanMatrixColumn);
     		}
@@ -278,7 +487,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     			
     			pricePlanMatrixLineService.create(duplicateLine);
     			
-    			ids.put(ppml.getId().longValue(), duplicateLine);
+    			ids.put(ppml.getId(), duplicateLine);
     			
     			entity.getLines().add(duplicateLine);
     		});
@@ -432,24 +641,63 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			return null;
 		}
 
-		private Set<Map<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
-			Set<Map<String, Object>> CSVLineRecords = new HashSet<>();
+		private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+			Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
 			ppv.getLines().stream()
 				.forEach(line -> {
 					Map<String, Object> CSVLineRecord = new HashMap<>();
+					
+					LinkedHashMap<String, Integer> CSVLineRecordPosition = new LinkedHashMap<>();
+					
 					CSVLineRecord.put("id", line.getId());
-					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					CSVLineRecordPosition.put("id", 0);
 					line.getPricePlanMatrixValues().iterator()
 							.forEachRemaining(ppmv -> {
-								ColumnTypeEnum type = ppmv.getPricePlanMatrixColumn().getType();
+								
+								String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
+								String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), (value == null ? "" : value).contains("|"));
 								CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']',
-										resolveValue(ppmv, type));
-								CSVLineRecord.put("description[text]", ppmv.getPricePlanMatrixLine().getDescription());
+										value);
+
+								CSVLineRecordPosition.put(ppmv.getPricePlanMatrixColumn().getCode()+"["+ (ColumnTypeEnum.String.equals(type) ? "text" : type) +']', ppmv.getPricePlanMatrixColumn().getPosition());
 
 							});
-					CSVLineRecords.add(CSVLineRecord);
+					CSVLineRecord.put("description[text]", line.getDescription());
+					CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
+					CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+					CSVLineRecordPosition.put("priceWithoutTax[number]",  Integer.MAX_VALUE);
+					CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
 				});
 			return CSVLineRecords;
+		}
+		
+		private LinkedHashMap<String, Object> copyToSortedMap(Map<String, Object> originMap, Map<String, Integer> mapPosition){
+			LinkedHashMap<String, Object> sortedMap = new LinkedHashMap<>();
+			mapPosition.entrySet().stream().sorted(Map.Entry.comparingByValue())
+	        	.forEachOrdered(x -> sortedMap.put(x.getKey(), originMap.get(x.getKey())));
+			return sortedMap;
+		}
+
+		private String resolveAttributeType(AttributeTypeEnum attributeType, boolean isRange) {
+			switch (attributeType){
+				case DATE:
+					return isRange ? "range-date": "date";
+				case NUMERIC:
+				case INTEGER:
+					return isRange ? "range-number": "number";
+				case LIST_TEXT:
+					return "list_of_text_values";
+				case LIST_MULTIPLE_TEXT:
+					return "multiple_list_of_text_values";
+				case LIST_NUMERIC:
+					return "list_of_numeric_values";
+				case LIST_MULTIPLE_NUMERIC:
+					return "multiple_list_of_numeric_values";
+				case BOOLEAN:
+					return "boolean";
+				default:
+					return "text";
+			}
 		}
 
 		private String resolveValue(PricePlanMatrixValue ppmv, ColumnTypeEnum type) {
@@ -461,8 +709,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				case Boolean:
 					return ppmv.getBooleanValue() == null ? ppmv.getStringValue() : ppmv.getBooleanValue().toString();
 				case Range_Date:
+					if(ppmv.getFromDateValue() == null && ppmv.getToDateValue() == null) {
+						return "";
+					}
 					return (DateUtils.formatDateWithPattern(ppmv.getFromDateValue(), "yyyy-MM-dd") + "|" + DateUtils.formatDateWithPattern(ppmv.getToDateValue(), "yyyy-MM-dd")).replaceAll("null", "");
 				case Range_Numeric:
+					if(ppmv.getFromDoubleValue() == null && ppmv.getToDoubleValue() == null) {
+						return "";
+					}
 					return  (ppmv.getFromDoubleValue() + "|" + ppmv.getToDoubleValue()).replaceAll("null", "");
 				default:
 					return ppmv.getStringValue();
@@ -500,7 +754,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 		}
 
 		private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv) {
-			Set<Map<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
+			Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv));
 			CsvMapper csvMapper = new CsvMapper();
 			CsvSchema invoiceCsvSchema = ppv.isMatrix() ? buildGridPricePlanVersionCsvSchema(records) : buildPricePlanVersionCsvSchema();
 			csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
@@ -508,7 +762,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				if(!Files.exists(Path.of(saveDirectory))){
 					Files.createDirectories(Path.of(saveDirectory));
 				}
-				csvMapper.writer(invoiceCsvSchema).writeValues(new File(saveDirectory + fileName)).write(records);
+				File csvFile = new File(saveDirectory + fileName);
+				OutputStream fileOutputStream = new FileOutputStream(csvFile);
+				fileOutputStream.write('\ufeef');
+				fileOutputStream.write('\ufebb');
+				fileOutputStream.write('\ufebf');
+				csvMapper.writer(invoiceCsvSchema).writeValues(fileOutputStream).write(records);
 				log.info("PricePlanMatrix version is exported in -> " + saveDirectory + fileName);
 				return Path.of(saveDirectory, fileName);
 			} catch (IOException e) {
@@ -517,8 +776,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 			}
 		}
 
-		private Map<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
-			Map<String, Object> CSVLineRecords = new HashMap<>();
+		private LinkedHashMap<String, Object> toCSVLineRecords(PricePlanMatrixVersion ppv) {
+			LinkedHashMap<String, Object> CSVLineRecords = new LinkedHashMap<>();
 			CSVLineRecords.put("id", ppv.getId());
 			CSVLineRecords.put("label", ppv.getLabel());
 			CSVLineRecords.put("amount", ppv.getAmountWithoutTax());
@@ -533,16 +792,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 					.build().withColumnSeparator(';').withLineSeparator("\n").withoutQuoteChar().withHeader();
 		}
 
-		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<Map<String, Object>> records) {
+		private CsvSchema buildGridPricePlanVersionCsvSchema(Set<LinkedHashMap<String, Object>> records) {
 		    
-		    Set<String> dynamicColumns = new HashSet<>();
+		    List<String> dynamicColumns = new ArrayList();
 		    if (!records.isEmpty()) {
-		        Set<String> columns = records.stream()
+		        List<String> columns = records.stream()
 						.map(record -> record.keySet())
 						.flatMap(Collection::stream)
-						.collect(Collectors.toSet());
-	            dynamicColumns = columns.stream()
-	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toSet());
+						.collect(Collectors.toList());
+	            dynamicColumns = columns.stream().distinct()
+	                    .filter(v -> !v.equals("id") && !v.equals("description[text]") && !v.equals("priceWithoutTax[number]")).collect(Collectors.toList());
             }
 			return CsvSchema.builder()
 					.addColumn(new CsvSchema.Column(0, "id"))

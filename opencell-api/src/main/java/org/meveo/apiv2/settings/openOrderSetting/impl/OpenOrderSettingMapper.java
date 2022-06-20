@@ -7,9 +7,10 @@ import org.meveo.model.settings.OpenOrderSetting;
 
 public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput, OpenOrderSetting> {
 
-    @Override protected OpenOrderSettingInput toResource(OpenOrderSetting entity) {
+    @Override public OpenOrderSettingInput toResource(OpenOrderSetting entity) {
         return ImmutableOpenOrderSettingInput.builder()
                 .id(entity.getId())
+                .code(entity.getCode())
                 .useOpenOrders(entity.getUseOpenOrders())
                 .applyMaximumValidity(entity.getApplyMaximumValidity())
                 .applyMaximumValidityValue(entity.getApplyMaximumValidityValue())
@@ -20,18 +21,24 @@ public class OpenOrderSettingMapper extends ResourceMapper<OpenOrderSettingInput
                 .build();
     }
 
-    @Override protected OpenOrderSetting toEntity(OpenOrderSettingInput resource) {
+    @Override public OpenOrderSetting toEntity(OpenOrderSettingInput resource) {
         return toEntity(new OpenOrderSetting(), resource);
     }
 
-     protected OpenOrderSetting toEntity(OpenOrderSetting entity, OpenOrderSettingInput resource) {
-         entity.setUseOpenOrders(resource.getUseOpenOrders());
-         entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
-         entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
-         entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
-         entity.setDefineMaximumValidity(resource.getDefineMaximumValidity());
-         entity.setDefineMaximumValidityValue(resource.getDefineMaximumValidityValue());
-         entity.setUseManagmentValidationForOOQuotation(resource.getUseManagmentValidationForOOQuotation());
+     public OpenOrderSetting toEntity(OpenOrderSetting entity, OpenOrderSettingInput resource) {
+        entity.setId(resource.getId());
+        entity.setUseOpenOrders(resource.getUseOpenOrders());
+        if(entity.getUseOpenOrders() == true) {
+            if(resource.getCode() != null && !resource.getCode().isBlank()) {
+                entity.setCode(resource.getCode());
+            }
+            entity.setApplyMaximumValidity(resource.getApplyMaximumValidity());
+            entity.setApplyMaximumValidityValue(resource.getApplyMaximumValidityValue());
+            entity.setApplyMaximumValidityUnit(resource.getApplyMaximumValidityUnit());
+            entity.setDefineMaximumValidity(resource.getDefineMaximumValidity());
+            entity.setDefineMaximumValidityValue(resource.getDefineMaximumValidityValue());
+            entity.setUseManagmentValidationForOOQuotation(resource.getUseManagmentValidationForOOQuotation());
+        }
         return entity;
     }
 }
