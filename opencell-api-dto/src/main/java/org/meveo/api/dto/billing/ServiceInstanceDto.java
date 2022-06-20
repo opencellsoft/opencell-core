@@ -35,6 +35,7 @@ import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 
 /**
  * The Class ServiceInstanceDto.
@@ -64,6 +65,12 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /** The termination date. */
     private Date terminationDate;
 
+	/** the price version date setting. */
+	private PriceVersionDateSettingEnum priceVersionDateSetting;
+    
+    /** The price version date. */
+    private Date priceVersionDate;
+    
     /** The quantity. */
     private BigDecimal quantity;
 
@@ -187,6 +194,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         setMinimumAmountEl(serviceInstance.getMinimumAmountEl());
         setMinimumLabelEl(serviceInstance.getMinimumLabelEl());
         deliveryDate = serviceInstance.getDeliveryDate();
+        priceVersionDateSetting = serviceInstance.getPriceVersionDateSetting();
+        priceVersionDate = serviceInstance.getActivationDate();
     }
 
     /**
@@ -352,6 +361,34 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * @return the priceVersionDateSetting
+     */
+    public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting to set priceVersionDateSetting
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
+	}
+
+	/**
+	 * @return the priceVersionDate
+	 */
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+
+	/**
+	 * @param priceVersionDate to set priceVersionDate
+	 */
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
+	}
+
+	/**
      * Gets the quantity.
      *
      * @return the quantity

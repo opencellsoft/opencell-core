@@ -35,7 +35,7 @@ public enum InvoicePaymentStatusEnum {
 	/**
 	 * PaymentPlan created for DEBUT AO
 	 */
-	PENDING_PP(1, "invoicePaymentStatusEnum.pendingForPP"),
+	PENDING_PLAN(1, "invoicePaymentStatusEnum.pending_plan"),
 
 	/**
 	 * invoice has no payment status, no AO created.

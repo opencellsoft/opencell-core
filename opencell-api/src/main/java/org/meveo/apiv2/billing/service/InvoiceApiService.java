@@ -418,6 +418,11 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         return invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
     }
 
+	/**
+	 * Invoice refresh rate
+	 * @param invoiceId Invoice identifier
+	 * @return refresh result
+	 */
 	public Optional<Invoice> refreshRate(Long invoiceId) {
 		Invoice invoice = ofNullable(invoiceService.findById(invoiceId, asList("tradingCurrency")))
 				.orElseThrow(() -> new NotFoundException("Invoice not found"));

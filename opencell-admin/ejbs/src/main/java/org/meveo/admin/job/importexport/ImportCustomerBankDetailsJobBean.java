@@ -54,9 +54,9 @@ public class ImportCustomerBankDetailsJobBean {
     
     private int nbModifications;
     private int nbModificationsError;
-    private int nbModificationsTerminated;
     private int nbModificationsIgnored;
     private int nbModificationsCreated;
+    private String msgModifications;
 
     private CustomerBankDetailsImportHisto customerBankDetailsImport;
 
@@ -64,8 +64,8 @@ public class ImportCustomerBankDetailsJobBean {
     private ParamBeanFactory paramBeanFactory;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobExecutionResultImpl result) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, String parameter) {
         ParamBean paramBean = paramBeanFactory.getInstance();
         String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "bank_Mobility" + File.separator;        
         initialiserCompteur();        
@@ -75,8 +75,10 @@ public class ImportCustomerBankDetailsJobBean {
         traitementFiles(result, dirOK, dirKO, files);
 
         result.setNbItemsToProcess(nbModifications);
-        result.setNbItemsCorrectlyProcessed((long)nbModificationsCreated + nbModificationsTerminated + nbModificationsIgnored);
+        result.setNbItemsCorrectlyProcessed(nbModificationsCreated);
         result.setNbItemsProcessedWithError(nbModificationsError);
+        result.setNbItemsProcessedWithWarning(nbModificationsIgnored);
+        result.setReport(msgModifications);
     }
 
     private List<File> getFilesFromInput(ParamBean paramBean, String importDir) {
@@ -121,9 +123,9 @@ public class ImportCustomerBankDetailsJobBean {
     private void initialiserCompteur() {
         nbModifications = 0;
         nbModificationsError = 0;
-        nbModificationsTerminated = 0;
         nbModificationsIgnored = 0;
         nbModificationsCreated = 0;
+        msgModifications = "";
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -138,53 +140,54 @@ public class ImportCustomerBankDetailsJobBean {
         Document customerBankDetails = (Document) JAXBUtils.unmarshaller(Document.class, file);        
         log.debug("parsing file ok");
 
-        int i = -1;
         nbModifications = customerBankDetails.getMessageBanqueEmetteur().getModification().size();
+        log.debug("nbModifications: {}", nbModifications);
         if (nbModifications == 0) {
             return;
         }
 
-        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-        paymentMethodeDepartArrivee(jobInstance, customerBankDetails, i, checkJobStatusEveryNr);    
-        
+        paymentMethodeDepartArrivee(customerBankDetails);    
         createHistory();
         log.info("end import file ");
     }
 
-    private void paymentMethodeDepartArrivee(JobInstance jobInstance, Document customerBankDetails, int i, int checkJobStatusEveryNr) throws CloneNotSupportedException {
+    private void paymentMethodeDepartArrivee(Document customerBankDetails) throws CloneNotSupportedException {
         for (Modification newModification : customerBankDetails.getMessageBanqueEmetteur().getModification()) {
-            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
-                break;
-            }
             //IBAN du client et BIC dans l'établissement de départ
             String ibanDepart = newModification.getOrgPartyAndAccount().getAccount().getiBAN();
             String bicDepart = newModification.getOrgPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             //IBAN du client et BIC dans l'établissement d'arrivée
             String ibanArrivee = newModification.getUpdatedPartyAndAccount().getAccount().getiBAN();
             String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
-            
-            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
+            log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}])"
+                , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
+            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
+            log.debug("paymentMethodsDepart.size(): {}", paymentMethods.size());
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
-            if (paymentMethods != null && paymentMethodsArrivee != null) {
-                dupPmDepartArrivee(ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
-            }
+            log.debug("paymentMethodsArrivee.size(): {}", paymentMethodsArrivee.size());
+            dupPmDepartArrivee(ibanDepart, bicDepart, ibanArrivee, bicArrivee, paymentMethods, paymentMethodsArrivee);
         }
     }
 
-    private void dupPmDepartArrivee(String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
+    private void dupPmDepartArrivee(String ibanDepart, String bicDepart, String ibanArrivee, String bicArrivee, List<PaymentMethod> paymentMethods, List<PaymentMethod> paymentMethodsArrivee)
             throws CloneNotSupportedException {
         if(paymentMethodsArrivee.isEmpty()) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 dupDDPaymentMethode(ibanArrivee, bicArrivee, paymentMethod);
                 nbModificationsCreated++;
+                log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] - OK)"
+                    , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
+            }
+            if(paymentMethods.isEmpty()) {
+                nbModificationsIgnored++;
+                msgModifications += "[(Warning) Original bank account (iban=" + ibanDepart + "; bic=" + bicDepart + ") does not exist in opencell]  ";
+                log.debug("(Warning) Original bank account iban: [{}] bic: [{}] does not exist in opencell..", ibanDepart, bicDepart);
             }
         }
         else {
+            msgModifications += "[(ko) Arrival bank account (iban=" + ibanArrivee + "; bic=" + bicArrivee + ") Already exists in opencell]  ";
             nbModificationsError++;
-        }
-        
-        if(paymentMethods.isEmpty()) {
-            nbModificationsIgnored++;
+            log.debug("(ko) Arrival bank account iban: [{}] bic: [{}] Already exists in opencell..", ibanArrivee, bicArrivee);
         }
     }
 
@@ -212,10 +215,11 @@ public class ImportCustomerBankDetailsJobBean {
     private void createHistory() {
         customerBankDetailsImport.setLinesRead(nbModifications);
         customerBankDetailsImport.setLinesInserted(nbModificationsCreated);
-        customerBankDetailsImport.setLinesRejected(nbModificationsError);
+        customerBankDetailsImport.setLinesRejected(nbModificationsIgnored);
         customerBankDetailsImport.setNbCustomerAccountsIgnored(nbModificationsIgnored);
         customerBankDetailsImport.setNbCustomerAccountsError(nbModificationsError);
-        customerBankDetailsImport.setNbCustomerAccountsCreated(nbModificationsTerminated);
+        customerBankDetailsImport.setNbCustomerAccountsCreated(nbModificationsCreated);
+        customerBankDetailsImport.setNbCustomerAccounts(nbModifications);
         customerBankDetailsImportHistoService.create(customerBankDetailsImport);
     }
 
