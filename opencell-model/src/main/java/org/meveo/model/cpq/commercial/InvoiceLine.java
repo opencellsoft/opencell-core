@@ -1,7 +1,6 @@
 package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
@@ -103,7 +102,8 @@ import org.meveo.model.cpq.ProductVersion;
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByQuote", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.quote.id=:quoteId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuoteAndBR", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
-		@NamedQuery(name = "InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote")
+		@NamedQuery(name = "InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote"),
+		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)")
 		})
 public class InvoiceLine extends AuditableEntity {
 

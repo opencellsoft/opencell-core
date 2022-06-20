@@ -4,12 +4,6 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CUST;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SE;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SU;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
@@ -59,7 +53,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -70,14 +63,12 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -395,31 +386,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return accountingArticle;
     }
 
-    private String getMinAmountInvoiceLineCode(BusinessEntity entity, Class accountClass) {
-        StringBuilder prefix = new StringBuilder("");
-        if (accountClass.equals(ServiceInstance.class)) {
-            prefix.append(IL_MIN_AMOUNT_SE.getCode());
-        }
-        if (accountClass.equals(Subscription.class)) {
-            prefix.append(IL_MIN_AMOUNT_SU.getCode());
-        }
-        if (accountClass.equals(UserAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_UA.getCode());
-        }
-        if (accountClass.equals(BillingAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_BA.getCode());
-        }
-        if (accountClass.equals(CustomerAccount.class)) {
-            prefix.append(IL_MIN_AMOUNT_CA.getCode());
-        }
-        if (accountClass.equals(Customer.class)) {
-            prefix.append(IL_MIN_AMOUNT_CUST.getCode());
-        }
-        return prefix.append("_")
-                .append(entity.getCode())
-                .toString();
-    }
-
     private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
                                           BusinessEntity entity, Seller seller, AccountingArticle defaultAccountingArticle,
                                           TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
@@ -721,4 +687,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	    basicStatistics.append(ilBasicStatistics);
 	}
 
+    public List<InvoiceLine> findByInvoiceAndIds(Invoice invoice, List<Long> invoiceLinesIds) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByInvoiceAndIds", entityClass)
+                .setParameter("invoice", invoice)
+                .setParameter("invoiceLinesIds", invoiceLinesIds)
+                .getResultList();
+    }
 }
