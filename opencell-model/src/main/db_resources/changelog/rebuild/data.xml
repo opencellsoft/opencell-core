@@ -8069,7 +8069,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
 
         <insert tableName="billing_seq_invoice">
-            <column name="id" valueNumeric="-1" />
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="version" valueNumeric="0" />
             <column name="code" value="DRAFT" />
             <column name="sequence_size" valueNumeric="5" />
@@ -8077,7 +8077,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
         </insert>
         <insert tableName="billing_seq_invoice">
-            <column name="id" valueNumeric="-2" />
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="sequence_size" valueNumeric="9" />
@@ -8085,7 +8085,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
         </insert>
         <insert tableName="billing_seq_invoice">
-            <column name="id" valueNumeric="-3" />
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="sequence_size" valueNumeric="9" />
@@ -8093,7 +8093,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
         </insert>
         <insert tableName="billing_seq_invoice">
-            <column name="id" valueNumeric="-4" />
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="sequence_size" valueNumeric="9" />
@@ -8101,7 +8101,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
         </insert>
        <insert tableName="billing_seq_invoice">
-           <column name="id" valueNumeric="-5" />
+           <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
            <column name="version" valueNumeric="0" />
            <column name="code" value="ADV" />
            <column name="description" value="Advanced Payment Invoice sequence" />
@@ -8116,7 +8116,8 @@
             <column name="code" value="COM" />
             <column name="description" value="Commercial invoice" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id" valueNumeric="-2" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
             <column name="occ_template_id" valueNumeric="-25" />
             <column name="occ_templ_negative_id" value="-40" />
             <column name="matching_auto" valueNumeric="0" />
@@ -8129,7 +8130,8 @@
             <column name="code" value="ADJ" />
             <column name="description" value="Adjustement" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id" valueNumeric="-3" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
             <column name="occ_template_id" value="-40" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-ADJ" />
@@ -8141,7 +8143,8 @@
             <column name="code" value="QUOTE" />
             <column name="description" value="Invoice for quote" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id" valueNumeric="-4" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-QUOTE" />
         </insert>
@@ -8157,7 +8160,8 @@
             <column name="use_self_sequence" valueNumeric="0" />
             <column name="prefix_el" value="DRAFT_" />
             <column name="uuid" value="INVOICE_TYPE-4" />
-            <column name="invoice_sequence_id" value="-1" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'DRAFT')" />
         </insert>
         <insert tableName="billing_invoice_type">
            <column name="id" valueNumeric="-5" />
@@ -8166,7 +8170,8 @@
            <column name="code" value="ADV" />
            <column name="description" value="Advanced Payment Invoicee" />
            <column name="creator" value="OPENCELL.ADMIN" />
-           <column name="invoice_sequence_id" valueNumeric="-5" />
+           <column name="invoice_sequence_id"
+				   valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
            <column name="occ_template_id" valueNumeric="-25" />
            <column name="occ_templ_negative_id" value="-40" />
            <column name="matching_auto" valueNumeric="0" />
@@ -8241,7 +8246,7 @@
             <column name="src_type" value="JAVA" />
         </insert>
         <insert tableName="generic_sequence">
-            <column name="id" valueSequenceNext="generic_sequence_seq" />
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
@@ -8259,11 +8264,11 @@
 			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
+            <column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
 		</insert>
         
         <insert tableName="generic_sequence">
-            <column name="id" valueSequenceNext="generic_sequence_seq"/>
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
@@ -8280,7 +8285,7 @@
 			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
+            <column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
 		</insert>
     
     </changeSet>
@@ -9730,7 +9735,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="description" value="Accounting schemes"/>
 		</insert>
 		<insert tableName="generic_sequence">
-			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="version" valueNumeric="1" />
@@ -9746,7 +9751,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
+			<column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
 		</insert>
 	</changeSet>
 	
@@ -9904,7 +9909,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 
 	<changeSet id="#INTRD-5924-20220401" author="ZBariki">
 		<insert tableName="generic_sequence">
-			<column name="id" valueSequenceNext="generic_sequence_seq" />
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
 			<column name="version" valueNumeric="0" />
@@ -10061,6 +10066,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-7750_20220608" author="ZBariki" />
 	<changeSet id="#INTRD-7663_20220613" author="ZBariki" />
 	<changeSet id="#INTRD-7872_20220615" author="ZBariki" />
+	<changeSet id="#INTRD-7722_20220618" author="ZBariki" />
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

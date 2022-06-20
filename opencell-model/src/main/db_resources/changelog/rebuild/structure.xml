@@ -239,7 +239,6 @@
         <createSequence sequenceName="job_execution_error_seq" startValue="1"/>
         <createSequence sequenceName="bi_data_collector_seq" startValue="1" />
         <createSequence sequenceName="wf_generic_action_seq" startValue="1" />
-        <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createSequence sequenceName="meveo_metrics_config_seq" />
         <createSequence sequenceName="cpq_product_seq" />
         <createSequence sequenceName="cpq_product_line_seq" />
@@ -17898,6 +17897,7 @@
     <changeSet id="#INTRD-7872_20220615" author="ZBariki" />
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
+    <changeSet id="#INTRD-7722_20220618" author="ZBariki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
