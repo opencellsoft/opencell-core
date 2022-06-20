@@ -650,7 +650,11 @@ public class ServiceSingleton {
         if (formatEL.isEmpty()) {
             return (String) context.get(GENERATED_CODE_KEY);
         }
-        return evaluateExpression(formatEL, context, String.class);
+        String resultCode = evaluateExpression(formatEL, context, String.class);
+        if(!formatEL.contains(GENERATED_CODE_KEY)) {
+            return resultCode + context.get(GENERATED_CODE_KEY);
+        }
+        return resultCode;
     }
 
     private String replaceDigitsWithChars(long epochTimestamp) {
