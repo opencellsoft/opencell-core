@@ -613,7 +613,7 @@ public class ServiceSingleton {
         Map<Object, Object> context = new HashMap<>();
         context.put("entity", customGenericEntityCode.getEntityClass());
         if (sequence.getSequenceType() == SEQUENCE) {
-            generatedCode = String.valueOf(sequenceService.generateSequence(sequence).getCurrentNumber());
+            generatedCode = StringUtils.getLongAsNChar(sequenceService.generateSequence(sequence).getCurrentNumber(), sequence.getSequenceSize());
         }
 
         if(sequence.getSequenceType() == NUMERIC) {
@@ -650,11 +650,7 @@ public class ServiceSingleton {
         if (formatEL.isEmpty()) {
             return (String) context.get(GENERATED_CODE_KEY);
         }
-        String resultCode = evaluateExpression(formatEL, context, String.class);
-        if(formatEL.contains(GENERATED_CODE_KEY)) {
-            return resultCode + context.get(GENERATED_CODE_KEY);
-        }
-        return resultCode;
+        return evaluateExpression(formatEL, context, String.class);
     }
 
     private String replaceDigitsWithChars(long epochTimestamp) {
