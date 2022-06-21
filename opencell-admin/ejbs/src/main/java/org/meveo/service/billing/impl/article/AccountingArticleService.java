@@ -146,8 +146,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
 		if (!StringUtils.isBlank(mappingExpressionEl)) {
-			Object result = evaluateExpression(mappingExpressionEl,
-					Map.of("walletOperation", walletOperation), Boolean.class);
+			Map<Object, Object> context = new HashMap<>();
+			context.put("walletOperation",walletOperation);
+			Object result = evaluateExpression(mappingExpressionEl, context, Boolean.class);
 			try {
 				return (Boolean) result;
 			} catch (Exception exception) {
