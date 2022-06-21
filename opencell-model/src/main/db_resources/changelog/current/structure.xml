@@ -13027,4 +13027,11 @@ order by date_trunc('month', i.invoice_date) DESC
 			<where>version is null</where>
 		</update>
 	</changeSet>
+
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI">
+        <addColumn tableName="dwh_report_extract">
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+
+    </changeSet>
 </databaseChangeLog>
