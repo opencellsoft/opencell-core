@@ -10288,6 +10288,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Creation" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-63" />
@@ -10299,6 +10300,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Installment" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 	</changeSet>
 	
@@ -10360,5 +10362,90 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                                 WHERE converted_amount_with_tax IS NULL</sql>
 		<sql>UPDATE billing_invoice_agregate SET converted_amount_tax = amount_tax
                                 WHERE converted_amount_tax IS NULL</sql>
+	</changeSet>
+
+	<changeSet id="#INTRD-7722_20220618" author="ZBariki">
+		<delete tableName="adm_custom_generic_entity_code" />
+		<delete tableName="generic_sequence" />
+
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="quote_offer_sequence" />
+			<column name="description" value="Quote Offer sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="QuoteOffer" />
+			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+		</insert>
+
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="order_offer_sequence" />
+			<column name="description" value="Order Offer sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="9" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="OrderOffer" />
+			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+		</insert>
+
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="accounting_scheme_sequence" />
+			<column name="description" value="AccountingScheme sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="AccountingScheme" />
+			<column name="code_el" value="#{sequenceNextValue}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+		</insert>
+
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="discount_plan_item_seq" />
+			<column name="description" value="Discount plan item sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="10" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="org.meveo.model.catalog.DiscountPlanItem" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence_id"
+					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
+		</insert>
 	</changeSet>
 </databaseChangeLog>
