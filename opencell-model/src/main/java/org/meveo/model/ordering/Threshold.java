@@ -33,6 +33,9 @@ public class Threshold extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "open_order_template_id", nullable = false, updatable = false)
     private OpenOrderTemplate openOrderTemplate;
+    
+    @Column(name = "external_recipient")
+    private String externalRecipient;
 
     public Integer getSequence() {
         return sequence;
@@ -65,4 +68,13 @@ public class Threshold extends BaseEntity {
     public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
         this.openOrderTemplate = openOrderTemplate;
     }
+
+	public String getExternalRecipient() {
+		return externalRecipient;
+	}
+
+	public void setExternalRecipient(String externalRecipient) {
+		this.externalRecipient = externalRecipient;
+	}
+    
 }

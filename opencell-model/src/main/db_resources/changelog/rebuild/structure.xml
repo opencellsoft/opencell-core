@@ -11748,6 +11748,7 @@
             <column name="sequence" type="int"/>
             <column name="percentage" type="int"/>
             <column name="open_order_template_id" type="bigint"/>
+            <column name="external_recipient" type="varchar(100)"/>
         </createTable>
 
         <createTable tableName="open_order_threshold_recipients">
@@ -17898,6 +17899,7 @@
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
     <changeSet id="#INTRD-7722_20220618" author="ZBariki" />
+    <changeSet id="#INTRD-8026_20220621" author="HatimOUDAD" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -13040,5 +13040,11 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-7722_20220618" author="ZBariki">
         <dropSequence sequenceName="generic_sequence_seq"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-8026_20220621" author="HatimOUDAD">
+        <addColumn tableName="open_order_threshold">
+            <column name="external_recipient" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
