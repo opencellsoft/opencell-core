@@ -10229,4 +10229,15 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='ICAT_SECURITY_DEPOSIT'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-1304_21062022" author="AbdelmounaimAkadid">
+		<insert tableName="global_settings">
+			<column name="id" valueSequenceNext="global_settings_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="quote_default_validity_delay" value="30" />
+		</insert>
+	</changeSet>
+	
 </databaseChangeLog>

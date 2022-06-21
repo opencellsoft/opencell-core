@@ -10023,6 +10023,16 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 	
+	<changeSet id="#INTRD-1304_21062022" author="AbdelmounaimAkadid">
+		<insert tableName="global_settings">
+			<column name="id" valueSequenceNext="global_settings_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="quote_default_validity_delay" value="30" />
+		</insert>
+	</changeSet>
+	
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
