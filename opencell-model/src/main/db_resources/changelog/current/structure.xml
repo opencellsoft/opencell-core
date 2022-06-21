@@ -13037,5 +13037,56 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="price_version_date" type="datetime" />
         </addColumn>
     </changeSet>
+    <changeSet id="#INTRD-7722_20220618" author="ZBariki">
+        <dropSequence sequenceName="generic_sequence_seq"/>
+    </changeSet>
+    <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_occ_template">
+            <column name="manual_creation_enabled" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+        <update tableName="ar_occ_template" >
+            <column name="manual_creation_enabled" value="0"/>
+            <where>code in ('CRD_SD', 'CRD_TRS', 'DBT_TRS', 'DEB_SD', 'INV_CRN', 'INV_DIS', 'INV_REB', 'INV_STD', 'PAY_BATCH', 'PAY_DEP', 'PPL_CREATION', 'PPL_INSTALLMENT', 'REF_SD', 'TAX_VAT_00', 'TAX_VAT_05', 'TAX_VAT_10', 'TAX_VAT_20')</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-8036-20220621" author="hichamhanine">
+        <createSequence sequenceName="invoice_sub_totals_seq" startValue="1" />
+        <createTable tableName="invoice_sub_totals">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />            
+
+            <column name="sub_total_el" type="varchar(2000)" />
+            <column name="label" type="varchar(50)" />
+            <column name="invoice_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="label_i18n" type="${type.json}" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="invoice_sub_totals" constraintName="fk_invoice_sub_totals_invoice_type" deferrable="false" initiallyDeferred="false"
+				onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+        <createTable tableName="invoice_sub_totals_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}invoice_sub_totals_seq values(1)</sql>
+    </changeSet>
 
 </databaseChangeLog>

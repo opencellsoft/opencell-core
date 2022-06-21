@@ -824,6 +824,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
+        billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
             List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
@@ -1398,7 +1399,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			            													(billingCycle != null ? billingCycle.getDescription() : " ") +
 			            													"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "") +")"); 
 	    	            	
-	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+	    	            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<>();
 	    	            	newDescriptionsTranslated.add(languageDescriptionEn);
 	    	            	newDescriptionsTranslated.add(languageDescriptionFr);
 	    	            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
@@ -1449,7 +1450,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 														            	(billingCycle != null ? billingCycle.getDescription() : " ") +
 														            	"; invoice date="+(billingRun.getInvoiceDate()!=null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(billingRun.getInvoiceDate()) : "")+")"); 
 		            	
-		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<LanguageDescriptionDto>();
+		            	List<LanguageDescriptionDto> newDescriptionsTranslated = new ArrayList<>();
 		            	newDescriptionsTranslated.add(languageDescriptionEn);
 		            	newDescriptionsTranslated.add(languageDescriptionFr);
 		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(newDescriptionsTranslated ,null));	            	
@@ -1557,7 +1558,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Filter filter = new Filter();
         if(invoicingV2) {
             filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
                             .collect(joining(",")) + ")");
         } else {
             Map<String, String> filters = billingRun.getFilters();

@@ -8,6 +8,12 @@ import javax.ejb.Stateless;
 @Stateless
 public class SequenceService extends BusinessService<Sequence> {
 
+    /**
+     * Generate nex sequence
+     *
+     * @param sequence
+     * @return Sequence
+     */
     public Sequence generateSequence(Sequence sequence) {
         Sequence entity = refreshOrRetrieve(sequence);
         entity.setCurrentNumber(sequence.getCurrentNumber() != null ? sequence.getCurrentNumber() + 1 : 0);
