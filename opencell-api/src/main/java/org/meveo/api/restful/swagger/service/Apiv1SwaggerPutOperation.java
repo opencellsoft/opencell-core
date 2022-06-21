@@ -2,6 +2,7 @@ package org.meveo.api.restful.swagger.service;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
 
@@ -34,8 +35,11 @@ public class Apiv1SwaggerPutOperation {
             aPathParam.setIn("path");
             String entityCode = aRFPathSplit[aRFPathSplit.length - 1];
             entityCode = entityCode.substring( 1, entityCode.length() - 1 ); // Remove open accolade "{" and close accolade "}"
+            Schema<String> schema = new Schema<>();
+            schema.setType("string");
+            aPathParam.setSchema(schema);
             aPathParam.setName( entityCode );
-            aPathParam.setDescription( "Add the " + entityCode + " here" );
+            aPathParam.setDescription( "The " + entityCode + " here" );
             parameters.add(aPathParam);
 
             putOp.setParameters(parameters);

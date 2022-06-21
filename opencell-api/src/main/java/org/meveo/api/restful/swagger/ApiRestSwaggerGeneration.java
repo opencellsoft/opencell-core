@@ -51,6 +51,12 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
     @Inject
     private Apiv1SwaggerDeleteOperation deleteOperation;
 
+    public static final String FORWARD_SLASH = "/";
+
+    public static final String OPEN_BRACE = "{";
+
+    public static final String CLOSE_BRACE = "}";
+
     @GET
     @Produces({MediaType.APPLICATION_JSON, "application/json"})
     @io.swagger.v3.oas.annotations.Operation(hidden = true)
@@ -107,7 +113,7 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
                     switch (splitStdPath[0]) {
                         case MapRestUrlAndStandardUrl.GET :
                             if ( pathItemInOldSwagger.getGet() != null )
-                                getOperation.setGet(pathItem, pathItemInOldSwagger.getGet(), aRFPath);
+                                aRFPath = getOperation.setGet(pathItem, pathItemInOldSwagger.getGet(), aRFPath);
                             break;
                         case MapRestUrlAndStandardUrl.POST :
                             if ( pathItemInOldSwagger.getPost() != null )

@@ -2,11 +2,13 @@ package org.meveo.api.restful.swagger.service;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
+import org.meveo.api.restful.swagger.ApiRestSwaggerGeneration;
 
 import java.util.List;
 
@@ -15,13 +17,11 @@ import java.util.List;
  */
 public class Apiv1SwaggerGetOperation {
 
-    private static final String FORWARD_SLASH = "/";
-
-    public void setGet(PathItem pathItem, Operation getOp, String aRFPath) {
-        String[] aRFPathSplit = aRFPath.split(FORWARD_SLASH);
+    public String setGet(PathItem pathItem, Operation getOp, String aRFPath) {
+        String[] aRFPathSplit = aRFPath.split(ApiRestSwaggerGeneration.FORWARD_SLASH);
         StringBuilder getAnEntityRFPathBuilder = new StringBuilder();
         for (int i = 1; i < aRFPathSplit.length - 1; i++ ) {
-            getAnEntityRFPathBuilder.append( FORWARD_SLASH ).append( aRFPathSplit[i] );
+            getAnEntityRFPathBuilder.append(ApiRestSwaggerGeneration.FORWARD_SLASH).append( aRFPathSplit[i] );
         }
         String getAnEntityRFPath = getAnEntityRFPathBuilder.toString();
 
@@ -45,22 +45,52 @@ public class Apiv1SwaggerGetOperation {
                 for ( Parameter param : parameters ) {
                     String entityCode = aRFPathSplit[ aRFPathSplit.length - 1 ];
                     entityCode = entityCode.substring( 1, entityCode.length() - 1 ); // Remove open accolade "{" and close accolade "}"
-                    switch ( param.getIn() ) {
-                        case "query" :
-                            if ( param.getName().equals( entityCode ) ) {
-                                PathParameter aPathParam = new PathParameter();
-                                aPathParam.setName( param.getName() );
-                                parameters.add(aPathParam);
-                                parameters.remove(param);
+
+                    if (!param.getName().equals("inheritCF") && !param.getName().equals("query")
+                        && !param.getName().equals("fields") && !param.getName().equals("offset")
+                        && !param.getName().equals("limit") && !param.getName().equals("sortBy")
+                        && !param.getName().equals("sortOrder") && !param.getName().equals("loadOfferServiceTemplate")
+                        && !param.getName().equals("loadOfferProductTemplate") && !param.getName().equals("loadServiceChargeTemplate")
+                        && !param.getName().equals("loadProductChargeTemplate")  && !param.getName().equals("loadServiceChargeTemplate")
+                        && !param.getName().equals("loadServiceChargeTemplate") && !param.getName().equals("offerTemplateCode")
+                        && !param.getName().equals("validFrom") && !param.getName().equals("validTo")
+                        && !param.getName().equals("loadOfferServiceTemplate") && !param.getName().equals("loadOfferProductTemplate")
+                        && !param.getName().equals("loadServiceChargeTemplate") && !param.getName().equals("loadProductChargeTemplate")
+                        && !param.getName().equals("loadAllowedDiscountPlan") && !param.getName().equals("loadProductChargeTemplate")) {
+
+                        if ( param.getName().equals( entityCode ) ) {
+                            if (param.getIn().equals("query")) {
+//                                PathParameter aPathParam = new PathParameter();
+//                                aPathParam.setName(param.getName());
+//                                Schema<String> schema = new Schema<>();
+//                                schema.setType("string");
+//                                aPathParam.setSchema(schema);
+//                                parameters.add(aPathParam);
+//                                parameters.remove(param);
+
+                                param.setIn("path");
+                                break;
                             }
+                        }
+                        else {
+                            if (param.getIn().equals("query")) {
+                                param.setIn("path");
+                            }
+
+                            aRFPath = getAnEntityRFPath + ApiRestSwaggerGeneration.FORWARD_SLASH
+                                    + ApiRestSwaggerGeneration.OPEN_BRACE + param.getName()
+                                    + ApiRestSwaggerGeneration.CLOSE_BRACE;
                             break;
+                        }
                     }
-                    break;
+
                 }
                 getOp.setParameters(parameters);
             }
         }
 
         pathItem.setGet(getOp);
+
+        return aRFPath;
     }
 }
