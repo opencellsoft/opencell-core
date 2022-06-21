@@ -629,6 +629,7 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
 
         <insert tableName="ar_occ_template">
@@ -673,6 +674,7 @@
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-32" />
@@ -685,6 +687,7 @@
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-33" />
@@ -697,6 +700,7 @@
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-34" />
@@ -709,6 +713,7 @@
             <column name="description" value="Tax - VAT" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-35" />
@@ -757,6 +762,7 @@
             <column name="description" value="Invoice - rebate sub-item" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-39" />
@@ -769,6 +775,7 @@
             <column name="description" value="Invoice - discount sub-item" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <update tableName="ar_occ_template">
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -824,6 +831,7 @@
             <column name="description" value="Debit for credit transfer" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-45" />
@@ -835,6 +843,7 @@
             <column name="description" value="Credit for debit transfer" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>    
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-46" />
@@ -874,6 +883,7 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="manual_creation_enabled" value="0"/>
         </insert>
     </changeSet>
     
@@ -2428,6 +2438,7 @@
 			<column name="description" value="Credit for Security deposit transfer" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
+            <column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-52" />
@@ -2440,6 +2451,7 @@
 			<column name="description" value="Debit for Security deposit transfer" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
+            <column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-53" />
@@ -2452,6 +2464,7 @@
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
+            <column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="billing_seq_invoice">
 			<column name="id" valueNumeric="-6" />

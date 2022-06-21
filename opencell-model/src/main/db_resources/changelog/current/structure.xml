@@ -13040,5 +13040,14 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-7722_20220618" author="ZBariki">
         <dropSequence sequenceName="generic_sequence_seq"/>
     </changeSet>
+    <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_occ_template">
+            <column name="manual_creation_enabled" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+        <update tableName="ar_occ_template" >
+            <column name="manual_creation_enabled" value="0"/>
+            <where>code in ('CRD_SD', 'CRD_TRS', 'DBT_TRS', 'DEB_SD', 'INV_CRN', 'INV_DIS', 'INV_REB', 'INV_STD', 'PAY_BATCH', 'PAY_DEP', 'PPL_CREATION', 'PPL_INSTALLMENT', 'REF_SD', 'TAX_VAT_00', 'TAX_VAT_05', 'TAX_VAT_10', 'TAX_VAT_20')</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>

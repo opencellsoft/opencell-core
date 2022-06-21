@@ -8055,6 +8055,7 @@
             <column name="code" value="INV_STD" />
             <column name="description" value="Standard invoice sub-item" />
             <column name="occ_category" value="DEBIT" />
+			<column name="manual_creation_enabled" value="0"/>
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-40" />
@@ -8063,6 +8064,7 @@
             <column name="code" value="INV_CRN" />
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
+			<column name="manual_creation_enabled" value="0"/>
         </insert>
     </changeSet>
     

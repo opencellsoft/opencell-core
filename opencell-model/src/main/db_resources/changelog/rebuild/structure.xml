@@ -2337,6 +2337,7 @@
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
             <column name="contra_accounting_code2_id" type="bigint"/>
+            <column name="manual_creation_enabled" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -17898,7 +17899,8 @@
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
     <changeSet id="#INTRD-7722_20220618" author="ZBariki" />
-    
+
+    <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
