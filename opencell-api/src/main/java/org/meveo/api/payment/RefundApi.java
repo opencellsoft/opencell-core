@@ -99,9 +99,6 @@ public class RefundApi extends BaseApi {
         if (StringUtils.isBlank(refundDto.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
         }
-        if (StringUtils.isBlank(refundDto.getOccTemplateCode())) {
-            missingParameters.add("occTemplateCode");
-        }
         if (StringUtils.isBlank(refundDto.getReference())) {
             missingParameters.add("reference");
         }
@@ -114,9 +111,17 @@ public class RefundApi extends BaseApi {
             throw new BusinessException("Cannot find customer account with code=" + refundDto.getCustomerAccountCode());
         }
 
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(refundDto.getOccTemplateCode());
+        String occTemplateCode = refundDto.getOccTemplateCode();
+        if (StringUtils.isBlank(occTemplateCode)) {
+            if(PaymentMethodEnum.CASH.equals(refundDto.getPaymentMethod())){
+                occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.cash", "REF_CASH");
+            }else if(PaymentMethodEnum.CHECK.equals(refundDto.getPaymentMethod())){
+                occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.check", "REF_CHK");
+            }
+        }
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + refundDto.getOccTemplateCode());
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
 
         Refund refund = new Refund();
