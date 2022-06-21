@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.apiv2.catalog.ImportPricePlanVersionsItem;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.shared.DateUtils;
 
 public class ImportResultResponseDto extends BaseResponse {
 
@@ -22,6 +24,14 @@ public class ImportResultResponseDto extends BaseResponse {
         private VersionStatusEnum uploadAs;
         private Date startDate;
         private Date endDate;
+
+        public ImportResultDto(ImportPricePlanVersionsItem importItem) {
+            this.fileName = importItem.getFileName();
+            this.chargeCode = importItem.getChargeCode();
+            this.uploadAs = importItem.getStatus();
+            this.startDate = DateUtils.truncateTime(importItem.getStartDate());
+            this.endDate = DateUtils.truncateTime(importItem.getEndDate());
+        }
 
         public ActionStatusEnum getStatus() {
             return status;
