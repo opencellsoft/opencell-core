@@ -50,7 +50,7 @@ import java.util.List;
 public class ModuleItemsDto {
 
     /** The module items. */
-    @JsonDeserialize(using = ModuleItemListDeserializer.class)
+    //@JsonDeserialize(using = ModuleItemListDeserializer.class)
     @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class), @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
             @XmlElement(name = "filter", type = FilterDto.class), @XmlElement(name = "jobInstance", type = JobInstanceDto.class),
             @XmlElement(name = "script", type = ScriptInstanceDto.class), @XmlElement(name = "notification", type = ScriptNotificationDto.class),
