@@ -14,6 +14,7 @@ import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
@@ -24,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,9 @@ public class OpenOrderTemplateApiService {
     private ThresholdService thresholdService;
     @Inject
     private TagService tagService;
+
+    @Inject
+    private AuditLogService auditLogService;
 
     private OpenOrderTemplateMapper openOrderTemplateMapper = new OpenOrderTemplateMapper();
      private ThresholdMapper thresholdMapper = new ThresholdMapper();
@@ -61,6 +66,7 @@ public class OpenOrderTemplateApiService {
 
         openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.DRAFT);
         openOrderTemplateService.create(openOrderTemplate);
+        auditLogService.trackOperation("CREATE", new Date(), openOrderTemplate, openOrderTemplate.getCode());
         return openOrderTemplateMapper.toResource(openOrderTemplate);
     }
 
@@ -83,7 +89,9 @@ public class OpenOrderTemplateApiService {
         if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
         if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
         checkParameters(openOrderTemplate);
-        return openOrderTemplateMapper.toResource(openOrderTemplateService.update(openOrderTemplate));
+        openOrderTemplate = openOrderTemplateService.update(openOrderTemplate);
+        auditLogService.trackOperation("UPDATE", new Date(), openOrderTemplate, openOrderTemplate.getCode());
+        return openOrderTemplateMapper.toResource(openOrderTemplate);
     }
 
     private void checkParameters(OpenOrderTemplateInput openOrderTemplateInput) {
