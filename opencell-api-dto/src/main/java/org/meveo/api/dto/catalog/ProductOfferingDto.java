@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.IVersionedDto;
@@ -56,78 +57,97 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
     private static final long serialVersionUID = 4599063410509766484L;
 
     /** The valid from. */
+    @Schema(description = "The 'valid from' date of product.")
     @XmlAttribute()
     protected Date validFrom;
 
     /** The valid to. */
+    @Schema(description = "The 'valid to' date of product.")
     @XmlAttribute()
     protected Date validTo;
     
     /** The new valid from. */
     @XmlAttribute()
+    @Schema(description = "The new 'valid from' date of product.")
     protected Date newValidFrom;
 
     /** The new valid to. */
     @XmlAttribute()
+    @Schema(description = "The new 'valid to' date of product.")
     protected Date newValidTo;
 
 
     /** The name. */
     @XmlElement(required = true)
+    @Schema(description = "Name of product.")
     protected String name;
 
     /** The offer template categories. */
     @XmlElementWrapper(name = "offerTemplateCategories")
     @XmlElement(name = "offerTemplateCategory")
+    @Schema(description = "The offer template categories.")
     protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
     /** The channels. */
     @XmlElementWrapper(name = "channels")
     @XmlElement(name = "channel")
+    @Schema(description = "The sales channels.")
     private List<ChannelDto> channels;
 
     /** The attachments. */
     @XmlElementWrapper(name = "digitalResources")
     @XmlElement(name = "digitalResource")
+    @Schema(description = "The digital resources such as uri and media type.")
     protected List<DigitalResourceDto> attachments;
 
     /** The model code. */
+    @Schema(description = "The model code.")
     protected String modelCode;
 
     /** The life cycle status. */
     @XmlElement(required = true)
+    @Schema(description = "The life cycle status.")
     protected LifeCycleStatusEnum lifeCycleStatus;
 
     /** The custom fields. */
+    @Schema(description = "The custom field that can be added to a product.")
     protected CustomFieldsDto customFields;
 
     /**
      * This field is populated on find and list. Use to pull the image from a servlet later on.
      */
+    @Schema(description = "This field is populated on find and list. Use to pull the image from a servlet later on.")
     protected String imagePath;
 
     /** The image base 64. */
+    @Schema(description = "The image base 64.")
     protected String imageBase64;
 
     /** The language descriptions. */
+    @Schema(description = "The language descriptions.")
     protected List<LanguageDescriptionDto> languageDescriptions;
 
     /** The long description. */
+    @Schema(description = "A long description of product.")
     protected String longDescription;
 
     /** The long descriptions translated. */
+    @Schema(description = "The long descriptions translated.")
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
 
     /** The global rating script instance. */
+    @Schema(description = "The global rating script instance.")
     private String globalRatingScriptInstance;
 
     /** The sellers. */
     @XmlElementWrapper(name = "sellers")
     @XmlElement(name = "seller")
+    @Schema(description = "The list of sellers.")
     private List<String> sellers;
 
     @XmlElementWrapper(name = "customerCategories")
     @XmlElement(name = "customerCategory")
+    @Schema(description = "The customer categories.")
     private List<CustomerCategoryDto> customerCategories;
 
     /**

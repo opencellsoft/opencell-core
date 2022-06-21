@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
@@ -51,14 +52,17 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
     private static final long serialVersionUID = 1866373944715745993L;
 
     /** The product charge templates. */
+    @Schema(description = "The product charge templates.")
     @XmlElementWrapper(name = "productChargeTemplates")
     @XmlElement(name = "productChargeTemplate", required = true)
     private List<ProductChargeTemplateDto> productChargeTemplates;
 
     /** The business product model. */
+    @Schema(description = "The business product model.")
     private BusinessProductModelDto businessProductModel;
 
     /** The wallet templates. */
+    @Schema(description = "The wallet templates.")
     @XmlElementWrapper(name = "walletTemplates")
     @XmlElement(name = "walletTemplate")
     private List<WalletTemplateDto> walletTemplates;

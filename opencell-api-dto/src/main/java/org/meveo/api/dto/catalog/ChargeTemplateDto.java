@@ -65,14 +65,17 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /** The input unit description. */
+    @Schema(description = "The input unit description.")
     @Deprecated
     private String inputUnitDescription;
 
     /** The rating unit description. */
+    @Schema(description = "The rating unit description.")
     @Deprecated
     private String ratingUnitDescription;
 
     /** The unit multiplicator. */
+    @Schema(description = "The unit multiplicator.")
     @Deprecated
     private BigDecimal unitMultiplicator;
 
