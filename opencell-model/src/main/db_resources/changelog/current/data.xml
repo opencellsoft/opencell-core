@@ -10288,6 +10288,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Creation" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-63" />
@@ -10299,6 +10300,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Installment" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 	</changeSet>
 	
