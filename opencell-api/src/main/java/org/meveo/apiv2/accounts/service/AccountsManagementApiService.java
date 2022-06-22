@@ -162,7 +162,7 @@ public class AccountsManagementApiService {
 
         // Attache to new user account
         subscription.setUserAccount(newOwner);
-        subscriptionService.updateOwner(subscription, newOwner);
+        subscriptionService.updateNoCheck(subscription);
 
         // The change must be logged (audit log + make Subscription.userAccount into auditable field)
         createAuditLog(Subscription.class.getName());
