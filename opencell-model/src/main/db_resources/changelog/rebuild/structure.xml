@@ -12204,9 +12204,6 @@
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-535">
     	<addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-536">
-    	<addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
-    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-537">
     	<addUniqueConstraint columnNames="uuid" constraintName="uk_wf_generic_action_uuid" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="wf_generic_action" />
@@ -17942,6 +17939,7 @@
     <changeSet id="#INTRD-8036-20220621" author="hichamhanine" />
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza"/>
+    <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
