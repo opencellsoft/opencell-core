@@ -16788,6 +16788,13 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_plan" />
     </changeSet>
 
+    <changeSet id="#INTRD-8109_20220622_str" author="ZBariki">
+        <createIndex indexName="accounting_journal_entry_auxiliary_accounting_code_idx"
+                     tableName="accounting_journal_entry">
+            <column name="auxiliary_account_code"/>
+        </createIndex>
+    </changeSet>
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
@@ -17939,6 +17946,7 @@
     <changeSet id="#INTRD-8036-20220621" author="hichamhanine" />
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
+    <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
