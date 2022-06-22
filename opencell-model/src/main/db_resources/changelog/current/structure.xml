@@ -13081,12 +13081,6 @@ order by date_trunc('month', i.invoice_date) DESC
         </createTable>
         <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="invoice_sub_totals" constraintName="fk_invoice_sub_totals_invoice_type" deferrable="false" initiallyDeferred="false"
 				onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
-        <createTable tableName="invoice_sub_totals_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}invoice_sub_totals_seq values(1)</sql>
     </changeSet>
 
 </databaseChangeLog>
