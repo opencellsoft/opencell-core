@@ -102,7 +102,10 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[12]));
 			agedReceivableDto.setInvoiceId((Long) agedList[19]);
 			agedReceivableDto.setInvoiceNumber((String) agedList[20]);
-			agedReceivableDto.setBilledAmount((BigDecimal) agedList[21]);
+			if(agedList[23] == null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[21]);
+			else
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[23]);
 			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
 			dtoList.add(agedReceivableDto);
 		} 
@@ -150,6 +153,9 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
 			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
+			if(agedReceivable[++startingSumIndex] != null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[startingSumIndex]);
+				
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;
