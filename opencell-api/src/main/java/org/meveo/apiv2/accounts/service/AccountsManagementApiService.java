@@ -143,7 +143,7 @@ public class AccountsManagementApiService {
 
         // Attache to new user account
         subscription.setUserAccount(newOwner);
-        subscriptionService.updateOwner(subscription, newOwner);
+        subscriptionService.updateNoCheck(subscription);
 
         return count;
     }
