@@ -411,4 +411,26 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
         return revenuEntry;
     }
+
+    @Override
+    public void create(JournalEntry journalEntry) {
+        super.create(journalEntry);
+        if(checkAuxiliaryCodeUniqniess(journalEntry.getAuxiliaryAccountCode(), journalEntry.getCustomerAccount()) != 0) {
+            journalEntry.setAuxiliaryAccountCode(journalEntry.getAuxiliaryAccountCode()
+                    + journalEntry.getCustomerAccount().getId());
+        }
+    }
+
+    /**
+     * Check auxiliary account code uniqniess
+     * @param auxiliaryAccountCode auxiliary account code
+     * @param customerAccount      customer account
+     * @return number of occurrence
+     */
+    public long checkAuxiliaryCodeUniqniess(String auxiliaryAccountCode, CustomerAccount customerAccount) {
+        return (long) getEntityManager().createNamedQuery("JournalEntry.checkAuxiliaryCodeUniqniess")
+                                .setParameter("auxiliaryAccountCode", auxiliaryAccountCode)
+                                .setParameter("customerAccount", customerAccount)
+                                .getSingleResult();
+    }
 }
