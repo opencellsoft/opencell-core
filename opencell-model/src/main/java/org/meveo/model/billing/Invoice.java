@@ -762,9 +762,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         if(this.getBillingAccount() != null) {
         	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
         	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
-            this.tradingCurrency = billingAccount.getTradingCurrency() != null ? billingAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
             if(this.tradingCurrency == null) {
-                this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                this.tradingCurrency = billingAccount.getTradingCurrency() != null
+                        ? billingAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                if(this.tradingCurrency == null) {
+                    this.tradingCurrency = customerAccount.getTradingCurrency() != null
+                            ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                }
             }
             if(billingAccount.getTradingLanguage() != null) {
         		this.tradingLanguage = billingAccount.getTradingLanguage();
