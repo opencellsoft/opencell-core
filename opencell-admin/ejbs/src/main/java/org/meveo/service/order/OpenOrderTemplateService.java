@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class OpenOrderTemplateService extends BusinessService<OpenOrderTemplate> {
 
-
     public void create(OpenOrderTemplate entity) {
         super.create(entity);
     }
@@ -16,8 +15,4 @@ public class OpenOrderTemplateService extends BusinessService<OpenOrderTemplate>
     public OpenOrderTemplate update(OpenOrderTemplate entity) {
         return super.update(entity);
     }
-
-
-
-
 }

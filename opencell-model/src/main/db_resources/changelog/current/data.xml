@@ -10288,6 +10288,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Creation" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-63" />
@@ -10299,6 +10300,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="description" value="Payment plan Installment" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-3" />
+			<column name="manual_creation_enabled" value="0"/>
 		</insert>
 	</changeSet>
 	
@@ -10444,6 +10446,33 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="creator" value="applicationInitializer" />
 			<column name="sequence_id"
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
+		</insert>
+	</changeSet>
+	<changeSet id="#INTRD-8004_210622" author="AbdelkaderBouazza">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-64" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="REF_CASH" />
+			<column name="description" value="Refund - cash" />
+			<column name="occ_category" value="DEBIT" />
+			<column name="account_code_client_side" value="411000000" />
+			<column name="journal_id" value="-2" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
+			<column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419000000')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-1304_21062022" author="AbdelmounaimAkadid">
+		<insert tableName="global_settings">
+			<column name="id" valueSequenceNext="global_settings_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="quote_default_validity_delay" value="30" />
 		</insert>
 	</changeSet>
 </databaseChangeLog>

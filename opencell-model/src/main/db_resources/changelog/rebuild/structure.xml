@@ -324,6 +324,7 @@
       	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
         <createSequence sequenceName="ar_payment_plan_seq" startValue="1"/>
         <createSequence sequenceName="open_order_quote_seq"/>
+        <createSequence sequenceName="invoice_sub_totals_seq" startValue="1"/>
     </changeSet>
 
 
@@ -1441,6 +1442,12 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_tax_mapping_seq values(1)</sql>
+        <createTable tableName="invoice_sub_totals_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}invoice_sub_totals_seq values(1)</sql>
     </changeSet>
 
     <!-- end sequence -->
@@ -2338,6 +2345,7 @@
             <column name="accounting_scheme_id" type="${cast.long}"/>
             <column name="contra_accounting_code_id" type="bigint"/>
             <column name="contra_accounting_code2_id" type="bigint"/>
+            <column name="manual_creation_enabled" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -11901,6 +11909,35 @@
                                              
     </changeSet>
 
+	<changeSet author="hichamhanine" id="rebuild-str-tbl-8036">
+        <createTable tableName="invoice_sub_totals">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />            
+
+            <column name="sub_total_el" type="varchar(2000)" />
+            <column name="label" type="varchar(50)" />
+            <column name="invoice_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="label_i18n" type="${type.json}" />
+        </createTable>
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -12225,9 +12262,6 @@
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-535">
     	<addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-536">
-    	<addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-537">
     	<addUniqueConstraint columnNames="uuid" constraintName="uk_wf_generic_action_uuid" deferrable="false" disabled="false"
@@ -16167,7 +16201,11 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_line" constraintName="fk_invoice_line_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
-
+	   <changeSet author="hichamhanine" id="rebuild-str-fk-8036">
+			<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="invoice_sub_totals" constraintName="fk_invoice_sub_totals_invoice_type" deferrable="false" initiallyDeferred="false"
+				onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+	   </changeSet>
+	   
    <changeSet id="INTRD-5806_20220516-fk" author="HichamELHALOUI">
 		<addForeignKeyConstraint baseTableName="finance_settings" baseColumnNames="open_order_settings_id"
                                  constraintName="fk_finance_settings_open_order_setting_id" referencedTableName="open_order_setting"
@@ -17984,7 +18022,9 @@
     <changeSet id="#INTRD-7722_20220618" author="ZBariki" />
     <changeSet id="#INTRD-8026_20220621" author="HatimOUDAD" />
     <changeSet id="#INTRD-8026_20220622" author="HatimOUDAD"/>
-    
+    <changeSet id="#INTRD-8036-20220621" author="hichamhanine" />
+    <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
+    <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
