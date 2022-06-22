@@ -9870,4 +9870,7 @@ public class OrderAdvancement extends ModuleScript {
         <sql>update ${db.schema.adapted}billing_subscrip_termin_reason set invoice_agreement_immediately = 0</sql>
     </changeSet>
 
+	<changeSet author="hichamhanine" id="#INTRD-7850-20220622">
+    	<dropUniqueConstraint tableName="ar_payment_token" uniqueColumns="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
 </databaseChangeLog>
