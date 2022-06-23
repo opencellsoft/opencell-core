@@ -24,5 +24,6 @@ public interface ThresholdInput extends Resource {
 
     List<ThresholdRecipientsEnum> getRecipients();
     
+    @Nullable
     String getExternalRecipient();
 }
