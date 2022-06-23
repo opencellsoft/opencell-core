@@ -166,11 +166,13 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && !isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode();
 
         } else if (ao.getCustomerAccount() == null && isOrphan) {
