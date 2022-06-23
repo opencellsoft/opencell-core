@@ -164,21 +164,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (invoice != null) {
                     if (withWriteOff) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
-                        invoice.setPaymentStatusDate(new Date());
                     } else if (withRefund) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
-                        invoice.setPaymentStatusDate(new Date());
                     } else if (isPplCreationCreditAo) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PENDING_PLAN);
-                        invoice.setPaymentStatusDate(new Date());
                     } else if (fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                        invoice.setPaymentStatusDate(new Date());
                         invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if (!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
-                        invoice.setPaymentStatusDate(new Date());
                     }
+                    invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
                 }
             }
@@ -237,18 +233,15 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (invoice != null) {
                     if(withWriteOff) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
-                        invoice.setPaymentStatusDate(new Date());
                     } else if(withRefund) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
-                        invoice.setPaymentStatusDate(new Date());
                     } else if(fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-                        invoice.setPaymentStatusDate(new Date());
                         invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if(!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
-                        invoice.setPaymentStatusDate(new Date());
                     }
+                    invoice.setPaymentStatusDate(new Date());
                 }
             }
 
