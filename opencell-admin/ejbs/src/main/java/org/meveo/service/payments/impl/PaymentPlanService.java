@@ -164,6 +164,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
             if (accountOperation instanceof RecordedInvoice) {
                 Invoice inv = ((RecordedInvoice) accountOperation).getInvoice();
                 inv.setPaymentStatus(paymentStatus);
+                inv.setPaymentStatusDate(new Date());
                 inv.setPaymentPlan(paymentPlan);
                 invoiceService.update(inv);
                 log.info("Invoice '{}' changed to '{}' since all linked AO of PaymentPlan '{}' are matched",
