@@ -19,7 +19,9 @@ import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
@@ -33,6 +35,7 @@ import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
@@ -48,6 +51,9 @@ public class AccountsManagementApiService {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -163,6 +169,13 @@ public class AccountsManagementApiService {
         // Attache to new user account
         subscription.setUserAccount(newOwner);
         subscriptionService.updateNoCheck(subscription);
+
+        for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+            for (ChargeInstance chargeInsaInstance : serviceInstance.getChargeInstances()) {
+                chargeInsaInstance.setUserAccount(newOwner);
+                chargeInstanceService.updateNoCheck(chargeInsaInstance);
+            }
+        }
 
         // The change must be logged (audit log + make Subscription.userAccount into auditable field)
         createAuditLog(Subscription.class.getName());
