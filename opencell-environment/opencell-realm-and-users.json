@@ -324,7 +324,7 @@
 								"query-clients",
 								"view-authorization",
 								"manage-clients",
-								"manage-realms"
+								"manage-realm"
 							]
 						}
 					},
