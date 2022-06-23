@@ -1523,9 +1523,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setPaymentStatus(InvoicePaymentStatusEnum paymentStatus) {
 		this.paymentStatus = paymentStatus;
-		if(!InvoicePaymentStatusEnum.NONE.equals(paymentStatus)) {
-			this.paymentStatusDate = new Date();
-		}
 	}
 
 	public Date getPaymentStatusDate() {
