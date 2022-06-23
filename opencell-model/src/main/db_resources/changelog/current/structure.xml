@@ -13040,6 +13040,15 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-7722_20220618" author="ZBariki">
         <dropSequence sequenceName="generic_sequence_seq"/>
     </changeSet>
+
+    
+    <changeSet id="#INTRD-8026_20220621" author="HatimOUDAD">
+        <addColumn tableName="open_order_threshold">
+            <column name="external_recipient" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
+    
+
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza">
         <addColumn tableName="ar_occ_template">
             <column name="manual_creation_enabled" type="${type.boolean}" defaultValueNumeric="1"/>
@@ -13081,12 +13090,106 @@ order by date_trunc('month', i.invoice_date) DESC
         </createTable>
         <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="invoice_sub_totals" constraintName="fk_invoice_sub_totals_invoice_type" deferrable="false" initiallyDeferred="false"
 				onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
-        <createTable tableName="invoice_sub_totals_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_seq_pk" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-8026_20220622" author="HatimOUDAD">
+        <createSequence sequenceName="open_order_quote_seq"/>
+        <createTable tableName="open_order_quote">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_quote" />
             </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_quote_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+           
+            <column name="external_reference" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="open_order_type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="max_amount" type="numeric">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>     
+            <column name="end_validity_date" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="activation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
         </createTable>
-        <sql>insert into ${db.schema.adapted}invoice_sub_totals_seq values(1)</sql>
+
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_quote"
+                                 constraintName="fk_open_order_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+     	<addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="open_order_quote"
+                                 constraintName="fk_currency_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="open_order_quote"
+                                 constraintName="fk_billing_account_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+                                 
+                                 
+        <addColumn tableName="open_order_threshold">
+            <column name="open_order_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="open_order_threshold" constraintName="fk_threshold_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+                                 
+        <addColumn tableName="cpq_product">
+            <column name="open_order_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_product" constraintName="fk_cpq_product_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+                                 
+        <addColumn tableName="billing_accounting_article">
+            <column name="open_order_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="billing_accounting_article" constraintName="fk_billing_accounting_article_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+                                 
+        <addColumn tableName="cpq_tag">
+            <column name="open_order_quote_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_tag" constraintName="fk_tag_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+    </changeSet>
+    
+	<changeSet author="hichamhanine" id="#INTRD-7850-20220622">
+    	<dropUniqueConstraint tableName="ar_payment_token" uniqueColumns="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-8109_20220622" author="ZBariki">
+        <createIndex indexName="accounting_journal_entry_auxiliary_accounting_code_idx"
+                     tableName="accounting_journal_entry">
+            <column name="auxiliary_account_code"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

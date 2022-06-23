@@ -35,7 +35,9 @@ import java.math.BigDecimal;
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "accounting_journal_entry_seq")})
 @NamedQueries({
         @NamedQuery(name = "JournalEntry.checkExistenceWithAccountingCode",
-                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.accountingCode.id = :ID_ACCOUNTING_CODE")
+                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.accountingCode.id = :ID_ACCOUNTING_CODE"),
+        @NamedQuery(name = "JournalEntry.checkAuxiliaryCodeUniqniess",
+                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.auxiliaryAccountCode = :auxiliaryAccountCode AND je.customerAccount <> :customerAccount")
 })
 public class JournalEntry extends AuditableEntity {
 

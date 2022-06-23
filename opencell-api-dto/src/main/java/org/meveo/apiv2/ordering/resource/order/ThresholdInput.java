@@ -23,4 +23,6 @@ public interface ThresholdInput extends Resource {
     Integer getPercentage();
 
     List<ThresholdRecipientsEnum> getRecipients();
+    
+    String getExternalRecipient();
 }
