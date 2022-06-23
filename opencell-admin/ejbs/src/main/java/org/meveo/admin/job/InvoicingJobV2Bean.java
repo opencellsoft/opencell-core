@@ -132,6 +132,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result) {
+    	boolean prevalidatedAutomaticPrevBRStatus = false;
+    	
         if(billingRun.getStatus() == INVOICE_LINES_CREATED
                 && (billingRun.getProcessType() == AUTOMATIC || billingRun.getProcessType() == FULL_AUTOMATIC)) {
             billingRun.setStatus(PREVALIDATED);
@@ -144,6 +146,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             billingRun.setPrAmountWithoutTax(amountWithoutTax);
             billingRun.setPrAmountTax(amountTax);
             billingRun.setStatus(DRAFT_INVOICES);
+            prevalidatedAutomaticPrevBRStatus = true;
         }
         if(billingRun.getStatus() == DRAFT_INVOICES && billingRun.getProcessType() == FULL_AUTOMATIC) {
             billingRun.setStatus(POSTVALIDATED);
@@ -151,8 +154,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         if(!billingRunService.isBillingRunValid(billingRun)) {
             billingRun.setStatus(REJECTED);
         }
-        billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-                billingRun.getStatus(), null);
         
         if ((billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) 
         		&& (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) 
@@ -160,12 +161,20 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         				|| BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()))) {
             billingRunService.applyAutomaticValidationActions(billingRun);
             if(billingRunService.isBillingRunValid(billingRun)) {
-                billingRun.setStatus(POSTVALIDATED);
+            	if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                    billingRun.setStatus(POSTVALIDATED);
+            	}else if(billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC && prevalidatedAutomaticPrevBRStatus) {
+                    billingRun.setStatus(DRAFT_INVOICES);
+            	} else {
+                    billingRun.setStatus(POSTVALIDATED);
+            	}
             }
-            billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
-                    billingRun.getStatus(), null);
-        }
 
+        }
+        
+        billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
+                billingRun.getStatus(), null);
+        
         billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if(billingRun.getStatus() == POSTVALIDATED) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);

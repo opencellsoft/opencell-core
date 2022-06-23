@@ -824,7 +824,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+        //billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
             List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
