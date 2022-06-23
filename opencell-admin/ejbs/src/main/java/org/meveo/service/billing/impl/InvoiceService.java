@@ -4893,6 +4893,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             List<BillingAccount> billingAccounts = nextBR.getBillableBillingAccounts();
             
         	for (Invoice invoice : invoices) {
+        		invoice = refreshOrRetrieve(invoice);
                 if(billingAccounts.isEmpty()) {
                 	billingAccounts.add(invoice.getBillingAccount());
                 }else {
