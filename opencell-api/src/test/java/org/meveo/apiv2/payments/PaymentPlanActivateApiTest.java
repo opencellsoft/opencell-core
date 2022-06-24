@@ -66,13 +66,6 @@ public class PaymentPlanActivateApiTest {
         customerAccount.setId(1L);
         customerAccount.setCode("CUST-CODE");
 
-        PaymentPlanDto dto = buildDto(new BigDecimal(240), new BigDecimal(20), new BigDecimal(40),
-                ActionOnRemainingAmountEnum.FIRST, RecurrenceUnitEnum.MONTH, PaymentPlanStatusEnum.DRAFT,
-                10,
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(LocalDate.now().plusMonths(9).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                customerAccount.getId(), Set.of(1L, 2L));
-
         List<AccountOperation> aos = new ArrayList<>();
         aos.add(buildAo(1L, customerAccount, new BigDecimal(120), MatchingStatusEnum.O, "A"));
         aos.add(buildAo(2L, customerAccount, new BigDecimal(120), MatchingStatusEnum.P, "B"));
