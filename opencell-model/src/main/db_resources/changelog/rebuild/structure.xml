@@ -16688,6 +16688,17 @@
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
+
+            <column name="journal_code" type="varchar(50)" />
+            <column name="category" type="varchar(50)" />
+            <column name="account" type="varchar(50)" />
+            <column name="label" type="varchar(255)" />
+            <column name="customer_code" type="varchar(50)" />
+            <column name="customer_name" type="varchar(255)" />
+            <column name="seller_name" type="varchar(255)" />
+            <column name="reference" type="varchar(50)" />
+            <column name="document_type" type="varchar(50)" />
+
         </createTable>
     </changeSet>
 
@@ -18033,6 +18044,7 @@
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
+    <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
