@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.ChartOfAccountTypeEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
@@ -165,6 +166,61 @@ public class JournalEntry extends AuditableEntity {
      */
     @Column(name = "auxiliary_account_label")
 	private String auxiliaryAccountLabel;
+
+    /**
+     * Journal Code
+     */
+    @Column(name = "journal_code")
+    private String journalCode;
+
+    /**
+     * Category
+     */
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
+    private ChartOfAccountTypeEnum category;
+
+    /**
+     * Account
+     */
+    @Column(name = "account")
+    private String account;
+
+    /**
+     * Label
+     */
+    @Column(name = "label")
+    private String label;
+
+    /**
+     * Customer Code
+     */
+    @Column(name = "customer_code")
+    private String customerCode;
+
+    /**
+     * Customer Name
+     */
+    @Column(name = "customer_name")
+    private String customerName;
+
+    /**
+     * Seller Name
+     */
+    @Column(name = "seller_name")
+    private String sellerName;
+
+    /**
+     * Reference
+     */
+    @Column(name = "reference")
+    private String reference;
+
+    /**
+     * Document type
+     */
+    @Column(name = "document_type")
+    private String documentType;
     
     public AccountOperation getAccountOperation() {
         return accountOperation;
@@ -325,4 +381,77 @@ public class JournalEntry extends AuditableEntity {
     public void setAuxiliaryAccountLabel(String auxiliaryAccountLabel) {
         this.auxiliaryAccountLabel = auxiliaryAccountLabel;
     }
+
+	public String getJournalCode() {
+		return journalCode;
+	}
+
+	public void setJournalCode(String journalCode) {
+		this.journalCode = journalCode;
+	}
+
+	public ChartOfAccountTypeEnum getCategory() {
+		return category;
+	}
+
+	public void setCategory(ChartOfAccountTypeEnum category) {
+		this.category = category;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getCustomerCode() {
+		return customerCode;
+	}
+
+	public void setCustomerCode(String customerCode) {
+		this.customerCode = customerCode;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
 }
