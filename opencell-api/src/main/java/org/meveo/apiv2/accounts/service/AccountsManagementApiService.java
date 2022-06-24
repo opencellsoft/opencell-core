@@ -16,19 +16,10 @@ import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -41,6 +32,9 @@ public class AccountsManagementApiService {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -143,7 +137,14 @@ public class AccountsManagementApiService {
 
         // Attache to new user account
         subscription.setUserAccount(newOwner);
-        subscriptionService.updateOwner(subscription, newOwner);
+        subscriptionService.updateNoCheck(subscription);
+
+        for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+            for (ChargeInstance chargeInsaInstance : serviceInstance.getChargeInstances()) {
+                chargeInsaInstance.setUserAccount(newOwner);
+                chargeInstanceService.updateNoCheck(chargeInsaInstance);
+            }
+        }
 
         return count;
     }
