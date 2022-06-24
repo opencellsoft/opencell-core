@@ -16607,17 +16607,6 @@
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
-
-            <column name="journal_code" type="varchar(50)" />
-            <column name="category" type="varchar(50)" />
-            <column name="account" type="varchar(50)" />
-            <column name="label" type="varchar(255)" />
-            <column name="customer_code" type="varchar(50)" />
-            <column name="customer_name" type="varchar(255)" />
-            <column name="seller_name" type="varchar(255)" />
-            <column name="reference" type="varchar(50)" />
-            <column name="document_type" type="varchar(50)" />
-
         </createTable>
     </changeSet>
 
