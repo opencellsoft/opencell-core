@@ -874,12 +874,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.autoUpdateEndOfEngagementDate();
     }
 
-    public int updateOwner(Subscription subscription, UserAccount newOwner) {
-        return getEntityManager().createNamedQuery("Subscription.updateOwner")
-                .setParameter("newOwner", newOwner)
-                .setParameter("id", subscription.getId()).executeUpdate();
-    }
-
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
         if(date == null)
             return findByCode(subscriptionCode);
