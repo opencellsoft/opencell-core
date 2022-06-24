@@ -954,7 +954,9 @@ public class ProductApi extends BaseApi {
             if (offerProduct.getProduct() != null && offerProduct.getProduct().getCurrentProductVersion() != null) {
 
                 List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndProduct(offerCode + "-"+ offerProduct.getProduct().getCode());
-				// List<CommercialRuleHeader> commercialRulesOld = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+                log.info("productCommercialRules productCode={},size={}",offerProduct.getProduct().getCode(),commercialRules.size());
+				
+                // List<CommercialRuleHeader> commercialRulesOld = commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
                 if (commercialRules != null && !commercialRules.isEmpty()) {
                     List<CommercialRuleHeaderDTO> commercialRuleDtoList = new ArrayList<CommercialRuleHeaderDTO>();
                     for (CommercialRuleHeader rule : commercialRules) {
@@ -976,7 +978,9 @@ public class ProductApi extends BaseApi {
                 GetProductVersionResponse productVersionResponse = (GetProductVersionResponse) offerProduct.getProduct().getCurrentProductVersion();
                 for (AttributeDTO attributeDto : productVersionResponse.getAttributes()) {
 					List<CommercialRuleHeader> attributeCommercialRules = commercialRulesContainerProvider.getForProductAndAtttribute(attributeDto.getCode() + "-"+ offerProduct.getProduct().getCode());
-                    // List<CommercialRuleHeader> attributeCommercialRulesOld = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+                   
+					log.info("attributeCommercialRules attributeCode={}, productCode={},size={}",attributeDto.getCode(),offerProduct.getProduct().getCode(),attributeCommercialRules.size());
+					// List<CommercialRuleHeader> attributeCommercialRulesOld = commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
 
 					if (attributeCommercialRules != null && !attributeCommercialRules.isEmpty()) {
                         List<String> commercialRuleCodes = new ArrayList<>();

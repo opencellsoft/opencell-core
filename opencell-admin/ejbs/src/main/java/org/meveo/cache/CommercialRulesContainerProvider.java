@@ -35,7 +35,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Stateless
 public class CommercialRulesContainerProvider implements Serializable {
@@ -257,6 +259,22 @@ public class CommercialRulesContainerProvider implements Serializable {
 
     public List<CommercialRuleHeader> getForoOerAndAttribute(String identifier) {
         return offerAndAttribute.get(new CacheKeyStr(null, identifier));
+    }
+    
+    /**
+     * Get a summary of cached information.
+     *
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<>();
+        summaryOfCaches.put(offerAndAttribute.getName(), offerAndAttribute);
+        summaryOfCaches.put(productAndAtttribute.getName(), productAndAtttribute);
+        summaryOfCaches.put(offerAndAttribute.getName(), offerAndAttribute);
+        summaryOfCaches.put(productAndGrpAttribute.getName(), productAndGrpAttribute);
+
+        return summaryOfCaches;
     }
 
 }

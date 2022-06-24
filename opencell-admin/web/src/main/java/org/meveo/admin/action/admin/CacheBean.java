@@ -38,6 +38,7 @@ import org.infinispan.commons.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.CommercialRulesContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
@@ -86,6 +87,10 @@ public class CacheBean implements Serializable {
 
     @Inject
     private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
+    
+    @Inject
+    private CommercialRulesContainerProvider commercialRulesContainerProvider;
+    
 
     /** Logger. */
     @Inject
@@ -152,6 +157,7 @@ public class CacheBean implements Serializable {
             caches.putAll(esPopulationService.getCaches());
             caches.putAll(scriptInstanceService.getCaches());
             caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
+            caches.putAll(commercialRulesContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -175,6 +181,7 @@ public class CacheBean implements Serializable {
         caches.putAll(esPopulationService.getCaches());
         caches.putAll(scriptInstanceService.getCaches());
         caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
+        caches.putAll(commercialRulesContainerProvider.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {
@@ -203,6 +210,7 @@ public class CacheBean implements Serializable {
         esPopulationService.refreshCache(cacheName);
         scriptInstanceService.refreshCache(cacheName);
         metricsConfigurationCacheContainerProvider.refreshCache(cacheName);
+        
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
