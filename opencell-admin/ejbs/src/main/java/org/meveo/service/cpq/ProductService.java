@@ -265,7 +265,7 @@ public class ProductService extends BusinessService<Product> {
 	 */
 	public void create(Product product) throws BusinessException {
 		
-		if(!this.findByCodeLike(product.getCode()).isEmpty()) {
+		if(this.findByCode(product.getCode()) != null) {
 			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, product.getCode()));
 		}
 		product.setStatus(ProductStatusEnum.DRAFT);
