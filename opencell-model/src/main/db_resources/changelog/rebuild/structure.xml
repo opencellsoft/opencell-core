@@ -11915,9 +11915,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_sub_totals_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
+            
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -11925,11 +11923,11 @@
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="description" type="varchar(255)" />            
-
+            <column name="cf_values" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" />
             <column name="sub_total_el" type="varchar(2000)" />
             <column name="label" type="varchar(50)" />
             <column name="invoice_type_id" type="bigint">
@@ -18033,6 +18031,8 @@
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
+    <changeSet id="#INTRD-8037-20220624" author="hichamhanine" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

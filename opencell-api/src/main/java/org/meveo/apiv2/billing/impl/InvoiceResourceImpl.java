@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -52,6 +53,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -65,8 +67,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+    
+    @Inject
+    private InvoiceSubTotalsService invoiceSubTotalsService;
 
-	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
+    private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
 	@Override
 	public Response getInvoice(Long id, Request request) {
@@ -420,4 +425,12 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		}
 		return Response.ok(response).build();
 	}
+	
+	@Override
+    public Response addSubTotals(InvoiceSubTotalsDto invoiceSubTotals) {
+        invoiceSubTotalsService.addSubTotals(invoiceSubTotals);
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        return Response.ok(response).build();
+    }
 }

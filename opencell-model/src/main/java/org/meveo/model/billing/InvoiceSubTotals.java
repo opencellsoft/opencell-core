@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.EnableCFEntity;
 import org.meveo.model.ModuleItem;
 
 @Entity
@@ -24,7 +24,7 @@ import org.meveo.model.ModuleItem;
 @Table(name = "invoice_sub_totals")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "invoice_sub_totals_seq"), }) 
-public class InvoiceSubTotals extends EnableBusinessEntity {
+public class InvoiceSubTotals extends EnableCFEntity {
     private static final long serialVersionUID = -1640429569087958882L;
 
     @ManyToOne(fetch = FetchType.LAZY)
