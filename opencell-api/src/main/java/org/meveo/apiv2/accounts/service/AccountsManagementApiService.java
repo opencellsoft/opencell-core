@@ -183,7 +183,7 @@ public class AccountsManagementApiService {
 
         // Attache to new user account
         subscription.setUserAccount(newOwner);
-        subscriptionService.updateOwner(subscription, newOwner);
+        subscriptionService.updateNoCheck(subscription);
         
         var usageServiceInstance = usageChargeInstanceService.findUsageChargeInstanceBySubscriptionId(subscription.getId());
         changeToNewUserAccount(usageServiceInstance, newOwner);

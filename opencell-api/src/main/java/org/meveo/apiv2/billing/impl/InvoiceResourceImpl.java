@@ -36,6 +36,7 @@ import org.meveo.apiv2.billing.GenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceMatchedOperation;
+import org.meveo.apiv2.billing.ImmutableInvoiceSubTotals;
 import org.meveo.apiv2.billing.ImmutableInvoices;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
@@ -47,6 +48,7 @@ import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
+import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
@@ -65,8 +67,13 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+	
+	@Inject
+	private InvoiceSubTotalsApiService invoiceSubTotalsApiService;
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
+	
+	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
 	
 	@Override
 	public Response getInvoice(Long id, Request request) {
@@ -419,5 +426,29 @@ public class InvoiceResourceImpl implements InvoiceResource {
 					"Last applied rate and trading currency current rate are equals");
 		}
 		return Response.ok(response).build();
+	}
+
+	@Override
+	public Response calculateSubTotals(Long invoiceId) {
+		Invoice invoice = invoiceApiService.findById(invoiceId).orElseThrow(NotFoundException::new);
+		var invoiceSubtotalsList = invoiceSubTotalsApiService.calculateSubTotals(invoice);
+		  return Response
+	                .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
+	                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(invoiceSubtotalsList)))
+	                .build();
+	}
+	
+
+	private org.meveo.apiv2.billing.InvoiceSubTotals toResourceInvoiceSubTotalsWithLink(org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotal) {
+		return ImmutableInvoiceSubTotals.copyOf(invoiceSubTotal)
+				.withLinks(new LinkGenerator.SelfLinkGenerator(InvoiceResource.class).withId(invoiceSubTotal.getId())
+						.withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction().build());
+	}
+	private List<org.meveo.apiv2.billing.InvoiceSubTotals> toResourceInvoiceSubTotalsWithLink(List<org.meveo.apiv2.billing.InvoiceSubTotals> invoiceSubTotal) {
+		var result = new ArrayList<org.meveo.apiv2.billing.InvoiceSubTotals>();
+		for (org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotals : invoiceSubTotal) {
+			result.add(toResourceInvoiceSubTotalsWithLink(invoiceSubTotals));
+		}
+		return result;
 	}
 }

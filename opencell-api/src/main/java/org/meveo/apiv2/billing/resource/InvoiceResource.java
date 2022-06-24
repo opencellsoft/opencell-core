@@ -358,5 +358,48 @@ public interface InvoiceResource {
 							description = "Refresh rate only allowed on invoices with status : NEW or DRAFT"),
 					@ApiResponse(responseCode = "404", description = "Invoice not found") })
 	Response refreshRate(@Parameter(description = "Invoice identifier", required = true) @PathParam("id") Long invoiceId);
+	
+	@POST
+	@Path("/{id}/calculateSubTotals")
+	@Operation(summary="Calucate subtotals", description = "calculate sub total of invoice linked to invoice type",
+	responses = {
+			@ApiResponse(responseCode = "200", description = "display calculate subtotals"),
+			@ApiResponse(responseCode = "404", description = "The invoice entity doesn't exist"),
+			@ApiResponse(responseCode = "400", description = "Action is failed")
+	})
+	Response calculateSubTotals(@Parameter(description = "Invoice identifier", required = true)  @PathParam("id") Long invoiceId);
             
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
