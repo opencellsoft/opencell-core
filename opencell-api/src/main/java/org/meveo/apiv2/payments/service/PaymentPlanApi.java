@@ -201,7 +201,7 @@ public class PaymentPlanApi extends BaseApi {
         // A list of AOs of type PPI is created, and linked to the PaymentPlan using this process:
         MathContext rounding = new MathContext(12, RoundingMode.DOWN);
         BigDecimal remaningToProcess = paymentPlan.getRemainingAmount() != null ? paymentPlan.getRemainingAmount() : BigDecimal.ZERO;
-        BigDecimal ppiUnitAmount = paymentPlan.getAmountToRecover()
+        BigDecimal ppiUnitAmount = paymentPlan.getAmountToRecover().subtract(remaningToProcess)
                 .divide(BigDecimal.valueOf(paymentPlan.getNumberOfInstallments()), rounding)
                 .setScale(2, RoundingMode.DOWN);
 
