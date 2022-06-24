@@ -13192,4 +13192,18 @@ order by date_trunc('month', i.invoice_date) DESC
         </createIndex>
     </changeSet>
 
+    <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe">
+        <addColumn tableName="accounting_journal_entry">
+            <column name="journal_code" type="varchar(50)" />
+            <column name="category" type="varchar(50)" />
+            <column name="account" type="varchar(50)" />
+            <column name="label" type="varchar(255)" />
+            <column name="customer_code" type="varchar(50)" />
+            <column name="customer_name" type="varchar(255)" />
+            <column name="seller_name" type="varchar(255)" />
+            <column name="reference" type="varchar(50)" />
+            <column name="document_type" type="varchar(50)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
