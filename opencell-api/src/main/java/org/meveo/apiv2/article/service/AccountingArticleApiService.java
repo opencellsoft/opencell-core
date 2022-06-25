@@ -1,5 +1,7 @@
 package org.meveo.apiv2.article.service;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.*;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +32,6 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxClassService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Optional.ofNullable;
 
 public class AccountingArticleApiService implements AccountingArticleServiceBase {
 
@@ -73,36 +73,36 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public AccountingArticle create(AccountingArticle accountingArticle) {
-        AccountingArticle accou = accountingArticleService.findByCode(accountingArticle.getCode());
-        if (accou != null) {
+        AccountingArticle entity = accountingArticleService.findByCode(accountingArticle.getCode());
+        if (entity != null) {
             throw new EntityAlreadyExistsException(AccountingArticle.class, accountingArticle.getCode());
         }
-        InvoiceSubCategory invoiceSubCategory = (InvoiceSubCategory) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getInvoiceSubCategory());
+        InvoiceSubCategory invoiceSubCategory = accountingArticleService.tryToFindByCodeOrId(accountingArticle.getInvoiceSubCategory());
         if (invoiceSubCategory == null)
             throw new BadRequestException("No invoice sub category found with id: " + accountingArticle.getInvoiceSubCategory().getId());
         accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
 
-        TaxClass taxClass = (TaxClass) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getTaxClass());
+        TaxClass taxClass = accountingArticleService.tryToFindByCodeOrId(accountingArticle.getTaxClass());
         if (taxClass == null)
             throw new BadRequestException("No taxClass found for id : " + accountingArticle.getTaxClass().getId());
         accountingArticle.setTaxClass(taxClass);
 
         if (accountingArticle.getAccountingCode() != null) {
-            AccountingCode accountingCode = (AccountingCode) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getAccountingCode());
+            AccountingCode accountingCode = accountingArticleService.tryToFindByCodeOrId(accountingArticle.getAccountingCode());
             if (accountingCode == null)
                 throw new BadRequestException("No accountingCode found");
             accountingArticle.setAccountingCode(accountingCode);
         }
 
         if (accountingArticle.getArticleFamily() != null) {
-            ArticleFamily articleFamily = (ArticleFamily) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getArticleFamily());
+            ArticleFamily articleFamily = accountingArticleService.tryToFindByCodeOrId(accountingArticle.getArticleFamily());
             if (articleFamily == null)
                 throw new BadRequestException("No articleFamily found");
             accountingArticle.setArticleFamily(articleFamily);
         }
         
         if (accountingArticle.getInvoiceType() != null) {
-            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(accountingArticle.getInvoiceType());
+            InvoiceType invoiceType = invoiceTypeService.tryToFindByCodeOrId(accountingArticle.getInvoiceType());
             if (invoiceType == null)
                 throw new BadRequestException("No invoiceType found");
             accountingArticle.setInvoiceType(invoiceType);
@@ -158,14 +158,14 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         }
 
         if (baseEntity.getAccountingCode() != null) {
-            AccountingCode accountingCode = (AccountingCode) accountingArticleService.tryToFindByCodeOrId(baseEntity.getAccountingCode());
+            AccountingCode accountingCode = accountingArticleService.tryToFindByCodeOrId(baseEntity.getAccountingCode());
             if (accountingCode == null)
                 throw new BadRequestException("No accountingCode found");
             accountingArticle.setAccountingCode(accountingCode);
         }
 
         if (baseEntity.getArticleFamily() != null) {
-            ArticleFamily articleFamily = (ArticleFamily) accountingArticleService.tryToFindByCodeOrId(baseEntity.getArticleFamily());
+            ArticleFamily articleFamily = accountingArticleService.tryToFindByCodeOrId(baseEntity.getArticleFamily());
             if (articleFamily == null)
                 throw new BadRequestException("No articleFamily found");
             accountingArticle.setArticleFamily(articleFamily);
@@ -201,7 +201,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         }
         
         if (baseEntity.getInvoiceType() != null) {
-            InvoiceType invoiceType = (InvoiceType) invoiceTypeService.tryToFindByCodeOrId(baseEntity.getInvoiceType());
+            InvoiceType invoiceType = invoiceTypeService.tryToFindByCodeOrId(baseEntity.getInvoiceType());
             if (invoiceType == null)
                 throw new BadRequestException("No invoiceType found");
             accountingArticle.setInvoiceType(invoiceType);
@@ -294,8 +294,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 									.setFlushMode(FlushModeType.COMMIT).getSingleResult();
         if (product == null)
             throw new BadRequestException("No Product found with code: " + productCode);
-        Optional<AccountingArticle> article = accountingArticleService.getAccountingArticle(product, attributes);
-        return article;
+        return accountingArticleService.getAccountingArticle(product, attributes);
     }
 
     public List<AccountingCodeMapping> createAccountingCodeMappings(AccountingCodeMappingInput accountingCodeMappingInput) {

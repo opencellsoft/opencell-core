@@ -689,12 +689,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_invoice_sub_cat_seq values(3)</sql>
-        <!-- <createTable tableName="billing_invoice_sub_country_seq"> -->
-        <!-- <column name="next_val" type="BIGINT" > -->
-        <!-- <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_country_seq_pk" /> -->
-        <!-- </column> -->
-        <!-- </createTable> -->
-        <!-- <sql>insert into ${db.schema.adapted}billing_inv_sub_country_seq values(1)</sql> -->
         <createTable tableName="billing_invoice_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_template_seq_pk" />
@@ -9879,6 +9873,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="open_order_quote_id" type="bigint" />
+            <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -13480,10 +13475,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    	<!-- 
-        <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
-         -->
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
         <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -18101,6 +18092,7 @@
     <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe" />
     <changeSet id="#INTRD-8211_20220626" author="anas.rouaguebe" />
     <changeSet id="#INTRD-8067_20220627" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8077_20220625" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

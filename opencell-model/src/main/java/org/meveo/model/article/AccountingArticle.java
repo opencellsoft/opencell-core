@@ -85,6 +85,13 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "open_order_quote_id")
     private OpenOrderQuote openOrderQuote;
 
+    /**
+     * Ignore aggregation
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_aggregation", nullable = false)
+    private boolean ignoreAggregation;
+
     public AccountingArticle() {
     }
 
@@ -252,5 +259,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public void setOpenOrderQuote(OpenOrderQuote openOrderQuote) {
 		this.openOrderQuote = openOrderQuote;
 	}
-    
+
+    public boolean isIgnoreAggregation() {
+        return ignoreAggregation;
+    }
+
+    public void setIgnoreAggregation(boolean ignoreAggregation) {
+        this.ignoreAggregation = ignoreAggregation;
+    }
 }
