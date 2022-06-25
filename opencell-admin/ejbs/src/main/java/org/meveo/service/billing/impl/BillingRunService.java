@@ -1417,6 +1417,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	       }else {
 	    	   BillingRun quarantineBillingRun = new BillingRun();
 	           try {
+	               BeanUtils.copyProperties(quarantineBillingRun, billingRun);
+
 	               Set<BillingRunList> billingRunLists = new HashSet<>();
 	               billingRunLists.addAll(billingRun.getBillingRunLists());
 	               quarantineBillingRun.setBillingRunLists(billingRunLists );
@@ -1437,7 +1439,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	               quarantineBillingRun.setOriginBillingRun(billingRun);
 	               quarantineBillingRun.setId(null);
 
-	               
 	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
 		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
 		            }else {
