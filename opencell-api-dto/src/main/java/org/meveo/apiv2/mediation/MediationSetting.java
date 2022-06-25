@@ -3,6 +3,7 @@ package org.meveo.apiv2.mediation;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.DefaultValue;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
@@ -17,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface MediationSetting extends Resource {
 
     @Schema(description = "enable edr versioning")
-    @Nullable
+    @DefaultValue("true")
 	boolean isEnableEdrVersioning();
 
     @Schema(description = "list of rules for edr versioning")
