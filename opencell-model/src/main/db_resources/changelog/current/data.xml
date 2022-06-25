@@ -10475,4 +10475,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="quote_default_validity_delay" value="30" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="#INTRD-8211_20220625" author="anas.rouaguebe">
+		<update tableName="com_meveo_instance">
+			<column name="version" value="0" />
+			<where>code='Integration' and version is null</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
