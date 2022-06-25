@@ -33,10 +33,12 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
 
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
-        accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, true);
+        accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(),
+				accountingArticleEntity, true);
         accountingArticleEntity = accountingArticleApiService.create(accountingArticleEntity);
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())
+                .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class,
+						accountingArticleEntity.getId()).build())
                 .entity(toResourceOrderWithLink(mapper.toResource(accountingArticleEntity)))
                 .build();
     }
@@ -94,7 +96,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 					.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
 					.orElse(Response.status(Response.Status.NOT_FOUND).entity(result).build());
 			return Response.ok(result).build();
-		}catch(BadRequestException e) {
+		} catch(BadRequestException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 			return Response.status(Response.Status.NOT_FOUND).entity(result).build();
@@ -115,8 +117,8 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	}
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
-        List<AccountingArticle> accoutnigArticleEntities = accountingArticleApiService.list(offset, limit, sort, orderBy, filter);
-		return mapToAccountingArticlesResponse(offset, limit, filter, request, accoutnigArticleEntities);
+        List<AccountingArticle> accountingArticleEntities = accountingArticleApiService.list(offset, limit, sort, orderBy, filter);
+		return mapToAccountingArticlesResponse(offset, limit, filter, request, accountingArticleEntities);
 	}
 
 	private Response mapToAccountingArticlesResponse(Long offset, Long limit, Map<String, Object> filter, Request request, List<AccountingArticle> accoutnigArticleEntities) {
@@ -130,7 +132,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 		}
 		ImmutableAccountingArticle[] accountingList = accoutnigArticleEntities
 				.stream()
-				.map(accoutingArticle -> toResourceOrderWithLink(mapper.toResource(accoutingArticle)))
+				.map(accountingArticle -> toResourceOrderWithLink(mapper.toResource(accountingArticle)))
 				.toArray(ImmutableAccountingArticle[]::new);
 		Long orderCount = accountingArticleApiService.getCount(filter);
 		AccountingArticles articles = ImmutableAccountingArticles.builder().addData(accountingList).offset(offset).limit(limit).total(orderCount)
@@ -140,8 +142,8 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	}
 
 	@Override
-	public Response getAccountingArticles(String productCode, Map<String, Object> attribues, Request request) {
-		return accountingArticleApiService.getAccountingArticles(productCode, attribues)
+	public Response getAccountingArticles(String productCode, Map<String, Object> attributes, Request request) {
+		return accountingArticleApiService.getAccountingArticles(productCode, attributes)
 											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
 											.orElseThrow(NotFoundException::new);
 	}

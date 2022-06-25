@@ -1,5 +1,6 @@
 package org.meveo.apiv2.article.service;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
 import java.util.*;
@@ -68,7 +69,8 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @PostConstruct
     public void initService() {
-        fetchFields = Arrays.asList("taxClass", "invoiceSubCategory", "articleFamily", "accountingCode", "accountingCodeMappings");
+        fetchFields = asList("taxClass", "invoiceSubCategory",
+                "articleFamily", "accountingCode", "accountingCodeMappings", "invoiceType");
     }
 
     @Override
@@ -218,6 +220,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(baseEntity.getColumnCriteriaEL() != null) {
             accountingArticle.setColumnCriteriaEL(baseEntity.getColumnCriteriaEL());
         }
+        accountingArticle.setIgnoreAggregation(baseEntity.isIgnoreAggregation());
 
         accountingArticleService.update(accountingArticle);
 
