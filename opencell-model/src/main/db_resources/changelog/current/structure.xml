@@ -13277,5 +13277,58 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
 		
       	</changeSet>
+      	
+      	
+      	<changeSet id="#INTRD-8023_20220624" author="HatimOUDAD" >
+      	
+      		
+	    <dropPrimaryKey constraintName="open_order_template_articles_pkey" tableName="open_order_template_articles"/>
+	    <dropPrimaryKey constraintName="open_order_template_products_pkey" tableName="open_order_template_products"/>                            
+	    <dropColumn tableName="open_order_template_products">
+            <column name="product_id" />
+        </dropColumn>
+        
+        <dropColumn tableName="open_order_template_articles">
+            <column name="article_id" />
+        </dropColumn>
+	                                 
+        <addColumn tableName="open_order_template_products">                        
+	        <column name="open_product_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+            
+        <addColumn tableName="open_order_template_articles">
+        <column name="open_article_id" type="bigint">
+            <constraints nullable="false"/>
+        </column>   
+        </addColumn>      
+	            
+	                               
+        <addPrimaryKey columnNames="open_order_template_id,open_article_id"
+	            constraintName="open_order_template_articles_pkey"
+	            tableName="open_order_template_articles"/>
+        <addPrimaryKey columnNames="open_order_template_id,open_product_id"
+	            constraintName="open_order_template_products_pkey"
+	            tableName="open_order_template_products"/>
+      	
+   		<dropForeignKeyConstraint baseTableName="open_order_template_products"
+                               constraintName="open_order_template_products_product_id_fk"/>
+        <dropForeignKeyConstraint baseTableName="open_order_template_articles"
+                               constraintName="open_order_template_articles_article_id_fk"/>
+                               
+    	<addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_product_id"
+                               constraintName="open_order_template_products_product_id_fk"
+                               referencedTableName="open_order_product"
+                               referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_article_id"
+                               constraintName="open_order_template_articles_article_id_fk"
+                               referencedTableName="open_order_article"
+                               referencedColumnNames="id"/>
+	    
+	    
+                                 
+        </changeSet>
 
 </databaseChangeLog>
