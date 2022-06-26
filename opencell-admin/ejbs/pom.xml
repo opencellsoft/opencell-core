@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>opencell-admin</artifactId>
@@ -138,13 +139,13 @@
                     </execution>
                 </executions>
             </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
-                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                    	<release>11</release>
-                    </configuration>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                    <release>11</release>
+                </configuration>
                 <!-- <dependencies> -->
                 <!-- <dependency> -->
                 <!-- <groupId>org.ow2.asm</groupId> -->
@@ -152,7 +153,7 @@
                 <!-- <version>9.3</version> -->
                 <!-- </dependency> -->
                 <!-- </dependencies> -->
-                </plugin>            
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -269,12 +270,11 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        
+
         <!-- Log4j2 -->
-		<dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -313,10 +313,10 @@
         </dependency>
 
         <dependency>
-		    <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-		    <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+            <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+            <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
             <scope>provided</scope>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -328,9 +328,9 @@
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
                 <exclusion>
-					<groupId>org.yaml</groupId>
-					<artifactId>snakeyaml</artifactId>
-				</exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -379,9 +379,9 @@
             </exclusions>
         </dependency>
         <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-compress</artifactId>
-		</dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+        </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -714,7 +714,7 @@
                 <!-- </exclusion> -->
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-authz-client</artifactId>
@@ -784,11 +784,11 @@
             <artifactId>generex</artifactId>
             <version>1.0.2</version>
         </dependency>
-        
+
         <dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.client</artifactId>
-		</dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.carlspring.cloud.aws</groupId>
@@ -808,11 +808,11 @@
             </exclusions>
         </dependency>
 
-<dependency>
-    <groupId>com.jayway.jsonpath</groupId>
-    <artifactId>json-path</artifactId>
-    <version>2.4.0</version>
-</dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.4.0</version>
+        </dependency>
 
         <!-- For testing -->
 

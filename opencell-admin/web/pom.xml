@@ -193,7 +193,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>./target/opencell/pages/docs/v1</outputDirectory> 
+                            <outputDirectory>./target/opencell/pages/docs/v1</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>./target/swagger-ui-master/dist</directory>
@@ -201,13 +201,13 @@
                             </resources>
                         </configuration>
                     </execution>
-                     <execution>
+                    <execution>
                         <id>copy-resources-apiv2</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-                        <configuration> 
+                        <configuration>
                             <outputDirectory>./target/opencell/pages/docs/v2</outputDirectory>
                             <resources>
                                 <resource>
@@ -404,9 +404,9 @@
         </dependency>
 
 
-      <dependency>
-        <groupId>org.jboss.spec.javax.xml.bind</groupId>
-        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        <dependency>
+            <groupId>org.jboss.spec.javax.xml.bind</groupId>
+            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -448,8 +448,8 @@
         </dependency>
 
         <dependency>
-                <groupId>jakarta.mail</groupId>
-                <artifactId>jakarta.mail-api</artifactId>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
         </dependency>
 
         <dependency>
