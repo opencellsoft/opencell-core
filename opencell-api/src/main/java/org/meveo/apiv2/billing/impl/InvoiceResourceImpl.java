@@ -27,9 +27,11 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.InvoiceTypeRs;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -54,6 +56,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -61,6 +64,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
+
+	@Inject
+    private InvoiceSubTotalsService invoiceSubTotalsService;
 
 	@Inject
 	private AccountOperationService accountOperationService;
@@ -438,7 +444,18 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	                .build();
 	}
 	
-
+	@Override
+    public Response addSubTotals(InvoiceSubTotalsDto invoiceSubTotals) {	    
+	    List<InvoiceSubTotals> lstInvoiceSubTotals = invoiceSubTotalsService.addSubTotals(invoiceSubTotals);
+        Long invoiceTypeId = invoiceSubTotals.getInvoiceType().getId();
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceTypeRs.class, invoiceTypeId).build())
+                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(lstInvoiceSubTotals)))
+                .build();
+        //return Response.ok(response).build();
+    }
+	
 	private org.meveo.apiv2.billing.InvoiceSubTotals toResourceInvoiceSubTotalsWithLink(org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotal) {
 		return ImmutableInvoiceSubTotals.copyOf(invoiceSubTotal)
 				.withLinks(new LinkGenerator.SelfLinkGenerator(InvoiceResource.class).withId(invoiceSubTotal.getId())

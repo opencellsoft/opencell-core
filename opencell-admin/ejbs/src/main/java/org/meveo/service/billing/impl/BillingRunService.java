@@ -1584,7 +1584,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return pollingQuery;
     }
     
-    private Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues) throws InvalidParameterException {
+    public Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues) throws InvalidParameterException {
         if (translationInfos == null || translationInfos.isEmpty()) {
             return null;
         }
