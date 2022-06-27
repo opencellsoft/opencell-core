@@ -13232,7 +13232,7 @@ order by date_trunc('month', i.invoice_date) DESC
     		<column name="key_el" type="text" >
     			<constraints nullable="false" />
     		</column>
-    		<column name="isNewVersionEl" type="text" >
+    		<column name="is_new_version_el" type="text" >
     			<constraints nullable="false" />
     		</column>
     		<column name="mediation_setting_id" type="bigint" >
