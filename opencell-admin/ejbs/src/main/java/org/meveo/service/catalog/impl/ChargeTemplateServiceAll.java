@@ -38,6 +38,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -124,6 +125,15 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 		
 		try {
 			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
+			
+			if(chargeTemplate.getProductCharges() != null) {
+			    List<ProductChargeTemplateMapping> listProductChargeTemplateMapping = new ArrayList<ProductChargeTemplateMapping>();
+                for(ProductChargeTemplateMapping pCTMapping : chargeTemplate.getProductCharges()) {
+                    listProductChargeTemplateMapping.add(pCTMapping);
+                }
+                duplicateChargeTemplate.setProductCharges(listProductChargeTemplateMapping);
+            }
+			
 			duplicateChargeTemplate.setId(null);
 			duplicateChargeTemplate.setCode(findDuplicateCode(chargeTemplate));
 			//set status to null then to DRAFT to bypass the validation used in the setStatus method

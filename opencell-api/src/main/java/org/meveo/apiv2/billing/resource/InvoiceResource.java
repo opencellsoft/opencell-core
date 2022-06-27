@@ -17,6 +17,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
+import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
@@ -369,37 +370,14 @@ public interface InvoiceResource {
 	})
 	Response calculateSubTotals(@Parameter(description = "Invoice identifier", required = true)  @PathParam("id") Long invoiceId);
             
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@POST
+    @Path("/addSubTotals")
+    @Operation(summary = "Add Sub Totals", tags = {
+            "Invoices" }, description = "Create a new sub totals", 
+                    responses = {
+                    @ApiResponse(responseCode = "200", description = "the sub totals successfully created, and the id is returned in the response"),
+                    @ApiResponse(responseCode = "400", description = "bad request when sub totals information contains an error") })
+    Response addSubTotals(
+            @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
+
 }

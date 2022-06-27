@@ -486,7 +486,7 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
             this.secretKeyKS = "";
         }
 
-        if (getId() != null &&! this.secretKeyKS.equals(getSecretKeyKS())) {
+        if (getId() != null && KeystoreManager.existKeystore() &&! this.secretKeyKS.equals(getSecretKeyKS())) {
             KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.secretKeyKS);
         }
     }

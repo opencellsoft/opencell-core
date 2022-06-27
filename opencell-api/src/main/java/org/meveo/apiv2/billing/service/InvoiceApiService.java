@@ -433,7 +433,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		if(currentRate != null && currentRate.equals(invoice.getLastAppliedRate())) {
 			return empty();
 		} else {
-			return of(invoiceService.refreshAmounts(invoice,
+			return of(invoiceService.refreshConvertedAmounts(invoice,
 					currentRate, invoice.getTradingCurrency().getCurrentRateFromDate()));
 		}
 	}

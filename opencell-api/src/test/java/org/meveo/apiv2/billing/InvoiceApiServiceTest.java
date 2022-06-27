@@ -65,7 +65,7 @@ public class InvoiceApiServiceTest {
         inv.setTradingCurrency(tradingCurrency);
         inv.setConvertedAmountWithTax(inv.getAmountWithTax().divide(rate, 12, HALF_UP));
         inv.setNetToPay(inv.getNetToPay().divide(rate, 12, HALF_UP));
-        when(invoiceService.refreshAmounts(any(), any(), any())).thenReturn(inv);
+        when(invoiceService.refreshConvertedAmounts(any(), any(), any())).thenReturn(inv);
     }
 
     @Test
