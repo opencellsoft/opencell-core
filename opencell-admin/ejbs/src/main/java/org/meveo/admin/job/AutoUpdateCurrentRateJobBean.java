@@ -35,15 +35,14 @@ public class AutoUpdateCurrentRateJobBean extends BaseJobBean {
             }
  
         }
-
         jobExecutionResult.setNbItemsCorrectlyProcessed(listExchangeRateId.size() - jobExecutionResult.getNbItemsProcessedWithError());
     }
 
 
     /**
-     * Process collection plans
+     * Process exchange rate
      *
-     * @param collectionPlanId   Collection plan id to process
+     * @param idExchangeRate   Exchange rate id
      * @param jobExecutionResult Job execution result
      */
     @JpaAmpNewTx
