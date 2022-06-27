@@ -3,12 +3,17 @@ package org.meveo.apiv2.mediation.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
@@ -41,6 +46,7 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 
 	@Override
 	public MediationSetting create(MediationSetting baseEntity) {
+		if(mediationsettingService.count() > 0) throw new EntityAlreadyExistsException("Entity Already exist");
 		 var rules = new HashSet<EdrVersioningRule>(baseEntity.getRules());
 		 baseEntity.getRules().clear();
 		 mediationsettingService.create(baseEntity);
@@ -54,9 +60,18 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 
 	@Override
 	public Optional<MediationSetting> update(Long id, MediationSetting baseEntity) {
-		this.findById(id).orElseThrow(NotFoundException::new);
-		 mediationsettingService.update(baseEntity);
-		 return Optional.of(baseEntity);
+		var mediationSetting = mediationsettingService.findById(id, true);
+		if(mediationSetting == null) throw new EntityDoesNotExistsException(MediationSetting.class, id);
+		mediationSetting.getRules().clear();
+		if(CollectionUtils.isNotEmpty(baseEntity.getRules())) {
+			baseEntity.getRules().forEach(edrV -> {
+				 edrV.setMediationSetting(mediationSetting);
+				 mediationSetting.getRules().add(edrV);
+			});
+		}
+		mediationSetting.setEnableEdrVersioning(baseEntity.isEnableEdrVersioning());
+		mediationsettingService.update(mediationSetting);
+		return Optional.of(baseEntity);
 	}
 
 	@Override
