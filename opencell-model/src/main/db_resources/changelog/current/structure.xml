@@ -13274,4 +13274,11 @@ order by date_trunc('month', i.invoice_date) DESC
 			<where>version is null</where>
 		</update>
 	</changeSet>
+
+    <changeSet id="#INTRD-8077_20220625" author="ZBariki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
