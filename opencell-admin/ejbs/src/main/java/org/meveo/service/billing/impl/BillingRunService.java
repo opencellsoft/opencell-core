@@ -1557,29 +1557,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void updateBillingRunStatistics(BillingRun billingRun) {
     	billingRun = billingRunService.refreshOrRetrieve(billingRun);
 
-        List<Invoice> billingInvoices = billingRun.getInvoices();
-        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+        List<BillingAccount> billingAccounts = invoiceService.getInvoicesBillingAccountsByBR(billingRun);
         
-        billingRun.setPrAmountTax(ZERO);
-        billingRun.setPrAmountWithoutTax(ZERO);
-        billingRun.setPrAmountWithTax(ZERO);
+        Amounts amounts = invoiceService.getTotalAmountsByBR(billingRun);
 
-        if(!CollectionUtils.isEmpty(billingInvoices)) {
-        	for (Invoice invoice : billingInvoices) {
-        		invoice = invoiceService.refreshOrRetrieve(invoice);
-                if(billingAccounts.isEmpty()) {
-                	billingAccounts.add(invoice.getBillingAccount());
-                }else {
-                	if(!billingAccounts.contains(invoice.getBillingAccount())) {
-                		billingAccounts.add(invoice.getBillingAccount());
-                	}
-                }
-                
-                billingRun.setPrAmountTax(billingRun.getPrAmountTax().add(invoice.getAmountTax()));
-                billingRun.setPrAmountWithoutTax(billingRun.getPrAmountWithoutTax().add(invoice.getAmountWithoutTax()));
-                billingRun.setPrAmountWithTax(billingRun.getPrAmountWithTax().add(invoice.getAmountWithTax()));
-            }
-        }
+        billingRun.setPrAmountTax(amounts.getAmountTax());
+        billingRun.setPrAmountWithoutTax(amounts.getAmountWithoutTax());
+        billingRun.setPrAmountWithTax(amounts.getAmountWithTax());
         
         billingRun.setBillableBillingAccounts(billingAccounts);
     	billingRun.setBillableBillingAcountNumber(billingAccounts.size());

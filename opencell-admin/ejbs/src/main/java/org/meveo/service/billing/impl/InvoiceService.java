@@ -4828,6 +4828,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Return the total of positive rated transaction for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction for a billing run.
+     */
+    @SuppressWarnings("unchecked")
+    public Amounts getTotalAmountsByBR(BillingRun billingRun) {
+		Amounts amounts = new Amounts();
+		try {
+			Object[] result = (Object[]) getEntityManager().createNamedQuery("Invoice.sumAmountsByBR").setParameter("billingRunId", billingRun.getId()).getSingleResult();
+			amounts.setAmountTax(result[0] != null ? (BigDecimal) result[0] : BigDecimal.ZERO);
+			amounts.setAmountWithoutTax(result[1] != null ? (BigDecimal) result[1] : BigDecimal.ZERO);
+			amounts.setAmountWithTax(result[2] != null ? (BigDecimal) result[2] : BigDecimal.ZERO);
+		} catch (NoResultException e) {
+			//ignore
+		}
+		return amounts;    	
+    }
+
+    /**
+     * List billing accounts that are associated with invoice for a given billing run
+     *
+     * @param billingRun Billing run
+     * @return A list of Billing accounts
+     */
+    public List<BillingAccount> getInvoicesBillingAccountsByBR(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Invoice.billingAccountsByBr", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
+    
+    /**
      * Resolve Invoice production date delay for a given billing run
      *
      * @param el EL expression to resolve
