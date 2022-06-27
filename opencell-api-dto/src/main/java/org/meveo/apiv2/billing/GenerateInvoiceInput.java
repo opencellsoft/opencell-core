@@ -105,4 +105,8 @@ public interface GenerateInvoiceInput extends Resource {
     @Nullable
     @Schema(description = "Filters on RT")
     FilterDto getFilters();
+    
+    @Nullable
+    @Schema(description = "OpenOrder code")
+    String getOpenOrderCode();
 }
