@@ -4830,6 +4830,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Return the total of positive rated transaction for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction for a billing run.
+     */
+    @SuppressWarnings("unchecked")
+    public Amounts getTotalAmountsByBR(BillingRun billingRun) {
+		Amounts amounts = new Amounts();
+		try {
+			Object[] result = (Object[]) getEntityManager().createNamedQuery("Invoice.sumAmountsByBR").setParameter("billingRunId", billingRun.getId()).getSingleResult();
+			amounts.setAmountTax(result[0] != null ? (BigDecimal) result[0] : BigDecimal.ZERO);
+			amounts.setAmountWithoutTax(result[1] != null ? (BigDecimal) result[1] : BigDecimal.ZERO);
+			amounts.setAmountWithTax(result[2] != null ? (BigDecimal) result[2] : BigDecimal.ZERO);
+		} catch (NoResultException e) {
+			//ignore
+		}
+		return amounts;    	
+    }
+
+    /**
+     * List billing accounts that are associated with invoice for a given billing run
+     *
+     * @param billingRun Billing run
+     * @return A list of Billing accounts
+     */
+    public List<BillingAccount> getInvoicesBillingAccountsByBR(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Invoice.billingAccountsByBr", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
+    
+    /**
      * Resolve Invoice production date delay for a given billing run
      *
      * @param el EL expression to resolve
@@ -4884,38 +4914,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         	}
         	
             BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null, null);
-            //getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", Arrays.asList(InvoiceStatusEnum.REJECTED)).executeUpdate();
             getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("InvoiceLine.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
 
-            nextBR = billingRunService.refreshOrRetrieve(nextBR);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
 
-            List<BillingAccount> billingAccounts = nextBR.getBillableBillingAccounts();
-            
-        	for (Invoice invoice : invoices) {
-        		invoice = refreshOrRetrieve(invoice);
-                if(billingAccounts.isEmpty()) {
-                	billingAccounts.add(invoice.getBillingAccount());
-                }else {
-                	if(!billingAccounts.contains(invoice.getBillingAccount())) {
-                		billingAccounts.add(invoice.getBillingAccount());
-                	}
-                }
-                
-                nextBR.setPrAmountTax(nextBR.getPrAmountTax().add(invoice.getAmountTax()));
-                nextBR.setPrAmountWithoutTax(nextBR.getPrAmountWithoutTax().add(invoice.getAmountWithoutTax()));
-                nextBR.setPrAmountWithTax(nextBR.getPrAmountWithTax().add(invoice.getAmountWithTax()));
-            }
-            
-            nextBR.setBillableBillingAccounts(billingAccounts);
-            nextBR.setBillableBillingAcountNumber(billingAccounts.size());
-            nextBR.setBillableBillingAcountNumber(billingAccounts.size());
-
-            
-            billingRunService.update(nextBR);
-        
+            billingRunService.updateBillingRunStatistics(nextBR);
+            billingRunService.updateBillingRunStatistics(billingRun);
         }
     }
 
@@ -6265,8 +6272,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
         List<Long> invoiceIds = new ArrayList<>();
+        List<Invoice> invoices = new ArrayList<Invoice>();
+        
         invoiceIds.add(invoice.getId());
-        BillingRun billingRun = invoice.getBillingRun() ;
+        BillingRun billingRun = invoice.getBillingRun();
+        invoices.add(invoiceService.refreshOrRetrieve(invoice));
        
         if (billingRun != null) {
             BillingRun nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), quarantineBillingRunDto.getQuarantineBillingRunId(), quarantineBillingRunDto.getDescriptionsTranslated());
@@ -6275,27 +6285,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             getEntityManager().createNamedQuery("RatedTransaction.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
             
-            nextBR = billingRunService.refreshOrRetrieve(nextBR);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
             
-            List<BillingAccount> billingAccounts = nextBR.getBillableBillingAccounts();
-            
-            if(billingAccounts.isEmpty()) {
-            	billingAccounts.add(invoice.getBillingAccount());
-            }else {
-            	if(!billingAccounts.contains(invoice.getBillingAccount())) {
-            		billingAccounts.add(invoice.getBillingAccount());
-            	}
-            }
-            
-            nextBR.setBillableBillingAccounts(billingAccounts);
-            nextBR.setBillableBillingAcountNumber(billingAccounts.size());
-            nextBR.setBillableBillingAcountNumber(billingAccounts.size());
-            
-            nextBR.setPrAmountTax(nextBR.getPrAmountTax().add(invoice.getAmountTax()));
-            nextBR.setPrAmountWithoutTax(nextBR.getPrAmountWithoutTax().add(invoice.getAmountWithoutTax()));
-            nextBR.setPrAmountWithTax(nextBR.getPrAmountWithTax().add(invoice.getAmountWithTax()));
-            
-            billingRunService.update(nextBR);
+            billingRunService.updateBillingRunStatistics(nextBR);
+            billingRunService.updateBillingRunStatistics(billingRun);
 
             return nextBR.getId();
         }else {

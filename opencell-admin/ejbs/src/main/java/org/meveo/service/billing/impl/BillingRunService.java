@@ -1548,6 +1548,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BigDecimal amountTax = invoices.stream().map(Invoice::getAmountTax).reduce(ZERO, BigDecimal::add);
         InvoicingJobV2Bean.addNewAmounts(amountTax, amountWithoutTax, amountWithTax);
     }
+    
+    public void updateBillingRunStatistics(BillingRun billingRun) {
+    	billingRun = billingRunService.refreshOrRetrieve(billingRun);
+
+        List<BillingAccount> billingAccounts = invoiceService.getInvoicesBillingAccountsByBR(billingRun);
+        
+        Amounts amounts = invoiceService.getTotalAmountsByBR(billingRun);
+
+        billingRun.setPrAmountTax(amounts.getAmountTax());
+        billingRun.setPrAmountWithoutTax(amounts.getAmountWithoutTax());
+        billingRun.setPrAmountWithTax(amounts.getAmountWithTax());
+        
+        billingRun.setBillableBillingAccounts(billingAccounts);
+    	billingRun.setBillableBillingAcountNumber(billingAccounts.size());
+        
+        billingRunService.update(billingRun);
+
+    }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
         QueryBuilder queryBuilder;
