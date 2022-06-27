@@ -39,6 +39,8 @@ import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.mapper.ModuleItemListDeserializer;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
@@ -47,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "ModuleItemsDto")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ModuleItemsDto {
 
     /** The module items. */
