@@ -453,7 +453,6 @@ public class InvoiceResourceImpl implements InvoiceResource {
         return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceTypeRs.class, invoiceTypeId).build())
                 .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(lstInvoiceSubTotals)))
                 .build();
-        //return Response.ok(response).build();
     }
 	
 	private org.meveo.apiv2.billing.InvoiceSubTotals toResourceInvoiceSubTotalsWithLink(org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotal) {
