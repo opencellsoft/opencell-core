@@ -8418,7 +8418,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -17752,6 +17752,7 @@
     <changeSet id="#INTRD-7124-130622" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
 	<changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
+	<changeSet id="#INTRD-8067_20220627" author="anas.rouaguebe" />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
