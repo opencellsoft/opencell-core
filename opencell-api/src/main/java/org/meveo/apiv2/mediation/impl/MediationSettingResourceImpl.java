@@ -1,6 +1,9 @@
 package org.meveo.apiv2.mediation.impl;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.mediation.ImmutableMediationSetting;
@@ -33,6 +36,15 @@ public class MediationSettingResourceImpl implements MediationSettingResource {
 				.build();
 	}
 
+	@Override
+	public Response update(Long mediationRuleId, org.meveo.apiv2.mediation.MediationSetting mediationSetting) {
+		Optional.of(mediationRuleId).orElseThrow(BadRequestException::new);
+		MediationSetting entity = mediationSettingApiService.update(mediationRuleId, mapper.toEntity(mediationSetting)).get();
+		return Response
+				.created(LinkGenerator.getUriBuilderFromResource(MediationSettingResource.class, entity.getId()).build())
+				.entity(toResourceWithLink(mapper.toResource(entity)))
+				.build();
+	}
 	
 
     private org.meveo.apiv2.mediation.ImmutableMediationSetting toResourceWithLink(org.meveo.apiv2.mediation.MediationSetting mediationSetting) {
@@ -44,4 +56,6 @@ public class MediationSettingResourceImpl implements MediationSettingResource {
                                 .build()
                 );
     }
+
+
 }

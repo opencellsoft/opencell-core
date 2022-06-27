@@ -2,7 +2,9 @@ package org.meveo.apiv2.mediation.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -31,8 +33,20 @@ public interface MediationSettingResource {
 	   description ="create new mediation setting to enabling or disabling edr versioning",
 	   responses = {
 	            @ApiResponse(responseCode="200", description = "new mediation setting is created"),
+	            @ApiResponse(responseCode = "404", description = "missing paramters",  content = @Content(schema = @Schema(implementation = ApiException.class))),
+	            @ApiResponse(responseCode = "400", description = "the setting of mediation already exist")
+	    })
+	Response create(MediationSetting mediationSetting);
+	
+	@PUT
+	@Path("/{mediationRuleId}")
+	@Operation(summary = "Update new Mediation Setting",
+	   tags = { "Mediation Settings" },
+	   description ="update an existing mediation setting to enabling or disabling edr versioning",
+	   responses = {
+	            @ApiResponse(responseCode="200", description = "new mediation setting is created"),
 	            @ApiResponse(responseCode = "404", description = "missing paramters",
 	                    content = @Content(schema = @Schema(implementation = ApiException.class)))            
 	    })
-	Response create(MediationSetting mediationSetting);
+	Response update(@PathParam("mediationRuleId") Long mediationRuleId, MediationSetting mediationSetting);
 }
