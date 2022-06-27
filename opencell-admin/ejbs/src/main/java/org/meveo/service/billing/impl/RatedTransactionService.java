@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Calendar;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -996,7 +997,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     	TypedQuery<RatedTransaction> query=null;
         if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
+            final List<RatedTransaction> filteredListAsObjects = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
+			return filteredListAsObjects.stream().filter(rt->RatedTransactionStatusEnum.OPEN==rt.getStatus()).collect(Collectors.toList());
         } else if (entityToInvoice instanceof Subscription) {
         	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId());
 
