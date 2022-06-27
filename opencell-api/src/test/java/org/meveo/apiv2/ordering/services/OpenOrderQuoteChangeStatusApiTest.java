@@ -1,5 +1,11 @@
 package org.meveo.apiv2.ordering.services;
 
+import static org.mockito.ArgumentMatchers.any;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +13,8 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.ordering.OpenOrderArticle;
+import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
@@ -17,12 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenOrderQuoteChangeStatusApiTest {
@@ -500,8 +502,8 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
     private OpenOrderQuote buildOOQ(OpenOrderTypeEnum type,
                                     OpenOrderQuoteStatusEnum status,
-                                    List<AccountingArticle> articles,
-                                    List<Product> products) {
+                                    List<OpenOrderArticle> articles,
+                                    List<OpenOrderProduct> products) {
         OpenOrderQuote ooq = new OpenOrderQuote();
         ooq.setId(-1L);
         ooq.setCode("OOQ-CODE-TU");
@@ -523,15 +525,15 @@ public class OpenOrderQuoteChangeStatusApiTest {
         return ooq;
     }
 
-    private List<AccountingArticle> buildArticles() {
-        AccountingArticle article = new AccountingArticle();
+    private List<OpenOrderArticle> buildArticles() {
+    	OpenOrderArticle article = new OpenOrderArticle();
         article.setId(-1L);
 
         return List.of(article);
     }
 
-    private List<Product> buildProducts() {
-        Product products = new Product();
+    private List<OpenOrderProduct> buildProducts() {
+    	OpenOrderProduct products = new OpenOrderProduct();
         products.setId(-1L);
 
         return List.of(products);
