@@ -1553,6 +1553,40 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BigDecimal amountTax = invoices.stream().map(Invoice::getAmountTax).reduce(ZERO, BigDecimal::add);
         InvoicingJobV2Bean.addNewAmounts(amountTax, amountWithoutTax, amountWithTax);
     }
+    
+    public void updateBillingRunStatistics(BillingRun billingRun) {
+    	billingRun = billingRunService.refreshOrRetrieve(billingRun);
+
+        List<Invoice> billingInvoices = billingRun.getInvoices();
+        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+        
+        billingRun.setPrAmountTax(ZERO);
+        billingRun.setPrAmountWithoutTax(ZERO);
+        billingRun.setPrAmountWithTax(ZERO);
+
+        if(!CollectionUtils.isEmpty(billingInvoices)) {
+        	for (Invoice invoice : billingInvoices) {
+        		invoice = invoiceService.refreshOrRetrieve(invoice);
+                if(billingAccounts.isEmpty()) {
+                	billingAccounts.add(invoice.getBillingAccount());
+                }else {
+                	if(!billingAccounts.contains(invoice.getBillingAccount())) {
+                		billingAccounts.add(invoice.getBillingAccount());
+                	}
+                }
+                
+                billingRun.setPrAmountTax(billingRun.getPrAmountTax().add(invoice.getAmountTax()));
+                billingRun.setPrAmountWithoutTax(billingRun.getPrAmountWithoutTax().add(invoice.getAmountWithoutTax()));
+                billingRun.setPrAmountWithTax(billingRun.getPrAmountWithTax().add(invoice.getAmountWithTax()));
+            }
+        }
+        
+        billingRun.setBillableBillingAccounts(billingAccounts);
+    	billingRun.setBillableBillingAcountNumber(billingAccounts.size());
+        
+        billingRunService.update(billingRun);
+
+    }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
         QueryBuilder queryBuilder;
