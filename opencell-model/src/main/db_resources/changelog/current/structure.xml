@@ -13258,5 +13258,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="document_type" type="varchar(50)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-8211_20220626" author="anas.rouaguebe">
+		<addDefaultValue tableName="com_meveo_instance" columnName="version" defaultValueNumeric="0" />
+		<update tableName="com_meveo_instance" >
+            <column name="version" value="0" />
+            <where>version is null</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
