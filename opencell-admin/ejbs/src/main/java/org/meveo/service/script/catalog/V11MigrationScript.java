@@ -1,6 +1,7 @@
 package org.meveo.service.script.catalog;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -270,26 +271,30 @@ public class V11MigrationScript extends Script {
   }
   
 	private void createArticle(ChargeTemplate chargeTemplate) {
+		try {
+			List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductAndCharge(null,
+					chargeTemplate);
 
-		Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(null,
-				chargeTemplate, null, null);
-		if (accountingArticle.isEmpty() || DEFAULT_ARTICLE.equals(accountingArticle.get().getCode())) {
-			AccountingArticle newAccountingArticle = new AccountingArticle(chargeTemplate.getCode(),
-					chargeTemplate.getDescription(), chargeTemplate.getTaxClass(),
-					chargeTemplate.getInvoiceSubCategory());
-			accountingArticleService.create(newAccountingArticle);
-			ArticleMapping defaultArticleMapping = articleMappingService.findByCode(ARTICLE_MAPPING_ID);
-			if (defaultArticleMapping == null) {
-				defaultArticleMapping = new ArticleMapping();
-				defaultArticleMapping.setCode(ARTICLE_MAPPING_ID);
-				defaultArticleMapping.setDescription("default ArticleMapping");
-				articleMappingService.create(defaultArticleMapping);
+			if (articleMappingLines.isEmpty() || DEFAULT_ARTICLE.equals(articleMappingLines.get(0).getCode())) {
+				AccountingArticle newAccountingArticle = new AccountingArticle(chargeTemplate.getCode(),
+						chargeTemplate.getDescription(), chargeTemplate.getTaxClass(),
+						chargeTemplate.getInvoiceSubCategory());
+				accountingArticleService.create(newAccountingArticle);
+				ArticleMapping defaultArticleMapping = articleMappingService.findByCode(ARTICLE_MAPPING_ID);
+				if (defaultArticleMapping == null) {
+					defaultArticleMapping = new ArticleMapping();
+					defaultArticleMapping.setCode(ARTICLE_MAPPING_ID);
+					defaultArticleMapping.setDescription("default ArticleMapping");
+					articleMappingService.create(defaultArticleMapping);
+				}
+				ArticleMappingLine articleMappingLine = new ArticleMappingLine();
+				articleMappingLine.setChargeTemplate(chargeTemplate);
+				articleMappingLine.setArticleMapping(defaultArticleMapping);
+				articleMappingLine.setAccountingArticle(newAccountingArticle);
+				articleMappingLineService.create(articleMappingLine);
 			}
-			ArticleMappingLine articleMappingLine = new ArticleMappingLine();
-			articleMappingLine.setChargeTemplate(chargeTemplate);
-			articleMappingLine.setArticleMapping(defaultArticleMapping);
-			articleMappingLine.setAccountingArticle(newAccountingArticle);
-			articleMappingLineService.create(articleMappingLine);
+		} catch (Exception e) {
+			log.error("The accounting article is not well created for the chargetemplate {}", chargeTemplate.getCode());
 		}
 
 	}
