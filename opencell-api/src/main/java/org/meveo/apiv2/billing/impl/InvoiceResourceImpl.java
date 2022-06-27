@@ -455,6 +455,14 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
     }
 	
+	@Override
+    public Response deleteSubTotals(InvoiceSubTotalsDto invoiceSubTotals) {        
+        invoiceSubTotalsService.deleteSubTotals(invoiceSubTotals);
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        return Response.ok(response).build();
+    }
+	
 	private org.meveo.apiv2.billing.InvoiceSubTotals toResourceInvoiceSubTotalsWithLink(org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotal) {
 		return ImmutableInvoiceSubTotals.copyOf(invoiceSubTotal)
 				.withLinks(new LinkGenerator.SelfLinkGenerator(InvoiceResource.class).withId(invoiceSubTotal.getId())
