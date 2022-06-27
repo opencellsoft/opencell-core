@@ -13258,9 +13258,5 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="document_type" type="varchar(50)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#INTRD-8159_20220625" author="TarikFA.">
-    	<renameColumn tableName="edr_versioning_rule" oldColumnName="isNewVersionEl" newColumnName="is_new_version_el"/>
-    </changeSet>
 
 </databaseChangeLog>
