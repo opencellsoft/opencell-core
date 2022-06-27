@@ -50,6 +50,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -292,6 +293,8 @@ public class ValueExpressionWrapper {
     private static final String VAR_QUOTE_OFFER = "quoteOffer";
 	
 	private static final String VAR_QUOTE_PRODUCT = "quoteProduct";
+	
+	private static final String VAR_INVOICE_LINE = "invoiceLine";
 
     /**
      * Variables in EL expression
@@ -344,6 +347,7 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(CommercialOrder.class.getName(), new String[] { VAR_COMMERCIAL_ORDER });
         elVariablesByClass.put(QuoteOffer.class.getName(), new String[] { VAR_QUOTE_OFFER });
         elVariablesByClass.put(QuoteProduct.class.getName(), new String[] { VAR_QUOTE_PRODUCT });
+        elVariablesByClass.put(InvoiceLine.class.getName(), new String[] { VAR_INVOICE_LINE });
     }
 
     /**
@@ -648,6 +652,7 @@ public class ValueExpressionWrapper {
         AttributeValue attributeValue=null;
         CommercialOrder order=null;
         List<Access> accessPoints = null;
+        InvoiceLine invoiceLine = null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {
@@ -735,6 +740,10 @@ public class ValueExpressionWrapper {
                         accessPoints = list;
                     }
                 }
+            }
+
+            if (parameter instanceof InvoiceLine) {
+            	invoiceLine = (InvoiceLine) parameter;
             }
         }
 
@@ -954,6 +963,12 @@ public class ValueExpressionWrapper {
         if(el.contains(VAR_ATTRIBUTE_VALUE) && !contextMap.containsKey(VAR_ATTRIBUTE_VALUE) && attributeValue != null){
             contextMap.put(VAR_ATTRIBUTE_VALUE, attributeValue);
         }
+        
+        if(el.contains(VAR_INVOICE_LINE) && !contextMap.containsKey(VAR_INVOICE_LINE) && invoiceLine != null) {
+            contextMap.put(VAR_INVOICE_LINE, invoiceLine);
+        }
+        
+        
 
         return contextMap;
     }
