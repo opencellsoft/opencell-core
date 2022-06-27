@@ -4,21 +4,23 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.mediation.ImmutableMediationSetting;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.mediation.MediationSetting;
 
-public class MediationSettingMapper extends ResourceMapper<org.meveo.apiv2.mediation.MediationSetting, MediationSetting>{
+public class MediationSettingMapper extends ResourceMapper<org.meveo.apiv2.mediation.MediationSetting, BaseEntity>{
 
 	
 	private EdrVersioningRuleMapper edrVersioningRuleMapper = new EdrVersioningRuleMapper();
 	
 	@Override
-	public org.meveo.apiv2.mediation.MediationSetting toResource(MediationSetting entity) {
+	public org.meveo.apiv2.mediation.MediationSetting toResource(BaseEntity entity) {
 		try {
+			MediationSetting mediationSetting = (MediationSetting) entity;
 			var builder = ImmutableMediationSetting.builder()
 					.id(entity.getId())
-					.isEnableEdrVersioning(entity.isEnableEdrVersioning());
-			if(!CollectionUtils.isEmpty(entity.getRules())) {
-				builder.rules(edrVersioningRuleMapper.toResource(entity.getRules()));
+					.isEnableEdrVersioning(mediationSetting.isEnableEdrVersioning());
+			if(!CollectionUtils.isEmpty(mediationSetting.getRules())) {
+				builder.rules(edrVersioningRuleMapper.toResource(mediationSetting.getRules()));
 			}
 			return builder.build();
 		}catch(Exception e) {
