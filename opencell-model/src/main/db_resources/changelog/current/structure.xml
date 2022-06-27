@@ -13192,7 +13192,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </createIndex>
     </changeSet>
     
-    <changeSet id="#INTRD-8158_20220624" author="TarikFA.">
+	<changeSet id="#INTRD-8158_20220624" author="TarikFA.">
     	<createSequence sequenceName="edr_versioning_rule_seq"/>
     	<createSequence sequenceName="mediation_setting_seq"/>
     	
@@ -13280,5 +13280,90 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-8022_20220624" author="HatimOUDAD" >
+        <createSequence sequenceName="open_order_article_seq"/>
+        <createTable tableName="open_order_article">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_article_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_article_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+            <!-- Simple fields -->
+            
+            <column name="active" type="${type.boolean}"/>
+            
+
+            <!-- Dependencies -->
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="open_order_article"
+                                 constraintName="fk_open_billing_accounting_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_article"
+                                 constraintName="fk_open_order_template_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+		
+		<createSequence sequenceName="open_order_product_seq"/>
+        <createTable tableName="open_order_product">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_product_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_product_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+            <!-- Simple fields -->
+            
+            <column name="active" type="${type.boolean}"/>
+            
+
+            <!-- Dependencies -->
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="open_order_product"
+                                 constraintName="fk_product_open_order_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_product"
+                                 constraintName="fk_open_order_template_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+		
+      	</changeSet>
 
 </databaseChangeLog>
