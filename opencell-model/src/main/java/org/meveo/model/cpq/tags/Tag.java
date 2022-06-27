@@ -21,6 +21,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.ordering.OpenOrderQuote;
 
 /**
  * 
@@ -85,8 +86,9 @@ public class Tag extends BusinessEntity {
     @Column(name = "filter_el") 
 	private String filterEl;
 	
-	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "open_order_quote_id")
+    private OpenOrderQuote openOrderQuote;
  
 	public String getName() {
 		return name;
@@ -154,6 +156,14 @@ public class Tag extends BusinessEntity {
 	 */
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+
+	public OpenOrderQuote getOpenOrderQuote() {
+		return openOrderQuote;
+	}
+
+	public void setOpenOrderQuote(OpenOrderQuote openOrderQuote) {
+		this.openOrderQuote = openOrderQuote;
 	}
 	
 }

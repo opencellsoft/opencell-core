@@ -323,6 +323,7 @@
         <createSequence sequenceName="global_settings_seq" startValue="1"/>
       	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
         <createSequence sequenceName="ar_payment_plan_seq" startValue="1"/>
+        <createSequence sequenceName="open_order_quote_seq"/>
         <createSequence sequenceName="invoice_sub_totals_seq" startValue="1"/>
     </changeSet>
 
@@ -8871,6 +8872,7 @@
             <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
                 <constraints nullable="false" />
             </column>
+            <column name="open_order_quote_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -8952,6 +8954,7 @@
             <column name="tag_type_id" type="bigint" />
             <column name="parent_tag_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)"/>
+            <column name="open_order_quote_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9875,6 +9878,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="open_order_quote_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -11756,6 +11760,8 @@
             <column name="sequence" type="int"/>
             <column name="percentage" type="int"/>
             <column name="open_order_template_id" type="bigint"/>
+            <column name="external_recipient" type="varchar(100)"/>
+            <column name="open_order_quote_id" type="bigint" />
         </createTable>
 
         <createTable tableName="open_order_threshold_recipients">
@@ -11848,6 +11854,59 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-8026_20220622-tbl" author="HatimOUDAD">
+        <createTable tableName="open_order_quote">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_quote" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_quote_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+           
+            <column name="external_reference" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="open_order_type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="max_amount" type="numeric">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>     
+            <column name="end_validity_date" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="activation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+                                             
     </changeSet>
 
 	<changeSet author="hichamhanine" id="rebuild-str-tbl-8036">
@@ -16162,6 +16221,31 @@
         <addForeignKeyConstraint baseColumnNames="origin_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_origin_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-8026_20220622_fk" author="HatimOUDAD">
+
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_quote"
+                                 constraintName="fk_open_order_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+     	<addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="open_order_quote"
+                                 constraintName="fk_currency_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="open_order_quote"
+                                 constraintName="fk_billing_account_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+        
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="open_order_threshold" constraintName="fk_threshold_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+        
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_product" constraintName="fk_cpq_product_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+       
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="billing_accounting_article" constraintName="fk_billing_accounting_article_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+        
+        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_tag" constraintName="fk_tag_open_quote" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
+    </changeSet>
 
     <!-- end fk -->
 
@@ -16604,6 +16688,17 @@
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
+
+            <column name="journal_code" type="varchar(50)" />
+            <column name="category" type="varchar(50)" />
+            <column name="account" type="varchar(50)" />
+            <column name="label" type="varchar(255)" />
+            <column name="customer_code" type="varchar(50)" />
+            <column name="customer_name" type="varchar(255)" />
+            <column name="seller_name" type="varchar(255)" />
+            <column name="reference" type="varchar(50)" />
+            <column name="document_type" type="varchar(50)" />
+
         </createTable>
     </changeSet>
 
@@ -16786,6 +16881,66 @@
     <changeSet id="#INTRD-7770_20220613-rebuild-fk" author="aelmalki">
         <addForeignKeyConstraint baseColumnNames="payment_plan_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_payment_plan_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_plan" />
+    </changeSet>
+
+    <changeSet id="#INTRD-8109_20220622_str" author="ZBariki">
+        <createIndex indexName="accounting_journal_entry_auxiliary_accounting_code_idx"
+                     tableName="accounting_journal_entry">
+            <column name="auxiliary_account_code"/>
+        </createIndex>
+    </changeSet>
+    
+     <changeSet id="#INTRD-8158_20220624_rebuild" author="TarikFA.">
+    	<createSequence sequenceName="edr_versioning_rule_seq"/>
+    	<createSequence sequenceName="mediation_setting_seq"/>
+    	
+    	<createTable tableName="mediation_setting">
+    	 	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_mediation_setting" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+    		<column name="enable_edr_versioning" type="${type.boolean}" defaultValueNumeric="0" />
+    	</createTable>
+    	
+    	<createTable tableName="edr_versioning_rule">
+    	 	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_edr_versioning_rule" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+    		<column name="priority" type="int4" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="criterial_el" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="key_el" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="isNewVersionEl" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="mediation_setting_id" type="bigint" >
+    			<constraints nullable="false" />
+    		</column>
+    	</createTable>
+    	
+    	
+        <addForeignKeyConstraint baseColumnNames="mediation_setting_id" baseTableName="edr_versioning_rule" constraintName="fk_edr_versioning_rule_mediation_setting" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -17936,9 +18091,15 @@
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh" />
     <changeSet id="#INTRD-7722_20220618" author="ZBariki" />
+    <changeSet id="#INTRD-8026_20220621" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8026_20220622" author="HatimOUDAD"/>
     <changeSet id="#INTRD-8036-20220621" author="hichamhanine" />
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
+    <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
+    <changeSet id="#INTRD-8158_20220624" author="TarikFA." />
+    <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

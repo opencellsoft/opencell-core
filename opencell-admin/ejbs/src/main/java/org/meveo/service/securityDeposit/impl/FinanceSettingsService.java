@@ -65,6 +65,13 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
         }
     }
 
+    /**
+     * Generate auxiliary accounting info
+     *
+     * @param customerAccount customer account
+     * @param auxiliaryAccounting auxiliaryA accounting settings
+     * @return Map of generated auxiliary accounting code and auxiliary accounting label
+     */
     public Map<String, String> generateAuxiliaryAccountInfo(CustomerAccount customerAccount,
                                                           AuxiliaryAccounting auxiliaryAccounting) {
         Map<Object, Object> context = new HashMap<>();
@@ -84,7 +91,7 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
     }
 
     private AccountingCode getGeneralClientAccounting(CustomerAccount customerAccount) {
-        if (customerAccount.getGeneralClientAccount() != null) {
+        if (customerAccount != null && customerAccount.getGeneralClientAccount() != null) {
             return customerAccount.getGeneralClientAccount();
         } else {
             String occTemplateCode =

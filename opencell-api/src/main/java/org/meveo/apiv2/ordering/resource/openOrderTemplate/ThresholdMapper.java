@@ -36,6 +36,7 @@ public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
                 .sequence(entity.getSequence())
                 .percentage(entity.getPercentage())
                 .recipients(entity.getRecipients())
+                .externalRecipient(entity.getExternalRecipient())
                 .build();
     }
 
@@ -52,6 +53,7 @@ public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
         threshold.setSequence(input.getSequence());
         threshold.setPercentage(input.getPercentage());
         threshold.setRecipients(input.getRecipients());
+        threshold.setExternalRecipient(input.getExternalRecipient());
         return threshold;
     }
 

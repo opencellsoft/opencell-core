@@ -192,13 +192,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setIsCompany(postData.getIsCompany());
         }
 
-//        if (postData.getPaymentMethods() != null) {
-//            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-//                paymentMethodApi.validate(paymentMethodDto, false);
-//                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
-//            }
-//        }
-
         customerAccountService.create(customerAccount);
 
         return customerAccount;
@@ -366,6 +359,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             AccountingCode generalClientAccountingCode = Optional.ofNullable(accountingCodeService.findByCode(postData.getGeneralClientAccountCode()))
                     .orElseThrow(() -> new NotFoundException("General client accounting code not found"));
             customerAccount.setGeneralClientAccount(generalClientAccountingCode);
+        } else {
+            customerAccount.setGeneralClientAccount(null);
         }
 
     }
@@ -380,7 +375,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 				}
 			}
 
-			List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+			List<PaymentMethod> paymentMethodsFromDto = new ArrayList<>();
             //workaround 550 case
 			boolean isFirst = true;
 

@@ -824,7 +824,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+        //billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus()) || BillingRunStatusEnum.DRAFT_INVOICES.equals(billingRun.getStatus())) {
             List<InvoiceStatusEnum> toMove = new ArrayList<>();
             List<InvoiceStatusEnum> toQuarantine = new ArrayList<>();
@@ -832,13 +832,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             
             if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.REJECTED);
-            } else {
+            } else if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)){
             	toQuarantine.add(InvoiceStatusEnum.REJECTED);
             }
 
             if (billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.SUSPECT);
-            } else {
+            } else if(billingRun.getSuspectAutoAction() != null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.MOVE)){
                 toMove.add(InvoiceStatusEnum.SUSPECT);
             }
             
@@ -1417,6 +1417,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	       }else {
 	    	   BillingRun quarantineBillingRun = new BillingRun();
 	           try {
+	               BeanUtils.copyProperties(quarantineBillingRun, billingRun);
+
 	               Set<BillingRunList> billingRunLists = new HashSet<>();
 	               billingRunLists.addAll(billingRun.getBillingRunLists());
 	               quarantineBillingRun.setBillingRunLists(billingRunLists );
@@ -1437,7 +1439,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	               quarantineBillingRun.setOriginBillingRun(billingRun);
 	               quarantineBillingRun.setId(null);
 
-	               
 	   	            if(descriptionsTranslated != null && !descriptionsTranslated.isEmpty()) {
 		            	quarantineBillingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
 		            }else {

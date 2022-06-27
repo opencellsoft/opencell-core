@@ -97,7 +97,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .articles(Collections.singleton("article 1"))
 
                         .thresholds(Collections.singleton(
-                                ImmutableThresholdInput.builder().sequence(1).percentage(-1).build()))
+                                ImmutableThresholdInput.builder().sequence(1).percentage(-1).externalRecipient("example").build()))
 
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
@@ -124,8 +124,8 @@ public class OpenOrderTemplateApiServiceTest {
                         .openOrderType(OpenOrderTypeEnum.ARTICLES)
                         .articles(Collections.singleton("article 1"))
                         .thresholds(Arrays.asList(
-                                ImmutableThresholdInput.builder().sequence(1).percentage(99).build(),
-                                ImmutableThresholdInput.builder().sequence(2).percentage(50).build()
+                                ImmutableThresholdInput.builder().sequence(1).percentage(99).externalRecipient("example").build(),
+                                ImmutableThresholdInput.builder().sequence(2).percentage(50).externalRecipient("example").build()
                                 ))
 
                         .build();
