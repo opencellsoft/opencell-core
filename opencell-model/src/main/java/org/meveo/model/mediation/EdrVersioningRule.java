@@ -1,5 +1,6 @@
 package org.meveo.model.mediation;
 
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -7,11 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -44,8 +47,15 @@ public class EdrVersioningRule extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mediation_setting_id", nullable = false, referencedColumnName = "id")
-	@NotNull
+//	@NotNull
 	private MediationSetting mediationSetting;
+    
+    @PrePersist
+    private void prePersist() {
+    	if(auditable == null)
+    		auditable = new Auditable();
+    	auditable.setCreated(new Date());
+    }
 
 	public Integer getPriority() {
 		return priority;
@@ -99,8 +109,6 @@ public class EdrVersioningRule extends AuditableEntity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		EdrVersioningRule other = (EdrVersioningRule) obj;

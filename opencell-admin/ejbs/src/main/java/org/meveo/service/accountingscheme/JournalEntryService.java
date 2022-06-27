@@ -33,6 +33,7 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -281,6 +282,23 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setAuxiliaryAccountCode(accountingInfo.get(AUXILIARY_ACCOUNT_CODE));
             firstEntry.setAuxiliaryAccountLabel(accountingInfo.get(AUXILIARY_ACCOUNT_LABEL));
         }
+
+        if(ao != null) {
+        	firstEntry.setJournalCode(ofNullable(ao.getJournal()).map(Journal::getCode).orElse(null));
+        	firstEntry.setReference(ao.getReference());
+        	firstEntry.setDocumentType(ao.getType());
+        }
+        if(code != null) {
+        	firstEntry.setCategory(code.getChartOfAccountTypeEnum());
+        	firstEntry.setAccount(code.getCode());
+        	firstEntry.setLabel(code.getDescription());
+        }
+        if(customerAccount != null) {
+        	firstEntry.setCustomerCode(customerAccount.getCode());
+        	firstEntry.setCustomerName(customerAccount.getDescription());
+        }
+        
+        firstEntry.setSellerName(ofNullable(seller).map(Seller::getDescription).orElse(null));
 
         return firstEntry;
     }

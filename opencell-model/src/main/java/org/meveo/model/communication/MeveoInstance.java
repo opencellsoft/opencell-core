@@ -701,7 +701,7 @@ public class MeveoInstance extends BusinessEntity {
             this.authPasswordKS = "";
         }
 
-        if (getId() != null &&! this.authPasswordKS.equals(getAuthPasswordKS())) {
+        if (getId() != null && KeystoreManager.existKeystore() &&! this.authPasswordKS.equals(getAuthPasswordKS())) {
             KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.authPasswordKS);
         }
     }
