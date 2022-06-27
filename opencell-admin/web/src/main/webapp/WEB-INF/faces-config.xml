@@ -8,6 +8,11 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 <!-- <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory> -->
 <!-- </factory> -->
 
+<converter>
+	<converter-for-class>java.lang.String</converter-for-class>
+	<converter-class>org.meveo.admin.jsf.converter.EmptyToNullConverter</converter-class>
+</converter>
+
 <application>
 	<locale-config>
 		<default-locale>en</default-locale>
