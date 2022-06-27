@@ -1348,7 +1348,7 @@ public class InvoiceServiceTest {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(ba);
-        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false, null);
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false);
 
         assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(12);
         SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);

@@ -1,5 +1,6 @@
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,7 +27,8 @@ import org.meveo.model.ModuleItem;
 @Cacheable
 @Table(name = "invoice_sub_totals")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "invoice_sub_totals_seq"), }) 
+        @Parameter(name = "sequence_name", value = "invoice_sub_totals_seq"), })
+@NamedQueries(value = { @NamedQuery(name = "InvoiceSubTotals.findByInvoiceType", query = "From InvoiceSubTotals iv where iv.invoiceType=:invoiceType") })
 public class InvoiceSubTotals extends EnableBusinessEntity {
     private static final long serialVersionUID = -1640429569087958882L;
 
@@ -48,6 +53,18 @@ public class InvoiceSubTotals extends EnableBusinessEntity {
     @Type(type = "json")
     @Column(name = "label_i18n", columnDefinition = "jsonb")
     private Map<String, String> labelI18n;
+    
+    @Transient
+    private BigDecimal amountWithoutTax;
+    
+    @Transient
+    private BigDecimal amountWithTax;
+
+    @Transient
+    private BigDecimal convertedAmountWithTax;
+    
+    @Transient
+    private BigDecimal convertedAmountWithoutTax;
     
     @Override
     public String toString() {
@@ -113,4 +130,36 @@ public class InvoiceSubTotals extends EnableBusinessEntity {
         }
         return labelI18n;
     }
+
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
+	}
+
+	public BigDecimal getConvertedAmountWithTax() {
+		return convertedAmountWithTax;
+	}
+
+	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
+		this.convertedAmountWithTax = convertedAmountWithTax;
+	}
+
+	public BigDecimal getConvertedAmountWithoutTax() {
+		return convertedAmountWithoutTax;
+	}
+
+	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	}
 }

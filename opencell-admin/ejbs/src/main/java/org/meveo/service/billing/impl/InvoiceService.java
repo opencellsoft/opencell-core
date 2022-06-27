@@ -18,7 +18,6 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static java.math.BigDecimal.ONE;
@@ -58,7 +57,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
-import javax.ws.rs.ForbiddenException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -4672,7 +4670,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param currentRateFromDate current rate from date
      * @return Refreshed invoice
      */
-    public Invoice refreshAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
+    public Invoice refreshConvertedAmounts(Invoice invoice, BigDecimal currentRate, Date currentRateFromDate) {
         invoice = refreshOrRetrieve(invoice);
         if(currentRate != null) {
             invoice.setLastAppliedRate(currentRate);
@@ -4684,13 +4682,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else {
             invoice.setLastAppliedRateDate(invoice.getAuditable().getCreated());
         }
+        refreshInvoiceLineAndAggregateAmounts(invoice);
+        return update(invoice);
+    }
+
+    private void refreshInvoiceLineAndAggregateAmounts(Invoice invoice) {
         invoice.getInvoiceLines()
                 .forEach(invoiceLine -> invoiceLinesService.update(invoiceLine));
         invoice.getInvoiceAgregates()
                 .stream()
                 .filter(invoiceAggregate -> invoiceAggregate instanceof TaxInvoiceAgregate)
                 .forEach(invoiceAggregate -> invoiceAgregateService.update(invoiceAggregate));
-        return update(invoice);
     }
 
     /**
@@ -4876,7 +4878,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.REJECTED));
         
         if(!invoices.isEmpty()) {
-        	List<Long> invoiceIds = new ArrayList<Long>();
+        	List<Long> invoiceIds = new ArrayList<>();
         	for (Invoice invoice : invoices) {
         		invoiceIds.add(invoice.getId());
         	}
@@ -5429,7 +5431,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
                     invoice.setHasMinimum(hasMin);
 
-                    appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun, billingRun);
+                    appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5520,8 +5522,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
+        applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
         return invoiceList;
 
+    }
+
+    private void applyExchangeRateToInvoiceLineAndAggregate(List<Invoice> invoices) {
+        invoices = refreshOrRetrieve(invoices);
+        invoices.forEach(invoice -> refreshInvoiceLineAndAggregateAmounts(invoice));
     }
 
     /**
@@ -5563,7 +5571,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     protected void appendInvoiceAggregatesIL(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<InvoiceLine> invoiceLines, boolean isInvoiceAdjustment,
-            InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreInvoiceLinesExpected, BillingRun billingRun) throws BusinessException {
+            InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreInvoiceLinesExpected) throws BusinessException {
 
         boolean isAggregateByUA = paramBeanFactory.getInstance().getPropertyAsBoolean("invoice.agregateByUA", true);
 

@@ -15,7 +15,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 
 public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.article.AccountingArticle, AccountingArticle> {
 
-    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());;
+    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());
 
     @Override
     protected org.meveo.apiv2.article.AccountingArticle toResource(AccountingArticle entity) {
@@ -34,6 +34,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .invoiceTypeEl(entity.getInvoiceTypeEl())
                 .accountingCodeEl(entity.getAccountingCodeEl())
                 .columCriteriaEL(entity.getColumnCriteriaEL())
+                .ignoreAggregation(entity.isIgnoreAggregation())
                 .build();
     }
 
@@ -76,6 +77,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
         accountingArticleEntity.setColumnCriteriaEL(resource.getColumCriteriaEL());
         accountingArticleEntity.setAccountingCodeEl(resource.getAccountingCodeEl());
         accountingArticleEntity.setInvoiceTypeEl(resource.getInvoiceTypeEl());
+        accountingArticleEntity.setIgnoreAggregation(resource.getIgnoreAggregation());
         return accountingArticleEntity;
     }
 }

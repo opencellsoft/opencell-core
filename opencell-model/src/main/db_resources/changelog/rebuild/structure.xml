@@ -691,12 +691,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_invoice_sub_cat_seq values(3)</sql>
-        <!-- <createTable tableName="billing_invoice_sub_country_seq"> -->
-        <!-- <column name="next_val" type="BIGINT" > -->
-        <!-- <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_country_seq_pk" /> -->
-        <!-- </column> -->
-        <!-- </createTable> -->
-        <!-- <sql>insert into ${db.schema.adapted}billing_inv_sub_country_seq values(1)</sql> -->
         <createTable tableName="billing_invoice_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_template_seq_pk" />
@@ -5867,7 +5861,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_meveo_instance_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -8425,7 +8419,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_class_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -9881,6 +9875,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="open_order_quote_id" type="bigint" />
+            <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -13549,10 +13544,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    	<!-- 
-        <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
-         -->
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
         <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -16773,6 +16764,17 @@
             <column name="trading_currency" type="varchar(3)" />
             <column name="auxiliary_account_code" type="varchar(255)" />
             <column name="auxiliary_account_label" type="varchar(255)" />
+
+            <column name="journal_code" type="varchar(50)" />
+            <column name="category" type="varchar(50)" />
+            <column name="account" type="varchar(50)" />
+            <column name="label" type="varchar(255)" />
+            <column name="customer_code" type="varchar(50)" />
+            <column name="customer_name" type="varchar(255)" />
+            <column name="seller_name" type="varchar(255)" />
+            <column name="reference" type="varchar(50)" />
+            <column name="document_type" type="varchar(50)" />
+
         </createTable>
     </changeSet>
 
@@ -16962,6 +16964,59 @@
                      tableName="accounting_journal_entry">
             <column name="auxiliary_account_code"/>
         </createIndex>
+    </changeSet>
+    
+     <changeSet id="#INTRD-8158_20220624_rebuild" author="TarikFA.">
+    	<createSequence sequenceName="edr_versioning_rule_seq"/>
+    	<createSequence sequenceName="mediation_setting_seq"/>
+    	
+    	<createTable tableName="mediation_setting">
+    	 	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_mediation_setting" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+    		<column name="enable_edr_versioning" type="${type.boolean}" defaultValueNumeric="0" />
+    	</createTable>
+    	
+    	<createTable tableName="edr_versioning_rule">
+    	 	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_edr_versioning_rule" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+    		<column name="priority" type="int4" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="criterial_el" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="key_el" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="is_new_version_el" type="text" >
+    			<constraints nullable="false" />
+    		</column>
+    		<column name="mediation_setting_id" type="bigint" >
+    			<constraints nullable="false" />
+    		</column>
+    	</createTable>
+    	
+    	
+        <addForeignKeyConstraint baseColumnNames="mediation_setting_id" baseTableName="edr_versioning_rule" constraintName="fk_edr_versioning_rule_mediation_setting" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -18119,6 +18174,11 @@
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
     <changeSet id="#INTRD-8022_20220624" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8158_20220624" author="TarikFA." />
+    <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8211_20220626" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8067_20220627" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8077_20220625" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
