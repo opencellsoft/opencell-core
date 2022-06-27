@@ -25,6 +25,11 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.PersistenceService;
 
 import java.util.Currency;
+import java.util.Date;
+
+import static java.math.BigDecimal.ONE;
+import static java.util.Objects.isNull;
+import static org.meveo.model.shared.DateUtils.setTimeToZero;
 
 @Stateless
 @Named
@@ -54,5 +59,25 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
         } catch (IllegalArgumentException e) {
             return code;
         }
+    }
+
+    /**
+     * Refresh trading currency information
+     * @param tradingCurrency
+     * @return updated trading currency
+     */
+    public TradingCurrency updateFunctionalCurrency(TradingCurrency tradingCurrency) {
+        tradingCurrency.setCurrentRate(ONE);
+        tradingCurrency.setCurrentRateFromDate(new Date());
+        tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+        Date today = setTimeToZero(new Date());
+        tradingCurrency.getExchangeRates()
+                .stream()
+                .filter(exchangeRate -> exchangeRate.getFromDate().compareTo(today) >= 0)
+                .forEach(exchangeRate -> exchangeRate.setTradingCurrency(null));
+        tradingCurrency.getExchangeRates().stream()
+                .filter(exchangeRate -> !isNull(exchangeRate.getTradingCurrency()) && exchangeRate.isCurrentRate())
+                .forEach(exchangeRate -> exchangeRate.setExchangeRate(ONE));
+        return update(tradingCurrency);
     }
 }

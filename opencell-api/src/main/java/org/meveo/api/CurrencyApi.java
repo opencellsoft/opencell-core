@@ -18,6 +18,8 @@
 
 package org.meveo.api;
 
+import static java.math.BigDecimal.ONE;
+import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
 
 import java.math.BigDecimal;
@@ -269,17 +271,18 @@ public class CurrencyApi extends BaseApi {
         provider.setFunctionalCurrencyFlag(true);
         providerService.update(provider);
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
-        if(tradingCurrency == null)
-        {
+        if(tradingCurrency == null) {
             tradingCurrency = new TradingCurrency();
             tradingCurrency.setCurrencyCode(currency.getCurrencyCode());
             tradingCurrency.setPrDescription(currency.getDescription());
             tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
             tradingCurrency.setDecimalPlaces(2);
-            tradingCurrency.setCurrentRate(BigDecimal.ONE);
+            tradingCurrency.setCurrentRate(ONE);
             tradingCurrency.setCurrentRateFromDate(new Date());
             tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
             tradingCurrencyService.create(tradingCurrency);
+        } else {
+            tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
         }
 
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Success");
@@ -333,7 +336,7 @@ public class CurrencyApi extends BaseApi {
         }
 
         // We can modify only the future rates
-        if (exchangeRate.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) <= 0) {
+        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
         }
 
@@ -348,12 +351,12 @@ public class CurrencyApi extends BaseApi {
         }
 
         // User cannot set a rate in a paste date
-        if (postData.getFromDate().before(DateUtils.setTimeToZero(new Date()))) {
+        if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));
         }
 
         // Check if fromDate = new Date()
-        if (postData.getFromDate().compareTo(DateUtils.setTimeToZero(new Date())) == 0) {
+        if (postData.getFromDate().compareTo(setTimeToZero(new Date())) == 0) {
             exchangeRate.setCurrentRate(true);
             // set isCurrentRate to false for all other ExchangeRate of the same TradingCurrency
             TradingCurrency tradingCurrency = tradingCurrencyService.findById(exchangeRate.getTradingCurrency().getId(), Arrays.asList("exchangeRates"));
@@ -418,8 +421,5 @@ public class CurrencyApi extends BaseApi {
     
     public void removeExchangeRateById(Long id) {
         exchangeRateService.delete(id);
-
-
-
     }
 }
