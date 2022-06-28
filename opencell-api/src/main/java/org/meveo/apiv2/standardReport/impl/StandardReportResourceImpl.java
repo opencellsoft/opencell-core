@@ -20,8 +20,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
 
-import static java.lang.Long.valueOf;
-
 public class StandardReportResourceImpl implements StandardReportResource {
 
     @Inject
@@ -36,13 +34,13 @@ public class StandardReportResourceImpl implements StandardReportResource {
     
     @Override
     public Response getAgedReceivables(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
-                                       Date startDate, String customerAccountDescription, String invoiceNumber,
+                                       Date startDate, Date dueDate, String customerAccountDescription, String invoiceNumber,
                                        Integer stepInDays, Integer numberOfPeriods, Request request) {
     	if (startDate == null) {
     		startDate = new Date();
 		}
     	List<Object[]> agedBalanceList =
-                standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate,
+                standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate, dueDate,
                         customerAccountDescription, invoiceNumber, stepInDays, numberOfPeriods);
         agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
