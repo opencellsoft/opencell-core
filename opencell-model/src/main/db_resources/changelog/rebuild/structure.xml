@@ -4691,6 +4691,8 @@
             <column name="registration_no" type="varchar(100)" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="reference" type="varchar(80)" />
+            <column name="comment" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
