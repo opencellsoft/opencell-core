@@ -212,7 +212,9 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
     @Override
     public void remove(MeveoInstance meveoInstance) {
         // remove credential of opencellInstance in the keystore
-        KeystoreManager.removeCredential(meveoInstance.getClass().getSimpleName() + "." + meveoInstance.getId());
+    	if(KeystoreManager.existKeystore()) {
+    		KeystoreManager.removeCredential(meveoInstance.getClass().getSimpleName() + "." + meveoInstance.getId());
+    	}
 
         super.remove(meveoInstance);
     }
