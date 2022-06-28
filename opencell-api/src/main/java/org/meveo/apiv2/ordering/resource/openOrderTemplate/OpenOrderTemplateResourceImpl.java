@@ -33,6 +33,12 @@ public class OpenOrderTemplateResourceImpl implements OpenOrderTemplateResource 
         return Response.ok().build();
     }
 
+    @Override
+    public Response changeStatusOpenOrderTemplate(String code, String status) {
+        openOrderTemplateApiService.changeStatusOpenOrderTemplate(code, status);
+        return Response.ok().build();
+    }
+    
     private Response buildResponse(OpenOrderTemplateInput openOrderTemplateInput) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
