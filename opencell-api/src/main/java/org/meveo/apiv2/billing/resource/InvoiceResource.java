@@ -380,4 +380,14 @@ public interface InvoiceResource {
     Response addSubTotals(
             @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
 
+	@POST
+    @Path("/deleteSubTotals")
+    @Operation(summary = "Add Sub Totals", tags = {
+            "Invoices" }, description = "delete a sub totals", 
+                    responses = {
+                    @ApiResponse(responseCode = "200", description = "the sub totals successfully deleted"),
+                    @ApiResponse(responseCode = "400", description = "bad request when sub totals is not found") })
+    Response deleteSubTotals(
+            @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
+
 }

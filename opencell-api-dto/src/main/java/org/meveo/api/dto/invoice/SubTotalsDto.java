@@ -31,13 +31,13 @@ public class SubTotalsDto {
     }
 
     /** EL expression. */
-    @XmlElement(required = true)
-    @Schema(description = "The invoice type")
+    @XmlElement()
+    @Schema(description = "The EL Expression")
     private String el;
     
     /** Label translations. */
-    @XmlElement(required = true)
-    @Schema(description = "The invoice type")
+    @XmlElement()
+    @Schema(description = "The Label Translations")
     private String label;
     
     /** Label translations. */

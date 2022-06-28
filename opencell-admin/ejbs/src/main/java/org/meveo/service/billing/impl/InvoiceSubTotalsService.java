@@ -76,6 +76,19 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
         
         return lstInvoiceSubTotals;
     }
+    
+    public void deleteSubTotals(InvoiceSubTotalsDto invoiceSubTotalsDto) {
+        for(SubTotalsDto subTotalsDto : invoiceSubTotalsDto.getSubTotals()) {
+            Long subTotalId = subTotalsDto.getId();           
+            InvoiceSubTotals invoiceSubTotal = findById(subTotalId);
+            if (invoiceSubTotal != null) {
+                remove(invoiceSubTotal);
+            }
+            else {
+                throw new EntityDoesNotExistsException(InvoiceSubTotals.class, subTotalId);
+            }
+        }        
+    }
 
     private void updateInvoiceSubTotalsFromDto(InvoiceType invoiceType, SubTotalsDto subTotalsDto, InvoiceSubTotals invoiceSubTotal) {
         String subTotalEL = subTotalsDto.getEl();

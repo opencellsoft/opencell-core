@@ -17,7 +17,7 @@ public class InvoiceSubTotalsDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     
-    @XmlElement(required = true)
+    @XmlElement()
     @Schema(description = "The Invoice Type")
     private InvoiceTypeDto invoiceType;
     
