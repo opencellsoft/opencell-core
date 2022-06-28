@@ -18,10 +18,9 @@
 
 package org.meveo.admin.job;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -29,6 +28,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.SubListCreator;
+import org.meveo.admin.async.SubscriptionStatusAsync;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -38,10 +39,10 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
 
 /**
  * Handles subscription renewal or termination once subscription expires, fire handles renewal notice events
@@ -55,7 +56,7 @@ import org.meveo.service.job.JobExecutionService;
 public class SubscriptionStatusJob extends Job {
 
     @Inject
-    private SubscriptionStatusJobBean subscriptionStatusJobBean;
+    private SubscriptionStatusAsync subscriptionStatusAsync;
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -67,37 +68,74 @@ public class SubscriptionStatusJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         Date untilDate = (Date) this.getParamOrCFValue(jobInstance, "untilDate");
         if (untilDate == null) {
             untilDate = new Date();
         }
         try {
+            MeveoUser lastCurrentUser = currentUser.unProxy();
 
+            // process subscriptions update status
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify(untilDate);
+            SubListCreator<Long> subsSubListCreator = new SubListCreator<>(subscriptionIds, nbRuns.intValue());
+            List<Future<String>> subsFutures = new ArrayList<>();
 
-            int i = 0;
-            for (Long subscriptionId : subscriptionIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
+            while (subsSubListCreator.isHasNext()) {
+                subsFutures.add(subscriptionStatusAsync.launchAndForgetUpdateSubs(subsSubListCreator.getNextWorkSet(),
+                        untilDate, result, lastCurrentUser));
+                try {
+                    Thread.sleep(waitingMillis.longValue());
+                } catch (InterruptedException e) {
+                    log.error("", e);
                 }
-                subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId, untilDate);
+            }
+            // Wait for all subs async methods to finish
+            for (Future<String> future : subsFutures) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    // It was cancelled from outside - no interest
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    result.registerError(cause.getMessage());
+                    result.addReport(cause.getMessage());
+                    log.error("Failed to execute subscriptionStatusAsync.launchAndForgetUpdateSubs() method", cause);
+                }
             }
 
-        } catch (Exception e) {
-            log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
-            result.registerError(e.getMessage());
-        }
-
-        try {
+            // process services update status
             List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify(untilDate);
-            int i = 0;
-            for (Long serviceId : serviceIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
+            SubListCreator<Long> servicesSubListCreator = new SubListCreator<>(serviceIds, nbRuns.intValue());
+            List<Future<String>> servicesFutures = new ArrayList<>();
+
+            while (servicesSubListCreator.isHasNext()) {
+                servicesFutures.add(subscriptionStatusAsync.launchAndForgetUpdateServices(servicesSubListCreator.getNextWorkSet(),
+                        untilDate, result, lastCurrentUser));
+                try {
+                    Thread.sleep(waitingMillis.longValue());
+                } catch (InterruptedException e) {
+                    log.error("", e);
                 }
-                subscriptionStatusJobBean.updateServiceInstanceStatus(result, serviceId, untilDate);
+            }
+            // Wait for all services async methods to finish
+            for (Future<String> future : servicesFutures) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    // It was cancelled from outside - no interest
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    result.registerError(cause.getMessage());
+                    result.addReport(cause.getMessage());
+                    log.error("Failed to execute subscriptionStatusAsync.launchAndForgetUpdateServices() method", cause);
+                }
             }
 
         } catch (Exception e) {
@@ -114,6 +152,28 @@ public class SubscriptionStatusJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JobInstance_SubscriptionStatusJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
+        result.put("nbRuns", customFieldNbRuns);
+
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JobInstance_SubscriptionStatusJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:1");
+        result.put("waitingMillis", customFieldNbWaiting);
 
         CustomFieldTemplate untilDate = new CustomFieldTemplate();
         untilDate.setCode("untilDate");

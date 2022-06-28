@@ -45,10 +45,11 @@ import org.slf4j.Logger;
 /**
  * @author HORRI Khalid
  * @author Abdellatif BARI
+ * @author Mounir BOUKAYOUA
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class SubscriptionStatusJobBean extends BaseJobBean {
+public class UnitSubscriptionStatusJobBean {
 
 	@Inject
 	private Logger log;
@@ -66,12 +67,6 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 	@Inject
 	@EndOfTerm
 	protected Event<ServiceInstance> serviceEndOfTermEventProducer;
-
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateSubscriptionStatus(JobExecutionResultImpl result, Long subscriptionId) throws BusinessException {
-		updateSubscriptionStatus(result, subscriptionId, null);
-	}
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
