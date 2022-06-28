@@ -34,7 +34,9 @@ public class WebHookService extends NotificationInstanceService<WebHook> {
     @Override
     public void remove(WebHook webHook) {
         // remove credential of webhook in the keystore
-        KeystoreManager.removeCredential(webHook.getClass().getSimpleName() + "." + webHook.getId());
+    	if(KeystoreManager.existKeystore()) {
+    		KeystoreManager.removeCredential(webHook.getClass().getSimpleName() + "." + webHook.getId());
+    	}
 
         super.remove(webHook);
     }
