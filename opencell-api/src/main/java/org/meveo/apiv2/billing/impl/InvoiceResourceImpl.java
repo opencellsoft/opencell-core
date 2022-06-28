@@ -468,11 +468,14 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.withLinks(new LinkGenerator.SelfLinkGenerator(InvoiceResource.class).withId(invoiceSubTotal.getId())
 						.withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction().build());
 	}
+	
 	private List<org.meveo.apiv2.billing.InvoiceSubTotals> toResourceInvoiceSubTotalsWithLink(List<org.meveo.apiv2.billing.InvoiceSubTotals> invoiceSubTotal) {
 		var result = new ArrayList<org.meveo.apiv2.billing.InvoiceSubTotals>();
-		for (org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotals : invoiceSubTotal) {
-			result.add(toResourceInvoiceSubTotalsWithLink(invoiceSubTotals));
-		}
+		if (invoiceSubTotal != null) {
+            for (org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotals : invoiceSubTotal) {
+                result.add(toResourceInvoiceSubTotalsWithLink(invoiceSubTotals));
+            }
+        }
 		return result;
 	}
 }
