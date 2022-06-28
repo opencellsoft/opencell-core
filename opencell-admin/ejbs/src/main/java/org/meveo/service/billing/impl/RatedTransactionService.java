@@ -1525,21 +1525,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Map<String, Object> params = new HashMap<>();
         params.put("ids", ratedTransactionIds);
-        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usage_date ");
-        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
-                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                + "              sum(rt.amount_without_tax) as sum_amount_without_tax,"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
-                + "              rt.offer_id, rt.service_instance_id, "
-                + 				 usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
-                + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id "
-                + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
-                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
-                + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
-                + "             rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, charge_instance_id, rt.article_id ,discounted_Ratedtransaction_id order by unit_amount_without_tax desc  ";
-        return executeNativeSelectQuery(query, params);
+        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usageDate");
+        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, "
+                + "              rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
+                + "              sum(rt.unitAmountWithoutTax) as sum_amount_without_tax,"
+                + "              sum(rt.amountWithTax) / sum(rt.quantity) as unit_price,"
+                + "              rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
+                + 				 usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, "
+                + "              max(rt.endDate) as end_date, rt.orderNumber as order_number, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
+                + "             rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as accounting_article_id ,rt.discountedRatedTransaction as discounted_Ratedtransaction_id "
+                + "    FROM RatedTransaction rt WHERE rt.id in (:ids) "
+                + "    GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, "
+                + "             rt.offerTemplate.id, rt.serviceInstance.id, " + usageDateAggregation + ",  "
+                + "             rt.orderNumber, rt.taxPercent, rt.tax.id, "
+                + "             rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction ";
+        return getSelectQueryAsMap(query, params);
     }
 
     public int makeAsProcessed(List<Long> ratedTransactionIds) {
