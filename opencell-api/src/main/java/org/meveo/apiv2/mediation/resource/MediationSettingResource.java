@@ -1,6 +1,8 @@
 package org.meveo.apiv2.mediation.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -10,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.mediation.EdrVersioningRule;
+import org.meveo.apiv2.mediation.EdrVersioningRuleSwapping;
 import org.meveo.apiv2.mediation.MediationSetting;
 import org.meveo.apiv2.models.ApiException;
 
@@ -45,7 +48,7 @@ public interface MediationSettingResource {
 	   tags = { "Mediation Settings" },
 	   description ="update an existing mediation setting to enabling or disabling edr versioning",
 	   responses = {
-	            @ApiResponse(responseCode="200", description = "new mediation setting is created"),
+	            @ApiResponse(responseCode="200", description = "An existing mediation setting is updated"),
 	            @ApiResponse(responseCode = "404", description = "missing paramters",
 	                    content = @Content(schema = @Schema(implementation = ApiException.class)))            
 	    })
@@ -62,4 +65,40 @@ public interface MediationSettingResource {
 	            @ApiResponse(responseCode = "404", description = "missing paramters",  content = @Content(schema = @Schema(implementation = ApiException.class)))
 	    })
 	Response createEdrVersionRule(EdrVersioningRule edrVersioningRule);
+	
+
+	@PUT
+	@Path("/edrVersioningRule/{edrVersionRuleId}")
+	@Operation(summary = "Update new Edr Version rule",
+	   tags = { "Mediation Settings" },
+	   description ="upate an existing Edr Version rule",
+	   responses = {
+	            @ApiResponse(responseCode="200", description = "Edr Version rule is updated"),
+	            @ApiResponse(responseCode = "404", description = "missing paramters",  content = @Content(schema = @Schema(implementation = ApiException.class)))
+	    })
+	Response updateEdrVersionRule(@PathParam("edrVersionRuleId") Long edrVersionRuleId, EdrVersioningRule edrVersioningRule);
+	
+
+	@POST
+	@Path("/edrVersioningRule/swapPriority")
+	@Operation(summary = "Update new Edr Version rule",
+	   tags = { "Mediation Settings" },
+	   description ="upate an existing Edr Version rule",
+	   responses = {
+	            @ApiResponse(responseCode="200", description = "Edr Version rule is updated"),
+	            @ApiResponse(responseCode = "404", description = "missing paramters",  content = @Content(schema = @Schema(implementation = ApiException.class)))
+	    })
+	Response swapPriority(EdrVersioningRuleSwapping edrVersioningRuleSwapping);
+	
+
+	@DELETE
+	@Path("/edrVersioningRule/{edrVersionRuleId}")
+	@Operation(summary = "Remove new Edr Version rule",
+	   tags = { "Mediation Settings" },
+	   description ="remove an existing Edr Version rule",
+	   responses = {
+	            @ApiResponse(responseCode="200", description = "Edr Version rule is removed"),
+	            @ApiResponse(responseCode = "400", description = "Edr Version doesn't exist",  content = @Content(schema = @Schema(implementation = NotFoundException.class)))
+	    })
+	Response deleteEdrVersioningRule(@PathParam("edrVersionRuleId") Long edrVersionRuleId);
 }
