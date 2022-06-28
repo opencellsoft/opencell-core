@@ -13,6 +13,8 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapper;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
@@ -109,6 +111,40 @@ public class OpenOrderTemplateApiService {
             throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
         }
         openOrderTemplate.setStatus(OpenOrderTemplateStatusEnum.ARCHIVED);
+        openOrderTemplateService.update(openOrderTemplate);
+    }
+    
+    public void changeStatusOpenOrderTemplate(String code, String status) {
+        OpenOrderTemplate openOrderTemplate = openOrderTemplateService.findByCode(code);
+        if (null == openOrderTemplate) {
+            throw new BusinessApiException(String.format("open order template with code %s doesn't exist", code));
+        }
+        
+        if (status == null){
+            throw new MissingParameterException("following parameters are required: status");
+        }
+        
+        OpenOrderTemplateStatusEnum valueOpenOrderTemplateStatusEnum = null;
+        if (status.equalsIgnoreCase(OpenOrderTemplateStatusEnum.ARCHIVED.toString())){
+            valueOpenOrderTemplateStatusEnum = OpenOrderTemplateStatusEnum.ARCHIVED;
+        }
+        if (status.equalsIgnoreCase(OpenOrderTemplateStatusEnum.ACTIVE.toString())){
+            valueOpenOrderTemplateStatusEnum = OpenOrderTemplateStatusEnum.ACTIVE;
+        }
+        if (status.equalsIgnoreCase(OpenOrderTemplateStatusEnum.DRAFT.toString())){
+            valueOpenOrderTemplateStatusEnum = OpenOrderTemplateStatusEnum.DRAFT;
+        }        
+        if (valueOpenOrderTemplateStatusEnum == null){
+            throw new MeveoApiException("the open order template Status must be either ARCHIVED or ACTIVE or DRAFT");
+        }
+        
+        if (openOrderTemplate.getStatus() != null && 
+            openOrderTemplate.getStatus().equals(OpenOrderTemplateStatusEnum.ARCHIVED) && 
+            !valueOpenOrderTemplateStatusEnum.equals(OpenOrderTemplateStatusEnum.DRAFT)){
+            throw new MeveoApiException("changing the open order template status from ARCHIVED to " + valueOpenOrderTemplateStatusEnum + " is not allowed");
+        }        
+        
+        openOrderTemplate.setStatus(valueOpenOrderTemplateStatusEnum);
         openOrderTemplateService.update(openOrderTemplate);
     }
 
