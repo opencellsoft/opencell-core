@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.mediation.EdrVersioningRule;
 import org.meveo.apiv2.mediation.MediationSetting;
 import org.meveo.apiv2.models.ApiException;
 
@@ -49,4 +50,16 @@ public interface MediationSettingResource {
 	                    content = @Content(schema = @Schema(implementation = ApiException.class)))            
 	    })
 	Response update(@PathParam("mediationRuleId") Long mediationRuleId, MediationSetting mediationSetting);
+	
+
+	@POST
+	@Path("/edrVersioningRule")
+	@Operation(summary = "Create new Edr Version rule",
+	   tags = { "Mediation Settings" },
+	   description ="create new Edr Version rule",
+	   responses = {
+	            @ApiResponse(responseCode="200", description = "new Edr Version rule is created"),
+	            @ApiResponse(responseCode = "404", description = "missing paramters",  content = @Content(schema = @Schema(implementation = ApiException.class)))
+	    })
+	Response createEdrVersionRule(EdrVersioningRule edrVersioningRule);
 }

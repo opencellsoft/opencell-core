@@ -3,15 +3,16 @@ package org.meveo.apiv2.mediation.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -44,6 +45,7 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 		return Optional.ofNullable(mediationsettingService.findById(id));
 	}
 
+	@Transactional
 	@Override
 	public MediationSetting create(MediationSetting baseEntity) {
 		if(mediationsettingService.count() > 0) throw new EntityAlreadyExistsException("Entity Already exist");
@@ -58,6 +60,7 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 		 return baseEntity;
 	}
 
+	@Transactional
 	@Override
 	public Optional<MediationSetting> update(Long id, MediationSetting baseEntity) {
 		var mediationSetting = mediationsettingService.findById(id, true);
