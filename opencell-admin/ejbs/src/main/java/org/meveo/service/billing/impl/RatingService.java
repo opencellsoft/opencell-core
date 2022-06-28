@@ -590,7 +590,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
             if (bareWalletOperation.getTax() == null) {
 
-                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate(), accountingArticle);
+                TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
                 if(taxInfo==null) {
                 	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
                 }
