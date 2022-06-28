@@ -24,9 +24,11 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.dto.invoice.SubTotalsDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceSubTotals;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -121,13 +123,19 @@ public class InvoiceSubTotalsApiServiceTest {
     @Test
     public void createSubTotals() {
         InvoiceSubTotalsDto invoiceSubTotalsDto = initInvoiceSubTotalsDto();
-        invoiceSubTotalsService.addSubTotals(invoiceSubTotalsDto);
+        subTotals = invoiceSubTotalsService.addSubTotals(invoiceSubTotalsDto);
+        assertEquals(0, subTotals.get(0).getAmountWithoutTax().intValue());
     }
     
     @Test
     public void deleteSubTotals() {
         InvoiceSubTotalsDto invoiceSubTotalsDto = init4DeleteInvoiceSubTotalsDto();
         invoiceSubTotalsService.deleteSubTotals(invoiceSubTotalsDto);
+        for(SubTotalsDto subTotalsDto : invoiceSubTotalsDto.getSubTotals()) {
+            Long subTotalId = subTotalsDto.getId();           
+            InvoiceSubTotals invoiceSubTotal = invoiceSubTotalsService.findById(subTotalId);
+            assertEquals(invoiceSubTotal, null);
+        }   
     }
     
     private InvoiceSubTotalsDto init4DeleteInvoiceSubTotalsDto() {
