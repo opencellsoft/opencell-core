@@ -106,6 +106,7 @@ public class Product extends ServiceCharge {
 		this.discountList = new HashSet<DiscountPlan>();
 		this.modelChildren = new HashSet<String>();
 		this.productVersions = new ArrayList<ProductVersion>();
+		this.priceVersionDateSetting = copy.getPriceVersionDateSetting();
 		this.getUuid();
 		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
 	}
