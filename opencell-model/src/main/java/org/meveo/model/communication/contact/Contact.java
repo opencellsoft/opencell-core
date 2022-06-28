@@ -247,6 +247,15 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
 
+    @Column(name = "reference", length = 80)
+    @Size(max = 80)
+    private String reference;
+
+
+    @Column(name = "comment", length = 2000)
+    @Size(max = 2000)
+    private String comment;
+
     public String getAssistantName() {
         return assistantName;
     }
@@ -489,4 +498,19 @@ public class Contact extends BusinessCFEntity implements ISearchable {
         this.legalEntityType = legalEntityType;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }
