@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
@@ -18,10 +20,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.billing.InvoiceTypeDto;
+import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
+import org.meveo.api.dto.invoice.SubTotalsDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceSubTotals;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.report.query.ReportQuery;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceSubTotalsService;
@@ -106,11 +115,79 @@ public class InvoiceSubTotalsApiServiceTest {
     
     @Test
     public void shouldReturn_emptyList() {
-    	when(invoiceSubTotalsService.findByInvoiceType(any())).thenReturn(Collections.emptyList());
-    	invoice.setInvoiceType(new InvoiceType());
-    	invoiceSubTotalsApiService.calculateSubTotals(invoice);
+        when(invoiceSubTotalsService.findByInvoiceType(any())).thenReturn(Collections.emptyList());
+        invoice.setInvoiceType(new InvoiceType());
+        invoiceSubTotalsApiService.calculateSubTotals(invoice);
     }
     
+    @Test
+    public void createSubTotals() {
+        InvoiceSubTotalsDto invoiceSubTotalsDto = initInvoiceSubTotalsDto();
+        subTotals = invoiceSubTotalsService.addSubTotals(invoiceSubTotalsDto);
+        assertEquals(0, subTotals.get(0).getAmountWithoutTax().intValue());
+    }
+    
+    @Test
+    public void deleteSubTotals() {
+        InvoiceSubTotalsDto invoiceSubTotalsDto = init4DeleteInvoiceSubTotalsDto();
+        invoiceSubTotalsService.deleteSubTotals(invoiceSubTotalsDto);
+        for(SubTotalsDto subTotalsDto : invoiceSubTotalsDto.getSubTotals()) {
+            Long subTotalId = subTotalsDto.getId();           
+            InvoiceSubTotals invoiceSubTotal = invoiceSubTotalsService.findById(subTotalId);
+            assertEquals(invoiceSubTotal, null);
+        }   
+    }
+    
+    private InvoiceSubTotalsDto init4DeleteInvoiceSubTotalsDto() {
+        InvoiceSubTotalsDto invoiceSubTotalsDto = new InvoiceSubTotalsDto();
+        InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto();
+        invoiceTypeDto.setId(-1L);
+        invoiceSubTotalsDto.setInvoiceType(invoiceTypeDto);
+        List<SubTotalsDto> subTotalsListDto = new ArrayList<SubTotalsDto>();
+        
+        SubTotalsDto subTotalsDto1 = new SubTotalsDto();
+        subTotalsDto1.setId(1L);        
+        subTotalsListDto.add(subTotalsDto1);
+
+        invoiceSubTotalsDto.setSubTotals(subTotalsListDto);
+        return invoiceSubTotalsDto;
+    }
+
+    private InvoiceSubTotalsDto initInvoiceSubTotalsDto() {
+        InvoiceSubTotalsDto invoiceSubTotalsDto = new InvoiceSubTotalsDto();
+        InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto();
+        invoiceTypeDto.setId(-1L);
+        invoiceSubTotalsDto.setInvoiceType(invoiceTypeDto);
+        List<SubTotalsDto> subTotalsListDto = new ArrayList<SubTotalsDto>();
+        
+        SubTotalsDto subTotalsDto1 = new SubTotalsDto();
+        subTotalsDto1.setLabel("test_1");
+        subTotalsDto1.setEl("#{invoiceLine.getQuantity().intValue() == 10}");
+        subTotalsDto1.setLabel("English label");
+        List<LanguageDescriptionDto> listLanguageLabels = new ArrayList<LanguageDescriptionDto>();
+        LanguageDescriptionDto languageDescription1 = new LanguageDescriptionDto();
+        languageDescription1.setLanguageCode("FRA");
+        languageDescription1.setLanguageCode("labelFR");
+        LanguageDescriptionDto languageDescription2 = new LanguageDescriptionDto();
+        languageDescription2.setLanguageCode("ENG");
+        languageDescription2.setLanguageCode("label ENG");
+        listLanguageLabels.add(languageDescription1);
+        listLanguageLabels.add(languageDescription2);
+        subTotalsDto1.setLanguageLabels(listLanguageLabels);
+
+        SubTotalsDto subTotalsDto2 = new SubTotalsDto();
+        subTotalsDto2.setLabel("test_1");
+        subTotalsDto2.setEl("#{invoiceLine.getQuantity().intValue() == 10}");
+        subTotalsDto2.setLabel("English label");
+        subTotalsDto2.setLanguageLabels(listLanguageLabels);
+        
+        subTotalsListDto.add(subTotalsDto1);
+        subTotalsListDto.add(subTotalsDto2);
+
+        invoiceSubTotalsDto.setSubTotals(subTotalsListDto);
+        return invoiceSubTotalsDto;
+    }
+
     @Test
     public void shouldReturn_listOfInvoiceSubTotals() {
     	initInvoiceSubTotals();
