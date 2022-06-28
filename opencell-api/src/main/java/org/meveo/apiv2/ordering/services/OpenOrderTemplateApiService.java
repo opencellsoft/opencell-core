@@ -2,6 +2,15 @@ package org.meveo.apiv2.ordering.services;
 
 import static org.meveo.admin.util.CollectionUtil.isNullOrEmpty;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapper;
@@ -10,32 +19,26 @@ import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.ordering.OpenOrderArticle;
+import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.ProductService;
+import org.meveo.service.billing.impl.article.OpenOrderArticleService;
+import org.meveo.service.billing.impl.article.OpenOrderProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.order.ThresholdService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Stateless
 public class OpenOrderTemplateApiService {
 
     @Inject
-    private ProductService productService;
+    private OpenOrderProductService openOrderProductService;
     @Inject
-    private AccountingArticleService accountingArticleService;
+    private OpenOrderArticleService openOrderArticleService;
     @Inject
     private OpenOrderTemplateService openOrderTemplateService;
     @Inject
@@ -147,10 +150,10 @@ public class OpenOrderTemplateApiService {
     }
 
 
-    private List<Product> fetchProducts(List<String> productsCodes) {
-        List<Product> products = new ArrayList<>();
+    private List<OpenOrderProduct> fetchProducts(List<String> productsCodes) {
+        List<OpenOrderProduct> products = new ArrayList<>();
         for (String productCode : productsCodes) {
-            Product product = productService.findByCode(productCode);
+        	OpenOrderProduct product = openOrderProductService.findByCode(productCode);
             if (null == product) {
                 throw new BusinessApiException(String.format("Product with code %s doesn't exist", productCode));
 
@@ -160,10 +163,10 @@ public class OpenOrderTemplateApiService {
         return products;
     }
 
-    private List<AccountingArticle> fetchArticles(List<String> articlesCodes) {
-        List<AccountingArticle> articles = new ArrayList<>();
+    private List<OpenOrderArticle> fetchArticles(List<String> articlesCodes) {
+        List<OpenOrderArticle> articles = new ArrayList<>();
         for (String articleCode : articlesCodes) {
-            AccountingArticle article = accountingArticleService.findByCode(articleCode);
+        	OpenOrderArticle article = openOrderArticleService.findByCode(articleCode);
             if (null == article) {
                 throw new BusinessApiException(String.format("Article with code %s doesn't exist", articleCode));
 

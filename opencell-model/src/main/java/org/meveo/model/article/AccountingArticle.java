@@ -81,9 +81,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountingCodeMapping> accountingCodeMappings;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_order_quote_id")
-    private OpenOrderQuote openOrderQuote;
 
     /**
      * Ignore aggregation
@@ -251,14 +248,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     public void setAccountingCodeMappings(List<AccountingCodeMapping> accountingCodeMappings) {
         this.accountingCodeMappings = accountingCodeMappings;
     }
-
-	public OpenOrderQuote getOpenOrderQuote() {
-		return openOrderQuote;
-	}
-
-	public void setOpenOrderQuote(OpenOrderQuote openOrderQuote) {
-		this.openOrderQuote = openOrderQuote;
-	}
 
     public boolean isIgnoreAggregation() {
         return ignoreAggregation;
