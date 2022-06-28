@@ -2001,8 +2001,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(attributInstance.get().getDoubleValue()!=null) {
 					return attributInstance.get().getDoubleValue(); 
 				}
-				if(NumberUtils.isCreatable(attributInstance.get().toString().trim())) {
-					return Double.valueOf(attributInstance.get().toString().trim());
+				if(NumberUtils.isCreatable(attributInstance.get().getStringValue().trim())) {
+					return Double.valueOf(attributInstance.get().getStringValue().trim());
 				}
 				
 				break;
