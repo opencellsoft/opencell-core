@@ -189,6 +189,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
 		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
+		invoiceService.calculateInvoice(invoice);
 	}
 
 	/**
