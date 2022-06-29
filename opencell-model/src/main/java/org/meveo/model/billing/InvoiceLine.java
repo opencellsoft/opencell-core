@@ -344,6 +344,13 @@ public class InvoiceLine extends AuditableEntity {
 	 */
 	@Column(name = "converted_raw_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal convertedRawAmount = BigDecimal.ZERO;
+
+	/**
+	 * Open Order Number
+	 */
+	@Column(name = "open_order_number")
+	@Size(max = 255)
+	private String openOrderNumber;
     
 	public InvoiceLine() {
 	}
@@ -817,6 +824,14 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
 		this.convertedRawAmount = convertedRawAmount;
+	}
+
+	public String getOpenOrderNumber() {
+		return openOrderNumber;
+	}
+
+	public void setOpenOrderNumber(String openOrderNumber) {
+		this.openOrderNumber = openOrderNumber;
 	}
 
 	@PrePersist
