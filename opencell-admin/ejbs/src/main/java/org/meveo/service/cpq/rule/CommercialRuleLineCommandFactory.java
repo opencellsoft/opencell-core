@@ -27,6 +27,8 @@ public class CommercialRuleLineCommandFactory {
                 return new ExistLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes, isQuoteScope);
             case EQUAL:
                 return new EqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
+            case NOT_EQUAL:
+                return new NotEqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
 
             default: {
                 log.warn("Only Exist operator can be applied on commercial rules of type replacement");

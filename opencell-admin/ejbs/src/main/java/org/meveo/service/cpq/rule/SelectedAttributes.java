@@ -11,6 +11,7 @@ public class SelectedAttributes {
     private String offerCode;
     private String productCode;
     private LinkedHashMap<String, Object> selectedAttributes;
+    private boolean canReplace=false;
 
     public SelectedAttributes(String offerCode, String productCode, LinkedHashMap<String, Object> selectedAttributes) {
         this.offerCode = offerCode;
@@ -42,5 +43,14 @@ public class SelectedAttributes {
     public boolean match(String offerCode, String productCode){
         return StringUtils.equals(offerCode, this.offerCode) && StringUtils.equals(productCode, this.productCode);
     }
+
+	public boolean isCanReplace() {
+		return canReplace;
+	}
+
+	public void setCanReplace(boolean canReplace) {
+		this.canReplace = canReplace;
+	}
+    
 
 }

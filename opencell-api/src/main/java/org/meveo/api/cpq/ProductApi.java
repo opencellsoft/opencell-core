@@ -995,7 +995,10 @@ public class ProductApi extends BaseApi {
 								.findFirst();
 						if(selectedAttribute.isPresent() && selectedAttribute.get().getSelectedAttributesMap() != null && selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()) != null) {
 							replacementRulesExecutor.executeReplacements(selectedAttribute.get(), productSourceSelectedAttributes,attributeCommercialRules);
-							attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
+							if(selectedAttribute.get().isCanReplace()) {
+								attributeDto.setAssignedValue(selectedAttribute.get().getSelectedAttributesMap().get(attributeDto.getCode()));
+							}
+							
 						}
                     }
                     List<Long> sourceRules = commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
