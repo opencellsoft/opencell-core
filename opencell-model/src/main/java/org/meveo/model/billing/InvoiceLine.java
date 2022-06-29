@@ -349,6 +349,7 @@ public class InvoiceLine extends AuditableEntity {
 	 * Open Order Number
 	 */
 	@Column(name = "open_order_number")
+	@Size(max = 255)
 	private String openOrderNumber;
     
 	public InvoiceLine() {
