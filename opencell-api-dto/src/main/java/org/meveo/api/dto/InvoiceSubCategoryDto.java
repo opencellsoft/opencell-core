@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.model.billing.InvoiceSubCategory;
 
 /**
@@ -46,38 +47,45 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
      * The invoice category.
      */
     @XmlElement(required = true)
+    @Schema(description = "The invoice category.")
     private String invoiceCategory;
 
     /**
      * The accounting code.
      */
     @XmlElement(required = true)
+    @Schema(description = "The accounting code.")
     private String accountingCode;
 
     /**
      * The language descriptions.
      */
+    @Schema(description = "Description of languages.")
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * The custom fields.
      */
+    @Schema(description = "Custom fields.")
     private CustomFieldsDto customFields;
 
     /**
      * The occ template code.
      */
     @XmlElement(required = true)
+    @Schema(description = "The occ template code.")
     private String occTemplateCode;
 
     /**
      * The occ template negative code.
      */
+    @Schema(description = "The occ template negative code.")
     private String occTemplateNegativeCode;
 
     /**
      * Sorting index.
      */
+    @Schema(description = "Sorting index.")
     private Integer sortIndex;
 
     /**

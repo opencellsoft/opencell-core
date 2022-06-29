@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.model.billing.InvoiceCategory;
 
 /**
@@ -42,27 +43,32 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
     private static final long serialVersionUID = 5166093858617578774L;
 
     /** The language descriptions. */
+    @Schema(description = "Description of languages.")
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * The occ template code.
      */
     @XmlElement(required = true)
+    @Schema(description = "The occ template code.")
     private String occTemplateCode;
 
     /**
      * The occ template negative code.
      */
+    @Schema(description = "The occ template negative code.")
     private String occTemplateNegativeCode;
 
     /**
      * The custom fields.
      */
+    @Schema(description = "The custom fields.")
     private CustomFieldsDto customFields;
 
     /**
      * Sorting index.
      */
+    @Schema(description = "Sorting index.")
     private Integer sortIndex;
 
     /**
