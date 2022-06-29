@@ -13509,5 +13509,14 @@ order by date_trunc('month', i.invoice_date) DESC
 	                               
 	        
 		</changeSet>
+		
+		<changeSet id="#INTRD-8132_20220628" author="anas.rouaguebe" >
+			<addColumn tableName="billing_invoice">
+				<column name="open_order_number" type="varchar(255)" />
+			</addColumn>
+			<addColumn tableName="billing_invoice_line">
+				<column name="open_order_number" type="varchar(255)" />
+			</addColumn>
+		</changeSet>
 
 </databaseChangeLog>

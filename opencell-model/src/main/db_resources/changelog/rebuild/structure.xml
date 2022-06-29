@@ -2971,6 +2971,7 @@
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
+            <column name="open_order_number" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -10549,6 +10550,7 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
+            <column name="open_order_number" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -18242,6 +18244,7 @@
     <changeSet id="#INTRD-8219_20220627" author="HatimOUDAD" />    
     <changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" />
     <changeSet id="#INTRD-8023_20220624-fk2" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8132_20220628" author="anas.rouaguebe" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
