@@ -143,4 +143,16 @@ public class DDPaymentMethod extends PaymentMethod {
 				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
 	}
 
+	public DDPaymentMethod copieDDPaymentMethod() throws CloneNotSupportedException {   
+        DDPaymentMethod clone = new DDPaymentMethod();
+        clone.setPaymentType(this.getPaymentType());
+        clone.setPreferred(this.isPreferred());
+        clone.setAlias(this.getAlias());
+        clone.setMandateIdentification(this.getMandateIdentification());
+        clone.setMandateDate(this.getMandateDate());
+        clone.setBankCoordinates((BankCoordinates) this.getBankCoordinates().clone());
+        clone.setCustomerAccount(this.getCustomerAccount());        
+        
+        return clone;
+    }
 }
