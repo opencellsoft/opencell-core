@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -28,6 +29,7 @@ import org.meveo.model.AuditableEntity;
 public class MediationSetting extends AuditableEntity {
 
     @Column(name = "enable_edr_versioning")
+    @Type(type = "numeric_boolean")
 	private boolean enableEdrVersioning = Boolean.FALSE;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "mediationSetting", orphanRemoval = true)
@@ -53,7 +55,7 @@ public class MediationSetting extends AuditableEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(enableEdrVersioning, rules);
+		result = prime * result + Objects.hash(enableEdrVersioning);
 		return result;
 	}
 
@@ -61,13 +63,13 @@ public class MediationSetting extends AuditableEntity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		MediationSetting other = (MediationSetting) obj;
-		return enableEdrVersioning == other.enableEdrVersioning && Objects.equals(rules, other.rules);
+		return enableEdrVersioning == other.enableEdrVersioning;
 	}
+
+
     
     
 }

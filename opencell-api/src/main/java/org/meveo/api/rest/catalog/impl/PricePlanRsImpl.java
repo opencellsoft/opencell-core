@@ -18,16 +18,11 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.PricePlanMatrixColumnApi;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
@@ -337,6 +332,17 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
     @Override
+    public ActionStatus removePricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            pricePlanMatrixLineApi.remove(pricePlanMatrixLinesDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+    
+    @Override
     public Response getPricePlanMatrixLine(Long ppmLineId) {
         GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
         try {
@@ -360,6 +366,17 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, result.getActionStatus());
         }
 	}
+	
+	@Override
+    public Response updateWithoutDeletePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            result = pricePlanMatrixLineApi.updateWithoutDeletePricePlanMatrixLines(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLinesDto);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+    }
 	
 	@Override
 	public Response duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {

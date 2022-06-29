@@ -59,7 +59,6 @@ import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.ordering.OpenOrderQuote;
 
 /**
  * 
@@ -107,6 +106,7 @@ public class Product extends ServiceCharge {
 		this.discountList = new HashSet<DiscountPlan>();
 		this.modelChildren = new HashSet<String>();
 		this.productVersions = new ArrayList<ProductVersion>();
+		this.priceVersionDateSetting = copy.getPriceVersionDateSetting();
 		this.getUuid();
 		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
 	}
@@ -260,9 +260,6 @@ public class Product extends ServiceCharge {
     @JoinColumn(name = "product_model_id")
     private Product productModel;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_order_quote_id")
-    private OpenOrderQuote openOrderQuote;
 
 	/**
 	 * @return the status
@@ -710,16 +707,6 @@ public class Product extends ServiceCharge {
 	 */
 	public void setProductModel(Product productModel) {
 		this.productModel = productModel;
-	}
-
-
-	public OpenOrderQuote getOpenOrderQuote() {
-		return openOrderQuote;
-	}
-
-
-	public void setOpenOrderQuote(OpenOrderQuote openOrderQuote) {
-		this.openOrderQuote = openOrderQuote;
 	}
 	
 	

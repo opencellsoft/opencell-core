@@ -1,5 +1,11 @@
 package org.meveo.apiv2.ordering.services;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,21 +14,15 @@ import org.meveo.apiv2.ordering.resource.order.ImmutableOpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.resource.order.ImmutableThresholdInput;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.ordering.OpenOrderArticle;
+import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.ProductService;
+import org.meveo.service.billing.impl.article.OpenOrderArticleService;
+import org.meveo.service.billing.impl.article.OpenOrderProductService;
 import org.meveo.service.order.OpenOrderTemplateService;
-import org.meveo.service.order.ThresholdService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenOrderTemplateApiServiceTest {
@@ -30,12 +30,12 @@ public class OpenOrderTemplateApiServiceTest {
     private OpenOrderTemplateApiService openOrderTemplateApiService;
 
     @Mock
-    private ProductService productService;
+    private OpenOrderProductService openProductService;
 
     @Mock
     private OpenOrderTemplateService openOrderTemplateService;
     @Mock
-    private AccountingArticleService accountingArticleService;
+    private OpenOrderArticleService openArticleService;
 
     @Test
     public void createOpenOrderTemplate_typeArticle_productExist()
@@ -49,7 +49,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .products(Collections.singleton("product 1"))
 
                         .build();
-        doReturn(new Product()).when(productService).findByCode(any());
+        doReturn(new OpenOrderProduct()).when(openProductService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
@@ -73,7 +73,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .articles(Collections.singleton("article 1"))
 
                         .build();
-        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
         try {
             openOrderTemplateApiService.create(input);
@@ -100,7 +100,7 @@ public class OpenOrderTemplateApiServiceTest {
                                 ImmutableThresholdInput.builder().sequence(1).percentage(-1).externalRecipient("example").build()))
 
                         .build();
-        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {
@@ -129,7 +129,7 @@ public class OpenOrderTemplateApiServiceTest {
                                 ))
 
                         .build();
-        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
+        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
 
         try {

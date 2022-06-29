@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -70,11 +73,13 @@ public class OpenOrderQuote extends BusinessEntity {
 	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY)
     private List<Threshold> thresholds;
 
-	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY)
-	private List<Product> products;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_quote_products", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
+    private List<OpenOrderProduct> products;
 	
-    @OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY)
-    private List<AccountingArticle> articles;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_quote_articles", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_article_id", referencedColumnName = "id"))
+    private List<OpenOrderArticle> articles;
     
     @OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billing_account_id")
@@ -86,7 +91,8 @@ public class OpenOrderQuote extends BusinessEntity {
     @NotNull
     private OpenOrderQuoteStatusEnum status;
 
-    @OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "open_order_quote_tags", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
     
 
@@ -114,22 +120,6 @@ public class OpenOrderQuote extends BusinessEntity {
 
     public void setThresholds(List<Threshold> thresholds) {
         this.thresholds = thresholds;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public List<AccountingArticle> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<AccountingArticle> articles) {
-        this.articles = articles;
     }
 
 	public String getExternalReference() {
@@ -203,5 +193,20 @@ public class OpenOrderQuote extends BusinessEntity {
 	public void setStatus(OpenOrderQuoteStatusEnum status) {
 		this.status = status;
 	}
-    
+
+	public List<OpenOrderProduct> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<OpenOrderProduct> products) {
+		this.products = products;
+	}
+
+	public List<OpenOrderArticle> getArticles() {
+		return articles;
+	}
+
+	public void setArticles(List<OpenOrderArticle> articles) {
+		this.articles = articles;
+	} 
 }

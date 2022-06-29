@@ -325,6 +325,8 @@
         <createSequence sequenceName="ar_payment_plan_seq" startValue="1"/>
         <createSequence sequenceName="open_order_quote_seq"/>
         <createSequence sequenceName="invoice_sub_totals_seq" startValue="1"/>
+        <createSequence sequenceName="open_order_article_seq"/>
+        <createSequence sequenceName="open_order_product_seq"/>
     </changeSet>
 
 
@@ -689,12 +691,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_invoice_sub_cat_seq values(3)</sql>
-        <!-- <createTable tableName="billing_invoice_sub_country_seq"> -->
-        <!-- <column name="next_val" type="BIGINT" > -->
-        <!-- <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_country_seq_pk" /> -->
-        <!-- </column> -->
-        <!-- </createTable> -->
-        <!-- <sql>insert into ${db.schema.adapted}billing_inv_sub_country_seq values(1)</sql> -->
         <createTable tableName="billing_invoice_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_template_seq_pk" />
@@ -5865,7 +5861,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_meveo_instance_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -8423,7 +8419,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_class_pkey" />
             </column>
-            <column name="version" type="int4" />
+            <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -8872,7 +8868,6 @@
             <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
                 <constraints nullable="false" />
             </column>
-            <column name="open_order_quote_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -8954,7 +8949,6 @@
             <column name="tag_type_id" type="bigint" />
             <column name="parent_tag_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)"/>
-            <column name="open_order_quote_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -9878,7 +9872,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="cf_values" type="${type.json}" />
-            <column name="open_order_quote_id" type="bigint" />
+            <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -11800,7 +11794,7 @@
             <column name="open_order_template_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="product_id" type="bigint">
+            <column name="open_product_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -11808,7 +11802,7 @@
             <column name="open_order_template_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="article_id" type="bigint">
+            <column name="open_article_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -11817,10 +11811,10 @@
         <addPrimaryKey columnNames="open_order_template_id,tag_id"
                        constraintName="open_order_template_tags_pkey"
                              tableName="open_order_template_tags"/>
-         <addPrimaryKey columnNames="open_order_template_id,product_id"
+         <addPrimaryKey columnNames="open_order_template_id,open_product_id"
                              constraintName="open_order_template_products_pkey"
                              tableName="open_order_template_products"/>
-         <addPrimaryKey columnNames="open_order_template_id,article_id"
+         <addPrimaryKey columnNames="open_order_template_id,open_article_id"
                              constraintName="open_order_template_articles_pkey"
                              tableName="open_order_template_articles"/>
     </changeSet>
@@ -11938,6 +11932,111 @@
             <column name="label_i18n" type="${type.json}" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-8022_20220624_tbl" author="HatimOUDAD" >
+        <createTable tableName="open_order_article">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_article_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_article_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+            <!-- Simple fields -->
+            
+            <column name="active" type="${type.boolean}"/>
+            
+
+            <!-- Dependencies -->
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        
+        <createTable tableName="open_order_product">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order_product_plan" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_product_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+
+            <!-- Simple fields -->
+            
+            <column name="active" type="${type.boolean}"/>
+            
+
+            <!-- Dependencies -->
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>	
+        </changeSet>
+        
+        <changeSet id="#INTRD-8219_20220627_tbl" author="HatimOUDAD" >                      
+	                              
+        <createTable tableName="open_order_quote_tags">
+           <column name="open_order_quote_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+           <column name="tag_id" type="bigint">
+               <constraints nullable="false"/>
+           </column>
+        </createTable>
+        <createTable tableName="open_order_quote_products">
+            <column name="open_order_quote_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open_product_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="open_order_quote_articles">
+            <column name="open_order_quote_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open_article_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+       	<addPrimaryKey columnNames="open_order_quote_id,tag_id"
+                       constraintName="open_order_quote_tags_pkey"
+                             tableName="open_order_quote_tags"/>
+         <addPrimaryKey columnNames="open_order_quote_id,open_product_id"
+                             constraintName="open_order_quote_products_pkey"
+                             tableName="open_order_quote_products"/>
+         <addPrimaryKey columnNames="open_order_quote_id,open_article_id"
+                             constraintName="open_order_quote_articles_pkey"
+                             tableName="open_order_quote_articles"/>
+        
+        </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -13480,10 +13579,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    	<!-- 
-        <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
-         -->
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
         <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -16116,10 +16211,10 @@
                                  referencedTableName="open_order_template"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="product_id"
-                                 constraintName="open_order_template_products_product_id_fk"
-                                 referencedTableName="cpq_product"
-                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_product_id"
+	                                 constraintName="open_order_template_products_product_id_fk"
+	                                 referencedTableName="open_order_product"
+	                                 referencedColumnNames="id"/>
 
 
         <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_order_template_id"
@@ -16127,10 +16222,10 @@
                                  referencedTableName="open_order_template"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="article_id"
-                                 constraintName="open_order_template_articles_article_id_fk"
-                                 referencedTableName="billing_accounting_article"
-                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order_template_articles" baseColumnNames="open_article_id"
+	                                 constraintName="open_order_template_articles_article_id_fk"
+	                                 referencedTableName="open_order_article"
+	                                 referencedColumnNames="id"/>
 
 
     </changeSet>
@@ -16236,17 +16331,57 @@
         
         <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="open_order_threshold" constraintName="fk_threshold_open_quote" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
-        
-        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_product" constraintName="fk_cpq_product_open_quote" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
-       
-        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="billing_accounting_article" constraintName="fk_billing_accounting_article_open_quote" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
-        
-        <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="cpq_tag" constraintName="fk_tag_open_quote" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
     </changeSet>
+    <changeSet id="#INTRD-8022_20220624_fk" author="HatimOUDAD" >
+     	<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="open_order_article"
+                                 constraintName="fk_open_billing_accounting_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_article"
+                                 constraintName="fk_open_order_template_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="open_order_product"
+                                 constraintName="fk_product_open_order_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+                                 
+        <addForeignKeyConstraint baseColumnNames="open_order_template_id" baseTableName="open_order_product"
+                                 constraintName="fk_open_order_template_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_template" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-8219_20220627_fk" author="HatimOUDAD" >  
+		<addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_quote_tags_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
 
+        <addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_quote_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_quote_products_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_product_id"
+	                                 constraintName="open_order_quote_products_product_id_fk"
+	                                 referencedTableName="open_order_product"
+	                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_quote_articles_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_article_id"
+	                                 constraintName="open_order_quote_articles_article_id_fk"
+	                                 referencedTableName="open_order_article"
+	                                 referencedColumnNames="id"/>
+	    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18097,9 +18232,17 @@
     <changeSet id="#INTRD-8055_20220621" author="AbdelkaderBouazza"/>
     <changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
     <changeSet id="#INTRD-8109_20220622" author="ZBariki" />
+    <changeSet id="#INTRD-8022_20220624" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8023_20220624" author="HatimOUDAD" />
     <changeSet id="#INTRD-8158_20220624" author="TarikFA." />
     <changeSet id="#INTRD-8147_20220624" author="anas.rouaguebe" />
-
+    <changeSet id="#INTRD-8211_20220626" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8067_20220627" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8077_20220625" author="ZBariki" />
+    <changeSet id="#INTRD-8219_20220627" author="HatimOUDAD" />    
+    <changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" />
+    <changeSet id="#INTRD-8023_20220624-fk2" author="HatimOUDAD" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

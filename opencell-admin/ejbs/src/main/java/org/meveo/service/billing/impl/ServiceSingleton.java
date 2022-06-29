@@ -419,7 +419,7 @@ public class ServiceSingleton {
     		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	}
         if(refreshExchangeRate && invoice.canBeRefreshed()) {
-            invoiceService.refreshAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
+            invoiceService.refreshConvertedAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
                     invoice.getTradingCurrency().getCurrentRateFromDate());
         }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);

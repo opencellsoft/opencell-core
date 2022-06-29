@@ -73,5 +73,15 @@ public interface OpenOrderTemplateResource {
             })
     Response disableOpenOrderTemplate(@Parameter(description = "code of the open order template ", required = true) @PathParam("code") String code);
 
+    @PUT
+    @Path("/{code}/status/{status}")
+    @Operation(summary = "change status open order template",
+            tags = { "Open Orders Templates" },
+            description = "change status the specified open order template",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response changeStatusOpenOrderTemplate(@Parameter(description = "code of the open order template ", required = true) @PathParam("code") String code,
+            @Parameter(description = "status of the open order template ", required = true) @PathParam("status") String status);
 
 }
