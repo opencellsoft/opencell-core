@@ -33,6 +33,7 @@ public class AgedReceivableDto extends BaseEntity {
 	private String invoiceNumber;
 	private String tradingCurrency;
 	private BigDecimal billedAmount;
+	private Long customerId;
 
 	public AgedReceivableDto() {
 		super();
@@ -201,4 +202,13 @@ public class AgedReceivableDto extends BaseEntity {
 	public void setBilledAmount(BigDecimal billedAmount) {
 		this.billedAmount = billedAmount;
 	}
+
+	public Long getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
+	}
+
 }

@@ -91,4 +91,7 @@ public interface AgedReceivable extends Resource {
 
     @Nullable
     BigDecimal getBilledAmount();
+
+    @Nullable
+    Long getCustomerId();
 }

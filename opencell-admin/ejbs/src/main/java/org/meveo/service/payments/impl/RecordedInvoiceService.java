@@ -465,10 +465,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
     
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, PaginationConfiguration paginationConfiguration,
+    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date dueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
     	String datePattern = "yyyy-MM-dd";
-        StringBuilder query = new StringBuilder("Select ao.customerAccount.id ,sum (case when ao.dueDate > '")
+        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate > '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
                 .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
     	if(stepInDays != null && numberOfPeriods != null) {
@@ -507,7 +507,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_90_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -518,12 +518,14 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
         
+        ofNullable(dueDate).ifPresent(dd -> qb.addSql("ao.dueDate = '" + DateUtils.formatDateWithPattern(dd, datePattern) + "'"));
+        
         if(DateUtils.compare(startDate, new Date()) < 0) {
         	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'");
         	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'))");
         }
         
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax ");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
         
         return qb.getQuery(getEntityManager()).getResultList();
