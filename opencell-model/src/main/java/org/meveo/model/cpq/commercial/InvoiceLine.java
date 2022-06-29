@@ -103,7 +103,8 @@ import org.meveo.model.cpq.ProductVersion;
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuote", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByQuoteAndBR", query = "FROM InvoiceLine il where il.quote.id=:quoteId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.findByQuote", query = "select il from InvoiceLine il where il.quote =:quote"),
-		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)")
+		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
+		@NamedQuery(name = "InvoiceLine.deleteInvoiceAggrByInvoice", query = "UPDATE InvoiceLine il set il.invoiceAggregateF=null where il.invoice.id=:invoiceId")
 		})
 public class InvoiceLine extends AuditableEntity {
 

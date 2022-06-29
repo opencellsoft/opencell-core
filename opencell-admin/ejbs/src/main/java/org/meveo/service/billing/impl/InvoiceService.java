@@ -5288,8 +5288,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId
      */
     public void cleanInvoiceAggregates(Long invoiceId) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
-        getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceLine.deleteInvoiceAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceAgregate.updateByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
@@ -5742,15 +5743,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (input.getInvoiceDate() != null) {
             toUpdate.setInvoiceDate(input.getInvoiceDate());
         }
-        if (input.getDueDate() != null) {
-            toUpdate.setDueDate(input.getDueDate());
-        }
+
+        //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
+        toUpdate.setDueDate(input.getDueDate());
+        
         if (invoiceResource.getPaymentMethod() != null) {
             final Long pmId = invoiceResource.getPaymentMethod().getId();
             PaymentMethod pm = (PaymentMethod) tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
             toUpdate.setPaymentMethod(pm);
         }
         if (invoiceResource.getListLinkedInvoices() != null) {
+            toUpdate.getLinkedInvoices().clear();
             for (Long invoiceId : invoiceResource.getListLinkedInvoices()) {
                 Invoice invoiceTmp = findById(invoiceId);
                 if (invoiceTmp == null) {
@@ -5781,9 +5784,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
             toUpdate.setCommercialOrder(commercialOrder);
         }
 
+        if(invoiceResource.getCpqQuote()!=null) {
+            final Long cpqQuoteId = invoiceResource.getCpqQuote().getId();
+            CpqQuote cpqQuote = (CpqQuote)tryToFindByEntityClassAndId(CpqQuote.class, cpqQuoteId);
+            toUpdate.setCpqQuote(cpqQuote);
+        }
         if (input.getCfValues() != null) {
             toUpdate.setCfValues(input.getCfValues());
         }
+
+        if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            toUpdate.setDiscountAmount(BigDecimal.ZERO);
+        }
+
         return update(toUpdate);
     }
 
