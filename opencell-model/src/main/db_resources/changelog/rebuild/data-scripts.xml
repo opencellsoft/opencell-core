@@ -3429,6 +3429,7 @@ INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, cr
 	</changeSet>
 	
 	<changeSet id="#4082_20190404" author="SaidRamli"/>
+	<changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
    
        <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data-scripts" author="AbdelmounaimAkadid">

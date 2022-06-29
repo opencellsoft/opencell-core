@@ -1752,7 +1752,10 @@ order by edr.STATUS, edr.id DESC]]>
             <column name="sequence_id" valueNumeric="-2" />
         </insert>
     </changeSet>
-        
+    
+    <changeSet id="#5417_20200929 - Error while running CUSTOMERS_PER_SELLER report extracts" author="Mohamed-Ali-HAMMAL"/>
+    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL"/>
+            
        <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data-reports" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data-reports.xml'</sql>
