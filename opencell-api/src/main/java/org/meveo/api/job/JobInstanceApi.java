@@ -37,6 +37,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -68,6 +69,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCache;
 
     @Override
     public JobInstance create(JobInstanceDto postData) throws MeveoApiException, BusinessException {
@@ -139,8 +143,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         // Create any missing CFT for a given provider and job
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
         if (jobCustomFields != null) {
-            customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
+            Map<String, CustomFieldTemplate> missingCFTemplates = customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
             customFieldTemplateService.commit();
+            // Update Cache with new templates
+            customFieldsCache.addUpdateCustomFieldTemplates(missingCFTemplates.values());
         }
 
         // Populate customFields
