@@ -10079,6 +10079,19 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-7663_20220613" author="ZBariki" />
 	<changeSet id="#INTRD-7872_20220615" author="ZBariki" />
 	<changeSet id="#INTRD-7722_20220618" author="ZBariki" />
+	
+	<changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
+	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI"/>    
+	<changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI" />
+	<changeSet id="#5610_20201102 - bad dept operation type" author="NabilOUACHI"/>
+	<changeSet id="#5632_20201207_RT_TYPE_DATA" author="NabilOUACHI"/>
+	<changeSet id="5743_20201215" author="AmineBENAICHA"/>
+	<changeSet id="5678_20210214" author="anasseh"/>
+	<changeSet id="#5890-2021-02-05_43" author="ZBARIKI"/>
+	<changeSet id="#20210607_540_563" author="TarikFA."/>
+	<changeSet id="#INTRD-1406_20210826" author="HatimOUDAD"/>
+	<changeSet id="#2122_20211001" author="YoussefIZEM"/>
+	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
