@@ -9625,9 +9625,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         	<column name="dunning_settings_id" valueNumeric="1" />
        	</insert>
    	</changeSet>
-	<changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
-
-	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM" />
 
 	<changeSet id="INTRD-3334_2021_11_26" author="ZBariki">
 		<insert tableName="meveo_job_instance">
@@ -10079,6 +10076,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-7663_20220613" author="ZBariki" />
 	<changeSet id="#INTRD-7872_20220615" author="ZBariki" />
 	<changeSet id="#INTRD-7722_20220618" author="ZBariki" />
+	
+	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM" />
 	
 	<changeSet id="INTRD-2701_20211124" author="hichamElHaloui"/>
 	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI"/>    
