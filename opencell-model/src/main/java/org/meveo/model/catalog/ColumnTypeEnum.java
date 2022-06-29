@@ -1,17 +1,17 @@
 package org.meveo.model.catalog;
 
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.QuoteAttribute;
-
 import java.math.BigDecimal;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.cpq.AttributeValue;
 
 
 public enum ColumnTypeEnum {
     String {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+            if (StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
                 return true;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
@@ -46,7 +46,7 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
-            return pricePlanMatrixValue.getStringValue() == null;
+            return StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
         }
     },
     Long {
@@ -82,7 +82,7 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null)
+            if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()))
                 return true;
             Object quote =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             switch (attributeValue.getAttribute().getAttributeType()) {
@@ -119,7 +119,7 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
-            return pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null;
+            return pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
         }
     },
     Range_Date {
@@ -170,7 +170,7 @@ public enum ColumnTypeEnum {
     Boolean {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+            if (attributeValue.getStringValue() == null || StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
                 return true;
             }
             return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
@@ -178,7 +178,7 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
-            return pricePlanMatrixValue.getStringValue() == null;
+            return StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
         }
     };
 
