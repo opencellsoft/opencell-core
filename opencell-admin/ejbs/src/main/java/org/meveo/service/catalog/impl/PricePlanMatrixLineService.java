@@ -266,6 +266,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             pricePlanMatrixLine.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
             pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
+            pricePlanMatrixLine.setPriceEL(pricePlanMatrixLineDto.getPriceEL());
             pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             create(pricePlanMatrixLine);
@@ -303,6 +304,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             PricePlanMatrixLine pricePlanMatrixLineUpdate) {
         pricePlanMatrixLineUpdate.setPriceWithoutTax(pricePlanMatrixLineDto.getPriceWithoutTax());
         pricePlanMatrixLineUpdate.setPriority(pricePlanMatrixLineDto.getPriority());
+        pricePlanMatrixLineUpdate.setPriceEL(pricePlanMatrixLineDto.getPriceEL());
         pricePlanMatrixLineUpdate.setPricePlanMatrixVersion(ppmVersion);
         pricePlanMatrixLineUpdate.setDescription(pricePlanMatrixLineDto.getDescription());
         Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLineUpdate);
