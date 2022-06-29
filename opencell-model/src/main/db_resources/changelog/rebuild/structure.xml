@@ -17753,7 +17753,20 @@
     <changeSet id="#INTRD-4424_20220221" author="Mounir_BOUKAYOUA" />
 	<changeSet id="#INTRD-7850-20220622" author="hichamhanine"/>
 	<changeSet id="#INTRD-8067_20220627" author="anas.rouaguebe" />
-	
+	    
+	<changeSet id="#6122_20210517" author="AbdelmounaimAkadid" />
+    <changeSet id="07042021-540-423" author="NabilOuachi" />
+    <changeSet id="#6122_20210524" author="AbdelmounaimAkadid" dbms="postgresql" />
+    <changeSet id="#20210123_540_281_1" author="TarikFA."/>
+    <changeSet id="#20210123_540_281_2" author="TarikFA."/>
+    <changeSet id="#20210123_540_281_3" author="TarikFA."/>
+    <changeSet id="#20210123_540_281_4" author="TarikFA."/>
+    <changeSet id="#20210123_540_281_5" author="TarikFA."/>
+    <changeSet id="#INTRD-828-drop-view" author="AbdelmounaimAkadid"/>
+    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
+    <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
+    <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
