@@ -6249,6 +6249,31 @@ public class ServiceTemplateToProductScript extends Script {
             <column name="uuid" value="CounterPeriodJob" />
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-7339_20220607" author="hichamhanine">
+		<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-62" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="ImportCustomerBankDetailsJob" />
+            <column name="description" value="ImportCustomerBankDetailsJob" />
+            <column name="job_category" value="IMPORT_HIERARCHY" />
+            <column name="job_template" value="ImportCustomerBankDetailsJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="ImportCustomerBankDetailsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values" value="null" />
+            <column name="verbose_report" value="1" />
+        </insert>
+	</changeSet>
+	
     <changeSet id="INTRD-3765_07012022" author="hichamElHaloui">
         <sql><![CDATA[ UPDATE ${db.schema.adapted}meveo_script_instance set script = '
 package org.meveo.service.script;
