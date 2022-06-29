@@ -42,6 +42,7 @@ import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
@@ -319,6 +320,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * 
      * @param cfts A list of Custom field template definitions
      */
+    @JpaAmpNewTx
     public void addUpdateCustomFieldTemplates(Collection<CustomFieldTemplate> cfts) {
 
         if (!useCFTCache) {
