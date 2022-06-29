@@ -26,10 +26,6 @@ public class OpenOrderArticle extends BusinessEntity {
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 	
-	@OneToOne(fetch = LAZY)
-    @JoinColumn(name = "open_order_template_id")
-    private OpenOrderTemplate openOrderTemplate;
-	
 	@Type(type = "numeric_boolean")
     @Column(name = "active")
     private Boolean active;
@@ -40,14 +36,6 @@ public class OpenOrderArticle extends BusinessEntity {
 
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
-	}
-
-	public OpenOrderTemplate getOpenOrderTemplate() {
-		return openOrderTemplate;
-	}
-
-	public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
-		this.openOrderTemplate = openOrderTemplate;
 	}
 
 	public Boolean getActive() {

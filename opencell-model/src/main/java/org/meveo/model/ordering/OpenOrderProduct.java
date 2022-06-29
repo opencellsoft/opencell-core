@@ -26,21 +26,10 @@ public class OpenOrderProduct extends BusinessEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 	
-	@OneToOne(fetch = LAZY)
-    @JoinColumn(name = "open_order_template_id")
-    private OpenOrderTemplate openOrderTemplate;
-	
 	@Type(type = "numeric_boolean")
     @Column(name = "active")
     private Boolean active;
 
-	public OpenOrderTemplate getOpenOrderTemplate() {
-		return openOrderTemplate;
-	}
-
-	public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
-		this.openOrderTemplate = openOrderTemplate;
-	}
 
 	public Boolean getActive() {
 		return active;
