@@ -60,6 +60,8 @@ import org.meveo.model.ObservableEntity;
     @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.customerAccount.id = :caId and pm.id <>:id"),
     @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
     @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
+    @NamedQuery(name = "PaymentMethod.listByIbanAndBicFi", query = "select m from PaymentMethod m where m.bankCoordinates.iban=:Iban and m.bankCoordinates.bic=:Bic and m.disabled is :Disable"),
+    @NamedQuery(name = "PaymentMethod.listByIbanAndBicFiAll", query = "select m from PaymentMethod m where m.bankCoordinates.iban=:Iban and m.bankCoordinates.bic=:Bic"),
     @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount") })
 public abstract class PaymentMethod extends EnableEntity {
 

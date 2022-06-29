@@ -76,7 +76,7 @@ public class DDPaymentMethod extends PaymentMethod {
 	public DDPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, boolean preferred,
 			Date mandateDate, String mandateIdentification, BankCoordinates bankCoordinates) {
 		super();
-		setPaymentType(PaymentMethodEnum.CARD);
+		setPaymentType(PaymentMethodEnum.DIRECTDEBIT);
 		setAlias(alias);
 		setDisabled(isDisabled);
 		setPreferred(preferred);
@@ -141,6 +141,19 @@ public class DDPaymentMethod extends PaymentMethod {
 	    if(bankCoordinates != null) {
 	        bankCoordinates.anonymize(code);
 	    }
+    }
+	
+	public DDPaymentMethod copieDDPaymentMethod() throws CloneNotSupportedException {   
+        DDPaymentMethod clone = new DDPaymentMethod();
+        clone.setPaymentType(this.getPaymentType());
+        clone.setPreferred(this.isPreferred());
+        clone.setAlias(this.getAlias());
+        clone.setMandateIdentification(this.getMandateIdentification());
+        clone.setMandateDate(this.getMandateDate());
+        clone.setBankCoordinates((BankCoordinates) this.getBankCoordinates().clone());
+        clone.setCustomerAccount(this.getCustomerAccount());        
+        
+        return clone;
     }
 
 }
