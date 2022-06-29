@@ -41,6 +41,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.ValidationException;
@@ -768,4 +769,22 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return zipFileName;
         }
     }
+
+	/**
+	 * get pricePlanVersion Valid for the given operationDate
+	 * @param ppmCode
+	 * @param operationDate
+	 * @return
+	 */
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, Date operationDate) {
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDate).getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+        	return null;
+        }
+        if(result.size()>1) {
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+		return result.get(0);
+	}
 }
