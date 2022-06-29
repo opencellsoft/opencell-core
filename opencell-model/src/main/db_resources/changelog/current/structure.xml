@@ -13366,10 +13366,16 @@ order by date_trunc('month', i.invoice_date) DESC
 		
       	</changeSet>
       	
+      	<changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" failOnError="false">
+        	<dropForeignKeyConstraint baseTableName="open_order_template_products"
+	                               constraintName="open_order_template_products_product_id_fk"/>
+	                               
+	        <dropForeignKeyConstraint baseTableName="open_order_template_articles"
+	                               constraintName="open_order_template_articles_article_id_fk"/>
+        </changeSet>
       	
       	<changeSet id="#INTRD-8023_20220624" author="HatimOUDAD" >
       	
-      		
 		    <dropPrimaryKey constraintName="open_order_template_articles_pkey" tableName="open_order_template_articles"/>
 		    <dropPrimaryKey constraintName="open_order_template_products_pkey" tableName="open_order_template_products"/>                            
 		    <dropColumn tableName="open_order_template_products">
@@ -13400,14 +13406,6 @@ order by date_trunc('month', i.invoice_date) DESC
 		            constraintName="open_order_template_products_pkey"
 		            tableName="open_order_template_products"/>
 	      	
-        </changeSet>
-        
-        <changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" failOnError="false">
-        	<dropForeignKeyConstraint baseTableName="open_order_template_products"
-	                               constraintName="open_order_template_products_product_id_fk"/>
-	                               
-	        <dropForeignKeyConstraint baseTableName="open_order_template_articles"
-	                               constraintName="open_order_template_articles_article_id_fk"/>
         </changeSet>
         
         <changeSet id="#INTRD-8023_20220624-fk2" author="HatimOUDAD" failOnError="false">
