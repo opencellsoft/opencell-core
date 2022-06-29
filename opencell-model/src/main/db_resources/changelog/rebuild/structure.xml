@@ -327,6 +327,7 @@
         <createSequence sequenceName="invoice_sub_totals_seq" startValue="1"/>
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
+        <createSequence sequenceName="open_order_seq"/>
     </changeSet>
 
 
@@ -8869,6 +8870,7 @@
             <column name="price_version_date_setting" type="varchar(255)" defaultValue="DELIVERY">
                 <constraints nullable="false" />
             </column>
+            <column name="open_order_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -8950,6 +8952,7 @@
             <column name="tag_type_id" type="bigint" />
             <column name="parent_tag_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)"/>
+            <column name="open_order_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -9874,6 +9877,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="open_order_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -11758,6 +11762,7 @@
             <column name="open_order_template_id" type="bigint"/>
             <column name="external_recipient" type="varchar(100)"/>
             <column name="open_order_quote_id" type="bigint" />
+            <column name="open_order_id" type="bigint"/>
         </createTable>
 
         <createTable tableName="open_order_threshold_recipients">
@@ -12039,6 +12044,55 @@
                              tableName="open_order_quote_articles"/>
         
         </changeSet>
+
+    <changeSet id="#INTRD-8117_20220629_rebuild_tbl" author="ZBariki">
+        <createTable tableName="open_order">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="external_reference" type="varchar(255)"/>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(25)">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="initial_amount" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_quote_id" type="bigint"/>
+            <column name="end_of_validity_date" type="datetime"/>
+            <column name="activation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="balance" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -14663,20 +14717,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
 
-
-
-    <!--<changeSet author="NabilOuachi" id="rebuild-str-fk-1394">
-        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_tag" constraintName="fk_product_version_tag" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
-    </changeSet>
-    <changeSet author="NabilOuachi" id="rebuild-str-fk-1395">
-        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_tag" constraintName="fk_service_template_tag" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
-    </changeSet>
-    <changeSet author="NabilOuachi" id="rebuild-str-fk-1396">
-        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_tag" constraintName="fk_offer_template_version_tag" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
-    </changeSet>-->
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1397">
         <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="offer_template_id"
                                  constraintName="cpq_offer_template_tags_offer_template_id_fk" referencedTableName="cat_offer_template"
@@ -16384,6 +16424,42 @@
 	                                 referencedTableName="open_order_article"
 	                                 referencedColumnNames="id"/>
 	    </changeSet>
+
+    <changeSet id="#INTRD-8117_20220629_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="billing_account_id"
+                                 constraintName="open_order_billing_account_id_fk"
+                                 referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="currency_id"
+                                 constraintName="open_order_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_id"
+                                 constraintName="open_order_threshold_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_product" baseColumnNames="open_order_id"
+                                 constraintName="cpq_product_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_accounting_article" baseColumnNames="open_order_id"
+                                 constraintName="billing_accounting_article_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
+                                 constraintName="cpq_tag_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17079,6 +17155,8 @@
         <addForeignKeyConstraint baseColumnNames="mediation_setting_id" baseTableName="edr_versioning_rule" constraintName="fk_edr_versioning_rule_mediation_setting" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
+
+
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -18245,6 +18323,7 @@
     <changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" />
     <changeSet id="#INTRD-8023_20220624-fk2" author="HatimOUDAD" />
     <changeSet id="#INTRD-8132_20220628" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-8117_20220629" author="ZBariki" />
     
     <changeSet id="#6122_20210517" author="AbdelmounaimAkadid" />
     <changeSet id="07042021-540-423" author="NabilOuachi" />
