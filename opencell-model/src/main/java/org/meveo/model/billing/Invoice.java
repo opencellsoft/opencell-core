@@ -699,6 +699,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "payment_plan_id")
     private PaymentPlan paymentPlan;
 
+    /**
+     * Open Order Number
+     */
+    @Column(name = "open_order_number")
+    @Size(max = 255)
+	private String openOrderNumber;
+
     public Invoice() {
 	}
 
@@ -1831,7 +1838,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.paymentPlan = paymentPlan;
     }
 
-    /**
+    public String getOpenOrderNumber() {
+		return openOrderNumber;
+	}
+
+	public void setOpenOrderNumber(String openOrderNumber) {
+		this.openOrderNumber = openOrderNumber;
+	}
+
+
+	/**
      * Check if an invoice can be refreshed
      * @return refresh check result
      */
