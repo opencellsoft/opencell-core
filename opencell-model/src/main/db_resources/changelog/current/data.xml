@@ -2111,6 +2111,30 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-7339_20220607" author="hichamhanine">
+		<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-62" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="ImportCustomerBankDetailsJob" />
+            <column name="description" value="ImportCustomerBankDetailsJob" />
+            <column name="job_category" value="IMPORT_HIERARCHY" />
+            <column name="job_template" value="ImportCustomerBankDetailsJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="ImportCustomerBankDetailsJob" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            <column name="cf_values" value="null" />
+            <column name="verbose_report" value="1" />
+        </insert>
+	</changeSet>
+	
 	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
 		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
 	</changeSet>
