@@ -146,7 +146,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             Map<String, CustomFieldTemplate> missingCFTemplates = customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
             customFieldTemplateService.commit();
             // Update Cache with new templates
-            customFieldsCache.addUpdateCustomFieldTemplates(missingCFTemplates.values());
+            if(missingCFTemplates.size()>0) {
+                customFieldsCache.addUpdateCustomFieldTemplates(missingCFTemplates.values());
+            }
         }
 
         // Populate customFields
