@@ -19,7 +19,7 @@ public interface MediationSetting extends Resource {
 
     @Schema(description = "enable edr versioning")
     @DefaultValue("true")
-	boolean isEnableEdrVersioning();
+	boolean getEnableEdrVersioning();
 
     @Schema(description = "list of rules for edr versioning")
     @Nullable

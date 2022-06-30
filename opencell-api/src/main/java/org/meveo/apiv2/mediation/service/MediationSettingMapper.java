@@ -18,7 +18,7 @@ public class MediationSettingMapper extends ResourceMapper<org.meveo.apiv2.media
 			MediationSetting mediationSetting = (MediationSetting) entity;
 			var builder = ImmutableMediationSetting.builder()
 					.id(entity.getId())
-					.isEnableEdrVersioning(mediationSetting.isEnableEdrVersioning());
+					.enableEdrVersioning(mediationSetting.isEnableEdrVersioning());
 			if(!CollectionUtils.isEmpty(mediationSetting.getRules())) {
 				builder.rules(edrVersioningRuleMapper.toResource(mediationSetting.getRules()));
 			}
@@ -33,7 +33,7 @@ public class MediationSettingMapper extends ResourceMapper<org.meveo.apiv2.media
 		try {
 			MediationSetting mediationSetting =  new MediationSetting();
 			mediationSetting.setId(resource.getId());
-			mediationSetting.setEnableEdrVersioning(resource.isEnableEdrVersioning());
+			mediationSetting.setEnableEdrVersioning(resource.getEnableEdrVersioning());
 			if(!CollectionUtils.isEmpty(resource.getRules())) {
 				mediationSetting.setRules(edrVersioningRuleMapper.toEntity(resource.getRules()));
 			}
