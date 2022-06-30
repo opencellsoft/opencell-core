@@ -18,31 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
-import static java.lang.String.valueOf;
-import static java.time.Instant.now;
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
-import static org.apache.commons.lang3.StringUtils.leftPad;
-import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
-import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
-import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
-import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
-import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
-import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
-import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
-
-import java.security.SecureRandom;
-import java.util.*;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
+import com.mifmif.common.regex.Generex;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -78,11 +54,39 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
-import com.mifmif.common.regex.Generex;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+
+import static java.lang.String.valueOf;
+import static java.time.Instant.now;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
+import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
+import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
+import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
+import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
+import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
+import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
- * 
+ *
  * @author Andrius Karpavicius
  * @author Edward Legaspi
  * @author akadid abdelmounaim
@@ -148,7 +152,7 @@ public class ServiceSingleton {
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
-     * 
+     *
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceSequence}
@@ -170,7 +174,7 @@ public class ServiceSingleton {
 
     /**
      * Get invoice number sequence.
-     * 
+     *
      * @param invoiceDate Invoice date
      * @param invoiceType Invoice type
      * @param seller Seller
@@ -241,7 +245,7 @@ public class ServiceSingleton {
 
     /**
      * Reserve invoice numbers for a given invoice type, seller and invoice date match. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
-     * 
+     *
      * @param invoiceTypeId Invoice type identifier
      * @param sellerId Seller identifier
      * @param invoiceDate Invoice date
@@ -268,7 +272,7 @@ public class ServiceSingleton {
 
     /**
      * Create an invoice type. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
-     * 
+     *
      * @param occCode OCC code
      * @param occCodeDefaultValue OCC default value
      * @param invoiceTypeCode Invoice type code
@@ -402,8 +406,8 @@ public class ServiceSingleton {
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, true);
     }
-    
-    
+
+
     /**
      * Validate and assign invoice number to an invoice.
      * @param invoiceId invoice identifier
@@ -586,7 +590,7 @@ public class ServiceSingleton {
 
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
-     * 
+     *
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceTypeSellerSequence}
@@ -659,6 +663,22 @@ public class ServiceSingleton {
         return prefixOverride == null || prefixOverride.isBlank()
                 ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
                 : prefixOverride + generatedCode;
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getNextOpenOrderSequence() {
+        String code = "OOQ-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
+        if (sequence == null) {
+            sequence = new InvoiceSequence();
+            sequence.setCurrentNumber(0L);
+            sequence.setSequenceSize(5);
+            sequence.setCode(code);
+            invoiceSequenceService.create(sequence);
+        }
+        return sequence.getCurrentNumber().toString();
     }
 
     private String formatCode(String formatEL, Map<Object, Object> context) {
