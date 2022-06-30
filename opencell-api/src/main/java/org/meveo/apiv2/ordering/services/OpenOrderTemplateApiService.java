@@ -27,6 +27,8 @@ import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
@@ -47,6 +49,10 @@ public class OpenOrderTemplateApiService {
     private ThresholdService thresholdService;
     @Inject
     private TagService tagService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @Inject
     private AuditLogService auditLogService;
@@ -198,6 +204,7 @@ public class OpenOrderTemplateApiService {
             oop.setActive(true);
             oop.setProduct(product);
             oop.setOpenOrderTemplate(openOrderTemplate);
+            oop.updateAudit(currentUser);
 
             products.add(oop);
         }
@@ -216,6 +223,7 @@ public class OpenOrderTemplateApiService {
             ooa.setActive(true);
             ooa.setAccountingArticle(article);
             ooa.setOpenOrderTemplate(openOrderTemplate);
+            ooa.updateAudit(currentUser);
 
             articles.add(ooa);
         }
