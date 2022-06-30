@@ -53,7 +53,7 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 		MediationSetting mediationSetting = mediationsettingService.findById(baseEntity.getMediationSetting().getId());
 		if(mediationSetting == null )
 			throw new EntityDoesNotExistsException(MediationSetting.class, baseEntity.getMediationSetting().getId());
-		if(StringUtils.isAnyBlank(baseEntity.getCriterialEl(), baseEntity.getKeyEl(), baseEntity.getIsNewVersionEl()) || baseEntity.getPriority() == null)
+		if(StringUtils.isAnyBlank(baseEntity.getCriterialEL(), baseEntity.getKeyEL(), baseEntity.getIsNewVersionEL()) || baseEntity.getPriority() == null)
 			throw new MissingParameterException("all parameters of edr version rule is required");
 		baseEntity.setMediationSetting(mediationSetting);
 		edrVersioningRuleService.create(baseEntity);
@@ -69,9 +69,9 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 		var mediationSetting = mediationsettingService.findById(baseEntity.getMediationSetting().getId());
 		if(mediationSetting == null) throw new EntityDoesNotExistsException(MediationSetting.class, baseEntity.getMediationSetting().getId());
 		edrVersionRuleUpaded.setMediationSetting(mediationSetting);
-		edrVersionRuleUpaded.setCriterialEl(baseEntity.getCriterialEl());
-		edrVersionRuleUpaded.setKeyEl(baseEntity.getKeyEl());
-		edrVersionRuleUpaded.setIsNewVersionEl(baseEntity.getIsNewVersionEl());
+		edrVersionRuleUpaded.setCriterialEL(baseEntity.getCriterialEL());
+		edrVersionRuleUpaded.setKeyEL(baseEntity.getKeyEL());
+		edrVersionRuleUpaded.setIsNewVersionEL(baseEntity.getIsNewVersionEL());
 		edrVersionRuleUpaded.setPriority(baseEntity.getPriority());
 		return Optional.of(baseEntity);
 	}
