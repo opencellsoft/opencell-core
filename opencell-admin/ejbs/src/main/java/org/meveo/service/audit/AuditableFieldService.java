@@ -143,7 +143,6 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         if (changedEntities == null || changedEntities.isEmpty()) {
             return;
         }
-        boolean forceFlush = false;
         for (BaseEntity baseEntity : changedEntities) {
             AuditableEntity entity = (AuditableEntity) baseEntity;
             Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
@@ -159,7 +158,6 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
                             }
                             createFieldHistory(entity, field.getFieldName(), field.getAuditType(), previousState, currentState);
                             field.setHistorized(true);
-                            forceFlush = true;
 
                         } catch (BusinessException e) {
                             field.setHistorized(false);
@@ -170,11 +168,6 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
                 }
                 entity.setHistorized(true);
             }
-        }
-
-        // This is needed to flush audit field history to DB, as this logic occurs already inside a transaction commit and hibernate dirty checking wont be aware to persist these changes
-        if (forceFlush) {
-            getEntityManager().flush();
         }
     }
 
