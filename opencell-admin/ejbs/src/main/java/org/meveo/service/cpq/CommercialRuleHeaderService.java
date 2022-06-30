@@ -332,48 +332,48 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     	if(convertedValue==null && StringUtils.isBlank(sourceAttributeValue)) {
     		return true;
     	}
-    	if(sourceAttributeValue!=null && convertedValue !=null && operator!=null) {
-    		String convertedValueStr=String.valueOf(convertedValue);
+    	if(sourceAttributeValue!=null &&  operator!=null) {
+    		String convertedValueStr=convertedValue !=null?String.valueOf(convertedValue):null;
     		switch(operator) {
     		case EQUAL:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) &&  NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))==0) {
     					 return true;
     				 }
     			}
-    			if (convertedValueStr.equals(sourceAttributeValue))
+    			if (sourceAttributeValue.equals(convertedValueStr))
     				return true;
     			break;
     		case NOT_EQUAL:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
    				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
    					 return true;
    				 }
    			    }
-    			if (!convertedValueStr.equals(sourceAttributeValue))
+    			if (!sourceAttributeValue.equals(convertedValueStr))
     				return true;
     			break;
     		case LESS_THAN:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)<Double.valueOf(sourceAttributeValue))
     				return true;
     			}
     			break;
     		case LESS_THAN_OR_EQUAL:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)<=Double.valueOf(sourceAttributeValue))
     				return true;
     			}
     			break;
     		case GREATER_THAN:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)>Double.valueOf(sourceAttributeValue))
     				return true;	
     			}
     			break;
 
     		case GREATER_THAN_OR_EQUAL:
-    			if(NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    			if(convertedValueStr !=null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
     			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
     				return true;	
     			}
