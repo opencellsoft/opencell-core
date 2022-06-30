@@ -13623,4 +13623,11 @@ order by date_trunc('month', i.invoice_date) DESC
     	</addColumn>
     </changeSet>
 
+        <changeSet id="#INTRD-8027_20220629" author="aelmalki">
+            <dropColumn tableName="open_order_product" columnName="code" />
+            <dropColumn tableName="open_order_product" columnName="description" />
+            <dropColumn tableName="open_order_article" columnName="code" />
+            <dropColumn tableName="open_order_article" columnName="description" />
+        </changeSet>
+
 </databaseChangeLog>

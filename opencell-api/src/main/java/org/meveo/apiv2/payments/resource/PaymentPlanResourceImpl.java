@@ -23,7 +23,7 @@ public class PaymentPlanResourceImpl implements PaymentPlanResource {
         createdStatus.setStatus(ActionStatusEnum.SUCCESS);
         createdStatus.setEntityId(createdPPId);
 
-        return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, createdPPId).build())
+        return Response.created(LinkGenerator.getUriBuilderFromResource(PaymentPlanResource.class, createdPPId).build())
                 .entity(createdStatus).build();
     }
 
