@@ -95,6 +95,25 @@
 					</execution>
 				</executions>
 			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>com.webcohesion.enunciate</groupId>-->
+<!--				<artifactId>enunciate-maven-plugin</artifactId>-->
+<!--				<version>2.14.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<phase>process-classes</phase>-->
+<!--						<goals>-->
+<!--							<goal>docs</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<docsDir>${project.build.directory}/docs</docsDir>-->
+<!--							<configFile>enunciate.xml</configFile>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+
 			<!-- <plugin> -->
 			<!-- <groupId>org.apache.maven.plugins</groupId> -->
 			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
