@@ -59,7 +59,8 @@ import org.meveo.model.catalog.DiscountPlanItem;
         @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomer", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.customer.id"
                 + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByInvoiceIds", query = "delete from SubCategoryInvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)"),
-        @NamedQuery(name = "SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds", query = "update SubCategoryInvoiceAgregate ia set ia.billingRun=:billingRun where ia.invoice.id IN (:invoiceIds)")})
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.moveToQuarantineBRByInvoiceIds", query = "update SubCategoryInvoiceAgregate ia set ia.billingRun=:billingRun where ia.invoice.id IN (:invoiceIds)"),
+        @NamedQuery(name = "SubCategoryInvoiceAggregate.removeInvoiceAggregateReferences", query = "UPDATE SubCategoryInvoiceAgregate ia set ia.categoryInvoiceAgregate= null WHERE ia.categoryInvoiceAgregate.id IN (:categoryInvoiceAggregateIds)")})
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /** The Constant serialVersionUID. */
