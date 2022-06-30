@@ -37,7 +37,7 @@ public class SelectedAttributes {
     }
 
     public boolean match(CommercialRuleLine commercialRuleLine) {
-        return StringUtils.equals(offerCode, commercialRuleLine.getSourceOfferTemplateCode()) && StringUtils.equals(this.productCode, commercialRuleLine.getSourceProductCode()) && selectedAttributes.containsKey(commercialRuleLine.getSourceAttribute().getCode());
+        return StringUtils.equals(offerCode, commercialRuleLine.getSourceOfferTemplateCode()) && StringUtils.equals(this.productCode, commercialRuleLine.getSourceProductCode()) && (commercialRuleLine.getSourceAttribute()==null || selectedAttributes.containsKey(commercialRuleLine.getSourceAttribute().getCode()));
     }
 
     public boolean match(String offerCode, String productCode){
