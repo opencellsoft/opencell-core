@@ -13,6 +13,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,6 +33,8 @@ import org.meveo.model.cpq.tags.Tag;
 @Table(name = "open_order_quote")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_quote_seq"),})
+@NamedQueries({ @NamedQuery(name = "Order.listByBillingRun", query = "select o from Order o where o.billingRun.id=:billingRunId order by o.id"),
+    @NamedQuery(name = "OpenOrderQuote.findByOpenOrderTemplateId", query = "select o from open_order_quote where o.openOrderTemplate.id = :id") })
 public class OpenOrderQuote extends BusinessEntity {
 	
 	@Column(name = "external_reference")

@@ -19,10 +19,12 @@ import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapp
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
+import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
@@ -30,6 +32,7 @@ import org.meveo.model.ordering.Threshold;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
@@ -37,7 +40,7 @@ import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.order.ThresholdService;
 
 @Stateless
-public class OpenOrderTemplateApiService {
+public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTemplate>{
 
     @Inject
     private ProductService productService;
@@ -213,6 +216,15 @@ public class OpenOrderTemplateApiService {
 
     private List<OpenOrderArticle> fetchArticles(List<String> articlesCodes, OpenOrderTemplate openOrderTemplate) {
         List<OpenOrderArticle> articles = new ArrayList<>();
+
+        OpenOrderQuote openOrderQuote = findByOpenOrderTemplate(openOrderTemplate);
+        
+        List<String> existingAOs = openOrderTemplate.getArticles().stream().map(a -> a.getAccountingArticle().getCode()).collect(Collectors.toList());
+        
+        //Newly added
+        List<String> addedAOs = articlesCodes.stream().filter(a -> !existingAOs.contains(a)).collect(Collectors.toList());
+
+        
         for (String articleCode : articlesCodes) {
             AccountingArticle article = accountingArticleService.findByCode(articleCode);
             if (null == article) {
@@ -227,6 +239,10 @@ public class OpenOrderTemplateApiService {
 
             articles.add(ooa);
         }
+        //Removed
+        List<String> removedAOs = existingAOs.stream().filter(a -> !articlesCodes.contains(a)).collect(Collectors.toList());
+        
+        
         return articles;
     }
 
@@ -240,6 +256,12 @@ public class OpenOrderTemplateApiService {
             tags.add(tag);
         }
         return tags;
+    }
+    
+    private OpenOrderQuote findByOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
+        return getEntityManager().createNamedQuery("OpenOrderQuote.findByOpenOrderTemplate", OpenOrderQuote.class)
+                .setParameter("openOrderTemplate", openOrderTemplate)
+                .getSingleResult();
     }
 
 }
