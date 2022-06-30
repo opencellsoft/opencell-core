@@ -13615,5 +13615,12 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-8106_20220630" author="TarikFA.">
+    	<addColumn tableName="rating_edr">
+            <column name="event_key" type="varchar(100)" />
+            <column name="event_version" type="int4" />
+    	</addColumn>
+    </changeSet>
 
 </databaseChangeLog>

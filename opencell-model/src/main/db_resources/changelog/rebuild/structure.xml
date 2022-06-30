@@ -5721,6 +5721,8 @@
             </column>
             <column name="extra_parameter" type="${type.text}" />
             <column name="times_tried" type="int4"/>
+            <column name="event_key" type="varchar(100)" />
+            <column name="event_version" type="int4" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -18337,6 +18339,8 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
+    
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
