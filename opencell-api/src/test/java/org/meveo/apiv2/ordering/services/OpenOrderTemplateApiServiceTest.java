@@ -16,6 +16,7 @@ import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OpenOrderTemplateService;
@@ -35,6 +36,8 @@ public class OpenOrderTemplateApiServiceTest {
     private OpenOrderTemplateService openOrderTemplateService;
     @Mock
     private AccountingArticleService accountingArticleService;
+    @Mock
+    private MeveoUser currentUser;
 
     @Test
     public void createOpenOrderTemplate_typeArticle_productExist()
@@ -50,6 +53,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .build();
         doReturn(new Product()).when(productService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -74,6 +78,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -101,6 +106,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
 
         try {
             openOrderTemplateApiService.create(input);
@@ -130,6 +136,7 @@ public class OpenOrderTemplateApiServiceTest {
                         .build();
         doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
 
         try {
             openOrderTemplateApiService.create(input);
