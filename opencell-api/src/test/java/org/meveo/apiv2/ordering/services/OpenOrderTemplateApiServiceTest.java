@@ -14,11 +14,11 @@ import org.meveo.apiv2.ordering.resource.order.ImmutableOpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.resource.order.ImmutableThresholdInput;
 import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.ordering.OpenOrderArticle;
-import org.meveo.model.ordering.OpenOrderProduct;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
-import org.meveo.service.billing.impl.article.OpenOrderArticleService;
-import org.meveo.service.billing.impl.article.OpenOrderProductService;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,12 +30,14 @@ public class OpenOrderTemplateApiServiceTest {
     private OpenOrderTemplateApiService openOrderTemplateApiService;
 
     @Mock
-    private OpenOrderProductService openProductService;
+    private ProductService productService;
 
     @Mock
     private OpenOrderTemplateService openOrderTemplateService;
     @Mock
-    private OpenOrderArticleService openArticleService;
+    private AccountingArticleService accountingArticleService;
+    @Mock
+    private MeveoUser currentUser;
 
     @Test
     public void createOpenOrderTemplate_typeArticle_productExist()
@@ -49,8 +51,9 @@ public class OpenOrderTemplateApiServiceTest {
                         .products(Collections.singleton("product 1"))
 
                         .build();
-        doReturn(new OpenOrderProduct()).when(openProductService).findByCode(any());
+        doReturn(new Product()).when(productService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -73,8 +76,9 @@ public class OpenOrderTemplateApiServiceTest {
                         .articles(Collections.singleton("article 1"))
 
                         .build();
-        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
+        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
         try {
             openOrderTemplateApiService.create(input);
         } catch (Exception ex)
@@ -100,8 +104,9 @@ public class OpenOrderTemplateApiServiceTest {
                                 ImmutableThresholdInput.builder().sequence(1).percentage(-1).externalRecipient("example").build()))
 
                         .build();
-        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
+        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
 
         try {
             openOrderTemplateApiService.create(input);
@@ -129,8 +134,9 @@ public class OpenOrderTemplateApiServiceTest {
                                 ))
 
                         .build();
-        doReturn(new OpenOrderArticle()).when(openArticleService).findByCode(any());
+        doReturn(new AccountingArticle()).when(accountingArticleService).findByCode(any());
         doReturn(null).when(openOrderTemplateService).findByCode(any());
+        doReturn("TU-OOT").when(currentUser).getUserName();
 
         try {
             openOrderTemplateApiService.create(input);

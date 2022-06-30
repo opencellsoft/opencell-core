@@ -37,7 +37,7 @@ public class OpenOrderQuote extends BusinessEntity {
 	private String externalReference;
 
     @Enumerated(EnumType.STRING)
-	@Column(name = "open_order_type", length = 50)
+	@Column(name = "open_order_type", length = 50, updatable = false)
     @NotNull
     private OpenOrderTypeEnum openOrderType;
     
@@ -46,7 +46,7 @@ public class OpenOrderQuote extends BusinessEntity {
 	@NotNull
     private OpenOrderTemplate openOrderTemplate;
 	
-	@Column(name = "open_order_number")
+	@Column(name = "open_order_number", updatable = false)
 	@NotNull
 	private String openOrderNumber;
 	

@@ -20,9 +20,11 @@ package org.meveo.apiv2.ordering.resource.ooq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -33,6 +35,30 @@ import javax.ws.rs.core.Response;
 @Produces({"application/json"})
 @Consumes({"application/json"})
 public interface OpenOrderQuoteResource {
+
+    @POST
+    @Path("/")
+    @Operation(
+            summary = "Create Open Order Quote",
+            description = "Create Open Order Quote",
+            operationId = "POST_Open-Order-Quote",
+            responses = {
+                    @ApiResponse(description = "Id of created Open Order Quote"
+                    )}
+    )
+    Response create(OpenOrderQuoteDto dto);
+
+    @PUT
+    @Path("/{id}")
+    @Operation(
+            summary = "Update Open Order Quote",
+            description = "Update Open Order Quote",
+            operationId = "PUT_Open-Order-Quote",
+            responses = {
+                    @ApiResponse(description = "Id of updated Open Order Quote"
+                    )}
+    )
+    Response update(@Parameter(description = "Open Order Quote id", required = true) @PathParam("id") Long id, OpenOrderQuoteDto dto);
 
     @PUT
     @Path("/{code}/status/{status}")
