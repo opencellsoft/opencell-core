@@ -4,17 +4,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.tax.TaxClass;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
-
-import java.util.List;
 
 @Entity
 @Table(name = "open_order_product")
