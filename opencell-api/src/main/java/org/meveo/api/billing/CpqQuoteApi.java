@@ -114,6 +114,7 @@ import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -1934,7 +1935,10 @@ public class CpqQuoteApi extends BaseApi {
             }
 
             serviceInstance.setSubscription(subscription);
-            
+            if(PriceVersionDateSettingEnum.QUOTE.equals(product.getPriceVersionDateSetting())) {
+            	serviceInstance.setPriceVersionDate(quoteProduct.getQuote().getQuoteDate());
+            }
+
             processProductWithDiscount(subscription, quoteProduct, serviceInstance);
 
             AttributeInstance attributeInstance = null;
@@ -1944,7 +1948,7 @@ public class CpqQuoteApi extends BaseApi {
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
             serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, true);
-
+            
             List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
             for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());

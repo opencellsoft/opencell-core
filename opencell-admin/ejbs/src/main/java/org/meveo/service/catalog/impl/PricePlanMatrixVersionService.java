@@ -43,6 +43,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -59,6 +60,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
@@ -70,6 +72,7 @@ import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -389,6 +392,41 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         return result.isEmpty() ? null : result.get(0);
     }
+
+	/**
+	 * get pricePlanVersion Valid for the given operationDate
+	 * @param ppmCode
+	 * @param serviceInstance
+	 * @param operationDate
+	 * @return PricePlanMatrixVersion
+	 */
+
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
+		Date operationDateParam = new Date();
+		if(PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+			if(serviceInstance.getPriceVersionDate() != null) {
+				operationDateParam = serviceInstance.getPriceVersionDate(); 
+			}else {
+				operationDateParam = serviceInstance.getSubscriptionDate(); 
+			}
+		}else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
+			operationDateParam = serviceInstance.getSubscriptionDate(); 
+		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+			operationDateParam = serviceInstance.getRenewalNotifiedDate(); 
+		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+			operationDateParam = operationDate; 
+		}
+		
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+        	return null;
+        }
+        if(result.size()>1) {
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+		return result.get(0);
+	}
 
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
