@@ -70,7 +70,7 @@ public class OpenOrderQuoteUpdateApiTest {
     private ServiceSingleton serviceSingleton;
 
     @Test
-    public void createNominal() {
+    public void updateNominal() {
         ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
