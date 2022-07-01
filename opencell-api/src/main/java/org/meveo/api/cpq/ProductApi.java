@@ -169,9 +169,6 @@ public class ProductApi extends BaseApi {
 		if(Strings.isEmpty(productDto.getLabel())){
 			missingParameters.add("label");
 		}
-		if(productDto.getPriceVersionDateSetting() == null){
-			missingParameters.add("priceVersionDateSetting");
-		}
 		handleMissingParameters();
 		try {
 			productDto.setCode(productDto.getCode().trim());

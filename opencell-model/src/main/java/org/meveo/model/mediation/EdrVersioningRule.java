@@ -35,15 +35,15 @@ public class EdrVersioningRule extends AuditableEntity {
 
     @Column(name = "criterial_el", nullable = false)
 	@NotNull
-	private String criterialEl;
+	private String criterialEL;
 
     @Column(name = "key_el", nullable = false)
 	@NotNull
-	private String keyEl;
+	private String keyEL;
 
     @Column(name = "is_new_version_el", nullable = false)
 	@NotNull
-	private String isNewVersionEl;
+	private String isNewVersionEL;
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mediation_setting_id", nullable = false, referencedColumnName = "id")
@@ -65,29 +65,6 @@ public class EdrVersioningRule extends AuditableEntity {
 		this.priority = priority;
 	}
 
-	public String getCriterialEl() {
-		return criterialEl;
-	}
-
-	public void setCriterialEl(String criterialEl) {
-		this.criterialEl = criterialEl;
-	}
-
-	public String getKeyEl() {
-		return keyEl;
-	}
-
-	public void setKeyEl(String keyEl) {
-		this.keyEl = keyEl;
-	}
-
-	public String getIsNewVersionEl() {
-		return isNewVersionEl;
-	}
-
-	public void setIsNewVersionEl(String isNewVersionEl) {
-		this.isNewVersionEl = isNewVersionEl;
-	}
 
 	public MediationSetting getMediationSetting() {
 		return mediationSetting;
@@ -101,7 +78,7 @@ public class EdrVersioningRule extends AuditableEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(criterialEl, isNewVersionEl, keyEl, mediationSetting, priority);
+		result = prime * result + Objects.hash(criterialEL, isNewVersionEL, keyEL, mediationSetting, priority);
 		return result;
 	}
 
@@ -112,9 +89,33 @@ public class EdrVersioningRule extends AuditableEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		EdrVersioningRule other = (EdrVersioningRule) obj;
-		return Objects.equals(criterialEl, other.criterialEl) && Objects.equals(isNewVersionEl, other.isNewVersionEl)
-				&& Objects.equals(keyEl, other.keyEl) && Objects.equals(mediationSetting, other.mediationSetting)
+		return Objects.equals(criterialEL, other.criterialEL) && Objects.equals(isNewVersionEL, other.isNewVersionEL)
+				&& Objects.equals(keyEL, other.keyEL) && Objects.equals(mediationSetting, other.mediationSetting)
 				&& Objects.equals(priority, other.priority);
+	}
+
+	public String getCriterialEL() {
+		return criterialEL;
+	}
+
+	public void setCriterialEL(String criterialEL) {
+		this.criterialEL = criterialEL;
+	}
+
+	public String getKeyEL() {
+		return keyEL;
+	}
+
+	public void setKeyEL(String keyEL) {
+		this.keyEL = keyEL;
+	}
+
+	public String getIsNewVersionEL() {
+		return isNewVersionEL;
+	}
+
+	public void setIsNewVersionEL(String isNewVersionEL) {
+		this.isNewVersionEL = isNewVersionEL;
 	}
     
     

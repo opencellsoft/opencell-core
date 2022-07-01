@@ -13519,4 +13519,115 @@ order by date_trunc('month', i.invoice_date) DESC
 			</addColumn>
 		</changeSet>
 
+    <changeSet id="#INTRD-8117_20220629" author="ZBariki">
+        <createSequence sequenceName="open_order_seq"/>
+        <createTable tableName="open_order">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="external_reference" type="varchar(255)"/>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(25)">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="initial_amount" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_quote_id" type="bigint"/>
+            <column name="end_of_validity_date" type="datetime"/>
+            <column name="activation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="balance" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="billing_account_id"
+                                 constraintName="open_order_billing_account_id_fk"
+                                 referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="currency_id"
+                                 constraintName="open_order_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
+
+        <addColumn tableName="open_order_threshold">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cpq_product">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_accounting_article">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cpq_tag">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_id"
+                                 constraintName="open_order_threshold_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_product" baseColumnNames="open_order_id"
+                                 constraintName="cpq_product_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_accounting_article" baseColumnNames="open_order_id"
+                                 constraintName="billing_accounting_article_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
+                                 constraintName="cpq_tag_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-8106_20220630" author="TarikFA.">
+    	<addColumn tableName="rating_edr">
+            <column name="event_key" type="varchar(100)" />
+            <column name="event_version" type="int4" />
+    	</addColumn>
+    </changeSet>
+
+        <changeSet id="#INTRD-8027_20220629" author="aelmalki">
+            <dropColumn tableName="open_order_product" columnName="code" />
+            <dropColumn tableName="open_order_product" columnName="description" />
+            <dropColumn tableName="open_order_article" columnName="code" />
+            <dropColumn tableName="open_order_article" columnName="description" />
+        </changeSet>
+
 </databaseChangeLog>

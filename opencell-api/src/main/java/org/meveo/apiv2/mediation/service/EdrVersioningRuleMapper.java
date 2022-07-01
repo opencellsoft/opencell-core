@@ -19,14 +19,13 @@ public class EdrVersioningRuleMapper extends ResourceMapper<org.meveo.apiv2.medi
 	public org.meveo.apiv2.mediation.EdrVersioningRule toResource(BaseEntity entity) {
 		try {
 			EdrVersioningRule edrVersioningRule = (EdrVersioningRule)entity;
-			ImmutableEdrVersioningRule immutableEdrVersioningRule = (ImmutableEdrVersioningRule) initResource(ImmutableEdrVersioningRule.class, entity);
-			return ImmutableEdrVersioningRule.builder().from(immutableEdrVersioningRule)
+			return ImmutableEdrVersioningRule.builder()
 					.id(entity.getId())
 					.priority(edrVersioningRule.getPriority())
-					.criterialEl(edrVersioningRule.getCriterialEl())
-					.isNewVersionEl(edrVersioningRule.getIsNewVersionEl())
-					.keyEl(edrVersioningRule.getKeyEl())
-					.mediationSetting(edrVersioningRule.getMediationSetting() != null ? ImmutableMediationSetting.builder().id(edrVersioningRule.getMediationSetting().getId()).isEnableEdrVersioning(edrVersioningRule.getMediationSetting().isEnableEdrVersioning()).build() : null)
+					.criterialEL(edrVersioningRule.getCriterialEL())
+					.isNewVersionEL(edrVersioningRule.getIsNewVersionEL())
+					.keyEL(edrVersioningRule.getKeyEL())
+					.mediationSetting(edrVersioningRule.getMediationSetting() != null ? ImmutableMediationSetting.builder().id(edrVersioningRule.getMediationSetting().getId()).enableEdrVersioning(edrVersioningRule.getMediationSetting().isEnableEdrVersioning()).build() : null)
 					.build();
 		}catch(Exception e) {
 			throw new BusinessException(e);
@@ -39,9 +38,9 @@ public class EdrVersioningRuleMapper extends ResourceMapper<org.meveo.apiv2.medi
 			EdrVersioningRule entity = new EdrVersioningRule();
 			entity.setId(resource.getId());
 			entity.setPriority(resource.getPriority());
-			entity.setCriterialEl(resource.getCriterialEl());
-			entity.setKeyEl(resource.getKeyEl());
-			entity.setIsNewVersionEl(resource.getIsNewVersionEl());
+			entity.setCriterialEL(resource.getCriterialEL());
+			entity.setKeyEL(resource.getKeyEL());
+			entity.setIsNewVersionEL(resource.getIsNewVersionEL());
 			if(resource.getMediationSetting() != null) {
 				MediationSetting mediationSetting = new MediationSetting();
 				mediationSetting.setId(resource.getMediationSetting().getId());

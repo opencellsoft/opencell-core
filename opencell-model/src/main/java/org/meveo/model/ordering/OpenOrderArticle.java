@@ -3,58 +3,56 @@ package org.meveo.model.ordering;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.tax.TaxClass;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import static javax.persistence.FetchType.LAZY;
-
-import java.util.List;
 
 @Entity
 @Table(name = "open_order_article")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_article_seq"),})
-public class OpenOrderArticle extends BusinessEntity {
+public class OpenOrderArticle extends AuditableEntity {
 
-	@OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
-	
-	@OneToOne(fetch = LAZY)
+
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "open_order_template_id")
     private OpenOrderTemplate openOrderTemplate;
-	
-	@Type(type = "numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "active")
     private Boolean active;
 
-	public AccountingArticle getAccountingArticle() {
-		return accountingArticle;
-	}
+    public AccountingArticle getAccountingArticle() {
+        return accountingArticle;
+    }
 
-	public void setAccountingArticle(AccountingArticle accountingArticle) {
-		this.accountingArticle = accountingArticle;
-	}
+    public void setAccountingArticle(AccountingArticle accountingArticle) {
+        this.accountingArticle = accountingArticle;
+    }
 
-	public OpenOrderTemplate getOpenOrderTemplate() {
-		return openOrderTemplate;
-	}
+    public OpenOrderTemplate getOpenOrderTemplate() {
+        return openOrderTemplate;
+    }
 
-	public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
-		this.openOrderTemplate = openOrderTemplate;
-	}
+    public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
+        this.openOrderTemplate = openOrderTemplate;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }

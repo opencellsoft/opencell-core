@@ -27,9 +27,11 @@ import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.billing.impl.article.OpenOrderArticleService;
-import org.meveo.service.billing.impl.article.OpenOrderProductService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.order.ThresholdService;
@@ -38,15 +40,19 @@ import org.meveo.service.order.ThresholdService;
 public class OpenOrderTemplateApiService {
 
     @Inject
-    private OpenOrderProductService openOrderProductService;
+    private ProductService productService;
     @Inject
-    private OpenOrderArticleService openOrderArticleService;
+    private AccountingArticleService accountingArticleService;
     @Inject
     private OpenOrderTemplateService openOrderTemplateService;
     @Inject
     private ThresholdService thresholdService;
     @Inject
     private TagService tagService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @Inject
     private AuditLogService auditLogService;
@@ -64,8 +70,8 @@ public class OpenOrderTemplateApiService {
         openOrderTemplate.setCode(openOrderTemplate.getTemplateName());
         if (null != input.getThresholds())
             openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
-        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
-        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles(), openOrderTemplate));
+        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts(), openOrderTemplate));
         if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
         checkParameters(openOrderTemplate);
 
@@ -90,8 +96,8 @@ public class OpenOrderTemplateApiService {
         openOrderTemplateMapper.fillEntity(openOrderTemplate, input);
         thresholdService.deleteThresholdsByOpenOrderTemplateId(openOrderTemplate.getId());
         openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
-        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles()));
-        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts()));
+        if (null != input.getArticles()) openOrderTemplate.setArticles(fetchArticles(input.getArticles(), openOrderTemplate));
+        if (null != input.getProducts()) openOrderTemplate.setProducts(fetchProducts(input.getProducts(), openOrderTemplate));
         if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
         checkParameters(openOrderTemplate);
         openOrderTemplate = openOrderTemplateService.update(openOrderTemplate);
@@ -186,28 +192,40 @@ public class OpenOrderTemplateApiService {
     }
 
 
-    private List<OpenOrderProduct> fetchProducts(List<String> productsCodes) {
+    private List<OpenOrderProduct> fetchProducts(List<String> productsCodes, OpenOrderTemplate openOrderTemplate) {
         List<OpenOrderProduct> products = new ArrayList<>();
         for (String productCode : productsCodes) {
-        	OpenOrderProduct product = openOrderProductService.findByCode(productCode);
+            Product product = productService.findByCode(productCode);
             if (null == product) {
                 throw new BusinessApiException(String.format("Product with code %s doesn't exist", productCode));
 
             }
-            products.add(product);
+            OpenOrderProduct oop = new OpenOrderProduct();
+            oop.setActive(true);
+            oop.setProduct(product);
+            oop.setOpenOrderTemplate(openOrderTemplate);
+            oop.updateAudit(currentUser);
+
+            products.add(oop);
         }
         return products;
     }
 
-    private List<OpenOrderArticle> fetchArticles(List<String> articlesCodes) {
+    private List<OpenOrderArticle> fetchArticles(List<String> articlesCodes, OpenOrderTemplate openOrderTemplate) {
         List<OpenOrderArticle> articles = new ArrayList<>();
         for (String articleCode : articlesCodes) {
-        	OpenOrderArticle article = openOrderArticleService.findByCode(articleCode);
+            AccountingArticle article = accountingArticleService.findByCode(articleCode);
             if (null == article) {
                 throw new BusinessApiException(String.format("Article with code %s doesn't exist", articleCode));
 
             }
-            articles.add(article);
+            OpenOrderArticle ooa = new OpenOrderArticle();
+            ooa.setActive(true);
+            ooa.setAccountingArticle(article);
+            ooa.setOpenOrderTemplate(openOrderTemplate);
+            ooa.updateAudit(currentUser);
+
+            articles.add(ooa);
         }
         return articles;
     }

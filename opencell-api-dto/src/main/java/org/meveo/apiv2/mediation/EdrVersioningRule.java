@@ -21,15 +21,15 @@ public interface EdrVersioningRule extends Resource {
 
     @Schema(description = "Defines if this rule is valid to for this EDR.")
     @NotEmpty
-	String getCriterialEl();
+	String getCriterialEL();
 
     @Schema(description = "This expression will return string that will be stored as the EDR eventKey")
     @NotEmpty
-	String getKeyEl();
+	String getKeyEL();
 
     @Schema(description = "This expression will tell us if EDR is a new version of the EDR.")
     @NotEmpty
-	String getIsNewVersionEl();
+	String getIsNewVersionEL();
 
     @Schema(description = "attached mediation settings")
     @Nullable

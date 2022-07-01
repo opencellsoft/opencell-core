@@ -17,7 +17,6 @@ import javax.ws.rs.BadRequestException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
@@ -189,14 +188,18 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 || billingRun.getStatus() == CREATING_INVOICE_LINES) {
             throw new BadRequestException("The billing run with status " + billingRun.getStatus() + " cannot be cancelled");
         }
-        ratedTransactionService.deleteSupplementalRTs(billingRun);
-        ratedTransactionService.uninvoiceRTs(billingRun);
-        invoiceLineService.deleteInvoiceLines(billingRun);
-        invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBR(billingRun.getId()));
-        invoiceService.deleteInvoices(billingRun);
-        invoiceAgregateService.deleteInvoiceAgregates(billingRun);
-        billingRun.setStatus(CANCELED);
-        billingRunService.update(billingRun);
-        return of(billingRun);
+        try {
+            ratedTransactionService.deleteSupplementalRTs(billingRun);
+            ratedTransactionService.uninvoiceRTs(billingRun);
+            invoiceLineService.deleteInvoiceLines(billingRun);
+            invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBR(billingRun.getId()));
+            invoiceService.deleteInvoices(billingRun);
+            invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+            billingRun.setStatus(CANCELED);
+            billingRunService.update(billingRun);
+            return of(billingRun);
+        } catch (Exception exception) {
+            throw new BusinessException(exception.getMessage());
+        }
 	}
 }
