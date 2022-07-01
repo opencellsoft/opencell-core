@@ -6,9 +6,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteDto;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
@@ -16,23 +14,24 @@ import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.Threshold;
+import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
+import org.meveo.service.order.OpenOrderArticleService;
+import org.meveo.service.order.OpenOrderProductService;
 import org.meveo.service.order.OpenOrderQuoteService;
 import org.meveo.service.order.OpenOrderTemplateService;
-import org.meveo.service.order.ThresholdService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -65,13 +64,10 @@ public class OpenOrderQuoteApi {
     private OpenOrderTemplateService openOrderTemplateService;
 
     @Inject
-    private ProductService productService;
+    private OpenOrderProductService openOrderProductService;
 
     @Inject
-    private AccountingArticleService accountingArticleService;
-
-    @Inject
-    private ThresholdService thresholdService;
+    private OpenOrderArticleService openOrderArticleService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -173,6 +169,11 @@ public class OpenOrderQuoteApi {
         if (template == null) {
             throw new EntityDoesNotExistsException("No OpenOrderTemplate found with code '" + dto.getOpenOrderTemplate() + "'");
         }
+
+        // To activate in SPRINT 21
+        /*if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
+            throw new BusinessApiException("Template shall be in ACTIVE status");
+        }*/
         return template;
     }
 
@@ -284,7 +285,7 @@ public class OpenOrderQuoteApi {
         ooq.setTags(tags);
 
         List<Threshold> thresholds = new ArrayList<>();
-        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptyList())
+        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptySet())
                 .forEach(thresholdDto -> {
                     Threshold threshold = new Threshold();
                     threshold.setOpenOrderTemplate(template);
@@ -321,14 +322,15 @@ public class OpenOrderQuoteApi {
 
             // all products must exist and be active in the openOrderTemplate products list.
             dto.getProducts().forEach(productCode -> {
-                Product product = productService.findByCode(productCode);
-                if (product == null) {
-                    throw new EntityDoesNotExistsException("Product with code '" + productCode + "' is not exist");
+                OpenOrderProduct templateOOP = openOrderProductService.findByProductCodeAndTemplate(productCode, template.getId());
+
+                if (templateOOP == null) {
+                    throw new EntityDoesNotExistsException("Open Order Product with code '" + productCode + "' is not exist in template");
                 }
 
                 OpenOrderProduct oop = new OpenOrderProduct();
                 oop.setActive(true);
-                oop.setProduct(product);
+                oop.setProduct(templateOOP.getProduct());
                 oop.setOpenOrderTemplate(template);
                 oop.updateAudit(currentUser);
 
@@ -346,15 +348,15 @@ public class OpenOrderQuoteApi {
             }
 
             // all articles must exist and be active in the openOrderTemplate articles list.
-            dto.getProducts().forEach(articleCode -> {
-                AccountingArticle article = accountingArticleService.findByCode(articleCode);
+            dto.getArticles().forEach(articleCode -> {
+                OpenOrderArticle article = openOrderArticleService.findByArticleCodeAndTemplate(articleCode, template.getId());
                 if (article == null) {
-                    throw new EntityDoesNotExistsException("Article with code '" + articleCode + "' is not exist");
+                    throw new EntityDoesNotExistsException("Open Order Article with code '" + articleCode + "' is not exist in template");
                 }
 
                 OpenOrderArticle ooa = new OpenOrderArticle();
                 ooa.setActive(true);
-                ooa.setAccountingArticle(article);
+                ooa.setAccountingArticle(article.getAccountingArticle());
                 ooa.setOpenOrderTemplate(template);
                 ooa.updateAudit(currentUser);
 
@@ -366,24 +368,23 @@ public class OpenOrderQuoteApi {
 
     private void validateThresholds(OpenOrderQuoteDto dto, OpenOrderTemplate template) {
         // check thresholds list
-        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptyList())
-                .forEach(thresholdDto -> {
-                    // "percentage": distinct integers, from 1 to 100
-                    if (thresholdDto.getPercentage() != null && (thresholdDto.getPercentage() < 1 || thresholdDto.getPercentage() > 100)) {
-                        throw new BusinessApiException("Invalid Threshold percentage '" + thresholdDto.getPercentage() + "'. Value must be between 1 and 100");
-                    }
-
-                    // recipients: not null, enum: CUSTOMER,SALES_AGENT,CONSUMER
-                    if (CollectionUtils.isEmpty(thresholdDto.getRecipients())) {
-                        throw new BusinessApiException("Threshold Recipients must not be empty");
-                    }
-
-                    // externalRecipient: should be valid email format :
-                    // use @Email in dto field
-
-                });
-
         if (CollectionUtils.isNotEmpty(dto.getThresholds())) {
+            dto.getThresholds().forEach(thresholdDto -> {
+                // "percentage": distinct integers, from 1 to 100
+                if (thresholdDto.getPercentage() != null && (thresholdDto.getPercentage() < 1 || thresholdDto.getPercentage() > 100)) {
+                    throw new BusinessApiException("Invalid Threshold percentage '" + thresholdDto.getPercentage() + "'. Value must be between 1 and 100");
+                }
+
+                // recipients: not null, enum: CUSTOMER,SALES_AGENT,CONSUMER
+                if (CollectionUtils.isEmpty(thresholdDto.getRecipients())) {
+                    throw new BusinessApiException("Threshold Recipients must not be empty");
+                }
+
+                // externalRecipient: should be valid email format :
+                // use @Email in dto field
+
+            });
+
             // Sequence: distinct integers, from 1 to thresholds list size.
             Set<Integer> dtoSequence = dto.getThresholds().stream()
                     .sorted(Comparator.comparing(ThresholdInput::getSequence))
@@ -411,7 +412,8 @@ public class OpenOrderQuoteApi {
             }
 
             // all existing thresholds on template must be present in the OpenOrder (percentage is the key).
-            List<Integer> templateThresholdPercentages = template.getThresholds().stream()
+            List<Integer> templateThresholdPercentages = Optional.ofNullable(template.getThresholds()).orElse(Collections.emptyList())
+                    .stream()
                     .sorted(Comparator.comparing(Threshold::getPercentage))
                     .map(Threshold::getPercentage).collect(Collectors.toList());
 
@@ -427,13 +429,15 @@ public class OpenOrderQuoteApi {
             }
 
             // all existing recipients in a template line must be present in the OpenOrder existing line.
-            Set<String> templateThresholdRecipients = template.getThresholds().stream()
-                    .sorted(Comparator.comparing(Threshold::getExternalRecipient, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .map(Threshold::getExternalRecipient).collect(Collectors.toSet());
+            Set<ThresholdRecipientsEnum> templateThresholdRecipients = Optional.ofNullable(template.getThresholds()).orElse(Collections.emptyList())
+                    .stream()
+                    .map(Threshold::getRecipients)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
 
-            Set<String> dtoThresholdRecipients = dto.getThresholds().stream()
-                    .sorted(Comparator.comparing(ThresholdInput::getExternalRecipient, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .map(ThresholdInput::getExternalRecipient)
+            Set<ThresholdRecipientsEnum> dtoThresholdRecipients = dto.getThresholds().stream()
+                    .map(ThresholdInput::getRecipients)
+                    .flatMap(Collection::stream)
                     .collect(Collectors.toSet());
 
             templateThresholdRecipients.removeAll(dtoThresholdRecipients);
@@ -445,7 +449,7 @@ public class OpenOrderQuoteApi {
     }
 
     private void buildTags(OpenOrderQuoteDto dto, List<Tag> tags) {
-        Optional.ofNullable(dto.getTags()).orElse(Collections.emptyList())
+        Optional.ofNullable(dto.getTags()).orElse(Collections.emptySet())
                 .forEach(tagCode -> {
                     Tag tag = tagService.findByCode(tagCode);
                     if (tag == null) {

@@ -1,4 +1,4 @@
-package org.meveo.apiv2.ordering.services;
+package org.meveo.apiv2.ordering.ooq;
 
 import static org.mockito.ArgumentMatchers.any;
 
