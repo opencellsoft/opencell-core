@@ -19,6 +19,12 @@ import java.util.List;
 @Table(name = "open_order")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_seq"),})
+@NamedQueries({
+		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products product left join oo.articles article"
+				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
+				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
+				+ " AND (product.id = :productId or article.id = :articleId)") 
+})
 public class OpenOrder extends BusinessEntity {
 
     @Column(name = "external_reference")
