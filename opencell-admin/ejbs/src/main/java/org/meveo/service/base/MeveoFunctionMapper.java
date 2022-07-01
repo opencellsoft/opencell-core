@@ -277,6 +277,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCTValue", MeveoFunctionMapper.class
                     .getMethod("getCTValue", String.class, String.class, String.class, Object.class, String.class, Object.class, String.class, Object.class, String.class,
                             Object.class, String.class, Object.class));
+            addFunction("mv", "getCTFieldValue", MeveoFunctionMapper.class
+                    .getMethod("getCTFieldValue", String.class, String.class, String.class, Object.class, String.class, Object.class, String.class, Object.class, String.class,
+                            Object.class, String.class, Object.class));
 
             addFunction("mv", "getCTValues", MeveoFunctionMapper.class
                     .getMethod("getCTValues", String.class, String.class, Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class,
@@ -1666,6 +1669,28 @@ public class MeveoFunctionMapper extends FunctionMapper {
             queryValues.put(fieldName5, fieldValue5);
         }
         return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues);
+    }
+    
+    public static Object getCTFieldValue(String customTableCode, String fieldToReturn, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2, String fieldName3,
+            Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
+
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
+        }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getFieldByConditions(customTableCode, fieldToReturn, queryValues);
     }
 
     /**

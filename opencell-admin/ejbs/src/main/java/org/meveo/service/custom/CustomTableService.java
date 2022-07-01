@@ -1146,4 +1146,14 @@ public class CustomTableService extends NativePersistenceService {
         throw new InvalidParameterException("Invalid id value found: " + id);
     }
 
+    
+    @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+	public Object getFieldByConditions(String tableName, String fieldName, Map<String, Object> filters) {
+		final PaginationConfiguration config = new PaginationConfiguration(filters);
+		config.setFetchFields(Arrays.asList(fieldName));
+		QueryBuilder queryBuilder = getQuery(tableName, config, null);
+		Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+		final Map<String, Object> queryResult = (Map<String, Object>) query.uniqueResult();
+		return MapUtils.isEmpty(queryResult) ? null : queryResult.get(fieldName);
+	}
 }
