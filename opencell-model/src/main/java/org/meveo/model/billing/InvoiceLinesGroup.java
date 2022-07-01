@@ -18,12 +18,13 @@ public class InvoiceLinesGroup implements Serializable {
     private boolean prepaid;
     private String invoiceKey;
     private PaymentMethod paymentMethod;
+    private String openOrderNumber;
     private List<InvoiceLine> invoiceLines = new ArrayList<>();
 
     public InvoiceLinesGroup() { }
 
     public InvoiceLinesGroup(BillingAccount billingAccount, BillingCycle billingCycle, Seller seller, InvoiceType invoiceType,
-                             boolean prepaid, String invoiceKey, PaymentMethod paymentMethod) {
+                             boolean prepaid, String invoiceKey, PaymentMethod paymentMethod, String openOrderNumber) {
         this.billingAccount = billingAccount;
         this.billingCycle = billingCycle;
         this.seller = seller;
@@ -31,6 +32,7 @@ public class InvoiceLinesGroup implements Serializable {
         this.prepaid = prepaid;
         this.invoiceKey = invoiceKey;
         this.paymentMethod = paymentMethod;
+        this.openOrderNumber = openOrderNumber;
     }
 
     public BillingAccount getBillingAccount() {
@@ -75,8 +77,8 @@ public class InvoiceLinesGroup implements Serializable {
 
     public String getInvoiceKey() {
         if (invoiceKey == null) {
-            invoiceKey = format("%d_%d_%d_%s_%d", billingAccount.getId(), seller.getId(), invoiceType.getId(),
-                    prepaid, getPaymentMethod().getId());
+            invoiceKey = format("%d_%d_%d_%s_%d_%s", billingAccount.getId(), seller.getId(), invoiceType.getId(),
+                    prepaid, getPaymentMethod().getId(), openOrderNumber);
         }
         return invoiceKey;
     }
@@ -103,4 +105,13 @@ public class InvoiceLinesGroup implements Serializable {
     public void setInvoiceLines(List<InvoiceLine> invoiceLines) {
         this.invoiceLines = invoiceLines;
     }
+
+	public String getOpenOrderNumber() {
+		return openOrderNumber;
+	}
+
+	public void setOpenOrderNumber(String openOrderNumber) {
+		this.openOrderNumber = openOrderNumber;
+	}
+    
 }

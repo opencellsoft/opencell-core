@@ -5101,10 +5101,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         	
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
             Seller seller = getSelectedSeller(invoiceLine);
-            String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
+            String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId() + "_" + invoiceLine.getOpenOrderNumber();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
             if (ilGroup == null) {
-                ilGroup = new InvoiceLinesGroup(billingAccount, billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), seller, invoiceType, false, invoiceKey, paymentMethod);
+                ilGroup = new InvoiceLinesGroup(billingAccount, billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), seller, invoiceType, false, invoiceKey, paymentMethod, invoiceLine.getOpenOrderNumber());
                 invoiceLinesGroup.put(invoiceKey, ilGroup);
             }
             ilGroup.getInvoiceLines().add(invoiceLine);
@@ -5431,6 +5431,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoiceLinesGroup.getSeller().getId(), billingRun, invoiceDate, isDraft,
                                 invoiceLinesGroup.getBillingCycle(), invoiceLinesGroup.getPaymentMethod(), invoiceLinesGroup.getInvoiceType(), invoiceLinesGroup.isPrepaid(), automaticInvoiceCheck);
                         }
+                        invoiceAggregateProcessingInfo.invoice.setOpenOrderNumber(invoiceLinesGroup.getOpenOrderNumber());
                         invoiceAggregateProcessingInfo.invoice.setDueBalance(balance);
                         invoiceList.add(invoiceAggregateProcessingInfo.invoice);
                     }
