@@ -1571,7 +1571,14 @@ public class CpqQuoteApi extends BaseApi {
 
                 Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
-                quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
+                RecurringChargeTemplate recChargeTemplate = (RecurringChargeTemplate) chargeInstance.getChargeTemplate();
+                if(recChargeTemplate != null && !StringUtils.isBlank(recChargeTemplate.getCalendarCodeEl())) {
+                    Calendar calendarFromEl = recurringRatingService.getCalendarFromEl(recChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recChargeTemplate, (RecurringChargeInstance) chargeInstance);
+                    quotePrice.setRecurrencePeriodicity(calendarFromEl != null ? calendarFromEl.getDescription() : null);
+                }
+                if(StringUtils.isBlank(quotePrice.getRecurrencePeriodicity()) && recChargeTemplate != null && recChargeTemplate.getCalendar() != null){
+                    quotePrice.setRecurrencePeriodicity(recChargeTemplate.getCalendar().getDescription());
+                }
                 overrideAmounts(quotePrice, recurrenceDuration);
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());

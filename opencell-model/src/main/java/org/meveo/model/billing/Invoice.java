@@ -117,7 +117,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
-        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId")
+        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId"),
+        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -698,6 +699,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_plan_id")
     private PaymentPlan paymentPlan;
+
+    /**
+     * Open Order Number
+     */
+    @Column(name = "open_order_number")
+    @Size(max = 255)
+	private String openOrderNumber;
 
     public Invoice() {
 	}
@@ -1831,7 +1839,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.paymentPlan = paymentPlan;
     }
 
-    /**
+    public String getOpenOrderNumber() {
+		return openOrderNumber;
+	}
+
+	public void setOpenOrderNumber(String openOrderNumber) {
+		this.openOrderNumber = openOrderNumber;
+	}
+
+
+	/**
      * Check if an invoice can be refreshed
      * @return refresh check result
      */

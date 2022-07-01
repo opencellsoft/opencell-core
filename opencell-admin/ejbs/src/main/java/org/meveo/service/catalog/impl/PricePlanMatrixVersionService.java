@@ -69,7 +69,6 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.communication.FormatEnum;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
@@ -881,4 +880,22 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return zipFileName;
         }
     }
+
+	/**
+	 * get pricePlanVersion Valid for the given operationDate
+	 * @param ppmCode
+	 * @param operationDate
+	 * @return
+	 */
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, Date operationDate) {
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDate).getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+        	return null;
+        }
+        if(result.size()>1) {
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+		return result.get(0);
+	}
 }

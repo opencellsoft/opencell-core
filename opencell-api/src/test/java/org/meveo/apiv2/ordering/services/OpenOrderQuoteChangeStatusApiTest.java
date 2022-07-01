@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.ordering.services.ooq.OpenOrderQuoteApi;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.ordering.OpenOrderArticle;

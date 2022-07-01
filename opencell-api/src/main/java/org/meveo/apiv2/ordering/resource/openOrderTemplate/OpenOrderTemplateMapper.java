@@ -22,8 +22,8 @@ public class OpenOrderTemplateMapper extends ResourceMapper<OpenOrderTemplateInp
                 .openOrderType(entity.getOpenOrderType())
                 .thresholds(thresholdMapper.toResource(entity.getThresholds()))
                 .description(entity.getDescription())
-                .products(entity.getProducts() == null ? null : entity.getProducts().stream().map(product -> product.getCode()).collect(Collectors.toList()))
-                .articles(entity.getArticles() == null ? null : entity.getArticles().stream().map(accountingArticle -> accountingArticle.getCode()).collect(Collectors.toList()))
+                .products(entity.getProducts() == null ? null : entity.getProducts().stream().map(product -> product.getProduct().getCode()).collect(Collectors.toList()))
+                .articles(entity.getArticles() == null ? null : entity.getArticles().stream().map(accountingArticle -> accountingArticle.getAccountingArticle().getCode()).collect(Collectors.toList()))
                 .tags(entity.getTags() == null ? null : entity.getTags().stream().map(tag -> tag.getCode()).collect(Collectors.toList()))
                 .status(entity.getStatus())
                 .build();

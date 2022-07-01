@@ -6316,4 +6316,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    public List<Long> getInvoicesByBR(Long billingRunId) {
+        return getEntityManager().createNamedQuery("Invoice.loadByBillingRun", Long.class)
+                    .setParameter("billingRunId", billingRunId)
+                    .getResultList();
+    }
+
 }

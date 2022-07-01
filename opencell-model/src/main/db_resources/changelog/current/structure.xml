@@ -13366,10 +13366,16 @@ order by date_trunc('month', i.invoice_date) DESC
 		
       	</changeSet>
       	
+      	<changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" failOnError="false">
+        	<dropForeignKeyConstraint baseTableName="open_order_template_products"
+	                               constraintName="open_order_template_products_product_id_fk"/>
+	                               
+	        <dropForeignKeyConstraint baseTableName="open_order_template_articles"
+	                               constraintName="open_order_template_articles_article_id_fk"/>
+        </changeSet>
       	
       	<changeSet id="#INTRD-8023_20220624" author="HatimOUDAD" >
       	
-      		
 		    <dropPrimaryKey constraintName="open_order_template_articles_pkey" tableName="open_order_template_articles"/>
 		    <dropPrimaryKey constraintName="open_order_template_products_pkey" tableName="open_order_template_products"/>                            
 		    <dropColumn tableName="open_order_template_products">
@@ -13402,14 +13408,6 @@ order by date_trunc('month', i.invoice_date) DESC
 	      	
         </changeSet>
         
-        <changeSet id="#INTRD-8023_20220624-fk1" author="HatimOUDAD" failOnError="false">
-        	<dropForeignKeyConstraint baseTableName="open_order_template_products"
-	                               constraintName="open_order_template_products_product_id_fk"/>
-	                               
-	        <dropForeignKeyConstraint baseTableName="open_order_template_articles"
-	                               constraintName="open_order_template_articles_article_id_fk"/>
-        </changeSet>
-        
         <changeSet id="#INTRD-8023_20220624-fk2" author="HatimOUDAD" failOnError="false">
         	<addForeignKeyConstraint baseTableName="open_order_template_products" baseColumnNames="open_product_id"
 	                               constraintName="open_order_template_products_product_id_fk"
@@ -13421,96 +13419,215 @@ order by date_trunc('month', i.invoice_date) DESC
 	                               referencedTableName="open_order_article"
 	                               referencedColumnNames="id"/>
         </changeSet>
-      	
         
-		<changeSet id="#INTRD-8219_20220627" author="HatimOUDAD" >                      
+		<changeSet id="#INTRD-8219_20220627" author="HatimOUDAD" >
+		
+			<dropForeignKeyConstraint baseTableName="cpq_product"
+	                               constraintName="fk_cpq_product_open_quote"/>                      
 	        <dropColumn tableName="cpq_product">
 	            <column name="open_order_quote_id" />
 	        </dropColumn>
-	        <dropForeignKeyConstraint baseTableName="cpq_product"
-	                               constraintName="fk_cpq_product_open_quote"/>
-	                   
+
+	        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+	                               constraintName="fk_billing_accounting_article_open_quote"/>	                   
 	        <dropColumn tableName="billing_accounting_article">
 	            <column name="open_order_quote_id" />
 	        </dropColumn>
-	        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
-	                               constraintName="fk_billing_accounting_article_open_quote"/>
-	                        
+
+	        <dropForeignKeyConstraint baseTableName="cpq_tag"
+	                               constraintName="fk_tag_open_quote"/>                
 	        <dropColumn tableName="cpq_tag">
 	            <column name="open_order_quote_id" />
 	        </dropColumn>
-	        <dropForeignKeyConstraint baseTableName="cpq_tag"
-	                               constraintName="fk_tag_open_quote"/>
+
 	                               
-	                               
-	                               
-        <createTable tableName="open_order_quote_tags">
-           <column name="open_order_quote_id" type="bigint">
-               <constraints nullable="false"/>
-           </column>
-           <column name="tag_id" type="bigint">
-               <constraints nullable="false"/>
-           </column>
-        </createTable>
-        <createTable tableName="open_order_quote_products">
-            <column name="open_order_quote_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="open_product_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <createTable tableName="open_order_quote_articles">
-            <column name="open_order_quote_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="open_article_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="open_order_quote_id,tag_id"
-                       constraintName="open_order_quote_tags_pkey"
-                             tableName="open_order_quote_tags"/>
-         <addPrimaryKey columnNames="open_order_quote_id,open_product_id"
-                             constraintName="open_order_quote_products_pkey"
-                             tableName="open_order_quote_products"/>
-         <addPrimaryKey columnNames="open_order_quote_id,open_article_id"
-                             constraintName="open_order_quote_articles_pkey"
-                             tableName="open_order_quote_articles"/>
-                             
-         <addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="open_order_quote_id"
-                                 constraintName="open_order_quote_tags_open_order_quote_id_fk"
-                                 referencedTableName="open_order_quote"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="tag_id"
-                                 constraintName="open_order_quote_tags_tag_id_fk" referencedTableName="cpq_tag"
-                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_order_quote_id"
-                                 constraintName="open_order_quote_products_open_order_quote_id_fk"
-                                 referencedTableName="open_order_quote"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_product_id"
-	                                 constraintName="open_order_quote_products_product_id_fk"
-	                                 referencedTableName="open_order_product"
+	        <createTable tableName="open_order_quote_tags">
+	           <column name="open_order_quote_id" type="bigint">
+	               <constraints nullable="false"/>
+	           </column>
+	           <column name="tag_id" type="bigint">
+	               <constraints nullable="false"/>
+	           </column>
+	        </createTable>
+	        <createTable tableName="open_order_quote_products">
+	            <column name="open_order_quote_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="open_product_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        <createTable tableName="open_order_quote_articles">
+	            <column name="open_order_quote_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	            <column name="open_article_id" type="bigint">
+	                <constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	
+	        <addPrimaryKey columnNames="open_order_quote_id,tag_id"
+	                       constraintName="open_order_quote_tags_pkey"
+	                             tableName="open_order_quote_tags"/>
+	         <addPrimaryKey columnNames="open_order_quote_id,open_product_id"
+	                             constraintName="open_order_quote_products_pkey"
+	                             tableName="open_order_quote_products"/>
+	         <addPrimaryKey columnNames="open_order_quote_id,open_article_id"
+	                             constraintName="open_order_quote_articles_pkey"
+	                             tableName="open_order_quote_articles"/>
+	                             
+	         <addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="open_order_quote_id"
+	                                 constraintName="open_order_quote_tags_open_order_quote_id_fk"
+	                                 referencedTableName="open_order_quote"
 	                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_order_quote_id"
-                                 constraintName="open_order_quote_articles_open_order_quote_id_fk"
-                                 referencedTableName="open_order_quote"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_article_id"
-	                                 constraintName="open_order_quote_articles_article_id_fk"
-	                                 referencedTableName="open_order_article"
+	
+	        <addForeignKeyConstraint baseTableName="open_order_quote_tags" baseColumnNames="tag_id"
+	                                 constraintName="open_order_quote_tags_tag_id_fk" referencedTableName="cpq_tag"
 	                                 referencedColumnNames="id"/>
+	
+	
+	        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_order_quote_id"
+	                                 constraintName="open_order_quote_products_open_order_quote_id_fk"
+	                                 referencedTableName="open_order_quote"
+	                                 referencedColumnNames="id"/>
+	
+	        <addForeignKeyConstraint baseTableName="open_order_quote_products" baseColumnNames="open_product_id"
+		                                 constraintName="open_order_quote_products_product_id_fk"
+		                                 referencedTableName="open_order_product"
+		                                 referencedColumnNames="id"/>
+	
+	
+	        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_order_quote_id"
+	                                 constraintName="open_order_quote_articles_open_order_quote_id_fk"
+	                                 referencedTableName="open_order_quote"
+	                                 referencedColumnNames="id"/>
+	
+	        <addForeignKeyConstraint baseTableName="open_order_quote_articles" baseColumnNames="open_article_id"
+		                                 constraintName="open_order_quote_articles_article_id_fk"
+		                                 referencedTableName="open_order_article"
+		                                 referencedColumnNames="id"/>
 	                               
 	        
 		</changeSet>
+		
+		<changeSet id="#INTRD-8132_20220628" author="anas.rouaguebe" >
+			<addColumn tableName="billing_invoice">
+				<column name="open_order_number" type="varchar(255)" />
+			</addColumn>
+			<addColumn tableName="billing_invoice_line">
+				<column name="open_order_number" type="varchar(255)" />
+			</addColumn>
+		</changeSet>
+
+    <changeSet id="#INTRD-8117_20220629" author="ZBariki">
+        <createSequence sequenceName="open_order_seq"/>
+        <createTable tableName="open_order">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_open_order" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_code_unique"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="external_reference" type="varchar(255)"/>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(25)">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_account_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="initial_amount" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="open_order_quote_id" type="bigint"/>
+            <column name="end_of_validity_date" type="datetime"/>
+            <column name="activation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="balance" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_template_id"
+                                 constraintName="open_order_open_order_template_id_fk"
+                                 referencedTableName="open_order_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="billing_account_id"
+                                 constraintName="open_order_billing_account_id_fk"
+                                 referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="currency_id"
+                                 constraintName="open_order_currency_id_fk"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="open_order" baseColumnNames="open_order_quote_id"
+                                 constraintName="open_order_open_order_quote_id_fk"
+                                 referencedTableName="open_order_quote"
+                                 referencedColumnNames="id"/>
+
+        <addColumn tableName="open_order_threshold">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cpq_product">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_accounting_article">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cpq_tag">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="open_order_threshold" baseColumnNames="open_order_id"
+                                 constraintName="open_order_threshold_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_product" baseColumnNames="open_order_id"
+                                 constraintName="cpq_product_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_accounting_article" baseColumnNames="open_order_id"
+                                 constraintName="billing_accounting_article_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
+                                 constraintName="cpq_tag_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-8106_20220630" author="TarikFA.">
+    	<addColumn tableName="rating_edr">
+            <column name="event_key" type="varchar(100)" />
+            <column name="event_version" type="int4" />
+    	</addColumn>
+    </changeSet>
+
+        <changeSet id="#INTRD-8027_20220629" author="aelmalki">
+            <dropColumn tableName="open_order_product" columnName="code" />
+            <dropColumn tableName="open_order_product" columnName="description" />
+            <dropColumn tableName="open_order_article" columnName="code" />
+            <dropColumn tableName="open_order_article" columnName="description" />
+        </changeSet>
 
 </databaseChangeLog>
