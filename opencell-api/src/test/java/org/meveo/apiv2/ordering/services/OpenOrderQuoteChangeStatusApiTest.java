@@ -12,8 +12,7 @@ import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ooq.OpenOrderQuoteApi;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
@@ -21,6 +20,7 @@ import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.order.OpenOrderQuoteService;
+import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,6 +36,9 @@ public class OpenOrderQuoteChangeStatusApiTest {
     private OpenOrderQuoteService openOrderQuoteService;
     @Mock
     private OpenOrderSettingService openOrderSettingService;
+
+    @Mock
+    private OpenOrderService openOrderService;
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void ooqFoundErr() {
@@ -322,6 +325,7 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
         openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
 
@@ -336,14 +340,9 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
-        try {
-            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Open Order Quote status must be WAITING_VALIDATION");
-        }
-
+       openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
     }
 
     @Test
@@ -355,14 +354,9 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
-        try {
-            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "ASK VALIDATION feature is not activated");
-        }
-
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
     }
 
     @Test
@@ -539,6 +533,4 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         return List.of(products);
     }
-
-
 }
