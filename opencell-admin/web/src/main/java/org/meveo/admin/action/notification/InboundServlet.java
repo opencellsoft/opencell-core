@@ -143,7 +143,7 @@ public class InboundServlet extends HttpServlet {
                     status = inReq.getResponseStatus();
                 }
             } else {
-                status = HttpURLConnection.HTTP_UNAUTHORIZED;
+                status = HttpURLConnection.HTTP_FORBIDDEN;
             }
             
             res.setStatus(status);
