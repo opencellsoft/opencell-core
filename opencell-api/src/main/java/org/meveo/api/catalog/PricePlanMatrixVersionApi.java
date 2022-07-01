@@ -88,7 +88,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 				missingParameters.add("amountWithTax");
 			}
 			if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
-				missingParameters.add("amountWithoutTax");
+				missingParameters.add("price");
 			}
 		}
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
