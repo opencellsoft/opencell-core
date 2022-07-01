@@ -73,7 +73,6 @@ public class ReplacementRulesExecutor {
 
         }
         if (canReplace) {
-        	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
         }
     }
@@ -83,7 +82,10 @@ public class ReplacementRulesExecutor {
         boolean match = command.execute(commercialRuleLine);
         if (match && commercialRuleHeader.getTargetAttributeValue() == null)
             command.replace(commercialRuleLine);
-        else if (match)
+        else if (match) {
+        	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
+            
+        }
     }
 }
