@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
@@ -57,15 +60,19 @@ import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -123,6 +130,9 @@ public class MediationApiService {
 
     @EJB
     private MediationApiService thisNewTX;
+    
+    @Inject
+    private MediationsettingService mediationsettingService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -296,7 +306,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-
+                    applyEdrVersioningRule(edrs, cdr);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -513,5 +523,48 @@ public class MediationApiService {
         } catch (BusinessException e) {
             log.error("Failed to cancel Prepaid Reservation In New Transaction", e);
         }
+    }
+    
+    private void applyEdrVersioningRule(List<EDR> edrs, CDR cdr){
+    	var mediationSettings = mediationsettingService.list();
+    	if(CollectionUtils.isNotEmpty(mediationSettings) && mediationSettings.size() > 1)
+    		throw new BusinessException("More than one Mediation setting is found");
+    	if(CollectionUtils.isEmpty(mediationSettings)) return ;
+    	if(!mediationSettings.get(0).isEnableEdrVersioning()) return;
+    	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
+    	for (EDR edr : edrs) {
+    		var errorMessage = "Error evaluating criteriaEL  [id= %d, \"%s\"] for CDR: %s";
+        	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
+					.sorted(sortByPriority)
+					.filter(edrVersion -> {
+						try {
+							return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriterialEL(), Boolean.class, edr);
+						}catch(Exception e) {
+							var msg = String.format(errorMessage, edrVersion.getId(), edrVersion.getCriterialEL(), e.getMessage());
+							edr.setRejectReason(msg);
+							cdr.setRejectReason(msg);
+		        			edr.setStatus(EDRStatusEnum.REJECTED);
+		        			cdr.setStatus(CDRStatusEnum.ERROR);
+						}
+						return false;
+					})
+					.findFirst();
+        	if(edrVersionRuleOption.isPresent()) {
+        		var edrVersionRule = edrVersionRuleOption.get();
+        		try {
+        		String keyEvent = ValueExpressionWrapper.evaluateExpression(edrVersionRule.getKeyEL(), String.class, edr);
+				if(StringUtils.isNotEmpty(keyEvent))
+					edr.setEventKey(keyEvent);
+        		}catch(Exception e) {
+        			var msg = String.format(errorMessage, edrVersionRule.getId(), edrVersionRule.getKeyEL(), e.getMessage());
+					edr.setRejectReason(msg);
+        			cdr.setRejectReason(msg);
+        			edr.setStatus(EDRStatusEnum.REJECTED);
+        			cdr.setStatus(CDRStatusEnum.ERROR);
+				}
+        	}
+        	
+		}
+    	
     }
 }
