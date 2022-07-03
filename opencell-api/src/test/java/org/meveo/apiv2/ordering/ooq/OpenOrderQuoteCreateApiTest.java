@@ -1,7 +1,6 @@
 package org.meveo.apiv2.ordering.ooq;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
@@ -20,6 +19,7 @@ import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
+import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -70,12 +70,12 @@ public class OpenOrderQuoteCreateApiTest {
     private ServiceSingleton serviceSingleton;
 
     @Test
-    public void createNominal() {
+    public void createWithArticleNominal() {
         // String code, String billingAccountCode, String description, String externalReference,
         // OpenOrderTypeEnum openOrderType, String template, BigDecimal maxAmount,
         // Date endOfValidityDate, Date activationDate,
         // Set<ThresholdInput> thresholds, Set<String> tags, Set<String> articles, Set<String> products
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -84,6 +84,410 @@ public class OpenOrderQuoteCreateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
+        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        doReturn("TU-OOQ").when(currentUser).getUserName();
+
+        openOrderQuoteApi.create(dto);
+
+    }
+
+    @Test
+    public void createWithProductNominal() {
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.PRODUCTS, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), null, Set.of("P"));
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderProduct oop = new OpenOrderProduct();
+        Product p = new Product();
+        p.setCode("P");
+        oop.setProduct(p);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+        Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(oop);
+        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        doReturn("TU-OOQ").when(currentUser).getUserName();
+
+        openOrderQuoteApi.create(dto);
+
+    }
+
+    @Test
+    public void templateThresholdRecepientNominal() {
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
+        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        doReturn("TU-OOQ").when(currentUser).getUserName();
+
+        openOrderQuoteApi.create(dto);
+
+    }
+
+    @Test
+    public void templateThresholdInvalidRecipientErr() {
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "All existing recipients in a template line must be present in the OpenOrder existing line. Missing recipients : [CUSTOMER]");
+        }
+
+    }
+
+    @Test
+    public void thresholdSequenceInvalidErr() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(3, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Threshold sequence are not consecutive [1, 3]");
+        }
+
+    }
+
+    @Test
+    public void thresholdPercentageSequenceInvalidErr() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(2, 20, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Thresholds percent are not in correct sequence : current percente='20', previous one='50'");
+        }
+
+    }
+
+    @Test
+    public void thresholdSequenceInvalidStartErr() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(2, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(3, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Threshold sequence shall be start by '1'");
+        }
+
+    }
+
+    @Test
+    public void thresholdSequenceInvalidSizeErr() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(2, 60, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput3 = buildThresholdInput(2, 60, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput4 = buildThresholdInput(4, 60, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2, thresholdInput3, thresholdInput4), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Threshold sequence are not consecutive [1, 2, 2, 4]");
+        }
+
+    }
+
+    @Test
+    public void templateAndThresholdPercentageInvalidErr() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(2, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "All existing thresholds on template must be present in the OpenOrder. Missing percentages : [20]");
+        }
+
+    }
+
+    @Test
+    public void templateAndThresholdPercentageInvalid2Err() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 10, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(2, 20, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput3 = buildThresholdInput(3, 33, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput4 = buildThresholdInput(4, 41, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput5 = buildThresholdInput(5, 50, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput6 = buildThresholdInput(6, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2, thresholdInput3, thresholdInput4, thresholdInput5, thresholdInput6), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(
+                buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(2, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(3, 30, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(4, 60, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")
+        ));
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
+        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "All existing thresholds on template must be present in the OpenOrder. Missing percentages : [30, 60]");
+        }
+
+    }
+
+    @Test
+    public void templateAndThresholdValidPercentageNominal() {
+        ThresholdInput thresholdInput1 = buildThresholdInput(1, 10, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com");
+        ThresholdInput thresholdInput2 = buildThresholdInput(2, 20, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput3 = buildThresholdInput(3, 30, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput4 = buildThresholdInput(4, 33, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput5 = buildThresholdInput(5, 50, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput6 = buildThresholdInput(6, 60, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput7 = buildThresholdInput(7, 70, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput8 = buildThresholdInput(8, 90, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput9 = buildThresholdInput(9, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput1, thresholdInput2, thresholdInput3, thresholdInput4, thresholdInput5, thresholdInput6, thresholdInput7, thresholdInput8, thresholdInput9),
+                Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setThresholds(List.of(
+                buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(2, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(3, 30, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
+                buildThreshold(4, 60, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")
+        ));
 
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("BIL-ACC-1");
@@ -191,7 +595,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void thresholdPercentageInvalidErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -228,7 +632,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void thresholdPercentageInvalidErr2() {
-        ThresholdInput thresholdInput = buildThreshold(1, 101, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 101, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -265,7 +669,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void thresholdEmptyReceipientErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 85, null, "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 85, null, "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -301,92 +705,8 @@ public class OpenOrderQuoteCreateApiTest {
     }
 
     @Test
-    @Ignore
-    public void thresholdInvalidSequenceErr() {
-        ThresholdInput thresholdInput = buildThreshold(2, 85, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
-        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
-                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
-
-        OpenOrderTemplate template = new OpenOrderTemplate();
-        template.setCode("TMP-CODE-1");
-        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
-
-        BillingAccount billingAccount = new BillingAccount();
-        billingAccount.setCode("BIL-ACC-1");
-
-        OpenOrderArticle ooa = new OpenOrderArticle();
-        AccountingArticle aa = new AccountingArticle();
-        aa.setCode("A");
-        ooa.setAccountingArticle(aa);
-
-        Tag tag = new Tag();
-        tag.setCode("TAG_A");
-
-        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
-        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
-        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
-        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
-        Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(null);
-        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
-        doReturn("TU-OOQ").when(currentUser).getUserName();
-
-        try {
-            openOrderQuoteApi.create(dto);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Threshold sequence are not correct : expected '1', given '2'");
-        }
-
-    }
-
-    @Test
-    @Ignore
-    public void thresholdInvalidSequenceErr2() {
-        ThresholdInput thresholdInput = buildThreshold(0, 85, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
-        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
-                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
-
-        OpenOrderTemplate template = new OpenOrderTemplate();
-        template.setCode("TMP-CODE-1");
-        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
-
-        BillingAccount billingAccount = new BillingAccount();
-        billingAccount.setCode("BIL-ACC-1");
-
-        OpenOrderArticle ooa = new OpenOrderArticle();
-        AccountingArticle aa = new AccountingArticle();
-        aa.setCode("A");
-        ooa.setAccountingArticle(aa);
-
-        Tag tag = new Tag();
-        tag.setCode("TAG_A");
-
-        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
-        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
-        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
-        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
-        Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(null);
-        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
-        doReturn("TU-OOQ").when(currentUser).getUserName();
-
-        try {
-            openOrderQuoteApi.create(dto);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Threshold sequence are not correct : expected '1', given '0'");
-        }
-
-    }
-
-    @Test
     public void invalidProductTypeErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -423,7 +743,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void invalidArticleContentErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -460,7 +780,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void invalidProductContentErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.PRODUCTS, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -497,7 +817,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void invalidProductNotExitErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.PRODUCTS, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -525,7 +845,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test(expected = EntityDoesNotExistsException.class)
     public void invalidArticleNotExitErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -553,7 +873,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void invalidArticleTypeErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 1, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 1, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.PRODUCTS, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -590,7 +910,7 @@ public class OpenOrderQuoteCreateApiTest {
 
     @Test
     public void invalidOpenOrderTypeErr() {
-        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        ThresholdInput thresholdInput = buildThresholdInput(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
                 OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
                 Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
@@ -750,9 +1070,9 @@ public class OpenOrderQuoteCreateApiTest {
         return List.of(products);
     }
 
-    private ThresholdInput buildThreshold(Integer sequence, Integer percentage,
-                                          List<ThresholdRecipientsEnum> recipients,
-                                          String getExternalRecipient) {
+    private ThresholdInput buildThresholdInput(Integer sequence, Integer percentage,
+                                               List<ThresholdRecipientsEnum> recipients,
+                                               String getExternalRecipient) {
 
         return new ThresholdInput() {
 
@@ -795,6 +1115,18 @@ public class OpenOrderQuoteCreateApiTest {
                 return null;
             }
         };
+    }
+
+    private Threshold buildThreshold(Integer sequence, Integer percentage,
+                                     List<ThresholdRecipientsEnum> recipients,
+                                     String getExternalRecipient) {
+        Threshold threshold = new Threshold();
+        threshold.setSequence(sequence);
+        threshold.setPercentage(percentage);
+        threshold.setExternalRecipient(getExternalRecipient);
+        threshold.setRecipients(recipients);
+
+        return threshold;
     }
 
 

@@ -1,7 +1,6 @@
 package org.meveo.apiv2.ordering.ooq;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
@@ -122,6 +121,27 @@ public class OpenOrderQuoteUpdateApiTest {
 
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+
+        openOrderQuoteApi.update(1L, dto);
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void ooqNotFoundErr() {
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                null, Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setId(1L);
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(null);
 
         openOrderQuoteApi.update(1L, dto);
 
@@ -381,102 +401,6 @@ public class OpenOrderQuoteUpdateApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "Threshold Recipients must not be empty");
-        }
-
-    }
-
-    @Test
-    @Ignore
-    public void thresholdInvalidSequenceErr() {
-        ThresholdInput thresholdInput = buildThreshold(2, 85, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
-        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
-                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
-
-        OpenOrderTemplate template = new OpenOrderTemplate();
-        template.setId(1L);
-        template.setCode("TMP-CODE-1");
-        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
-
-        OpenOrderQuote ooq = new OpenOrderQuote();
-        ooq.setId(1L);
-        ooq.setOpenOrderTemplate(template);
-
-        BillingAccount billingAccount = new BillingAccount();
-        billingAccount.setCode("BIL-ACC-1");
-
-        OpenOrderArticle ooa = new OpenOrderArticle();
-        AccountingArticle aa = new AccountingArticle();
-        aa.setCode("A");
-        ooa.setAccountingArticle(aa);
-
-        Tag tag = new Tag();
-        tag.setCode("TAG_A");
-
-        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
-        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
-        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
-        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
-        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
-        Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(null);
-        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
-        doReturn("TU-OOQ").when(currentUser).getUserName();
-
-        try {
-            openOrderQuoteApi.update(1L, dto);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Threshold sequence are not correct : expected '1', given '2'");
-        }
-
-    }
-
-    @Test
-    @Ignore
-    public void thresholdInvalidSequenceErr2() {
-        ThresholdInput thresholdInput = buildThreshold(0, 85, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
-        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
-                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
-                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
-
-        OpenOrderTemplate template = new OpenOrderTemplate();
-        template.setId(1L);
-        template.setCode("TMP-CODE-1");
-        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
-
-        OpenOrderQuote ooq = new OpenOrderQuote();
-        ooq.setId(1L);
-        ooq.setOpenOrderTemplate(template);
-
-        BillingAccount billingAccount = new BillingAccount();
-        billingAccount.setCode("BIL-ACC-1");
-
-        OpenOrderArticle ooa = new OpenOrderArticle();
-        AccountingArticle aa = new AccountingArticle();
-        aa.setCode("A");
-        ooa.setAccountingArticle(aa);
-
-        Tag tag = new Tag();
-        tag.setCode("TAG_A");
-
-        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
-        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
-        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
-        Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
-        Mockito.when(tagService.findByCode(any())).thenReturn(tag);
-        Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(null);
-        Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
-        doReturn("TU-OOQ").when(currentUser).getUserName();
-
-        try {
-            openOrderQuoteApi.update(1L, dto);
-            Assert.fail("Exception must be thrown");
-        } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "Threshold sequence are not correct : expected '1', given '0'");
         }
 
     }

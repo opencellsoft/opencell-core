@@ -39,11 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.DRAFT;
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.REJECTED;
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.SENT;
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.VALIDATED;
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.WAITING_VALIDATION;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.*;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 
@@ -386,12 +382,16 @@ public class OpenOrderQuoteApi {
             });
 
             // Sequence: distinct integers, from 1 to thresholds list size.
-            Set<Integer> dtoSequence = dto.getThresholds().stream()
+            List<Integer> dtoSequence = dto.getThresholds().stream()
                     .sorted(Comparator.comparing(ThresholdInput::getSequence))
-                    .map(ThresholdInput::getSequence).collect(Collectors.toSet());
+                    .map(ThresholdInput::getSequence).collect(Collectors.toList());
 
-            if (dtoSequence.size() < dto.getThresholds().size()) {
-                throw new BusinessApiException("Threshold sequence are not correct : expected '" + dto.getThresholds().size() + "', given '" + dtoSequence.size() + "'");
+            if (dtoSequence.get(0) != 1) {
+                throw new BusinessApiException("Threshold sequence shall be start by '1'");
+            }
+
+            if (!isConsecutive(dtoSequence)) {
+                throw new BusinessApiException("Threshold sequence are not consecutive " + dtoSequence);
             }
 
             // For the list of thresholds ordered by sequence, the next threshold percent must be greater than the previous one.
@@ -458,6 +458,15 @@ public class OpenOrderQuoteApi {
 
                     tags.add(tag);
                 });
+    }
+
+    public boolean isConsecutive(List<Integer> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i) != list.get(i + 1) - 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
