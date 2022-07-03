@@ -99,7 +99,8 @@ public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTem
 
         openOrderTemplateMapper.fillEntity(openOrderTemplate, input);
         thresholdService.deleteThresholdsByOpenOrderTemplateId(openOrderTemplate.getId());
-        openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
+        if (null != input.getThresholds())
+        	openOrderTemplate.setThresholds(input.getThresholds().stream().map(thresholdMapper::toEntity).collect(Collectors.toList()));
         if (null != input.getArticles()) openOrderTemplate.setArticles(updateArticles(input.getArticles(), openOrderTemplate));
         if (null != input.getProducts()) openOrderTemplate.setProducts(updateProducts(input.getProducts(), openOrderTemplate));
         if (null != input.getTags()) openOrderTemplate.setTags(fetchTags(input.getTags()));
@@ -234,9 +235,8 @@ public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTem
         return articles;
     }
 
-    private List<OpenOrderArticle> updateArticles(List<String> articlesCodes, OpenOrderTemplate openOrderTemplate) {
+    public List<OpenOrderArticle> updateArticles(List<String> articlesCodes, OpenOrderTemplate openOrderTemplate) {
         List<OpenOrderArticle> articles = new ArrayList<>();
-        new LinkedList<>(Arrays.asList(articlesCodes));
         
         //Removed Articles
         List<String> existingAOs = openOrderTemplate.getArticles().stream().map(a -> a.getAccountingArticle().getCode()).collect(Collectors.toList());
@@ -298,9 +298,8 @@ public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTem
         return articles;
     }
     
-    private List<OpenOrderProduct> updateProducts(List<String> productsCodes, OpenOrderTemplate openOrderTemplate) {
+    public List<OpenOrderProduct> updateProducts(List<String> productsCodes, OpenOrderTemplate openOrderTemplate) {
         List<OpenOrderProduct> products = new ArrayList<>();
-        new LinkedList<>(Arrays.asList(productsCodes));
         
         //Removed Products
         List<String> existingProducts = openOrderTemplate.getProducts().stream().map(p -> p.getProduct().getCode()).collect(Collectors.toList());
