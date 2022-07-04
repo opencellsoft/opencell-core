@@ -10,12 +10,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.ordering.OpenOrderArticle;
-import org.meveo.model.ordering.OpenOrderProduct;
-import org.meveo.model.ordering.OpenOrderQuote;
-import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
-import org.meveo.model.ordering.OpenOrderTemplate;
-import org.meveo.model.ordering.Threshold;
+import org.meveo.model.ordering.*;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -25,8 +20,8 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderQuoteService;
+import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OpenOrderTemplateService;
-import org.meveo.service.order.ThresholdService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
 import javax.ejb.Stateless;
@@ -71,9 +66,6 @@ public class OpenOrderQuoteApi {
     private AccountingArticleService accountingArticleService;
 
     @Inject
-    private ThresholdService thresholdService;
-
-    @Inject
     private BillingAccountService billingAccountService;
 
     @Inject
@@ -81,6 +73,9 @@ public class OpenOrderQuoteApi {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private OpenOrderService openOrderService;
 
     @Transactional
     public Long create(OpenOrderQuoteDto dto) {
@@ -246,7 +241,9 @@ public class OpenOrderQuoteApi {
                 }
 
                 break;
-            case VALIDATED:
+            case VALIDATED :
+                openOrderService.create(ooq);
+                break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
                     throw new BusinessApiException("ASK VALIDATION feature is not activated");
