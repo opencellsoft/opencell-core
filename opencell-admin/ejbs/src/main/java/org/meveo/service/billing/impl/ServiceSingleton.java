@@ -673,12 +673,17 @@ public class ServiceSingleton {
         InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
         if (sequence == null) {
             sequence = new InvoiceSequence();
-            sequence.setCurrentNumber(0L);
+            sequence.setCurrentNumber(1L);
             sequence.setSequenceSize(5);
             sequence.setCode(code);
             invoiceSequenceService.create(sequence);
         }
-        return sequence.getCurrentNumber().toString();
+        String ooqCode =  code + "-" + leftPad(valueOf(sequence.getCurrentNumber()),
+                sequence.getSequenceSize(), '0');
+
+        sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
+
+        return ooqCode;
     }
 
     private String formatCode(String formatEL, Map<Object, Object> context) {
