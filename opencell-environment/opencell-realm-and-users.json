@@ -2077,8 +2077,18 @@
 			],
 			"authorizationSettings": {
 				"allowRemoteResourceManagement": true,
-				"policyEnforcementMode": "ENFORCING",
+				"policyEnforcementMode": "PERMISSIVE",
 				"resources": [
+					{
+						"name": "Default - accessible files",
+						"ownerManagedAccess": false,
+						"attributes": {},
+						"_id": "c7a26ae0-7a5d-4393-9f98-1b08532e4a98",
+						"uris": [
+							"/frontend/*",
+							"/resources/*"
+						]
+					},
 					{
 						"name": "Page Cache",
 						"ownerManagedAccess": false,
@@ -4749,6 +4759,17 @@
 						}
 					},
 					{
+						"id": "fae7ee9a-82bc-4f0e-b67f-f67a96f723ec",
+						"name": "Default policy - any time",
+						"type": "time",
+						"logic": "POSITIVE",
+						"decisionStrategy": "UNANIMOUS",
+						"config": {
+							"dayMonth": "1",
+							"dayMonthEnd": "31"
+						}
+					},
+					{
 						"id": "fb4ae3b2-3d51-4f4b-bdd4-8725175ee1cb",
 						"name": "Role countryVisualization",
 						"type": "role",
@@ -5156,6 +5177,17 @@
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
 							"clients": "[\"opencell-web\"]"
+						}
+					},
+					{
+						"id": "a97c4a6d-2cee-485a-8719-888a060ef7ea",
+						"name": "Default - accessible files",
+						"type": "resource",
+						"logic": "POSITIVE",
+						"decisionStrategy": "UNANIMOUS",
+						"config": {
+							"resources": "[\"Default - accessible files\"]",
+							 "applyPolicies": "[\"Default policy - any time\"]"
 						}
 					},
 					{

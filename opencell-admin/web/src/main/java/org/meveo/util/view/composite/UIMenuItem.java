@@ -12,8 +12,12 @@ public class UIMenuItem extends org.primefaces.component.menuitem.UIMenuItem {
 
         boolean accessible = super.isRendered();
 
+        String outcome = getOutcome();
+        if (outcome == null) {
+            return accessible;
+        }
         PageAccessHandler pageAccessHandler = (PageAccessHandler) CDI.current().select(PageAccessHandler.class).get();
-        accessible = accessible && pageAccessHandler.isOutcomeAccesible(AccessScopeEnum.LIST.getHttpMethod(), getOutcome());
+        accessible = accessible && pageAccessHandler.isOutcomeAccesible(AccessScopeEnum.LIST.getHttpMethod(), outcome);
         return accessible;
     }
 }

@@ -403,18 +403,6 @@ public class KeycloakAdminClientService implements Serializable {
             }
         }
 
-        // does not work
-        // Define password credential
-        // CredentialRepresentation credential = new CredentialRepresentation();
-        // credential.setTemporary(false);
-        // credential.setType(CredentialRepresentation.PASSWORD);
-        // credential.setValue(postData.getPassword());
-        // user.setCredentials(Arrays.asList(credential));
-
-        // Map<String, List<String>> clientRoles = new HashMap<>();
-        // clientRoles.put(keycloakAdminClientConfig.getClientId(),
-        // Arrays.asList(KeycloakConstants.ROLE_API_ACCESS, KeycloakConstants.ROLE_GUI_ACCESS, KeycloakConstants.ROLE_ADMINISTRATEUR, KeycloakConstants.ROLE_USER_MANAGEMENT));
-
         String userId = null;
 
         // Update current user

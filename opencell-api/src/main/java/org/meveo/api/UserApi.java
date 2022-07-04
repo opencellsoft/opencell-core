@@ -60,9 +60,9 @@ public class UserApi extends BaseApi {
     private static final String USER_HAS_NO_PERMISSION_TO_MANAGE_USERS = "User has no permission to manage users.";
     private static final String USER_HAS_NO_PERMISSION_TO_VIEW_USERS = "User has no permission to view users.";
     private static final String USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS = "User has no permission to manage other users.";
-    private static final String USER_SELF_MANAGEMENT = "userSelfManagement";
-    private static final String USER_MANAGEMENT = "userManagement";
-    private static final String USER_VISUALIZATION = "userVisualization";
+    private static final String ROLE_API_USER_SELF_MANAGEMENT = "apiUserSelfManagement";
+    private static final String ROLE_API_USER_MANAGEMENT = "apiUserManagement";
+    private static final String ROLE_API_USER_VISUALIZATION = "apiUserVisualization";
 
     @Inject
     private UserService userService;
@@ -99,8 +99,8 @@ public class UserApi extends BaseApi {
                 throw new EntityAlreadyExistsException(User.class, postData.getUsername(), "username");
             }
 
-            boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-            boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT);
+            boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+            boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT);
 
             boolean isAllowed = isManagingSelf || isUsersManager;
             boolean isSelfManaged = isManagingSelf && !isUsersManager;
@@ -148,8 +148,8 @@ public class UserApi extends BaseApi {
         }
 
         boolean isSameUser = currentUser.getUserName().equals(postData.getUsername());
-        boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT);
+        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT);
         boolean isAllowed = isManagingSelf || isUsersManager;
         boolean isSelfManaged = isManagingSelf && !isUsersManager;
 
@@ -252,8 +252,8 @@ public class UserApi extends BaseApi {
         handleMissingParameters();
 
         boolean isSameUser = currentUser.getUserName().equals(username);
-        boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
+        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
         boolean isAllowed = isManagingSelf || isUsersManager;
         boolean isSelfManaged = isManagingSelf && !isUsersManager;
 
@@ -300,8 +300,8 @@ public class UserApi extends BaseApi {
     // @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UsersDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
-        boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isAccessOthers = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
+        boolean isViewerSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isAccessOthers = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
 
         if (!isViewerSelf && !isAccessOthers) {
             throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_VIEW_USERS);

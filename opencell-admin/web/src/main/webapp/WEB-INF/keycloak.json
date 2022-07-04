@@ -15,6 +15,16 @@
 	"register-node-at-startup": "${opencell.keycloak.register-node-at-startup:false}",
 	"register-node-period": 600,
 	"policy-enforcer": {
+		"paths": [
+			{
+				"path": "/resources/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/frontend/*",
+				"enforcement-mode": "DISABLED"
+			}
+		],
 		"path-cache": {
 			"lifespan": 0,
 			"max-entries": 0
