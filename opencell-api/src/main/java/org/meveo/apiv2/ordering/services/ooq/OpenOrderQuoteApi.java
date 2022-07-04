@@ -24,6 +24,7 @@ import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderArticleService;
 import org.meveo.service.order.OpenOrderProductService;
 import org.meveo.service.order.OpenOrderQuoteService;
+import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
@@ -39,7 +40,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.*;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.DRAFT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.REJECTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.SENT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.VALIDATED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.WAITING_VALIDATION;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 
@@ -73,6 +78,9 @@ public class OpenOrderQuoteApi {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private OpenOrderService openOrderService;
 
     @Transactional
     public Long create(OpenOrderQuoteDto dto) {
@@ -243,7 +251,9 @@ public class OpenOrderQuoteApi {
                 }
 
                 break;
-            case VALIDATED:
+            case VALIDATED :
+                openOrderService.create(ooq);
+                break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
                     throw new BusinessApiException("ASK VALIDATION feature is not activated");

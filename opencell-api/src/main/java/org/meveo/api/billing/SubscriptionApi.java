@@ -3102,4 +3102,26 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * Create a subscription and instantiate cpq products
+     *
+     * @param postData
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Subscription subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
+        Subscription subscription=create(postData);
+        createAccess(postData);
+        if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
+            List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
+            if(products!=null && !products.isEmpty()) {
+                for(ProductToInstantiateDto productDto:products)
+                    processProduct(subscription, productDto);
+            }
+        }
+        subscriptionService.activateInstantiatedService(subscription);
+        return subscription;
+    }
 }

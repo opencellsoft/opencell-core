@@ -218,4 +218,9 @@ public class OpenOrder extends BusinessEntity {
     public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
+
+    @PostPersist
+    public void postPersist() {
+        this.code = this.code.substring(0, this.code.length() - 13) + this.id;
+    }
 }

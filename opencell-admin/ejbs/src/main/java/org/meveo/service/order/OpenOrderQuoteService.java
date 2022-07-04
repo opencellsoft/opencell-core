@@ -15,4 +15,6 @@ public class OpenOrderQuoteService extends BusinessService<OpenOrderQuote> {
 
         return ooq;
     }
+    
+   
 }

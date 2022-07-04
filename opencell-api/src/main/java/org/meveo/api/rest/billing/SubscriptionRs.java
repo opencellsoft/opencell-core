@@ -997,4 +997,27 @@ public interface SubscriptionRs extends IBaseRs {
 				)}
 	)
     ActionStatus rollbackOffer(@PathParam("code") String code, OfferRollbackDto offerRollbackDto);
+    
+    /**
+     * Create a subscription and instanciate product in a single transaction.
+     * 
+     * @param postData Subscription and products to i
+     * @return Request processing status
+     */
+    @POST
+    @Path("/subscribeAndActivateProducts")
+    @Operation(
+            summary=" subscribe And Activate Products ",
+            description=" Create a subscribe And Activate Products  ",
+            operationId="POST_Subscription_subscribeAndActivateProducts",
+            responses= {
+                @ApiResponse(description=" Request processing status ",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
+    ActionStatus subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData);
 }
