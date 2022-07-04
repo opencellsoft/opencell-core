@@ -134,7 +134,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                     .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         } else if (billableEntity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountByBillingAccount")
+            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableByServiceWithMinAmountByBA")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
@@ -163,7 +163,7 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                     .setParameter("invoiceUpToDate", invoiceUpToDate)
                     .getResultList();
         } else if (billableEntity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountByBillingAccount")
+            return getEntityManager().createNamedQuery(invoicingProcessType + ".sumInvoiceableBySubscriptionWithMinAmountByBA")
                     .setParameter("billingAccount", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate)
                     .setParameter("lastTransactionDate", lastTransactionDate)
