@@ -409,6 +409,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
 		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(serviceInstance.getRenewalNotifiedDate()); 
+		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(null); 
 		}
 
         if (!isVirtual) {

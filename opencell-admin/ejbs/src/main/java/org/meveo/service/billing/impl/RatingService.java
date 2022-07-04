@@ -175,6 +175,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     @Inject
     protected CounterInstanceService counterInstanceService;
 
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
     @Inject
@@ -708,7 +711,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
 
-        ServiceInstance serviceInstance = wo.getServiceInstance();
+        ServiceInstance serviceInstance = serviceInstanceService.findById(wo.getServiceInstance().getId());
+
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
 
         if (ppmVersion != null) {
