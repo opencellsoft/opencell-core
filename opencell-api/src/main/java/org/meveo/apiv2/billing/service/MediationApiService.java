@@ -66,6 +66,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -123,6 +124,9 @@ public class MediationApiService {
 
     @EJB
     private MediationApiService thisNewTX;
+    
+    @Inject
+    private MediationsettingService mediationsettingService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -296,7 +300,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
