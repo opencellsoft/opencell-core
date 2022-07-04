@@ -1,5 +1,9 @@
 package org.meveo.service.settings.impl;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -42,5 +46,14 @@ public class OpenOrderSettingService extends BusinessService<OpenOrderSetting> {
         }
     }
 
+    public OpenOrderSetting findLastOne() {
+        try {
+            TypedQuery<OpenOrderSetting> query = getEntityManager().createQuery("from OpenOrderSetting g order by g.id desc", entityClass).setMaxResults(1);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} found", getEntityClass().getSimpleName());
+            return null;
+        }
+    }
 
 }
