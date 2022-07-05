@@ -287,8 +287,8 @@ public class ProviderResourceImpl implements ProviderResource {
                 listAllowedCreditCategories.add(creditCategory);
             }
             providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
-            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
-                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
+            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null && paymentPlanPolicy.getDunningDefaultPauseReason().getId() != null) {
+                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 if (dunningPauseReason == null) {
                     throw new EntityDoesNotExistsException(DunningPauseReason.class, paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 }
