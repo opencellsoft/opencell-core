@@ -298,6 +298,7 @@ public class OpenOrderQuoteApi {
                     threshold.setExternalRecipient(thresholdDto.getExternalRecipient());
                     threshold.setRecipients(thresholdDto.getRecipients());
                     threshold.setSequence(thresholdDto.getSequence());
+                    threshold.setPercentage(thresholdDto.getPercentage());
                     threshold.setOpenOrderQuote(ooq);
 
                     thresholds.add(threshold);
