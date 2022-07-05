@@ -89,8 +89,10 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
             missingParameters.add("accountTaxCategoryCode");
         }
 
-        if (StringUtils.isBlank(dto.getTaxCode()) && StringUtils.isBlank(dto.getTaxEL())) {
-            missingParameters.add("taxCode, taxCodeEL");
+        if (StringUtils.isBlank(dto.getTaxCode()) && StringUtils.isBlank(dto.getTaxEL()) && StringUtils.isBlank(dto.getTaxScriptCode())) {
+
+            missingParameters.add("taxCode or taxCodeEL or TaxScriptCode");
+
         }
 
         handleMissingParametersAndValidate(dto);
