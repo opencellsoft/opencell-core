@@ -273,7 +273,7 @@ public class V11MigrationScript extends Script {
 	private void createArticle(ChargeTemplate chargeTemplate) {
 		try {
 			List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductAndCharge(null,
-					chargeTemplate);
+					chargeTemplate, null, null, null, null);
 
 			if (articleMappingLines.isEmpty() || DEFAULT_ARTICLE.equals(articleMappingLines.get(0).getCode())) {
 				AccountingArticle newAccountingArticle = new AccountingArticle(chargeTemplate.getCode(),
