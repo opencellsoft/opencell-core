@@ -73,6 +73,7 @@ public class ReplacementRulesExecutor {
 
         }
         if (canReplace) {
+        	selectedAttributes.setCanReplace(true);
             selectedAttributes.getSelectedAttributesMap().put(commercialRuleHeader.getTargetAttribute().getCode(), commercialRuleHeader.getTargetAttributeValue());
         }
     }
