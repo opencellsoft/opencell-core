@@ -90,6 +90,11 @@ public class HostedCheckoutInput {
      * The advanced options (currently only for ATOS Wallet).
      */
     String advancedOptions;
+    
+    /**
+     * Default value is false.
+     */
+    boolean isOneShotPayment = false;
 
     /**
      * Gets the gateway payment name.
@@ -386,6 +391,16 @@ public class HostedCheckoutInput {
 	public void setAuthenticationAmount(String authenticationAmount) {
 		this.authenticationAmount = authenticationAmount;
 	}
+
+	public boolean isOneShotPayment() {
+		return isOneShotPayment;
+	}
+
+	public void setOneShotPayment(boolean isOneShotPayment) {
+		this.isOneShotPayment = isOneShotPayment;
+	}
+	
+	
     
     
 }

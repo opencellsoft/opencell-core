@@ -128,7 +128,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public CustomerAccount initEntity() {
         super.initEntity();
         if (entity.getId() == null) {
-            entity.setDateDunningLevel(new Date());
             entity.setPassword(RandomStringUtils.randomAlphabetic(8));
         }
         if (entity.getId() == null && getCustomerId() != null) {

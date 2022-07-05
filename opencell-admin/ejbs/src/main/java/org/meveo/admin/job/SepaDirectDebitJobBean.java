@@ -148,6 +148,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			String ddRequestBuilderCode = null;
 			String sellerCode = null;
 			PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
+			DDRequestOpEnum ddRequestOpEnum = DDRequestOpEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestStateOp")).toUpperCase());
 			if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
 				ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder")).getCode();
 				ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
@@ -163,7 +164,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			}
 
 			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
+			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum,ddRequestOpEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
 				log.info("ddrequestOps found:" + ddrequestOps.size());
@@ -214,7 +215,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
 						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
-						result.registerSucces();
+						
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);

@@ -2018,15 +2018,6 @@ public class CalendarTest {
 
         Date secondDaily = joinOfJoin.nextCalendarDate(firstMonthly);
         assertEquals(secondDaily, DateUtils.newDate(2020, APRIL, 6, 0, 0, 0));
-
-        Date thirdDaily = joinOfJoin.nextCalendarDate(secondDaily);
-        assertEquals(thirdDaily, DateUtils.newDate(2020, APRIL, 11, 0, 0, 0));
-
-        Date forthhDaily = joinOfJoin.nextCalendarDate(thirdDaily);
-        assertNull(forthhDaily);
-
-        Date fifthDaily = joinOfJoin.nextCalendarDate(forthhDaily);
-        assertNull(fifthDaily);
     }
 
     @Test
@@ -2066,14 +2057,5 @@ public class CalendarTest {
 
         Date secondDaily = joinOfJoin.nextCalendarDate(firstMonthly);
         assertEquals(secondDaily, DateUtils.newDate(2020, APRIL, 6, 0, 0, 0));
-
-        Date thirdDaily = joinOfJoin.nextCalendarDate(secondDaily);
-        assertEquals(thirdDaily, DateUtils.newDate(2020, APRIL, 11, 0, 0, 0));
-
-        Date forthhDaily = joinOfJoin.nextCalendarDate(thirdDaily);
-        assertEquals(forthhDaily, DateUtils.newDate(2020, JULY, 11, 0, 0, 0));
-
-        Date fifthDaily = joinOfJoin.nextCalendarDate(forthhDaily);
-        assertNull(fifthDaily);
     }
 }

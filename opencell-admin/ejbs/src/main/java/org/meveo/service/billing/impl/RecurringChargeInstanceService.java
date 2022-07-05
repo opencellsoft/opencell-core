@@ -385,6 +385,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 }
 
             }
+            if (activeRecurringChargeInstance.getNextChargeDate() == null) {
+                log.warn("Rating RecurringChargeInstance {} updates its next charge date to null. " +
+                        "It'll be no longer rated even is active!", chargeInstanceId);
+            }
         } catch (Exception e) {
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);
