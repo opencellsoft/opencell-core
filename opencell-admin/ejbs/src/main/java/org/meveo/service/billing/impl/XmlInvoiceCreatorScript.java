@@ -105,6 +105,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+import org.meveo.service.admin.impl.SellerService;
 
 /**
  * A default implementation of XML invoice creation.
@@ -165,6 +166,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     @Inject
     private InvoiceLineService invoiceLineService;
+    
+    @Inject
+    private SellerService sellerService;
+    
 
     /**
      * transformer factory.
@@ -1478,7 +1483,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createSellerSection(Document doc, Invoice invoice) {
 
-        Seller seller = invoice.getSeller();
+        Seller seller = sellerService.refreshOrRetrieve(invoice.getSeller());
         if (seller == null) {
             return null;
         }
