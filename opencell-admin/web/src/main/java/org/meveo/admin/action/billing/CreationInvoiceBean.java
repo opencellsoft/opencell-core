@@ -245,7 +245,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rootInvoiceId = linkedInvoiceIdParam;
                     rootInvoice = invoiceService.findById(rootInvoiceId);
                     entity.setBillingAccount(rootInvoice.getBillingAccount());
+                    entity.setSeller(rootInvoice.getSeller());
                     entity.getLinkedInvoices().add(rootInvoice);
+                    
                     try {
                         entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
                     } catch (BusinessException e) {
