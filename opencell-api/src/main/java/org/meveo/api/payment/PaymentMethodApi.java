@@ -356,9 +356,6 @@ public class PaymentMethodApi extends BaseApi {
                 } else {
                     cust = customerAccount.getCustomer();
                 }
-                if (StringUtils.isBlank(bankCoordinates.getBic()) && customerService.isBicRequired(cust, bankCoordinates.getIban())) {
-                    throw new InvalidDTOException("Missing BIC.");
-                }
 
                 if (StringUtils.isBlank(bankCoordinates.getIban())) {
                     throw new InvalidDTOException("Missing IBAN.");
