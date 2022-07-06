@@ -21,7 +21,7 @@ public interface EdrVersioningRule extends Resource {
 
     @Schema(description = "Defines if this rule is valid to for this EDR.")
     @NotEmpty
-	String getCriterialEL();
+	String getCriteriaEL();
 
     @Schema(description = "This expression will return string that will be stored as the EDR eventKey")
     @NotEmpty
