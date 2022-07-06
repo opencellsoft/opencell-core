@@ -109,8 +109,8 @@ public class OpenOrderQuoteCreateApiTest {
         orderSetting.setApplyMaximumValidity(false);
         orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
         orderSetting.setApplyMaximumValidityValue(5);
-        orderSetting.setDefineMaximumValidity(false);
-        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(1000);
         orderSetting.setUseOpenOrders(true);
 
         Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);

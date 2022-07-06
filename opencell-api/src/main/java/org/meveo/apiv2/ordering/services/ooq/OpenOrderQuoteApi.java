@@ -509,7 +509,7 @@ public class OpenOrderQuoteApi {
         }
 
         if (orSettings.getDefineMaximumValidity() && orSettings.getDefineMaximumValidityValue() != null
-                && dto.getMaxAmount().compareTo(BigDecimal.valueOf(orSettings.getDefineMaximumValidityValue())) >= 0) {
+                && dto.getMaxAmount().compareTo(BigDecimal.valueOf(orSettings.getDefineMaximumValidityValue())) > 0) {
             throw new BusinessApiException("Amount is greater than or equal OpenOrder settings maximum amount");
         }
 
