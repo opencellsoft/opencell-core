@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.GenericOpencellRestful;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.model.IEntity;
@@ -170,6 +171,22 @@ public class GenericApiLoadService {
                         .build()
                         .toJson(genericFields, entityClass, Collections.singletonMap("data", entity), excludedFields));
     }
+
+	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields) throws ClassNotFoundException {
+		
+		SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
+        searchConfig.setFetchFields(new ArrayList<>(genericFields));
+        List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+                .find(nativePersistenceService.getEntityManager()).stream()
+                .map(ObjectArrays -> Arrays.asList(ObjectArrays))
+                .collect(Collectors.toList());
+        List<Map<String, Object>> mapResult = list.stream()
+										        .map(line -> addResultLine(line, genericFields.iterator()))
+										        .collect(Collectors.toList());
+		
+		
+		return null;
+	}
     
 
 }

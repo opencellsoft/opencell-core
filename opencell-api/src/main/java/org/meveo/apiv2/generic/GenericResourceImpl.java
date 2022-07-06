@@ -12,6 +12,7 @@ import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.apiv2.generic.services.SearchResult;
 import org.meveo.util.Inflector;
 
 import javax.ejb.Stateless;
@@ -153,5 +154,24 @@ public class GenericResourceImpl implements GenericResource {
         return new LinkGenerator.SelfLinkGenerator(GenericResource.class)
                 .withGetAction().withPostAction().withId(entityId)
                 .withDeleteAction().build(entityName);
+    }
+    
+    @Override
+    public Response export(String entityName, String fileFormat, GenericPagingAndFiltering searchConfig) throws ClassNotFoundException {
+        Set<String> genericFields = null;
+        Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
+        
+        if(searchConfig != null){
+        	if(searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty())
+        		throw new MeveoApiException("Nested entities are not handled by the export api");
+            genericFields = searchConfig.getGenericFields();
+        }
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields);
+        return Response.ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
+                .build();
     }
 }
