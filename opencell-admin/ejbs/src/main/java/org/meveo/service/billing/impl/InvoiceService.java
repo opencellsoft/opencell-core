@@ -17,11 +17,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static java.math.BigDecimal.ONE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -43,8 +42,21 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -58,7 +70,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
-import javax.ws.rs.ForbiddenException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -71,7 +82,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.util.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -120,7 +131,43 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
+import org.meveo.model.billing.IInvoiceable;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceLineTaxModeEnum;
+import org.meveo.model.billing.InvoiceLinesGroup;
+import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
+import org.meveo.model.billing.InvoiceProcessTypeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -137,7 +184,10 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.order.Order;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
@@ -1586,6 +1636,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
         } catch (IOException | JRException | TransformerException | ParserConfigurationException e) {
+            throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
+        } catch(Throwable e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);

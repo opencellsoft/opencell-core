@@ -37,6 +37,7 @@
           <module name="org.keycloak.keycloak-core" />        
           <module name="org.keycloak.keycloak-authz-client" services="import"/>   
           <module name="com.google.code.gson" />
+          <module name="org.jaxen" />
         </dependencies>          
 	</deployment>
 </jboss-deployment-structure>
