@@ -26,10 +26,10 @@ import java.util.List;
 				+ " AND (product.id = :productId or article.id = :articleId)"),
 		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join oo.products product"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND oo.endOfValidityDate >= :eventDate AND product.id = :productId"),
+				+ " AND oo.endOfValidityDate >= :eventDate AND product.id = :productId ORDER BY oo.endOfValidityDate"),
 		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join oo.articles article"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND oo.endOfValidityDate >= :eventDate AND article.id = :articleId")
+				+ " AND oo.endOfValidityDate >= :eventDate AND article.id = :articleId ORDER BY oo.endOfValidityDate")
 })
 public class OpenOrder extends BusinessEntity {
 
