@@ -22,6 +22,7 @@
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>6.25.0</version.ingenico-connect-sdk>
+        <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
         <version.paypal-sdk>LATEST</version.paypal-sdk>
         <version.keycloak>7.0.0</version.keycloak>
         <version.pdfbox>2.0.17</version.pdfbox>
