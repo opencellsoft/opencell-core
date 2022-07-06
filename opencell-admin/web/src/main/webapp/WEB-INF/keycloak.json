@@ -31,7 +31,19 @@
 			{
 				"path": "/about.*",
 				"enforcement-mode": "DISABLED"
-			}
+			},
+			{
+				"path": "/javax.faces.resource/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/stylesheet/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/favicon.ico",
+				"enforcement-mode": "DISABLED"
+			}		
 		],
 		"path-cache": {
 			"lifespan": 0,

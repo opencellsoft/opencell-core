@@ -942,11 +942,11 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * Create resources, policies and permissions in keycloak based on resource protection level chosen <br/>
      * 
-     * /api/rest/generic/all/seller POST - search <br/>
-     * /api/rest/generic/seller/<id> POST - find <br/>
-     * /api/rest/generic/seller/<id> PUT - update <br/>
-     * /api/rest/generic/seller/<id> DELETE - delete <br/>
-     * /api/rest/generic/seller POST - create <br/>
+     * /api/rest/v2/generic/all/seller POST - search <br/>
+     * /api/rest/v2/generic/seller/<id> POST - find <br/>
+     * /api/rest/v2/generic/seller/<id> PUT - update <br/>
+     * /api/rest/v2/generic/seller/<id> DELETE - delete <br/>
+     * /api/rest/v2/generic/seller POST - create <br/>
      * 
      * @param readLevel Protect API granularity level for find/search access
      * @param createLevel Protect API granularity level for create access
@@ -1002,15 +1002,16 @@ public class KeycloakAdminClientService implements Serializable {
                     Set<String> uris = new HashSet<String>();
                     for (String entityClass : subPackageEntities) {
                         entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                        entityClass = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
                         if (accessScope == AccessScopeEnum.LIST) {
-                            uris.add("/api/rest/generic/all/" + entityClass);
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/all/" + entityClass);
+                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
                         } else if (accessScope == AccessScopeEnum.CREATE) {
-                            uris.add("/api/rest/generic/" + entityClass);
+                            uris.add("/api/rest/v2/generic/" + entityClass);
                         } else if (accessScope == AccessScopeEnum.UPDATE) {
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
                         } else if (accessScope == AccessScopeEnum.DELETE) {
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
                         }
                     }
 
@@ -1045,15 +1046,18 @@ public class KeycloakAdminClientService implements Serializable {
                         String classLevelRolePolicyName = KC_POLICY_ROLE_PREFIX + classLevelRoleName;
 
                         Set<String> uris = new HashSet<String>();
+
+                        String entityClassForUrl = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
+
                         if (accessScope == AccessScopeEnum.LIST) {
-                            uris.add("/api/rest/generic/all/" + entityClass);
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/all/" + entityClassForUrl);
+                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
                         } else if (accessScope == AccessScopeEnum.CREATE) {
-                            uris.add("/api/rest/generic/" + entityClass);
+                            uris.add("/api/rest/v2/generic/" + entityClassForUrl);
                         } else if (accessScope == AccessScopeEnum.UPDATE) {
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
                         } else if (accessScope == AccessScopeEnum.DELETE) {
-                            uris.add("/api/rest/generic/" + entityClass + "/*");
+                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
                         }
 
                         createGenericApiAuthorizationResource(classLevelResourceName, classLevelPermissionName, classLevelRolePolicyName, classLevelRoleName, uris, scope, keycloakAdminClientConfig.getClientId(),

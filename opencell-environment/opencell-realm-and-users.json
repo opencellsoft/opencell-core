@@ -2088,7 +2088,10 @@
 							"/frontend/*",
 							"/resources/*",
 							"/about.*",
-							"/api/rest/v2/version"
+							"/api/rest/v2/version",
+							"/javax.faces.resource/*",
+							"/stylesheet/*",
+							"/favicon.ico"
 						]
 					},
 					{
