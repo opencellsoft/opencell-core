@@ -249,6 +249,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void removeLine(Invoice invoice, Long lineId) {
 		invoiceLinesService.remove(invoice, lineId);
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -283,6 +284,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {       
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
+        invoiceService.updateBillingRunStatistics(updateInvoice);
         return updateInvoice;
     }
 
@@ -291,6 +293,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void calculateInvoice(Invoice invoice) {
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 	
 	public Invoice duplicate(Invoice invoice) {

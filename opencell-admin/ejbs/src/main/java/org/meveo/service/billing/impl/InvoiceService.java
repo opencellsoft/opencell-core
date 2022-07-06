@@ -2449,9 +2449,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else {
             super.update(invoice);
         }
+        updateBillingRunStatistics(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
+
+    public void updateBillingRunStatistics(Invoice invoice) {
+    	invoice = refreshOrRetrieve(invoice);
+        if(invoice != null) {
+        	if (invoice.getBillingRun() != null) {
+                billingRunService.updateBillingRunStatistics(invoice.getBillingRun());
+        	}
+        }
+    }
+
+    
     public void cancelInvoiceAndRts(Invoice invoice) {
         checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
@@ -2601,6 +2613,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void deleteInvoices(Long billingRunId) {
         BillingRun br = getBrById(billingRunId);
         deleteInvoicesByStatus(br, Arrays.asList(InvoiceStatusEnum.CANCELED));
+        billingRunService.updateBillingRunStatistics(br);
     }
 
     /**
@@ -4897,6 +4910,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+        billingRunService.updateBillingRunStatistics(billingRun);
     }
 
     public void cancelRejectedInvoicesByBR(BillingRun billingRun) {
@@ -6115,6 +6129,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Object calculateInvoice(Invoice invoice) {
         invoice = invoiceService.retrieveIfNotManaged(invoice);
         final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
+        invoiceService.updateBillingRunStatistics(invoice);
         return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null,null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount,
             billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice, InvoiceProcessTypeEnum.MANUAL);
     }

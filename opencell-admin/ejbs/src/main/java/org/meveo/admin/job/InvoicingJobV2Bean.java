@@ -181,6 +181,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             billingRun.setStatus(VALIDATED);
         }
         billingRunService.update(billingRun);
+        billingRunService.updateBillingRunStatistics(billingRun);
     }
 
     /**
