@@ -35,7 +35,7 @@ public class EdrVersioningRule extends AuditableEntity {
 
     @Column(name = "criterial_el", nullable = false)
 	@NotNull
-	private String criterialEL;
+	private String criteriaEL;
 
     @Column(name = "key_el", nullable = false)
 	@NotNull
@@ -78,7 +78,7 @@ public class EdrVersioningRule extends AuditableEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(criterialEL, isNewVersionEL, keyEL, mediationSetting, priority);
+		result = prime * result + Objects.hash(criteriaEL, isNewVersionEL, keyEL, mediationSetting, priority);
 		return result;
 	}
 
@@ -89,17 +89,17 @@ public class EdrVersioningRule extends AuditableEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		EdrVersioningRule other = (EdrVersioningRule) obj;
-		return Objects.equals(criterialEL, other.criterialEL) && Objects.equals(isNewVersionEL, other.isNewVersionEL)
+		return Objects.equals(criteriaEL, other.criteriaEL) && Objects.equals(isNewVersionEL, other.isNewVersionEL)
 				&& Objects.equals(keyEL, other.keyEL) && Objects.equals(mediationSetting, other.mediationSetting)
 				&& Objects.equals(priority, other.priority);
 	}
 
-	public String getCriterialEL() {
-		return criterialEL;
+	public String getCriteriaEL() {
+		return criteriaEL;
 	}
 
-	public void setCriterialEL(String criterialEL) {
-		this.criterialEL = criterialEL;
+	public void setCriteriaEL(String criterialEL) {
+		this.criteriaEL = criterialEL;
 	}
 
 	public String getKeyEL() {

@@ -37,9 +37,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 				.sorted(sortByPriority)
 				.filter(edrVersion -> {
 					try {
-						return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriterialEL(), Boolean.class, edr);
+						return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriteriaEL(), Boolean.class, edr);
 					}catch(Exception e) {
-						log.warn("cant evaluate expression : " + edrVersion.getCriterialEL() , e);
+						log.warn("cant evaluate expression : " + edrVersion.getCriteriaEL() , e);
 					}
 					return false;
 				})
@@ -68,9 +68,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
 						try {
-							return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriterialEL(), Boolean.class, edr);
+							return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriteriaEL(), Boolean.class, edr);
 						}catch(Exception e) {
-							var msg = String.format(errorMessage, edrVersion.getId(), edrVersion.getCriterialEL(), e.getMessage());
+							var msg = String.format(errorMessage, edrVersion.getId(), edrVersion.getCriteriaEL(), e.getMessage());
 							edr.setRejectReason(msg);
 							cdr.setRejectReason(msg);
 		        			edr.setStatus(EDRStatusEnum.REJECTED);
