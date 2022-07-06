@@ -23,6 +23,14 @@
 			{
 				"path": "/frontend/*",
 				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/api/rest/v2/version",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/about.*",
+				"enforcement-mode": "DISABLED"
 			}
 		],
 		"path-cache": {

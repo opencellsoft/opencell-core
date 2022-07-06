@@ -2086,7 +2086,9 @@
 						"_id": "c7a26ae0-7a5d-4393-9f98-1b08532e4a98",
 						"uris": [
 							"/frontend/*",
-							"/resources/*"
+							"/resources/*",
+							"/about.*",
+							"/api/rest/v2/version"
 						]
 					},
 					{
