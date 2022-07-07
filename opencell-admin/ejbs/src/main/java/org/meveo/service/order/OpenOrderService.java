@@ -109,7 +109,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 	    	query.setParameter("billingAccountId", billingAccount.getId());
 	    	query.setParameter("status", OpenOrderStatusEnum.CANCELED);
 	    	query.setParameter("eventDate", eventDate);
-	    	query.setParameter("productId", ofNullable(article).map(AccountingArticle::getId).orElse(null));
+	    	query.setParameter("articleId", ofNullable(article).map(AccountingArticle::getId).orElse(null));
 
 	    	List<OpenOrder> result = query.getResultList();
 	    	if(!ListUtils.isEmtyCollection(result)) {

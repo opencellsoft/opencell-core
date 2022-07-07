@@ -737,6 +737,7 @@ public class SubscriptionApi extends BaseApi {
                 ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
                 if (serviceTemplate == null) {
                     productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date());
+                    log.debug("getServiceToActivate - productVersion: " + productVersion + " - serviceToActivateDto.getCode(): " + serviceToActivateDto.getCode() + " - serviceToActivateDto.getSubscriptionDate(): " + serviceToActivateDto.getSubscriptionDate());
                     if(productVersion.isEmpty()){
                         throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
                     }
@@ -876,6 +877,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceTemplate == null) {
                 Date validityDate = serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date();
                 productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), validityDate);
+                log.debug("getServiceToActivate - productVersion: " + productVersion + " - serviceToActivateDto.getCode(): " + serviceToActivateDto.getCode() + " - validityDate: " + validityDate);
                 if(productVersion.isEmpty()) {
                     throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
                 }
@@ -1049,6 +1051,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceTemplate == null) {
                 Date validityDate = subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date();
                 productVersion = productService.getCurrentPublishedVersion(serviceToInstantiateDto.getCode(), validityDate);
+                log.debug("checkCompatibilityAndGetServiceToInstantiate - productVersion: " + productVersion + " - serviceToInstantiateDto.getCode(): " + serviceToInstantiateDto.getCode() + " - validityDate: " + validityDate);
                 if(productVersion.isEmpty()) {
                     throw new BusinessApiException("No service template or valid product version found for code: " + serviceToInstantiateDto.getCode());
                 }
