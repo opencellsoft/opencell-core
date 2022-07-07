@@ -711,7 +711,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
 
-        ServiceInstance serviceInstance = serviceInstanceService.findById(wo.getServiceInstance().getId());
+        ServiceInstance serviceInstance = wo.getServiceInstance();
+        serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);
 
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
 
