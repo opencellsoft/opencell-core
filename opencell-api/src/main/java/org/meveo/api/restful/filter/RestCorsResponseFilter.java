@@ -1,13 +1,13 @@
 package org.meveo.api.restful.filter;
 
 
+import javax.servlet.annotation.WebFilter;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
-@Provider
+@WebFilter(filterName = "RestCorsResponseFilter", urlPatterns = { "/api/rest/v2/generic/all/*" })
 public class RestCorsResponseFilter implements ContainerResponseFilter {
 
     @Override
