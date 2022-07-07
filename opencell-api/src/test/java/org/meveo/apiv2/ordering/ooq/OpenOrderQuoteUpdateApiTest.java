@@ -923,7 +923,7 @@ public class OpenOrderQuoteUpdateApiTest {
             openOrderQuoteApi.create(dto);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "OpenOrder not enable is settings");
+            Assert.assertEquals(e.getMessage(), "OpenOrder not enable in settings");
         }
 
     }
