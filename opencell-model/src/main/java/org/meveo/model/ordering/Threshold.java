@@ -30,7 +30,7 @@ public class Threshold extends BaseEntity {
     private List<ThresholdRecipientsEnum> recipients;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_order_template_id", nullable = false, updatable = false)
+    @JoinColumn(name = "open_order_template_id", updatable = false)
     private OpenOrderTemplate openOrderTemplate;
     
     @Column(name = "external_recipient")

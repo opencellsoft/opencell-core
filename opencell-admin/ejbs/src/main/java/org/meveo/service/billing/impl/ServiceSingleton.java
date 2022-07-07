@@ -669,7 +669,7 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String getNextOpenOrderSequence() {
-        String code = "OOQ-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        String code = "OOR-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
         InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
         if (sequence == null) {
             sequence = new InvoiceSequence();
