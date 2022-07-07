@@ -711,7 +711,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
 
-        ServiceInstance serviceInstance = serviceInstanceService.findById(wo.getServiceInstance().getId());
+        ServiceInstance serviceInstance = wo.getServiceInstance();
+        serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);
 
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
 
@@ -733,8 +734,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if(pricePlanMatrixLine!=null) {
                 	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                     String amountEL = ppmVersion.getPriceEL();
+                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                    	priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                    }
+                    if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
+                        priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
                 if (priceWithoutTax == null) {

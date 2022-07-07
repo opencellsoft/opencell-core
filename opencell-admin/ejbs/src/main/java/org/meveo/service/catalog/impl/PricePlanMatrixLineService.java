@@ -208,7 +208,15 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-    	addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
+        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
+                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
+                .collect(Collectors.toList());
+        int i = 0;
+        for (PricePlanMatrixLine ppml : priceLinesSorted) {
+            ppml.setPriority(i++);
+        }
+            
+        addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
         if(attributeValues.isEmpty()) {
             return priceLines.stream()
                     .filter(PricePlanMatrixLine::isDefaultLine)

@@ -197,6 +197,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 						.collect(Collectors.toList())).orElse(Collections.emptyList())
 				.forEach(accountOperation -> {
 					accountOperation.setCustomerAccount(customer);
+					// change status of orphan AO after CA assignement : new requirement added as bug https://opencellsoft.atlassian.net/browse/INTRD-8217
+					accountOperation.setStatus(POSTED);
 					accountOperationService.update(accountOperation);
 				});
 

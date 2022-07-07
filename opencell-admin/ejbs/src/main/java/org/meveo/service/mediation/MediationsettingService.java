@@ -48,9 +48,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 				.sorted(sortByPriority)
 				.filter(edrVersion -> {
 					try {
-						return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriterialEL(), Boolean.class, edr);
+						return ValueExpressionWrapper.evaluateExpression(edrVersion.getCriteriaEL(), Boolean.class, edr);
 					}catch(Exception e) {
-						log.warn("cant evaluate expression : " + edrVersion.getCriterialEL() , e);
+						log.warn("cant evaluate expression : " + edrVersion.getCriteriaEL() , e);
 					}
 					return false;
 				})
@@ -81,18 +81,18 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
-						var errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriterialEL(), cdr, "%s");
-						var eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriterialEL(),edr, cdr, errorMsg, Boolean.class); 
+						var errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), cdr, "%s");
+						var eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, errorMsg, Boolean.class); 
 						return eval == null ? false : eval;
 					})
 					.findFirst();
         	if(edrVersionRuleOption.isPresent()) {
         		var edrVersionRule = edrVersionRuleOption.get();
-				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriterialEL(), cdr, "%s");
+				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
         		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class);
         		if(StringUtils.isNotEmpty(keyEvent) && edr.getRejectReason() == null) { // test si cdr est rejete
 					edr.setEventKey(keyEvent);		
-    				errorMsg = String.format(errorMessage, "isNewVersionEL", edrVersionRule.getId(), edrVersionRule.getCriterialEL(), cdr, "%s");
+    				errorMsg = String.format(errorMessage, "isNewVersionEL", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
     				var previousEdrs = this.findByEventKey(keyEvent);
     				if(CollectionUtils.isEmpty(previousEdrs)) {
     					edr.setEventVersion(1);
