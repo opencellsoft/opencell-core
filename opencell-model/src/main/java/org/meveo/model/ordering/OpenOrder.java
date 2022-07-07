@@ -24,10 +24,10 @@ import java.util.List;
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
 				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
 				+ " AND (product.id = :productId or article.id = :articleId)"),
-		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join oo.products product"
+		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products product"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
 				+ " AND oo.endOfValidityDate >= :eventDate AND product.id = :productId ORDER BY oo.endOfValidityDate"),
-		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join oo.articles article"
+		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles article"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
 				+ " AND oo.endOfValidityDate >= :eventDate AND article.id = :articleId ORDER BY oo.endOfValidityDate")
 })
