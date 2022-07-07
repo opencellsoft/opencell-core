@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(filterName = "RestCorsResponseFilter", urlPatterns = { "/api/rest/v1/*" })
+@WebFilter(filterName = "RestCorsResponseFilter", urlPatterns = { "/api/rest/v2/generic/all/*" })
 public class RestCorsResponseFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
