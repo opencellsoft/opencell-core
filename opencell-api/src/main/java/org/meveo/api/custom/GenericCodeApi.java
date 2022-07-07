@@ -36,6 +36,10 @@ public class GenericCodeApi extends BaseApi {
     @Inject
     private SequenceService sequenceService;
 
+    /**
+     * Create a custom generic code
+     * @param genericCodeDto
+     */
     public void create(GenericCodeDto genericCodeDto) {
         if (genericCodeDto.getSequence() == null) {
             missingParameters.add("sequence");
@@ -48,11 +52,9 @@ public class GenericCodeApi extends BaseApi {
         }
         handleMissingParameters();
         validateEntityClass(genericCodeDto.getEntityClass());
-        String sequenceCode = genericCodeDto.getSequence().getCode();
-        Sequence sequence = sequenceService.findByCode(sequenceCode);
+        Sequence sequence = sequenceService.findByCode(genericCodeDto.getSequence().getCode());
         if(sequence == null) {
-            createSequence(genericCodeDto.getSequence());
-            sequence = sequenceService.findByCode(sequenceCode);
+            sequence = createSequence(genericCodeDto.getSequence());
         }
         CustomGenericEntityCode customGenericEntityCode = from(genericCodeDto, sequence);
         customGenericEntityCodeService.create(customGenericEntityCode);
@@ -66,13 +68,27 @@ public class GenericCodeApi extends BaseApi {
         }
     }
 
-    public void update(GenericCodeDto genericCodeDto) {
+    private CustomGenericEntityCode from(GenericCodeDto dto, Sequence sequence) {
+        CustomGenericEntityCode customGenericEntityCode = new CustomGenericEntityCode();
+        Optional.ofNullable(dto.getFormatEL())
+                .ifPresent(customGenericEntityCode::setFormatEL);
+        customGenericEntityCode.setEntityClass(dto.getEntityClass());
+        customGenericEntityCode.setSequence(sequence);
+        return customGenericEntityCode;
+    }
+
+    /**
+     * Update a custom generic code
+     * @param genericCodeDto
+     */
+    public CustomGenericEntityCode update(GenericCodeDto genericCodeDto) {
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService.findByClass(genericCodeDto.getEntityClass()))
                 .orElseThrow(() -> new MeveoApiException("Generic code does not exist"));
-        String sequenceCode = genericCodeDto.getSequence().getCode();
-        ofNullable(sequenceService.findByCode(sequenceCode))
-                .orElseThrow(() -> new MeveoApiException("Sequence does not exist"));
-        customGenericEntityCodeService.update(toEntity(genericCodeDto, customGenericEntityCode));
+        if(genericCodeDto.getSequence() != null
+                && sequenceService.findByCode(genericCodeDto.getSequence().getCode()) == null) {
+                throw  new MeveoApiException("Sequence does not exist");
+        }
+        return customGenericEntityCodeService.update(toEntity(genericCodeDto, customGenericEntityCode));
     }
 
     private CustomGenericEntityCode toEntity(GenericCodeDto genericCodeDto, CustomGenericEntityCode customGenericEntityCode) {
@@ -88,21 +104,33 @@ public class GenericCodeApi extends BaseApi {
         return customGenericEntityCode;
     }
 
-    public void createSequence(SequenceDto sequenceDto) {
+    /**
+     * Create generic sequence
+     * @param sequenceDto
+     * @return created sequence
+     */
+    public Sequence createSequence(SequenceDto sequenceDto) {
         validateInputs(sequenceDto);
         Sequence sequence = SequenceDto.from(sequenceDto);
         sequenceService.create(sequence);
+        return sequence;
     }
 
-    public void updateSequence(SequenceDto sequenceDto) {
+    /**
+     * Update generic sequence
+     * @param sequenceDto
+     * @return created sequence
+     */
+    public Sequence updateSequence(SequenceDto sequenceDto) {
         validateInputs(sequenceDto);
         Sequence sequence = SequenceDto.from(sequenceDto);
         sequenceService.findByCode(sequence.getCode());
         sequenceService.update(sequence);
+        return sequence;
     }
 
     private void validateInputs(SequenceDto sequenceDto) {
-        if(sequenceDto != null) {
+        if (sequenceDto != null) {
             if (isBlank(sequenceDto.getCode())) {
                 missingParameters.add("code");
             }
@@ -110,21 +138,27 @@ public class GenericCodeApi extends BaseApi {
                 missingParameters.add("Sequence Type");
             }
             if (sequenceDto.getSequenceType() == REGEXP) {
-                ofNullable(sequenceDto.getPattern())
-                        .orElseThrow(() -> new MeveoApiException("Sequence pattern is required"));
-                ofNullable(sequenceDto.getSize())
-                        .orElseThrow(() -> new MeveoApiException("Sequence size is missing"));
+                if (sequenceDto.getPattern() == null) {
+                    throw new MeveoApiException("Sequence pattern is required");
+                }
+                if (sequenceDto.getSize() == null) {
+                    throw new MeveoApiException("Sequence size is required");
+                }
             }
-            if (sequenceDto.getSequenceType() == ALPHA_UP) {
-                ofNullable(sequenceDto.getSize())
-                        .orElseThrow(() -> new MeveoApiException("Sequence size is required"));
+            if (sequenceDto.getSequenceType() == ALPHA_UP && sequenceDto.getSize() == null) {
+                throw new MeveoApiException("Sequence size is required");
             }
             handleMissingParameters();
         } else {
             throw new MeveoApiException("No data provided, dto is null");
         }
     }
-
+    
+    /**
+     * Generate generic code
+     * @param genericCodeDto
+     * @return Generated code
+     */
     public String getGenericCode(GenericCodeDto genericCodeDto) {
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService
                 .findByClass(genericCodeDto.getEntityClass()))
@@ -138,6 +172,11 @@ public class GenericCodeApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Find a custom generic code by associated entity class
+     * @param entityClass
+     * @return Optional<GetGenericCodeResponseDto>
+     */
     public Optional<GetGenericCodeResponseDto> find(String entityClass) {
         CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
         if(customGenericEntityCode != null) {
@@ -146,16 +185,7 @@ public class GenericCodeApi extends BaseApi {
         return empty();
     }
 
-    public CustomGenericEntityCode from(GenericCodeDto dto, Sequence sequence) {
-        CustomGenericEntityCode customGenericEntityCode = new CustomGenericEntityCode();
-        Optional.ofNullable(dto.getFormatEL())
-                .ifPresent(formatEl -> customGenericEntityCode.setFormatEL(formatEl));
-        customGenericEntityCode.setEntityClass(dto.getEntityClass());
-        customGenericEntityCode.setSequence(sequence);
-        return customGenericEntityCode;
-    }
-
-    public GetGenericCodeResponseDto from(CustomGenericEntityCode customGenericEntityCode) {
+    private GetGenericCodeResponseDto from(CustomGenericEntityCode customGenericEntityCode) {
         GenericCodeDto genericCodeDto = new GenericCodeDto();
         genericCodeDto.setEntityClass(customGenericEntityCode.getEntityClass());
         genericCodeDto.setFormatEL(customGenericEntityCode.getFormatEL());
