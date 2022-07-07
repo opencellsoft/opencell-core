@@ -152,7 +152,7 @@ public interface GenericResource {
     Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
 
     @POST
-    @Path("/export/{entityName}/{format}")
+    @Path("/export/{entityName}/{fileFormat}")
     @Operation(summary = "Generic single endpoint to export paginated records of an entity",
             tags = { "Generic" },
             description ="specify the entity name, and as body, the configuration of the research."

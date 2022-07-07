@@ -17,6 +17,7 @@ import org.meveo.util.Inflector;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -167,9 +168,12 @@ public class GenericResourceImpl implements GenericResource {
         		throw new MeveoApiException("Nested entities are not handled by the export api");
             genericFields = searchConfig.getGenericFields();
         }
+        if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL")){
+            throw new BadRequestException("format of the price plan matrix version can be only equals (CSV or EXCEL).");
+        }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields);
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, fileFormat);
         return Response.ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
                 .build();
