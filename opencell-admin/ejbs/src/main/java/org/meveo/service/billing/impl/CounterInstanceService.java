@@ -508,7 +508,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public CounterValueChangeInfo deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal valueToDeduce, boolean isVirtual)
             throws CounterInstantiationException {
 
@@ -552,9 +552,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      */
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) {
 
         BigDecimal deducedQuantity = null;

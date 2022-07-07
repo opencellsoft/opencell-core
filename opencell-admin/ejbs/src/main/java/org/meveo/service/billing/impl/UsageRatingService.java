@@ -204,30 +204,19 @@ public class UsageRatingService extends RatingService implements Serializable {
             edr.deduceQuantityLeftToRate(deducedQuantity);
             quantityToCharge = deducedQuantity;
         }
-
-        try {
-            RatingResult ratingResult = null;
-            if (reservation == null) {
-                ratingResult = rateChargeAndInstantiateTriggeredEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, reservation, false, isVirtual);
-            } else {
-                ratingResult = rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, reservation, false);
-            }
-            ratingResult.setFullyRated(fullyRated);
-            if (deducedCounter != null) {
-                ratingResult.addCounterChange(deducedCounter.getCounterValueChangeInfo().getCounterPeriodId(), deducedCounter.getCounterValueChangeInfo().getDeltaValue());
-            }
-
-            return ratingResult;
-
-        } catch (ValidationException | RatingException | CommunicateToRemoteInstanceException e) {
-            // Counter was deduced, but rating failed, so counter value must be restored
-            if (deducedCounter != null) {
-                log.error("Failed to rate charge {}, will revert the applied counter {} by {}", usageChargeInstance.getId(), deducedCounter.getCounterValueChangeInfo().getCounterPeriodId(),
-                    deducedCounter.getCounterValueChangeInfo().getDeltaValue());
-                counterInstanceService.incrementCounterValue(deducedCounter.getCounterValueChangeInfo().getCounterPeriodId(), deducedCounter.getCounterValueChangeInfo().getDeltaValue());
-            }
-            throw e;
+    
+        RatingResult ratingResult = null;
+        if (reservation == null) {
+            ratingResult = rateChargeAndInstantiateTriggeredEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, reservation, false, isVirtual);
+        } else {
+            ratingResult = rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, reservation, false);
         }
+        ratingResult.setFullyRated(fullyRated);
+        if (deducedCounter != null) {
+            ratingResult.addCounterChange(deducedCounter.getCounterValueChangeInfo().getCounterPeriodId(), deducedCounter.getCounterValueChangeInfo().getDeltaValue());
+        }
+        return ratingResult;
+
     }
 
     /**
