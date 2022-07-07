@@ -513,7 +513,7 @@ public class OpenOrderQuoteApi {
         // DEFINE => AMOUNT / APPLY => DATE !!
         // ************************************
         if (!orSettings.getUseOpenOrders()) {
-            throw new BusinessApiException("OpenOrder not enable is settings");
+            throw new BusinessApiException("OpenOrder not enable in settings");
         }
 
         if (orSettings.getDefineMaximumValidity() && orSettings.getDefineMaximumValidityValue() != null
