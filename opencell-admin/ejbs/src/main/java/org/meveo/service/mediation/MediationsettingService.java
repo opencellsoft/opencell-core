@@ -99,13 +99,14 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     					continue;
     				}
 					var previousEdr = previousEdrs.get(0);
+					boolean tmpTestComparaison = edr.getDecimalParam1().intValue() > previousEdr.getDecimalParam1().intValue();
         			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr);    				
         			if(isNewVersion) {
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
         					previousEdr.setStatus(EDRStatusEnum.CANCELLED);
-        					previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId());
-        					edr.setEventVersion(previousEdr.getVersion() + 1);
+        					previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
+        					edr.setEventVersion(previousEdr.getEventVersion() + 1);
     					}else { // for status RATED
     						// check if  wallet operation related to EDR is treated
     						var wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
@@ -121,15 +122,12 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     								cdr.setRejectReason(msgError);
     								continue;
     							}else { // find all wallet operation that have a status OPEN 
-        							wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
-																											.setParameter("edrId", previousEdr.getId())
-																											.getResultList();
 									edr.setStatus(EDRStatusEnum.RATED);
-									edr.setEventVersion(previousEdr.getVersion() + 1);
+									edr.setEventVersion(previousEdr.getEventVersion() + 1);
 									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
 									previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
 									wos.forEach(wo -> {
-										wo.setStatus(WalletOperationStatusEnum.RERATED);
+										wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
 										wo.setEdr(edr);
 										walletOperationService.update(wo);
 									});
