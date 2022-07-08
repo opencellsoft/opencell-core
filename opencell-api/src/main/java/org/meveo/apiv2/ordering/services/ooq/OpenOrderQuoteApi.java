@@ -248,12 +248,20 @@ public class OpenOrderQuoteApi {
                 // status in (VALIDATED, SENT)
                 // check that Product/Article list is not empty(depending on type)
 
-                if (setting.getUseManagmentValidationForOOQuotation()) {
-                    throw new BusinessApiException("ASK VALIDATION feature shall not be activated");
+                if (!setting.getUseManagmentValidationForOOQuotation()) {
+                    if (ooq.getStatus() != DRAFT) {
+                        throw new BusinessApiException("Open Order Quote status must be DRAFT");
+                    }
+                } else if (ooq.getStatus() != VALIDATED) {
+                    throw new BusinessApiException("Open Order Quote status must be VALIDATED");
                 }
 
-                if (ooq.getStatus() != VALIDATED) {
-                    throw new BusinessApiException("Open Order Quote status must be VALIDATED");
+                if (ARTICLES == ooq.getOpenOrderType() && CollectionUtils.isEmpty(ooq.getArticles())) {
+                    throw new BusinessApiException("Articles must not be empty");
+                }
+
+                if (PRODUCTS == ooq.getOpenOrderType() && CollectionUtils.isEmpty(ooq.getProducts())) {
+                    throw new BusinessApiException("Products must not be empty");
                 }
 
                 break;
@@ -505,7 +513,7 @@ public class OpenOrderQuoteApi {
         // DEFINE => AMOUNT / APPLY => DATE !!
         // ************************************
         if (!orSettings.getUseOpenOrders()) {
-            throw new BusinessApiException("OpenOrder not enable is settings");
+            throw new BusinessApiException("OpenOrder not enable in settings");
         }
 
         if (orSettings.getDefineMaximumValidity() && orSettings.getDefineMaximumValidityValue() != null
