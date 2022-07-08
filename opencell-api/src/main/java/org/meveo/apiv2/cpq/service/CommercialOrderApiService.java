@@ -30,9 +30,6 @@ public class CommercialOrderApiService {
 	private OpenOrderService openOrderService;
 
 	@Inject
-	private QuoteVersionService quoteVersionService;
-
-	@Inject
 	private OrderProductService orderProductService;
 
 	@Inject
@@ -42,7 +39,6 @@ public class CommercialOrderApiService {
 	private CommercialOrderService commercialOrderService;
 
 	public Set<OpenOrder> findAvailableOpenOrders(String code) {
-		List<QuoteVersion> quoteVersion = quoteVersionService.findLastVersionByCode(code);
 		
 		BusinessEntity be = commercialOrderService.findBusinessEntityByCode(code);
 		if(be == null) {
@@ -55,22 +51,20 @@ public class CommercialOrderApiService {
 		List<Product> product = products.stream().map(qp -> qp.getProductVersion().getProduct()).collect(Collectors.toList());
 		List<AccountingArticle> articles = articleLines.stream().map(OrderArticleLine::getAccountingArticle).collect(Collectors.toList());
 
-		// Getting OO for each Quote product
+		// Getting OO for each Commercial Order product
 		Set<OpenOrder> avaiableOO = product.stream()
 											.map(p -> openOrderService.checkAvailableOpenOrderForProduct(order.getBillingAccount(), p, new Date()))
 											.filter(oo -> oo.isPresent())
 											.map(oo -> oo.get())
 											.collect(Collectors.toSet());
 		
-		// Getting OO for each Quote article
+		// Getting OO for each Commercial Order article
 		avaiableOO.addAll(articles.stream()
-											.map(a -> openOrderService.checkAvailableOpenOrderForArticle(order.getBillingAccount(), a, new Date()))
-											.filter(oo -> oo.isPresent())
-											.map(oo -> oo.get())
-											.collect(Collectors.toSet()));
+									.map(a -> openOrderService.checkAvailableOpenOrderForArticle(order.getBillingAccount(), a, new Date()))
+									.filter(oo -> oo.isPresent())
+									.map(oo -> oo.get())
+									.collect(Collectors.toSet()));
 
-		// Group product and articles by OO
-		// Map<Long, OpenOrder> openOrderMap = avaiableOO.stream().collect(Collectors.toMap(OpenOrder::getId, Function.identity()));
 
 		return avaiableOO;
 		
