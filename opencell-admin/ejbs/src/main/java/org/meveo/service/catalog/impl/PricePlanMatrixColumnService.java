@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.NotFoundException;
@@ -83,7 +86,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         Set<Long> valuesId = ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet());
         if(!valuesId.isEmpty())
             pricePlanMatrixValueService.remove(valuesId);
-        remove(ppmColumn);
+        remove(new HashSet<Long>(Arrays.asList(ppmColumn.getId())));
     }
 
 	public List<PricePlanMatrixColumn> findByCodeAndPricePlanMatrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
