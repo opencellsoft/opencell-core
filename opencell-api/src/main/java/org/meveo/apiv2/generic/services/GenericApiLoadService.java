@@ -188,11 +188,11 @@ public class GenericApiLoadService {
 										        .map(line -> addResultLine(line, genericFields.iterator()))
 										        .collect(Collectors.toList());
         
-        csvGenericExportManager.export("billingAccount" , mapResult, fileFormat);
+        String filePath = csvGenericExportManager.export("billingAccount" , mapResult, fileFormat);
         
         
 		
-		return null;
+		return filePath;
 	}
     
 
