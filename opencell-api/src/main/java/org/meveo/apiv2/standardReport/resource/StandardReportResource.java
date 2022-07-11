@@ -49,6 +49,7 @@ public interface StandardReportResource {
                                 @QueryParam("sortOrder") String sort, @QueryParam("sortBy") String orderBy,
                                 @QueryParam("customerAccountCode") String customerAccountCode,
                                 @QueryParam("startDate") Date startDate,
+                                @QueryParam("dueDate") Date dueDate,
                                 @QueryParam("customerAccountDescription") String customerAccountDescription,
                                 @QueryParam("invoiceNumber") String invoiceNumber,
                                 @QueryParam("stepInDays") Integer stepInDays,

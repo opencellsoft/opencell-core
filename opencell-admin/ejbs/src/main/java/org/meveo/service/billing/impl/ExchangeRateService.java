@@ -19,6 +19,8 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 
+import static java.math.BigDecimal.ONE;
+
 @Stateless
 public class ExchangeRateService extends PersistenceService<ExchangeRate> {
     
@@ -53,7 +55,7 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         }
         
         // Check if a user choose a date that is already taken
-        if (findByfromDate(postData.getFromDate(), postData.getTradingCurrency().getId()) != null) {
+        if (findByFromDate(postData.getFromDate(), postData.getTradingCurrency().getId()) != null) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
         
@@ -125,26 +127,31 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
                 .getResultList();
     }
     
-    public void updateCurrentRateForTradingCurrency(Long idExchangeRate) {
-        ExchangeRate exchangeRate = findById(idExchangeRate);        
-        TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();        
-        List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
-        
-        for (ExchangeRate elementExchangeRate : listExchangeRate) {
-            elementExchangeRate.setCurrentRate(false);
+    public void updateCurrentRateForTradingCurrency(Long exchangeRateId) {
+        ExchangeRate exchangeRate = findById(exchangeRateId);
+        TradingCurrency tradingCurrency = exchangeRate.getTradingCurrency();
+        if(tradingCurrency != null) {
+            if(tradingCurrency.getCurrentRate().equals(ONE)) {
+                List<ExchangeRate> listExchangeRate = tradingCurrency.getExchangeRates();
+                for (ExchangeRate elementExchangeRate : listExchangeRate) {
+                    elementExchangeRate.setCurrentRate(false);
+                }
+                exchangeRate.setCurrentRate(true);
+                tradingCurrency.setExchangeRates(listExchangeRate);
+                tradingCurrency.setCurrentRate(exchangeRate.getExchangeRate());
+                tradingCurrency.setCurrentRateFromDate(DateUtils.setTimeToZero(new Date()));
+                tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
+                exchangeRate.setTradingCurrency(tradingCurrency);
+                update(exchangeRate);
+            } else {
+                tradingCurrencyService.updateFunctionalCurrency(tradingCurrency);
+            }
         }
-        exchangeRate.setCurrentRate(true);
-        tradingCurrency.setExchangeRates(listExchangeRate);
-        tradingCurrency.setCurrentRate(exchangeRate.getExchangeRate());
-        tradingCurrency.setCurrentRateFromDate(DateUtils.setTimeToZero(new Date()));
-        tradingCurrency.setCurrentRateUpdater(currentUser.getUserName());
-        exchangeRate.setTradingCurrency(tradingCurrency);
-        update(exchangeRate);
-    }    
+    }
     
-    public ExchangeRate findByfromDate(Date fromDate, Long tradingCurrencyId) {        
+    public ExchangeRate findByFromDate(Date fromDate, Long tradingCurrencyId) {
         try {
-            return (ExchangeRate) getEntityManager()
+            return getEntityManager()
                     .createNamedQuery("ExchangeRate.findByfromDate", entityClass)
                     .setParameter("fromDate", fromDate)
                     .setParameter("tradingCurrencyId", tradingCurrencyId)

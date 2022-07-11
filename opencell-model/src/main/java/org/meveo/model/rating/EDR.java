@@ -307,6 +307,12 @@ public class EDR extends BaseEntity {
     /** The times tried. */
     @Column(name = "times_tried")
     private Integer timesTried = 0;
+    
+    @Column(name = "event_key")
+    private String eventKey;
+    
+    @Column(name = "event_version")
+    private Integer eventVersion;
 
     /**
      * Tracks quantity left to rate. Initialized with quantity field value on the first call.
@@ -668,4 +674,20 @@ public class EDR extends BaseEntity {
     public Date getStatusDate() {
         return updated == null ? created : updated;
     }
+
+	public String getEventKey() {
+		return eventKey;
+	}
+
+	public void setEventKey(String eventKey) {
+		this.eventKey = eventKey;
+	}
+
+	public Integer getEventVersion() {
+		return eventVersion;
+	}
+
+	public void setEventVersion(Integer eventVersion) {
+		this.eventVersion = eventVersion;
+	}
 }

@@ -109,11 +109,16 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
         "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
                 + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
+
+        @NamedQuery(name = "Invoice.sumAmountsByBR", query = "select sum(inv.amountTax),sum(inv.amountWithoutTax), sum(inv.amountWithTax) FROM Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
+        @NamedQuery(name = "Invoice.billingAccountsByBr", query = "select distinct inv.billingAccount from Invoice inv where inv.billingRun.id=:billingRunId and inv.status <> 'CANCELED'"),
+ 
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
-        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId")
+        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0 where inv.id = :invoiceId"),
+        @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -695,6 +700,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "payment_plan_id")
     private PaymentPlan paymentPlan;
 
+    /**
+     * Open Order Number
+     */
+    @Column(name = "open_order_number")
+    @Size(max = 255)
+	private String openOrderNumber;
+
     public Invoice() {
 	}
 
@@ -762,9 +774,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         if(this.getBillingAccount() != null) {
         	CustomerAccount customerAccount = this.getBillingAccount().getCustomerAccount();
         	this.tradingCountry = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry() :this.getSeller().getTradingCountry();
-            this.tradingCurrency = billingAccount.getTradingCurrency() != null ? billingAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
             if(this.tradingCurrency == null) {
-                this.tradingCurrency = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                this.tradingCurrency = billingAccount.getTradingCurrency() != null
+                        ? billingAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                if(this.tradingCurrency == null) {
+                    this.tradingCurrency = customerAccount.getTradingCurrency() != null
+                            ? customerAccount.getTradingCurrency() : this.getSeller().getTradingCurrency();
+                }
             }
             if(billingAccount.getTradingLanguage() != null) {
         		this.tradingLanguage = billingAccount.getTradingLanguage();
@@ -772,6 +788,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         	if(this.tradingLanguage == null) {
         		this.tradingLanguage = customerAccount.getTradingLanguage() != null ? customerAccount.getTradingLanguage() : this.getSeller().getTradingLanguage();
         	}
+        }
+        if(this.id == null) {
+            if(this.lastAppliedRate == null) {
+                this.lastAppliedRate = this.tradingCurrency != null && this.tradingCurrency.getCurrentRate() != null
+                        ? this.tradingCurrency.getCurrentRate() : ONE;
+            }
+            if(this.lastAppliedRateDate == null) {
+                this.lastAppliedRateDate = new Date();
+            }
         }
         BigDecimal appliedRate = getAppliedRate();
         this.convertedAmountTax = this.amountTax != null
@@ -1813,13 +1838,30 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setPaymentPlan(PaymentPlan paymentPlan) {
         this.paymentPlan = paymentPlan;
     }
-    
+
+    public String getOpenOrderNumber() {
+		return openOrderNumber;
+	}
+
+	public void setOpenOrderNumber(String openOrderNumber) {
+		this.openOrderNumber = openOrderNumber;
+	}
+
+
+	/**
+     * Check if an invoice can be refreshed
+     * @return refresh check result
+     */
     public boolean canBeRefreshed() {
         return this.status == InvoiceStatusEnum.NEW || this.status == InvoiceStatusEnum.DRAFT
                 && (this.lastAppliedRate != null
                 && !this.lastAppliedRate.equals(this.tradingCurrency.getCurrentRate()));
     }
 
+    /**
+     * Get applied rate for an invoice
+     * @return last applied rate
+     */
     public BigDecimal getAppliedRate() {
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }

@@ -3,7 +3,6 @@ package org.meveo.model.ordering;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -33,6 +32,17 @@ public class Threshold extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "open_order_template_id", nullable = false, updatable = false)
     private OpenOrderTemplate openOrderTemplate;
+    
+    @Column(name = "external_recipient")
+    private String externalRecipient;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "open_order_quote_id")
+    private OpenOrderQuote openOrderQuote;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "open_order_id")
+    private OpenOrder openOrder;
 
     public Integer getSequence() {
         return sequence;
@@ -64,5 +74,29 @@ public class Threshold extends BaseEntity {
 
     public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
         this.openOrderTemplate = openOrderTemplate;
+    }
+
+	public String getExternalRecipient() {
+		return externalRecipient;
+	}
+
+	public void setExternalRecipient(String externalRecipient) {
+		this.externalRecipient = externalRecipient;
+	}
+
+	public OpenOrderQuote getOpenOrderQuote() {
+		return openOrderQuote;
+	}
+
+	public void setOpenOrderQuote(OpenOrderQuote openOrderQuote) {
+		this.openOrderQuote = openOrderQuote;
+	}
+
+    public OpenOrder getOpenOrder() {
+        return openOrder;
+    }
+
+    public void setOpenOrder(OpenOrder openOrder) {
+        this.openOrder = openOrder;
     }
 }

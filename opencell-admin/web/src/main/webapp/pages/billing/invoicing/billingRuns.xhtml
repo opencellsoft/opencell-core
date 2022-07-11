@@ -27,7 +27,7 @@
         <hftl:dataList label="#{messages['billingRuns.title']}" backingBean="#{billingRunListBean}" sortOrder="descending">
             <p:column width="5%">
                 <f:facet name="header">
-                    <h:outputText value="#{messages['role.id']}" />
+                    <h:outputText value="#{messages['baseEntity.id']}" />
                 </f:facet>
                 <h:link id="showInvoices" outcome="postInvoicingReports" rendered="#{entity.status.toString() == 'VALIDATED' || entity.status.toString() == 'REJECTED'}" value="#{entity.id}">
                     <f:param name="objectId" value="#{entity.id}" />

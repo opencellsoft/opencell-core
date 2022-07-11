@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -79,7 +80,9 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
@@ -90,6 +93,8 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.order.OpenOrderService;
+import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
@@ -151,6 +156,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
 	private TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    private OpenOrderSettingService openOrderSettingService;
+
+    @Inject
+    private OpenOrderService openOrderService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -723,7 +734,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         String parCodeAccountingCode = "";
 
         if(accountingCodeStr != null) {
-            accountingCode = accountingCodeService.findByCode(accountingCodeStr);
+            accountingCode = Optional.ofNullable(accountingCodeService.findByCode(accountingCodeStr))
+                .orElseThrow(() -> new EntityDoesNotExistsException(AccountingCode.class, accountingCodeStr));
+
             parCodeAccountingCode = "_" + accountingCodeStr;
         }
         Tax tax = taxService.findTaxByRateAndAccountingCode(taxRate, accountingCode);
@@ -925,6 +938,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         BasicStatistics basicStatistics = new BasicStatistics();
+        OpenOrderSetting openOrderSetting = openOrderSettingService.findLastOne();
+        boolean useOpenOrder = ofNullable(openOrderSetting).map(OpenOrderSetting::getUseOpenOrders).orElse(false);
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
         for (Map<String, Object> groupedRT : groupedRTs) {
@@ -942,6 +957,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             	for(String id: ratedTransIds) {
             		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
             	}
+            }
+            
+            if(useOpenOrder) {
+            	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine);
+        		if (openOrder != null) {
+        			invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
+        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithTax()));
+        		}
             }
             
         }
@@ -1035,5 +1058,32 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoice", invoice)
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
+    }
+
+    public void deleteByAssociatedInvoice(List<Long> invoices) {
+        if(!invoices.isEmpty()) {
+            List<Long> invoicesLines = findInvoiceLineByAssociatedInvoices(invoices);
+            ratedTransactionService.getEntityManager()
+                    .createNamedQuery("RatedTransaction.detachFromInvoices")
+                    .setParameter("ids", invoices)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+            if(!invoicesLines.isEmpty()) {
+                detachRatedTransactions(invoicesLines);
+                getEntityManager()
+                        .createQuery("DELETE FROM InvoiceLine WHERE id in (:ids)")
+                        .setParameter("ids", invoicesLines)
+                        .executeUpdate();
+            }
+        }
+    }
+
+    public List<Long> findInvoiceLineByAssociatedInvoices(List<Long> invoiceIds) {
+        if(invoiceIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return getEntityManager().createNamedQuery("InvoiceLine.listByAssociatedInvoice")
+                    .setParameter("invoiceIds", invoiceIds)
+                    .getResultList();
     }
 }

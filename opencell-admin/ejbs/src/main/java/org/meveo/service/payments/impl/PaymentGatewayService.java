@@ -232,7 +232,9 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     @Override
     public void remove(PaymentGateway paymentGateway) {
         // remove credential of paymentGateway in the keystore
-        KeystoreManager.removeCredential(paymentGateway.getClass().getSimpleName() + "." + paymentGateway.getId());
+    	if(KeystoreManager.existKeystore()) {
+    		KeystoreManager.removeCredential(paymentGateway.getClass().getSimpleName() + "." + paymentGateway.getId());
+    	}
 
         super.remove(paymentGateway);
     }

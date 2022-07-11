@@ -98,6 +98,7 @@ public class NativeExpressionFactory {
             case SEARCH_WILDCARD_OR:
                 queryBuilder.addSearchWildcardOrFilters(tableNameAlias, exp.getAllFields(), value);
                 break;
+            case "or":
             case SEARCH_WILDCARD_OR_IGNORE_CAS:
                 queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, exp.getAllFields(), value);
                 break;

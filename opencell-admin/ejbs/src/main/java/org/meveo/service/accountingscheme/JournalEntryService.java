@@ -33,6 +33,7 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -166,11 +167,13 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && !isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode();
 
         } else if (ao.getCustomerAccount() == null && isOrphan) {
@@ -279,6 +282,23 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setAuxiliaryAccountCode(accountingInfo.get(AUXILIARY_ACCOUNT_CODE));
             firstEntry.setAuxiliaryAccountLabel(accountingInfo.get(AUXILIARY_ACCOUNT_LABEL));
         }
+
+        if(ao != null) {
+        	firstEntry.setJournalCode(ofNullable(ao.getJournal()).map(Journal::getCode).orElse(null));
+        	firstEntry.setReference(ao.getReference());
+        	firstEntry.setDocumentType(ao.getType());
+        }
+        if(code != null) {
+        	firstEntry.setCategory(code.getChartOfAccountTypeEnum());
+        	firstEntry.setAccount(code.getCode());
+        	firstEntry.setLabel(code.getDescription());
+        }
+        if(customerAccount != null) {
+        	firstEntry.setCustomerCode(customerAccount.getCode());
+        	firstEntry.setCustomerName(customerAccount.getDescription());
+        }
+        
+        firstEntry.setSellerName(ofNullable(seller).map(Seller::getDescription).orElse(null));
 
         return firstEntry;
     }
@@ -410,5 +430,27 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
         return revenuEntry;
+    }
+
+    @Override
+    public void create(JournalEntry journalEntry) {
+        super.create(journalEntry);
+        if(checkAuxiliaryCodeUniqniess(journalEntry.getAuxiliaryAccountCode(), journalEntry.getCustomerAccount()) != 0) {
+            journalEntry.setAuxiliaryAccountCode(journalEntry.getAuxiliaryAccountCode()
+                    + journalEntry.getCustomerAccount().getId());
+        }
+    }
+
+    /**
+     * Check auxiliary account code uniqniess
+     * @param auxiliaryAccountCode auxiliary account code
+     * @param customerAccount      customer account
+     * @return number of occurrence
+     */
+    public long checkAuxiliaryCodeUniqniess(String auxiliaryAccountCode, CustomerAccount customerAccount) {
+        return (long) getEntityManager().createNamedQuery("JournalEntry.checkAuxiliaryCodeUniqniess")
+                                .setParameter("auxiliaryAccountCode", auxiliaryAccountCode)
+                                .setParameter("customerAccount", customerAccount)
+                                .getSingleResult();
     }
 }

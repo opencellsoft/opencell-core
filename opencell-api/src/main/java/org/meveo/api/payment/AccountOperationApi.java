@@ -46,6 +46,7 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
+import org.meveo.api.dto.payment.OtherCreditAndChargeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
@@ -61,6 +62,7 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
@@ -70,6 +72,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
@@ -78,9 +81,6 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.WriteOff;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -129,13 +129,6 @@ public class AccountOperationApi extends BaseApi {
     private JournalReportService journalService;
 
     @Inject
-    private UserService userService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
-
-    @Inject
     private PaymentPlanService paymentPlanService;
 
     /**
@@ -157,6 +150,9 @@ public class AccountOperationApi extends BaseApi {
         AccountOperation accountOperation = null;
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
         OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
+        if(transactionCategory == null){
+            transactionCategory = ((AccountOperation)aoSubclassObject).getTransactionCategory();
+        }
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
@@ -207,8 +203,15 @@ public class AccountOperationApi extends BaseApi {
         }
 
         accountOperation.setDueDate(postData.getDueDate());
+        if(postData.getDueDate() == null) {
+            accountOperation.setDueDate(new Date());
+        }
+        OtherCreditAndChargeDto otherCreditAndCharge = postData.getOtherCreditAndCharge();
+        if (aoSubclassObject instanceof OtherCreditAndCharge && otherCreditAndCharge != null && otherCreditAndCharge.getOperationDate() == null) {
+            ((OtherCreditAndCharge) aoSubclassObject).setOperationDate(new Date());
+        }
         accountOperation.setType(postData.getType());
-        accountOperation.setTransactionDate(postData.getTransactionDate());
+
         accountOperation.setTransactionCategory(transactionCategory);
         accountOperation.setReference(postData.getReference());
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
@@ -231,6 +234,9 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setAmount(postData.getAmount());
         accountOperation.setMatchingAmount(postData.getMatchingAmount());
+        if(postData.getMatchingAmount() == null){
+            accountOperation.setMatchingAmount(BigDecimal.ZERO);
+        }
         accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
         accountOperation.setCustomerAccount(customerAccount);
 
@@ -240,8 +246,14 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
+        if (postData.getMatchingStatus() == null) {
+            accountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        }
 
         accountOperation.setCode(postData.getCode());
+        if(StringUtils.isBlank(postData.getCode())){
+            accountOperation.setCode(((BusinessEntity)aoSubclassObject).getCode());
+        }
         accountOperation.setDescription(postData.getDescription());
         if (!StringUtils.isBlank(postData.getPaymentMethod())) {
             accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));

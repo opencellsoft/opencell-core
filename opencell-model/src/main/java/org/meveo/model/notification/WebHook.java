@@ -237,7 +237,7 @@ public class WebHook extends Notification {
             this.passwordKS = "";
         }
 
-        if (getId() != null &&! this.passwordKS.equals(getPasswordKS())) {
+        if (getId() != null && KeystoreManager.existKeystore() &&! this.passwordKS.equals(getPasswordKS())) {
             KeystoreManager.addCredential(getClass().getSimpleName() + "." + getId(), this.passwordKS);
         }
     }

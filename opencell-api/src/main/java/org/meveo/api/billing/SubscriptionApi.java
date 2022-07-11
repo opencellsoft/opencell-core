@@ -3051,15 +3051,18 @@ public class SubscriptionApi extends BaseApi {
 
         lastSubscription.setToValidity(null);
         subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
-        reactivateServices(lastSubscription);
+        reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
         versionRemovedEvent.fire(lastSubscription);
     }
 
-    private void reactivateServices(Subscription lastSubscription) {
+    private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
         for(ServiceInstance serviceInstance : lastSubscription.getServiceInstances()){
-            serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
+            if (serviceInstance.getTerminationDate() != null
+                    && !serviceInstance.getTerminationDate().before(changeOfferDate)) {
+                serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
+            }
         }
     }
     @Inject
@@ -3099,4 +3102,26 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * Create a subscription and instantiate cpq products
+     *
+     * @param postData
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Subscription subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
+        Subscription subscription=create(postData);
+        createAccess(postData);
+        if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
+            List<ProductToInstantiateDto> products=postData.getProductToInstantiateDto();
+            if(products!=null && !products.isEmpty()) {
+                for(ProductToInstantiateDto productDto:products)
+                    processProduct(subscription, productDto);
+            }
+        }
+        subscriptionService.activateInstantiatedService(subscription);
+        return subscription;
+    }
 }

@@ -174,6 +174,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     } else if (!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
+                    invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
                 }
             }
@@ -240,6 +241,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     } else if(!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
+                    invoice.setPaymentStatusDate(new Date());
                 }
             }
 
@@ -328,6 +330,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
                             invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                            invoice.setPaymentStatusDate(new Date());
                         	entityUpdatedEventProducer.fire(invoice);
                     	}
                     }
@@ -337,6 +340,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
                             invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                            invoice.setPaymentStatusDate(new Date());
                     	}
                 	}
                 }

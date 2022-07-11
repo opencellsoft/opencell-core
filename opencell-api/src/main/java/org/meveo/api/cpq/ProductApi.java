@@ -272,7 +272,11 @@ public class ProductApi extends BaseApi {
 				discountList.addAll(discountListUsingCodes);
 			}
 
-    		product.getDiscountList().clear();
+	    	if(productDto.getPriceVersionDateSetting() != null){
+	    		product.setPriceVersionDateSetting(productDto.getPriceVersionDateSetting());
+			}
+	    	
+	    	product.getDiscountList().clear();
 	    	if(!discountList.isEmpty()){
 	    		product.getDiscountList().addAll(discountList);
 			}
@@ -682,6 +686,10 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+		
+		if(productDto.getPriceVersionDateSetting() != null) {
+			product.setPriceVersionDateSetting(productDto.getPriceVersionDateSetting());
+		}
 		createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 		/***@TODO : update product chargeTemplates
 		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
@@ -1098,24 +1106,6 @@ public class ProductApi extends BaseApi {
 		});
     	return findByCode(productCode);
     }
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
 }

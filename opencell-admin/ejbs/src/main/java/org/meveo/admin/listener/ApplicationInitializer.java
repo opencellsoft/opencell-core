@@ -117,7 +117,7 @@ public class ApplicationInitializer {
                 initProvider.get();
 
             } catch (InterruptedException | ExecutionException | BusinessException e) {
-                log.error("Failed to initialize a provider {}", provider.getCode());
+                log.error("Failed to initialize a provider {}", provider.getCode(), e);
             }
             i++;
         }

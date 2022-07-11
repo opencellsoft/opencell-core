@@ -1,5 +1,8 @@
 package org.meveo.model.sequence;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -7,18 +10,14 @@ import org.meveo.model.admin.CustomGenericEntityCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
 
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "generic_sequence")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "generic_sequence_seq"), })
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "bill_seq_invoice_seq"), })
 @Inheritance(strategy = TABLE_PER_CLASS)
 public class Sequence extends BusinessEntity {
 

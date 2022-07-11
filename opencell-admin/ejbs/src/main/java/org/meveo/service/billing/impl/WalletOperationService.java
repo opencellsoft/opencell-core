@@ -872,10 +872,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
     
     public WalletOperation findWoByRatedTransactionId(Long rtId) {
-        return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
-                .setParameter("rtId", rtId)
-                .setMaxResults(1)
-                .getSingleResult();
+        try {
+            return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
+                    .setParameter("rtId", rtId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
     }
 
 }

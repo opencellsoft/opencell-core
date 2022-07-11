@@ -8,10 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.export.*;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
@@ -91,9 +88,7 @@ public class ImportExportResourceImpl implements ImportExportResource {
         try {
             exportImport = entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true, checkForStatus);
         } catch (StatusChangeViolationException e) {
-            ImportExportResponseDto responseDto = new ImportExportResponseDto(executionId);
-            responseDto.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, e.getMessage()));
-            return responseDto;
+            throw new BusinessApiException(e.getMessage());
         }
 
         // executionResults.put(executionId, exportImport);

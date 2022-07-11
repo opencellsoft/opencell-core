@@ -36,6 +36,11 @@ public class GenericCodeApi extends BaseApi {
     @Inject
     private SequenceService sequenceService;
 
+    /**
+     * Create new generic code
+     *
+     * @param genericCodeDto generic code data.
+     */
     public void create(GenericCodeDto genericCodeDto) {
         if (genericCodeDto.getSequence() == null) {
             missingParameters.add("sequence");
@@ -51,8 +56,7 @@ public class GenericCodeApi extends BaseApi {
         String sequenceCode = genericCodeDto.getSequence().getCode();
         Sequence sequence = sequenceService.findByCode(sequenceCode);
         if(sequence == null) {
-            createSequence(genericCodeDto.getSequence());
-            sequence = sequenceService.findByCode(sequenceCode);
+            sequence = createSequence(genericCodeDto.getSequence());
         }
         CustomGenericEntityCode customGenericEntityCode = from(genericCodeDto, sequence);
         customGenericEntityCodeService.create(customGenericEntityCode);
@@ -66,6 +70,11 @@ public class GenericCodeApi extends BaseApi {
         }
     }
 
+    /**
+     * Update generic code
+     *
+     * @param genericCodeDto generic code data.
+     */
     public void update(GenericCodeDto genericCodeDto) {
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService.findByClass(genericCodeDto.getEntityClass()))
                 .orElseThrow(() -> new MeveoApiException("Generic code does not exist"));
@@ -88,10 +97,17 @@ public class GenericCodeApi extends BaseApi {
         return customGenericEntityCode;
     }
 
-    public void createSequence(SequenceDto sequenceDto) {
+    /**
+     * Create new sequence
+     *
+     * @param sequenceDto sequence data.
+     * @return created sequence
+     */
+    public Sequence createSequence(SequenceDto sequenceDto) {
         validateInputs(sequenceDto);
         Sequence sequence = SequenceDto.from(sequenceDto);
         sequenceService.create(sequence);
+        return sequence;
     }
 
     public void updateSequence(SequenceDto sequenceDto) {
@@ -148,8 +164,8 @@ public class GenericCodeApi extends BaseApi {
 
     public CustomGenericEntityCode from(GenericCodeDto dto, Sequence sequence) {
         CustomGenericEntityCode customGenericEntityCode = new CustomGenericEntityCode();
-        Optional.ofNullable(dto.getFormatEL())
-                .ifPresent(formatEl -> customGenericEntityCode.setFormatEL(formatEl));
+        ofNullable(dto.getFormatEL())
+                .ifPresent(customGenericEntityCode::setFormatEL);
         customGenericEntityCode.setEntityClass(dto.getEntityClass());
         customGenericEntityCode.setSequence(sequence);
         return customGenericEntityCode;

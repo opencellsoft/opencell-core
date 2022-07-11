@@ -249,6 +249,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void removeLine(Invoice invoice, Long lineId) {
 		invoiceLinesService.remove(invoice, lineId);
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -283,6 +284,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {       
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
+        invoiceService.updateBillingRunStatistics(updateInvoice);
         return updateInvoice;
     }
 
@@ -291,6 +293,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void calculateInvoice(Invoice invoice) {
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 	
 	public Invoice duplicate(Invoice invoice) {
@@ -418,6 +421,11 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         return invoiceService.quarantineBillingRun(invoice, quarantineBillingRunDto);
     }
 
+	/**
+	 * Invoice refresh rate
+	 * @param invoiceId Invoice identifier
+	 * @return refresh result
+	 */
 	public Optional<Invoice> refreshRate(Long invoiceId) {
 		Invoice invoice = ofNullable(invoiceService.findById(invoiceId, asList("tradingCurrency")))
 				.orElseThrow(() -> new NotFoundException("Invoice not found"));
@@ -428,7 +436,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		if(currentRate != null && currentRate.equals(invoice.getLastAppliedRate())) {
 			return empty();
 		} else {
-			return of(invoiceService.refreshAmounts(invoice,
+			return of(invoiceService.refreshConvertedAmounts(invoice,
 					currentRate, invoice.getTradingCurrency().getCurrentRateFromDate()));
 		}
 	}

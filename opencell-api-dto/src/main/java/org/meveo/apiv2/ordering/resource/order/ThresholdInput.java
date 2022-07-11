@@ -1,5 +1,3 @@
-
-
 package org.meveo.apiv2.ordering.resource.order;
 
 import java.util.List;
@@ -12,6 +10,7 @@ import org.meveo.model.ordering.ThresholdRecipientsEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import javax.annotation.Nullable;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -23,8 +22,12 @@ public interface ThresholdInput extends Resource {
     @NotNull
     Integer getSequence();
 
-    @Nullable
+    @NotNull
     Integer getPercentage();
 
     List<ThresholdRecipientsEnum> getRecipients();
+    
+    @Nullable
+    @Email
+    String getExternalRecipient();
 }

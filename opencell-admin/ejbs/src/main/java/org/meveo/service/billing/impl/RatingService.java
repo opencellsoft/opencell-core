@@ -175,6 +175,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     @Inject
     protected CounterInstanceService counterInstanceService;
 
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
     @Inject
@@ -707,8 +710,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-        
-        PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
+
+        ServiceInstance serviceInstance = serviceInstanceService.findById(wo.getServiceInstance().getId());
+
+        PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
+
         if (ppmVersion != null) {
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
@@ -727,8 +733,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if(pricePlanMatrixLine!=null) {
                 	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                     String amountEL = ppmVersion.getPriceEL();
+                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {
-                    	priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        priceWithoutTax = evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                    }
+                    if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
+                        priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
                 }
                 if (priceWithoutTax == null) {

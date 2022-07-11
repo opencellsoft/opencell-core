@@ -58,9 +58,6 @@ public class RefundResourceImpl implements RefundResource{
         if(Objects.isNull(CAByCode)){
             throw new EntityDoesNotExistsException(CustomerAccount.class, sctRefund.getCustomerAccountCode());
         }
-        if(!PaymentMethodEnum.DIRECTDEBIT.equals(CAByCode.getPreferredPaymentMethodType())) {
-        	throw new ValidationException("DIRECTDEBIT is not the Preferred Payment Method Type for customerAccount :"+sctRefund.getCustomerAccountCode());
-        }
         if(sctRefund.getAoToRefund() != null && !sctRefund.getAoToRefund().isEmpty()){
         	validateIban(sctRefund.getIBAN());
             HashSet<Long> aoIds = new HashSet<>(sctRefund.getAoToRefund());

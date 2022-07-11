@@ -59,7 +59,7 @@ public class TradingCurrency extends EnableEntity {
     /**
      * Description. Deprecated in 5.3 for not use.
      */
-    @Column(name = "pr_description", length = 255)
+    @Column(name = "pr_description")
     @Size(max = 255)
     private String prDescription;
 
@@ -93,8 +93,8 @@ public class TradingCurrency extends EnableEntity {
     @Column(name = "current_rate_updater")
     private String currentRateUpdater;
 
-    @OneToMany(mappedBy = "tradingCurrency", fetch = FetchType.LAZY)
-    private List<ExchangeRate> exchangeRates= new ArrayList<>();    
+    @OneToMany(mappedBy = "tradingCurrency", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ExchangeRate> exchangeRates = new ArrayList<>();
 
     public List<ExchangeRate> getExchangeRates() {
         return exchangeRates;
