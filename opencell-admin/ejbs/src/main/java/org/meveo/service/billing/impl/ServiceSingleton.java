@@ -665,11 +665,32 @@ public class ServiceSingleton {
                 : prefixOverride + generatedCode;
     }
 
+    private String replaceDigitsWithChars(long epochTimestamp) {
+        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
+                .mapToObj(character ->  replaceNumber((char) character))
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+        return result.toString();
+    }
+
+    private char replaceNumber(char character) {
+        return character >= '0' && character <= '9' ? mapper.get(character) : character;
+    }
+
+    private String formatCode(String formatEL, Map<Object, Object> context) {
+        if (formatEL.isEmpty()) {
+            return (String) context.get(GENERATED_CODE_KEY);
+        }
+        if (formatEL.indexOf("#{") < 0) {
+            return formatEL + context.get(GENERATED_CODE_KEY);
+        }
+        return evaluateExpression(formatEL, context, String.class);
+    }
+
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String getNextOpenOrderSequence() {
-        String code = "OOQ-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        String code = "OOR-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
         InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
         if (sequence == null) {
             sequence = new InvoiceSequence();
@@ -684,23 +705,5 @@ public class ServiceSingleton {
         sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
 
         return ooqCode;
-    }
-
-    private String formatCode(String formatEL, Map<Object, Object> context) {
-        if (formatEL.isEmpty()) {
-            return (String) context.get(GENERATED_CODE_KEY);
-        }
-        return evaluateExpression(formatEL, context, String.class) + context.get(GENERATED_CODE_KEY);
-    }
-
-    private String replaceDigitsWithChars(long epochTimestamp) {
-        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
-                                    .mapToObj(character ->  replaceNumber((char) character))
-                                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
-        return result.toString();
-    }
-
-    private char replaceNumber(char character) {
-        return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 }

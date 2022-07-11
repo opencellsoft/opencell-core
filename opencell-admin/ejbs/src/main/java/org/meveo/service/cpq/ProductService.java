@@ -321,13 +321,26 @@ public class ProductService extends BusinessService<Product> {
 	}
 
 	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
-		Product product = findByCode(code);
-		if(product == null)
-			return Optional.empty();
-		return product.getProductVersions()
-				.stream()
-				.filter(pv -> VersionStatusEnum.PUBLISHED.equals(pv.getStatus()))
-				.filter(pv -> { if (pv.getValidity()!=null && pv.getValidity().getFrom()!=null && pv.getValidity().getFrom()!=null) { return pv.getValidity().isCorrespondsToPeriod(date);}return false;})
-				.findFirst();
-	}
+        Product product = findByCode(code);
+        if(product == null)
+            return Optional.empty();
+        
+        for(ProductVersion pvElement : product.getProductVersions()) {            
+            ProductVersion pv = productVersionService.findById(pvElement.getId());
+            if (pv != null) {
+                boolean conditionValidity = false; 
+                if (pv.getValidity()!=null && pv.getValidity().getFrom()!=null && pv.getValidity().getFrom()!=null) 
+                { 
+                    conditionValidity =  pv.getValidity().isCorrespondsToPeriod(date);
+                }
+                log.debug("code: " + code + " - pv.getStatus(): " + pv.getStatus() + " - date: " + date + " - conditionValidity: " + conditionValidity);
+
+                if(VersionStatusEnum.PUBLISHED.equals(pv.getStatus()) && conditionValidity)
+                {
+                    return Optional.of(pv);
+                }
+            }            
+        }
+        return Optional.empty();
+    }
 }

@@ -4951,8 +4951,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param toMove
      */
     public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
-        BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
-        getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.SUSPECT));
+        
+        if(!invoices.isEmpty()) {
+            BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+            getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
+        }
     }
 
     /**

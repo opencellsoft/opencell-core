@@ -1,5 +1,7 @@
 package org.meveo.service.cpq.order;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.commercial.OrderArticleLine;
@@ -13,5 +15,10 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class OrderArticleLineService extends BusinessService<OrderArticleLine> {
+
+	@SuppressWarnings("unchecked")
+	public List<OrderArticleLine> findByOrderId(Long orderId) {
+		return getEntityManager().createNamedQuery("OrderArticleLine.findByOrderId").setParameter("commercialOrderId", orderId).getResultList();
+	}
 
 }
