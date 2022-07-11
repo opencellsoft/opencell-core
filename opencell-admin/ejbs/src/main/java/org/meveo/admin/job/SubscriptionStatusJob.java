@@ -84,6 +84,7 @@ public class SubscriptionStatusJob extends Job {
 
             // process subscriptions update status
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify(untilDate);
+            log.info("nbr of subscriptionIds to process:{}", subscriptionIds.size());
             SubListCreator<Long> subsSubListCreator = new SubListCreator<>(subscriptionIds, nbRuns.intValue());
             List<Future<String>> subsFutures = new ArrayList<>();
 
@@ -112,6 +113,7 @@ public class SubscriptionStatusJob extends Job {
 
             // process services update status
             List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify(untilDate);
+            log.info("nbr of serviceIds to process:{}", serviceIds.size());
             SubListCreator<Long> servicesSubListCreator = new SubListCreator<>(serviceIds, nbRuns.intValue());
             List<Future<String>> servicesFutures = new ArrayList<>();
 

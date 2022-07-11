@@ -28,6 +28,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
 
 import javax.ejb.*;
 import javax.inject.Inject;
@@ -41,6 +42,9 @@ import java.util.concurrent.Future;
  */
 @Stateless
 public class SubscriptionStatusAsync {
+
+    @Inject
+    private Logger log;
 
     @Inject
     private UnitSubscriptionStatusJobBean unitSubscriptionStatusJobBean;
@@ -64,7 +68,7 @@ public class SubscriptionStatusAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForgetUpdateSubs(List<Long> subscriptionIds, Date untilDate, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
-
+        log.debug("start launchAndForgetUpdateSubs() with {} subscriptionIds", subscriptionIds.size());
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;
         for (Long subscriptionId : subscriptionIds) {
