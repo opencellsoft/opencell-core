@@ -1,7 +1,9 @@
 package org.meveo.apiv2.cpq.service;
 
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.ordering.resource.oo.ImmutableAvailableOpenOrder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
@@ -16,8 +19,6 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.ordering.OpenOrder;
-import org.meveo.model.quote.QuoteVersion;
-import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderArticleLineService;
 import org.meveo.service.cpq.order.OrderProductService;
@@ -38,7 +39,7 @@ public class CommercialOrderApiService {
 	@Inject
 	private CommercialOrderService commercialOrderService;
 
-	public Set<OpenOrder> findAvailableOpenOrders(String code) {
+	public List<ImmutableAvailableOpenOrder> findAvailableOpenOrders(String code) {
 		
 		BusinessEntity be = commercialOrderService.findBusinessEntityByCode(code);
 		if(be == null) {
@@ -51,22 +52,38 @@ public class CommercialOrderApiService {
 		List<Product> product = products.stream().map(qp -> qp.getProductVersion().getProduct()).collect(Collectors.toList());
 		List<AccountingArticle> articles = articleLines.stream().map(OrderArticleLine::getAccountingArticle).collect(Collectors.toList());
 
-		// Getting OO for each Commercial Order product
-		Set<OpenOrder> avaiableOO = product.stream()
-											.map(p -> openOrderService.checkAvailableOpenOrderForProduct(order.getBillingAccount(), p, new Date()))
-											.filter(oo -> oo.isPresent())
-											.map(oo -> oo.get())
-											.collect(Collectors.toSet());
+		// Getting OO for each Order product
+		Map<OpenOrder, Set<Product>> ooForProducts = product.stream()
+								.map(p -> new AbstractMap.SimpleEntry<>(openOrderService.checkAvailableOpenOrderForProduct(order.getBillingAccount(), p, new Date()).orElse(null), p))
+								.filter(e -> e.getKey() != null)
+								.collect(Collectors.groupingBy(e -> e.getKey(), Collectors.mapping(e -> e.getValue(), Collectors.toSet())));
 		
-		// Getting OO for each Commercial Order article
-		avaiableOO.addAll(articles.stream()
-									.map(a -> openOrderService.checkAvailableOpenOrderForArticle(order.getBillingAccount(), a, new Date()))
-									.filter(oo -> oo.isPresent())
-									.map(oo -> oo.get())
-									.collect(Collectors.toSet()));
+		// Getting OO for each Order article
+		Map<OpenOrder, Set<AccountingArticle>> ooForArticles = articles.stream()
+								.map(a -> new AbstractMap.SimpleEntry<>(openOrderService.checkAvailableOpenOrderForArticle(order.getBillingAccount(), a, new Date()).orElse(null), a))
+								.filter(e -> e.getKey() != null)
+								.collect(Collectors.groupingBy(e -> e.getKey(), Collectors.mapping(e -> e.getValue(), Collectors.toSet())));
 
+		// Group OpenOrders by Order's products
+		List<ImmutableAvailableOpenOrder> lResult = ooForProducts.entrySet().stream()
+				.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderNumber(oo.getKey().getOpenOrderNumber())
+												.startDate(oo.getKey().getActivationDate())
+												.externalReference(oo.getKey().getExternalReference())
+												.addAllProducts(oo.getValue().stream().map(Product::getId).collect(Collectors.toList()))
+												.build()).collect(Collectors.toList());
+		
+		// Group OpenOrders by Order's articles
+		lResult.addAll(ooForArticles.entrySet().stream()
+									.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderNumber(oo.getKey().getOpenOrderNumber())
+												.startDate(oo.getKey().getActivationDate())
+												.externalReference(oo.getKey().getExternalReference())
+												.addAllArticles(oo.getValue().stream().map(AccountingArticle::getId).collect(Collectors.toList()))
+												.build())
+									.collect(Collectors.toList()));
 
-		return avaiableOO;
+		return lResult;
 		
 	}
 	
