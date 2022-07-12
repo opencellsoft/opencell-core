@@ -107,6 +107,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
@@ -299,6 +300,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
 
+    @Inject
+    @InvoicePaymentStatusUpdated
+    protected Event<Invoice> invoicePaymentStatusUpdated;
+    
     @Inject
     private FilterService filterService;
 
@@ -6028,7 +6033,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Updated invoice
      */
     public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+        boolean isFire = false;
         toUpdate = refreshOrRetrieve(toUpdate);
+        if (!toUpdate.getPaymentStatus().equals(invoiceResource.getPaymentStatus())) {
+            isFire = true;
+        }
         final InvoiceStatusEnum status = toUpdate.getStatus();
         if (!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
@@ -6097,6 +6106,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
+        }
+        
+        if (isFire) {
+            invoicePaymentStatusUpdated.fire(toUpdate);
         }
 
         return update(toUpdate);
@@ -6340,6 +6353,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.loadByBillingRun", Long.class)
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
+    }
+    
+    @Override
+    public Invoice update(Invoice entity) throws BusinessException {
+        Invoice invoiceOld = findById(entity.getId());
+        if (!invoiceOld.getPaymentStatus().equals(entity.getPaymentStatus())) {
+            invoicePaymentStatusUpdated.fire(entity);
+        }
+        super.update(entity);
+        return entity;
     }
 
 }
