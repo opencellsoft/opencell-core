@@ -400,7 +400,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * @throws BusinessException the business exception
      */
     private ICdrCsvReader getReader() throws BusinessException {
-        return getReader(null);
+        return (ICdrCsvReader)getReader(null);
     }
 	
 	
