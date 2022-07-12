@@ -50,8 +50,8 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 			throw new BadRequestException("numberOfPeriods parameter is mandatory when stepInDays is provided");
 		}
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccount,
-					startDate, dueDate, paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
+			return recordedInvoiceService.getAgedReceivables(customerAccount, startDate, dueDate,
+					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report");
 		}

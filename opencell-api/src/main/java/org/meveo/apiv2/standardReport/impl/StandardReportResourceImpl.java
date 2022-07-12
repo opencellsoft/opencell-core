@@ -30,7 +30,6 @@ public class StandardReportResourceImpl implements StandardReportResource {
     protected Provider appProvider;
 
     private AgedReceivableMapper agedReceivableMapper = new AgedReceivableMapper();
-
     
     @Override
     public Response getAgedReceivables(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
@@ -55,10 +54,16 @@ public class StandardReportResourceImpl implements StandardReportResource {
         }
         ImmutableAgedReceivable[] agedReceivablesData = agedReceivablesList
                 .stream()
-                .map(AgedReceivableDto -> agedReceivableMapper.toResourceAgedReceivable(agedReceivableMapper.toResource(AgedReceivableDto)))
+                .map(agedReceivableDto ->
+                        agedReceivableMapper.toResourceAgedReceivable(agedReceivableMapper.toResource(agedReceivableDto)))
                 .toArray(ImmutableAgedReceivable[]::new);
-        Long count = Long.valueOf(standardReportApiService.getCountAgedReceivables(customerAccountCode));
-        AgedReceivables agedReceivables = ImmutableAgedReceivables.builder().addData(agedReceivablesData).startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy").toString()).offset(offset).limit(limit).total(count)
+        Long count = standardReportApiService.getCountAgedReceivables(customerAccountCode);
+        AgedReceivables agedReceivables = ImmutableAgedReceivables.builder()
+                .addData(agedReceivablesData)
+                .startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy"))
+                .offset(offset)
+                .limit(limit)
+                .total(count)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(StandardReportResource.class)
                         .offset(offset).limit(limit).total(count).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(agedReceivables).build();

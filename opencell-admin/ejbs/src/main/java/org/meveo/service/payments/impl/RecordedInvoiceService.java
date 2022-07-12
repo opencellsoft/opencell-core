@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -170,7 +171,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     @SuppressWarnings("unchecked")
     public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o, boolean dunningExclusion) {
-        List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
+        List<RecordedInvoice> invoices = new ArrayList<>();
         try {
 
             if (dunningExclusion) {
@@ -222,7 +223,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     private Map<Object, Object> constructElContext(String expression, Invoice invoice, BillingRun billingRun) {
 
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
@@ -521,8 +522,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(dueDate).ifPresent(dd -> qb.addSql("ao.dueDate = '" + DateUtils.formatDateWithPattern(dd, datePattern) + "'"));
         
         if(DateUtils.compare(startDate, new Date()) < 0) {
-        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'))");
+        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + setDateToEndOfDay(startDate) + "'");
+        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
+                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + setDateToEndOfDay(startDate) + "'))");
         }
         
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ");

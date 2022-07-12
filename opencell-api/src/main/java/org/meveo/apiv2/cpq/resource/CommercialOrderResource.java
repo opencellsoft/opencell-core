@@ -12,17 +12,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Path("/cpq/quotes")
+@Path("/commercialOrders")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public interface CpqQuoteResource {
+public interface CommercialOrderResource {
 
     @GET
-    @Path("/{quoteCode}/availableOpenOrders")
-    @Operation(summary = "Get available open orders for a quote", 
+    @Path("/{code}/availableOpenOrders")
+    @Operation(summary = "Get available open orders for a commercial order", 
     tags = {""},
     responses = {
-    		@ApiResponse(responseCode = "200", description = "The Open Orders avaiblable for quote")
+    		@ApiResponse(responseCode = "200", description = "The Open Orders avaiblable for commercial order")
     })
-    Response findAvailableOpenOrders(@Parameter(description = "", required = true) @PathParam("quoteCode") String quoteCode);
+    Response findAvailableOpenOrders(@Parameter(description = "", required = true) @PathParam("code") String code);
 }
