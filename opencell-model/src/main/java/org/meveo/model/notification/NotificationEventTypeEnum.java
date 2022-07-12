@@ -125,6 +125,11 @@ public enum NotificationEventTypeEnum {
     STATUS_UPDATED,
 
     /**
+     * Invoice payment status was updated
+     */
+    PAYMENT_STATUS_UPDATED,
+    
+    /**
      * Subscription or service renewal condition was updated
      */
     RENEWAL_UPDATED,
