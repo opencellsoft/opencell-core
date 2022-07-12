@@ -98,6 +98,8 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
 
+    private static final String OPEN_ORDER_QUOTE_PREFIX = "OOQ-";
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -690,7 +692,7 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String getNextOpenOrderSequence() {
-        String code = "OOR-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        String code = OPEN_ORDER_QUOTE_PREFIX + (Calendar.getInstance().get(Calendar.YEAR) % 100);
         InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
         if (sequence == null) {
             sequence = new InvoiceSequence();
