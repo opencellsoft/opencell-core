@@ -122,7 +122,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * @throws FileNotFoundException the file not found exception
      */
     public ICdrCsvReader getCDRReaderByCode(File cdrFile,String readerCode) throws BusinessException, FileNotFoundException {
-        ICdrCsvReader cdrReader = getReader(readerCode);
+        ICdrCsvReader cdrReader = (ICdrCsvReader)getReader(readerCode);
         cdrReader.init(cdrFile);
         return cdrReader;
     }
@@ -411,10 +411,10 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * @return the reader
      * @throws BusinessException the business exception
      */
-    public ICdrCsvReader getReader(String readerCode) throws BusinessException {
-        ICdrCsvReader cdrReader;
+    public ICdrReader getReader(String readerCode) throws BusinessException {
+    	ICdrReader cdrReader;
         if (StringUtils.isNotBlank(readerCode)) {
-            cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
+            cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
             if(cdrReader == null) {
                 throw new BusinessException("Failed to find CDR Reader "+readerCode);
             }
