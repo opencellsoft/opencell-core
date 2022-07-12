@@ -1,5 +1,7 @@
 package org.meveo.service.billing.impl.article;
 
+import static java.util.Arrays.asList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,8 +38,10 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	private static final String DEFAULT_ARTICLE_MAPPING_CODE = "DEFAULT_ARTICLE_MAPPING";
 
 	@SuppressWarnings("unchecked")
-	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate) {
-		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product", "chargeTemplate"));
+	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate,
+														   OfferTemplate offer, String parameter1,
+														   String parameter2, String parameter3) {
+		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", asList("product", "chargeTemplate"));
 		if(product != null)
 			queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		if(chargeTemplate != null)
@@ -47,6 +51,30 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		}
 		if(chargeTemplate == null) {
 			queryBuilder.addSql("am.chargeTemplate is null ");
+		}
+		if(offer != null) {
+			queryBuilder.addCriterionEntity("am.offerTemplate.code", offer.getCode());
+		}
+		if(offer == null) {
+			queryBuilder.addSql("am.offerTemplate is null ");
+		}
+		if(parameter1 != null) {
+			queryBuilder.addCriterionEntity("am.parameter1", parameter1);
+		}
+		if(parameter1 == null) {
+			queryBuilder.addSql("am.parameter1 is null ");
+		}
+		if(parameter2 != null) {
+			queryBuilder.addCriterionEntity("am.parameter2", parameter2);
+		}
+		if(parameter2 == null) {
+			queryBuilder.addSql("am.parameter2 is null ");
+		}
+		if(parameter3 != null) {
+			queryBuilder.addCriterionEntity("am.parameter3", parameter3);
+		}
+		if(parameter3 == null) {
+			queryBuilder.addSql("am.parameter3 is null ");
 		}
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
