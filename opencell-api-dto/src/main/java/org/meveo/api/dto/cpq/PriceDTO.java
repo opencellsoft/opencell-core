@@ -81,6 +81,9 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal discountValue;
     private DiscountPlanItemTypeEnum discountPlanType;
     private String discountPlanItemCode;
+    private String discountPlanCode;
+    private String discountPlanItemDesc;
+    private String discountPlanDesc;
     private Boolean applyDiscountsOnOverridenPrice;
     private BigDecimal overchargedUnitAmountWithoutTax;
     private BigDecimal discountedAmount;
@@ -114,7 +117,10 @@ public class PriceDTO extends BaseEntityDto {
 	   if(quotePrice.getDiscountedQuotePrice() != null) {
 		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
 	   }
+	   discountPlanCode=quotePrice.getDiscountPlan()!=null?quotePrice.getDiscountPlan().getCode():null;
+	   discountPlanDesc=quotePrice.getDiscountPlan()!=null?quotePrice.getDiscountPlan().getDescription():null;
 	   discountPlanItemCode=quotePrice.getDiscountPlanItem()!=null?quotePrice.getDiscountPlanItem().getCode():null;
+	   discountPlanItemDesc=quotePrice.getDiscountPlanItem()!=null?quotePrice.getDiscountPlanItem().getDescription():null;
 	   discountPlanType=quotePrice.getDiscountPlanType();
 	   discountValue=quotePrice.getDiscountValue();
 	   applyDiscountsOnOverridenPrice=quotePrice.getApplyDiscountsOnOverridenPrice();
@@ -306,6 +312,39 @@ public class PriceDTO extends BaseEntityDto {
 	}
 	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
 		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
+	}
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+	public String getDiscountPlanItemDesc() {
+		return discountPlanItemDesc;
+	}
+	public void setDiscountPlanItemDesc(String discountPlanItemDesc) {
+		this.discountPlanItemDesc = discountPlanItemDesc;
+	}
+	public String getDiscountPlanDesc() {
+		return discountPlanDesc;
+	}
+	public void setDiscountPlanDesc(String discountPlanDesc) {
+		this.discountPlanDesc = discountPlanDesc;
+	}
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public Integer getSequence() {
+		return sequence;
+	}
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 	
 	
