@@ -73,11 +73,13 @@ public class UnitSubscriptionStatusJobBean {
 	public void updateSubscriptionStatus(JobExecutionResultImpl result, Long subscriptionId, Date untillDate) throws BusinessException {
 		try {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
+			log.debug("start update status of subscription {}", subscription);
 			// Handle subscription renewal or termination
 			if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE
 					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
 
 				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
+					log.debug("Auto renew subscription {}", subscriptionId);
 					Date subscribedTillDate = subscription.getSubscribedTillDate();
 					while (subscribedTillDate.before(untillDate)) {
 						Date calendarDate = new Date();
@@ -113,6 +115,7 @@ public class UnitSubscriptionStatusJobBean {
 					}
 
 				} else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+					log.debug("Suspend subscription {}", subscription.getId());
 					subscriptionService.subscriptionSuspension(subscription,
 							subscription.getSubscribedTillDate());
 
@@ -131,8 +134,9 @@ public class UnitSubscriptionStatusJobBean {
 						Subscription subNextVersion = subscriptionService
 								.findByCodeAndValidityDate(subscription.getCode(), validTo);
 						if (subNextVersion != null && subNextVersion.getStatus() == SubscriptionStatusEnum.CREATED) {
-							log.debug("Subscription {} has new version sub {} with status CREATED. will be activated",
+							log.info("Subscription {} has new version sub {} with status CREATED. The new version will be activated",
 									subscription.getId(), subNextVersion.getId());
+							log.debug("Old sub terminated: {}. New version of sub which will be activated: {}", subscription, subNextVersion);
 
 							subscriptionService.activateInstantiatedService(subNextVersion);
 						}
@@ -142,6 +146,7 @@ public class UnitSubscriptionStatusJobBean {
 				// Fire "soon to renew" notification
 			} else if (subscription.isFireRenewalNotice() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE
 					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
+				log.debug("Fire \"soon to renew\" notif for the subscription {}", subscription.getId());
 				subscription.setRenewalNotifiedDate(new Date());
 				subscription = subscriptionService.update(subscription);
 				endOfTermEventProducer.fire(subscription);
@@ -159,11 +164,12 @@ public class UnitSubscriptionStatusJobBean {
 	public void updateServiceInstanceStatus(JobExecutionResultImpl result, Long serviceId, Date untillDate) {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService.findById(serviceId);
+			log.debug("start update status of serviceInstance {}", serviceInstance);
 			// Handle subscription renewal or termination
 			if (serviceInstance.isSubscriptionExpired() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 
 				if (serviceInstance.getServiceRenewal().isAutoRenew()) {
-
+					log.debug("Auto renew serviceInstance {}", serviceId);
 					while (serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().before(untillDate)) {
 						Date calendarDate = new Date();
 						Calendar calendar = new GregorianCalendar();
@@ -194,15 +200,18 @@ public class UnitSubscriptionStatusJobBean {
 
 				} else if (serviceInstance.getServiceRenewal()
 						.getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+					log.debug("suspend serviceInstance {}", serviceId);
 					serviceInstanceService.serviceSuspension(serviceInstance, serviceInstance.getSubscribedTillDate());
 
 				} else if (serviceInstance.getServiceRenewal().getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
+					log.debug("Terminate serviceInstance {}", serviceId);
 					serviceInstanceService.terminateService(serviceInstance, serviceInstance.getSubscribedTillDate(),
 							serviceInstance.getServiceRenewal().getTerminationReason(), null);
 				}
 
 				// Fire "soon to renew" notification
 			} else if (serviceInstance.isFireRenewalNotice() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+				log.debug("Fire \"soon to renew\" notif for the serviceInstance {}", serviceInstance.getId());
 				serviceInstance.setRenewalNotifiedDate(new Date());
 				serviceInstance = serviceInstanceService.update(serviceInstance);
 				serviceEndOfTermEventProducer.fire(serviceInstance);
@@ -210,7 +219,7 @@ public class UnitSubscriptionStatusJobBean {
 
 			result.registerSucces();
 		} catch (Exception e) {
-			log.error("Failed to process status of serviceInstance with id={}. {}", serviceId, e.getMessage());
+			log.error("Failed to process status of serviceInstance with id={}", serviceId, e);
 			result.registerError("Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());
 		}
 	}
