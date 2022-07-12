@@ -166,6 +166,8 @@ public class GenericResourceImpl implements GenericResource {
         if(searchConfig != null){
         	if(searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty())
         		throw new MeveoApiException("Nested entities are not handled by the export api");
+        	if(searchConfig.getGenericFields() == null || searchConfig.getGenericFields().isEmpty())
+        		throw new MeveoApiException("Generic fields are mandatory");
             genericFields = searchConfig.getGenericFields();
         }
         if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL")){
