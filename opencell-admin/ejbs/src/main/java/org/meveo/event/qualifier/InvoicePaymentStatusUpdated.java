@@ -15,6 +15,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ METHOD, FIELD, PARAMETER, TYPE })
-public @interface InvoicePaymentStatusUpdated {//HHAN
+public @interface InvoicePaymentStatusUpdated {
 
 }
