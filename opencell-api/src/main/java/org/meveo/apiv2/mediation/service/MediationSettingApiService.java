@@ -1,5 +1,6 @@
 package org.meveo.apiv2.mediation.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,6 +22,8 @@ import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
 import org.meveo.service.mediation.EdrVersioningRuleService;
 import org.meveo.service.mediation.MediationsettingService;
+
+import software.amazon.awssdk.utils.StringUtils;
 
 public class MediationSettingApiService implements ApiService<MediationSetting>{
 
@@ -53,6 +57,7 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 		 baseEntity.getRules().clear();
 		 mediationsettingService.create(baseEntity);
 		 rules.forEach(edrV -> {
+			 edrVersioningRuleService.checkField(edrV);
 			 edrV.setMediationSetting(baseEntity);
 			 baseEntity.getRules().add(edrV);
 			 edrVersioningRuleService.create(edrV);
@@ -68,6 +73,7 @@ public class MediationSettingApiService implements ApiService<MediationSetting>{
 		mediationSetting.getRules().clear();
 		if(CollectionUtils.isNotEmpty(baseEntity.getRules())) {
 			baseEntity.getRules().forEach(edrV -> {
+				edrVersioningRuleService.checkField(edrV);
 				 edrV.setMediationSetting(mediationSetting);
 				 mediationSetting.getRules().add(edrV);
 			});
