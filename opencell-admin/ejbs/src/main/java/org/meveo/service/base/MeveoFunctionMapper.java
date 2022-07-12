@@ -1988,7 +1988,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
 
-    	Optional<AttributeInstance> attributInstance=serviceInstance.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	Optional<AttributeInstance> attributInstance=serviceInstance != null ? serviceInstance.getAttributeInstances().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst() : Optional.empty();
     	
     	if(attribute.getAttributeType()!=null && attributInstance.isPresent()) {
     		switch (attribute.getAttributeType()) {
