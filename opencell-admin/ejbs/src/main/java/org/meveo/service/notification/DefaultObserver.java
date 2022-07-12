@@ -53,6 +53,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
@@ -360,6 +361,17 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.ADVT_RATE_INCREASED, commercialOrder);
     }
 
+    /**
+     * Handle PaymentStatus from Invoice
+     *
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void invoicePaymentStatusUpdated(@Observes @InvoicePaymentStatusUpdated Invoice invoice) throws BusinessException {
+        log.trace("Defaut observer: check cpq invoice payment status updated {}", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.PAYMENT_STATUS_UPDATED, invoice);
+    }
+    
     public void quoteStatusUpdated(@Observes @StatusUpdated CpqQuote cpqQuote){
         log.trace("Defaut observer: check cpq quote status updated {}", cpqQuote.getId());
         checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, cpqQuote);

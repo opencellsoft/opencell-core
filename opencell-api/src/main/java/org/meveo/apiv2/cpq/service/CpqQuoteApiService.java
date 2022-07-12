@@ -1,7 +1,9 @@
 package org.meveo.apiv2.cpq.service;
 
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.ordering.resource.oo.ImmutableAvailableOpenOrder;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
@@ -32,7 +35,7 @@ public class CpqQuoteApiService {
 	@Inject
 	private QuoteProductService quoteProductService;
 
-	public Set<OpenOrder> findAvailableOpenOrders(String quoteCode) {
+	public List<ImmutableAvailableOpenOrder> findAvailableOpenOrders(String quoteCode) {
 		List<QuoteVersion> quoteVersion = quoteVersionService.findLastVersionByCode(quoteCode);
 		
 		if(ListUtils.isEmtyCollection(quoteVersion)) {
@@ -46,23 +49,38 @@ public class CpqQuoteApiService {
 		List<AccountingArticle> articles = latestQuoteVersion.getQuoteArticleLines().stream().map(QuoteArticleLine::getAccountingArticle).collect(Collectors.toList());
 
 		// Getting OO for each Quote product
-		Set<OpenOrder> avaiableOO = product.stream()
-											.map(p -> openOrderService.checkAvailableOpenOrderForProduct(latestQuoteVersion.getQuote().getBillableAccount(), p, new Date()))
-											.filter(oo -> oo.isPresent())
-											.map(oo -> oo.get())
-											.collect(Collectors.toSet());
+		;
+		Map<OpenOrder, Set<Product>> ooForProducts = product.stream()
+				.map(p -> new AbstractMap.SimpleEntry<>(openOrderService.checkAvailableOpenOrderForProduct(latestQuoteVersion.getQuote().getBillableAccount(), p, new Date()).orElse(null), p))
+				.filter(e -> e.getKey() != null)
+				.collect(Collectors.groupingBy(e -> e.getKey(), Collectors.mapping(e -> e.getValue(), Collectors.toSet())));
 		
 		// Getting OO for each Quote article
-		avaiableOO.addAll(articles.stream()
-											.map(a -> openOrderService.checkAvailableOpenOrderForArticle(latestQuoteVersion.getQuote().getBillableAccount(), a, new Date()))
-											.filter(oo -> oo.isPresent())
-											.map(oo -> oo.get())
-											.collect(Collectors.toSet()));
+		Map<OpenOrder, Set<AccountingArticle>> ooForArticles = articles.stream()
+				.map(a -> new AbstractMap.SimpleEntry<>(openOrderService.checkAvailableOpenOrderForArticle(latestQuoteVersion.getQuote().getBillableAccount(), a, new Date()).orElse(null), a))
+				.filter(e -> e.getKey() != null)
+				.collect(Collectors.groupingBy(e -> e.getKey(), Collectors.mapping(e -> e.getValue(), Collectors.toSet())));
 
-		// Group product and articles by OO
-		// Map<Long, OpenOrder> openOrderMap = avaiableOO.stream().collect(Collectors.toMap(OpenOrder::getId, Function.identity()));
+		// Group OpenOrders by Order's products
+		List<ImmutableAvailableOpenOrder> lResult = ooForProducts.entrySet().stream()
+				.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderNumber(oo.getKey().getOpenOrderNumber())
+												.startDate(oo.getKey().getActivationDate())
+												.externalReference(oo.getKey().getExternalReference())
+												.addAllProducts(oo.getValue().stream().map(Product::getId).collect(Collectors.toList()))
+												.build()).collect(Collectors.toList());
 
-		return avaiableOO;
+		// Group OpenOrders by Order's articles
+		lResult.addAll(ooForArticles.entrySet().stream()
+									.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderNumber(oo.getKey().getOpenOrderNumber())
+												.startDate(oo.getKey().getActivationDate())
+												.externalReference(oo.getKey().getExternalReference())
+												.addAllArticles(oo.getValue().stream().map(AccountingArticle::getId).collect(Collectors.toList()))
+												.build())
+									.collect(Collectors.toList()));
+
+		return lResult;
 		
 	}
 	

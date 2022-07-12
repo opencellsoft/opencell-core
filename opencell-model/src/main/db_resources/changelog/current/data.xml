@@ -8226,4 +8226,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="quote_default_validity_delay" value="30" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-8420_20220708" author="hichamHANINE">
+		<update tableName="meveo_script_instance">
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

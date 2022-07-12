@@ -1,5 +1,6 @@
 package org.meveo.apiv2.mediation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +54,7 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 		MediationSetting mediationSetting = mediationsettingService.findById(baseEntity.getMediationSetting().getId());
 		if(mediationSetting == null )
 			throw new EntityDoesNotExistsException(MediationSetting.class, baseEntity.getMediationSetting().getId());
-		if(StringUtils.isAnyBlank(baseEntity.getCriteriaEL(), baseEntity.getKeyEL(), baseEntity.getIsNewVersionEL()) || baseEntity.getPriority() == null)
-			throw new MissingParameterException("all parameters of edr version rule is required");
+		edrVersioningRuleService.checkField(baseEntity);
 		baseEntity.setMediationSetting(mediationSetting);
 		edrVersioningRuleService.create(baseEntity);
 		 return baseEntity;
@@ -66,6 +66,7 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 		var edrVersionRuleUpaded = this.findById(id).orElseThrow(BadRequestException::new);
 		if(baseEntity.getMediationSetting() == null || baseEntity.getMediationSetting().getId() == null)
 			throw new BadRequestException("Mediation setting is required");
+		edrVersioningRuleService.checkField(baseEntity);
 		var mediationSetting = mediationsettingService.findById(baseEntity.getMediationSetting().getId());
 		if(mediationSetting == null) throw new EntityDoesNotExistsException(MediationSetting.class, baseEntity.getMediationSetting().getId());
 		edrVersionRuleUpaded.setMediationSetting(mediationSetting);
@@ -121,6 +122,5 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 	public Optional<EdrVersioningRule> findByCode(String code) {
 		throw new BusinessException(MediationSetting.class.getSimpleName() + " doesn't have a code, please search with id" );
 	}
-
 
 }
