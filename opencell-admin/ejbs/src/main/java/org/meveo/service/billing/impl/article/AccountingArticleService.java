@@ -1,5 +1,6 @@
 package org.meveo.service.billing.impl.article;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -28,6 +29,7 @@ import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
@@ -52,11 +54,29 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
 		List<ArticleMappingLine> articleMappingLines = null;
-		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate);
-		if(articleMappingLines.isEmpty() && chargeTemplate!=null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate);
-		}else if(articleMappingLines.isEmpty() && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null);
+
+		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
+		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
+		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
+		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter2() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, param2, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
 		}
 		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
 			articleMappingLines = articleMappingLines.stream()
