@@ -21,7 +21,6 @@ package org.meveo.service.notification;
 import javax.ejb.Stateless;
 
 import org.meveo.commons.keystore.KeystoreManager;
-import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.notification.WebHook;
 
 /**
@@ -34,7 +33,9 @@ public class WebHookService extends NotificationInstanceService<WebHook> {
     @Override
     public void remove(WebHook webHook) {
         // remove credential of webhook in the keystore
-        KeystoreManager.removeCredential(webHook.getClass().getSimpleName() + "." + webHook.getId());
+    	if(KeystoreManager.existKeystore()) {
+    		KeystoreManager.removeCredential(webHook.getClass().getSimpleName() + "." + webHook.getId());
+    	}
 
         super.remove(webHook);
     }

@@ -32,7 +32,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -227,7 +226,9 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     @Override
     public void remove(PaymentGateway paymentGateway) {
         // remove credential of paymentGateway in the keystore
-        KeystoreManager.removeCredential(paymentGateway.getClass().getSimpleName() + "." + paymentGateway.getId());
+    	if(KeystoreManager.existKeystore()) {
+    		KeystoreManager.removeCredential(paymentGateway.getClass().getSimpleName() + "." + paymentGateway.getId());
+    	}
 
         super.remove(paymentGateway);
     }
