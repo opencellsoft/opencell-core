@@ -24,6 +24,7 @@ import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -400,6 +401,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         }
 
         AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
+        Auditable auditable = new Auditable(currentUser);
+        auditable.setUpdater(null);
+        auditable.setUpdated(null);
+        newAccountOperation.setAuditable(auditable);
         newAccountOperation.setId(null);
         newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
         newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
@@ -410,7 +415,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         newAccountOperation.setInvoices(null);
         newAccountOperation.setMatchingAmounts(new ArrayList<>());
         newAccountOperation.setTransactionDate(new Date());
-        // newAccountOperation.setDueDate(new Date());
+        newAccountOperation.setDueDate(new Date());
 
         newAccountOperation.setAccountingCode(occTemplate.getAccountingCode());
         newAccountOperation.setCode(occTemplate.getCode());
