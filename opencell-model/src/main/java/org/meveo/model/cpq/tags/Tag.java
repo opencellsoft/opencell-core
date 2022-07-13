@@ -19,8 +19,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.ordering.OpenOrder;
 
 /**
  * 
@@ -84,9 +84,10 @@ public class Tag extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "filter_el") 
 	private String filterEl;
-	
-	
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "open_order_id")
+	private OpenOrder openOrder;
  
 	public String getName() {
 		return name;
@@ -155,5 +156,12 @@ public class Tag extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-	
+
+	public OpenOrder getOpenOrder() {
+		return openOrder;
+	}
+
+	public void setOpenOrder(OpenOrder openOrder) {
+		this.openOrder = openOrder;
+	}
 }

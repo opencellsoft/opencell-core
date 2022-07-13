@@ -256,6 +256,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterPeriod != null) {
             counterPeriod.setCounterInstance(counterInstance);
             counterPeriodService.create(counterPeriod);
+            getEntityManager().flush();
 
             // AK is this really needed?
             // counterInstance.getCounterPeriods().add(counterPeriod);

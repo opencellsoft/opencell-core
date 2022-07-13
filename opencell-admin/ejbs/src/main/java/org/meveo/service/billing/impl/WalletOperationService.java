@@ -516,11 +516,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA").setParameter("newWallet", newWallet).setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
+        							.setParameter("newWallet", newWallet)
+        							.setParameter("newUserAccount", newWallet.getUserAccount())
+        							.setParameter("subscription", subscription).executeUpdate();
     }
 
     public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
-        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA").setParameter("newWallet", wallet).setParameter("subscription", subscription).executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
+        							.setParameter("newWallet", wallet)
+        							.setParameter("newUserAccount", wallet.getUserAccount())
+        							.setParameter("subscription", subscription).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
@@ -866,10 +872,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
     
     public WalletOperation findWoByRatedTransactionId(Long rtId) {
-        return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
-                .setParameter("rtId", rtId)
-                .setMaxResults(1)
-                .getSingleResult();
+        try {
+            return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
+                    .setParameter("rtId", rtId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
     }
 
 }

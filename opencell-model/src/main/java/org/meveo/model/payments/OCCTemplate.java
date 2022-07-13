@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.AccountingCode;
@@ -90,6 +91,10 @@ public class OCCTemplate extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contra_accounting_code2_id")
     private AccountingCode contraAccountingCode2;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "manual_creation_enabled")
+    private boolean manualCreationEnabled;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
@@ -174,5 +179,13 @@ public class OCCTemplate extends BusinessEntity {
 
     public void setContraAccountingCode2(AccountingCode commissionAccountingCode) {
         this.contraAccountingCode2 = commissionAccountingCode;
+    }
+
+    public boolean isManualCreationEnabled() {
+        return manualCreationEnabled;
+    }
+
+    public void setManualCreationEnabled(boolean manualCreationEnabled) {
+        this.manualCreationEnabled = manualCreationEnabled;
     }
 }

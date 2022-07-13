@@ -114,6 +114,7 @@ import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -1570,7 +1571,14 @@ public class CpqQuoteApi extends BaseApi {
 
                 Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringCharge.getAttributeDuration(), recurringCharge.getDurationTermInMonth(), quoteOffer, wo.getServiceInstance().getQuoteProduct()));
                 quotePrice.setRecurrenceDuration(recurrenceDuration);
-                quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar().getDescription());
+                RecurringChargeTemplate recChargeTemplate = (RecurringChargeTemplate) chargeInstance.getChargeTemplate();
+                if(recChargeTemplate != null && !StringUtils.isBlank(recChargeTemplate.getCalendarCodeEl())) {
+                    Calendar calendarFromEl = recurringRatingService.getCalendarFromEl(recChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recChargeTemplate, (RecurringChargeInstance) chargeInstance);
+                    quotePrice.setRecurrencePeriodicity(calendarFromEl != null ? calendarFromEl.getDescription() : null);
+                }
+                if(StringUtils.isBlank(quotePrice.getRecurrencePeriodicity()) && recChargeTemplate != null && recChargeTemplate.getCalendar() != null){
+                    quotePrice.setRecurrencePeriodicity(recChargeTemplate.getCalendar().getDescription());
+                }
                 overrideAmounts(quotePrice, recurrenceDuration);
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
@@ -1934,7 +1942,14 @@ public class CpqQuoteApi extends BaseApi {
             }
 
             serviceInstance.setSubscription(subscription);
-            
+            if(PriceVersionDateSettingEnum.QUOTE.equals(product.getPriceVersionDateSetting())) {
+            	CpqQuote cpqQuote = quoteProduct.getQuote();
+            	if(cpqQuote != null) {
+            		cpqQuote = cpqQuoteService.refreshOrRetrieve(cpqQuote);
+                	serviceInstance.setPriceVersionDate(cpqQuote.getQuoteDate());
+            	}
+            }
+
             processProductWithDiscount(subscription, quoteProduct, serviceInstance);
 
             AttributeInstance attributeInstance = null;
@@ -1944,7 +1959,7 @@ public class CpqQuoteApi extends BaseApi {
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
             serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, true);
-
+            
             List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
             for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());

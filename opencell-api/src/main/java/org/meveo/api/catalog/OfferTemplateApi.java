@@ -241,13 +241,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         handleMissingParametersAndValidate(postData);
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
-        if (offerTemplate == null) {
-            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / " + DateUtils.formatDateWithPattern(
-                            postData.getValidTo(), datePattern));
-        }
+        OfferTemplate offerTemplate = findOfferTemplate(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
 
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getNewValidFrom(), postData.getNewValidTo(),
                 offerTemplate.getId(), true);
@@ -708,12 +702,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             handleMissingParameters();
         }
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
-        if (offerTemplate == null) {
-            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
-        }
+        OfferTemplate offerTemplate = findOfferTemplate(code, validFrom, validTo);
 
         return fromOfferTemplate(offerTemplate, inheritCF, Boolean.TRUE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate,
                 loadAllowedDiscountPlan, Boolean.FALSE, Boolean.FALSE, null);
@@ -1037,20 +1026,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
-        if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
-        OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
-        return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false, true, true);
+    	OfferTemplate offerTemplate = findOfferTemplate(offerTemplateCode, validFrom, validTo);
+    	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
+    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true,true);
     }
 
     public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
         if (status == null)
             missingParameters.add("status");
         handleMissingParameters();
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
-        if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+        OfferTemplate offerTemplate = findOfferTemplate(offerTemplateCode, validFrom, validTo);
+
         if (LifeCycleStatusEnum.ACTIVE.equals(status)) {
             if (offerTemplate.getOfferComponents().isEmpty()) {
                 throw new MeveoApiException("Offer Template code " + offerTemplateCode + " doesn't have product");
@@ -1136,7 +1122,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         tmpOfferTemplateDto.getOfferProducts().addAll(productDto.getProducts());
         List<String> productCodes = productDto.getProducts().stream().map(offerProductDto -> offerProductDto.getProduct().getCode()).collect(Collectors.toList());
         offerTemplate.getOfferComponents().removeIf(offerComponent -> offerComponent.getProduct() != null && productCodes.contains(offerComponent.getProduct().getCode()));
-        processOfferProductDtos(tmpOfferTemplateDto, offerTemplate, false); 
+        processOfferProductDtos(tmpOfferTemplateDto, offerTemplate, false);
         offerTemplateService.update(offerTemplate);
         return find(offerCode, productDto.getValidFrom(), productDto.getValidTo());
     }
@@ -1155,11 +1141,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     private OfferTemplate findOfferTemplate(String offerCode, Date validFrom, Date validTo) {
-        var offerTemplate = offerTemplateService.findByCode(offerCode, validFrom, validTo);
-        String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-        if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    offerCode + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
+    	var offerTemplate = offerTemplateService.findByCodeBestValidityMatch(offerCode, validFrom, validTo);
+    	String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
+        if(offerTemplate == null)
+        	 throw new EntityDoesNotExistsException(OfferTemplate.class, offerCode + "and validity dates from:" + DateUtils.formatDateWithPattern(validFrom, datePattern) + " - to: "
+                     + DateUtils.formatDateWithPattern(validTo, datePattern));
         return offerTemplate;
     }
 

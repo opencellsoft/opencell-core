@@ -32,7 +32,7 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
     private List<String> fetchFields = asList("fields");
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
-							   Date startDate, String customerAccountDescription, String invoiceNumber,
+							   Date startDate, Date dueDate, String customerAccountDescription, String invoiceNumber,
 							   Integer stepInDays, Integer numberOfPeriods) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
@@ -50,8 +50,8 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 			throw new BadRequestException("numberOfPeriods parameter is mandatory when stepInDays is provided");
 		}
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccount,
-					startDate, paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
+			return recordedInvoiceService.getAgedReceivables(customerAccount, startDate, dueDate,
+					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report");
 		}

@@ -5,7 +5,6 @@ import static java.lang.Boolean.FALSE;
 import java.math.BigDecimal;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
@@ -19,8 +18,11 @@ import org.meveo.apiv2.settings.OpenOrderSettingInput;
 @JsonDeserialize(as = ImmutableFinanceSettings.class)
 public interface FinanceSettings extends Resource {
 
-    @NotNull
-    Boolean getUseSecurityDeposit();
+    @Value.Default
+    @Schema(description = "use security deposit")
+    default Boolean getUseSecurityDeposit() {
+        return FALSE;
+    }
 
     @Nullable
     BigDecimal getMaxAmountPerSecurityDeposit();
@@ -28,8 +30,11 @@ public interface FinanceSettings extends Resource {
     @Nullable
     BigDecimal getMaxAmountPerCustomer();
 
-    @NotNull
-    Boolean getAutoRefund();
+    @Value.Default
+    @Schema(description = "Auto refund")
+    default Boolean getAutoRefund() {
+        return FALSE;
+    }
 
     @Value.Default
     @Schema(description = "Use auxiliary accounting")

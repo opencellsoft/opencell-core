@@ -19,6 +19,7 @@
 package org.meveo.api.dunning;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -113,6 +114,7 @@ public class DunningDocumentApi extends BaseApi {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
                 invoice.setPaymentStatus(InvoicePaymentStatusEnum.DISPUTED);
+                invoice.setPaymentStatusDate(new Date());
                 entityUpdatedEventProducer.fire(invoice);
                 RecordedInvoice ri = invoice.getRecordedInvoice();
                 ri.setDunningDocument(dunningDocument);

@@ -27,15 +27,18 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.InvoiceTypeRs;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceMatchedOperation;
+import org.meveo.apiv2.billing.ImmutableInvoiceSubTotals;
 import org.meveo.apiv2.billing.ImmutableInvoices;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
@@ -47,11 +50,13 @@ import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
+import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
@@ -61,12 +66,20 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	private InvoiceApiService invoiceApiService;
 
 	@Inject
+    private InvoiceSubTotalsService invoiceSubTotalsService;
+
+	@Inject
 	private AccountOperationService accountOperationService;
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+	
+	@Inject
+	private InvoiceSubTotalsApiService invoiceSubTotalsApiService;
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
+	
+	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
 	
 	@Override
 	public Response getInvoice(Long id, Request request) {
@@ -130,21 +143,6 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeId(invoiceTypeId, invoiceNumber)
 				.orElseThrow(NotFoundException::new);
 		List<AccountOperation> accountOperations = accountOperationService.listByInvoice(invoice);
-
-		/*Set<InvoiceMatchedOperation> collect = accountOperations == null ? Collections.EMPTY_SET : accountOperations.stream()
-				.map(accountOperation -> accountOperationService.findById(accountOperation.getId(), Arrays.asList("matchingAmounts")))
-				.map(accountOperation -> accountOperation.getMatchingAmounts().stream()
-						.map(matchingAmount -> matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), Arrays.asList("matchingAmounts")))
-						.map(matchingCode -> matchingCode.getMatchingAmounts())
-						.flatMap(Collection::stream)
-						.filter(matchingAmount -> !accountOperation.getId().equals(matchingAmount.getAccountOperation().getId()))
-						.collect(Collectors.toSet())
-				)
-				.flatMap(Collection::stream)
-				.distinct()
-				.map(matchingAmount -> toResponse(matchingAmount.getAccountOperation(), matchingAmount, invoice))
-				.collect(Collectors.toSet());
-		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(buildResponse(collect)).build();*/
 
 		Set<InvoiceMatchedOperation> result = new HashSet<>();
 
@@ -246,7 +244,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
-		if(invoiceLineInput.getSkipValidation()==null || !invoiceLineInput.getSkipValidation()) {
+		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
@@ -369,20 +367,20 @@ public class InvoiceResourceImpl implements InvoiceResource {
     public Response createAdjustment(@NotNull Long id, @NotNull InvoiceLinesToReplicate invoiceLinesToReplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         Invoice adjInvoice = invoiceApiService.createAdjustment(invoice, invoiceLinesToReplicate);
-        return Response.ok().entity(buildSuccessResponse(invoiceMapper.toResource(adjInvoice))).build();
+        return Response.ok().entity(buildSuccessResponse("invoice", invoiceMapper.toResource(adjInvoice))).build();
     }
 
-    private Map<String, Object> buildSuccessResponse(org.meveo.apiv2.billing.Invoice invoiceResource) {
+    private Map<String, Object> buildSuccessResponse(String label, Object object) {
         Map<String, Object> response = new HashMap<>();
         response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
-        response.put("invoice", invoiceResource);
+        response.put(label, object);
         return response;
     }
     
     @Override
     public Response duplicateInvoiceLines(Long id, InvoiceLinesToDuplicate invoiceLinesToDuplicate) {
         Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-        List<Long> idsInvoiceLineForInvoice = new ArrayList<Long>();
+        List<Long> idsInvoiceLineForInvoice = new ArrayList<>();
         for(InvoiceLine invoiceLine : invoice.getInvoiceLines()) {
             idsInvoiceLineForInvoice.add(invoiceLine.getId());
         }
@@ -421,6 +419,63 @@ public class InvoiceResourceImpl implements InvoiceResource {
         response.put("quarantineBillingRunId", quarantineBillingRunId);
         return Response.ok(response).build();
 	}
-    
-    
+
+	@Override
+	public Response refreshRate(Long invoiceId) {
+		Optional<Invoice> refreshedInvoice = invoiceApiService.refreshRate(invoiceId);
+		Map<String, Object> response;
+		if(refreshedInvoice.isPresent()) {
+			response = buildSuccessResponse("message",
+					"Exchange rate successfully refreshed");
+		} else {
+			response = buildSuccessResponse("message",
+					"Last applied rate and trading currency current rate are equals");
+		}
+		return Response.ok(response).build();
+	}
+
+	@Override
+	public Response calculateSubTotals(Long invoiceId) {
+		Invoice invoice = invoiceApiService.findById(invoiceId).orElseThrow(NotFoundException::new);
+		var invoiceSubtotalsList = invoiceSubTotalsApiService.calculateSubTotals(invoice);
+		  return Response
+	                .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
+	                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(invoiceSubtotalsList)))
+	                .build();
+	}
+	
+	@Override
+    public Response addSubTotals(InvoiceSubTotalsDto invoiceSubTotals) {	    
+	    List<InvoiceSubTotals> lstInvoiceSubTotals = invoiceSubTotalsService.addSubTotals(invoiceSubTotals);
+        Long invoiceTypeId = invoiceSubTotals.getInvoiceType().getId();
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceTypeRs.class, invoiceTypeId).build())
+                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(lstInvoiceSubTotals)))
+                .build();
+    }
+	
+	@Override
+    public Response deleteSubTotals(InvoiceSubTotalsDto invoiceSubTotals) {        
+        invoiceSubTotalsService.deleteSubTotals(invoiceSubTotals);
+        Map<String, Object> response = new HashMap<>();
+        response.put("actionStatus", Collections.singletonMap("status", "SUCCESS"));
+        return Response.ok(response).build();
+    }
+	
+	private org.meveo.apiv2.billing.InvoiceSubTotals toResourceInvoiceSubTotalsWithLink(org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotal) {
+		return ImmutableInvoiceSubTotals.copyOf(invoiceSubTotal)
+				.withLinks(new LinkGenerator.SelfLinkGenerator(InvoiceResource.class).withId(invoiceSubTotal.getId())
+						.withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction().build());
+	}
+	
+	private List<org.meveo.apiv2.billing.InvoiceSubTotals> toResourceInvoiceSubTotalsWithLink(List<org.meveo.apiv2.billing.InvoiceSubTotals> invoiceSubTotal) {
+		var result = new ArrayList<org.meveo.apiv2.billing.InvoiceSubTotals>();
+		if (invoiceSubTotal != null) {
+            for (org.meveo.apiv2.billing.InvoiceSubTotals invoiceSubTotals : invoiceSubTotal) {
+                result.add(toResourceInvoiceSubTotalsWithLink(invoiceSubTotals));
+            }
+        }
+		return result;
+	}
 }

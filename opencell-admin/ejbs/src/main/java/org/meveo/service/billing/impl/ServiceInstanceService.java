@@ -72,6 +72,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
@@ -402,6 +403,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setDescription(product.getDescription());
+        serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        
+		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
+		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(serviceInstance.getRenewalNotifiedDate()); 
+		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(null); 
+		}
 
         if (!isVirtual) {
             create(serviceInstance);
@@ -661,7 +671,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             // chargedToDate is null means that charge was never charged
             if (chargedToDate == null || chargeToDateOnTermination.after(chargedToDate)) {
                 try {
-                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
+                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination,
+                            terminationReason.isInvoiceAgreementImmediately(), terminationDate);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

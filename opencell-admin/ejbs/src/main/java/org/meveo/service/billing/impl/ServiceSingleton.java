@@ -18,31 +18,8 @@
 
 package org.meveo.service.billing.impl;
 
-import static java.time.Instant.now;
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
-import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
-import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
-import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
-import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
-import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
-import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
-import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
-
-import java.util.*;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
+import com.mifmif.common.regex.Generex;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.InvoicingJob;
-import org.meveo.admin.job.TriggerCollectionPlanLevelsJob;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -59,7 +36,6 @@ import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -78,11 +54,39 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
-import com.mifmif.common.regex.Generex;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+
+import static java.lang.String.valueOf;
+import static java.time.Instant.now;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
+import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
+import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
+import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
+import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
+import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
+import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
- * 
+ *
  * @author Andrius Karpavicius
  * @author Edward Legaspi
  * @author akadid abdelmounaim
@@ -141,10 +145,14 @@ public class ServiceSingleton {
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
+    private static final String GENERATED_CODE_KEY = "generatedCode";
+
+    private Random random = new SecureRandom();
+
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
-     * 
+     *
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceSequence}
@@ -166,7 +174,7 @@ public class ServiceSingleton {
 
     /**
      * Get invoice number sequence.
-     * 
+     *
      * @param invoiceDate Invoice date
      * @param invoiceType Invoice type
      * @param seller Seller
@@ -217,7 +225,6 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentNumber();
                 sequence.setCurrentNumber(sequence.getCurrentNumber() + incrementBy);
-                // invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
@@ -238,7 +245,7 @@ public class ServiceSingleton {
 
     /**
      * Reserve invoice numbers for a given invoice type, seller and invoice date match. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
-     * 
+     *
      * @param invoiceTypeId Invoice type identifier
      * @param sellerId Seller identifier
      * @param invoiceDate Invoice date
@@ -260,18 +267,12 @@ public class ServiceSingleton {
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-        return sequence;
-
-        /*
-         * try { sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence); return sequence; } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
-         * NoSuchMethodException e) { throw new BusinessException("Failed to close invoice numbering sequence", e); }
-         */
+        return incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
     }
 
     /**
      * Create an invoice type. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
-     * 
+     *
      * @param occCode OCC code
      * @param occCodeDefaultValue OCC default value
      * @param invoiceTypeCode Invoice type code
@@ -405,21 +406,26 @@ public class ServiceSingleton {
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, true);
     }
-    
-    
+
+
     /**
      * Validate and assign invoice number to an invoice.
-     * @param invoice invoice
+     * @param invoiceId invoice identifier
+     * @param refreshExchangeRate refresh exchange rate
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice validateAndAssignInvoiceNumber(Long invoiceId) throws BusinessException {
+    public Invoice validateAndAssignInvoiceNumber(Long invoiceId, boolean refreshExchangeRate) throws BusinessException {
     	Invoice invoice = invoiceService.findById(invoiceId);
     	if (invoice == null) {
     		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	}
+        if(refreshExchangeRate && invoice.canBeRefreshed()) {
+            invoiceService.refreshConvertedAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
+                    invoice.getTradingCurrency().getCurrentRateFromDate());
+        }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
     	return assignInvoiceNumber(invoice, true);
     }
@@ -584,7 +590,7 @@ public class ServiceSingleton {
 
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
-     * 
+     *
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceTypeSellerSequence}
@@ -599,10 +605,23 @@ public class ServiceSingleton {
         return sequence;
     }
 
+    /**
+     * Generate custom generic code
+     *
+     * @param customGenericEntityCode
+     * @return generated code
+     */
     public String getGenericCode(CustomGenericEntityCode customGenericEntityCode) {
         return getGenericCode(customGenericEntityCode, null);
     }
 
+    /**
+     * Generate custom generic code
+     *
+     * @param customGenericEntityCode
+     * @param prefixOverride
+     * @return generated code
+     */
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -612,18 +631,18 @@ public class ServiceSingleton {
         Map<Object, Object> context = new HashMap<>();
         context.put("entity", customGenericEntityCode.getEntityClass());
         if (sequence.getSequenceType() == SEQUENCE) {
-            generatedCode = String.valueOf(sequenceService.generateSequence(sequence).getCurrentNumber());
+            generatedCode = leftPad(valueOf(sequenceService.generateSequence(sequence).getCurrentNumber()),
+                    sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == NUMERIC) {
-            Random random = new Random();
-            generatedCode = String.valueOf(random.nextLong()) + now().toEpochMilli();
+            generatedCode =
+                    leftPad((valueOf(random.nextLong()) + now().toEpochMilli()), sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == ALPHA_UP) {
             int leftLimit = 97;
             int rightLimit = 122;
-            Random random = new Random();
             String generatedString = random.ints(leftLimit, rightLimit + 1)
                     .limit(sequence.getSequenceSize())
                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
@@ -640,30 +659,51 @@ public class ServiceSingleton {
             Generex generex = new Generex(sequence.getSequencePattern());
             generatedCode = generex.random(sequence.getSequenceSize());
         }
-        context.put("generatedCode", generatedCode);
-        return prefixOverride == null ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
+        context.put(GENERATED_CODE_KEY, generatedCode);
+        return prefixOverride == null || prefixOverride.isBlank()
+                ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
                 : prefixOverride + generatedCode;
-    }
-
-    private String formatCode(String formatEL, Map<Object, Object> context) {
-        if (formatEL.isEmpty()) {
-            return (String) context.get("generatedCode");
-        }
-        String resultCode = evaluateExpression(formatEL, context, String.class);
-        if(formatEL.contains("generatedCode")) {
-            return resultCode + context.get("generatedCode");
-        }
-        return resultCode;
     }
 
     private String replaceDigitsWithChars(long epochTimestamp) {
         StringBuilder result = Long.toString(epochTimestamp, 26).chars()
-                                    .mapToObj(character ->  replaceNumber((char) character))
-                                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+                .mapToObj(character ->  replaceNumber((char) character))
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
         return result.toString();
     }
 
     private char replaceNumber(char character) {
         return character >= '0' && character <= '9' ? mapper.get(character) : character;
+    }
+
+    private String formatCode(String formatEL, Map<Object, Object> context) {
+        if (formatEL.isEmpty()) {
+            return (String) context.get(GENERATED_CODE_KEY);
+        }
+        if (formatEL.indexOf("#{") < 0) {
+            return formatEL + context.get(GENERATED_CODE_KEY);
+        }
+        return evaluateExpression(formatEL, context, String.class);
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getNextOpenOrderSequence() {
+        String code = "OOR-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
+        if (sequence == null) {
+            sequence = new InvoiceSequence();
+            sequence.setCurrentNumber(1L);
+            sequence.setSequenceSize(5);
+            sequence.setCode(code);
+            invoiceSequenceService.create(sequence);
+        }
+        String ooqCode =  code + "-" + leftPad(valueOf(sequence.getCurrentNumber()),
+                sequence.getSequenceSize(), '0');
+
+        sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
+
+        return ooqCode;
     }
 }

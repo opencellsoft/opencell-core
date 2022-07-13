@@ -18,9 +18,9 @@
 package org.meveo.service.accountingscheme;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Map.of;
 import static java.util.Optional.ofNullable;
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_CODE;
+import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_LABEL;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.accountingScheme.JournalEntry;
@@ -33,6 +33,7 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -48,7 +49,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ import java.util.Map;
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     private static final String PARAM_ID_INV = "ID_INV";
-    private static final String REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+    private static final String REVENUE_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related accounting articles have an accounting code or that the default revenue accounting code" +
             " is set in the account operation type (contra accounting code)";
 
@@ -91,7 +91,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 null);
 
         // Second JournalEntry
-        JournalEntry secondEntry = buildJournalEntry(ao, accountingCode,
+        JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
                 //if occCategory == DEBIT then direction= CREDIT and vice versa
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
@@ -105,26 +105,32 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     }
 
+    private AccountingCode fromCustomerAccount(CustomerAccount customerAccount) {
+        return ofNullable(customerAccount)
+                .map(CustomerAccount::getGeneralClientAccount)
+                .orElse(null);
+    }
+
     @Transactional
     public List<JournalEntry> createFromInvoice(RecordedInvoice recordedInvoice, OCCTemplate occT) {
         List<JournalEntry> saved = new ArrayList<>();
 
-        AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
-        // 1- produce a Customer account entry line
-        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice, accountingCode != null ? accountingCode :
+        AccountingCode accountingCodeFromRecordedAoOrOcc =
                 recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() != null ?
-                        recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() :
-                        occT.getAccountingCode(),
-                occT.getOccCategory(),
-                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(),
-                null);
+                recordedInvoice.getCustomerAccount().getCustomer().getCustomerCategory().getAccountingCode() :
+                occT.getAccountingCode();
+        AccountingCode accountingCode = ofNullable(fromCustomerAccount(recordedInvoice.getCustomerAccount()))
+                .orElse(accountingCodeFromRecordedAoOrOcc);
+        // 1- produce a Customer account entry line
+        JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice, accountingCode, occT.getOccCategory(),
+                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(), null);
 
         saved.add(customerAccountEntry);
 
         log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
 
         // 2- produce the revenue accounting entries
-        buildRevenusJournalEntries(recordedInvoice, occT, saved);
+        buildRevenuesJournalEntries(recordedInvoice, occT, saved);
 
         // 3- produce the taxes accounting entries
         buildTaxesJournalEntries(recordedInvoice, occT, saved);
@@ -161,11 +167,13 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode2();
 
         } else if (ao.getCustomerAccount() != null && !isOrphan) {
-            firstAccountingCode = occT.getAccountingCode();
+            firstAccountingCode = ofNullable(fromCustomerAccount(ao.getCustomerAccount()))
+                    .orElse(occT.getAccountingCode());
             secondAccountingCode = occT.getContraAccountingCode();
 
         } else if (ao.getCustomerAccount() == null && isOrphan) {
@@ -173,8 +181,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
 
         // 1- produce a first accounting entry
-        AccountingCode accountingCode = fromCustomerAccount(ao.getCustomerAccount());
-        JournalEntry firstAccountingEntry = buildJournalEntry(ao, accountingCode != null ? accountingCode : firstAccountingCode, firstCategory,
+        JournalEntry firstAccountingEntry = buildJournalEntry(ao, firstAccountingCode, firstCategory,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(firstAccountingEntry);
@@ -183,7 +190,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 ao.getId(), firstCategory, firstAccountingCode);
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
-        JournalEntry secondAccountingEntry = buildJournalEntry(ao, accountingCode != null ? accountingCode : secondAccountingCode, secondCategory,
+        JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
 
         saved.add(secondAccountingEntry);
@@ -197,12 +204,6 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         log.info("{} Payments JournalEntries created for AO={}", saved.size(), ao.getId());
 
         return saved;
-    }
-
-    private AccountingCode fromCustomerAccount(CustomerAccount customerAccount) {
-        return ofNullable(customerAccount)
-                .map(CustomerAccount::getGeneralClientAccount)
-                .orElse(null);
     }
 
     public void validateAOForInvoiceScheme(AccountOperation ao) {
@@ -222,8 +223,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
      *
      * @param ao             account operation
      * @param occT           occt.code = ao.code
-     * @param isDefaultCheck for Default Script we must check accountinfCode and contraAccountingCode,
-     *                       for Invoice one for exemple, we must on check accountinfode
+     * @param isDefaultCheck for Default Script we must check accountingCode and contraAccountingCode,
+     *                       for Invoice one for example, we must on check accountingCode
      */
     public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck, boolean isPaymentCheck) {
         if (occT == null) {
@@ -231,15 +232,15 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
         }
         if (occT.getAccountingCode() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} Mandatory AccountingCode not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
         if ((isDefaultCheck || isPaymentCheck) && occT.getContraAccountingCode() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} : Mandatory ContraAccountingCode not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
         }        
         if (isPaymentCheck && occT.getContraAccountingCode2() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} : Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id=" + occT.getId());
         }
     }
@@ -278,43 +279,50 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
         Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
         if(accountingInfo != null && !accountingInfo.isEmpty()) {
-            firstEntry.setAuxiliaryAccountCode(accountingInfo.get("auxiliaryAccountCode"));
-            firstEntry.setAuxiliaryAccountLabel(accountingInfo.get("auxiliaryAccountLabel"));
+            firstEntry.setAuxiliaryAccountCode(accountingInfo.get(AUXILIARY_ACCOUNT_CODE));
+            firstEntry.setAuxiliaryAccountLabel(accountingInfo.get(AUXILIARY_ACCOUNT_LABEL));
         }
+
+        if(ao != null) {
+        	firstEntry.setJournalCode(ofNullable(ao.getJournal()).map(Journal::getCode).orElse(null));
+        	firstEntry.setReference(ao.getReference());
+        	firstEntry.setDocumentType(ao.getType());
+        }
+        if(code != null) {
+        	firstEntry.setCategory(code.getChartOfAccountTypeEnum());
+        	firstEntry.setAccount(code.getCode());
+        	firstEntry.setLabel(code.getDescription());
+        }
+        if(customerAccount != null) {
+        	firstEntry.setCustomerCode(customerAccount.getCode());
+        	firstEntry.setCustomerName(customerAccount.getDescription());
+        }
+        
+        firstEntry.setSellerName(ofNullable(seller).map(Seller::getDescription).orElse(null));
 
         return firstEntry;
     }
 
     private Seller getSeller(AccountOperation ao) {
-        return ao.getSeller() != null ? ao.getSeller() :
-                ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
-                        ao.getCustomerAccount().getCustomer().getSeller() : null;
+        Seller customerSeller = ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null
+                ? ao.getCustomerAccount().getCustomer().getSeller() : null;
+        return ao.getSeller() != null ? ao.getSeller() : customerSeller;
+
     }
 
     private Map<String, String> addAccountingInfo(CustomerAccount customerAccount) {
-        FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
-                .orElseThrow(() -> new NotFoundException("No finance settings found"));
-        AuxiliaryAccounting auxiliaryAccounting = ofNullable(financeSettings.getAuxiliaryAccounting())
-                .orElseThrow(() -> new NotFoundException("Auxiliary accounting not configured for finance settings"));
-        if(auxiliaryAccounting.isUseAuxiliaryAccounting()) {
-            try {
-                return evaluateAccountingELs(customerAccount, auxiliaryAccounting);
-            } catch (Exception exception) {
-                log.error(exception.getMessage());
+        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        if(financeSettings != null) {
+            AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
+            if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {
+                try {
+                    return financeSettingsService.generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting);
+                } catch (Exception exception) {
+                    log.error(exception.getMessage());
+                }
             }
         }
         return emptyMap();
-    }
-
-    private Map<String, String> evaluateAccountingELs(CustomerAccount customerAccount,
-                                                          AuxiliaryAccounting auxiliaryAccounting) {
-        Map<Object, Object> context =
-                of("ca", customerAccount, "gca", customerAccount.getGeneralClientAccount());
-        String auxiliaryAccountCode =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountCodeEl(), context, String.class);
-        String auxiliaryAccountLabel =
-                evaluateExpression(auxiliaryAccounting.getAuxiliaryAccountLabelEl(), context, String.class);
-        return of("auxiliaryAccountCode", auxiliaryAccountCode, "auxiliaryAccountLabel", auxiliaryAccountLabel);
     }
 
     private void buildTaxesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
@@ -334,9 +342,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             // otherwise the default accounting code should be assigned before grouping
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             taxResult.forEach(taxAgr -> {
-                AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
-                AccountingCode taxACC = accountingCode != null ? accountingCode :
-                        taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
+                AccountingCode taxACC = taxAgr.getAccountingCode() != null ? taxAgr.getAccountingCode() : occT.getContraAccountingCode2();
                 if (taxACC == null) {
                     throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
                             TAX_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
@@ -365,7 +371,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
     }
 
-    private void buildRevenusJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
+    private void buildRevenuesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
         Query query = getEntityManager().createQuery(
                         "SELECT ivl" + // amountWithoutTax
                                 " FROM InvoiceLine ivL LEFT JOIN AccountingCode ac ON ivL.accountingArticle.accountingCode = ac" +
@@ -383,15 +389,13 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
-                AccountingCode accountingCode = fromCustomerAccount(recordedInvoice.getCustomerAccount());
-                AccountingCode revenuACC = accountingCode != null
-                        ? accountingCode : accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
+                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
 
                 if (revenuACC == null &&  occT != null) {
                     revenuACC = occT.getContraAccountingCode();
                     if (revenuACC == null) {
                         throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
-                                REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                                REVENUE_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
                     }
                 }
 
@@ -428,5 +432,27 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
         return revenuEntry;
+    }
+
+    @Override
+    public void create(JournalEntry journalEntry) {
+        super.create(journalEntry);
+        if(checkAuxiliaryCodeUniqniess(journalEntry.getAuxiliaryAccountCode(), journalEntry.getCustomerAccount()) != 0) {
+            journalEntry.setAuxiliaryAccountCode(journalEntry.getAuxiliaryAccountCode()
+                    + journalEntry.getCustomerAccount().getId());
+        }
+    }
+
+    /**
+     * Check auxiliary account code uniqniess
+     * @param auxiliaryAccountCode auxiliary account code
+     * @param customerAccount      customer account
+     * @return number of occurrence
+     */
+    public long checkAuxiliaryCodeUniqniess(String auxiliaryAccountCode, CustomerAccount customerAccount) {
+        return (long) getEntityManager().createNamedQuery("JournalEntry.checkAuxiliaryCodeUniqniess")
+                                .setParameter("auxiliaryAccountCode", auxiliaryAccountCode)
+                                .setParameter("customerAccount", customerAccount)
+                                .getSingleResult();
     }
 }

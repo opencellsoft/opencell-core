@@ -73,6 +73,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
@@ -90,7 +91,7 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
+@CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = {"productVersion.product", "serviceTemplate"})
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -175,6 +176,18 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+	/**
+	 * status of product type of {@link PriceVersionDateSettingEnum}
+	 */
+	@Column(name = "price_version_date_setting")
+	@Enumerated(EnumType.STRING)
+	private PriceVersionDateSettingEnum priceVersionDateSetting;
+
+    /** price Version Date timestamp. */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "price_version_date")
+    private Date priceVersionDate;
+    
     /**
      * Charges instances associated with a service instance
      */
@@ -296,7 +309,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     @MapKey(name = "code")
-    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
      * Initial service renewal configuration
@@ -686,6 +699,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         if (serviceTemplate != null) {
             return new ICustomFieldEntity[] { serviceTemplate };
         }
+        if (productVersion != null) {
+            return new ICustomFieldEntity[] { productVersion.getProduct() };
+        }
         return null;
     }
 
@@ -979,8 +995,36 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-
+    
     /**
+     * @return the priceVersionDateSetting
+     */
+    public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting to set priceVersionDateSetting
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
+	}
+
+	/**
+	 * @return the priceVersionDate
+	 */
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+
+	/**
+	 * @param priceVersionDate to set priceVersionDate
+	 */
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
+	}
+
+	/**
      * Gets the amount PS.
      *
      * @return the amountPS
@@ -1152,7 +1196,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 	}
 
 	public void addAttributeInstance(AttributeInstance attributeInstance) {
-		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<>();
 		if(attributeInstance!=null) {
 			attributeInstances.add(attributeInstance);
 		}

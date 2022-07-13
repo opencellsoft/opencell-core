@@ -53,6 +53,14 @@ public class PricePlanMatrixLineApi extends BaseApi {
         return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
+    public GetPricePlanVersionResponseDto updateWithoutDeletePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+        PricePlanMatrixVersion ppmVersion = pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+        pricePlanMatrixLineService.updateWithoutDeletePricePlanMatrixLines(ppmVersion, dtoData);
+        pricePlanMatrixVersionService.updatePricePlanMatrixVersion(ppmVersion);
+
+        return new GetPricePlanVersionResponseDto(ppmVersion);
+    }
+    
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto pricePlanMatrixLineDto) {
 
         if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))
@@ -93,6 +101,14 @@ public class PricePlanMatrixLineApi extends BaseApi {
         pricePlanMatrixVersionService.update(ppmLine.getPricePlanMatrixVersion());
     }
 
+    public void remove(PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto: pricePlanMatrixLinesDto.getPricePlanMatrixLines()) {            
+            PricePlanMatrixLine ppmLine = pricePlanMatrixLineService.findById(pricePlanMatrixLineDto.getPpmLineId());
+            ppmLine.getPricePlanMatrixVersion().getLines().remove(ppmLine);
+            pricePlanMatrixVersionService.update(ppmLine.getPricePlanMatrixVersion());
+        }
+    }
+    
     public PricePlanMatrixLineDto load(Long ppmLineId){
         if(StringUtils.isBlank(ppmLineId))
             missingParameters.add("pricePlanMatrixLineId");

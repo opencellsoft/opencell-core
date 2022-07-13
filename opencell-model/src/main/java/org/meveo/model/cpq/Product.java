@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -53,11 +52,13 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.ordering.OpenOrder;
 
 /**
  * 
@@ -80,7 +81,6 @@ public class Product extends ServiceCharge {
 
 	public Product() {
 	}
-
 	
 	@SuppressWarnings("rawtypes")
 	public Product(Product copy) {
@@ -95,16 +95,17 @@ public class Product extends ServiceCharge {
 		this.statusDate = Calendar.getInstance().getTime();
 		this.brand = null;
 		this.currentVersion = null;
-		this.pricePlanMatrixColumns = new ArrayList<PricePlanMatrixColumn>();
-		this.offerComponents = new ArrayList<OfferComponent>();
-		this.articleMappingLines = new ArrayList<ArticleMappingLine>();
-		this.commercialRuleLines = new ArrayList<CommercialRuleLine>();
-		this.commercialRuleHeader = new ArrayList<CommercialRuleHeader>();
-		this.productCharges = new ArrayList<ProductChargeTemplateMapping>();
-		this.medias = new ArrayList<Media>();
-		this.discountList = new HashSet<DiscountPlan>();
-		this.modelChildren = new HashSet<String>();
-		this.productVersions = new ArrayList<ProductVersion>();
+		this.pricePlanMatrixColumns = new ArrayList<>();
+		this.offerComponents = new ArrayList<>();
+		this.articleMappingLines = new ArrayList<>();
+		this.commercialRuleLines = new ArrayList<>();
+		this.commercialRuleHeader = new ArrayList<>();
+		this.productCharges = new ArrayList<>();
+		this.medias = new ArrayList<>();
+		this.discountList = new HashSet<>();
+		this.modelChildren = new HashSet<>();
+		this.productVersions = new ArrayList<>();
+		this.priceVersionDateSetting = copy.getPriceVersionDateSetting();
 		this.getUuid();
 		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
 	}
@@ -167,7 +168,7 @@ public class Product extends ServiceCharge {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "model_chlidren")
 	@CollectionTable(name = "cpq_product_model_children", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-	private Set<String> modelChildren =new HashSet<String>();
+	private Set<String> modelChildren =new HashSet<>();
 	
 
 	/**
@@ -200,6 +201,13 @@ public class Product extends ServiceCharge {
     @NotNull
     private boolean packageFlag;
     
+	/**
+	 * status of product type of {@link PriceVersionDateSettingEnum}
+	 */
+	@Column(name = "price_version_date_setting", nullable = false)
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private PriceVersionDateSettingEnum priceVersionDateSetting = PriceVersionDateSettingEnum.DELIVERY;
 	
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
@@ -222,25 +230,25 @@ public class Product extends ServiceCharge {
 	private ProductVersion currentVersion;
 
 	@OneToMany(mappedBy = "sourceProduct",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<CommercialRuleLine> commercialRuleLines = new ArrayList<CommercialRuleLine>();
+    private List<CommercialRuleLine> commercialRuleLines = new ArrayList<>();
 
 	@OneToMany(mappedBy = "targetProduct",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<CommercialRuleHeader> commercialRuleHeader = new ArrayList<CommercialRuleHeader>();
+    private List<CommercialRuleHeader> commercialRuleHeader = new ArrayList<>();
 
 
 	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<ArticleMappingLine> articleMappingLines = new ArrayList<ArticleMappingLine>();
+    private List<ArticleMappingLine> articleMappingLines = new ArrayList<>();
 	
 
 
 	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
-    private List<PricePlanMatrixColumn> pricePlanMatrixColumns = new ArrayList<PricePlanMatrixColumn>();
+    private List<PricePlanMatrixColumn> pricePlanMatrixColumns = new ArrayList<>();
 	 /**
      * list of Media
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_product_media", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-    private List<Media> medias = new ArrayList<Media>();
+    private List<Media> medias = new ArrayList<>();
     
     
     @Type(type = "numeric_boolean")
@@ -250,6 +258,10 @@ public class Product extends ServiceCharge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_model_id")
     private Product productModel;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "open_order_id")
+	private OpenOrder openOrder;
 
 	/**
 	 * @return the status
@@ -413,7 +425,7 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
-		List<ServiceChargeTemplateRecurring> serviceRecurringCharges= new ArrayList<ServiceChargeTemplateRecurring>();
+		List<ServiceChargeTemplateRecurring> serviceRecurringCharges= new ArrayList<>();
 		if(this.serviceRecurringCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -434,7 +446,7 @@ public class Product extends ServiceCharge {
 	@Override
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
 		if(this.serviceUsageCharges.isEmpty()){
-			List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<ServiceChargeTemplateUsage>();
+			List<ServiceChargeTemplateUsage> serviceUsageCharges= new ArrayList<>();
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
 					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
@@ -454,7 +466,7 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
-		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges= new ArrayList<ServiceChargeTemplateSubscription>();
+		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges= new ArrayList<>();
 		if(this.serviceSubscriptionCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -475,7 +487,7 @@ public class Product extends ServiceCharge {
 
 	@Override
 	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
-		List<ServiceChargeTemplateTermination> serviceTerminationCharges= new ArrayList<ServiceChargeTemplateTermination>();
+		List<ServiceChargeTemplateTermination> serviceTerminationCharges= new ArrayList<>();
 		if(this.serviceTerminationCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
@@ -522,6 +534,20 @@ public class Product extends ServiceCharge {
 				&& Objects.equals(modelChildren, other.modelChildren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
+	}
+
+	/**
+	 * @return the priceVersionDateSetting
+	 */
+	public PriceVersionDateSettingEnum getPriceVersionDateSetting() {
+		return priceVersionDateSetting;
+	}
+
+	/**
+	 * @param priceVersionDateSetting the priceVersionDateSetting to set
+	 */
+	public void setPriceVersionDateSetting(PriceVersionDateSettingEnum priceVersionDateSetting) {
+		this.priceVersionDateSetting = priceVersionDateSetting;
 	}
 
 
@@ -684,7 +710,13 @@ public class Product extends ServiceCharge {
 	public void setProductModel(Product productModel) {
 		this.productModel = productModel;
 	}
-	
-	
-	
+
+
+	public OpenOrder getOpenOrder() {
+		return openOrder;
+	}
+
+	public void setOpenOrder(OpenOrder openOrder) {
+		this.openOrder = openOrder;
+	}
 }

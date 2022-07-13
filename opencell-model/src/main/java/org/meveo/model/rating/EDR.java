@@ -86,7 +86,8 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.getEdrsBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate and e.id >:lastId order by e.id"),
         @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
-        @NamedQuery(name = "EDR.countNbrEdrByOriginRecord", query = "SELECT count(e) from EDR e where e.originRecord =:originRecord")
+        @NamedQuery(name = "EDR.countNbrEdrByOriginRecord", query = "SELECT count(e) from EDR e where e.originRecord =:originRecord"),
+        @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC")
     })
 public class EDR extends BaseEntity {
 
@@ -306,6 +307,12 @@ public class EDR extends BaseEntity {
     /** The times tried. */
     @Column(name = "times_tried")
     private Integer timesTried = 0;
+    
+    @Column(name = "event_key")
+    private String eventKey;
+    
+    @Column(name = "event_version")
+    private Integer eventVersion;
 
     /**
      * Tracks quantity left to rate. Initialized with quantity field value on the first call.
@@ -667,4 +674,20 @@ public class EDR extends BaseEntity {
     public Date getStatusDate() {
         return updated == null ? created : updated;
     }
+
+	public String getEventKey() {
+		return eventKey;
+	}
+
+	public void setEventKey(String eventKey) {
+		this.eventKey = eventKey;
+	}
+
+	public Integer getEventVersion() {
+		return eventVersion;
+	}
+
+	public void setEventVersion(Integer eventVersion) {
+		this.eventVersion = eventVersion;
+	}
 }

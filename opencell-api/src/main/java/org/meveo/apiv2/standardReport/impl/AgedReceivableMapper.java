@@ -28,6 +28,7 @@ import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.standardReport.AgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
@@ -52,7 +53,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.sum_90_up(agedReceivableDto.getSum90Up())
 				.general_total(agedReceivableDto.getGeneralTotal())
 				.dueDate(agedReceivableDto.getDueDate())
-				.funcCurrency(appProvider.getCurrency().getCurrencyCode())
+				.funcCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null))
 				.netAmountByPeriod(agedReceivableDto.getNetAmountByPeriod())
 				.taxAmountByPeriod(agedReceivableDto.getTaxAmountByPeriod())
 				.totalAmountByPeriod(agedReceivableDto.getTotalAmountByPeriod())
@@ -60,6 +61,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.invoiceNumber(agedReceivableDto.getInvoiceNumber())
 				.tradingCurrency(agedReceivableDto.getTradingCurrency())
 				.billedAmount(agedReceivableDto.getBilledAmount())
+				.customerId(agedReceivableDto.getCustomerId())
 				.build();
     }
 
@@ -102,8 +104,12 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[12]));
 			agedReceivableDto.setInvoiceId((Long) agedList[19]);
 			agedReceivableDto.setInvoiceNumber((String) agedList[20]);
-			agedReceivableDto.setBilledAmount((BigDecimal) agedList[21]);
-			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
+			if(agedList[23] == null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[21]);
+			else
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[23]);
+			agedReceivableDto.setCustomerId((Long) agedList[24]);
+			agedReceivableDto.setFuncCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
 			dtoList.add(agedReceivableDto);
 		} 
 		return dtoList;
@@ -148,8 +154,11 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
+			agedReceivableDto.setFuncCurrency(Optional.ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
 			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
+			if(agedReceivable[++startingSumIndex] != null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[startingSumIndex]);
+			agedReceivableDto.setCustomerId((Long) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
 		return responseDto;

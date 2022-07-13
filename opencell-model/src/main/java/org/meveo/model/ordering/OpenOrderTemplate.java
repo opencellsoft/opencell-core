@@ -1,15 +1,24 @@
 package org.meveo.model.ordering;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Table(name = "open_order_template")
@@ -31,19 +40,16 @@ public class OpenOrderTemplate extends BusinessEntity {
     private List<Threshold> thresholds;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "open_order_template_products", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-    private List<Product> products;
+    @JoinTable(name = "open_order_template_products", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
+    private List<OpenOrderProduct> products;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "open_order_template_articles", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"))
-    private List<AccountingArticle> articles;
+    @JoinTable(name = "open_order_template_articles", joinColumns = @JoinColumn(name = "open_order_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_article_id", referencedColumnName = "id"))
+    private List<OpenOrderArticle> articles;
 
     @Column(name = "status")
 	@Enumerated(EnumType.STRING)
     private OpenOrderTemplateStatusEnum status;
-
-    @Column(name = "number_instantiation")
-    private Integer numberOfInstantiation;
 
      @Column(name = "template_name", nullable = false)
     private String templateName;
@@ -72,36 +78,28 @@ public class OpenOrderTemplate extends BusinessEntity {
         this.thresholds = thresholds;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
+    public List<OpenOrderProduct> getProducts() {
+		return products;
+	}
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+	public void setProducts(List<OpenOrderProduct> products) {
+		this.products = products;
+	}
 
-    public List<AccountingArticle> getArticles() {
-        return articles;
-    }
+	public List<OpenOrderArticle> getArticles() {
+		return articles;
+	}
 
-    public void setArticles(List<AccountingArticle> articles) {
-        this.articles = articles;
-    }
+	public void setArticles(List<OpenOrderArticle> articles) {
+		this.articles = articles;
+	}
 
-    public OpenOrderTemplateStatusEnum getStatus() {
+	public OpenOrderTemplateStatusEnum getStatus() {
         return status;
     }
 
     public void setStatus(OpenOrderTemplateStatusEnum status) {
         this.status = status;
-    }
-
-    public Integer getNumberOfInstantiation() {
-        return numberOfInstantiation;
-    }
-
-    public void setNumberOfInstantiation(Integer numberOfInstantiation) {
-        this.numberOfInstantiation = numberOfInstantiation;
     }
 
     public String getTemplateName() {

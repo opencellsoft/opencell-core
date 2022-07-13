@@ -237,7 +237,8 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
     public Optional<DunningPolicy> archiveDunningPolicy(DunningPolicy dunningPolicy) {
         globalSettingsVerifier.checkActivateDunning();
         dunningPolicy.setIsActivePolicy(FALSE);
-        auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("isActive"));
+        dunningPolicy.setDisabled(true);
+        auditLogService.trackOperation("archive", new Date(), dunningPolicy, dunningPolicy.getPolicyName(), Arrays.asList("disabled"));
         return of(dunningPolicyService.update(dunningPolicy));
     }
 

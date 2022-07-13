@@ -33,7 +33,6 @@ import java.util.List;
 @JsonDeserialize(as = ImmutableOpenOrderTemplateInput.class)
 public interface OpenOrderTemplateInput extends Resource {
 
-
     @Nullable
     OpenOrderTypeEnum getOpenOrderType();
 
@@ -52,16 +51,10 @@ public interface OpenOrderTemplateInput extends Resource {
     @Nullable
     List<String> getArticles();
 
-    @Schema(description = "The Number Of Instantiation")
-    @Nullable
-    Integer getNumberOfInstantiation();
-
     @Schema(description = "The Template Name")
     @Nullable
      String getTemplateName();
 
     @Nullable
     OpenOrderTemplateStatusEnum getStatus();
-
-
 }

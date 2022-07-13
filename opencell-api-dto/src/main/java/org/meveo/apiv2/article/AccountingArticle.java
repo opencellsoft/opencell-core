@@ -83,4 +83,11 @@ public interface AccountingArticle extends Resource {
     @Nullable
     @Schema(description = "Column criteria EL")
     String getColumCriteriaEL();
+
+    @Nullable
+    @Value.Default
+    @Schema(description = "Ignore aggregation")
+    default Boolean getIgnoreAggregation() {
+        return Boolean.FALSE;
+    }
 }

@@ -50,6 +50,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 	private MatchingCodeService matchingCodeService;
 
 	@Inject
+	private PaymentPlanService paymentPlanService;
+
+	@Inject
 	private SecurityDepositTransactionService securityDepositTransactionService;
 
 	@Override
@@ -194,6 +197,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 						.collect(Collectors.toList())).orElse(Collections.emptyList())
 				.forEach(accountOperation -> {
 					accountOperation.setCustomerAccount(customer);
+					// change status of orphan AO after CA assignement : new requirement added as bug https://opencellsoft.atlassian.net/browse/INTRD-8217
+					accountOperation.setStatus(POSTED);
 					accountOperationService.update(accountOperation);
 				});
 
@@ -233,6 +238,11 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 					matchingResult.getPartialMatchingOcc().add(p);
 				}
 			}
+
+			// update PaymentPlan
+			List<Long> debitAos = new ArrayList<>(aoIds);
+			debitAos.remove(creditAoId);
+			paymentPlanService.toComplete(debitAos);
 
 			return matchingResult;
 

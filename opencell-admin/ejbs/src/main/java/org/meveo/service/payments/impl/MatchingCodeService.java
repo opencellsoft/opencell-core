@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -50,6 +51,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * MatchingCode service implementation.
@@ -60,6 +62,9 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
+    private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
+    private static final String PPL_CREATION = "PPL_CREATION";
+
     @Inject
     private CustomerAccountService customerAccountService;
 
@@ -68,6 +73,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private PaymentPlanService paymentPlanService;
 
     @Inject
     @Updated
@@ -92,6 +103,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean withWriteOff = false;
         boolean withRefund = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
+
+        // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
+        // Specially for this case, Invoice will pass to PENDING_PLAN status
+        boolean isPplCreationCreditAo = false;
+
         
         for (AccountOperation accountOperation : listOcc) {
             if (accountOperation instanceof WriteOff) {
@@ -127,6 +143,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     amountCredit = BigDecimal.ZERO;
                 }
 
+                if (PPL_CREATION.equals(accountOperation.getCode())) {
+                    isPplCreationCreditAo = true;
+                }
+
             } else {
                 if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
@@ -146,11 +166,15 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
                     } else if (withRefund) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                    } else if (isPplCreationCreditAo) {
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PENDING_PLAN);
                     } else if (fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if (!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
+                    invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
                 }
             }
@@ -213,9 +237,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
                     } else if(fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if(!fullMatch) {
                         invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
+                    invoice.setPaymentStatusDate(new Date());
                 }
             }
 
@@ -243,6 +269,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
             }
         }
+
+        // send matched PPL Aos to check if PaymentPlan shall be passed to COMPLETE status
+        paymentPlanService.toComplete(listOcc.stream()
+                .filter(accountOperation -> PPL_INSTALLMENT.equals(accountOperation.getCode()) && MatchingStatusEnum.L == accountOperation.getMatchingStatus())
+                .map(AccountOperation::getId)
+                .collect(Collectors.toList()));
 
     }
 
@@ -298,6 +330,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
                             invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                            invoice.setPaymentStatusDate(new Date());
                         	entityUpdatedEventProducer.fire(invoice);
                     	}
                     }
@@ -307,6 +340,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
                             invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                            invoice.setPaymentStatusDate(new Date());
                     	}
                 	}
                 }
