@@ -9,6 +9,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,10 +22,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     @Override
     public Response search(Map<String, Object> searchInfo) {
         Query query = pricePlanMatrixLineService.getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
-        query.setParameter("description", MatchMode.ANYWHERE.toMatchString(((String) searchInfo.getOrDefault("description", "")).toLowerCase()));
-        if(searchInfo.containsKey("priceWithoutTax")){
-            query.setParameter("priceWithoutTax", searchInfo.getOrDefault("priceWithoutTax", 0.0));
-        }
+        injectParamsIntoQuery(searchInfo, query);
         List<PricePlanMatrixLine> resultList = query.getResultList();
         return  Response.ok().entity(buildResponse(resultList,
                         (Integer) searchInfo.getOrDefault("limit", 10),
@@ -33,11 +31,24 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
                 .build();
     }
 
+    private void injectParamsIntoQuery(Map<String, Object> searchInfo, Query query) {
+        query.setParameter("description", MatchMode.ANYWHERE.toMatchString(((String) searchInfo.getOrDefault("description", "")).toLowerCase()));
+        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
+            query.setParameter("pricePlanMatrixVersionId", Long.valueOf(((Map) searchInfo.get("pricePlanMatrixVersion")).getOrDefault("id", 1l)+""));
+        }
+        if(searchInfo.containsKey("priceWithoutTax")){
+            query.setParameter("priceWithoutTax", BigDecimal.valueOf(Double.valueOf(searchInfo.getOrDefault("priceWithoutTax", 0.0)+"")));
+        }
+    }
+
     private String buildQuery(Map<String, Object> searchInfo) {
         StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT ppml FROM PricePlanMatrixLine ppml");
+        queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
         queryString.append(" JOIN FETCH ppml.pricePlanMatrixValues ppmv ");
         queryString.append(" WHERE LOWER(ppml.description) LIKE :description ");
+        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
+            queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
+        }
         if(searchInfo.containsKey("priceWithoutTax")){
             queryString.append(" AND ppml.priceWithoutTax = :priceWithoutTax ");
         }
