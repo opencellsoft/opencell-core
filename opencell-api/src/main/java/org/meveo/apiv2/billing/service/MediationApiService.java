@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +125,7 @@ public class MediationApiService {
 
     @EJB
     private MediationApiService thisNewTX;
-    
+
     @Inject
     private MediationsettingService mediationsettingService;
 
@@ -169,6 +170,7 @@ public class MediationApiService {
      * @param ipAddress IP address from the request
      * @return CDR processing result
      */
+    @SuppressWarnings("rawtypes")
     private ProcessCdrListResult processCdrList(List<String> cdrLines, ProcessCdrListModeEnum mode, boolean isVirtual, boolean rate, boolean reserve, boolean rateTriggeredEdr, Integer maxDepth,
             boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, boolean returnCounters, String ipAddress) {
 
@@ -180,11 +182,10 @@ public class MediationApiService {
 
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-//        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
-        int nbThreads = 1;
-//        if (nbThreads > cdrLines.size()) {
-//            nbThreads = cdrLines.size();
-//        }
+        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        if (nbThreads > cdrLines.size()) {
+            nbThreads = cdrLines.size();
+        }
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
         List<Future> futures = new ArrayList<>();
