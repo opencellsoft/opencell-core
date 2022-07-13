@@ -4,6 +4,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
@@ -35,6 +37,10 @@ import org.slf4j.LoggerFactory;
 public class MediationsettingService extends PersistenceService<MediationSetting>{
 
 	private Logger log = LoggerFactory.getLogger(MediationsettingService.class);
+	@Inject
+	private WalletOperationService walletOperationService;
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 	
 	public String getEventKeyFromEdrVersionRule(EDR edr) {
 		var mediationSettings = this.list();
@@ -65,8 +71,6 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 				}).get();
 	}
 	
-	@Inject
-	private WalletOperationService walletOperationService;
 	
     @SuppressWarnings("unchecked")
 	public void applyEdrVersioningRule(List<EDR> edrs, CDR cdr){
@@ -76,20 +80,22 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	if(CollectionUtils.isEmpty(mediationSettings)) return ;
     	if(!mediationSettings.get(0).isEnableEdrVersioning()) return;
     	Comparator<EdrVersioningRule> sortByPriority = (EdrVersioningRule edrV1, EdrVersioningRule edrV2) -> edrV1.getPriority().compareTo(edrV2.getPriority()); 
-    	for (EDR edr : edrs) {
-    		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
+    	var edrIterate = edrs.iterator();
+    	while(edrIterate.hasNext()) {
+    		var edr = edrIterate.next();
+    		var errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
         	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
 						var errorMsg = String.format(errorMessage, "criteriaEL", edrVersion.getId(), edrVersion.getCriteriaEL(), cdr, "%s");
-						var eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, errorMsg, Boolean.class); 
+						var eval = (Boolean) evaluateEdrVersion(edrVersion.getId(), edrVersion.getCriteriaEL(),edr, cdr, errorMsg, Boolean.class, edrIterate); 
 						return eval == null ? false : eval;
 					})
 					.findFirst();
         	if(edrVersionRuleOption.isPresent()) {
         		var edrVersionRule = edrVersionRuleOption.get();
 				var errorMsg = String.format(errorMessage, "eventKeyEl", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
-        		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class);
+        		String keyEvent =  (String) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getKeyEL(),edr, cdr, errorMsg , String.class, edrIterate);
         		if(StringUtils.isNotEmpty(keyEvent) && edr.getRejectReason() == null) { // test si cdr est rejete
 					edr.setEventKey(keyEvent);		
     				errorMsg = String.format(errorMessage, "isNewVersionEL", edrVersionRule.getId(), edrVersionRule.getCriteriaEL(), cdr, "%s");
@@ -99,8 +105,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     					continue;
     				}
 					var previousEdr = previousEdrs.get(0);
-					boolean tmpTestComparaison = edr.getDecimalParam1().intValue() > previousEdr.getDecimalParam1().intValue();
-        			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr);    				
+        			boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(),edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);    				
         			if(isNewVersion) {
         				 // liste des edr versioning 
     					if(previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
@@ -115,11 +120,11 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     						if(CollectionUtils.isNotEmpty(wos)) { // wo already treated. find all rated
     							var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
     							if(billedTransaction) {
-    								edr.setStatus(EDRStatusEnum.REJECTED);
     								cdr.setStatus(CDRStatusEnum.DISCARDED);
-    								var msgError = "EDR[id="+previousEdr.getId()+", eventKey="+keyEvent+"] has already been invoiced";
-    								edr.setRejectReason(msgError);
-    								cdr.setRejectReason(msgError);
+    								cdr.setRejectReason("EDR[id="+previousEdr.getId()+", eventKey="+keyEvent+"] has already been invoiced");
+    								if(edr.getId() != null)
+    									edrService.remove(edr);
+    								edrIterate.remove();
     								continue;
     							}else { // find all wallet operation that have a status OPEN 
 									edr.setStatus(EDRStatusEnum.RATED);
@@ -130,6 +135,10 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 										wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
 										wo.setEdr(edr);
 										walletOperationService.update(wo);
+										if(wo.getRatedTransaction() != null) {
+											wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+											ratedTransactionService.update(wo.getRatedTransaction());
+										}
 									});
 								
 								}
@@ -137,11 +146,11 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     					}
         			}else {
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
-						edr.setStatus(EDRStatusEnum.REJECTED);
 						var msgError = "Newer version already exists EDR[id="+previousEdrs.get(0).getId()+"]";
-						edr.setRejectReason(msgError);
 						cdr.setRejectReason(msgError);
-						edr.setEventVersion(null);
+						if(edr.getId() != null)
+							edrService.remove(edr);
+						edrIterate.remove();
         			}
         		}
         		
@@ -151,7 +160,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	
     }
     
-    private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, EDR previousEdr) {
+    private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, EDR previousEdr, Iterator<EDR> edrIterate) {
     	Object evaluted = null;
     	Map<Object, Object> context = new HashMap<>();
     	context.put("edr", edr);
@@ -161,16 +170,21 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		evaluted = ValueExpressionWrapper.evaluateExpression(expression, context, result);
 		}catch(Exception e) {
 			msg = String.format(msg, e.getMessage());
-			edr.setRejectReason(msg);
 			cdr.setRejectReason(msg);
-			edr.setStatus(EDRStatusEnum.REJECTED);
 			cdr.setStatus(CDRStatusEnum.ERROR);
+			if(edr.getId() != null) {
+				edrService.remove(edr);
+			}
+			edrIterate.remove();
 		}
     	return evaluted;
     }
+    
+    @Inject
+    private EdrService edrService;
 
-    private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result) {
-    	return evaluateEdrVersion(idEdrVersion, expression, edr, cdr, msg, result, null);
+    private Object evaluateEdrVersion(Long idEdrVersion, String expression, EDR edr, CDR cdr, String msg, Class<?> result, Iterator<EDR> edrIterate) {
+    	return evaluateEdrVersion(idEdrVersion, expression, edr, cdr, msg, result, null, edrIterate);
     }
     
     @SuppressWarnings("unchecked")
