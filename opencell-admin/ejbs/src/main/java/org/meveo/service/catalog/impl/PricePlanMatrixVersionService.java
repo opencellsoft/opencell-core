@@ -402,16 +402,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
-		if(PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-			if(serviceInstance.getPriceVersionDate() != null) {
+		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
 				operationDateParam = serviceInstance.getPriceVersionDate(); 
-			}else {
-				operationDateParam = serviceInstance.getSubscriptionDate(); 
-			}
-		}else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = serviceInstance.getSubscriptionDate(); 
-		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = serviceInstance.getRenewalNotifiedDate(); 
 		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			operationDateParam = operationDate; 
 		}
