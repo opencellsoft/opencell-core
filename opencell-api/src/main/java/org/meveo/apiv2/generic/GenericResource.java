@@ -150,4 +150,22 @@ public interface GenericResource {
                             content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
+
+    @POST
+    @Path("/export/{entityName}/{fileFormat}")
+    @Operation(summary = "Generic single endpoint to export paginated records of an entity",
+            tags = { "Generic" },
+            description ="specify the entity name, and as body, the configuration of the research."
+                    + " also you can define the offset and the limit, you can order by a field and define the sort type"
+                    + " see PagingAndFiltering doc for more details. ",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully exported"),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
+    })
+    Response export(
+                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+                    @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
+                    @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
+
+
 }

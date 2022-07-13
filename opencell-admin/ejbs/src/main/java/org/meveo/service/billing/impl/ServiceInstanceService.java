@@ -419,6 +419,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (!isVirtual) {
             create(serviceInstance);
+            getEntityManager().flush();
         } else {
             serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }

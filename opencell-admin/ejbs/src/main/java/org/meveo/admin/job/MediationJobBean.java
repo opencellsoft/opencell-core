@@ -437,9 +437,10 @@ public class MediationJobBean extends BaseJobBean {
                     if (isDuplicateCheckOn) {
                         cdrParserFinal.deduplicate(cdr);
                     }
-                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
                     
                     cdrParsingService.createEdrs(edrs, cdr);
+                    
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
 
                     outputFileWriter.println(cdr.getLine());
 

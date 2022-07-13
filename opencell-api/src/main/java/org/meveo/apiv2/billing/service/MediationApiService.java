@@ -34,6 +34,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
@@ -465,7 +466,7 @@ public class MediationApiService {
 
         result.setError(cdrError);
 
-        if (returnEDRs && edrs != null && edrs.get(0).getId() != null) {
+        if (returnEDRs && CollectionUtils.isNotEmpty(edrs) && edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
             for (EDR edr : edrs) {
                 result.getEdrIds().add(edr.getId());
