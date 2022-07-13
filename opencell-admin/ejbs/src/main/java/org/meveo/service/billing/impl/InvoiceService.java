@@ -2452,13 +2452,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (remove) {
             super.remove(invoice);
         } else {
-            super.update(invoice);
+        	cancelInvoiceById(invoice.getId());
         }
         updateBillingRunStatistics(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
-
+    public void cancelInvoiceById(Long invoiceId) {
+        getEntityManager().createNamedQuery("Invoice.cancelInvoiceById")
+        .setParameter("now", new Date())
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
+    }
+    
     public void updateBillingRunStatistics(Invoice invoice) {
     	invoice = refreshOrRetrieve(invoice);
         if(invoice != null) {
