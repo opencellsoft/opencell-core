@@ -8370,52 +8370,6 @@
 			<column name="description" value="L’entreprise a débuté une procédure de dépôt de bilan. Renvoi au dept comptable"/>
 			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
 		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="status" value="Pause"/>
-			<column name="context" value="PAUSED_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="status" value="Stop"/>
-			<column name="context" value="STOPPED_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="status" value="Succès"/>
-			<column name="context" value="SUCCESSFUL_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="status" value="Echec"/>
-			<column name="context" value="FAILED_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-		<insert tableName="invoice_dunning_statuses">
-			<column name="id" valueSequenceNext="invoice_dunning_statuses_seq"/>
-			<column name="created" valueDate="${db.current.time}"/>
-			<column name="creator" value="OPENCELL.ADMIN"/>
-			<column name="version" valueNumeric="1"/>
-			<column name="status" value="Actif"/>
-			<column name="context" value="ACTIVE_DUNNING"/>
-			<column name="dunning_settings_id" valueSequenceCurrent="dunning_settings_seq"/>
-		</insert>
-
 		<insert tableName="dunning_collection_plan_statuses">
 			<column name="id" valueSequenceNext="dunning_collection_plan_statuses_seq"/>
 			<column name="created" valueDate="${db.current.time}"/>
