@@ -39,7 +39,6 @@ import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -1061,19 +1060,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
     
     public void instanciateCounterPeriods(ChargeInstance chargeInstance) {
-    	CounterPeriod counterPeriod = null;
+
     	// accumulatorCounter
     	for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
-    		if (counterInstance != null) {
-    			counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance,chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-    					chargeInstance);
-    		}
+            if (counterInstance != null) {
+                counterInstanceService.createCounterPeriodIfMissing(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            }
     	}
     	// standard counter
-    	if (chargeInstance.getCounter() != null) {
-    		counterPeriod = counterInstanceService.getOrCreateCounterPeriod(chargeInstance.getCounter(),chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-    				chargeInstance);
-    	}
+        if (chargeInstance.getCounter() != null) {
+            counterInstanceService.createCounterPeriodIfMissing(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+        }
     }
     
     
