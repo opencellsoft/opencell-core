@@ -3,6 +3,7 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -80,15 +81,16 @@ public class OneShotRatingService extends RatingService implements Serializable 
         try {
             ratingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, chargeMode, null, null, false, isVirtual);
 
-            incrementAccumulatorCounterValues(ratingResult.getWalletOperations(), ratingResult, isVirtual);
-
-            if (!isVirtual && !ratingResult.getWalletOperations().isEmpty()) {
+            final List<WalletOperation> walletOperations = ratingResult.getWalletOperations();
+			incrementAccumulatorCounterValues(walletOperations, ratingResult, isVirtual);
+            chargeInstance.setWalletOperations(walletOperations);
+            if (!isVirtual && !walletOperations.isEmpty()) {
                 if (ratingResult.getTriggeredEDRs() != null) {
                     for (EDR triggeredEdr : ratingResult.getTriggeredEDRs()) {
                         edrService.create(triggeredEdr);
                     }
                 }
-                for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
+                for (WalletOperation walletOperation : walletOperations) {
                     walletOperationService.chargeWalletOperation(walletOperation);
                 }
 
@@ -110,7 +112,7 @@ public class OneShotRatingService extends RatingService implements Serializable 
 
                     int delay = 0;
                     if (billingAccount.getBillingCycle().getInvoiceDateDelayEL() != null) {
-                        delay = InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), ratingResult.getWalletOperations().get(0), billingAccount);
+                        delay = InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperations.get(0), billingAccount);
                     }
 
                     Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
