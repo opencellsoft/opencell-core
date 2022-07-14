@@ -77,6 +77,9 @@ public class CsvGenericExportManager {
             }
             //EXCEL
             if(fileType.equals("EXCEL")) {
+            	if(!Files.exists(Path.of(saveDirectory))){
+                    Files.createDirectories(Path.of(saveDirectory));
+                }
                 extensionFile = ".xlsx";
                 File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
                 writeExcelFile(outputExcelFile, records);
