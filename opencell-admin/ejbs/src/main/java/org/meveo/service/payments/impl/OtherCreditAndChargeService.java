@@ -46,6 +46,8 @@ import org.meveo.service.base.PersistenceService;
 public class OtherCreditAndChargeService extends
 		PersistenceService<OtherCreditAndCharge> {
 
+	private static final String OCC_PPL_CREATION = "PPL_CREATION";
+
 	@Inject
 	private OCCTemplateService occTemplateService;
 
@@ -113,6 +115,12 @@ public class OtherCreditAndChargeService extends
 		otherCreditAndCharge.setAmount(amount);
 		otherCreditAndCharge.setUnMatchingAmount(amount);
 		otherCreditAndCharge.setMatchingStatus(MatchingStatusEnum.O);
+
+		if (OCC_PPL_CREATION.equals(codeOCCTemplate)) {
+			// for PPL CREATION, collection date shall have the same value of due date
+			// https://opencellsoft.atlassian.net/browse/INTRD-8501
+			otherCreditAndCharge.setCollectionDate(dueDate);
+		}
 		
 		if (customerAccount != null) {
 		    customerAccount.getAccountOperations().add(otherCreditAndCharge);
