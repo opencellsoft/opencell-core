@@ -44,6 +44,7 @@ public class CsvGenericExportManager {
     private String saveDirectory;
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType){
+    	log.debug("Save directory "+paramBeanFactory.getChrootDir());
     	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
         if (mapResult != null && !mapResult.isEmpty()) {        	
             Path filePath = saveAsRecord(entityName, mapResult, fileType);            

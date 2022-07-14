@@ -175,7 +175,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, fileFormat);
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, fileFormat, entityName);
         return Response.ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
                 .build();
