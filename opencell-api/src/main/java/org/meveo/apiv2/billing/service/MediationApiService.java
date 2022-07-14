@@ -379,7 +379,7 @@ public class MediationApiService {
                 }
             }
 
-            if (cdr.getStatus() == CDRStatusEnum.ERROR) {
+            if (cdr.getStatus() == CDRStatusEnum.ERROR || cdr.getStatus() == CDRStatusEnum.DISCARDED) {
 
                 String errorReason = cdr.getRejectReason();
                 if (cdr.getRejectReasonException() != null) {
