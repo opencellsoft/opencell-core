@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -229,6 +230,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 
+	@Transactional
 	@Override
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);

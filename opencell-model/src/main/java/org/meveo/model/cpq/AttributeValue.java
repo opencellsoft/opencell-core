@@ -3,6 +3,7 @@ package org.meveo.model.cpq;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,8 +14,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ServiceInstance;
 
 @MappedSuperclass
 public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity {
@@ -162,4 +166,24 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 	public void setBooleanValue(Boolean booleanValue) {
 		this.booleanValue = booleanValue;
 	}
+	
+	@SuppressWarnings("incomplete-switch")
+	public Object getValue() {
+		if(attribute.getAttributeType()!=null) {
+			switch (attribute.getAttributeType()) {
+				case TOTAL :
+				case COUNT :
+				case NUMERIC :
+				case INTEGER: return this.getDoubleValue() != null;
+				case LIST_MULTIPLE_TEXT:
+				case LIST_TEXT:
+				case EXPRESSION_LANGUAGE :
+				case TEXT:	return this.getStringValue();  
+				case DATE: return this.getDateValue();  
+			}
+		}
+		return null;
+	}
+	
+	
 }
