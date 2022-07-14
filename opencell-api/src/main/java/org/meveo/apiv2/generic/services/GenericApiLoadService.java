@@ -176,7 +176,7 @@ public class GenericApiLoadService {
                         .toJson(genericFields, entityClass, Collections.singletonMap("data", entity), excludedFields));
     }
 
-	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, String fileFormat) throws ClassNotFoundException {
+	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, String fileFormat, String entityName) throws ClassNotFoundException {
 		
 		SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
         searchConfig.setFetchFields(new ArrayList<>(genericFields));
@@ -188,7 +188,7 @@ public class GenericApiLoadService {
 										        .map(line -> addResultLine(line, genericFields.iterator()))
 										        .collect(Collectors.toList());
         
-        String filePath = csvGenericExportManager.export("billingAccount" , mapResult, fileFormat);
+        String filePath = csvGenericExportManager.export(entityName, mapResult, fileFormat);
         
         
 		

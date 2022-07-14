@@ -44,6 +44,7 @@ public class CsvGenericExportManager {
     private String saveDirectory;
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType){
+    	log.debug("Save directory "+paramBeanFactory.getChrootDir());
     	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
         if (mapResult != null && !mapResult.isEmpty()) {        	
             Path filePath = saveAsRecord(entityName, mapResult, fileType);            
@@ -64,21 +65,22 @@ public class CsvGenericExportManager {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
         		.appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
         try {
+        	String time = LocalDateTime.now().format(formatter);
         	//CSV
             if(fileType.equals("CSV")) {
                 if(!Files.exists(Path.of(saveDirectory))){
                     Files.createDirectories(Path.of(saveDirectory));
                 }
-                File csvFile = new File(saveDirectory + fileName + LocalDateTime.now().format(formatter) + extensionFile);
+                File csvFile = new File(saveDirectory + fileName + time + extensionFile);
                 writeCsvFile(records, csvFile);
-                return Path.of(saveDirectory, fileName + LocalDateTime.now().format(formatter) + extensionFile);
+                return Path.of(saveDirectory, fileName + time + extensionFile);
             }
             //EXCEL
             if(fileType.equals("EXCEL")) {
                 extensionFile = ".xlsx";
-                File outputExcelFile = new File(saveDirectory + fileName + LocalDateTime.now().format(formatter) + extensionFile);
+                File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
                 writeExcelFile(outputExcelFile, records);
-                return Path.of(saveDirectory + fileName + LocalDateTime.now().format(formatter) + extensionFile);
+                return Path.of(saveDirectory + fileName + time + extensionFile);
             }
         } catch (IOException e) {
             throw new RuntimeException("error during file writing : ", e);
