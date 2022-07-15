@@ -77,6 +77,7 @@ public class MethodCallingUtils {
      * @param runnable A runnable method to execute once lock is obtained
      */
     public static <T> T executeFunctionLocked(Long lockId, Callable<T> function) throws Exception {
+
         AtomicIntegerWithEquals counterAndLock = identifierToLockCounter.compute(lockId, (key, existing) -> {
             if (existing == null) {
                 return new AtomicIntegerWithEquals(1);
@@ -84,7 +85,6 @@ public class MethodCallingUtils {
             existing.atomicValue.incrementAndGet();
             return existing;
         });
-
         synchronized (counterAndLock) {
             try {
                 return function.call();
