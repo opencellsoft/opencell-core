@@ -119,7 +119,7 @@ public class OpenOrderQuoteCreateApiTest {
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.create(dto);
@@ -163,7 +163,7 @@ public class OpenOrderQuoteCreateApiTest {
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderProductService.findByProductCodeAndTemplate(any(), any())).thenReturn(oop);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.create(dto);
@@ -208,7 +208,7 @@ public class OpenOrderQuoteCreateApiTest {
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.create(dto);
@@ -660,7 +660,7 @@ public class OpenOrderQuoteCreateApiTest {
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.create(dto);
@@ -1654,7 +1654,7 @@ public class OpenOrderQuoteCreateApiTest {
         ooq.setActivationDate(null);
         ooq.setArticles(articles);
         ooq.setCurrency(null);
-        ooq.setOpenOrderNumber(UUID.randomUUID().toString());
+        ooq.setQuoteNumber(UUID.randomUUID().toString());
         ooq.setOpenOrderTemplate(null);
         ooq.setBillingAccount(null);
         ooq.setEndOfValidityDate(null);
