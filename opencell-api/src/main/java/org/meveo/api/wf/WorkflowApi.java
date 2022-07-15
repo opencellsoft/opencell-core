@@ -260,15 +260,13 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
             handleMissingParameters();
         }
 
-        Class<BusinessEntity> clazz = null;
+        BusinessEntity businessEntity = null;
         try {
-            clazz = (Class<BusinessEntity>) Class.forName(baseEntityName);
-        } catch (Exception e) {
+            businessEntity = workflowService.mapWFBaseEntityInstance(baseEntityName, baseEntityInstanceId);
+        } catch (ClassNotFoundException e) {
             throw new MeveoApiException("Cant find class for baseEntityName");
         }
-        businessEntityService.setEntityClass(clazz);
 
-        BusinessEntity businessEntity = businessEntityService.findByCode(baseEntityInstanceId);
         if (businessEntity == null) {
             throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
         }

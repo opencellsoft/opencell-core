@@ -62,6 +62,7 @@ import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WFStatusService;
 import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
+import org.meveo.service.wf.WorkflowService;
 
 /**
  * The Class GenericWorkflowApi
@@ -90,6 +91,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
     @Inject
     private FilterService filterService;
+
+    @Inject
+    private WorkflowService workflowService;
 
     @Override
     public GenericWorkflow create(GenericWorkflowDto genericWorkflowDto) throws MeveoApiException, BusinessException {
@@ -378,15 +382,12 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
         log.debug("genericWorkflow.getCode() : " + genericWorkflow.getCode());
 
-        Class<BusinessEntity> clazz = null;
+        BusinessEntity businessEntity = null;
         try {
-            clazz = (Class<BusinessEntity>) Class.forName(baseEntityName);
-        } catch (Exception e) {
+            businessEntity = workflowService.mapWFBaseEntityInstance(baseEntityInstanceId, baseEntityInstanceId);
+        } catch (ClassNotFoundException e) {
             throw new MeveoApiException("Cant find class for baseEntityName");
         }
-        businessEntityService.setEntityClass(clazz);
-
-        BusinessEntity businessEntity = businessEntityService.findByCode(baseEntityInstanceId);
         if (businessEntity == null) {
             throw new EntityDoesNotExistsException(BaseEntity.class, baseEntityInstanceId);
         }
@@ -440,13 +441,10 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
     }
 
     private BusinessEntity businessEntityFrom(String baseEntityName, String entityInstanceCode) {
-        Class<BusinessEntity> clazz;
         try {
-            clazz = (Class<BusinessEntity>) Class.forName(baseEntityName);
-        } catch (Exception e) {
-            throw new MeveoApiException("Can not find class for baseEntityName");
+            return workflowService.mapWFBaseEntityInstance(baseEntityName, entityInstanceCode);
+        } catch (ClassNotFoundException e) {
+            throw new MeveoApiException("Cant find class for baseEntityName");
         }
-        businessEntityService.setEntityClass(clazz);
-        return businessEntityService.findByCode(entityInstanceCode);
     }
 }
