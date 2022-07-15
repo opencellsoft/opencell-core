@@ -44,14 +44,6 @@ public class StandardReportResourceImpl implements StandardReportResource {
         agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
                 ? agedReceivableMapper.toEntityList(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, numberOfPeriods);
-    	EntityTag etag = new EntityTag(Integer.toString(agedReceivablesList.hashCode()));
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(1000);
-        Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-        if (builder != null) {
-            builder.cacheControl(cc);
-            return builder.build();
-        }
         ImmutableAgedReceivable[] agedReceivablesData = agedReceivablesList
                 .stream()
                 .map(agedReceivableDto ->
@@ -66,6 +58,6 @@ public class StandardReportResourceImpl implements StandardReportResource {
                 .total(count)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(StandardReportResource.class)
                         .offset(offset).limit(limit).total(count).build());
-        return Response.ok().cacheControl(cc).tag(etag).entity(agedReceivables).build();
+        return Response.ok().entity(agedReceivables).build();
     }
 }
