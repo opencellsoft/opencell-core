@@ -8,6 +8,7 @@ import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteDto;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
@@ -44,7 +45,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.*;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.ACCEPTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.CANCELED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.DRAFT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.REJECTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.SENT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.VALIDATED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.WAITING_VALIDATION;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 
@@ -136,6 +143,10 @@ public class OpenOrderQuoteApi {
 
         if (ooq == null) {
             throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
+        }
+
+        if (ACCEPTED == ooq.getStatus() || CANCELED == ooq.getStatus()) {
+            throw new BusinessApiException("Cannot update OpenOrderQuote with status : " + ooq.getStatus());
         }
 
         OpenOrderQuote ooqWithSameCode = openOrderQuoteService.findByCode(dto.getCode());
@@ -249,10 +260,10 @@ public class OpenOrderQuoteApi {
                 // check that Product/Article list is not empty(depending on type)
 
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
-                    if (ooq.getStatus() != DRAFT) {
+                    if (ooq.getStatus() != DRAFT && ooq.getStatus() != SENT) {
                         throw new BusinessApiException("Open Order Quote status must be DRAFT");
                     }
-                } else if (ooq.getStatus() != VALIDATED) {
+                } else if (ooq.getStatus() != VALIDATED && ooq.getStatus() != SENT) {
                     throw new BusinessApiException("Open Order Quote status must be VALIDATED");
                 }
 
@@ -266,7 +277,9 @@ public class OpenOrderQuoteApi {
 
                 break;
             case VALIDATED:
-                openOrderService.create(ooq);
+                OpenOrder oor = openOrderService.create(ooq);
+                ooq.setOpenOrder(oor);
+                openOrderQuoteService.update(ooq);
                 break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
@@ -294,7 +307,7 @@ public class OpenOrderQuoteApi {
         ooq.setDescription(dto.getDescription());
         ooq.setOpenOrderType(dto.getOpenOrderType());
         ooq.setMaxAmount(dto.getMaxAmount());
-        ooq.setOpenOrderNumber(serviceSingleton.getNextOpenOrderSequence());
+        ooq.setQuoteNumber(serviceSingleton.getNextOpenOrderQuoteSequence());
         ooq.setOpenOrderTemplate(template); // 3.4 template: set at creation, cannot be changed later.
         ooq.setExternalReference(dto.getExternalReference());
         ooq.setEndOfValidityDate(dto.getEndOfValidityDate());

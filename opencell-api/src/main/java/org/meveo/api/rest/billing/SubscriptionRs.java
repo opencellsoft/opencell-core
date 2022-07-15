@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
@@ -102,7 +103,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus create(SubscriptionDto postData);
+    Response create(SubscriptionDto postData);
 
     /**
      * Updates a subscription. It cannot update a subscription with status=RESILIATED
@@ -125,7 +126,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus update(SubscriptionDto postData);
+    Response update(SubscriptionDto postData);
 
     /**
      * Instantiate a Service subscription 
@@ -496,7 +497,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus createOrUpdate(SubscriptionDto subscriptionDto);
+    Response createOrUpdate(SubscriptionDto subscriptionDto);
 
     /**
      * Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if

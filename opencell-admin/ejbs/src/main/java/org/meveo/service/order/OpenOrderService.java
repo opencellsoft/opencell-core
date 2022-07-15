@@ -25,6 +25,7 @@ import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
@@ -39,6 +40,9 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 
 	@Inject
 	private OpenOrderSettingService openOrderSettingService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
 	/**
 	 * Find Open orders compatible with InvoiceLine in parameter.
@@ -141,7 +145,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         openOrder.setBillingAccount(openOrderQuote.getBillingAccount());
         openOrder.setType(openOrderQuote.getOpenOrderType());
         openOrder.setOpenOrderTemplate(openOrderQuote.getOpenOrderTemplate());
-        openOrder.setOpenOrderNumber(openOrderQuote.getOpenOrderNumber());
+        openOrder.setOpenOrderNumber(serviceSingleton.getNextOpenOrderSequence());
         openOrder.setInitialAmount(openOrderQuote.getMaxAmount());
         openOrder.setBalance(openOrderQuote.getMaxAmount());
         openOrder.setCurrency(openOrderQuote.getCurrency());
@@ -173,9 +177,6 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
         if (openOrderQuote.getOpenOrderTemplate() == null) {
             missingFields.add("openOrderTemplate");
-        }
-        if (openOrderQuote.getOpenOrderNumber() == null) {
-            missingFields.add("openOrder");
         }
         if (openOrderQuote.getMaxAmount() == null) {
             missingFields.add("maxAmount");

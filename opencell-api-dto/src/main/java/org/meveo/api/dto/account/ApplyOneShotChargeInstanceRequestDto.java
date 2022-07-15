@@ -68,6 +68,11 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
      * The create wallet.
      */
     private Boolean createWallet;
+    
+    /**
+     * The create RatedTransactions.
+     */
+    private Boolean generateRTs;
 
     /**
      * The operation date.
@@ -372,6 +377,20 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="
-                + criteria2 + ", criteria3=" + criteria3 + "]";
+                + criteria2 + ", criteria3=" + criteria3 + ", generateRTs=" + generateRTs + "]";
     }
+
+	/**
+	 * @return the generateRTs
+	 */
+	public Boolean getGenerateRTs() {
+		return generateRTs;
+	}
+
+	/**
+	 * @param generateRTs the generateRTs to set
+	 */
+	public void setGenerateRTs(Boolean generateRTs) {
+		this.generateRTs = generateRTs;
+	}
 }

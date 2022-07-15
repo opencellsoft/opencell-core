@@ -11886,7 +11886,7 @@
             <column name="open_order_template_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="open_order_number" type="varchar(255)">
+            <column name="quote_number" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="max_amount" type="numeric">
@@ -11907,6 +11907,7 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+			<column name="open_order_id" type="bigint" />
 
         </createTable>
                                              
@@ -16368,7 +16369,9 @@
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="open_order_quote"
                                  constraintName="fk_billing_account_quote" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-        
+        <addForeignKeyConstraint baseColumnNames="open_order_id" baseTableName="open_order_quote"
+                                 constraintName="fk_open_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order" />
         <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="open_order_threshold" constraintName="fk_threshold_open_quote" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
     </changeSet>
@@ -18337,6 +18340,7 @@
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
+	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
