@@ -17,6 +17,7 @@ import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
+import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
@@ -117,7 +118,7 @@ public class OpenOrderQuoteUpdateApiTest {
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.update(1L, dto);
@@ -341,6 +342,110 @@ public class OpenOrderQuoteUpdateApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "Template cannot be updated");
+        }
+
+    }
+
+    @Test
+    public void updateOOQWithInvalidACCEPTEDStatus() {
+        ThresholdInput thresholdInput = buildThreshold(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setId(1L);
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        OpenOrderTemplate otherTemplate = new OpenOrderTemplate();
+        otherTemplate.setId(2L);
+
+        OpenOrderQuote ooq = new OpenOrderQuote();
+        ooq.setId(1L);
+        ooq.setOpenOrderTemplate(template);
+        ooq.setStatus(OpenOrderQuoteStatusEnum.ACCEPTED);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
+
+        try {
+            openOrderQuoteApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Cannot update OpenOrderQuote with status : ACCEPTED");
+        }
+
+    }
+
+    @Test
+    public void updateOOQWithInvalidCANCELEDStatus() {
+        ThresholdInput thresholdInput = buildThreshold(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setId(1L);
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        OpenOrderTemplate otherTemplate = new OpenOrderTemplate();
+        otherTemplate.setId(2L);
+
+        OpenOrderQuote ooq = new OpenOrderQuote();
+        ooq.setId(1L);
+        ooq.setOpenOrderTemplate(template);
+        ooq.setStatus(OpenOrderQuoteStatusEnum.CANCELED);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
+
+        try {
+            openOrderQuoteApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Cannot update OpenOrderQuote with status : CANCELED");
         }
 
     }
@@ -1107,7 +1212,7 @@ public class OpenOrderQuoteUpdateApiTest {
         ooq.setActivationDate(null);
         ooq.setArticles(articles);
         ooq.setCurrency(null);
-        ooq.setOpenOrderNumber(UUID.randomUUID().toString());
+        ooq.setQuoteNumber(UUID.randomUUID().toString());
         ooq.setOpenOrderTemplate(null);
         ooq.setBillingAccount(null);
         ooq.setEndOfValidityDate(null);

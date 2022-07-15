@@ -51,9 +51,9 @@ public class OpenOrderQuote extends BusinessEntity {
 	@NotNull
     private OpenOrderTemplate openOrderTemplate;
 	
-	@Column(name = "open_order_number", updatable = false)
+	@Column(name = "quote_number", updatable = false)
 	@NotNull
-	private String openOrderNumber;
+	private String quoteNumber;
 	
 	@Column(name = "max_amount")
 	@NotNull
@@ -97,9 +97,10 @@ public class OpenOrderQuote extends BusinessEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "open_order_quote_tags", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
-    
 
-
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "open_order_id", nullable = false)
+	private OpenOrder openOrder;
 
     public OpenOrderTypeEnum getOpenOrderType() {
         return openOrderType;
@@ -139,14 +140,6 @@ public class OpenOrderQuote extends BusinessEntity {
 
 	public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
 		this.openOrderTemplate = openOrderTemplate;
-	}
-
-	public String getOpenOrderNumber() {
-		return openOrderNumber;
-	}
-
-	public void setOpenOrderNumber(String openOrderNumber) {
-		this.openOrderNumber = openOrderNumber;
 	}
 
 	public BigDecimal getMaxAmount() {
@@ -211,5 +204,21 @@ public class OpenOrderQuote extends BusinessEntity {
 
 	public void setArticles(List<OpenOrderArticle> articles) {
 		this.articles = articles;
-	} 
+	}
+
+	public String getQuoteNumber() {
+		return quoteNumber;
+	}
+
+	public void setQuoteNumber(String quoteNumber) {
+		this.quoteNumber = quoteNumber;
+	}
+
+	public OpenOrder getOpenOrder() {
+		return openOrder;
+	}
+
+	public void setOpenOrder(OpenOrder openOrder) {
+		this.openOrder = openOrder;
+	}
 }
