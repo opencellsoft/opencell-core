@@ -96,7 +96,7 @@ public class WorkflowHistory extends AuditableEntity {
      * Executed actions and their execution report
      */
     @OneToMany(mappedBy = "workflowHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<WorkflowHistoryAction> actionsAndReports = new ArrayList<WorkflowHistoryAction>();
+    private List<WorkflowHistoryAction> actionsAndReports = new ArrayList<>();
 
     public WorkflowHistory() {
 
