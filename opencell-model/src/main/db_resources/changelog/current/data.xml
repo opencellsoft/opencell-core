@@ -8233,4 +8233,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-8507_20220715" author="ZBariki">
+		<update tableName="billing_wallet_operation">
+			<column name="rated_transaction_id" value="null"/>
+			<where>rated_transaction_id NOT IN (SELECT id FROM billing_rated_transaction)</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

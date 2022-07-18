@@ -14,6 +14,7 @@ import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -108,7 +109,7 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         validateTags(dto, tags);
@@ -155,7 +156,7 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         if (!template.getId().equals(ooq.getOpenOrderTemplate().getId())) {
@@ -184,7 +185,7 @@ public class OpenOrderQuoteApi {
         return billingAccount;
     }
 
-    private OpenOrderTemplate getOpenOrderTemplate(OpenOrderQuoteDto dto) {
+    private OpenOrderTemplate validateAndGetOpenOrderTemplate(OpenOrderQuoteDto dto) {
         OpenOrderTemplate template = openOrderTemplateService.findByCode(dto.getOpenOrderTemplate());
 
         if (template == null) {
@@ -192,9 +193,9 @@ public class OpenOrderQuoteApi {
         }
 
         // To activate in SPRINT 21
-        /*if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
+        if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
             throw new BusinessApiException("Template shall be in ACTIVE status");
-        }*/
+        }
         return template;
     }
 
@@ -252,6 +253,10 @@ public class OpenOrderQuoteApi {
                     throw new BusinessApiException("Open Order Quote status must be SENT");
                 }
 
+                OpenOrder oor = openOrderService.create(ooq);
+                ooq.setOpenOrder(oor);
+                openOrderQuoteService.update(ooq);
+
                 break;
 
             case SENT:
@@ -277,10 +282,6 @@ public class OpenOrderQuoteApi {
 
                 break;
             case VALIDATED:
-                OpenOrder oor = openOrderService.create(ooq);
-                ooq.setOpenOrder(oor);
-                openOrderQuoteService.update(ooq);
-                break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
                     throw new BusinessApiException("ASK VALIDATION feature is not activated");

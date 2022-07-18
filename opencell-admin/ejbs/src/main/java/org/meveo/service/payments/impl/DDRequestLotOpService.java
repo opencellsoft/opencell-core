@@ -44,7 +44,7 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 			ddRequestOpEnum = DDRequestOpEnum.CREATE;
 		}
 		StringBuilder selectQuery = new StringBuilder("from ").append(DDRequestLotOp.class.getSimpleName())
-				.append(" as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and ")
+				.append(" as p  left join fetch p.ddrequestLOT t left join fetch p.seller s where p.status=:statusIN and ")
 				.append(" p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN ").append(seller == null ? "" : " and  p.seller =:sellerIN")
 				.append(" and  p.ddrequestOp =:ddrequestOpIN");
 		try {
