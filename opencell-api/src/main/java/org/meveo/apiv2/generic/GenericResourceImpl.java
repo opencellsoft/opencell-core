@@ -47,12 +47,6 @@ public class GenericResourceImpl implements GenericResource {
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
         return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
-//                .header("Access-Control-Allow-Origin", "*")
-//                .header("Access-Control-Allow-Credentials", "true")
-//                .header("Access-Control-Allow-Headers",
-//                        "origin, content-type, accept, authorization")
-//                .header("Access-Control-Allow-Methods",
-//                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
