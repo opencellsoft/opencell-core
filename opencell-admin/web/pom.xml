@@ -263,6 +263,10 @@
                             <token>@BUILD_NUMBER@</token>
                             <value>${buildNumber}</value>
                         </replacement>
+                        <replacement>
+                            <token>@COMMIT_DATE@</token>
+                            <value>${commitDate}</value>
+                        </replacement>
                     </replacements>
                 </configuration>
             </plugin>

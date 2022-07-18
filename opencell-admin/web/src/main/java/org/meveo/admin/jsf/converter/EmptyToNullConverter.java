@@ -15,28 +15,36 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.admin.jsf.converter;
 
-package org.meveo.service.notification;
-
-import javax.ejb.Stateless;
-
-import org.meveo.commons.keystore.KeystoreManager;
-import org.meveo.model.notification.WebHook;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 
 /**
- * A service class to manage CRUD operations on Webhook notification entity
- * 
- * @author Andrius Karpavicius
+ * The jsf converter which allow submitting null string instead of empty.
+ *
+ * @author Abdellatif BARI
  */
-@Stateless
-public class WebHookService extends NotificationInstanceService<WebHook> {
-    @Override
-    public void remove(WebHook webHook) {
-        // remove credential of webhook in the keystore
-    	if(KeystoreManager.existKeystore()) {
-    		KeystoreManager.removeCredential(webHook.getClass().getSimpleName() + "." + webHook.getId());
-    	}
+public class EmptyToNullConverter implements Converter {
 
-        super.remove(webHook);
+
+    @Override
+    public String getAsString(FacesContext facesContext, UIComponent component, Object modelValue) {
+        return (modelValue == null) ? "" : modelValue.toString();
+    }
+
+    @Override
+    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String submittedValue) {
+        if (submittedValue == null || submittedValue.isEmpty()) {
+            /*
+            if (uiComponent instanceof EditableValueHolder) {
+                ((EditableValueHolder) uiComponent).setSubmittedValue(null);
+            }
+            */
+            return null;
+        }
+
+        return submittedValue;
     }
 }

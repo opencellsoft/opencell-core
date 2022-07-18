@@ -111,7 +111,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -165,11 +164,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private ContractItemService contractItemService;
     
     @Inject
-    private RecurringChargeInstanceService recurringChargeInstanceService;
-    
-    
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     @Inject
     protected CounterInstanceService counterInstanceService;
@@ -182,9 +177,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private DiscountPlanItemService discountPlanItemService;
     @Inject
     private AccountingArticleService accountingArticleService;
-
-    @Inject
-    private WalletOperationService walletOperationService;
 
     /**
      * @param level level enum
@@ -282,7 +274,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, Reservation reservation, boolean isVirtual) throws InvalidELException, RatingException {
 
         WalletOperation walletOperation = null;
-
+        chargeInstance=chargeInstanceService.retrieveIfNotManaged(chargeInstance);
         if (quantityInChargeUnits == null) {
             quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
         }
@@ -589,7 +581,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
             if (bareWalletOperation.getTax() == null) {
 
-                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate(), accountingArticle);
+                TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
                 if(taxInfo==null) {
                 	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
                 }
@@ -1386,7 +1378,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Map<ChargeInstance, List<WalletOperation>> groupedWOByChargeInstance = walletOperations.stream().collect(Collectors.groupingBy(wo -> wo.getChargeInstance()));
 
         for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
-            ChargeInstance chargeInstance = groupedWos.getKey();
+            ChargeInstance chargeInstance = chargeInstanceService.retrieveIfNotManaged(groupedWos.getKey());
             if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
                 List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
                 ratingResult.addCounterChange(counterChangeInfo);

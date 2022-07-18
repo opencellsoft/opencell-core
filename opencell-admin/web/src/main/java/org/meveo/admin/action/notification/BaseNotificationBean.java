@@ -150,6 +150,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
+                events.add(NotificationEventTypeEnum.PAYMENT_STATUS_UPDATED);
             } else if (clazzStr.equals(CommercialOrder.class.getName())) {
                 events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
