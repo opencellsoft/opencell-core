@@ -336,7 +336,7 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-
+                        usageRatingService.count(); // remove this line and usageRatingService will throw nullpointerExpection
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
 
