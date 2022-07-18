@@ -106,21 +106,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
-        	if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
-				if(validity==null || validity.getTo()==null) {
-					throw new InvalidParameterException("ending date must not be null to update a published pricePlanMatrixVersion ");
-        		} else if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-                	throw new InvalidParameterException("ending date must be greater than today");
-                }
-        		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
-        	} else {
-	            populatePricePlanMatrixVersion(pricePlanMatrixVersion, pricePlanMatrixVersionDto, pricePlanMatrixVersionDto.getStatusEnum(), pricePlanMatrixVersionDto.getStatusDate());
-	            try {
-	            	pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
-	            } catch(BusinessException e) {
-	            	throw new MeveoApiException(e.getMessage());
-	            }
-        	}
+            throw new MeveoApiException("PricePlanMatrixVersion[code=" + pricePlanMatrixVersionDto.getLabel() + ",version=" + pricePlanMatrixVersionDto.getVersion() + "] already exists");
         }
         pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
 
