@@ -18,6 +18,7 @@ import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
@@ -89,6 +90,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -136,6 +138,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -180,6 +183,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com")));
 
@@ -225,6 +229,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -272,6 +277,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER, ThresholdRecipientsEnum.SALES_AGENT), "test@oc.com")));
 
@@ -320,6 +326,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -368,6 +375,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -416,6 +424,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -466,6 +475,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 50, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -514,6 +524,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com")));
 
@@ -566,6 +577,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(
                 buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
@@ -627,6 +639,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
         template.setThresholds(List.of(
                 buildThreshold(1, 20, List.of(ThresholdRecipientsEnum.CUSTOMER), "test@oc.com"),
@@ -699,6 +712,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -747,6 +761,41 @@ public class OpenOrderQuoteCreateApiTest {
 
     }
 
+    @Test
+    public void templateDisabledErr() {
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                null, Set.of("TAG_A"), Set.of("A"), null);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
+        Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Template shall be in ACTIVE status");
+        }
+
+    }
+
     @Test(expected = EntityDoesNotExistsException.class)
     public void tagNotFoundErr() {
         OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
@@ -756,6 +805,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -794,6 +844,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -840,6 +891,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -886,6 +938,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -932,6 +985,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -978,6 +1032,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -1024,6 +1079,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -1070,6 +1126,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -1107,6 +1164,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -1144,6 +1202,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         BillingAccount billingAccount = new BillingAccount();
@@ -1190,6 +1249,7 @@ public class OpenOrderQuoteCreateApiTest {
 
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
 
         BillingAccount billingAccount = new BillingAccount();
