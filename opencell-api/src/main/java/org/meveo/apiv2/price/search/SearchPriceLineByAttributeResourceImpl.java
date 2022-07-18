@@ -27,7 +27,8 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
         return  Response.ok().entity(buildResponse(resultList,
                         (Integer) searchInfo.getOrDefault("limit", 10),
                         (Integer) searchInfo.getOrDefault("offset", 0),
-                        (String) searchInfo.getOrDefault("order","ASCENDING")))
+                        (String) searchInfo.getOrDefault("sortBy","id"),
+                        (String) searchInfo.getOrDefault("order","ASC")))
                 .build();
     }
 
@@ -44,8 +45,8 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     private String buildQuery(Map<String, Object> searchInfo) {
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
-        queryString.append(" JOIN FETCH ppml.pricePlanMatrixValues ppmv ");
-        queryString.append(" WHERE LOWER(ppml.description) LIKE :description ");
+        queryString.append(" LEFT JOIN FETCH ppml.pricePlanMatrixValues ppmv ");
+        queryString.append(" WHERE (LOWER(ppml.description) LIKE :description OR ppml.description is null) ");
         if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
             queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
         }
@@ -60,6 +61,10 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
             queryString.append(appendAttributesToQuery((List<Map<String, Object>>) searchInfo.getOrDefault("attributes", Collections.EMPTY_LIST)));
             queryString.append(")");
         }
+        queryString.append(" ORDER BY ppml." + searchInfo.getOrDefault("sortBy","id"));
+        queryString.append(" ");
+        queryString.append(searchInfo.getOrDefault("order","ASC"));
+
         return queryString.toString();
     }
 
@@ -101,7 +106,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
         return new Date((Long) value);
     }
 
-    private Map<String, Object> buildResponse(List<PricePlanMatrixLine> resultList, int limit, int offset, String order) {
+    private Map<String, Object> buildResponse(List<PricePlanMatrixLine> resultList, int limit, int offset, String sortBy, String order) {
         Map<String, Object> response = new HashMap<>();
         response.put("total", resultList.size());
         List<PricePlanMatrixLine> pricePlanMatrixLines = ((resultList.size() + offset) <= limit) ? resultList : resultList.subList(offset, limit + offset);
@@ -118,6 +123,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
         response.put("data", mapper.readValue(mapper.toJson(fields, PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));
         response.put("limit", limit);
         response.put("offset", offset);
+        response.put("sortBy", sortBy);
         response.put("order", order);
         return response;
     }
