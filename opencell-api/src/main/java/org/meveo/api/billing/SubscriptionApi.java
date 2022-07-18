@@ -163,6 +163,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -280,6 +281,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private CommercialOrderService commercialOrderService;
@@ -737,6 +741,7 @@ public class SubscriptionApi extends BaseApi {
                 ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
                 if (serviceTemplate == null) {
                     productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date());
+                    log.debug("getServiceToActivate - productVersion: " + productVersion + " - serviceToActivateDto.getCode(): " + serviceToActivateDto.getCode() + " - serviceToActivateDto.getSubscriptionDate(): " + serviceToActivateDto.getSubscriptionDate());
                     if(productVersion.isEmpty()){
                         throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
                     }
@@ -876,6 +881,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceTemplate == null) {
                 Date validityDate = serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date();
                 productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), validityDate);
+                log.debug("getServiceToActivate - productVersion: " + productVersion + " - serviceToActivateDto.getCode(): " + serviceToActivateDto.getCode() + " - validityDate: " + validityDate);
                 if(productVersion.isEmpty()) {
                     throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
                 }
@@ -1049,6 +1055,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceTemplate == null) {
                 Date validityDate = subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date();
                 productVersion = productService.getCurrentPublishedVersion(serviceToInstantiateDto.getCode(), validityDate);
+                log.debug("checkCompatibilityAndGetServiceToInstantiate - productVersion: " + productVersion + " - serviceToInstantiateDto.getCode(): " + serviceToInstantiateDto.getCode() + " - validityDate: " + validityDate);
                 if(productVersion.isEmpty()) {
                     throw new BusinessApiException("No service template or valid product version found for code: " + serviceToInstantiateDto.getCode());
                 }
@@ -1138,11 +1145,14 @@ public class SubscriptionApi extends BaseApi {
             	 serviceInstance=alreadyInstantiatedServices.get(0);
         	}
 
-            oneShotChargeInstanceService
+        	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
+        	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
+        		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
+        	}
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
             throw new MeveoApiException(e.getMessage());

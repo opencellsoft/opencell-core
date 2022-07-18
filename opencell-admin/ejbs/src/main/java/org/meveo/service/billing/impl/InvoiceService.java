@@ -107,6 +107,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
@@ -299,6 +300,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
 
+    @Inject
+    @InvoicePaymentStatusUpdated
+    protected Event<Invoice> invoicePaymentStatusUpdated;
+    
     @Inject
     private FilterService filterService;
 
@@ -2447,11 +2452,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (remove) {
             super.remove(invoice);
         } else {
-            super.update(invoice);
+        	cancelInvoiceById(invoice.getId());
         }
+        updateBillingRunStatistics(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
+    public void cancelInvoiceById(Long invoiceId) {
+        getEntityManager().createNamedQuery("Invoice.cancelInvoiceById")
+        .setParameter("now", new Date())
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
+    }
+    
+    public void updateBillingRunStatistics(Invoice invoice) {
+    	invoice = refreshOrRetrieve(invoice);
+        if(invoice != null) {
+        	if (invoice.getBillingRun() != null) {
+                billingRunService.updateBillingRunStatistics(invoice.getBillingRun());
+        	}
+        }
+    }
+
+    
     public void cancelInvoiceAndRts(Invoice invoice) {
         checkNonValidateInvoice(invoice);
         if (invoice.getRecordedInvoice() != null) {
@@ -2601,6 +2624,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void deleteInvoices(Long billingRunId) {
         BillingRun br = getBrById(billingRunId);
         deleteInvoicesByStatus(br, Arrays.asList(InvoiceStatusEnum.CANCELED));
+        billingRunService.updateBillingRunStatistics(br);
     }
 
     /**
@@ -4887,8 +4911,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param toMove
      */
     public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
-        BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
-        getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), Arrays.asList(InvoiceStatusEnum.SUSPECT));
+        
+        if(!invoices.isEmpty()) {
+            BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+            getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
+        }
     }
 
     /**
@@ -4897,6 +4925,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+        billingRunService.updateBillingRunStatistics(billingRun);
     }
 
     public void cancelRejectedInvoicesByBR(BillingRun billingRun) {
@@ -6010,7 +6039,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Updated invoice
      */
     public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+        boolean isFire = false;
         toUpdate = refreshOrRetrieve(toUpdate);
+        if (!toUpdate.getPaymentStatus().equals(invoiceResource.getPaymentStatus())) {
+            isFire = true;
+        }
         final InvoiceStatusEnum status = toUpdate.getStatus();
         if (!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
@@ -6080,6 +6113,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
         }
+        
+        if (isFire) {
+            invoicePaymentStatusUpdated.fire(toUpdate);
+        }
 
         return update(toUpdate);
     }
@@ -6115,6 +6152,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Object calculateInvoice(Invoice invoice) {
         invoice = invoiceService.retrieveIfNotManaged(invoice);
         final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
+        invoiceService.updateBillingRunStatistics(invoice);
         return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null,null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount,
             billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice, InvoiceProcessTypeEnum.MANUAL);
     }
@@ -6321,6 +6359,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.loadByBillingRun", Long.class)
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
+    }
+    
+    @Override
+    public Invoice update(Invoice entity) throws BusinessException {
+        Invoice invoiceOld = findById(entity.getId());
+        if (!invoiceOld.getPaymentStatus().equals(entity.getPaymentStatus())) {
+            invoicePaymentStatusUpdated.fire(entity);
+        }
+        super.update(entity);
+        return entity;
     }
 
 }

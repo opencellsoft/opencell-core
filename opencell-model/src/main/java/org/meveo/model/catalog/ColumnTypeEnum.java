@@ -128,12 +128,12 @@ public enum ColumnTypeEnum {
             if (attributeValue.getDateValue() == null || (pricePlanMatrixValue.getFromDateValue() == null && pricePlanMatrixValue.getToDateValue() == null)) {
                 return true;
             } else if (pricePlanMatrixValue.getFromDateValue() != null && pricePlanMatrixValue.getToDateValue() == null) {
-                return attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue());
+                return attributeValue.getDateValue().equals(pricePlanMatrixValue.getFromDateValue()) || attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue());
             } else if (pricePlanMatrixValue.getFromDateValue() == null || pricePlanMatrixValue.getToDateValue() != null) {
-                return attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue());
+                return attributeValue.getDateValue().equals(pricePlanMatrixValue.getToDateValue()) || attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue());
             } else {
-                return attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue())
-                        && attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue());
+                return (attributeValue.getDateValue().equals(pricePlanMatrixValue.getFromDateValue()) || attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue()))
+                        && (attributeValue.getDateValue().equals(pricePlanMatrixValue.getToDateValue()) || attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue()));
             }
         }
 
@@ -148,13 +148,13 @@ public enum ColumnTypeEnum {
             if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() == null &&  attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()) {
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() == null &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
             if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                 return true;
             }
-            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()
+            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()
                     && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()){
                 return true;
             }

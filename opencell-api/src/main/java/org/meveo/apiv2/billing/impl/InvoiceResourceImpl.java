@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -56,11 +57,14 @@ import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
+
+	private static final String PPL_CREATION = "PPL_CREATION";
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
@@ -155,7 +159,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
 								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
 										.forEach(matchingAmountAo -> {
-											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+											if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
+													!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+											 		!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
 												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
 											}
 										});
@@ -229,6 +235,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 
+	@Transactional
 	@Override
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);

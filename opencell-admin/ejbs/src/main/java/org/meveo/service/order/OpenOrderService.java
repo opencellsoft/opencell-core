@@ -15,14 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 import org.meveo.commons.utils.ListUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
+import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.base.BusinessService;
-
+import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
@@ -33,6 +37,12 @@ import java.util.Optional;
 
 @Stateless
 public class OpenOrderService extends BusinessService<OpenOrder> {
+
+	@Inject
+	private OpenOrderSettingService openOrderSettingService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
 	/**
 	 * Find Open orders compatible with InvoiceLine in parameter.
@@ -61,6 +71,60 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
     }
 
 	/**
+	 * Check and retrieve available OpenOrder for given Billing account and product
+	 * 
+	 * @param billingAccount
+	 * @param product
+	 * @param eventDate
+	 * @return
+	 */
+	public Optional<OpenOrder> checkAvailableOpenOrderForProduct(BillingAccount billingAccount, Product product, Date eventDate) {
+		OpenOrderSetting findLastOne = openOrderSettingService.findLastOne();
+		
+		if(findLastOne != null && findLastOne.getUseOpenOrders()) {
+			TypedQuery<OpenOrder> query = getEntityManager().createNamedQuery("OpenOrder.availableOOForProduct", OpenOrder.class);
+	    	query.setParameter("billingAccountId", billingAccount.getId());
+	    	query.setParameter("status", OpenOrderStatusEnum.CANCELED);
+	    	query.setParameter("eventDate", eventDate);
+	    	query.setParameter("productId", ofNullable(product).map(Product::getId).orElse(null));
+
+	    	List<OpenOrder> result = query.getResultList();
+	    	if(!ListUtils.isEmtyCollection(result)) {
+	    		return of(result.get(0));
+	    	}
+		}
+
+		return empty();
+	}
+
+	/**
+	 * Check and retrieve available OpenOrder for given Billing account and article
+	 * 
+	 * @param billingAccount
+	 * @param product
+	 * @param eventDate
+	 * @return
+	 */
+	public Optional<OpenOrder> checkAvailableOpenOrderForArticle(BillingAccount billingAccount, AccountingArticle article, Date eventDate) {
+		OpenOrderSetting findLastOne = openOrderSettingService.findLastOne();
+		
+		if(findLastOne != null && findLastOne.getUseOpenOrders()) {
+			TypedQuery<OpenOrder> query = getEntityManager().createNamedQuery("OpenOrder.availableOOForArticle", OpenOrder.class);
+	    	query.setParameter("billingAccountId", billingAccount.getId());
+	    	query.setParameter("status", OpenOrderStatusEnum.CANCELED);
+	    	query.setParameter("eventDate", eventDate);
+	    	query.setParameter("articleId", ofNullable(article).map(AccountingArticle::getId).orElse(null));
+
+	    	List<OpenOrder> result = query.getResultList();
+	    	if(!ListUtils.isEmtyCollection(result)) {
+	    		return of(result.get(0));
+	    	}
+		}
+
+		return empty();
+	}
+
+	/**
 	 * Create open order from an open order quote
 	 *
 	 * @param openOrderQuote : InvoiceLine
@@ -81,7 +145,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         openOrder.setBillingAccount(openOrderQuote.getBillingAccount());
         openOrder.setType(openOrderQuote.getOpenOrderType());
         openOrder.setOpenOrderTemplate(openOrderQuote.getOpenOrderTemplate());
-        openOrder.setOpenOrderNumber(openOrderQuote.getOpenOrderNumber());
+        openOrder.setOpenOrderNumber(serviceSingleton.getNextOpenOrderSequence());
         openOrder.setInitialAmount(openOrderQuote.getMaxAmount());
         openOrder.setBalance(openOrderQuote.getMaxAmount());
         openOrder.setCurrency(openOrderQuote.getCurrency());
@@ -113,9 +177,6 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
         if (openOrderQuote.getOpenOrderTemplate() == null) {
             missingFields.add("openOrderTemplate");
-        }
-        if (openOrderQuote.getOpenOrderNumber() == null) {
-            missingFields.add("openOrder");
         }
         if (openOrderQuote.getMaxAmount() == null) {
             missingFields.add("maxAmount");

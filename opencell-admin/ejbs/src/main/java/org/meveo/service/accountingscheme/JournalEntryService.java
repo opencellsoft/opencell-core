@@ -60,7 +60,7 @@ import java.util.Map;
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     private static final String PARAM_ID_INV = "ID_INV";
-    private static final String REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
+    private static final String REVENUE_MANDATORY_ACCOUNTING_CODE_NOT_FOUND = "Not possible to generate journal entries for this invoice," +
             " make sure that all related accounting articles have an accounting code or that the default revenue accounting code" +
             " is set in the account operation type (contra accounting code)";
 
@@ -88,7 +88,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .orElse(occT.getAccountingCode());
         JournalEntry firstEntry = buildJournalEntry(ao, accountingCode, occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+                null, ao.getOperationNumber());
 
         // Second JournalEntry
         JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
@@ -96,7 +96,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+                null, ao.getOperationNumber() + 1);
 
         create(firstEntry);
         create(secondEntry);
@@ -123,14 +123,14 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .orElse(accountingCodeFromRecordedAoOrOcc);
         // 1- produce a Customer account entry line
         JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice, accountingCode, occT.getOccCategory(),
-                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(), null);
+                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(), null, recordedInvoice.getOperationNumber());
 
         saved.add(customerAccountEntry);
 
         log.info("Customer account entry successfully created for AO={}", recordedInvoice.getId());
 
         // 2- produce the revenue accounting entries
-        buildRevenusJournalEntries(recordedInvoice, occT, saved);
+        buildRevenuesJournalEntries(recordedInvoice, occT, saved);
 
         // 3- produce the taxes accounting entries
         buildTaxesJournalEntries(recordedInvoice, occT, saved);
@@ -182,7 +182,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 1- produce a first accounting entry
         JournalEntry firstAccountingEntry = buildJournalEntry(ao, firstAccountingCode, firstCategory,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber());
 
         saved.add(firstAccountingEntry);
 
@@ -191,7 +191,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
         JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber() + 1);
 
         saved.add(secondAccountingEntry);
 
@@ -223,8 +223,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
      *
      * @param ao             account operation
      * @param occT           occt.code = ao.code
-     * @param isDefaultCheck for Default Script we must check accountinfCode and contraAccountingCode,
-     *                       for Invoice one for exemple, we must on check accountinfode
+     * @param isDefaultCheck for Default Script we must check accountingCode and contraAccountingCode,
+     *                       for Invoice one for example, we must on check accountingCode
      */
     public void validateOccTForAccountingScheme(AccountOperation ao, OCCTemplate occT, boolean isDefaultCheck, boolean isPaymentCheck) {
         if (occT == null) {
@@ -232,22 +232,22 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             throw new BusinessException("No OCCTemplate found for AccountOperation id=" + ao.getId());
         }
         if (occT.getAccountingCode() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} Mandatory AccountingCode not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory AccountingCode not found for OCCTemplate id=" + occT.getId());
         }
         if ((isDefaultCheck || isPaymentCheck) && occT.getContraAccountingCode() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} : Mandatory ContraAccountingCode not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode not found for OCCTemplate id=" + occT.getId());
         }        
         if (isPaymentCheck && occT.getContraAccountingCode2() == null) {
-            log.warn("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", occT.getId());
+            log.warn("AccountOperation with id={} : Mandatory ContraAccountingCode2 not found for OCCTemplate id={}", ao.getId(), occT.getId());
             throw new BusinessException("AccountOperation with id=" + ao.getId() + " : Mandatory ContraAccountingCode2 not found for OCCTemplate id=" + occT.getId());
         }
     }
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
                                            OperationCategoryEnum categoryEnum, BigDecimal amount,
-                                           Tax tax) {
+                                           Tax tax, Long operationNumber) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
@@ -259,7 +259,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         Seller seller = getSeller(ao);
         firstEntry.setSeller(seller);
-        firstEntry.setOperationNumber(ao.getOperationNumber());
+        firstEntry.setOperationNumber(operationNumber);
         firstEntry.setSellerCode(seller != null ? seller.getCode() : "");
         firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
 
@@ -304,20 +304,22 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     private Seller getSeller(AccountOperation ao) {
-        return ao.getSeller() != null ? ao.getSeller() :
-                ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null ?
-                        ao.getCustomerAccount().getCustomer().getSeller() : null;
+        Seller customerSeller = ao.getCustomerAccount() != null && ao.getCustomerAccount().getCustomer() != null
+                ? ao.getCustomerAccount().getCustomer().getSeller() : null;
+        return ao.getSeller() != null ? ao.getSeller() : customerSeller;
+
     }
 
     private Map<String, String> addAccountingInfo(CustomerAccount customerAccount) {
-        FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
-                .orElseThrow(() -> new BusinessException("No finance settings found"));
-        AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
-        if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {
-            try {
-                return financeSettingsService.generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting);
-            } catch (Exception exception) {
-                log.error(exception.getMessage());
+        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        if(financeSettings != null) {
+            AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
+            if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {
+                try {
+                    return financeSettingsService.generateAuxiliaryAccountInfo(customerAccount, auxiliaryAccounting);
+                } catch (Exception exception) {
+                    log.error(exception.getMessage());
+                }
             }
         }
         return emptyMap();
@@ -353,7 +355,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                     JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
                             occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                             amoutTax,
-                            taxAgr.getTax());
+                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
                     accountingCodeJournal.put(groupKey, taxEntry);
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
@@ -369,7 +371,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
     }
 
-    private void buildRevenusJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
+    private void buildRevenuesJournalEntries(RecordedInvoice recordedInvoice, OCCTemplate occT, List<JournalEntry> saved) {
         Query query = getEntityManager().createQuery(
                         "SELECT ivl" + // amountWithoutTax
                                 " FROM InvoiceLine ivL LEFT JOIN AccountingCode ac ON ivL.accountingArticle.accountingCode = ac" +
@@ -393,7 +395,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                     revenuACC = occT.getContraAccountingCode();
                     if (revenuACC == null) {
                         throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
-                                REVENU_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                                REVENUE_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
                     }
                 }
 
@@ -425,7 +427,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC,
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 invoiceLine.getAmountWithoutTax() == null ? BigDecimal.ZERO : invoiceLine.getAmountWithoutTax(),
-                null);
+                null, recordedInvoice.getOperationNumber());
         revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());

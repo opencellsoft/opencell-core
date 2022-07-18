@@ -49,7 +49,7 @@ public class WorkflowInstance extends BaseEntity {
     /**
      * Qualified name of Workflowed entities
      */
-    @Column(name = "target_entity_class", length = 255, nullable = false)
+    @Column(name = "target_entity_class", nullable = false)
     private String targetEntityClass;
 
     /**
@@ -61,13 +61,13 @@ public class WorkflowInstance extends BaseEntity {
     /**
      * Affected entity instance code
      */
-    @Column(name = "entity_instance_code", length = 255, nullable = false)
+    @Column(name = "entity_instance_code", nullable = false)
     private String entityInstanceCode;
 
     /**
      * Custom entity template code
      */
-    @Column(name = "target_cet_code", length = 255)
+    @Column(name = "target_cet_code")
     private String targetCetCode;
 
     /**

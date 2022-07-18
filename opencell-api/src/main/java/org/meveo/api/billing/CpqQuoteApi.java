@@ -1554,7 +1554,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setQuantity(wo.getQuantity());
             if(wo.getDiscountPlan() != null) {
-            	Optional<QuotePrice> optionalDiscounteQuotePrice = accountingPrices.stream().filter(qo ->  qo.getUuid().equals(wo.getUuid())).findFirst();
+            	Optional<QuotePrice> optionalDiscounteQuotePrice = accountingPrices.stream().filter(qo ->  wo.getUuid().equals(qo.getUuid())).findFirst();
             	if(optionalDiscounteQuotePrice.isPresent()) {
 	            	quotePrice.setDiscountedQuotePrice(optionalDiscounteQuotePrice.get());
 	            	quotePrice.setDiscountPlan(wo.getDiscountPlan());
@@ -1943,7 +1943,11 @@ public class CpqQuoteApi extends BaseApi {
 
             serviceInstance.setSubscription(subscription);
             if(PriceVersionDateSettingEnum.QUOTE.equals(product.getPriceVersionDateSetting())) {
-            	serviceInstance.setPriceVersionDate(quoteProduct.getQuote().getQuoteDate());
+            	CpqQuote cpqQuote = quoteProduct.getQuote();
+            	if(cpqQuote != null) {
+            		cpqQuote = cpqQuoteService.refreshOrRetrieve(cpqQuote);
+                	serviceInstance.setPriceVersionDate(cpqQuote.getQuoteDate());
+            	}
             }
 
             processProductWithDiscount(subscription, quoteProduct, serviceInstance);

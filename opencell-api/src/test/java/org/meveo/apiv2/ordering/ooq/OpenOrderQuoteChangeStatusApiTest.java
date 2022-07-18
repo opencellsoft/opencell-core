@@ -1,11 +1,5 @@
 package org.meveo.apiv2.ordering.ooq;
 
-import static org.mockito.ArgumentMatchers.any;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenOrderQuoteChangeStatusApiTest {
@@ -265,8 +265,8 @@ public class OpenOrderQuoteChangeStatusApiTest {
     }
 
     @Test
-    public void updateStatusToSENT() {
-        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.VALIDATED, buildArticles(), buildProducts());
+    public void updateStatusToSENTStatus() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.DRAFT, buildArticles(), buildProducts());
 
         OpenOrderSetting setting = new OpenOrderSetting();
         setting.setUseManagmentValidationForOOQuotation(false);
@@ -279,11 +279,72 @@ public class OpenOrderQuoteChangeStatusApiTest {
     }
 
     @Test
-    public void updateStatusToSENTErrStatus() {
-        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.DRAFT, buildArticles(), buildProducts());
+    public void updateStatusToSENTAnotherTimeStatusWithValidationConfigDisabled() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.SENT, buildArticles(), buildProducts());
 
         OpenOrderSetting setting = new OpenOrderSetting();
         setting.setUseManagmentValidationForOOQuotation(false);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+
+    }
+
+    @Test
+    public void updateStatusToSENTAnotherTimeStatusWithValidationConfigEnabled() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.SENT, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(true);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+
+    }
+
+    @Test
+    public void updateStatusToSENT() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.VALIDATED, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(true);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+
+    }
+
+    @Test
+    public void updateStatusToSENTErrSettings() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.VALIDATED, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(false);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        try {
+            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Open Order Quote status must be DRAFT");
+        }
+
+    }
+
+    @Test
+    public void updateStatusToSENTErrSettings2() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.WAITING_VALIDATION, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(true);
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
@@ -298,8 +359,8 @@ public class OpenOrderQuoteChangeStatusApiTest {
     }
 
     @Test
-    public void updateStatusToSENTErrSettings() {
-        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.VALIDATED, buildArticles(), buildProducts());
+    public void updateStatusToSENTErrSettingsEmptyArticles() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.VALIDATED, null, buildProducts());
 
         OpenOrderSetting setting = new OpenOrderSetting();
         setting.setUseManagmentValidationForOOQuotation(true);
@@ -311,7 +372,26 @@ public class OpenOrderQuoteChangeStatusApiTest {
             openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
-            Assert.assertEquals(e.getMessage(), "ASK VALIDATION feature shall not be activated");
+            Assert.assertEquals(e.getMessage(), "Articles must not be empty");
+        }
+
+    }
+
+    @Test
+    public void updateStatusToSENTErrSettingsEmptyProducts() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.PRODUCTS, OpenOrderQuoteStatusEnum.VALIDATED, buildArticles(), null);
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(true);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        try {
+            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Products must not be empty");
         }
 
     }
@@ -342,7 +422,7 @@ public class OpenOrderQuoteChangeStatusApiTest {
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
         Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
-       openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
     }
 
     @Test
@@ -506,7 +586,7 @@ public class OpenOrderQuoteChangeStatusApiTest {
         ooq.setActivationDate(null);
         ooq.setArticles(articles);
         ooq.setCurrency(null);
-        ooq.setOpenOrderNumber(UUID.randomUUID().toString());
+        ooq.setQuoteNumber(UUID.randomUUID().toString());
         ooq.setOpenOrderTemplate(null);
         ooq.setBillingAccount(null);
         ooq.setEndOfValidityDate(null);
@@ -521,14 +601,14 @@ public class OpenOrderQuoteChangeStatusApiTest {
     }
 
     private List<OpenOrderArticle> buildArticles() {
-    	OpenOrderArticle article = new OpenOrderArticle();
+        OpenOrderArticle article = new OpenOrderArticle();
         article.setId(-1L);
 
         return List.of(article);
     }
 
     private List<OpenOrderProduct> buildProducts() {
-    	OpenOrderProduct products = new OpenOrderProduct();
+        OpenOrderProduct products = new OpenOrderProduct();
         products.setId(-1L);
 
         return List.of(products);

@@ -17,9 +17,12 @@ import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
+import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
+import org.meveo.model.settings.MaximumValidityUnitEnum;
+import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -28,6 +31,7 @@ import org.meveo.service.order.OpenOrderArticleService;
 import org.meveo.service.order.OpenOrderProductService;
 import org.meveo.service.order.OpenOrderQuoteService;
 import org.meveo.service.order.OpenOrderTemplateService;
+import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -67,6 +71,9 @@ public class OpenOrderQuoteUpdateApiTest {
     private MeveoUser currentUser;
     @Mock
     private ServiceSingleton serviceSingleton;
+    @Mock
+    private OpenOrderSettingService openOrderSettingService;
+
 
     @Test
     public void updateNominal() {
@@ -96,13 +103,22 @@ public class OpenOrderQuoteUpdateApiTest {
         aa.setCode("A");
         ooa.setAccountingArticle(aa);
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
         Mockito.when(billingAccountService.findByCode(any())).thenReturn(billingAccount);
         Mockito.when(tagService.findByCode(any())).thenReturn(tag);
         Mockito.when(openOrderArticleService.findByArticleCodeAndTemplate(any(), any())).thenReturn(ooa);
-        Mockito.when(serviceSingleton.getNextOpenOrderSequence()).thenReturn("OOT-NUMBER");
+        Mockito.when(serviceSingleton.getNextOpenOrderQuoteSequence()).thenReturn("OOT-NUMBER");
         doReturn("TU-OOQ").when(currentUser).getUserName();
 
         openOrderQuoteApi.update(1L, dto);
@@ -119,6 +135,15 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderQuote ooq = new OpenOrderQuote();
         ooq.setId(2L);
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
 
@@ -141,6 +166,15 @@ public class OpenOrderQuoteUpdateApiTest {
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("BIL-ACC-1");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(null);
 
         openOrderQuoteApi.update(1L, dto);
@@ -167,6 +201,15 @@ public class OpenOrderQuoteUpdateApiTest {
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("BIL-ACC-1");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -189,6 +232,15 @@ public class OpenOrderQuoteUpdateApiTest {
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("BIL-ACC-1");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(null);
@@ -221,6 +273,15 @@ public class OpenOrderQuoteUpdateApiTest {
         aa.setCode("A");
         ooa.setAccountingArticle(aa);
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -262,6 +323,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(otherTemplate);
@@ -272,6 +342,110 @@ public class OpenOrderQuoteUpdateApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "Template cannot be updated");
+        }
+
+    }
+
+    @Test
+    public void updateOOQWithInvalidACCEPTEDStatus() {
+        ThresholdInput thresholdInput = buildThreshold(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setId(1L);
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        OpenOrderTemplate otherTemplate = new OpenOrderTemplate();
+        otherTemplate.setId(2L);
+
+        OpenOrderQuote ooq = new OpenOrderQuote();
+        ooq.setId(1L);
+        ooq.setOpenOrderTemplate(template);
+        ooq.setStatus(OpenOrderQuoteStatusEnum.ACCEPTED);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
+
+        try {
+            openOrderQuoteApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Cannot update OpenOrderQuote with status : ACCEPTED");
+        }
+
+    }
+
+    @Test
+    public void updateOOQWithInvalidCANCELEDStatus() {
+        ThresholdInput thresholdInput = buildThreshold(1, 0, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setId(1L);
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+
+        OpenOrderTemplate otherTemplate = new OpenOrderTemplate();
+        otherTemplate.setId(2L);
+
+        OpenOrderQuote ooq = new OpenOrderQuote();
+        ooq.setId(1L);
+        ooq.setOpenOrderTemplate(template);
+        ooq.setStatus(OpenOrderQuoteStatusEnum.CANCELED);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+        Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
+
+        try {
+            openOrderQuoteApi.update(1L, dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Cannot update OpenOrderQuote with status : CANCELED");
         }
 
     }
@@ -304,6 +478,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -347,6 +530,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -390,6 +582,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -433,6 +634,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -476,6 +686,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -519,6 +738,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -557,6 +785,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -591,6 +828,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -630,6 +876,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -673,6 +928,15 @@ public class OpenOrderQuoteUpdateApiTest {
         Tag tag = new Tag();
         tag.setCode("TAG_A");
 
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
         Mockito.when(openOrderQuoteService.findById(any())).thenReturn(ooq);
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(null);
         Mockito.when(openOrderTemplateService.findByCode(any())).thenReturn(template);
@@ -686,6 +950,169 @@ public class OpenOrderQuoteUpdateApiTest {
             Assert.fail("Exception must be thrown");
         } catch (BusinessApiException e) {
             Assert.assertEquals(e.getMessage(), "OpenOrder type shall be the same as Template : given='ARTICLES' | template='PRODUCTS'");
+        }
+
+    }
+
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void noOORSettingErr() {
+        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(null);
+
+        openOrderQuoteApi.create(dto);
+
+    }
+
+    @Test
+    public void oorNotEnabledErr() {
+        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(false);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "OpenOrder not enable in settings");
+        }
+
+    }
+
+    @Test
+    public void oorSettingAmountInvalidErr() {
+        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(5);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Amount is greater than or equal OpenOrder settings maximum amount");
+        }
+
+    }
+
+    @Test
+    public void oorSettingAmountValidityDateErr() {
+        ThresholdInput thresholdInput = buildThreshold(1, 100, List.of(ThresholdRecipientsEnum.CONSUMER), "test@oc.com");
+        OpenOrderQuoteDto dto = buildDto("OOQ-1", "BIL-ACC-1", "Description de OOQ test", "EXT-REF",
+                OpenOrderTypeEnum.ARTICLES, "TMP-CODE-1", BigDecimal.valueOf(1000),
+                Date.from(LocalDate.now().plusDays(5).atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Set.of(thresholdInput), Set.of("TAG_A"), Set.of("A"), null);
+
+        OpenOrderTemplate template = new OpenOrderTemplate();
+        template.setCode("TMP-CODE-1");
+        template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
+
+        BillingAccount billingAccount = new BillingAccount();
+        billingAccount.setCode("BIL-ACC-1");
+
+        OpenOrderArticle ooa = new OpenOrderArticle();
+        AccountingArticle aa = new AccountingArticle();
+        aa.setCode("A");
+        ooa.setAccountingArticle(aa);
+
+        Tag tag = new Tag();
+        tag.setCode("TAG_A");
+
+        OpenOrderSetting orderSetting = new OpenOrderSetting();
+        orderSetting.setApplyMaximumValidity(true);
+        orderSetting.setApplyMaximumValidityUnit(MaximumValidityUnitEnum.Days);
+        orderSetting.setApplyMaximumValidityValue(1);
+        orderSetting.setDefineMaximumValidity(true);
+        orderSetting.setDefineMaximumValidityValue(10000);
+        orderSetting.setUseOpenOrders(true);
+
+        Mockito.when(openOrderSettingService.findLastOne()).thenReturn(orderSetting);
+
+        try {
+            openOrderQuoteApi.create(dto);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Given end validity date '" + LocalDate.now().plusDays(5) + "' exceed maximum OpenOrder settings '" + LocalDate.now().plusDays(1) + "'");
         }
 
     }
@@ -785,7 +1212,7 @@ public class OpenOrderQuoteUpdateApiTest {
         ooq.setActivationDate(null);
         ooq.setArticles(articles);
         ooq.setCurrency(null);
-        ooq.setOpenOrderNumber(UUID.randomUUID().toString());
+        ooq.setQuoteNumber(UUID.randomUUID().toString());
         ooq.setOpenOrderTemplate(null);
         ooq.setBillingAccount(null);
         ooq.setEndOfValidityDate(null);
