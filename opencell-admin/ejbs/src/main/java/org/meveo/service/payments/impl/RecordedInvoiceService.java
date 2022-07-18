@@ -522,9 +522,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(dueDate).ifPresent(dd -> qb.addSql("ao.dueDate = '" + DateUtils.formatDateWithPattern(dd, datePattern) + "'"));
         
         if(DateUtils.compare(startDate, new Date()) < 0) {
-        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + setDateToEndOfDay(startDate) + "'");
+            var datePatternHours = "yyyy-MM-dd HH:mm:ss";
+        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
         	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
-                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + setDateToEndOfDay(startDate) + "'))");
+                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
         
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ");
