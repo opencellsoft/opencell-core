@@ -117,7 +117,6 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     						var wos = (List<WalletOperation>) walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )")
     																	.setParameter("edrId", previousEdr.getId())
     																	.getResultList();
-    						if(CollectionUtils.isNotEmpty(wos)) { // wo already treated. find all rated
     							var billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() ==  RatedTransactionStatusEnum.BILLED);
     							if(billedTransaction) {
     								cdr.setStatus(CDRStatusEnum.DISCARDED);
@@ -142,7 +141,6 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 									});
 								
 								}
-    						}
     					}
         			}else {
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
