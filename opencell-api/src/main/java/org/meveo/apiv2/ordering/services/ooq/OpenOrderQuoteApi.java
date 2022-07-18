@@ -252,6 +252,10 @@ public class OpenOrderQuoteApi {
                     throw new BusinessApiException("Open Order Quote status must be SENT");
                 }
 
+                OpenOrder oor = openOrderService.create(ooq);
+                ooq.setOpenOrder(oor);
+                openOrderQuoteService.update(ooq);
+
                 break;
 
             case SENT:
@@ -277,10 +281,6 @@ public class OpenOrderQuoteApi {
 
                 break;
             case VALIDATED:
-                OpenOrder oor = openOrderService.create(ooq);
-                ooq.setOpenOrder(oor);
-                openOrderQuoteService.update(ooq);
-                break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
                     throw new BusinessApiException("ASK VALIDATION feature is not activated");
