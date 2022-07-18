@@ -709,25 +709,26 @@ public class CustomFieldValues implements Cloneable, Serializable {
      * @param cfts Custom field template definitions for description lookup
      */
     public void asDomElement(Document doc, Element parentElement, Map<String, CustomFieldTemplate> cfts) {
+        if (valuesByCode != null) {
+            for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
+                CustomFieldTemplate cft = cfts.get(cfValueInfo.getKey());
 
-        for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
-            CustomFieldTemplate cft = cfts.get(cfValueInfo.getKey());
+                for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
 
-            for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                    Element customFieldTag = doc.createElement("customField");
+                    customFieldTag.setAttribute("code", cfValueInfo.getKey());
+                    customFieldTag.setAttribute("description", cft != null ? cft.getDescription() : "");
+                    if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
+                        customFieldTag.setAttribute("periodStartDate", xmlsdf.format(cfValue.getPeriod().getFrom()));
+                    }
+                    if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
+                        customFieldTag.setAttribute("periodEndDate", xmlsdf.format(cfValue.getPeriod().getTo()));
+                    }
 
-                Element customFieldTag = doc.createElement("customField");
-                customFieldTag.setAttribute("code", cfValueInfo.getKey());
-                customFieldTag.setAttribute("description", cft != null ? cft.getDescription() : "");
-                if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
-                    customFieldTag.setAttribute("periodStartDate", xmlsdf.format(cfValue.getPeriod().getFrom()));
+                    Text customFieldText = doc.createTextNode(cfValue.toXmlText(xmlsdf));
+                    customFieldTag.appendChild(customFieldText);
+                    parentElement.appendChild(customFieldTag);
                 }
-                if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
-                    customFieldTag.setAttribute("periodEndDate", xmlsdf.format(cfValue.getPeriod().getTo()));
-                }
-
-                Text customFieldText = doc.createTextNode(cfValue.toXmlText(xmlsdf));
-                customFieldTag.appendChild(customFieldText);
-                parentElement.appendChild(customFieldTag);
             }
         }
     }

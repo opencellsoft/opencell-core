@@ -63,6 +63,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -82,6 +83,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -147,6 +149,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     SellerService sellerService;
+    
+    @Inject
+    SubscriptionService subscriptionService;
+    
 
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
@@ -241,11 +247,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     detailed = mode.startsWith(MODE_DETAILED);
                     detailedWithServices = mode.equals(MODE_DETAILED_W_SERVICES);
                 }
-                if (linkedInvoiceIdParam != null) {
+                if (linkedInvoiceIdParam != null) {                    
                     rootInvoiceId = linkedInvoiceIdParam;
                     rootInvoice = invoiceService.findById(rootInvoiceId);
+                    rootInvoice = invoiceService.refreshOrRetrieve(rootInvoice);
+                   // rootInvoice.getLinkedInvoices().add(entity);
                     entity.setBillingAccount(rootInvoice.getBillingAccount());
                     entity.setSeller(rootInvoice.getSeller());
+                    entity.setSubscription(subscriptionService.refreshOrRetrieve(rootInvoice.getSubscription()));
                     entity.getLinkedInvoices().add(rootInvoice);
                     
                     try {
@@ -1060,18 +1069,22 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException General business exception
      */
     public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
-        if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
-            BillingAccount ba = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
-            filters.put("billingAccount", ba);
-        }
-        if (entity.getInvoiceType() != null) {
-            InvoiceType selInvoiceType = invoiceTypeService.refreshOrRetrieve(entity.getInvoiceType());
-            List<InvoiceType> invoiceTypes = selInvoiceType.getAppliesTo();
-            if (invoiceTypes != null && invoiceTypes.size() > 0) {
-                filters.put("inList invoiceType", invoiceTypes);
+        try {
+            if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
+                BillingAccount ba = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
+                filters.put("billingAccount", ba);
             }
+            if (entity.getInvoiceType() != null) {
+                InvoiceType selInvoiceType = invoiceTypeService.refreshOrRetrieve(entity.getInvoiceType());
+                List<InvoiceType> invoiceTypes = selInvoiceType.getAppliesTo();
+                if (invoiceTypes != null && invoiceTypes.size() > 0) {
+                    filters.put("inList invoiceType", invoiceTypes);
+                }
+            }
+        } catch (Exception e) {
+            log.error("\n\n\n le probleme est ici !!!  \n\n\n\n");
+            e.printStackTrace();
         }
-
         return getLazyDataModel();
     }
 
