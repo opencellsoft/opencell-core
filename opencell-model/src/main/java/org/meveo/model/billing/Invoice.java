@@ -104,7 +104,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.listUnpaidInvoicesIds", query = "SELECT inv.id FROM Invoice inv "
-                                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
+                                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "
+                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID, org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID)"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
         "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
