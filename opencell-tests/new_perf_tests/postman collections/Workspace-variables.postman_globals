@@ -1,0 +1,546 @@
+{
+	"id": "4cb1f319-b836-44f8-8cfa-5c6edde17487",
+	"values": [
+		{
+			"key": "NB_Files",
+			"value": "6",
+			"enabled": false
+		},
+		{
+			"key": "NB_cust",
+			"value": "300000",
+			"enabled": false
+		},
+		{
+			"key": "CDRs_per_cust",
+			"value": "10",
+			"enabled": false
+		},
+		{
+			"key": "FROM",
+			"value": "1",
+			"enabled": false
+		},
+		{
+			"key": "NB_SUBS",
+			"value": "1",
+			"enabled": false
+		},
+		{
+			"key": "request.label",
+			"value": "Create|code=CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "request.label.0",
+			"value": "Create",
+			"enabled": true
+		},
+		{
+			"key": "request.label.1",
+			"value": "code=CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "request.label.2",
+			"value": "Generate Customers and CDR files",
+			"enabled": true
+		},
+		{
+			"key": "timestamp.iso",
+			"value": "2021-03-24T13:09:12.219Z",
+			"enabled": true
+		},
+		{
+			"key": "wait",
+			"value": 0,
+			"enabled": true
+		},
+		{
+			"key": "request.label.3",
+			"value": "FROM",
+			"enabled": true
+		},
+		{
+			"key": "code",
+			"value": "CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "desc",
+			"value": "all_in_one_services",
+			"enabled": true
+		},
+		{
+			"key": "nextJob",
+			"value": "Acco_Job Copy",
+			"enabled": true
+		},
+		{
+			"key": "inc",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "index",
+			"value": 377,
+			"enabled": true
+		},
+		{
+			"key": "accCode",
+			"value": "445710000",
+			"enabled": true
+		},
+		{
+			"key": "percentage",
+			"value": "0",
+			"enabled": true
+		},
+		{
+			"key": "request.label.4",
+			"value": "NB_cust",
+			"enabled": true
+		},
+		{
+			"key": "buyer",
+			"value": "US",
+			"enabled": true
+		},
+		{
+			"key": "priority",
+			"value": "10",
+			"enabled": true
+		},
+		{
+			"key": "request.label.5",
+			"value": "NB_SUBS",
+			"enabled": true
+		},
+		{
+			"key": "tax",
+			"value": "TAX_10",
+			"enabled": true
+		},
+		{
+			"key": "taxCat",
+			"value": "EXEMPTED",
+			"enabled": true
+		},
+		{
+			"key": "taxClass",
+			"value": "NORMAL",
+			"enabled": true
+		},
+		{
+			"key": "name",
+			"value": "Offre Opencell",
+			"enabled": true
+		},
+		{
+			"key": "parent",
+			"value": "OCAT_ROOT",
+			"enabled": true
+		},
+		{
+			"key": "storage",
+			"value": "SINGLE",
+			"enabled": true
+		},
+		{
+			"key": "target",
+			"value": "WalletOperation",
+			"enabled": true
+		},
+		{
+			"key": "type",
+			"value": "STRING",
+			"enabled": true
+		},
+		{
+			"key": "calendar",
+			"value": "CAL_MONTHLY_1ST",
+			"enabled": true
+		},
+		{
+			"key": "offer.services",
+			"value": "{\"serviceTemplate\":{\"code\":\"SE_OSS_OST_USG_RECU\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}",
+			"enabled": true
+		},
+		{
+			"key": "service",
+			"value": "SE_USG_UNIT",
+			"enabled": true
+		},
+		{
+			"key": "offer",
+			"value": "OF_BASIC",
+			"enabled": true
+		},
+		{
+			"key": "account.code",
+			"value": "OPENCELL-02",
+			"enabled": true
+		},
+		{
+			"key": "account.description",
+			"value": "DEMO CLIENT OPENCELL-377",
+			"enabled": true
+		},
+		{
+			"key": "account.firstname",
+			"value": "DEMO",
+			"enabled": true
+		},
+		{
+			"key": "account.lastname",
+			"value": "CLIENT",
+			"enabled": true
+		},
+		{
+			"key": "subscription.code",
+			"value": "OPENCELL-00-SU",
+			"enabled": true
+		},
+		{
+			"key": "subscription.date",
+			"value": "2019-12-15T01:23:45.678Z",
+			"enabled": true
+		},
+		{
+			"key": "path",
+			"value": "/jasper/OPENCELL_DEMO",
+			"enabled": true
+		},
+		{
+			"key": "isVirtual",
+			"value": "false",
+			"enabled": true
+		},
+		{
+			"key": "p1",
+			"value": "UNIT",
+			"enabled": true
+		},
+		{
+			"key": "p2",
+			"value": "PS_SUPPORT",
+			"enabled": true
+		},
+		{
+			"key": "qtt",
+			"value": "10",
+			"enabled": true
+		},
+		{
+			"key": "jobRun.id",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "invoice.id",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "invoice.number",
+			"value": "INV_0001",
+			"enabled": true
+		},
+		{
+			"key": "request.label.6",
+			"value": "NB_Files",
+			"enabled": true
+		},
+		{
+			"key": "request.label.7",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.8",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "FROM",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_cust",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_SUBS",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_Files",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "aggregationId",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "field",
+			"value": "cf_WO_test",
+			"enabled": true
+		},
+		{
+			"key": "action",
+			"value": "MIN",
+			"enabled": true
+		},
+		{
+			"key": "value",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "alias",
+			"value": "cf_rt_test",
+			"enabled": true
+		},
+		{
+			"key": "aggregationRule",
+			"value": "aggreg_by_day",
+			"enabled": true
+		},
+		{
+			"key": "filterId",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "RG",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "firstmonthday",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "variable_key",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "firstofthecurrentmonth",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "lastofthepastmonth",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "Tax",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p6",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p7",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p8",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.9",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p9",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.10",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d1",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.11",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d2",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.12",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.13",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.14",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.15",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n1",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.16",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n2",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.17",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.18",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.19",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.20",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "extraParameter",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "paymentMethod.id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "displayInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "productRefPerfect",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "taxesInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "paymentsInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "JSON_text",
+			"value": "{\\\"displayInfos\\\":{\\\"subscription_parent_id\\\":\\\"par_sub_1\\\",\\\"subscription_id\\\":\\\"sub_1\\\",\\\"mandatory_addon\\\":\\\"false\\\",\\\"charge_type\\\":\\\"ONESHOT\\\",\\\"order_id\\\":\\\"ord_1\\\",\\\"purchase_order_reference\\\":\\\"ord_1_1\\\",\\\"customer_reference\\\":\\\"cust_1\\\",\\\"unit\\\":\\\"GB\\\",\\\"currency\\\":\\\"EUR\\\",\\\"document_line_label\\\":\\\"description\\\",\\\"product_reference\\\":\\\"ref_1\\\",\\\"product_name\\\":\\\"prod_1\\\",\\\"resourcename\\\":\\\"ress_1\\\",\\\"cdr_index\\\":\\\"cdr_1\\\",\\\"total_cdr\\\":\\\"10000\\\"},\\\"productRefPerfect\\\":{\\\"brand\\\":\\\"OC\\\",\\\"actively_sold\\\":\\\"1000\\\",\\\"rental_consumption\\\":\\\"1000\\\",\\\"product_nature\\\":\\\"OC\\\",\\\"default_dc_location\\\":\\\"EUROPE\\\",\\\"revenue_class\\\":\\\"MIDDLE\\\",\\\"service_type\\\":\\\"OSE\\\",\\\"product_source\\\":\\\"OC\\\",\\\"universe\\\":\\\"OC\\\",\\\"range\\\":\\\"OC\\\",\\\"line\\\":\\\"OC\\\",\\\"category\\\":\\\"OC\\\",\\\"subcategory\\\":\\\"OC\\\",\\\"family\\\":\\\"OC\\\"},\\\"taxesInfos\\\":[{\\\"gl_tax_account\\\":\\\"french_service_vat\\\",\\\"application\\\":\\\"percent\\\",\\\"type\\\":\\\"vat\\\",\\\"value\\\":\\\"integer\\\",\\\"tax_base_amount\\\":\\\"integer\\\",\\\"tax_rate_code\\\":\\\"string\\\",\\\"tax_rate_in_percent\\\":\\\"integer\\\"}],\\\"paymentsInfos\\\":[{\\\"payment_method_type\\\":\\\"paypal\\\",\\\"payment_method_id\\\":\\\"paymentcenter_9987987\\\",\\\"payment_transaction_id\\\":\\\"hrh24hr87146\\\",\\\"payment_amount\\\":\\\"integer\\\",\\\"payment_currency\\\":\\\"EURO\\\",\\\"payment_date\\\":\\\"2021-01-01T12:00:27.87\\\",\\\"payment_status\\\":\\\"PAID\\\"}]}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "validDateFrom",
+			"value": "2020-03-11",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2022-02-18T09:26:57.606Z",
+	"_postman_exported_using": "Postman/9.13.2"
+}
