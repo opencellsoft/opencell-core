@@ -26,6 +26,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
@@ -323,16 +324,27 @@ public class ProductService extends BusinessService<Product> {
 	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
         Product product = findByCode(code);
         if(product == null)
-            return Optional.empty();
-        
+            return Optional.empty();        
+                
         for(ProductVersion pvElement : product.getProductVersions()) {            
             ProductVersion pv = productVersionService.findById(pvElement.getId());
             if (pv != null) {
                 boolean conditionValidity = false; 
-                if (pv.getValidity()!=null && pv.getValidity().getFrom()!=null && pv.getValidity().getFrom()!=null) 
+                if (pv.getValidity()!=null) 
                 { 
-                    conditionValidity =  pv.getValidity().isCorrespondsToPeriod(date);
+                    Date dFrom = DateUtils.truncateTime(pv.getValidity().getFrom());
+                    Date dTo = DateUtils.truncateTime(pv.getValidity().getTo());
+                    
+                    DatePeriod validity = new DatePeriod();
+                    validity.setFrom(dFrom);
+                    validity.setTo(dTo);
+                    if (validity!=null && validity.getFrom()!=null && validity.getFrom()!=null) 
+                    { 
+                        date = DateUtils.truncateTime(date);
+                        conditionValidity =  validity.isCorrespondsToPeriod(date);
+                    }
                 }
+                
                 log.debug("code: " + code + " - pv.getStatus(): " + pv.getStatus() + " - date: " + date + " - conditionValidity: " + conditionValidity);
 
                 if(VersionStatusEnum.PUBLISHED.equals(pv.getStatus()) && conditionValidity)
