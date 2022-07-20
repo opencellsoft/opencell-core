@@ -703,6 +703,22 @@
 					"attributes": {}
 				},
 				{
+					"id": "877e79f7-54ce-47bc-b2d6-20ade2b2d701",
+					"name": "queryUser",
+					"composite": false,
+					"clientRole": true,
+					"containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+					"attributes": {}
+				},
+				{
+					"id": "877e79f7-54ce-47bc-b2d6-20ade2b2d702",
+					"name": "queryManagement",
+					"composite": false,
+					"clientRole": true,
+					"containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+					"attributes": {}
+				},
+				{
 					"id": "58f52c7f-71ca-4944-a4e0-5f69242c418c",
 					"name": "catalogManagement",
 					"composite": false,
@@ -2507,7 +2523,8 @@
 						"_id": "03078693-ac25-40ee-bcde-4daebd0f9f9e",
 						"uris": [
 							"/pages/catalog/pricePlanMatrixes/*",
-							"/pages/catalog/discountPlans/*"
+							"/pages/catalog/discountPlans/*",
+							"/pages/catalog/discountPlanItems/*"
 						],
 						"scopes": [
 							{
@@ -2869,43 +2886,6 @@
 							},
 							{
 								"name": "PUT"
-							}
-						]
-					},
-					{
-						"name": "Page Full text index",
-						"ownerManagedAccess": false,
-						"attributes": {},
-						"_id": "804a4045-f363-4e6c-b368-b9a3c48693ab",
-						"uris": [
-							"/pages/index/index.*"
-						],
-						"scopes": [
-							{
-								"name": "DELETE"
-							},
-							{
-								"name": "GET"
-							},
-							{
-								"name": "POST"
-							},
-							{
-								"name": "PUT"
-							}
-						]
-					},
-					{
-						"name": "Page Full text index search",
-						"ownerManagedAccess": false,
-						"attributes": {},
-						"_id": "f298d737-4271-4d95-94aa-8328009f4d2b",
-						"uris": [
-							"/pages/index/fullTextSearch.*"
-						],
-						"scopes": [
-							{
-								"name": "GET"
 							}
 						]
 					},
@@ -4141,7 +4121,7 @@
 							"/api/rest/job/jobReport",
 							"/api/rest/job/execution",
 							"/api/rest/job/*/jobExecution/*",
-							"/api/rest/job/jjobReport/*",
+							"/api/rest/job/jobReport/*",
 							"/api/rest/job/execute",
 							"/api/rest/job/stop/*"
 						],
@@ -4922,6 +4902,26 @@
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
 							"roles": "[{\"id\":\"opencell-web/apiAdministrationVisualization\",\"required\":false},{\"id\":\"opencell-web/apiUseWorkflow\",\"required\":false},{\"id\":\"opencell-web/apiAdministrationManagement\",\"required\":false},{\"id\":\"opencell-web/apiUseScript\",\"required\":false},{\"id\":\"opencell-web/apiUseJob\",\"required\":false}]"
+						}
+					},					
+					{
+						"id": "3732b39d-278c-41e2-8d1b-d0675e1a5ab3",
+						"name": "Role quoteUser",
+						"type": "role",
+						"logic": "POSITIVE",
+						"decisionStrategy": "UNANIMOUS",
+						"config": {
+							"roles": "[{\"id\":\"opencell-web/quoteUser\",\"required\":false},{\"id\":\"opencell-web/quoteManagement\",\"required\":false}]"
+						}
+					},					
+					{
+						"id": "3732b39d-278c-41e2-8d1b-d0675e1a5ab4",
+						"name": "Role quoteManagement",
+						"type": "role",
+						"logic": "POSITIVE",
+						"decisionStrategy": "UNANIMOUS",
+						"config": {
+							"roles": "[{\"id\":\"opencell-web/quoteManagement\",\"required\":false}]"
 						}
 					},
 					{
@@ -5940,18 +5940,6 @@
 						}
 					},
 					{
-						"id": "35f5e80c-fbd0-4ee4-89ab-4cb407701b81",
-						"name": "Page Full text index",
-						"type": "scope",
-						"logic": "POSITIVE",
-						"decisionStrategy": "UNANIMOUS",
-						"config": {
-							"resources": "[\"Page Full text index\"]",
-							"scopes": "[\"PUT\",\"DELETE\",\"GET\",\"POST\"]",
-							"applyPolicies": "[\"Role administrationManagement\"]"
-						}
-					},
-					{
 						"id": "77fa9751-6d0f-40b8-8dc8-c6dfea0c655f",
 						"name": "Page Finance (Default) - read",
 						"type": "scope",
@@ -6742,7 +6730,9 @@
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
 							"resources": "[\"Api V1 Payments\"]",
-							"scopes": "[\"PUT\",\"DELETE\",\"POST\"]"
+							"scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+							"applyPolicies": "[\"Role apiPaymentManagement\"]"
+
 						}
 					},
 					{
@@ -7204,18 +7194,6 @@
 							"defaultResourceType": "urn:opencell-web:resources:default",
 							"resources": "[\"Default Resource\"]",
 							"applyPolicies": "[\"Default policy\"]"
-						}
-					},
-					{
-						"id": "d4fe8248-bda7-4d7b-936e-06121be4edbd",
-						"name": "Page Full text index search",
-						"type": "scope",
-						"logic": "POSITIVE",
-						"decisionStrategy": "AFFIRMATIVE",
-						"config": {
-							"resources": "[\"Page Full text index search\"]",
-							"scopes": "[\"GET\"]",
-							"applyPolicies": "[\"Role catalogVisualization\",\"Role administrationVisualization\",\"Role accountVisualization\",\"Role billingVisualization\"]"
 						}
 					}
 				],
