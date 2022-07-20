@@ -22,6 +22,8 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 
 @Entity
@@ -31,9 +33,9 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 @NamedQueries({
 @NamedQuery(name="OrderPrice.findByOrder", query = "select o from OrderPrice o where o.order=:commercialOrder"),
 @NamedQuery(name="OrderPrice.findByQuote", query = "select o from OrderPrice o where o.order.quote=:quote"),
-@NamedQuery(name = "QuotePrice.sumPricesByArticle", query = "SELECT o.orderArticleLine.id,o.discountedOrderPrice.id,taxRate, sum(o.amountWithoutTax) as sumAmountWOTax, sum(o.amountWithTax), sum(o.taxAmount),"
-		+ "sum(o.quantity) FROM OrderPrice o WHERE o.order.id=:orderId AND o.priceTypeEnum=:priceType AND o.priceLevelEnum=:priceLevel GROUP BY o.orderArticleLine.id,o.discountedOrderPrice.id,o.taxRate order by sumAmountWOTax DESC"),
-
+@NamedQuery(name = "OrderPrice.sumPricesByArticle", query = "SELECT o.orderArticleLine.id,o.discountedOrderPrice.id,o.taxRate, sum(o.amountWithoutTax) as sumAmountWOTax, sum(o.amountWithTax), sum(o.taxAmount),"
+		+ "sum(o.quantity) FROM OrderPrice o WHERE o.order.id=:orderId AND o.priceTypeEnum=:priceType AND (o.priceLevelEnum=:priceLevel OR o.discountPlan is not null) GROUP BY o.orderArticleLine.id,o.discountedOrderPrice.id,o.taxRate order by sumAmountWOTax DESC"),
+@NamedQuery(name="OrderPrice.loadOverridenPricesByOrderProductAndCharge", query = "select op from OrderPrice op where op.orderArticleLine.orderProduct.id = :orderProductId and op.priceOverCharged = true and op.chargeTemplate.id = :chargeTemplateId")
 })
 public class OrderPrice extends BusinessEntity {
 
@@ -44,8 +46,7 @@ public class OrderPrice extends BusinessEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_article_line_id", nullable = false)
-    @NotNull
+    @JoinColumn(name = "order_article_line_id", nullable = false) 
     private OrderArticleLine orderArticleLine;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -111,6 +112,33 @@ public class OrderPrice extends BusinessEntity {
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;
 
+    @Column(name = "discount_value")
+ 	private BigDecimal discountValue;
+     
+     @Enumerated(EnumType.STRING)
+     @Column(name = "discount_plan_type", length = 50)
+     private DiscountPlanItemTypeEnum discountPlanType;
+
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "discount_plan_item_id")
+     private DiscountPlanItem discountPlanItem;
+     
+     @Type(type = "numeric_boolean")
+     @Column(name = "apply_discounts_on_overriden_price")
+     private Boolean applyDiscountsOnOverridenPrice;
+    
+     
+     /**The amount after discount**/
+     @Column(name = "discounted_amount")
+    	private BigDecimal discountedAmount;
+     
+     /**
+ 	 * 
+ 	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+ 	 */
+ 	@Column(name = "sequence")
+ 	private Integer sequence;
+     
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
     }
@@ -262,6 +290,56 @@ public class OrderPrice extends BusinessEntity {
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+	
+	
     
     
 }

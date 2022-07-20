@@ -46,6 +46,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
@@ -53,7 +54,8 @@ import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
-
+import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Discount plan
  * 
@@ -214,6 +216,24 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@JoinColumn(name = "discount_plan_id")
 	private List<DiscountPlan> incompatibleDiscountPlans;
 
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private Boolean applicableOnOverriddenPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_discounted_price")
+	private Boolean applicableOnDiscountedPrice;
+	
+	/**
+	 *determines whether the discount plan is applicable on the gross or discounted amount
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
+	
+	
 	public enum DurationPeriodUnitEnum {
 		/**
 		 * Month: 2
@@ -265,6 +285,8 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setCfValues(dp.getCfValues());
 		this.setCfAccumulatedValues(dp.getCfAccumulatedValues());
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
+		this.sequence=dp.getSequence();
+		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
 	}
 	
 	public boolean isValid() {
@@ -443,7 +465,32 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.expressionEl = expressionEl;
 	}
 	
-    /**
+    public Boolean getApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+	
+
+	public Boolean getApplicableOnDiscountedPrice() {
+		return applicableOnDiscountedPrice;
+	}
+
+	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
+		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	/**
      * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
      *
@@ -466,6 +513,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
         return (date.compareTo(startDate) >= 0) && (date.before(endDate));
     }
 
+    
 
 
 }

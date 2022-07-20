@@ -269,6 +269,13 @@ public class InvoiceLine extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**
+   	 * 
+   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+   	 */
+   	@Column(name = "sequence")
+   	private Integer sequence;
 
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
@@ -833,6 +840,16 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
+	}
+	
+	
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	@PrePersist
