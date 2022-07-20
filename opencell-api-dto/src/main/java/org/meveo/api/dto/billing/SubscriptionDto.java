@@ -35,6 +35,7 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
@@ -112,6 +113,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     @XmlElementWrapper(name = "productInstances")
     @XmlElement(name = "productInstances")
     private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
+
+    @XmlElementWrapper(name = "productsToInstantiate")
+    @XmlElement(name = "productsToInstantiate")
+    private List<ProductToInstantiateDto> productsToInstantiate = new ArrayList<ProductToInstantiateDto>();
 
     /** The termination reason. */
     private String terminationReason;
@@ -878,4 +883,12 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setCustomerService(String customerService) {
 		this.customerService = customerService;
 	}
+
+    public List<ProductToInstantiateDto> getProductsToInstantiate() {
+        return productsToInstantiate;
+    }
+
+    public void setProductsToInstantiate(List<ProductToInstantiateDto> productsToInstantiate) {
+        this.productsToInstantiate = productsToInstantiate;
+    }
 }
