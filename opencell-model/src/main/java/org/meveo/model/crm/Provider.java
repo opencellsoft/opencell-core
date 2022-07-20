@@ -420,6 +420,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Column(name = "functional_currency_flag")
     private boolean functionalCurrencyFlag = false;
     
+    
+    @Type(type = "numeric_boolean")
+ 	@Column(name = "activate_cascading_discounts ")
+ 	private boolean activateCascadingDiscounts=true;
+    
 
     public String getCode() {
         return code;
@@ -876,4 +881,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setFunctionalCurrencyFlag(boolean functionalCurrencyFlag) {
         this.functionalCurrencyFlag = functionalCurrencyFlag;
     }
+
+	public boolean isActivateCascadingDiscounts() {
+		return activateCascadingDiscounts;
+	}
+
+	public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
+		this.activateCascadingDiscounts = activateCascadingDiscounts;
+	}
+    
+    
 }

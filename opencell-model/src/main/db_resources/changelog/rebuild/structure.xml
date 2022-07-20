@@ -283,6 +283,7 @@
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+        <createSequence sequenceName="discount_plan_sequence_seq" startValue="1" />
         <createSequence sequenceName="report_query_seq" startValue="1"/>
         <createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createSequence sequenceName="query_result_seq" startValue="1" />
@@ -2682,6 +2683,8 @@
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
 			<column name="reactivation_date" type="datetime" />
+			<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+		    <column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -3238,6 +3241,7 @@
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
+            <column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3830,6 +3834,8 @@
             <column name="user_account_id" type="bigint" />
             <column name="billing_account_id" type="bigint" />
             <column name="old_wallet_id" type="bigint" />
+            <column name="discounted_amount" type="numeric(23,12)"/>
+            <column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4137,6 +4143,8 @@
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -4181,6 +4189,9 @@
             <column name="accounting_article_id" type="bigint"></column>
             <column name="priorty" type="bigint"></column>
             <column name="price_plan_matrix_id" type="bigint" />
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="sequence" type="int4"/>
+             <column name="last_discount" type="${type.boolean}"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -5248,6 +5259,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
+             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -9788,6 +9800,10 @@
     		<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
+		  <column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
+			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10387,7 +10403,12 @@
     		<column name="quantity" type="numeric(19,2)" />
     		<column name="discounted_order_price" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
-            
+                <column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+    		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+    		<column name="discounted_amount" type="numeric(23,12)"/>
+    		<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -10556,6 +10577,7 @@
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
             <column name="open_order_number" type="varchar(255)" />
+             <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -11803,6 +11825,20 @@
                              constraintName="open_order_template_articles_pkey"
                              tableName="open_order_template_articles"/>
     </changeSet>
+    
+    <changeSet id="rebuild-str-tbl-504" author="Mbarek-Ay">
+		<createTable tableName="cpq_assigned_attributes">
+			<column name="attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="assigned_attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey
+			columnNames="attribute_id,assigned_attribute_id"
+			tableName="cpq_assigned_attributes" />
+	</changeSet>
 
     <changeSet id="#INTRD-5908-20220330-tbl" author="AmineBENAICHA">
         <createTable tableName="global_settings">
@@ -11821,19 +11857,7 @@
             </column>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
-    </changeSet>
-
-   <changeSet id="rebuild-str-540-5991-tbl-1" author="Mbarek-Ay">
-        <createTable tableName="cpq_assigned_attributes">
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="assigned_attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
-    </changeSet>
+    </changeSet> 
     
     <changeSet id="#INTRD-8026_20220622-tbl" author="HatimOUDAD">
         <createTable tableName="open_order_quote">
@@ -16420,7 +16444,7 @@
                                  constraintName="cpq_tag_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-    </changeSet>
+    </changeSet> 
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18301,7 +18325,15 @@
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
 	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
-    
+    <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
+	<changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
+	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay"/>
+	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

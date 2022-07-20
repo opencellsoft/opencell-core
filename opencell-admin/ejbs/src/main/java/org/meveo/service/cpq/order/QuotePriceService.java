@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
@@ -56,6 +57,13 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 				.getResultList();
 	}
 	
+	public List<QuotePrice> loadByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel){
+		return getEntityManager().createNamedQuery("QuotePrice.loadByQuoteVersionAndPriceLevel", QuotePrice.class)
+				.setParameter("quoteVersion", quoteVersion)
+				.setParameter("priceLevelEnum", priceLevel)
+				.getResultList();
+	}
+	
 	public QuotePrice findByUuid(String uuid) {
 		if(uuid == null) return null;
 		try {
@@ -64,6 +72,8 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 					.getSingleResult();
 		}catch(NonUniqueResultException e) {
 			return null;
-		}
+		}catch (NoResultException e) {
+		return null;
+	}
 	}
 }
