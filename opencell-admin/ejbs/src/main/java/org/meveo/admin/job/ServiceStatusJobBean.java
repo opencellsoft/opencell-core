@@ -19,6 +19,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -82,6 +83,9 @@ public class ServiceStatusJobBean extends IteratorBasedJobBean<Long> {
             if (serviceInstance.getServiceRenewal().isAutoRenew()) {
 
                 while (serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().before(untilDate)) {
+                	if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+                		serviceInstance.setPriceVersionDate(serviceInstance.getSubscribedTillDate());
+                	}
                     Date calendarDate = new Date();
                     Calendar calendar = new GregorianCalendar();
                     if (serviceInstance.getServiceRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR) {
