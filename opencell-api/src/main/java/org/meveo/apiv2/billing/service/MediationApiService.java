@@ -336,10 +336,9 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-                        usageRatingService.count(); // remove this line and usageRatingService will throw nullpointerExpection
+                        log.debug("usageRatingService : " + usageRatingService + ", isVirtual : " + isVirtual + ", rateTriggeredEdrs : " + rateTriggeredEdrs + ", maxDepth : " + maxDepth);
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
-
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                                 ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
