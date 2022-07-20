@@ -149,6 +149,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         openOrder.setInitialAmount(openOrderQuote.getMaxAmount());
         openOrder.setBalance(openOrderQuote.getMaxAmount());
         openOrder.setCurrency(openOrderQuote.getCurrency());
+        openOrder.setOpenOrderQuote(openOrderQuote);
         if(openOrderQuote.getTags() != null) {
             openOrder.setTags(new ArrayList<>(openOrderQuote.getTags()));
         }
