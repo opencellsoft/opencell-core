@@ -509,7 +509,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_90_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -529,7 +529,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
         
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
         
         return qb.getQuery(getEntityManager()).getResultList();
