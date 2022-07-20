@@ -240,7 +240,8 @@ public class InvoiceApi extends BaseApi {
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
         String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
-        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());
+        invoice.setAlias(invoice.getInvoiceNumber());
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());        
         invoice.assignTemporaryInvoiceNumber();
         invoiceDTO.setReturnPdf(Boolean.FALSE);
         invoiceDTO.setReturnXml(Boolean.FALSE);
