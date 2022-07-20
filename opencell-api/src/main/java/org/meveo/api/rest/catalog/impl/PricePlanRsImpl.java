@@ -210,6 +210,30 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, new GetPricePlanVersionResponseDto().getActionStatus());
         }
     }
+    
+    @Override
+    public Response updateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        try {
+            PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionApi.updatePricePlanMatrixVersion(pricePlanMatrixVersionDto);
+            if (pricePlanMatrixVersionDto.getColumns() != null) {
+                for (PricePlanMatrixColumnDto columnDto : pricePlanMatrixVersionDto.getColumns()) {
+                    try {
+                        pricePlanMatrixColumnApi.create(pricePlanMatrixVersionDto.getPricePlanMatrixCode(),pricePlanMatrixVersionDto.getVersion(), columnDto);
+                    }catch(EntityAlreadyExistsException exp){
+                        pricePlanMatrixColumnApi.update(pricePlanMatrixVersionDto.getPricePlanMatrixCode(),pricePlanMatrixVersionDto.getVersion(), columnDto);
+                    }
+                }
+            }
+            if (pricePlanMatrixVersionDto.getLines() != null) {
+                for (PricePlanMatrixLineDto line : pricePlanMatrixVersionDto.getLines()) {
+                    pricePlanMatrixLineApi.addPricePlanMatrixLine(pricePlanMatrixVersionDto.getPricePlanMatrixCode(), pricePlanMatrixVersion.getCurrentVersion(), line);
+                }
+            }
+            return Response.ok(new GetPricePlanVersionResponseDto(pricePlanMatrixVersionApi.load(pricePlanMatrixVersion.getId()))).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, new GetPricePlanVersionResponseDto().getActionStatus());
+        }
+    }
 
 
     @Override
