@@ -789,7 +789,8 @@
 								"userManagement",
 								"currencyManagement",
 								"ModifyAllCE",
-								"administrationManagement"
+								"administrationManagement",
+								"queryManagement"
 							]
 						}
 					},
@@ -4907,22 +4908,22 @@
 					},					
 					{
 						"id": "3732b39d-278c-41e2-8d1b-d0675e1a5ab3",
-						"name": "Role quoteUser",
+						"name": "Role queryUser",
 						"type": "role",
 						"logic": "POSITIVE",
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
-							"roles": "[{\"id\":\"opencell-web/quoteUser\",\"required\":false},{\"id\":\"opencell-web/quoteManagement\",\"required\":false}]"
+							"roles": "[{\"id\":\"opencell-web/queryUser\",\"required\":false},{\"id\":\"opencell-web/queryManagement\",\"required\":false}]"
 						}
 					},					
 					{
 						"id": "3732b39d-278c-41e2-8d1b-d0675e1a5ab4",
-						"name": "Role quoteManagement",
+						"name": "Role queryManagement",
 						"type": "role",
 						"logic": "POSITIVE",
 						"decisionStrategy": "UNANIMOUS",
 						"config": {
-							"roles": "[{\"id\":\"opencell-web/quoteManagement\",\"required\":false}]"
+							"roles": "[{\"id\":\"opencell-web/queryManagement\",\"required\":false}]"
 						}
 					},
 					{
