@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -86,7 +87,7 @@ public class InvoiceLinesFactory {
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record, Map<Long, Long> iLIdsRtIdsCorrespondence, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        String rtID = (String) record.get("rated_transaction_ids");
+        BigInteger rtID = (BigInteger) record.get("rated_transaction_ids");
         ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
         ofNullable(record.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
         ofNullable(record.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
@@ -103,7 +104,7 @@ public class InvoiceLinesFactory {
         		if(discountedILId!=null) {
         			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
             		invoiceLine.setDiscountedInvoiceLine(discountedIL);
-            		RatedTransaction discountRatedTransaction = ratedTransactionService.findById(Long.valueOf(rtID));
+            		RatedTransaction discountRatedTransaction = ratedTransactionService.findById(rtID.longValue());
             		if(discountRatedTransaction!=null) {
             			invoiceLine.setDiscountPlan(discountRatedTransaction.getDiscountPlan());
             			invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());

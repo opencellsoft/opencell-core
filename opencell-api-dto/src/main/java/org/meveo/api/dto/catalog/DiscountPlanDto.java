@@ -404,28 +404,20 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.discountPlanType = discountPlanType;
 	}
 
-	public Integer getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
-
-	public boolean isApplicableOnDiscountedPrice() {
-		return applicableOnDiscountedPrice;
-	}
-
-	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
-		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
-	}
-
 	public Boolean getApplicableOnOverriddenPrice() {
 		return applicableOnOverriddenPrice;
 	}
 
 	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	public Boolean getApplicableOnDiscountedPrice() {
@@ -435,7 +427,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
-	
+
+	 
 	
 	
 	

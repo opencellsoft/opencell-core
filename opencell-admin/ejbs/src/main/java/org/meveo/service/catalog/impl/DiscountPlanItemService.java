@@ -293,7 +293,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         				if(discountPlanItem.getSequence()==null) {
         					setDisountPlanItemSequence(discountPlanItem);
-        					update(discountPlanItem);
+        					super.update(discountPlanItem);
         				}
         				applicableDiscountPlanItems.add(discountPlanItem);
 
