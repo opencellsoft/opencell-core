@@ -955,11 +955,11 @@ public class DateUtils {
         Date dFrom = DateUtils.truncateTime(date.getFrom());
         Date dTo = DateUtils.truncateTime(date.getTo());        
         
-        DatePeriod validity = new DatePeriod();
-        validity.setFrom(dFrom);
-        validity.setTo(dTo);
+        DatePeriod result = new DatePeriod();
+        result.setFrom(dFrom);
+        result.setTo(dTo);
 
-        return validity;
+        return result;
     }
     
     public static Date truncateTime(Date date) {
