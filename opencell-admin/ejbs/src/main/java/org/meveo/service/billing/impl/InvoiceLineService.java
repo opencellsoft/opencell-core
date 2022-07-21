@@ -935,6 +935,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
+    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>());
+    }
+    	
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
+                AggregationConfiguration configuration, JobExecutionResultImpl result,
+                                              BillingRun billingRun, List<InvoiceLine> invoiceLines) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         BasicStatistics basicStatistics = new BasicStatistics();
@@ -958,7 +964,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
             	}
             }
-            
+
             if(useOpenOrder) {
             	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine);
         		if (openOrder != null) {
@@ -966,7 +972,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithTax()));
         		}
             }
-            
+            invoiceLines.add(invoiceLine);
         }
         return basicStatistics;
     }
