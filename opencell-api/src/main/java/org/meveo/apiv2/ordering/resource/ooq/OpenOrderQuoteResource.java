@@ -48,6 +48,18 @@ public interface OpenOrderQuoteResource {
     )
     Response create(OpenOrderQuoteDto dto);
 
+    @POST
+    @Path("/{id}/duplicate")
+    @Operation(
+            summary = "Duplicate Open Order Quote from existing one",
+            description = "Duplicate Open Order Quote",
+            operationId = "POST_DUPLICATE-Open-Order-Quote",
+            responses = {
+                    @ApiResponse(description = "Id of created Open Order Quote"
+                    )}
+    )
+    Response duplicate(@Parameter(description = "Source Open Order Quote id", required = true) @PathParam("id") Long iqOOQ);
+
     @PUT
     @Path("/{id}")
     @Operation(
