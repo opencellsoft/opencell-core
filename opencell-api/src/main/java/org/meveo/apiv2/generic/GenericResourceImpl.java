@@ -34,6 +34,7 @@ public class GenericResourceImpl implements GenericResource {
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
