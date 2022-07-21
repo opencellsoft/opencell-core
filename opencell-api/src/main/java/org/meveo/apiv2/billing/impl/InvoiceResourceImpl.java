@@ -30,6 +30,7 @@ import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.InvoiceTypeRs;
@@ -444,11 +445,15 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response calculateSubTotals(Long invoiceId) {
 		Invoice invoice = invoiceApiService.findById(invoiceId).orElseThrow(NotFoundException::new);
+		try {
 		var invoiceSubtotalsList = invoiceSubTotalsApiService.calculateSubTotals(invoice);
 		  return Response
 	                .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
 	                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(invoiceSubtotalsList)))
 	                .build();
+		}catch(Exception e) {
+		    throw new BusinessApiException(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+		}
 	}
 	
 	@Override
