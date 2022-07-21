@@ -951,6 +951,17 @@ public class DateUtils {
         return ddMM + y;
     }
 
+    public static DatePeriod truncateTime(DatePeriod date) {
+        Date dFrom = DateUtils.truncateTime(date.getFrom());
+        Date dTo = DateUtils.truncateTime(date.getTo());        
+        
+        DatePeriod validity = new DatePeriod();
+        validity.setFrom(dFrom);
+        validity.setTo(dTo);
+
+        return validity;
+    }
+    
     public static Date truncateTime(Date date) {
         try {
             if (date == null) {

@@ -332,13 +332,9 @@ public class ProductService extends BusinessService<Product> {
                 boolean conditionValidity = false; 
                 if (pv.getValidity()!=null) 
                 { 
-                    Date dFrom = DateUtils.truncateTime(pv.getValidity().getFrom());
-                    Date dTo = DateUtils.truncateTime(pv.getValidity().getTo());
-                    
-                    DatePeriod validity = new DatePeriod();
-                    validity.setFrom(dFrom);
-                    validity.setTo(dTo);
-                    if (dFrom != null) 
+                    DatePeriod validity = DateUtils.truncateTime(pv.getValidity());
+
+                    if (validity.getFrom() != null) 
                     { 
                         date = DateUtils.truncateTime(date);
                         conditionValidity =  validity.isCorrespondsToPeriod(date);
