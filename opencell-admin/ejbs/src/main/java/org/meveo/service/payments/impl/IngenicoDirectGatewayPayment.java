@@ -97,7 +97,7 @@ import java.util.List;
 
 
 /**
- * The Class IngenicoDirectGatewayPaymen based on Direct API Reference Direct specifications (2.60.0).
+ * The Class IngenicoDirectGatewayPayment based on Direct API Reference Direct specifications (2.60.0).
  *
  * @author anasseh
  */
@@ -105,13 +105,13 @@ import java.util.List;
 public class IngenicoDirectGatewayPayment implements GatewayPaymentInterface {
 
     /** The log. */
-    protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
+    protected Logger log = LoggerFactory.getLogger(IngenicoDirectGatewayPayment.class);
     
     /** The payment gateway. */
     private PaymentGateway paymentGateway = null; 
         
     /** The client. */
-    private  IClient client = null;
+    private  Client  client = null;
     
     private Marshaller marshaller = null;
     
@@ -123,12 +123,12 @@ public class IngenicoDirectGatewayPayment implements GatewayPaymentInterface {
     private void connect() {
         ParamBean paramBean = paramBean();
         //Init properties
-        paramBean.getProperty("direct.api.integrator", "CompanyName");
-        paramBean.getProperty("direct.api.endpoint.host", "5000");
-        paramBean.getProperty("connect.api.endpoint.host", "changeIt");
-        paramBean.getProperty("connect.api.endpoint.scheme", "changeIt");
-        paramBean.getProperty("connect.api.integrator", "");
-        paramBean.getProperty("connect.api.socketTimeout", "300000");        
+        
+        paramBean.getProperty("onlinePayments.api.endpoint.host", "payment.preprod.direct.worldline-solutions.com");
+        paramBean.getProperty("onlinePayments.api.endpoint.scheme", "https");
+        paramBean.getProperty("onlinePayments.api.endpoint.port", "443");
+        
+       
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
