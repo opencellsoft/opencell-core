@@ -327,7 +327,7 @@ public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTem
 	        
 	        //Disable used
 	        getEntityManager()
-	        .createNativeQuery("update open_order_product set active = '0' where open_order_template_id = "+openOrderTemplate.getId()+" and accounting_product_id in"
+	        .createNativeQuery("update open_order_product set active = '0' where open_order_template_id = "+openOrderTemplate.getId()+" and product_id in"
 	        		+ " (select open_product_id from open_order_quote_products ooqs"
 	        		+ " join open_order_quote ooq   on ooq.id = ooqs.open_order_quote_id"
 	        		+ " join open_order_product oop on oop.id = ooqs.open_product_id"

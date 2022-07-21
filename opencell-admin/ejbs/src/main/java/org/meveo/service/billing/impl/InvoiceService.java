@@ -120,6 +120,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
@@ -351,6 +352,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
 
+    @Inject
+    @InvoicePaymentStatusUpdated
+    protected Event<Invoice> invoicePaymentStatusUpdated;
+    
     @Inject
     private FilterService filterService;
 
@@ -760,9 +765,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 convertedRtGroups.add(rtGroup);
             }
         }
-
         return new RatedTransactionsToInvoice(moreRts, convertedRtGroups);
-
     }
 
     private PaymentMethod resolvePaymentMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, IInvoiceable dataToInvoice) {
@@ -2325,8 +2328,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Create missing rated transactions up to a last transaction date
-        if (!useV11Process)
+        if (!useV11Process) {
             ratedTransactionService.createRatedTransactions(entityToInvoice, lastTransactionDate);
+        }
         List<Invoice> invoices = invoiceService.createInvoice(entityToInvoice, generateInvoiceRequestDto, ratedTxFilter, isDraft, useV11Process);
 
         List<Invoice> invoicesWNumber = new ArrayList<>();
@@ -2415,9 +2419,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
-                invoiceLinesService.createInvoiceLines(groupedRTs, configuration, null, null);
-                ratedTransactionService.makeAsProcessed(ratedTransactionIds);
-                invoices = createAggregatesAndInvoiceWithIL(entity, null, filter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, !generateInvoiceRequestDto.getSkipValidation(), false);
+                List<InvoiceLine> invoiceLines = new ArrayList<>();
+                invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
+                        null, null, invoiceLines);
+                invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
+                        firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
+                        !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
+                        generateInvoiceRequestDto.getOpenOrderCode());
             }
         } else {
             MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
@@ -2498,13 +2506,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (remove) {
             super.remove(invoice);
         } else {
-            super.update(invoice);
+        	cancelInvoiceById(invoice.getId());
         }
         updateBillingRunStatistics(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
-
+    public void cancelInvoiceById(Long invoiceId) {
+        getEntityManager().createNamedQuery("Invoice.cancelInvoiceById")
+        .setParameter("now", new Date())
+                .setParameter("invoiceId", invoiceId)
+                .executeUpdate();
+    }
+    
     public void updateBillingRunStatistics(Invoice invoice) {
     	invoice = refreshOrRetrieve(invoice);
         if(invoice != null) {
@@ -5118,9 +5132,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     protected InvoiceLinesToInvoice getInvoiceLinesGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
-            Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
-        List<InvoiceLine> invoiceLines = existingInvoice != null ? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId())
-                : getInvoiceLines(billingRun, entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
+            Filter filter,Map<String, Object> filterParams, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum, List<InvoiceLine> invoiceLines, String openOrderCode) throws BusinessException {
+        if(CollectionUtils.isEmpty(invoiceLines)) {
+	    	invoiceLines = existingInvoice != null ? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId())
+	                : getInvoiceLines(billingRun, entityToInvoice, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft);
+        }
         boolean moreIls = invoiceLines.size() == rtPaginationSize;
         if (log.isDebugEnabled()) {
             log.debug("Split {} Invoice Lines for {}/{} in to billing account/seller/invoice type groups. {} invoice Lines to retrieve.", invoiceLines.size(), entityToInvoice.getClass().getSimpleName(),
@@ -5322,11 +5338,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param minAmountForAccounts Check if min amount is enabled in any account level
      * @param isDraft Is this a draft invoice
      * @param automaticInvoiceCheck automatic invoice check
+     * @param invoiceLines 
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
     public List<Invoice> createAggregatesAndInvoiceWithIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
             MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice) throws BusinessException {
+    	return createAggregatesAndInvoiceUsingIL(entityToInvoice, billingRun, filter, filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, automaticInvoiceCheck, isDepositInvoice, null,null);
+    }
+    
+    /**
+     * Creates invoices and their aggregates
+     * if the invoiceLinesList is given, it will be directly used to gcreate invoice
+     *
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
+     * @param filter invoice line filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param isDraft Is this a draft invoice
+     * @param automaticInvoiceCheck automatic invoice check
+     * @param invoiceLines 
+     * @param openOrderCode 
+     * @return A list of created invoices
+     * @throws BusinessException business exception
+     */
+    
+    public List<Invoice> createAggregatesAndInvoiceUsingIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
+            MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice, List<InvoiceLine> invoiceLines, String openOrderCode) throws BusinessException {
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
         if (billingRun == null) {
@@ -5418,7 +5459,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter,filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance,
-                automaticInvoiceCheck, hasMin, null, null);
+                automaticInvoiceCheck, hasMin, null, null, invoiceLines, openOrderCode);
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
             if (entityToInvoice instanceof BillingAccount) {
@@ -5438,7 +5479,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
             BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck, boolean hasMin,
-            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum) throws BusinessException {
+            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum, List<InvoiceLine> existingInvoiceLines, String openOrderCode) throws BusinessException {
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -5453,7 +5494,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             InvoiceLinesToInvoice iLsToInvoice = getInvoiceLinesGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, filter,filterParams, firstTransactionDate, lastTransactionDate, isDraft,
-                defaultPaymentMethod, existingInvoice, invoiceProcessTypeEnum);
+                defaultPaymentMethod, existingInvoice, invoiceProcessTypeEnum, existingInvoiceLines, openOrderCode);
             List<InvoiceLinesGroup> invoiceLinesGroupsPaged = iLsToInvoice.invoiceLinesGroups;
             moreInvoiceLinesExpected = iLsToInvoice.moreInvoiceLines;
             if (moreInvoiceLinesExpected) {
@@ -6079,7 +6120,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Updated invoice
      */
     public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
+        boolean isFire = false;
         toUpdate = refreshOrRetrieve(toUpdate);
+        if (!toUpdate.getPaymentStatus().equals(invoiceResource.getPaymentStatus())) {
+            isFire = true;
+        }
         final InvoiceStatusEnum status = toUpdate.getStatus();
         if (!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
@@ -6149,6 +6194,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
         }
+        
+        if (isFire) {
+            invoicePaymentStatusUpdated.fire(toUpdate);
+        }
 
         return update(toUpdate);
     }
@@ -6186,7 +6235,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
         invoiceService.updateBillingRunStatistics(invoice);
         return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null,null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount,
-            billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice, InvoiceProcessTypeEnum.MANUAL);
+            billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice, InvoiceProcessTypeEnum.MANUAL,null, null);
     }
 
     @Inject
@@ -6391,6 +6440,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.loadByBillingRun", Long.class)
                     .setParameter("billingRunId", billingRunId)
                     .getResultList();
+    }
+    
+    @Override
+    public Invoice update(Invoice entity) throws BusinessException {
+        Invoice invoiceOld = findById(entity.getId());
+        if (!invoiceOld.getPaymentStatus().equals(entity.getPaymentStatus())) {
+            invoicePaymentStatusUpdated.fire(entity);
+        }
+        super.update(entity);
+        return entity;
     }
 
 }

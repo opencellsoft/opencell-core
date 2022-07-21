@@ -402,18 +402,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
-		if(PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-			if(serviceInstance.getPriceVersionDate() != null) {
-				operationDateParam = serviceInstance.getPriceVersionDate(); 
-			}else {
-				operationDateParam = serviceInstance.getSubscriptionDate(); 
-			}
-		}else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = serviceInstance.getSubscriptionDate(); 
-		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = serviceInstance.getRenewalNotifiedDate(); 
-		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			operationDateParam = operationDate; 
+		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+				operationDateParam = serviceInstance.getPriceVersionDate(); 
 		}
 		
         List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
@@ -431,18 +425,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() != null) {
 
-            String serviceCode = chargeInstance.getServiceInstance().getCode();
-            Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances().stream()
-                .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation)).collect(Collectors.toSet());
-
-            return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode, walletOperation);
+     	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                    .stream()
+                    .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
+                    .collect(Collectors.toSet());
+     	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, walletOperation);
         }
 
         return null;
     }
 
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode, Set<AttributeValue> attributeValues) throws NoPricePlanException {
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode, null);
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, null);
     }
 
     @SuppressWarnings("unchecked")

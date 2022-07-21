@@ -240,6 +240,7 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
         openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.ACCEPTED);
 
@@ -265,11 +266,39 @@ public class OpenOrderQuoteChangeStatusApiTest {
     }
 
     @Test
-    public void updateStatusToSENTErrStatus() {
+    public void updateStatusToSENTStatus() {
         OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.DRAFT, buildArticles(), buildProducts());
 
         OpenOrderSetting setting = new OpenOrderSetting();
         setting.setUseManagmentValidationForOOQuotation(false);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+
+    }
+
+    @Test
+    public void updateStatusToSENTAnotherTimeStatusWithValidationConfigDisabled() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.SENT, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(false);
+
+        Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
+        Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
+
+        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.SENT);
+
+    }
+
+    @Test
+    public void updateStatusToSENTAnotherTimeStatusWithValidationConfigEnabled() {
+        OpenOrderQuote ooq = buildOOQ(OpenOrderTypeEnum.ARTICLES, OpenOrderQuoteStatusEnum.SENT, buildArticles(), buildProducts());
+
+        OpenOrderSetting setting = new OpenOrderSetting();
+        setting.setUseManagmentValidationForOOQuotation(true);
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
@@ -377,7 +406,6 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
-        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
         openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
 
@@ -392,9 +420,13 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
-        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
-        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
+        try {
+            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "Open Order Quote status must be WAITING_VALIDATION");
+        }
     }
 
     @Test
@@ -406,9 +438,13 @@ public class OpenOrderQuoteChangeStatusApiTest {
 
         Mockito.when(openOrderQuoteService.findByCode(any())).thenReturn(ooq);
         Mockito.when(openOrderSettingService.list()).thenReturn(List.of(setting));
-        Mockito.when(openOrderService.create(ooq)).thenReturn(new OpenOrder());
 
-        openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
+        try {
+            openOrderQuoteApi.changeStatus("OOQ", OpenOrderQuoteStatusEnum.VALIDATED);
+            Assert.fail("Exception must be thrown");
+        } catch (BusinessApiException e) {
+            Assert.assertEquals(e.getMessage(), "ASK VALIDATION feature is not activated");
+        }
     }
 
     @Test
@@ -558,7 +594,7 @@ public class OpenOrderQuoteChangeStatusApiTest {
         ooq.setActivationDate(null);
         ooq.setArticles(articles);
         ooq.setCurrency(null);
-        ooq.setOpenOrderNumber(UUID.randomUUID().toString());
+        ooq.setQuoteNumber(UUID.randomUUID().toString());
         ooq.setOpenOrderTemplate(null);
         ooq.setBillingAccount(null);
         ooq.setEndOfValidityDate(null);

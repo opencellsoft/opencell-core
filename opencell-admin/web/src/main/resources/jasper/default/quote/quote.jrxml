@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="integr.xml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Quote - Reference"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -320,6 +320,9 @@
 	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="xmlDateFormat" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/quote/header/billingAccount/name/name]]>
 	</queryString>
@@ -621,8 +624,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="115" height="30" isPrintWhenDetailOverflows="true" uuid="b24f86a6-c699-434d-b125-5e14f737e8c4"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -674,8 +676,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="74" height="30" isPrintWhenDetailOverflows="true" uuid="4ca2d59c-2814-47f0-8166-720ec2de18e5"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -701,8 +702,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="69" height="30" isPrintWhenDetailOverflows="true" uuid="89c3f7c2-56dc-43e3-97e3-e9c55ab66447"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -911,8 +911,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="87" height="30" isPrintWhenDetailOverflows="true" uuid="2107769c-6e18-48ed-a39e-0d5c938a1848"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -937,8 +936,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="94" height="30" isPrintWhenDetailOverflows="true" uuid="53423ada-4d55-4b45-b18a-d77b02eb75cc"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -963,8 +961,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="66" height="30" isPrintWhenDetailOverflows="true" uuid="fd62bc24-c1e5-445c-92f0-e8f3af0a6766"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -989,8 +986,7 @@
 								<textField pattern="#0.000" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="62" height="30" isPrintWhenDetailOverflows="true" uuid="616b0753-a93f-4d36-830e-8074b3c965f7"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"
-]]></textFieldExpression>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1152,382 +1148,7 @@
 	</group>
 	<group name="4">
 		<groupHeader>
-			<band height="228">
-				<componentElement>
-					<reportElement key="table 10" x="10" y="70" width="577" height="42" uuid="e589d361-32b7-4f54-afe1-0867b23e9e7a">
-						<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-					</reportElement>
-					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-						<datasetRun subDataset="line_prices" uuid="d637388f-5cbf-474b-b1cf-72130bef6830">
-							<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price")]]></dataSourceExpression>
-						</datasetRun>
-						<jr:column width="68" uuid="7bfd2125-96e0-458d-ba0f-99d214a2b80a">
-							<jr:columnHeader height="2" rowSpan="1"/>
-							<jr:detailCell height="30" rowSpan="1">
-								<textField>
-									<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="68" height="30" backcolor="#CCCCCC" uuid="47119aa4-c1f4-49b2-b51e-aef4b63732fb"/>
-									<box>
-										<pen lineWidth="0.5"/>
-										<topPen lineWidth="0.5"/>
-										<leftPen lineWidth="0.5"/>
-										<bottomPen lineWidth="0.5"/>
-										<rightPen lineWidth="0.5"/>
-									</box>
-									<textElement verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{billingAccountCode}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="81" uuid="37ac9d2f-0d72-4e6f-b958-089d30f63c11">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="81" height="30" uuid="9118be67-ed72-4e77-bde5-79fe436a7f2b"/>
-									<textElement verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{accountingArticleLabel}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="71" uuid="7e7c6c00-3f02-4529-8f88-9d4c760f100c">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="71" height="30" uuid="5ff454c7-b406-4060-829b-24731bc1ab1d"/>
-									<textElement verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{priceType}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="50" uuid="af553297-0264-4786-895b-a0ef783f69a9">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="50" height="30" uuid="db40bd06-58ce-4bbb-9d30-fed7359e93e0"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="69" uuid="d4a77252-04e5-4528-987d-cb5d3104cb43">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="69" height="30" isPrintWhenDetailOverflows="true" uuid="d9c99dea-cba6-4306-a503-ced2f4dee53a"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"
-]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="69" uuid="059f628b-75ea-4a7d-af84-8525e695d0e3">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="69" height="30" isPrintWhenDetailOverflows="true" uuid="5a98f398-96c2-4da4-9858-1da6b6039661"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"
-]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="59" uuid="0e694df2-bd5a-4b57-858c-35b568c02a19">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="a60755fe-28f9-47b3-a460-1951a6b3a802"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"
-]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="58" uuid="560d1926-a0ab-46a8-ab18-2cbe1f8fcd8a">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="58" height="30" isPrintWhenDetailOverflows="true" uuid="9f94cbdd-63f4-44d5-ba3c-0520d457703b"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"
-]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="52" uuid="2bb64140-6e8b-4b36-a26f-e0eef7de8e21">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="52" height="30" isPrintWhenDetailOverflows="true" uuid="c79b07f6-b0dd-4392-94db-69e7910d797e"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{recurrencePeriodicity}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:table>
-				</componentElement>
-				<staticText>
-					<reportElement mode="Opaque" x="538" y="41" width="52" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="7677e4d1-e484-4789-9b76-5da85108d973">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Duration]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="162" y="41" width="59" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6768b3bc-c6ea-421f-8ce1-46904ed5112b">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Category]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="287" y="41" width="53" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="7fb0c73e-474b-4b48-83a3-e2ce7935aa52">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Amount w/o tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="353" y="41" width="60" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="1afdb443-bc67-4cb4-ae3e-0967b4ff01ec">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Amout with tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="424" y="41" width="44" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="f1d564e1-776f-4e9e-a064-2f2ea1b37010">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="480" y="41" width="53" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5bede3a2-cfd6-4f9e-ba24-f6320bb3ab7c">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax Rate]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="89" y="41" width="63" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="d19e3cf8-a013-489a-aac1-c9cf01c070a5">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Article]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="231" y="41" width="50" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="2c663596-d2b8-404d-ad09-9e39cab17e96">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Quantity]]></text>
-				</staticText>
+			<band height="98">
 				<staticText>
 					<reportElement mode="Opaque" x="20" y="9" width="380" height="23" forecolor="#F0F7FA" backcolor="#76818C" uuid="8bb9ba5a-53af-41a6-965d-05ef316251c5">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1546,6 +1167,17 @@
 					</textElement>
 					<text><![CDATA[Details - Per Billing Account and Articles]]></text>
 				</staticText>
+				<subreport>
+					<reportElement x="0" y="41" width="595" height="40" uuid="daaed693-5b5a-4c19-8b1f-3f963b90319e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<subreportParameter name="xmlDateFormat">
+						<subreportParameterExpression><![CDATA[$P{xmlDateFormat}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price")]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{messagePath}+"quote_accouting_articles.jasper"]]></subreportExpression>
+				</subreport>
 			</band>
 		</groupHeader>
 	</group>

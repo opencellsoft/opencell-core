@@ -8,11 +8,13 @@ import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteDto;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -44,7 +46,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.*;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.ACCEPTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.CANCELED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.DRAFT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.REJECTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.SENT;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.VALIDATED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.WAITING_VALIDATION;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 
@@ -101,7 +109,7 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         validateTags(dto, tags);
@@ -138,13 +146,17 @@ public class OpenOrderQuoteApi {
             throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
         }
 
+        if (ACCEPTED == ooq.getStatus() || CANCELED == ooq.getStatus()) {
+            throw new BusinessApiException("Cannot update OpenOrderQuote with status : " + ooq.getStatus());
+        }
+
         OpenOrderQuote ooqWithSameCode = openOrderQuoteService.findByCode(dto.getCode());
         if (ooqWithSameCode != null && !ooqWithSameCode.getId().equals(idOOQ)) {
             throw new EntityAlreadyExistsException(OpenOrderQuote.class, dto.getCode());
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         if (!template.getId().equals(ooq.getOpenOrderTemplate().getId())) {
@@ -173,7 +185,7 @@ public class OpenOrderQuoteApi {
         return billingAccount;
     }
 
-    private OpenOrderTemplate getOpenOrderTemplate(OpenOrderQuoteDto dto) {
+    private OpenOrderTemplate validateAndGetOpenOrderTemplate(OpenOrderQuoteDto dto) {
         OpenOrderTemplate template = openOrderTemplateService.findByCode(dto.getOpenOrderTemplate());
 
         if (template == null) {
@@ -181,9 +193,9 @@ public class OpenOrderQuoteApi {
         }
 
         // To activate in SPRINT 21
-        /*if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
+        if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
             throw new BusinessApiException("Template shall be in ACTIVE status");
-        }*/
+        }
         return template;
     }
 
@@ -241,6 +253,10 @@ public class OpenOrderQuoteApi {
                     throw new BusinessApiException("Open Order Quote status must be SENT");
                 }
 
+                OpenOrder oor = openOrderService.create(ooq);
+                ooq.setOpenOrder(oor);
+                openOrderQuoteService.update(ooq);
+
                 break;
 
             case SENT:
@@ -249,10 +265,10 @@ public class OpenOrderQuoteApi {
                 // check that Product/Article list is not empty(depending on type)
 
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
-                    if (ooq.getStatus() != DRAFT) {
+                    if (ooq.getStatus() != DRAFT && ooq.getStatus() != SENT) {
                         throw new BusinessApiException("Open Order Quote status must be DRAFT");
                     }
-                } else if (ooq.getStatus() != VALIDATED) {
+                } else if (ooq.getStatus() != VALIDATED && ooq.getStatus() != SENT) {
                     throw new BusinessApiException("Open Order Quote status must be VALIDATED");
                 }
 
@@ -266,8 +282,6 @@ public class OpenOrderQuoteApi {
 
                 break;
             case VALIDATED:
-                openOrderService.create(ooq);
-                break;
             case REJECTED:
                 if (!setting.getUseManagmentValidationForOOQuotation()) {
                     throw new BusinessApiException("ASK VALIDATION feature is not activated");
@@ -294,7 +308,7 @@ public class OpenOrderQuoteApi {
         ooq.setDescription(dto.getDescription());
         ooq.setOpenOrderType(dto.getOpenOrderType());
         ooq.setMaxAmount(dto.getMaxAmount());
-        ooq.setOpenOrderNumber(serviceSingleton.getNextOpenOrderSequence());
+        ooq.setQuoteNumber(serviceSingleton.getNextOpenOrderQuoteSequence());
         ooq.setOpenOrderTemplate(template); // 3.4 template: set at creation, cannot be changed later.
         ooq.setExternalReference(dto.getExternalReference());
         ooq.setEndOfValidityDate(dto.getEndOfValidityDate());

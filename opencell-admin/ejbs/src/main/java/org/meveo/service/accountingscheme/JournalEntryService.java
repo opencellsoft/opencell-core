@@ -88,7 +88,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .orElse(occT.getAccountingCode());
         JournalEntry firstEntry = buildJournalEntry(ao, accountingCode, occT.getOccCategory(),
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+                null, ao.getOperationNumber());
 
         // Second JournalEntry
         JournalEntry secondEntry = buildJournalEntry(ao, occT.getContraAccountingCode(),
@@ -96,7 +96,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null);
+                null, ao.getOperationNumber() + 1);
 
         create(firstEntry);
         create(secondEntry);
@@ -123,7 +123,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 .orElse(accountingCodeFromRecordedAoOrOcc);
         // 1- produce a Customer account entry line
         JournalEntry customerAccountEntry = buildJournalEntry(recordedInvoice, accountingCode, occT.getOccCategory(),
-                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(), null);
+                recordedInvoice.getAmount() == null ? BigDecimal.ZERO : recordedInvoice.getAmount(), null, recordedInvoice.getOperationNumber());
 
         saved.add(customerAccountEntry);
 
@@ -182,7 +182,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 1- produce a first accounting entry
         JournalEntry firstAccountingEntry = buildJournalEntry(ao, firstAccountingCode, firstCategory,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber());
 
         saved.add(firstAccountingEntry);
 
@@ -191,7 +191,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
         JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber() + 1);
 
         saved.add(secondAccountingEntry);
 
@@ -247,7 +247,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
     private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
                                            OperationCategoryEnum categoryEnum, BigDecimal amount,
-                                           Tax tax) {
+                                           Tax tax, Long operationNumber) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
@@ -259,7 +259,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         Seller seller = getSeller(ao);
         firstEntry.setSeller(seller);
-        firstEntry.setOperationNumber(ao.getOperationNumber());
+        firstEntry.setOperationNumber(operationNumber);
         firstEntry.setSellerCode(seller != null ? seller.getCode() : "");
         firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
 
@@ -355,7 +355,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                     JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
                             occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                             amoutTax,
-                            taxAgr.getTax());
+                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
                     accountingCodeJournal.put(groupKey, taxEntry);
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
@@ -427,7 +427,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC,
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 invoiceLine.getAmountWithoutTax() == null ? BigDecimal.ZERO : invoiceLine.getAmountWithoutTax(),
-                null);
+                null, recordedInvoice.getOperationNumber());
         revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());

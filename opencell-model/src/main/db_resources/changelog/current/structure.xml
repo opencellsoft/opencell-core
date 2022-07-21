@@ -13630,6 +13630,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <dropColumn tableName="open_order_article" columnName="description" />
         </changeSet>
 
+    <changeSet id="#INTRD-8580_20220714" author="aelmalki">
+        <renameColumn tableName="open_order_quote" newColumnName="quote_number" oldColumnName="open_order_number"/>
+        <addColumn tableName="open_order_quote">
+            <column name="open_order_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="open_order_id" baseTableName="open_order_quote"
+                                 constraintName="fk_open_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order" />
+    </changeSet>
+
+</databaseChangeLog>
     <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius">
         <addColumn tableName="dwh_chart">
             <column name="role" type="varchar(50)"/>           

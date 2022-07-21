@@ -291,7 +291,6 @@
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
         <createSequence sequenceName="dunning_collection_plan_statuses_seq" startValue="1" />
-        <createSequence sequenceName="invoice_dunning_statuses_seq" startValue="1" />
         <createSequence sequenceName="dunning_agent_seq" startValue="1" />
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
@@ -11081,28 +11080,6 @@
             </column>
         </createTable>
 
-         <createTable tableName="invoice_dunning_statuses">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="status" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-            <column name="context" type="varchar(255)" >
-            	<constraints unique="false"/>
-            </column>
-            <column name="dunning_settings_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
          <createTable tableName="dunning_agent">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_agent_pkey" />
@@ -11429,7 +11406,6 @@
             </column>
             <column name="dunning_level_id" type="bigint" />
             <column name="collection_plan_status_id" type="bigint" />
-            <column name="invoice_dunning_statuses_id" type="bigint" />
             <column name="dunning_policy_id" type="bigint"/>
         </createTable>
 	</changeSet>
@@ -11815,7 +11791,7 @@
             <column name="open_order_template_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="open_order_number" type="varchar(255)">
+            <column name="quote_number" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="max_amount" type="numeric">
@@ -11836,6 +11812,7 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+			<column name="open_order_id" type="bigint" />
 
         </createTable>
                                              
@@ -15813,14 +15790,6 @@
 			referencedTableName="dunning_settings" />
 
 		<addForeignKeyConstraint
-			baseColumnNames="dunning_settings_id"
-			baseTableName="invoice_dunning_statuses"
-			constraintName="fk_dunning_settings_invoice_statuses_id"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="dunning_settings" />
-
-		<addForeignKeyConstraint
 			constraintName="fk_dunning_agent_dunning_settings"
 			referencedTableName="dunning_settings"
 			baseColumnNames="dunning_settings_id" baseTableName="dunning_agent"
@@ -15970,14 +15939,6 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="dunning_collection_plan_statuses" />
-
-		<addForeignKeyConstraint
-			baseColumnNames="invoice_dunning_statuses_id"
-			baseTableName="dunning_policy_level"
-			constraintName="fk_dunning_policy_level_invoice_dunning_statuses"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="invoice_dunning_statuses" />
 
 		<addForeignKeyConstraint
 			baseColumnNames="dunning_policy_id"
@@ -16257,7 +16218,9 @@
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="open_order_quote"
                                  constraintName="fk_billing_account_quote" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-        
+        <addForeignKeyConstraint baseColumnNames="open_order_id" baseTableName="open_order_quote"
+                                 constraintName="fk_open_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order" />
         <addForeignKeyConstraint baseColumnNames="open_order_quote_id" baseTableName="open_order_threshold" constraintName="fk_threshold_open_quote" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order_quote" />
     </changeSet>
@@ -18227,6 +18190,7 @@
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
+	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

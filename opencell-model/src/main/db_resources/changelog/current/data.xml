@@ -365,7 +365,7 @@
         <update tableName="cpq_attribute"><column name="el_value">${sub.getRenewalDate()}</column><where>id=-5</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${serviceInstance.getDeliveryDate()}</column><where>id=-6</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${quote.getValidationDate()}</column><where>id=-7</where></update>
-        <update tableName="cpq_attribute"><column name="el_value">${quote.getValidationDate()}</column><where>id=-8</where></update>
+        <update tableName="cpq_attribute"><column name="el_value">${sub.getSubscriptionDate()}</column><where>id=-8</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${sub.getSubscriptionMonthsAge()}</column><where>id=-9</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${sub.getSubscriptionDaysAge()}</column><where>id=-10</where></update>
         <update tableName="cpq_attribute"><column name="el_value">${edr.getParameter1()}</column><where>id=-11</where></update>
@@ -8028,5 +8028,26 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="creator" value="applicationInitializer" />
 			<column name="quote_default_validity_delay" value="30" />
 		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-8420_20220708" author="hichamHANINE">
+		<update tableName="meveo_script_instance">
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-8507_20220715" author="ZBariki">
+		<update tableName="billing_wallet_operation">
+			<column name="rated_transaction_id" value="null"/>
+			<where>rated_transaction_id NOT IN (SELECT id FROM billing_rated_transaction)</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-8618-20220719" author="aelmalki">
+		<update tableName="cpq_attribute">
+			<column name="el_value">${sub.getSubscriptionDate()}</column>
+			<where>id=-8</where>
+		</update>
 	</changeSet>
 </databaseChangeLog>

@@ -246,6 +246,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rootInvoice = invoiceService.findById(rootInvoiceId);
                     entity.setBillingAccount(rootInvoice.getBillingAccount());
                     entity.getLinkedInvoices().add(rootInvoice);
+                    entity.setPaymentMethod(rootInvoice.getPaymentMethod());
                     try {
                         entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
                     } catch (BusinessException e) {
@@ -714,19 +715,16 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             catInvAgr.updateAudit(currentUser);
 //            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
         }
-        rts = saveRTs();
-        if (entity.getId() == null) {
-            Customer customer = billingAccount.getCustomerAccount().getCustomer();
-            entity.setBillingAccount(billingAccount);
-            entity.setDetailedInvoice(isDetailed());
-            if (entity.getSeller() == null) {
-                entity.setSeller(customer.getSeller());
-            }
-            invoiceService.postCreate(entity);
-        }
 
+        entity.setBillingAccount(billingAccount);
+        entity.setDetailedInvoice(isDetailed());
+        if (entity.getSeller() == null) {
+            entity.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
+        }
+        rts = saveRTs();
+        
         invoiceService.postCreate(entity);
-        entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
+        
         if (entity.getInvoiceNumber() == null) {
             entity.setStatus(InvoiceStatusEnum.VALIDATED);
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);

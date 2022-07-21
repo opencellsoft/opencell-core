@@ -51,8 +51,8 @@ import org.meveo.service.report.ReportQueryService;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
 
-    private static final String QUERY_MANAGER_ROLE = "query_manager";
-    private static final String QUERY_USER_ROLE = "query_user";
+    private static final String QUERY_MANAGEMENT_ROLE = "queryManagement";
+    private static final String QUERY_USER_ROLE = "queryUser";
     @Inject
     private ReportQueryService reportQueryService;
 
@@ -93,12 +93,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     
     private void checkPermissionExist() {
-    	if(!currentUser.getRoles().contains(QUERY_MANAGER_ROLE) && !currentUser.getRoles().contains(QUERY_USER_ROLE))
-    		throw new BadRequestException("You don't have permission to access report queries");
+        if (!currentUser.hasRole(QUERY_MANAGEMENT_ROLE) && !currentUser.hasRole(QUERY_USER_ROLE)) {
+            throw new BadRequestException("You don't have permission to access report queries");
+        }
     }
     private void checkPermissionByAction(ReportQuery report, int action) {
     	checkPermissionExist();
-    	if(currentUser.getRoles().contains(QUERY_USER_ROLE)) {
+    	if(currentUser.hasRole(QUERY_USER_ROLE)) {
     		if(report.getVisibility() == PRIVATE && !report.getAuditable().getCreator().equals(currentUser.getUserName())) {
 	    		if(action == READ) {
 	        		throw new BadRequestException("Only Public and Protected query can you see");
@@ -243,7 +244,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
             try {
                 if(!reportQuery.getAuditable().getCreator().equals(currentUser.getUserName())
                         && reportQuery.getVisibility() == PRIVATE
-                        && !currentUser.hasRole(QUERY_MANAGER_ROLE)) {
+                        && !currentUser.hasRole(QUERY_MANAGEMENT_ROLE)) {
                     throw new BadRequestException("You don't have permission to delete query that belongs to another user.");
                 }
                 reportQueryService.remove(reportQuery);
@@ -291,7 +292,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
         if(!query.getAuditable().getCreator().equals(currentUser.getUserName()) && query.getVisibility() == PRIVATE
-                && !currentUser.getRoles().contains(QUERY_MANAGER_ROLE)) {
+                && !currentUser.getRoles().contains(QUERY_MANAGEMENT_ROLE)) {
             throw new BadRequestException("You don't have permission to execute query that belongs to another user.");
         }
 
@@ -350,6 +351,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public Long countAllowedQueriesForUser() {
         return reportQueryService.countAllowedQueriesForUser(currentUser, Collections.EMPTY_MAP);
     }

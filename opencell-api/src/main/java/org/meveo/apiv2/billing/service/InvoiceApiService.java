@@ -44,6 +44,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.security.CurrentUser;
@@ -220,6 +221,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			result.addInvoiceLines(invoiceLineResource);
 		}
 		invoiceService.calculateInvoice(invoice);
+		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
 		return result.build();
 	}
@@ -240,6 +242,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
 		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
 		invoiceService.calculateInvoice(invoice);
+		invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -366,6 +369,12 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	private Filter getFilterFromInput(FilterDto filterDto) throws MeveoApiException {
 		Filter filter = null;
+		if(!StringUtils.isBlank(filterDto.getPollingQuery()) && RatedTransaction.class.getSimpleName().equals(filterDto.getEntityClass())){
+			filter = new Filter();
+			filter.setPollingQuery(filterDto.getPollingQuery() + "AND status = 'OPEN'");
+			filter.setEntityClass(filterDto.getEntityClass());
+			return filter;
+		}
 		if (StringUtils.isBlank(filterDto.getCode()) && StringUtils.isBlank(filterDto.getInputXml())) {
 			throw new BadRequestException("code or inputXml");
 		}

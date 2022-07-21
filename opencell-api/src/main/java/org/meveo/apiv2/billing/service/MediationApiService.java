@@ -35,6 +35,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
@@ -336,10 +337,9 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-
+                        log.debug("usageRatingService : " + usageRatingService + ", isVirtual : " + isVirtual + ", rateTriggeredEdrs : " + rateTriggeredEdrs + ", maxDepth : " + maxDepth);
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
-
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                                 ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
@@ -379,7 +379,7 @@ public class MediationApiService {
                 }
             }
 
-            if (cdr.getStatus() == CDRStatusEnum.ERROR) {
+            if (cdr.getStatus() == CDRStatusEnum.ERROR || cdr.getStatus() == CDRStatusEnum.DISCARDED) {
 
                 String errorReason = cdr.getRejectReason();
                 if (cdr.getRejectReasonException() != null) {
@@ -466,7 +466,7 @@ public class MediationApiService {
 
         result.setError(cdrError);
 
-        if (returnEDRs && edrs != null && edrs.get(0).getId() != null) {
+        if (returnEDRs && CollectionUtils.isNotEmpty(edrs) && edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
             for (EDR edr : edrs) {
                 result.getEdrIds().add(edr.getId());
