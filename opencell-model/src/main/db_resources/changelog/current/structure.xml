@@ -13640,7 +13640,6 @@ order by date_trunc('month', i.invoice_date) DESC
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="open_order" />
     </changeSet>
 
-</databaseChangeLog>
     <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius">
         <addColumn tableName="dwh_chart">
             <column name="role" type="varchar(50)"/>           
