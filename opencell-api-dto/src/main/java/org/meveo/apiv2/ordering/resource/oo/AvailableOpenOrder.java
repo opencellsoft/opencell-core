@@ -15,6 +15,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public interface AvailableOpenOrder {
 
 	@NotNull
+	Long getOpenOrderId();
+	
+	@NotNull
 	String getOpenOrderNumber();
 	
 	@NotNull

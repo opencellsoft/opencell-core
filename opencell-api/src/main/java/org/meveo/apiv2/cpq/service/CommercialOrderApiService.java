@@ -67,6 +67,7 @@ public class CommercialOrderApiService {
 		// Group OpenOrders by Order's products
 		List<ImmutableAvailableOpenOrder> lResult = ooForProducts.entrySet().stream()
 				.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderId(oo.getKey().getId())
 												.openOrderNumber(oo.getKey().getOpenOrderNumber())
 												.startDate(oo.getKey().getActivationDate())
 												.externalReference(oo.getKey().getExternalReference())
@@ -76,6 +77,7 @@ public class CommercialOrderApiService {
 		// Group OpenOrders by Order's articles
 		lResult.addAll(ooForArticles.entrySet().stream()
 									.map(oo -> ImmutableAvailableOpenOrder.builder()
+												.openOrderId(oo.getKey().getId())
 												.openOrderNumber(oo.getKey().getOpenOrderNumber())
 												.startDate(oo.getKey().getActivationDate())
 												.externalReference(oo.getKey().getExternalReference())
