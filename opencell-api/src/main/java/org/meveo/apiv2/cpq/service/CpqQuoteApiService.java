@@ -4,6 +4,7 @@ import java.util.AbstractMap;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ public class CpqQuoteApiService {
 				.map(oo -> ImmutableAvailableOpenOrder.builder()
 												.openOrderNumber(oo.getKey().getOpenOrderNumber())
 												.startDate(oo.getKey().getActivationDate())
-												.externalReference(oo.getKey().getExternalReference())
+												.externalReference(Optional.ofNullable(oo.getKey().getExternalReference()).orElse(""))
 												.addAllProducts(oo.getValue().stream().map(Product::getId).collect(Collectors.toList()))
 												.build()).collect(Collectors.toList());
 
@@ -75,7 +76,7 @@ public class CpqQuoteApiService {
 									.map(oo -> ImmutableAvailableOpenOrder.builder()
 												.openOrderNumber(oo.getKey().getOpenOrderNumber())
 												.startDate(oo.getKey().getActivationDate())
-												.externalReference(oo.getKey().getExternalReference())
+												.externalReference(Optional.ofNullable(oo.getKey().getExternalReference()).orElse(""))
 												.addAllArticles(oo.getValue().stream().map(AccountingArticle::getId).collect(Collectors.toList()))
 												.build())
 									.collect(Collectors.toList()));
