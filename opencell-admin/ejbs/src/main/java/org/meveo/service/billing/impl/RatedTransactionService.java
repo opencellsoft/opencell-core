@@ -283,7 +283,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
-        boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
 
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
@@ -304,11 +303,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
             em.persist(ratedTransaction);
-
-            // Add entity to Elastic Search
-            if (isESEnabled) {
-                elasticClient.createOrFullUpdate(ratedTransaction);
-            }
 
             // Fire notifications
             if (eventsEnabled) {

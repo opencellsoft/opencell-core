@@ -48,12 +48,6 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
     public ActionStatus create(UserHierarchyLevelDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            userHierarchyLevelApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
         return result;
     }
 
@@ -61,11 +55,6 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
     public ActionStatus update(UserHierarchyLevelDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            userHierarchyLevelApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
 
         return result;
     }
@@ -88,11 +77,6 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
     public ActionStatus remove(String hierarchyLevelCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            userHierarchyLevelApi.remove(hierarchyLevelCode);
-        } catch (Exception e) {
-            processException(e, result);
-        }
 
         return result;
     }
@@ -100,11 +84,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
     @Override
     public ActionStatus createOrUpdate(UserHierarchyLevelDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            userHierarchyLevelApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
+        
         return result;
     }
 

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.faces.view.ViewScoped;
@@ -32,24 +33,25 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.DetailedSecuredEntity;
 import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.security.SecuredBusinessEntityService;
+import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link Role} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
- * view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link Role} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 6.0
  */
@@ -61,8 +63,8 @@ public class UserRoleBean extends BaseBean<Role> {
 
     /** Injected @{link Role} service. Extends {@link PersistenceService}. */
     @Inject
-    private RoleService userRoleService;
-    
+    protected RoleService userRoleService;
+
     @Inject
     private SecuredBusinessEntityService securedBusinessEntityService;
 
@@ -74,12 +76,16 @@ public class UserRoleBean extends BaseBean<Role> {
     @Named
     private SellerBean sellerBean;
 
-    private DualListModel<Permission> permissionsDM;
+    /** Role to lookup */
+    @Inject
+    @Param()
+    private String rolename;
+
     private DualListModel<Role> rolesDM;
-    private BusinessEntity selectedEntity;
     private String securedEntityType;
     private Map<String, String> securedEntityTypes;
     private Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap;
+    private BusinessEntity selectedEntity;
     private BaseBean<?> selectedAccountBean;
 
     /**
@@ -88,16 +94,25 @@ public class UserRoleBean extends BaseBean<Role> {
     public UserRoleBean() {
         super(Role.class);
     }
-    
+
+    @PostConstruct
+    public void init() {
+
+        initSelectionOptions();
+    }
+
     @Override
     public Role initEntity() {
-    	Role entity = super.initEntity();
-    	
-    	initSelectionOptions();
-    	
-    	return entity;
+        if (rolename != null) {
+            entity = userRoleService.findByName(rolename, true, true);
+
+        } else {
+            entity = new Role();
+        }
+
+        return entity;
     }
-    
+
     /**
      * This will initialize the dropdown values for selecting the entity types (Seller, Customer, etc) and the map of managed beans associated to each entity type.
      */
@@ -120,31 +135,11 @@ public class UserRoleBean extends BaseBean<Role> {
                 accountBeanMap.put(value, accountBean);
             }
         }
-        log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
-        log.debug("this.accountBeanMap: {}", this.accountBeanMap);
-        log.debug("initSelectionOptions done.");
-    }
-
-    public DualListModel<Permission> getPermissionListModel() {
-        if (permissionsDM == null) {
-            List<Permission> perksSource = permissionService.list();
-            List<Permission> perksTarget = new ArrayList<Permission>();
-            if (getEntity().getPermissions() != null) {
-                perksTarget.addAll(getEntity().getPermissions());
-            }
-            perksSource.removeAll(perksTarget);
-            permissionsDM = new DualListModel<Permission>(perksSource, perksTarget);
-        }
-        return permissionsDM;
-    }
-
-    public void setPermissionListModel(DualListModel<Permission> perks) {
-        this.permissionsDM = perks;
     }
 
     public DualListModel<Role> getRoleListModel() {
         if (rolesDM == null) {
-            List<Role> perksSource = userRoleService.listActive();
+            List<Role> perksSource = userRoleService.list((PaginationConfiguration) null);
             perksSource.remove(getEntity());
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getRoles() != null) {
@@ -164,13 +159,9 @@ public class UserRoleBean extends BaseBean<Role> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        // Update permissions
-        getEntity().getPermissions().clear();
-        getEntity().getPermissions().addAll(permissionService.refreshOrRetrieve(permissionsDM.getTarget()));
-
-        // Update roles
-        getEntity().getRoles().clear();
-        getEntity().getRoles().addAll(userRoleService.refreshOrRetrieve(rolesDM.getTarget()));
+//        // Update roles
+//        getEntity().getRoles().clear();
+//        getEntity().getRoles().addAll(rolesDM.getTarget());
 
         return super.saveOrUpdate(killConversation);
     }
@@ -184,19 +175,22 @@ public class UserRoleBean extends BaseBean<Role> {
         }
     }
 
-    /**
-     * Returns a list of secured entities.
-     */
     public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
+
         List<DetailedSecuredEntity> detailedSecuredEntities = new ArrayList<>();
         DetailedSecuredEntity detailedSecuredEntity = null;
         BusinessEntity businessEntity = null;
-        if (entity != null && entity.getSecuredEntities() != null) {
-            for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
-                detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
-                businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
-                detailedSecuredEntity.setDescription(businessEntity.getDescription());
-                detailedSecuredEntities.add(detailedSecuredEntity);
+        if (entity != null) {
+            List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForRole(rolename);
+            if (securedEntities != null) {
+                for (SecuredEntity securedEntity : securedEntities) {
+                    detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
+                    businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getEntityCode());
+                    if (businessEntity != null) {
+                        detailedSecuredEntity.setDescription(businessEntity.getDescription());
+                    }
+                    detailedSecuredEntities.add(detailedSecuredEntity);
+                }
             }
         }
         return detailedSecuredEntities;
@@ -210,26 +204,20 @@ public class UserRoleBean extends BaseBean<Role> {
      */
     @ActionMethod
     public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
-        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
-            if (securedEntity.equals(selectedSecuredEntity)) {
-                entity.getSecuredEntities().remove(selectedSecuredEntity);
-                break;
-            }
-        }
-        super.saveOrUpdate(false);
+        securedBusinessEntityService.remove(selectedSecuredEntity.getId());
+        messages.info(new BundleKey("messages", "securedEntity.deleted"));
     }
-    
+
     @ActionMethod
     public void enableOrDisable(SecuredEntity selectedSecuredEntity, boolean disable) throws BusinessException {
-        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
-            if (securedEntity.equals(selectedSecuredEntity)) {
-                securedEntity.setDisabledAsBoolean(disable);
-                break;
-            }
+        if (disable) {
+            securedBusinessEntityService.disable(selectedSecuredEntity.getId());
+
+        } else {
+            securedBusinessEntityService.enable(selectedSecuredEntity.getId());
         }
-        super.saveOrUpdate(false);
     }
-    
+
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 
@@ -238,17 +226,15 @@ public class UserRoleBean extends BaseBean<Role> {
      */
     @ActionMethod
     public void saveSecuredEntity(SelectEvent event) throws BusinessException {
-        log.debug("saveSecuredEntity: {}", this.selectedEntity);
         if (this.selectedEntity != null) {
-            List<SecuredEntity> securedEntities = getEntity().getSecuredEntities();
-            for (SecuredEntity securedEntity : securedEntities) {
-                if (securedEntity.equals(this.selectedEntity)) {
-                    messages.warn(new BundleKey("messages", "commons.uniqueField.code"));
-                    return;
-                }
-            }
-            getEntity().getSecuredEntities().add(new SecuredEntity(this.selectedEntity));
-            super.saveOrUpdate(false);
+
+            SecuredEntity securedEntity = new SecuredEntity();
+            securedEntity.setEntityId(selectedEntity.getId());
+            securedEntity.setEntityCode(selectedEntity.getCode());
+            securedEntity.setEntityClass(securedEntityType.substring(securedEntityType.lastIndexOf('.') + 1));
+            securedBusinessEntityService.addSecuredEntityForRole(securedEntity, rolename);
+
+            messages.info(new BundleKey("messages", "securedEntity.created"));
         }
     }
 
@@ -262,73 +248,78 @@ public class UserRoleBean extends BaseBean<Role> {
 
     /**
      * Returns the type of secured entity
+     * 
      * @return type of secured entity
      */
-	public String getSecuredEntityType() {
-		return securedEntityType;
-	}
+    public String getSecuredEntityType() {
+        return securedEntityType;
+    }
 
-	/**
-	 * Sets the type of secured entity
-	 */
-	public void setSecuredEntityType(String securedEntityType) {
-		this.securedEntityType = securedEntityType;
-	}
+    /**
+     * Sets the type of secured entity
+     */
+    public void setSecuredEntityType(String securedEntityType) {
+        this.securedEntityType = securedEntityType;
+    }
 
-	/**
-	 * Returns a map of secured entity types. From seller down to ua
-	 * @return map of secured entity types
-	 */
-	public Map<String, String> getSecuredEntityTypes() {
-		return securedEntityTypes;
-	}
+    /**
+     * Returns a map of secured entity types. From seller down to ua
+     * 
+     * @return map of secured entity types
+     */
+    public Map<String, String> getSecuredEntityTypes() {
+        return securedEntityTypes;
+    }
 
-	/**
-	 * Sets the type of secured entity types
-	 */
-	public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
-		this.securedEntityTypes = securedEntityTypes;
-	}
+    /**
+     * Sets the type of secured entity types
+     */
+    public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
+        this.securedEntityTypes = securedEntityTypes;
+    }
 
-	/**
-	 * Returns the list of account beans: sellerBean, userAccountBean, etc
-	 * @return list of account bean
-	 */
-	public Map<String, BaseBean<? extends BusinessEntity>> getAccountBeanMap() {
-		return accountBeanMap;
-	}
+    /**
+     * Returns the list of account beans: sellerBean, userAccountBean, etc
+     * 
+     * @return list of account bean
+     */
+    public Map<String, BaseBean<? extends BusinessEntity>> getAccountBeanMap() {
+        return accountBeanMap;
+    }
 
-	/**
-	 * Sets the list of account bean
-	 */
-	public void setAccountBeanMap(Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap) {
-		this.accountBeanMap = accountBeanMap;
-	}
+    /**
+     * Sets the list of account bean
+     */
+    public void setAccountBeanMap(Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap) {
+        this.accountBeanMap = accountBeanMap;
+    }
 
-	/**
-	 * Returns the selected account bean
-	 * @return account bean
-	 */
-	public BaseBean<?> getSelectedAccountBean() {
-		return selectedAccountBean;
-	}
+    /**
+     * Returns the selected account bean
+     * 
+     * @return account bean
+     */
+    public BaseBean<?> getSelectedAccountBean() {
+        return selectedAccountBean;
+    }
 
-	public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
-		this.selectedAccountBean = selectedAccountBean;
-	}
+    public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
+        this.selectedAccountBean = selectedAccountBean;
+    }
 
-	/**
-	 * Returns the selected entity type
-	 * @return selectd entity type
-	 */
-	public BusinessEntity getSelectedEntity() {
-		return selectedEntity;
-	}
+    /**
+     * Returns the selected entity type
+     * 
+     * @return selectd entity type
+     */
+    public BusinessEntity getSelectedEntity() {
+        return selectedEntity;
+    }
 
-	/**
-	 * Sets the selected entity type
-	 */
-	public void setSelectedEntity(BusinessEntity selectedEntity) {
-		this.selectedEntity = selectedEntity;
-	}
+    /**
+     * Sets the selected entity type
+     */
+    public void setSelectedEntity(BusinessEntity selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
 }

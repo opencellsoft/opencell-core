@@ -36,7 +36,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.admin.exception.CounterInstantiationException;

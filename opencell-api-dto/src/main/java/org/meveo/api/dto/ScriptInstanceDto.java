@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.script.CustomScriptDto;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.security.Role;
 
 /**
  * The Class ScriptInstanceDto.
@@ -42,10 +41,10 @@ public class ScriptInstanceDto extends CustomScriptDto {
     private static final long serialVersionUID = 4555037251902559699L;
 
     /** The execution roles. */
-    private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
+    private List<String> executionRoles = new ArrayList<String>();
 
     /** The sourcing roles. */
-    private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
+    private List<String> sourcingRoles = new ArrayList<String>();
     
     private String scriptInstanceCategoryCode;
 
@@ -65,15 +64,15 @@ public class ScriptInstanceDto extends CustomScriptDto {
         super(scriptInstance);
 
         if (scriptInstance.getExecutionRoles() != null) {
-            for (Role role : scriptInstance.getExecutionRoles()) {
-                executionRoles.add(new RoleDto(role, true, true));
-            }
+            executionRoles = new ArrayList<String>();
+            executionRoles.addAll(scriptInstance.getExecutionRoles());
         }
+
         if (scriptInstance.getSourcingRoles() != null) {
-            for (Role role : scriptInstance.getSourcingRoles()) {
-                sourcingRoles.add(new RoleDto(role, true, true));
-            }
+            sourcingRoles = new ArrayList<String>();
+            sourcingRoles.addAll(scriptInstance.getSourcingRoles());
         }
+        
         if(scriptInstance.getScriptInstanceCategory() != null) {
         	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
         }
@@ -90,7 +89,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
      *
      * @return the executionRoles
      */
-    public List<RoleDto> getExecutionRoles() {
+    public List<String> getExecutionRoles() {
         return executionRoles;
     }
 
@@ -99,7 +98,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
      *
      * @param executionRoles the executionRoles to set
      */
-    public void setExecutionRoles(List<RoleDto> executionRoles) {
+    public void setExecutionRoles(List<String> executionRoles) {
         this.executionRoles = executionRoles;
     }
 
@@ -108,7 +107,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
      *
      * @return the sourcingRoles
      */
-    public List<RoleDto> getSourcingRoles() {
+    public List<String> getSourcingRoles() {
         return sourcingRoles;
     }
 
@@ -117,7 +116,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
      *
      * @param sourcingRoles the sourcingRoles to set
      */
-    public void setSourcingRoles(List<RoleDto> sourcingRoles) {
+    public void setSourcingRoles(List<String> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
 

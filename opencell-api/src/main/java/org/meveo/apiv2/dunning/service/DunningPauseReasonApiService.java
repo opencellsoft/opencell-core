@@ -1,18 +1,19 @@
 package org.meveo.apiv2.dunning.service;
 
-import org.assertj.core.util.Lists;
-import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.DunningPauseReason;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.payments.impl.DunningSettingsService;
-import org.meveo.service.payments.impl.DunningPauseReasonsService;
+import static java.util.Optional.empty;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+
+import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.dunning.DunningPauseReason;
+import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.payments.impl.DunningPauseReasonsService;
+import org.meveo.service.payments.impl.DunningSettingsService;
 
 public class DunningPauseReasonApiService implements ApiService<DunningPauseReason> {
 
@@ -31,7 +32,7 @@ public class DunningPauseReasonApiService implements ApiService<DunningPauseReas
 
 	@Override
 	public List<DunningPauseReason> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return Lists.emptyList();
+		return new ArrayList<DunningPauseReason>();
 	}
 
 	@Override

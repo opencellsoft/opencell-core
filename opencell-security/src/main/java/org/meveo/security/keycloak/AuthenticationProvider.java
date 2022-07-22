@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
@@ -43,6 +44,9 @@ public class AuthenticationProvider {
     public String logout() {
         try {
             httpRequest.logout();
+            HttpSession session = httpRequest.getSession();
+            session.invalidate();
+
         } catch (ServletException e) {
             log.error("Failed to logout", e);
         }

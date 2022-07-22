@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;

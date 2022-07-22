@@ -107,7 +107,7 @@
 					stopByForce="#{jobInstanceBean.isJobRunning(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['action.stop']}"
 					stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}" stopByForceLabel="#{messages['action.stopNow']}"
 					stopByForceConfirmationMessage="#{messages['jobInstance.job.stopNowConfirmation']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-					submitPartialProcess=":formId:tabView" showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}"
+					submitPartialProcess=":formId:tabView" showEnableDisableButton="true"
 					killConversationOnSave="false" killConversationOnBack="false" />
 
 

@@ -15,7 +15,7 @@
                 <p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
             </p:breadCrumb>
         </h:form>
-        <hftl:searchPanel renderNewButton="#{currentUser.hasRole('createJob')}" label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}"
+        <hftl:searchPanel renderNewButton="#{jobInstanceListBean.canUserUpdateEntity()}" label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}"
             newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
 
             <hftl:searchField label="#{messages['timer.name']}" field="code" />
@@ -31,12 +31,12 @@
         <h:panelGroup id="resultsDatatable">
             <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" sortBy="code">
                 <p:column headerText="#{messages['timer.name']}" sortBy="#{entity.code}">
-                    <h:link outcome="jobInstanceDetail" value="#{entity.code}" rendered="#{currentUser.hasRole('useJob')}">
+                    <h:link outcome="jobInstanceDetail" value="#{entity.code}" rendered="#{jobInstanceListBean.canUserUpdateEntity()}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true" />
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                     </h:link>
-                    <h:outputText rendered="#{!currentUser.hasRole('useJob')}" value="#{entity.code}"></h:outputText>
+                    <h:outputText rendered="#{!jobInstanceListBean.canUserUpdateEntity()}" value="#{entity.code}"></h:outputText>
                 </p:column>
                 <hftl:column label="#{messages['businessEntity.description']}" field="description" />
                 <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
@@ -49,8 +49,8 @@
                     <h:outputText styleClass="ui-icon ui-icon-check" title="#{messages['timer.isRunning.other']}"
                         rendered="#{jobInstanceListBean.isJobRunningOnAnotherNode(entity)}" />
                 </p:column>
-                <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="#{currentUser.hasRole('useJob')}"
-                    renderDeleteLink="#{currentUser.hasRole('useJob')}" />
+                <hftl:actionsColumn renderEnableLink="#{jobInstanceListBean.canUserUpdateEntity()}"
+                    renderDeleteLink="#{jobInstanceListBean.canUserDeleteEntity()}" />
             </hftl:dataList>
         </h:panelGroup>
         <h:form>

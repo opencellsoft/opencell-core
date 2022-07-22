@@ -80,7 +80,6 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableCreatorService;
 import org.meveo.service.custom.CustomTableService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,9 +100,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     @EJB
     private CfValueAccumulator cfValueAccumulator;
@@ -290,7 +286,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
 
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
-        elasticClient.updateCFMapping(cft);
 
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
         
@@ -391,7 +386,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         CustomFieldTemplate cftUpdated = super.update(cft);
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
-        elasticClient.updateCFMapping(cftUpdated);
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.update);
 
         if (updateUniqueConstraint) {

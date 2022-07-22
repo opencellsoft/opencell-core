@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.apiv2.generic.core.filter.FilterMapper;

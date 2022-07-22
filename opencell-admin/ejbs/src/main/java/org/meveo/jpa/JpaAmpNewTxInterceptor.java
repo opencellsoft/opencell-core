@@ -25,8 +25,6 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
-import org.slf4j.Logger;
-
 /**
  * Interceptor that in case of application managed persistence context, a new EM will be instantiated for the period of a method call
  * 
@@ -45,8 +43,8 @@ public class JpaAmpNewTxInterceptor implements Serializable {
     @Inject
     private EntityManagerProvider entityManagerProvider;
 
-    @Inject
-    private Logger log;
+//    @Inject
+//    private Logger log;
 
     /**
      * Instantiate a new EM if EM is application managed persistence context
@@ -69,9 +67,9 @@ public class JpaAmpNewTxInterceptor implements Serializable {
                     emWrapper.newEntityManager(entityManagerProvider.getEntityManager().getEntityManager());
                 }
             }
-            
-            //log.error("AKK in interceptor");
+
             obj = invocationContext.proceed();
+
             emWrapper.getEntityManager().flush();
             emWrapper.getEntityManager().clear();
             return obj;
