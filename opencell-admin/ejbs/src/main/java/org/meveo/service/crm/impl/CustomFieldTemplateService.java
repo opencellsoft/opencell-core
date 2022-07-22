@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -78,7 +80,6 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableCreatorService;
 import org.meveo.service.custom.CustomTableService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,9 +100,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     @EJB
     private CfValueAccumulator cfValueAccumulator;
@@ -288,7 +286,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
 
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
-        elasticClient.updateCFMapping(cft);
 
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
         
@@ -389,7 +386,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         CustomFieldTemplate cftUpdated = super.update(cft);
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
-        elasticClient.updateCFMapping(cftUpdated);
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.update);
 
         if (updateUniqueConstraint) {
@@ -535,6 +531,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException business exception.
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
         return createMissingTemplates(appliesTo, templates, false, false);
     }

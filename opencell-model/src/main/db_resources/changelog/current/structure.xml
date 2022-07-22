@@ -13641,3 +13641,72 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
 
 </databaseChangeLog>
+    <changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius">
+        <addColumn tableName="dwh_chart">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_chart set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="dwh_chart" columnName="role_id"/>
+        
+        <addColumn tableName="adm_script_exec_role">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_script_exec_role set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="adm_script_exec_role" columnName="role_id"/>
+        
+        <createSequence sequenceName="adm_secured_entity_seq" startValue="1" />
+        
+        <addColumn tableName="adm_script_sourc_role">
+            <column name="role" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_script_sourc_role set role=(select role_name from ${db.schema.adapted}adm_role r where r.id=role_id)</sql>
+        <dropColumn tableName="adm_script_sourc_role" columnName="role_id"/>
+        
+        <addColumn tableName="adm_secured_entity">
+            <column name="id" type="bigint"/>
+            <column name="user_name" type="varchar(255)"/>
+            <column name="role_name" type="varchar(255)"/> 
+            <column name="entity_id" type="bigint"/>
+            <column name="permission" type="varchar(6)"/>
+        </addColumn>
+        
+        <renameColumn tableName="adm_secured_entity" oldColumnName="code" newColumnName="entity_code" columnDataType="varchar(255)"/>
+        
+        <sql>update ${db.schema.adapted}adm_secured_entity set id=nextval('adm_secured_entity_seq'), permission ='DELETE', user_name= (select u.username from ${db.schema.adapted}adm_user u where u.id=user_id)</sql>
+        <sql>insert into ${db.schema.adapted}adm_secured_entity (id, role_name, entity_code, entity_class, permission, disabled) (select nextval('adm_secured_entity_seq'), r.role_name, se.code, se.entity_class, 'DELETE', disabled from ${db.schema.adapted}adm_role r join ${db.schema.adapted}adm_role_secured_entity se on r.id=se.role_id)</sql>
+                
+        <dropColumn tableName="adm_secured_entity" columnName="user_id"/>
+        <addNotNullConstraint tableName="adm_secured_entity" columnName="id"/>
+        
+        <sql>CREATE INDEX adm_secured_entity_username_index ON ${db.schema.adapted}adm_secured_entity(lower(user_name))</sql>
+        <sql>CREATE INDEX adm_secured_entity_rolename_index ON ${db.schema.adapted}adm_secured_entity(role_name)</sql>
+        
+        <dropTable tableName="adm_role_secured_entity"/>
+        <dropTable tableName="adm_user_role"/>
+        <dropTable tableName="adm_role_permission"/>
+        <dropTable tableName="adm_permission"/>
+        <dropTable tableName="adm_role_role"/>
+        
+        <addColumn tableName="ord_order">
+            <column name="routed_to_user_group" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_order set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
+        <dropColumn tableName="ord_order" columnName="routed_to_user_group_id"/>
+        
+        <addColumn tableName="ord_quote">
+            <column name="routed_to_user_group" type="varchar(50)"/>           
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_quote set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
+        <dropColumn tableName="ord_quote" columnName="routed_to_user_group_id"/>
+        
+        <dropColumn tableName="adm_user" columnName="email"/>
+        <dropColumn tableName="adm_user" columnName="firstname"/>
+        <dropColumn tableName="adm_user" columnName="lastname"/>
+        <dropColumn tableName="adm_user" columnName="title_id"/>
+        <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
+        <dropColumn tableName="adm_user" columnName="last_login_date"/>
+        <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
+        <dropColumn tableName="adm_role" columnName="role_description"/>
+        
+    </changeSet>
+</databaseChangeLog>

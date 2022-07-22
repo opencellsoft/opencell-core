@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Calendar;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -282,7 +283,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
-        boolean isESEnabled = elasticClient.isEnabled(new RatedTransaction());
 
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
@@ -303,11 +303,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
             em.persist(ratedTransaction);
-
-            // Add entity to Elastic Search
-            if (isESEnabled) {
-                elasticClient.createOrFullUpdate(ratedTransaction);
-            }
 
             // Fire notifications
             if (eventsEnabled) {
@@ -992,11 +987,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException General exception
      */
     @SuppressWarnings("unchecked")
-    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, Filter ratedTransactionFilter, Integer rtPageSize) throws BusinessException {
-
-    	TypedQuery<RatedTransaction> query=null;
+    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate,
+                                                   Date invoiceUpToDate, Filter ratedTransactionFilter, Integer rtPageSize) throws BusinessException {
+    	TypedQuery<RatedTransaction> query = null;
         if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
+            final List<RatedTransaction> filteredListAsObjects = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
+			return filteredListAsObjects.stream()
+                    .filter(rt -> entityToInvoice instanceof BillingAccount && rt.getBillingAccount().getId().equals(entityToInvoice.getId()))
+                    .collect(toList());
         } else if (entityToInvoice instanceof Subscription) {
         	 query = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId());
 

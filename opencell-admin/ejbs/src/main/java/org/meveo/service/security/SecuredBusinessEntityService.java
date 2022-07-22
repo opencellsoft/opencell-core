@@ -18,21 +18,33 @@
 
 package org.meveo.service.security;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
+import org.meveo.model.IEnable;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.base.PersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SecuredBusinessEntity Service base class.
@@ -40,8 +52,13 @@ import org.meveo.service.base.PersistenceService;
  * @author Tony Alejandro
  */
 @Stateless
-public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity> {
-    
+public class SecuredBusinessEntityService extends PersistenceService<SecuredEntity> {
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
+
     public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code) {
         if (entityClass == null) {
             return null;
@@ -51,29 +68,26 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 
     public BusinessEntity getEntityByCode(String entityClassName, String code) {
         try {
-            Class<?> businessEntityClass = Class.forName(ReflectionUtils.getCleanClassName(entityClassName));
-            QueryBuilder qb = new QueryBuilder(businessEntityClass, "e", null);
+            QueryBuilder qb = new QueryBuilder("from " + entityClassName + " e", "e");
             qb.addCriterion("e.code", "=", code, true);
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code, e);
+            log.debug("No {} of code {} found", entityClassName, code, e);
         } catch (NonUniqueResultException e) {
-            log.error("More than one entity of type {} with code {} found", entityClass, code, e);
-        } catch (ClassNotFoundException e) {
-            log.error("Unable to create entity class for query", e);
+            log.error("More than one entity of type {} with code {} found", entityClassName, code, e);
         }
         return null;
     }
 
-    public boolean isEntityAllowed(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
-        Set<SecuredEntity> securedEntities = null;
-        //this because if the current entity is got as parent of a another fisrt entity by
-        // fisrtEntity.getParentEntity() then the real class of entity can be an hibernate proxy
+    public boolean isEntityAllowed(BusinessEntity entity, Map<String, Set<org.meveo.security.SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
+        Set<org.meveo.security.SecuredEntity> securedEntities = null;
+        // this because if the current entity is got as parent of a another first entity by
+        // firstEntity.getParentEntity() then the real class of entity can be an hibernate proxy
         if (entity != null) {
             Class<?> entityClass = getEntityRealClass(entity);
-            securedEntities = allSecuredEntitiesMap.get(entityClass);
+            securedEntities = allSecuredEntitiesMap.get(entityClass.getSimpleName());
         }
-        
+
         // Doing this check first allows verification without going to DB.
         if (entityFoundInSecuredEntities(entity, securedEntities)) {
             // Match was found authorization successful
@@ -85,8 +99,8 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
             boolean isSameTypeAsParent = getClassForHibernateObject(entity) == entity.getParentEntityType();
-            if(isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
-            	return false;
+            if (isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
+                return false;
             }
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
@@ -115,19 +129,18 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             return false;
         }
     }
-    
-	public static Class<?> getClassForHibernateObject(Object object) {
-		return object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass()
-				: object.getClass();
-	}
 
-    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
-    	if (entity == null || securedEntities == null) {
+    public static Class<?> getClassForHibernateObject(Object object) {
+        return object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+    }
+
+    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<org.meveo.security.SecuredEntity> securedEntities) {
+        if (entity == null || securedEntities == null) {
             return false;
         }
         boolean found = false;
-        for (SecuredEntity securedEntity : securedEntities) {
-            if (securedEntity.equals(entity)) {
+        for (org.meveo.security.SecuredEntity securedEntity : securedEntities) {
+            if (isSecuredEntityEqualBusinessEntity(securedEntity, entity)) {
                 found = true;
                 break;
             }
@@ -135,12 +148,167 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         return found;
     }
 
+    private static boolean isSecuredEntityEqualBusinessEntity(org.meveo.security.SecuredEntity securedEntity, BusinessEntity entity) {
+
+        if (entity == null) {
+            return false;
+        }
+
+        String thatCode = ((BusinessEntity) entity).getCode();
+        String thatClass = ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
+
+        thatCode = thatClass + "-_-" + thatCode;
+        String thisCode = securedEntity.getEntityClass() + "-_-" + securedEntity.getCode();
+
+        if (!thisCode.equals(thatCode)) {
+            return false;
+        }
+        return true;
+    }
+
     public static Class<?> getEntityRealClass(Object entity) {
         if (entity instanceof HibernateProxy) {
-			LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();
-			return lazyInitializer.getPersistentClass();
-		} else {
-			return entity.getClass();
-		}
-	}
+            LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();
+            return lazyInitializer.getPersistentClass();
+        } else {
+            return entity.getClass();
+        }
+    }
+
+    /**
+     * Get a list of secured entities for a current user
+     * 
+     * @return A list of secured entities for a current user
+     */
+    public List<org.meveo.security.SecuredEntity> getSecuredEntitiesForCurentUser() {
+
+        return getEntityManager().createNamedQuery("SecuredEntity.listForCurrentUser", org.meveo.security.SecuredEntity.class).setParameter("userName", currentUser.getUserName().toLowerCase())
+            .setParameter("roleNames", currentUser.getRoles()).getResultList();
+    }
+
+    /**
+     * Get a list of secured entities applied to a given user.
+     * 
+     * @param username Username of a user to retrieve
+     * @return A list of secured entities
+     */
+    public List<SecuredEntity> getSecuredEntitiesForUser(String username) {
+        return getEntityManager().createNamedQuery("SecuredEntity.listByUserName", SecuredEntity.class).setParameter("userName", username.toLowerCase()).getResultList();
+    }
+
+    /**
+     * Get a list of secured entities applied to a given role.
+     * 
+     * @param roleName Name of a role to retrieve
+     * @return A list of secured entities
+     */
+    public List<SecuredEntity> getSecuredEntitiesForRole(String roleName) {
+        return getEntityManager().createNamedQuery("SecuredEntity.listByRoleName", SecuredEntity.class).setParameter("roleName", roleName).getResultList();
+    }
+
+    /**
+     * Synchronize secured entities with what a user currently has assigned
+     * 
+     * @param securedEntities A final list of secured entities that user should have
+     * @param username Username of a user to assign secured entities to
+     */
+    public void syncSecuredEntitiesForUser(List<SecuredEntity> securedEntities, String username) {
+
+        // Determine new secured entities to add or remove
+        List<SecuredEntity> seToAdd = new ArrayList<>(securedEntities);
+        List<SecuredEntity> seToDelete = new ArrayList<>();
+
+        List<SecuredEntity> seCurrent = getSecuredEntitiesForUser(username);
+        seToDelete.addAll(seCurrent);
+        seToDelete.removeAll(seToAdd);
+        seToAdd.removeAll(seCurrent);
+
+        if (!seToDelete.isEmpty()) {
+            for (SecuredEntity securedEntity : seToDelete) {
+                remove(securedEntity);
+            }
+        }
+        if (!seToAdd.isEmpty()) {
+            for (SecuredEntity securedEntity : seToAdd) {
+                try {
+                    addSecuredEntityForUser(securedEntity, username);
+                } catch (ValidationException e) {
+                    log.warn("Failed to sync secured entity rule for user {}", username, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Synchronize secured entities with what a user currently has assigned
+     * 
+     * @param securedEntities A final list of secured entities that user should have
+     * @param roleName Username of a user to assign secured entities to
+     */
+    public void syncSecuredEntitiesForRole(List<SecuredEntity> securedEntities, String roleName) {
+
+        // Determine new secured entities to add or remove
+        List<SecuredEntity> seToAdd = new ArrayList<>(securedEntities);
+        List<SecuredEntity> seToDelete = new ArrayList<>();
+
+        List<SecuredEntity> seCurrent = getSecuredEntitiesForRole(roleName);
+        seToDelete.addAll(seCurrent);
+        seToDelete.removeAll(seToAdd);
+        seToAdd.removeAll(seCurrent);
+
+        if (!seToDelete.isEmpty()) {
+            for (SecuredEntity securedEntity : seToDelete) {
+                remove(securedEntity);
+            }
+        }
+        if (!seToAdd.isEmpty()) {
+            for (SecuredEntity securedEntity : seToAdd) {
+                try {
+                    addSecuredEntityForRole(securedEntity, roleName);
+                } catch (ValidationException e) {
+                    log.warn("Failed to sync secured entity rule for role {}", roleName, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Associate a secured entity to a user
+     * 
+     * @param securedEntity Secured entity to add
+     * @param username User name
+     * @throws ValidationException A similar rule already exists
+     */
+    public void addSecuredEntityForUser(SecuredEntity securedEntity, String username) throws ValidationException {
+
+        long count = getEntityManager().createNamedQuery("SecuredEntity.validateByUserName", Long.class).setParameter("userName", username).setParameter("entityCode", securedEntity.getEntityCode())
+            .setParameter("entityClass", securedEntity.getEntityClass()).getSingleResult();
+
+        if (count > 0) {
+            throw new ValidationException("A similar rule already exists", "securedEntity.error.duplicate");
+        }
+
+        securedEntity.setUserName(username);
+        create(securedEntity);
+    }
+
+    /**
+     * Associate a secured entity to a role
+     * 
+     * @param securedEntity Secured entity to add
+     * @param roleName Role name
+     * @throws ValidationException A similar rule already exists
+     */
+    public void addSecuredEntityForRole(SecuredEntity securedEntity, String roleName) throws ValidationException {
+
+        long count = getEntityManager().createNamedQuery("SecuredEntity.validateByRoleName", Long.class).setParameter("roleName", roleName).setParameter("entityCode", securedEntity.getEntityCode())
+            .setParameter("entityClass", securedEntity.getEntityClass()).getSingleResult();
+
+        if (count > 0) {
+            throw new ValidationException("A similar rule already exists", "securedEntity.error.duplicate");
+        }
+
+        securedEntity.setRoleName(roleName);
+        create(securedEntity);
+    }
 }

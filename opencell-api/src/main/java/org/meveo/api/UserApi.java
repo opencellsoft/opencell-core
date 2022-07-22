@@ -19,16 +19,14 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletRequest;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -37,65 +35,46 @@ import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.config.annotation.SecureMethodParameter;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
-import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
+//@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class UserApi extends BaseApi {
 
     private static final String USER_HAS_NO_PERMISSION_TO_MANAGE_USERS = "User has no permission to manage users.";
     private static final String USER_HAS_NO_PERMISSION_TO_VIEW_USERS = "User has no permission to view users.";
     private static final String USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS = "User has no permission to manage other users.";
-    private static final String USER_SELF_MANAGEMENT = "userSelfManagement";
-    private static final String USER_MANAGEMENT = "userManagement";
-    private static final String USER_VISUALIZATION = "userVisualization";
-
-    @Inject
-    private RoleService roleService;
+    private static final String ROLE_API_USER_SELF_MANAGEMENT = "apiUserSelfManagement";
+    private static final String ROLE_API_USER_MANAGEMENT = "apiUserManagement";
+    private static final String ROLE_API_USER_VISUALIZATION = "apiUserVisualization";
 
     @Inject
     private UserService userService;
 
     @Inject
-    private SecuredBusinessEntityService securedBusinessEntityService;
-
-    @Inject
-    private UserHierarchyLevelService userHierarchyLevelService;
-
-    @Inject
-    private KeycloakAdminClientService keycloakAdminClientService;
-
-    @Inject
     private CurrentUserProvider currentUserProvider;
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
+    @Inject
+    private SecuredBusinessEntityService securedBusinessEntityService;
+
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
-        create(postData, postData.isRequiredRoles());
+        create(postData, false);
     }
 
     public void create(UserDto postData, boolean isRequiredRoles) throws MeveoApiException, BusinessException {
@@ -113,19 +92,15 @@ public class UserApi extends BaseApi {
                 missingParameters.add("email");
             }
 
-            if (isRequiredRoles && ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole()))) {
-                missingParameters.add("roles");
-            }
-
             handleMissingParameters();
 
             // check if the user already exists
-            if (userService.findByUsername(postData.getUsername()) != null) {
+            if (userService.findByUsername(postData.getUsername(), false, false) != null) {
                 throw new EntityAlreadyExistsException(User.class, postData.getUsername(), "username");
             }
 
-            boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-            boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT);
+            boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+            boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT);
 
             boolean isAllowed = isManagingSelf || isUsersManager;
             boolean isSelfManaged = isManagingSelf && !isUsersManager;
@@ -138,66 +113,43 @@ public class UserApi extends BaseApi {
                 throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS);
             }
 
-            if (!StringUtils.isBlank(postData.getRole())) {
-                if (postData.getRoles() == null) {
-                    postData.setRoles(new ArrayList<String>());
-                }
-                postData.getRoles().add(postData.getRole());
-            }
-            Set<Role> roles = extractRoles(postData.getRoles());
+            // Validate secured entities
             List<SecuredEntity> securedEntities = extractSecuredEntities(postData.getSecuredEntities());
-
-            UserHierarchyLevel userHierarchyLevel = null;
-            if (!StringUtils.isBlank(postData.getUserLevel())) {
-                userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel());
-                if (userHierarchyLevel == null) {
-                    throw new EntityDoesNotExistsException(UserHierarchyLevel.class, postData.getUserLevel());
-                }
-            }
 
             User user = new User();
             user.setUserName(postData.getUsername().toUpperCase());
+            user.setPassword(postData.getPassword());
             user.setEmail((postData.getEmail()));
-            Name name = new Name();
-            name.setLastName(postData.getLastName());
-            name.setFirstName(postData.getFirstName());
-            user.setName(name);
-            user.setRoles(roles);
-            user.setSecuredEntities(securedEntities);
-            user.setUserLevel(userHierarchyLevel);
-            if(postData.getCustomFields() != null)
+            user.setName(new Name(null, postData.getFirstName(), postData.getLastName()));
+            user.setRoles(new HashSet<>(postData.getRoles()));
+            user.setUserLevel(postData.getUserLevel());
+            if (postData.getCustomFields() != null) {
                 super.populateCustomFields(postData.getCustomFields(), user, true, true);
-
+            }
             userService.create(user);
+
+            // Save secured entities
+            securedBusinessEntityService.syncSecuredEntitiesForUser(securedEntities, postData.getUsername());
         }
 
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void update(UserDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getUsername())) {
             missingParameters.add("username");
         }
         handleMissingParameters();
 
-        // we support old dto that containt only one role
-        if (!StringUtils.isBlank(postData.getRole())) {
-            if (postData.getRoles() == null) {
-                postData.setRoles(new ArrayList<String>());
-            }
-            postData.getRoles().add(postData.getRole());
-        }
-
         // find user
-        User user = userService.findByUsername(postData.getUsername());
+        User user = userService.findByUsername(postData.getUsername(), false, true);
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
         }
 
         boolean isSameUser = currentUser.getUserName().equals(postData.getUsername());
-        boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT);
+        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT);
         boolean isAllowed = isManagingSelf || isUsersManager;
         boolean isSelfManaged = isManagingSelf && !isUsersManager;
 
@@ -209,82 +161,69 @@ public class UserApi extends BaseApi {
             throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS);
         }
 
-        Set<Role> roles = new HashSet<>();
-        List<SecuredEntity> securedEntities = new ArrayList<>();
+        // Validate secured entities
+        List<SecuredEntity> securedEntities = null;
 
-        if (isUsersManager) {
-            if (!StringUtils.isBlank(postData.getRole())) {
-                if (postData.getRoles() == null) {
-                    postData.setRoles(new ArrayList<String>());
-                }
-                postData.getRoles().add(postData.getRole());
-            }
-            roles.addAll(extractRoles(postData.getRoles()));
-            securedEntities.addAll(extractSecuredEntities(postData.getSecuredEntities()));
-        }
+        if (postData.getSecuredEntities() != null) {
+            if (postData.getSecuredEntities().isEmpty()) {
+                securedEntities = new ArrayList<>();
 
-        UserHierarchyLevel userHierarchyLevel = null;
-        if (!StringUtils.isBlank(postData.getUserLevel())) {
-            userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel());
-            if (userHierarchyLevel == null) {
-                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, postData.getUserLevel());
+            } else {
+                securedEntities = extractSecuredEntities(postData.getSecuredEntities());
             }
         }
 
-        user.setUserName(postData.getUsername());
-        if (!StringUtils.isBlank(postData.getEmail())) {
+        user.setPassword(postData.getPassword());
+        if (postData.getEmail() != null) {
             user.setEmail(postData.getEmail());
         }
-        Name name = new Name();
-        if (!StringUtils.isBlank(postData.getLastName())) {
-            name.setLastName(postData.getLastName());
-            user.setName(name);
+
+        if (postData.getFirstName() != null || postData.getLastName() != null) {
+            if (user.getName() == null) {
+                user.setName(new Name());
+            }
+            if (postData.getFirstName() != null) {
+                user.getName().setFirstName(postData.getFirstName());
+            }
+            if (postData.getLastName() != null) {
+                user.getName().setLastName(postData.getLastName());
+            }
         }
-        if (!StringUtils.isBlank(postData.getFirstName())) {
-            name.setFirstName(postData.getFirstName());
-            user.setName(name);
+        if (postData.getRoles() != null) {
+            user.setRoles(new HashSet<>(postData.getRoles()));
         }
-        if (isUsersManager) {
-        	if(roles.size() > 0) {
-                user.setRoles(roles);
-        	}
-            user.setSecuredEntities(securedEntities);
+
+        if (postData.getUserLevel() != null) {
+            user.setUserLevel(postData.getUserLevel());
         }
-        user.setUserLevel(userHierarchyLevel);
-        if(postData.getCustomFields() != null){
+        if (postData.getCustomFields() != null) {
             populateCustomFields(postData.getCustomFields(), user, false, true);
         }
 
         userService.update(user);
+
+        // Save secured entities
+        if (securedEntities != null) {
+            securedBusinessEntityService.syncSecuredEntitiesForUser(securedEntities, postData.getUsername());
+        }
     }
 
-    private Set<Role> extractRoles(List<String> postDataRoles) throws EntityDoesNotExistsException {
-        Set<Role> roles = new HashSet<Role>();
-        if (postDataRoles == null) {
-            return roles;
-        }
-        for (String rl : postDataRoles) {
-            Role role = roleService.findByName(rl);
-            if (role == null) {
-                throw new EntityDoesNotExistsException(Role.class, rl);
-            }
-            roles.add(role);
-        }
-        return roles;
-    }
-
-    private List<SecuredEntity> extractSecuredEntities(List<SecuredEntityDto> postDataSecuredEntities) throws EntityDoesNotExistsException {
+    private List<SecuredEntity> extractSecuredEntities(List<SecuredEntityDto> securedEntityDtos) throws EntityDoesNotExistsException {
         List<SecuredEntity> securedEntities = new ArrayList<>();
-        if (postDataSecuredEntities != null) {
+        if (securedEntityDtos != null) {
             SecuredEntity securedEntity = null;
-            for (SecuredEntityDto securedEntityDto : postDataSecuredEntities) {
+            for (SecuredEntityDto securedEntityDto : securedEntityDtos) {
                 securedEntity = new SecuredEntity();
-                securedEntity.setCode(securedEntityDto.getCode());
+                securedEntity.setEntityId(securedEntityDto.getEntityId());
+                securedEntity.setEntityCode(securedEntityDto.getEntityCode());
                 securedEntity.setEntityClass(securedEntityDto.getEntityClass());
-                BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
+                securedEntity.setPermission(securedEntityDto.getPermission());
+                securedEntity.setDisabled(securedEntityDto.isDisabled());
+                BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getEntityCode());
                 if (businessEntity == null) {
-                    throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getCode());
+                    throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getEntityCode());
                 }
+                securedEntity.setEntityId(businessEntity.getId());
                 securedEntities.add(securedEntity);
             }
         }
@@ -292,14 +231,10 @@ public class UserApi extends BaseApi {
     }
 
     public void remove(String username) throws MeveoApiException, BusinessException {
-        User user = userService.findByUsername(username);
+        User user = userService.findByUsername(username, false, false);
 
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
-        }
-
-        if (!(currentUser.hasRole(USER_MANAGEMENT))) {
-            throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_USERS);
         }
 
         userService.remove(user);
@@ -308,7 +243,7 @@ public class UserApi extends BaseApi {
     // TODO[Andrius] Why is it here?
 //    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
 //    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
-    public UserDto find(HttpServletRequest httpServletRequest, String username) throws MeveoApiException, BusinessException {
+    public UserDto find(String username) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(username)) {
             missingParameters.add("username");
@@ -317,8 +252,8 @@ public class UserApi extends BaseApi {
         handleMissingParameters();
 
         boolean isSameUser = currentUser.getUserName().equals(username);
-        boolean isManagingSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isUsersManager = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
+        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
         boolean isAllowed = isManagingSelf || isUsersManager;
         boolean isSelfManaged = isManagingSelf && !isUsersManager;
 
@@ -330,24 +265,21 @@ public class UserApi extends BaseApi {
             throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS);
         }
 
-        User user = userService.findByUsernameWithFetch(username, Arrays.asList("roles", "userLevel"));
+        User user = userService.findByUsername(username, true, false);
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
         }
 
-        UserDto result = new UserDto(user, true);
-
-        // get the external roles
-        result.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, username));
-        // get the external email
-        result.setExternalEmail(keycloakAdminClientService.findUserEmail(httpServletRequest, username));
-
-        return result;
+        UserDto userDto = new UserDto(user);
+        List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForUser(username);
+        if (securedEntities != null) {
+            userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
+        }
+        return userDto;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void createOrUpdate(UserDto postData) throws MeveoApiException, BusinessException {
-        User user = userService.findByUsername(postData.getUsername());
+        User user = userService.findByUsername(postData.getUsername(), false, false);
         if (user == null) {
             create(postData);
         } else {
@@ -358,7 +290,6 @@ public class UserApi extends BaseApi {
     /**
      * List users matching filtering and query criteria
      * 
-     * @param httpServletRequest http servlet request.
      * @param pagingAndFiltering Paging and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
      * @return A list of users
      * @throws ActionForbiddenException action forbidden exception
@@ -367,10 +298,10 @@ public class UserApi extends BaseApi {
      */
     // @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     // @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
-    public UsersDto list(HttpServletRequest httpServletRequest, PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
+    public UsersDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
-        boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
-        boolean isAccessOthers = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
+        boolean isViewerSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isAccessOthers = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
 
         if (!isViewerSelf && !isAccessOthers) {
             throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_VIEW_USERS);
@@ -395,34 +326,18 @@ public class UserApi extends BaseApi {
         if (totalCount > 0) {
             List<User> users = userService.list(paginationConfig);
             for (User user : users) {
-                UserDto userDto = new UserDto(user, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities"));
-                userDto.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, user.getUserName()));
+                UserDto userDto = new UserDto(user);
+                if (pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities")) {
+                    List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForUser(user.getUserName());
+                    if (securedEntities != null) {
+                        userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
+                    }
+                }
                 result.getUsers().add(userDto);
             }
         }
 
         return result;
-    }
-
-    public String createExternalUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
-        // create the user in core
-        create(postData, false);
-
-        return keycloakAdminClientService.createUser(httpServletRequest, postData);
-    }
-
-    public void updateExternalUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
-        // update user in core
-        update(postData);
-
-        keycloakAdminClientService.updateUser(httpServletRequest, postData);
-    }
-
-    public void deleteExternalUser(HttpServletRequest httpServletRequest, String username) throws BusinessException, MeveoApiException {
-        // delete in core
-        remove(username);
-
-        keycloakAdminClientService.deleteUser(httpServletRequest, username);
     }
 
     public CurrentUserDto getCurrentUser() throws MeveoApiException, BusinessException {

@@ -411,7 +411,7 @@ public class MediationJobBean extends BaseJobBean {
         }
         return e;
     }
-
+    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRs(List<CDR> cdrs, JobExecutionResultImpl jobExecutionResult, ICdrParser cdrParserFinal, PrintWriter outputFileWriter, PrintWriter rejectFileWriter, String fileName, boolean isDuplicateCheckOn,
@@ -422,13 +422,7 @@ public class MediationJobBean extends BaseJobBean {
             try {
 
                 if (!StringUtils.isBlank(cdr.getRejectReason())) {
-                    log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, cdr.getRejectReason());
-                    rejectFileWriter.println(cdr.getLine() + "\t" + cdr.getRejectReason());
-                    jobExecutionResult.registerError("file=" + fileName + ", line=" + cdr.getLine() + ": " + cdr.getRejectReason());
-                    cdr.setStatus(CDRStatusEnum.ERROR);
-                    rejectededCdrEventProducer.fire(cdr);
-                    cdrService.createOrUpdateCdr(cdr);
-
+                    failedCDR(jobExecutionResult, fileName, cdr, CDRStatusEnum.ERROR, rejectFileWriter);
                 } else {
 
                     List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
@@ -441,6 +435,9 @@ public class MediationJobBean extends BaseJobBean {
                     cdrParsingService.createEdrs(edrs, cdr);
                     
                     mediationsettingService.applyEdrVersioningRule(edrs, cdr);
+                    if (!StringUtils.isBlank(cdr.getRejectReason())) {
+                        failedCDR(jobExecutionResult, fileName, cdr, cdr.getStatus(), rejectFileWriter);
+                    }
 
                     outputFileWriter.println(cdr.getLine());
 
@@ -480,6 +477,16 @@ public class MediationJobBean extends BaseJobBean {
                 jobExecutionResult.addNbItemsToProcess(1L);
             }
         }
+    }
+    
+
+    private void failedCDR(JobExecutionResultImpl jobExecutionResult,String fileName, CDR cdr, CDRStatusEnum status, PrintWriter rejectFileWriter) {
+        log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, cdr.getRejectReason());
+        rejectFileWriter.println(cdr.getLine() + "\t" + cdr.getRejectReason());
+        jobExecutionResult.registerError("file=" + fileName + ", line=" + cdr.getLine() + ": " + cdr.getRejectReason());
+        cdr.setStatus(status);
+        rejectededCdrEventProducer.fire(cdr);
+        cdrService.createOrUpdateCdr(cdr);
     }
     
 

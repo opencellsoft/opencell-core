@@ -1,14 +1,11 @@
 package org.meveo.service.mediation;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -83,7 +80,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     	var edrIterate = edrs.iterator();
     	while(edrIterate.hasNext()) {
     		var edr = edrIterate.next();
-    		var errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
+    		var  errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
         	var edrVersionRuleOption = mediationSettings.get(0).getRules().stream()
 					.sorted(sortByPriority)
 					.filter(edrVersion -> {
@@ -141,7 +138,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 									});
 								
 								}
-    					}
+    						}
         			}else {
 						cdr.setStatus(CDRStatusEnum.DISCARDED);
 						var msgError = "Newer version already exists EDR[id="+previousEdrs.get(0).getId()+"]";
@@ -172,12 +169,12 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 			cdr.setStatus(CDRStatusEnum.ERROR);
 			if(edr.getId() != null) {
 				edrService.remove(edr);
-			}
+		}
 			edrIterate.remove();
 		}
     	return evaluted;
     }
-    
+
     @Inject
     private EdrService edrService;
 

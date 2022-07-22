@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -52,15 +51,12 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.admin.User;
-import org.meveo.model.security.Role;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.admin.impl.UserService;
+import org.meveo.security.SecuredEntity;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
@@ -96,12 +92,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     @CurrentUser
     private MeveoUser currentUser;
 
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private RoleService roleService;
-
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -111,6 +101,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      */
     @Inject
     protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
+
+    /**
+     * Is secured entity check enabled
+     */
+    public static boolean isSecuredEntitiesEnabled() {
+        return ParamBean.getInstance().getPropertyAsBoolean("secured.entities.enabled", true);
+    }
 
     /**
      * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the {@link SecuredBusinessEntityMethod} annotation
@@ -145,7 +142,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             return context.proceed();
         }
 
-        Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntities(currentUser);
+        List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForCurentUser();
+
+        Map<String, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntitiesGroupedByClass(securedEntities);
         boolean hasRestrictions = !allSecuredEntitiesMap.isEmpty();
         if (!hasRestrictions) {
             return context.proceed();
@@ -157,20 +156,19 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 
-        Object[] values = context.getParameters();
+        Object[] methodParameters = context.getParameters();
 
         SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
 
         if (securedMethodConfig.getResultFilter().equals(ListFilter.class)) {
-            List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
-            addSecuredEntitiesToFilters(securedEntities, values, sbeConfig.getFilterResultsConfig());
+            addSecuredEntitiesToFilters(securedEntities, methodParameters, sbeConfig.getFilterResultsConfig());
         }
 
         // check validation
         SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
         if (parametersForValidation != null) {
             for (SecureMethodParameterConfig parameterConfig : parametersForValidation) {
-                List<BusinessEntity> entities = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
+                List<BusinessEntity> entities = parameterHandler.getParameterValue(parameterConfig, methodParameters, BusinessEntity.class);
                 if (CollectionUtils.isNotEmpty(entities)) {
                     boolean isAllowed = false;
                     for (BusinessEntity entity : entities) {
@@ -200,34 +198,47 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     }
 
     /**
+     * Add additional parameters to the data model's search criteria to allow access to secured entities only
+     * 
+     * @param filters Search criteria to enhance
+     * @param entityClass Class of an entity
+     * @param sbeConfig Secured entity configuration to apply
+     * @throws AccessDeniedException Not able to grant access - a higher entity is being accessed, but user has access to lower entity only, OR user is searching excplicity for an entity that is not in teh list of
+     *         accessible entities for the user
+     */
+    protected void secureDataModel(Map<String, Object> filters, Class<?> entityClass, SecuredBusinessEntityConfig sbeConfig) throws AccessDeniedException {
+
+        List<SecuredEntity> securedEntities = securedBusinessEntityService.getSecuredEntitiesForCurentUser();
+        if (!securedEntities.isEmpty()) {
+            updateFilters(securedEntities, filters, sbeConfig.getFilterResultsConfig());
+        }
+    }
+
+    /**
      * Get all accessible entities for the current user, both associated directly to the user or to its associated roles. Those accessible entities are then grouped by types into Map
      *
      * @param currentUser MeveoUser current user
      * @return current user's accessible entities
      */
-    private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
-        List<SecuredEntity> allSecuredEntities = new ArrayList<>();
-        User user = userService.findByUsername(currentUser.getUserName());
-        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
-
-        List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class).setParameter("currentUserRoles", currentUser.getRoles()).getResultList();
-        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
+    private Map<String, Set<SecuredEntity>> getAllSecuredEntitiesGroupedByClass(List<SecuredEntity> allSecuredEntities) {
 
         // group secured entites by types into Map
-        Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
-        Set<SecuredEntity> securedEntitySet = null;
-        try {
-            for (SecuredEntity securedEntity : allSecuredEntities) {
-                Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
-                if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
-                    securedEntitySet = new HashSet<>();
-                    securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
-                }
-                securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
-            }
-        } catch (ClassNotFoundException e) {
-            // do nothing
+        Map<String, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
+        if (allSecuredEntities == null) {
+            return securedEntitiesMap;
         }
+
+        Set<SecuredEntity> securedEntitySet = null;
+
+        for (SecuredEntity securedEntity : allSecuredEntities) {
+            String securedBusinessEntityClass = securedEntity.getEntityClass();
+            if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
+                securedEntitySet = new HashSet<>();
+                securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
+            }
+            securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
+        }
+
         return securedEntitiesMap;
     }
 
@@ -266,12 +277,16 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * @param securedEntities a secured entities
      * @param filters filters to update
      * @param filterResultsConfig Filter result configuration
+     * @throws AccessDeniedException Not able to grant access - a higher entity is being accessed, but user has access to lower entity only, OR user is searching excplicity for an entity that is not in teh list of
+     *         accessible entities for the user
      */
-    private Map<String, Object> updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters, FilterResultsConfig filterResultsConfig) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters, FilterResultsConfig filterResultsConfig) throws AccessDeniedException {
 
         if (filterResultsConfig.getItemPropertiesToFilter().length == 0) {
-            return filters;
+            return;
         }
+        boolean useIdIfAvailable = false;
 
         Map<String, List<String>> newFilterCriteria = new HashMap<String, List<String>>();
         for (FilterPropertyConfig propertyToFilter : filterResultsConfig.getItemPropertiesToFilter()) {
@@ -281,21 +296,17 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             String propertyToFilterClass = propertyToFilter.getEntityClass().getSimpleName();
 
             for (SecuredEntity securedEntity : securedEntities) {
-                String entityClass = securedEntity.getEntityClass();
-                if (entityClass.lastIndexOf('.') > 0) {
-                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
-                }
 
-                String propertyToFilterPath = getCriteriaPath(fieldName, propertyToFilterClass, entityClass);
+                String propertyToFilterPath = getCriteriaPath(fieldName, propertyToFilterClass, securedEntity.getEntityClass(), useIdIfAvailable && securedEntity.getId() != null);
                 if (propertyToFilterPath == null) {
                     continue;
                 }
 
                 if (newFilterCriteria.containsKey(propertyToFilterPath)) {
-                    newFilterCriteria.get(propertyToFilterPath).add(securedEntity.getCode());
+                    newFilterCriteria.get(propertyToFilterPath).add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
                 } else {
                     List<String> list = new ArrayList<>();
-                    list.add(securedEntity.getCode());
+                    list.add(useIdIfAvailable && securedEntity.getId() != null ? securedEntity.getId().toString() : securedEntity.getCode());
                     newFilterCriteria.put(propertyToFilterPath, list);
                 }
             }
@@ -371,8 +382,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         if (!orFilterItems.isEmpty()) {
             filters.put(PersistenceService.SEARCH_OR + AND_OR_FIELD_SUFFIX, orFilterItems);
         }
-        return filters;
-
     }
 
     /**
@@ -381,10 +390,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * @param propertyName Property to filter
      * @param tryToAccessEntityClass Class that corresponds to a property being filtered
      * @param allowedToAccessEntityClass Class that corresponds to an entity that user has access to
+     * @param isFilterValueIDBased Should filter be applied to ID or CODE field
      * @return A property hierarchy traversal path. E.g. if user has access to Customer and a rule is applied on Subscription's userAccount property, a method would return
      *         "userAccount.billingAccount.customerAccount.customer.code"
      */
-    private String getCriteriaPath(String propertyName, String tryToAccessEntityClass, String allowedToAccessEntityClass) {
+    private String getCriteriaPath(String propertyName, String tryToAccessEntityClass, String allowedToAccessEntityClass, boolean isFilterValueIDBased) {
 
         String[] classHierarchyByPosition = new String[] { "billingAccount", "customerAccount", "customer", "seller" };
 
@@ -393,6 +403,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         int posTryAccess = classHierarchyByClass.get(tryToAccessEntityClass);
         int posAllowed = classHierarchyByClass.get(allowedToAccessEntityClass);
 
+        String codeOrIdField = isFilterValueIDBased ? "id" : "code";
+
         // User is allowed to access UserAccount, but tries to access Customer, it wont be permitted
         if (posAllowed < posTryAccess) {
             return null;
@@ -400,9 +412,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             // User is allowed to access Customer and is accessing a customer
         } else if (posAllowed == posTryAccess) {
             if (propertyName.equals("code")) {
-                return "code";
+                return codeOrIdField;
             } else {
-                return propertyName + ".code";
+                return propertyName + "." + codeOrIdField;
             }
 
             // User is allowed to access Customer and is accessing a userAccount - need to construct the whole hierarchy to climb up
@@ -420,7 +432,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             for (int i = posTryAccess; i < posAllowed; i++) {
                 propertyName = (propertyName == null ? "" : propertyName + ".") + classHierarchyByPosition[i];
             }
-            propertyName = propertyName + ".code";
+            propertyName = propertyName + "." + codeOrIdField;
             return propertyName;
         }
 

@@ -83,26 +83,27 @@ public class AddressBookService extends BusinessService<AddressBook> {
         
 
         for(User u : users) {
-        	if(u.getAddressbook() == null) {
-        		AddressBook addressBook = new AddressBook(u.getUserName());
-            	this.create(addressBook);
-        		u.setAddressbook(addressBook);
-        		userService.update(u);
-        	}
+//        	if(u.getAddressbook() == null) {
+//        		AddressBook addressBook = new AddressBook(u.getUserName());
+//            	this.create(addressBook);
+//        		u.setAddressbook(addressBook);
+//        		userService.update(u);
+//        	}
         }
         
     }
 
     public AddressBook getCurrentUserAddressBook() throws BusinessException {
-    	User user = userService.findByUsername(currentUser.getUserName());
-    	if(user.getAddressbook() == null) {
-    		AddressBook addressBook = new AddressBook(user.getUserName());
-        	this.create(addressBook);
-    		user.setAddressbook(addressBook);
-    		userService.update(user);
-    		return addressBook;
-    	}
-    	else return user.getAddressbook();
+//    	User user = userService.findByUsername(currentUser.getUserName());
+//    	if(user.getAddressbook() == null) {
+//    		AddressBook addressBook = new AddressBook(user.getUserName());
+//        	this.create(addressBook);
+//    		user.setAddressbook(addressBook);
+//    		userService.update(user);
+//    		return addressBook;
+//    	}
+//    	else return user.getAddressbook();
+        return null;
     }
     
     public void addContact(String code, Contact contact) throws BusinessException {

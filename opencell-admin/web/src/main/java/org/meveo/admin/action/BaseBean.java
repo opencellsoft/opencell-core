@@ -19,20 +19,26 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -41,6 +47,7 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -53,19 +60,17 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.AccessScopeEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.MeveoModuleService;
-import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.view.ESBasedDataModel;
-import org.meveo.util.view.PagePermission;
+import org.meveo.util.view.PageAccessHandler;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
 import org.primefaces.PrimeFaces;
@@ -97,7 +102,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /** Logger. */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     @Inject
     protected Messages messages;
 
@@ -113,9 +118,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected Conversation conversation;
 
     @Inject
-    protected PermissionService permissionService;
-
-    @Inject
     private FilterService filterService;
 
     @Inject
@@ -123,9 +125,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
-
-    @Inject
-    private ElasticClient elasticClient;
 
     @Inject
     protected FacesContext facesContext;
@@ -182,6 +181,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Param()
     private String backMainTab;
 
+    @Inject
+    private PageAccessHandler pageAccessHandler;
+
     /**
      * Object identifier to load
      */
@@ -214,18 +216,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private int activeTab;
 
-    /**
-     * Cached access to entity (read/modification) rules
-     */
-    private Map<String, Boolean> writeAccessMap;
-
     @Inject
     protected ParamBeanFactory paramBeanFactory;
+    
+    @Inject
+    SecuredBusinessEntityCheckInterceptor securedBusinessEntityCheckInterceptor;
 
     private UploadedFile uploadedFile;
 
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
-    
+
     public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
     /**
@@ -976,6 +976,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     cleanupFilters(filters, cleanFilters);
                     cleanupFilters(MapUtils.emptyIfNull(customFilters), cleanFilters);
 
+                    if (BaseBean.this.getClass().getName().contains("ListBean")) {
+                        securedBusinessEntityCheckInterceptor.secureDataModel(cleanFilters, getClazz());
+                    }
+                    
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -1007,21 +1011,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 protected List<String> getListFieldsToFetchImpl() {
                     return getListFieldsToFetch();
                 }
-
-                @Override
-                protected ElasticClient getElasticClientImpl() {
-                    return elasticClient;
-                }
-
-                @Override
-                protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-                    String fullTextValue = super.getFullTextSearchValue(loadingFilters);
-                    if (fullTextValue == null) {
-                        return (String) filters.get(ESBasedDataModel.FILTER_FULL_TEXT);
-                    }
-                    return fullTextValue;
-                }
-
             };
         }
 
@@ -1429,29 +1418,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Determine if current user an modify a current entity
+     * Determine if current user can modify a current entity
      * 
      * @return True if user has suficient permissions to modify a current entity
      */
     public boolean canUserUpdateEntity() {
-        if (this.writeAccessMap == null) {
-            writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
-        }
-        ExternalContext context = facesContext.getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) context.getRequest();
-        String requestURI = request.getRequestURI();
+        return pageAccessHandler.isCurrentURLAccesible(AccessScopeEnum.UPDATE.getHttpMethod());
+    }
 
-        if (writeAccessMap.get(requestURI) == null) {
-            boolean hasWriteAccess = false;
-            try {
-                hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, currentUser);
-            } catch (BusinessException e) {
-                log.error("Error encountered checking for write access to {}", requestURI, e);
-                hasWriteAccess = false;
-            }
-            writeAccessMap.put(requestURI, hasWriteAccess);
-        }
-        return writeAccessMap.get(requestURI);
+    /**
+     * Determine if current user can delete a current entity
+     * 
+     * @return True if user has suficient permissions to delete a current entity
+     */
+    public boolean canUserDeleteEntity() {
+        return pageAccessHandler.isCurrentURLAccesible(AccessScopeEnum.DELETE.getHttpMethod());
     }
 
     /**

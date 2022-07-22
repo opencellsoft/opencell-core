@@ -10,7 +10,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
-import org.meveo.apiv2.generic.security.interceptor.UserPermissionCheckInterceptor;
 import org.meveo.model.IEntity;
 
 
@@ -23,7 +22,7 @@ import org.meveo.model.IEntity;
  * @since 10.X
  */
 @Stateless
-@Interceptors({UserPermissionCheckInterceptor.class, SecuredBusinessEntityCheckInterceptor.class})
+@Interceptors({ SecuredBusinessEntityCheckInterceptor.class})
 public class GenericApiPersistenceDelegate {
 
     /**

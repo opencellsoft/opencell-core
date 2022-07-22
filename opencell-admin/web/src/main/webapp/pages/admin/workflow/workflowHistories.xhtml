@@ -36,7 +36,7 @@
             <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
             <hftl:column label="#{messages['workflow.title']}" field="workflow.code" />
             <hftl:column label="#{messages['workflowHistory.creator']}" field="auditable.creator" />
-            <hftl:actionsColumn renderViewLink="true" renderDeleteLink="false" width="35" permission="#{currentUser.hasRole('administrationVisualization')}" />
+            <hftl:actionsColumn renderViewLink="true" renderDeleteLink="false" width="35" />
         </hftl:dataList>
 
     </ui:define>

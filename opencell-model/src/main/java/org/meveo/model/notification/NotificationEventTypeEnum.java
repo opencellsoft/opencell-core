@@ -90,26 +90,6 @@ public enum NotificationEventTypeEnum {
     LOW_BALANCE,
 
     /**
-     * File was uploaded via FTP
-     */
-    FILE_UPLOAD,
-
-    /**
-     * File was downloaded via FTP
-     */
-    FILE_DOWNLOAD,
-
-    /**
-     * File was renamed via FTP
-     */
-    FILE_RENAME,
-
-    /**
-     * File was deleted via FTP
-     */
-    FILE_DELETE,
-
-    /**
      * Counter has reached the value to alert on
      */
     COUNTER_DEDUCED,

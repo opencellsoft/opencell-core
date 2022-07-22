@@ -7,7 +7,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningSettings;
@@ -46,7 +46,7 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 		globalSettingsVerifier.checkActivateDunning();
 		if(baseEntity.getDunningSettings() != null) {
 			DunningSettings dunningSetting = null;
-			if(!Strings.isEmpty(baseEntity.getDunningSettings().getCode()))
+			if(!StringUtils.isEmpty(baseEntity.getDunningSettings().getCode()))
 				dunningSetting = dunningSettingsService.findByCode(baseEntity.getDunningSettings().getCode());
 			if(dunningSetting == null && baseEntity.getDunningSettings().getId() != null)
 				dunningSetting = dunningSettingsService.findById(baseEntity.getDunningSettings().getId());
@@ -89,11 +89,11 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 		var existingDunningAgent = dunningAgentService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
 		if(existingDunningAgent == null)
 			throw new BadRequestException(String.format(NO_DUNNING_AGENT_FOUND, dunningCode, agentEmailItem));
-		if(!Strings.isEmpty(baseEntity.getCollectionAgency()))
+		if(!StringUtils.isEmpty(baseEntity.getCollectionAgency()))
 			existingDunningAgent.setCollectionAgency(baseEntity.getCollectionAgency());
-		if(!Strings.isEmpty(baseEntity.getAgentFirstNameItem()))
+		if(!StringUtils.isEmpty(baseEntity.getAgentFirstNameItem()))
 			existingDunningAgent.setAgentFirstNameItem(baseEntity.getAgentFirstNameItem());
-		if(!Strings.isEmpty(baseEntity.getAgentLastNameItem()))
+		if(!StringUtils.isEmpty(baseEntity.getAgentLastNameItem()))
 			existingDunningAgent.setAgentLastNameItem(baseEntity.getAgentLastNameItem());
 		
 		existingDunningAgent.setExternal(baseEntity.isExternal());
