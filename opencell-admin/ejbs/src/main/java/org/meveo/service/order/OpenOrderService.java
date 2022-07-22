@@ -5,8 +5,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.meveo.model.ordering.OpenOrderStatusEnum.IN_USE;
-import static org.meveo.model.ordering.OpenOrderStatusEnum.NEW;
+import static org.meveo.model.ordering.OpenOrderStatusEnum.*;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
@@ -135,7 +134,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         validate(openOrderQuote);
         OpenOrder openOrder = new OpenOrder();
         openOrder.setExternalReference(openOrderQuote.getExternalReference());
-        if(openOrderQuote.getActivationDate().compareTo(setTimeToZero(new Date())) < 0) {
+        if(openOrderQuote.getActivationDate().after(setTimeToZero(new Date()))) {
             openOrder.setStatus(NEW);
         } else {
             openOrder.setStatus(IN_USE);
