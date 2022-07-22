@@ -137,14 +137,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	List<Object> result = execute(reportQuery, targetEntity, false);
     	List<String> response = new ArrayList<>();
 		for(Object object : result) {
-    		var line = "";
-				Map<String, Object> entries = (Map<String, Object>)object;
-				for (Object entry : entries.values()) {
-					if(entry != null)
-						line += entry.toString() +";"; 
-					else
-						line += ";";
-				}
+			Map<String, Object> entries = (Map<String, Object>)object;
+			var line = reportQuery.getFields().stream().map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
@@ -153,7 +147,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
 	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
     	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV, targetEntity);
-    }
+    }	
 
 	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
     	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL, targetEntity);
