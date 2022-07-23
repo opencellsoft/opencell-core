@@ -14,6 +14,7 @@ import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
@@ -34,7 +35,9 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -108,7 +111,7 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         validateTags(dto, tags);
@@ -139,11 +142,7 @@ public class OpenOrderQuoteApi {
         // build tags
         List<Tag> tags = new ArrayList<>();
 
-        OpenOrderQuote ooq = openOrderQuoteService.findById(idOOQ);
-
-        if (ooq == null) {
-            throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
-        }
+        OpenOrderQuote ooq = getOpenOrderQuote(idOOQ);
 
         if (ACCEPTED == ooq.getStatus() || CANCELED == ooq.getStatus()) {
             throw new BusinessApiException("Cannot update OpenOrderQuote with status : " + ooq.getStatus());
@@ -155,7 +154,7 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         if (!template.getId().equals(ooq.getOpenOrderTemplate().getId())) {
@@ -175,6 +174,94 @@ public class OpenOrderQuoteApi {
         return ooq.getId();
     }
 
+    @Transactional
+    public Long duplicate(Long idOOQ) {
+
+        OpenOrderQuote srcOOQ = getOpenOrderQuote(idOOQ);
+
+        // Build new code
+        String newCode = srcOOQ.getCode() + DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now());
+
+        OpenOrderQuote ooqWithSameCode = openOrderQuoteService.findByCode(newCode);
+        if (ooqWithSameCode != null && !ooqWithSameCode.getId().equals(idOOQ)) {
+            throw new EntityAlreadyExistsException(OpenOrderQuote.class, newCode);
+        }
+
+        // Even if a duplicate operation, the different rules are supposed by checked in created or update service,
+        // so we well only init the id's for prevent Hibernate to persiste new entities
+        OpenOrderQuote dupOOQ = new OpenOrderQuote();
+        dupOOQ.setStatus(DRAFT);
+        dupOOQ.setCode(newCode);
+        dupOOQ.setQuoteNumber(serviceSingleton.getNextOpenOrderQuoteSequence());
+        dupOOQ.setDescription(srcOOQ.getDescription());
+        dupOOQ.setOpenOrderType(srcOOQ.getOpenOrderType());
+        dupOOQ.setMaxAmount(srcOOQ.getMaxAmount());
+        dupOOQ.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate()); // 3.4 template: set at creation, cannot be changed later.
+        dupOOQ.setExternalReference(srcOOQ.getExternalReference());
+        dupOOQ.setEndOfValidityDate(srcOOQ.getEndOfValidityDate());
+        dupOOQ.setBillingAccount(srcOOQ.getBillingAccount());
+        dupOOQ.setCurrency(srcOOQ.getCurrency());
+        dupOOQ.setActivationDate(srcOOQ.getActivationDate());
+
+        List<OpenOrderProduct> products = new ArrayList<>();
+        List<OpenOrderArticle> articles = new ArrayList<>();
+        List<Threshold> thresholds = new ArrayList<>();
+        List<Tag> tags = new ArrayList<>(Optional.ofNullable(srcOOQ.getTags()).orElse(Collections.emptyList()));
+
+        Optional.ofNullable(srcOOQ.getProducts()).orElse(Collections.emptyList())
+                .forEach(product -> {
+                    OpenOrderProduct oop = new OpenOrderProduct();
+                    oop.setActive(true);
+                    oop.setProduct(product.getProduct());
+                    oop.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate());
+                    oop.updateAudit(currentUser);
+
+                    products.add(oop);
+                });
+
+        Optional.ofNullable(srcOOQ.getArticles()).orElse(Collections.emptyList())
+                .forEach(article -> {
+                    OpenOrderArticle ooa = new OpenOrderArticle();
+                    ooa.setActive(true);
+                    ooa.setAccountingArticle(article.getAccountingArticle());
+                    ooa.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate());
+                    ooa.updateAudit(currentUser);
+
+                    articles.add(ooa);
+                });
+
+        Optional.ofNullable(srcOOQ.getThresholds()).orElse(Collections.emptyList())
+                .forEach(srcTh -> {
+                    Threshold threshold = new Threshold();
+                    threshold.setExternalRecipient(srcTh.getExternalRecipient());
+                    List<ThresholdRecipientsEnum> recipients = new ArrayList<>(Optional.ofNullable(srcTh.getRecipients()).orElse(Collections.emptyList()));
+                    threshold.setRecipients(recipients);
+                    threshold.setSequence(srcTh.getSequence());
+                    threshold.setPercentage(srcTh.getPercentage());
+                    threshold.setOpenOrderQuote(dupOOQ);
+
+                    thresholds.add(threshold);
+                });
+
+        dupOOQ.setTags(tags);
+        dupOOQ.setArticles(articles);
+        dupOOQ.setProducts(products);
+        dupOOQ.setThresholds(thresholds);
+
+        openOrderQuoteService.create(dupOOQ);
+
+        return dupOOQ.getId();
+    }
+
+    private OpenOrderQuote getOpenOrderQuote(Long idOOQ) {
+        OpenOrderQuote srcOOQ = openOrderQuoteService.findById(idOOQ);
+
+        if (srcOOQ == null) {
+            throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
+        }
+        return srcOOQ;
+    }
+
     private BillingAccount getBillingAccount(OpenOrderQuoteDto dto) {
         BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
 
@@ -184,7 +271,7 @@ public class OpenOrderQuoteApi {
         return billingAccount;
     }
 
-    private OpenOrderTemplate getOpenOrderTemplate(OpenOrderQuoteDto dto) {
+    private OpenOrderTemplate validateAndGetOpenOrderTemplate(OpenOrderQuoteDto dto) {
         OpenOrderTemplate template = openOrderTemplateService.findByCode(dto.getOpenOrderTemplate());
 
         if (template == null) {
@@ -192,9 +279,9 @@ public class OpenOrderQuoteApi {
         }
 
         // To activate in SPRINT 21
-        /*if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
+        if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
             throw new BusinessApiException("Template shall be in ACTIVE status");
-        }*/
+        }
         return template;
     }
 

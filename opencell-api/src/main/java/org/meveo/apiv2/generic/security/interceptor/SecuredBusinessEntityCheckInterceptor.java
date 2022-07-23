@@ -1,9 +1,12 @@
 package org.meveo.apiv2.generic.security.interceptor;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
+import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.SecuredBusinessEntityConfig;
 import org.meveo.api.security.config.SecuredBusinessEntityConfigFactory;
@@ -44,11 +47,30 @@ public class SecuredBusinessEntityCheckInterceptor extends SecuredBusinessEntity
     @Override
     public Object aroundInvoke(InvocationContext context) throws Exception {
         // Check if secured entities are enabled.
-        boolean secureEntitesEnabled = paramBeanFactory.getInstance().getPropertyAsBoolean("secured.entities.enabled", true);
-        if (!secureEntitesEnabled) {
+        if (!SecuredBusinessEntityMethodInterceptor.isSecuredEntitiesEnabled()) {
             return context.proceed();
         }
         SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(context);
         return super.checkForSecuredEntities(context, sbeConfig);
+    }
+
+    /**
+     * Secure data model by enhancing search criteria and limiting access only to the secured entities as method configuration indicates
+     * 
+     * @param filters Search criteria to enhance
+     * @param entityClass Class of an entity to secure
+     * @throws AccessDeniedException Not able to grant access - a higher entity is being accessed, but user has access to lower entity only, OR user is searching excplicity for an entity that is not in teh list of
+     *         accessible entities for the user
+     */
+    public void secureDataModel(Map<String, Object> filters, Class<?> entityClass) throws AccessDeniedException {
+
+        if (!SecuredBusinessEntityMethodInterceptor.isSecuredEntitiesEnabled()) {
+            return;
+        }
+        SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(entityClass, "list");
+        if (sbeConfig == null) {
+            return;
+        }
+        super.secureDataModel(filters, entityClass, sbeConfig);
     }
 }

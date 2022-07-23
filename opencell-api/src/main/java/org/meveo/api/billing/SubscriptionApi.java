@@ -575,6 +575,11 @@ public class SubscriptionApi extends BaseApi {
                 applyProduct(dto);
             }
         }
+        if(postData.getProductsToInstantiate() != null && !postData.getProductsToInstantiate().isEmpty()){
+            Subscription finalSubscription = subscription;
+            postData.getProductsToInstantiate()
+                    .forEach(productToInstantiateDto -> processProduct(finalSubscription, productToInstantiateDto));
+        }
         // terminate discounts
         if (postData.getDiscountPlansForTermination() != null) {
             for (String dpiCode : postData.getDiscountPlansForTermination()) {
@@ -2609,9 +2614,8 @@ public class SubscriptionApi extends BaseApi {
     private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
         if(serviceInstanceDtos != null) {
             serviceInstanceDtos.forEach(serviceInstanceDto -> {
-                var serviceInstances = serviceInstanceService.findByCodeAndCodeSubscription(serviceInstanceDto.getCode(), subscription.getCode());
-                if(serviceInstances != null && !serviceInstances.isEmpty()) {
-                    var serviceInstance = serviceInstances.get(0);
+                var serviceInstance = serviceInstanceService.findById(serviceInstanceDto.getId());
+                if(serviceInstance != null) {
                     serviceInstance.getAttributeInstances().clear();
                     if(serviceInstanceDto.getAttributeInstances() != null) {
                         serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {

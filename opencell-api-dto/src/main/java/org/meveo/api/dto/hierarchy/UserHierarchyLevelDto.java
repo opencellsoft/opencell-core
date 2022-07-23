@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.hierarchy.HierarchyLevel;
+import org.meveo.security.UserGroup;
 
 /**
  * The Class UserHierarchyLevelDto.
@@ -49,9 +49,6 @@ public class UserHierarchyLevelDto extends BusinessEntityDto {
     @XmlElement(name = "userHierarchyLevel")
     private List<UserHierarchyLevelDto> childLevels;
 
-    /** The order level. */
-    protected Long orderLevel = 0L;
-
     /**
      * Instantiates a new user hierarchy level dto.
      */
@@ -64,12 +61,9 @@ public class UserHierarchyLevelDto extends BusinessEntityDto {
      *
      * @param level the HierarchyLevel
      */
-    public UserHierarchyLevelDto(@SuppressWarnings("rawtypes") HierarchyLevel level) {
-        super(level);
-        orderLevel = level.getOrderLevel();
-        if (level.getParentLevel() != null) {
-            parentLevel = level.getParentLevel().getCode();
-        }
+    public UserHierarchyLevelDto(UserGroup level) {
+        parentLevel = level.getParentGroup();
+        code = level.getName();
     }
 
     /**
@@ -106,23 +100,5 @@ public class UserHierarchyLevelDto extends BusinessEntityDto {
      */
     public void setChildLevels(List<UserHierarchyLevelDto> childLevels) {
         this.childLevels = childLevels;
-    }
-
-    /**
-     * Gets the order level.
-     *
-     * @return the order level
-     */
-    public Long getOrderLevel() {
-        return orderLevel;
-    }
-
-    /**
-     * Sets the order level.
-     *
-     * @param orderLevel the new order level
-     */
-    public void setOrderLevel(Long orderLevel) {
-        this.orderLevel = orderLevel;
     }
 }

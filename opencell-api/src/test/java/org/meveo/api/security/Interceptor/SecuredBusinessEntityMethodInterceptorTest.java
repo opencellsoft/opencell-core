@@ -2,7 +2,6 @@ package org.meveo.api.security.Interceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -10,22 +9,13 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Parameter;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -38,16 +28,16 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.admin.SecuredEntity.SecuredEntityPermissionEnum;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.RoleService;
+import org.meveo.security.SecuredEntity;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.security.SecuredBusinessEntityService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -65,9 +55,6 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     private UserService userService;
 
     @Mock
-    private RoleService roleService;
-
-    @Mock
     private ParamBeanFactory paramBeanFactory;
 
     @Mock
@@ -79,14 +66,8 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     @Mock
     private EntityManager entityManager;
 
-    @Before
-    public void setUp() {
-
-        when(roleService.getEntityManager()).thenReturn(entityManager);
-
-        TypedQuery<Object> query = getQuerySimulation();
-        when(entityManager.createNamedQuery(any(), any())).thenReturn(query);
-    }
+    @Mock
+    private SecuredBusinessEntityService securedBusinessEntityService;
 
     /**
      * Sets up a mocked current user with secured entities
@@ -98,14 +79,10 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         List<SecuredEntity> securedEntities = new ArrayList<>(entitiesAllowed.length / 2);
 
         for (int i = 0; i < entitiesAllowed.length; i = i + 2) {
-            securedEntities.add(new SecuredEntity((String) entitiesAllowed[i], (String) entitiesAllowed[i + 1]));
+            securedEntities.add(new SecuredEntity(Long.valueOf(i), (String) entitiesAllowed[i + 1], (String) entitiesAllowed[i], SecuredEntityPermissionEnum.READ));
         }
 
-        User user = new User();
-        user.setSecuredEntities(securedEntities);
-
-        Mockito.when(userService.findByUsername(any())).thenReturn(user);
-
+        Mockito.when(securedBusinessEntityService.getSecuredEntitiesForCurentUser()).thenReturn(securedEntities);
     }
 
     @Test
@@ -114,7 +91,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext();
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -143,7 +120,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -160,7 +137,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, true);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -178,7 +155,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "cust1");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -186,7 +163,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         assertThat(criteria.getFilters().get("code")).isEqualTo("cust1");
         assertThat(criteria.getFilters().size()).isEqualTo(1);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testSinglePropertySameAllowedEntityClassMaintainExistingCriteria_AllowNull() throws Exception {
@@ -194,7 +171,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "cust1");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, true);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -212,7 +189,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "will throw exception as not match single permited customer");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -226,7 +203,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(BillingAccount.class.getName(), "ba1");
+        setUpCurrentUser(BillingAccount.class.getSimpleName(), "ba1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -242,7 +219,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(CustomerAccount.class.getName(), "ca1");
+        setUpCurrentUser(CustomerAccount.class.getSimpleName(), "ca1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -258,7 +235,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -277,7 +254,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Seller.class.getName(), "seller1");
+        setUpCurrentUser(Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -296,7 +273,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", UserAccount.class, false);
 
-        setUpCurrentUser(Seller.class.getName(), "seller1");
+        setUpCurrentUser(Seller.class.getSimpleName(), "seller1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -309,7 +286,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -325,7 +302,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("code", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(UserAccount.class.getName(), "ua1");
+        setUpCurrentUser(UserAccount.class.getSimpleName(), "ua1");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -340,7 +317,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Customer.class.getName(), "cust2", Customer.class.getName(), "cust3");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -360,7 +337,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Customer.class.getName(), "cust2", Customer.class.getName(), "cust3");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2", Customer.class.getSimpleName(), "cust3");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -381,7 +358,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Customer.class.getName(), "cust2");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Customer.class.getSimpleName(), "cust2");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -400,7 +377,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -411,14 +388,13 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         assertThat(criteria.getFilters().size()).isEqualTo(2);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testSinglePropertyInListSearchRemoveNotAllowedEntities_AccessDenied() throws Exception {
 
         InvocationContext methodContext = getMethodContext("description", "test", "inList code", "cust1,cust2,cust3");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", Customer.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust4");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust4");
 
         assertThatThrownBy(() -> {
             securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
@@ -433,7 +409,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "code", BillingAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", UserAccount.class.getName(), "ua1", BillingAccount.class.getName(), "ba1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", UserAccount.class.getSimpleName(), "ua1", BillingAccount.class.getSimpleName(), "ba1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -455,7 +431,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Seller.class.getName(), "seller1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -467,7 +443,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         assertThat(((Map<String, Object>) criteria.getFilters().get("OR_secured")).get("userAccount.billingAccount.customerAccount.customer.seller.code")).isEqualTo("seller1");
         assertThat(criteria.getFilters().size()).isEqualTo(2);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testMultiplePropertiesMultipleParentAllowedEntityClass_AllowNull() throws Exception {
@@ -478,7 +454,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, true, "userAccount", UserAccount.class, true);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Seller.class.getName(), "seller1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -503,7 +479,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "seller.code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Seller.class.getName(), "seller1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -527,7 +503,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         InvocationContext methodContext = getMethodContext("description", "test", "seller.code", "keep me");
         SecuredBusinessEntityConfig sbeConfig = getSecurityConfig(ListFilter.class, "seller", Seller.class, false, "userAccount", UserAccount.class, false);
 
-        setUpCurrentUser(Customer.class.getName(), "cust1", Seller.class.getName(), "seller1");
+        setUpCurrentUser(Customer.class.getSimpleName(), "cust1", Seller.class.getSimpleName(), "seller1");
 
         securedBusinessEntityMethodInterceptor.checkForSecuredEntities(methodContext, sbeConfig);
 
@@ -548,7 +524,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
      *        access if null
      * @return Method's security context configuration
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private SecuredBusinessEntityConfig getSecurityConfig(Class<? extends SecureMethodResultFilter> filterType, Object... properties) {
 
         SecuredBusinessEntityConfig sbeConfig = new SecuredBusinessEntityConfig();
@@ -639,172 +615,4 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         };
         return context;
     }
-
-    private TypedQuery<Object> getQuerySimulation() {
-
-        TypedQuery<Object> query = new TypedQuery<Object>() {
-
-            @Override
-            public int executeUpdate() {
-                return 0;
-            }
-
-            @Override
-            public int getMaxResults() {
-                return 0;
-            }
-
-            @Override
-            public int getFirstResult() {
-                return 0;
-            }
-
-            @Override
-            public Map<String, Object> getHints() {
-                return null;
-            }
-
-            @Override
-            public Set<Parameter<?>> getParameters() {
-                return null;
-            }
-
-            @Override
-            public Parameter<?> getParameter(String name) {
-                return null;
-            }
-
-            @Override
-            public <T> Parameter<T> getParameter(String name, Class<T> type) {
-                return null;
-            }
-
-            @Override
-            public Parameter<?> getParameter(int position) {
-                return null;
-            }
-
-            @Override
-            public <T> Parameter<T> getParameter(int position, Class<T> type) {
-                return null;
-            }
-
-            @Override
-            public boolean isBound(Parameter<?> param) {
-                return false;
-            }
-
-            @Override
-            public <T> T getParameterValue(Parameter<T> param) {
-                return null;
-            }
-
-            @Override
-            public Object getParameterValue(String name) {
-                return null;
-            }
-
-            @Override
-            public Object getParameterValue(int position) {
-                return null;
-            }
-
-            @Override
-            public FlushModeType getFlushMode() {
-                return null;
-            }
-
-            @Override
-            public LockModeType getLockMode() {
-                return null;
-            }
-
-            @Override
-            public <T> T unwrap(Class<T> cls) {
-                return null;
-            }
-
-            @Override
-            public List<Object> getResultList() {
-                return new ArrayList();
-            }
-
-            @Override
-            public Object getSingleResult() {
-                return null;
-            }
-
-            @Override
-            public TypedQuery<Object> setMaxResults(int maxResult) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setFirstResult(int startPosition) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setHint(String hintName, Object value) {
-                return this;
-            }
-
-            @Override
-            public <T> TypedQuery<Object> setParameter(Parameter<T> param, T value) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(String name, Object value) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(String name, Calendar value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(String name, Date value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(int position, Object value) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(int position, Calendar value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setParameter(int position, Date value, TemporalType temporalType) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setFlushMode(FlushModeType flushMode) {
-                return this;
-            }
-
-            @Override
-            public TypedQuery<Object> setLockMode(LockModeType lockMode) {
-                return this;
-            }
-        };
-        return query;
-    }
-
 }

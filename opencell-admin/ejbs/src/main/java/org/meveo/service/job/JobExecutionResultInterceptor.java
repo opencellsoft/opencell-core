@@ -70,7 +70,7 @@ public class JobExecutionResultInterceptor {
      */
     private void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name, Long value) {
         JobInstance jobInstance = jobExecutionResultImpl.getJobInstance();
-        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).reusable().build();
+        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
         if (value != null) {

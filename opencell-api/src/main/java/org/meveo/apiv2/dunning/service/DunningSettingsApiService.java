@@ -1,14 +1,14 @@
 package org.meveo.apiv2.dunning.service;
 
+import static java.util.Optional.empty;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
-import static java.util.Optional.empty;
-
-import org.assertj.core.util.Lists;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.dunning.DunningModeEnum;
@@ -30,7 +30,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 
 	@Override
 	public List<DunningSettings> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		return Lists.emptyList();
+		return new ArrayList<DunningSettings>();
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.OpenOrderTypeEnum;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.MaximumValidityUnitEnum;
@@ -86,6 +87,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -193,6 +195,7 @@ public class OpenOrderQuoteUpdateApiTest {
         template.setId(1L);
         template.setCode("TMP-CODE-1");
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
         ooq.setId(1L);
@@ -259,6 +262,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -303,10 +307,12 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderTemplate otherTemplate = new OpenOrderTemplate();
         otherTemplate.setId(2L);
+        otherTemplate.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
         ooq.setId(1L);
@@ -461,6 +467,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -513,6 +520,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -565,6 +573,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -617,6 +626,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -669,6 +679,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -721,6 +732,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -773,6 +785,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -816,6 +829,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -859,6 +873,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.ARTICLES);
 
         OpenOrderQuote ooq = new OpenOrderQuote();
@@ -911,6 +926,7 @@ public class OpenOrderQuoteUpdateApiTest {
         OpenOrderTemplate template = new OpenOrderTemplate();
         template.setId(1L);
         template.setCode("TMP-CODE-1");
+        template.setStatus(OpenOrderTemplateStatusEnum.ACTIVE);
         template.setOpenOrderType(OpenOrderTypeEnum.PRODUCTS);
 
         OpenOrderQuote ooq = new OpenOrderQuote();

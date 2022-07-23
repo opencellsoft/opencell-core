@@ -42,6 +42,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.DiscountInvoiceAggregateDto;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.SubcategoryInvoiceAgregateAmountDto;
@@ -240,7 +241,8 @@ public class InvoiceApi extends BaseApi {
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
         String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
-        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());
+        invoice.setAlias(invoice.getInvoiceNumber());
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());        
         invoice.assignTemporaryInvoiceNumber();
         invoiceDTO.setReturnPdf(Boolean.FALSE);
         invoiceDTO.setReturnXml(Boolean.FALSE);
@@ -365,10 +367,17 @@ public class InvoiceApi extends BaseApi {
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto.getFilter() != null) {
-            ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
+        final FilterDto filterDto = generateInvoiceRequestDto.getFilter();
+		if (filterDto != null) {
+    		if(!StringUtils.isBlank(filterDto.getPollingQuery()) && RatedTransaction.class.getName().equals(filterDto.getEntityClass())){
+    			ratedTransactionFilter = new Filter();
+    			ratedTransactionFilter.setPollingQuery(filterDto.getPollingQuery());
+    			ratedTransactionFilter.setEntityClass(filterDto.getEntityClass());
+    		} else {
+    			ratedTransactionFilter = filteredListApi.getFilterFromDto(filterDto);
+    		}
             if (ratedTransactionFilter == null) {
-                throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
+                throw new EntityDoesNotExistsException(Filter.class, filterDto.getCode());
             }
         }
 

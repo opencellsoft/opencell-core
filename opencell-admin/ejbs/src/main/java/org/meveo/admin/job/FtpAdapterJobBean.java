@@ -18,8 +18,31 @@
 
 package org.meveo.admin.job;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.vfs2.*;
+import org.apache.commons.vfs2.AllFileSelector;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystem;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.UserAuthenticator;
+import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
@@ -35,20 +58,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.FtpTransferredFileService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.regex.Pattern;
 
 /**
  * The Class FtpAdapterJobBean.
@@ -350,11 +359,7 @@ public class FtpAdapterJobBean {
 
         UserAuthenticator auth = new StaticUserAuthenticator(null, userName, password);
         opts = getSftpOptions(isSftp);
-        try {
-            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
-        } catch (FileSystemException ex) {
-            throw new RuntimeException("setUserAuthenticator failed", ex);
-        }
+        DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
         if ("false".equals(paramBeanFactory.getInstance().getProperty("ftpAdapter.useExtentionAsRegex", "false"))) {
             filePattern = Pattern.compile(".*" + filePatternString);
         } else {

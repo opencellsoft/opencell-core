@@ -43,7 +43,7 @@ public class MissingParameterException extends MeveoApiException {
 
         if (!missingFields.isEmpty()) {
             if (missingFields.size() > 1) {
-                sb.append(org.apache.commons.lang.StringUtils.join(missingFields.toArray(), ", "));
+                sb.append(org.apache.commons.lang3.StringUtils.join(missingFields.toArray(), ", "));
             } else {
                 sb.append(missingFields.get(0));
             }

@@ -21,10 +21,10 @@ package org.meveo.api.security.filter;
 import java.util.Map;
 import java.util.Set;
 
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.config.FilterResultsConfig;
-import org.meveo.model.admin.SecuredEntity;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.SecuredEntity;
 
 /**
  * This is the default result filter. I does not do any filtering. It is used if
@@ -38,7 +38,7 @@ import org.meveo.security.MeveoUser;
 public class NullFilter extends SecureMethodResultFilter {
 
 	@Override
-	public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) {
+	public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<String, Set<SecuredEntity>> allSecuredEntitiesMap) {
 		return result;
 	}
 

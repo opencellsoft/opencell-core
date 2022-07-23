@@ -9,9 +9,46 @@
 	"use-resource-role-mappings": true,
 	"enable-basic-auth": "${opencell.keycloak.basic-auth:true}",
 	"principal-attribute": "preferred_username",
-	"proxy-url":"${opencell.keycloak.proxy-url:}",
-	"enable-cors" : "${opencell.keycloak.enable-cors:false}",
-	"cors-allowed-methods" : "${opencell.keycloak.cors-allowed-methods:POST, PUT, DELETE, GET, PATCH}",
+	"proxy-url": "${opencell.keycloak.proxy-url:}",
+	"enable-cors": "${opencell.keycloak.enable-cors:false}",
+	"cors-allowed-methods": "${opencell.keycloak.cors-allowed-methods:POST, PUT, DELETE, GET, PATCH}",
 	"register-node-at-startup": "${opencell.keycloak.register-node-at-startup:false}",
-	"register-node-period": 600
+	"register-node-period": 600,
+	"policy-enforcer": {
+		"paths": [
+			{
+				"path": "/resources/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/frontend/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/api/rest/v2/version",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/about.*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/javax.faces.resource/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/stylesheet/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/favicon.ico",
+				"enforcement-mode": "DISABLED"
+			}		
+		],
+		"path-cache": {
+			"lifespan": 0,
+			"max-entries": 0
+		},
+		"http-method-as-scope": true
+	}
 }

@@ -39,8 +39,7 @@
 			<hftl:column label="#{messages['invoiceType.appliesTo']}"
 				field="appliesTo" isList="true" valueLabelField="code"
 				valueIdField="id" entityView="invoiceTypeDetail" />
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('billingManagement')}" />
+			<hftl:actionsColumn />
 		</hftl:dataList>
 
 	</ui:define>

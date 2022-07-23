@@ -20,13 +20,12 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
@@ -38,7 +37,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
@@ -512,7 +510,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     @Transactional
     public PricePlanMatrixDto duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {
     	PricePlanMatrix ppm = loadEntityByCode(pricePlanMatrixService, pricePlanMatrixCode, PricePlanMatrix.class);
-    	if(!Strings.isEmpty(pricePlanMatrixNewCode) && pricePlanMatrixService.findByCode(pricePlanMatrixNewCode) != null)
+    	if(!StringUtils.isEmpty(pricePlanMatrixNewCode) && pricePlanMatrixService.findByCode(pricePlanMatrixNewCode) != null)
     		throw new EntityAlreadyExistsException(PricePlanMatrix.class, pricePlanMatrixNewCode);
     	PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, version);
     	if(ppmv == null) {

@@ -18,14 +18,16 @@
 
 package org.meveo.api.security.config.annotation;
 
-import org.meveo.api.security.config.*;
-import org.slf4j.Logger;
-
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.interceptor.InvocationContext;
 
+import org.meveo.api.security.config.FilterPropertyConfig;
+import org.meveo.api.security.config.FilterResultsConfig;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
+import org.meveo.api.security.config.SecuredBusinessEntityConfig;
+import org.meveo.api.security.config.SecuredBusinessEntityConfigFactory;
+import org.meveo.api.security.config.SecuredMethodConfig;
 
 /**
  * the default secured entities configuration factory that is based on annotations
@@ -37,11 +39,9 @@ import javax.interceptor.InvocationContext;
 @Default
 public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusinessEntityConfigFactory {
 
-    @Inject
-    private Logger log;
-
     /**
      * build and get secured entity config instance based on method defined annotations
+     * 
      * @param context method's invocation context
      * @return SecuredBusinessEntityConfig
      */
@@ -49,8 +49,7 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
     public SecuredBusinessEntityConfig get(InvocationContext context) {
         SecuredBusinessEntityConfig config = new SecuredBusinessEntityConfig();
 
-        SecuredBusinessEntityMethod securedMethodAnnotation = context.getMethod()
-                .getAnnotation(SecuredBusinessEntityMethod.class);
+        SecuredBusinessEntityMethod securedMethodAnnotation = context.getMethod().getAnnotation(SecuredBusinessEntityMethod.class);
         if (securedMethodAnnotation != null) {
             SecuredMethodConfig securedMethodConfig = mapSecuredMethodConfig(securedMethodAnnotation);
             config.setSecuredMethodConfig(securedMethodConfig);
@@ -62,13 +61,14 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
             config.setFilterResultsConfig(filterResultsConfig);
         }
 
-        //log.debug("Secured business entity config is built: {}", config);
+        // log.debug("Secured business entity config is built: {}", config);
 
         return config;
     }
 
     /**
-     *  build Secured method config from annotations
+     * build Secured method config from annotations
+     * 
      * @param annotation SecuredBusinessEntityMethod annotation
      * @return SecuredMethodConfig object
      */
@@ -98,6 +98,7 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
 
     /**
      * build filter results config form annotation
+     * 
      * @param filterResultsAnnotation FilterResults annotation
      * @return FilterResultsConfig object
      */
@@ -107,7 +108,7 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
         filterResultsConfig.setPropertyToFilter(filterResultsAnnotation.propertyToFilter());
         filterResultsConfig.setTotalRecords(filterResultsAnnotation.totalRecords());
 
-        //map filterProperties
+        // map filterProperties
         FilterProperty[] filterProperties = filterResultsAnnotation.itemPropertiesToFilter();
         FilterPropertyConfig[] propertyConfigs = new FilterPropertyConfig[filterProperties.length];
         for (int i = 0; i < filterProperties.length; i++) {
@@ -122,5 +123,11 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
         filterResultsConfig.setItemPropertiesToFilter(propertyConfigs);
 
         return filterResultsConfig;
+    }
+
+    @Override
+    public SecuredBusinessEntityConfig get(Class<?> entityClass, String methodName) {
+        // Method applies to JSPON configuration only for now
+        return null;
     }
 }

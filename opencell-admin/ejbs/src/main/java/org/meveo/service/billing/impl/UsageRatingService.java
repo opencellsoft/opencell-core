@@ -36,7 +36,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.admin.exception.CounterInstantiationException;
@@ -360,7 +360,7 @@ public class UsageRatingService extends RatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    public RatingResult rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth, Reservation reservation, boolean failSilently) {
+    public RatingResult rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdr, Integer maxDeep, Integer currentRatingDepth, Reservation reservation, boolean failSilently) {
 
         log.trace("Rating EDR={}", edr);
 
@@ -376,7 +376,8 @@ public class UsageRatingService extends RatingService implements Serializable {
             }
 
             List<UsageChargeInstance> usageChargeInstances = null;
-
+            maxDeep = maxDeep != null ? maxDeep : 0;
+            currentRatingDepth = currentRatingDepth != null ? currentRatingDepth : 0;
             // Charges should be already ordered by priority and id (why id??)
             Long subscriptionId = edr.getSubscription().getId();
             if (subscriptionId != null) {
