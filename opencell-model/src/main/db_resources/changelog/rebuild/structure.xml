@@ -64,8 +64,8 @@
         <createSequence sequenceName="adm_language_seq" startValue="34" />
         <createSequence sequenceName="adm_notif_history_seq" />
         <createSequence sequenceName="adm_notification_seq" />
-        <createSequence sequenceName="adm_permission_seq" startValue="18" />
         <createSequence sequenceName="adm_role_seq" startValue="5" />
+        <createSequence sequenceName="adm_secured_entity_seq" startValue="1" />
         <createSequence sequenceName="adm_title_seq" startValue="38" />
         <createSequence sequenceName="adm_user_seq" startValue="3" />
         <createSequence sequenceName="ar_account_operation_seq" />
