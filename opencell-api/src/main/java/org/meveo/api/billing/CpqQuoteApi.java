@@ -1409,9 +1409,6 @@ public class CpqQuoteApi extends BaseApi {
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         //calculate totalQuoteAttribute
         calculateTotalAttributes (quoteVersion);
-         
-        //calculate totalQuoteAttribute
-        calculateTotalAttributes (quoteVersion);
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer,quoteEligibleFixedDiscountItems));
         } 
@@ -1508,7 +1505,7 @@ public class CpqQuoteApi extends BaseApi {
 
             return quotePrice;
         });
-        if(!PriceLevelEnum.OFFER.equals(level)) {
+    	if(!PriceLevelEnum.OFFER.equals(level) && price.isPresent()) {
         	 quotePriceService.create(price.get());
         }
         return price;
@@ -1516,7 +1513,6 @@ public class CpqQuoteApi extends BaseApi {
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer, Set<DiscountPlanItem> quoteEligibleFixedDiscountItems) {
     	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
-    	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.PRODUCT);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> offerQuotePrices = new ArrayList<>();
@@ -1524,30 +1520,23 @@ public class CpqQuoteApi extends BaseApi {
         List<QuotePrice> productQuotePrices = new ArrayList<>();
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
-        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
-            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
-                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
-                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
-                productQuotePrices.addAll(overrodeLine.getQuotePrices());
-            }
-
-        }
+        
+//        Map<Long, BigDecimal> quoteProductTotalAmount =new HashMap<Long, BigDecimal>();;
+//        for(QuoteArticleLine overrodeLine : quoteOffer.getQuoteVersion().getQuoteArticleLines()){
+//            if(overrodeLine.getQuoteProduct().getQuoteOffer().getId().equals(quoteOffer.getId())) {
+//                quoteArticleLines.put(overrodeLine.getAccountingArticle().getCode(), quoteArticleLine);
+//                quoteProductTotalAmount.put(overrodeLine.getQuoteProduct().getId(), overrodeLine.getQuotePrices().stream().map(QuotePrice::getAmountWithoutTax).reduce(BigDecimal::add).get());
+//                productQuotePrices.addAll(overrodeLine.getQuotePrices());
+//            }
+//
+//        }
         String accountingArticleCode = null;
-        clearOfferPrices(quoteOffer);
-        BigDecimal quoteProductAmount=BigDecimal.ZERO;
+        clearOfferPrices(quoteOffer); 
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
-            Long quoteProductId=wo.getServiceInstance() != null ? wo.getServiceInstance().getQuoteProduct().getId() : null;
-            if (quoteProductId == null || !quoteProductTotalAmount.containsKey(quoteProductId)) {
-            	quoteProductTotalAmount.put(quoteProductId, wo.getAmountWithoutTax());
-            }else {
-            	quoteProductAmount=quoteProductTotalAmount.get(quoteProductId);
-            	quoteProductTotalAmount.put(quoteProductId,quoteProductAmount.add(wo.getAmountWithoutTax()));
-            }
             if (!quoteArticleLines.containsKey(accountingArticleCode) || wo.getDiscountPlan() != null ) {
             	quoteArticleLine=createQuoteArticleLine(wo, quoteOffer.getQuoteVersion());
-            	 quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+            	quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
             	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
                 quoteArticleLine.setQuantity(quoteArticleLine.getQuantity().add(wo.getQuantity()));
@@ -1563,14 +1552,12 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setQuantity(wo.getQuantity());
-            
             quotePrice.setDiscountPlan(wo.getDiscountPlan());
             quotePrice.setDiscountPlanItem(wo.getDiscountPlanItem());
             quotePrice.setDiscountPlanType(wo.getDiscountPlanType());
             quotePrice.setDiscountValue(wo.getDiscountValue());
             quotePrice.setPriceOverCharged(wo.isOverrodePrice());
             quotePrice.setDiscountedAmount(wo.getDiscountedAmount());
-            quotePrice.setSequence(wo.getSequence());
             QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
             if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
                 quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
@@ -1605,7 +1592,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
-            productQuotePrices.add(quotePrice);
+            
         }
         //Calculate totals by offer
 
@@ -1752,7 +1739,7 @@ public class CpqQuoteApi extends BaseApi {
                          RatingResult ratingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                          if (ratingResult != null) {
                              walletOperations.addAll(ratingResult.getWalletOperations());
-                             //walletOperations.add(ratingResult.getWalletOperation());
+                             walletOperations.add(ratingResult.getWalletOperation());
                              productEligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
                          }
 

@@ -27,8 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -358,7 +357,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
         
-    	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
+        if(!isVirtual) {
+        	walletOperationService.create(walletOperation);
+        }else {
+        	walletOperation.setUuid(UUID.randomUUID().toString());
+        }
+    	//applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
 
