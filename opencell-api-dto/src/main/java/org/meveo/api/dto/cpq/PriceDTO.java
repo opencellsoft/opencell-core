@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.tax.TaxCategory;
@@ -75,11 +76,22 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal quantity;
     private PriceDTO discountedQuotePrice;
     
+    private BigDecimal unitMultiplicator;
+    private BigDecimal discountValue;
+    private DiscountPlanItemTypeEnum discountPlanType;
+    private String discountPlanItemCode;
+    private Boolean applyDiscountsOnOverridenPrice;
+    private BigDecimal overchargedUnitAmountWithoutTax;
+    private BigDecimal discountedAmount;
+    private Integer sequence;
+    private Long id;
+    
     private CustomFieldsDto customFields;
     
     
 	public PriceDTO(QuotePrice quotePrice) {
 		super();
+		id=quotePrice.getId();
 		priceType=quotePrice.getPriceTypeEnum();
 	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
 	    taxAmount=quotePrice.getTaxAmount();
@@ -101,9 +113,17 @@ public class PriceDTO extends BaseEntityDto {
 	   TaxClass taxClass=quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass() : null;
 	   taxCode=taxClass!=null?taxClass.getCode():null;
 	   quantity = quotePrice.getQuantity();
+	   unitMultiplicator=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getUnitMultiplicator():null;
 	   if(quotePrice.getDiscountedQuotePrice() != null) {
 		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
 	   }
+	   discountPlanItemCode=quotePrice.getDiscountPlanItem()!=null?quotePrice.getDiscountPlanItem().getCode():null;
+	   discountPlanType=quotePrice.getDiscountPlanType();
+	   discountValue=quotePrice.getDiscountValue();
+	   applyDiscountsOnOverridenPrice=quotePrice.getApplyDiscountsOnOverridenPrice();
+	   overchargedUnitAmountWithoutTax=quotePrice.getOverchargedUnitAmountWithoutTax();
+	   discountedAmount=quotePrice.getDiscountedAmount();
+	   sequence=quotePrice.getSequence();
 		
 	}
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
@@ -247,6 +267,60 @@ public class PriceDTO extends BaseEntityDto {
 	}
 	public void setDiscountedQuotePrice(PriceDTO discountedQuotePrice) {
 		this.discountedQuotePrice = discountedQuotePrice;
+	}
+	public BigDecimal getUnitMultiplicator() {
+		return unitMultiplicator;
+	}
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+		this.unitMultiplicator = unitMultiplicator;
+	}
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+	public String getDiscountPlanItemCode() {
+		return discountPlanItemCode;
+	}
+	public void setDiscountPlanItemCode(String discountPlanItemCode) {
+		this.discountPlanItemCode = discountPlanItemCode;
+	}
+	public Boolean getApplyDiscountsOnOverridenPrice() {
+		return applyDiscountsOnOverridenPrice;
+	}
+	public void setApplyDiscountsOnOverridenPrice(Boolean applyDiscountsOnOverridenPrice) {
+		this.applyDiscountsOnOverridenPrice = applyDiscountsOnOverridenPrice;
+	}
+	public BigDecimal getOverchargedUnitAmountWithoutTax() {
+		return overchargedUnitAmountWithoutTax;
+	}
+	public void setOverchargedUnitAmountWithoutTax(BigDecimal overchargedUnitAmountWithoutTax) {
+		this.overchargedUnitAmountWithoutTax = overchargedUnitAmountWithoutTax;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+	public Integer getSequence() {
+		return sequence;
+	}
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	
