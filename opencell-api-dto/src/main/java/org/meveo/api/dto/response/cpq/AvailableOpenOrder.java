@@ -17,6 +17,8 @@ public class AvailableOpenOrder extends BusinessEntityDto {
 
 	private static final long serialVersionUID = 5719570552966744772L;
 
+	private Long openOrderid;
+	
 	@Schema(description = "Open Order number")
 	private String openOrderNumber;
 
@@ -28,6 +30,14 @@ public class AvailableOpenOrder extends BusinessEntityDto {
 	private List<Long> products;
 
 	private List<Long> articles;
+
+	public Long getOpenOrderid() {
+		return openOrderid;
+	}
+
+	public void setOpenOrderid(Long openOrderid) {
+		this.openOrderid = openOrderid;
+	}
 
 	public String getOpenOrderNumber() {
 		return openOrderNumber;
