@@ -8099,20 +8099,6 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
- <changeSet id="rebuild-str-fk-540-1640-fk1" author="Mbarek-Ay">
-       <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" /> 
-      </changeSet>                     
-    
-      <changeSet id="rebuild-str-fk-540-1640-fk2" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="assigned_attribute_id" baseTableName="cpq_assigned_attributes" constraintName="fk_cpq_assigned_attributes_assigned_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />  
-      </changeSet>
-	  
-	      <changeSet id="rebuild-str-fk5-540-6296" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="order_price" constraintName="fk_order_price_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
-       </changeSet>
     <changeSet id="#INTRD-682_20210707" author="HatimOUDAD" failOnError="false">
     	<createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createTable tableName="query_scheduler">
