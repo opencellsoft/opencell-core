@@ -13714,7 +13714,7 @@ order by date_trunc('month', i.invoice_date) DESC
 		<column name="sequence" type="int4"/>
 		</addColumn>
 		
-	   <addColumn tableName="crm_provider">
+	   	<addColumn tableName="crm_provider">
 		<column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/> 
 		</addColumn>
 		
@@ -13741,11 +13741,11 @@ order by date_trunc('month', i.invoice_date) DESC
 		<column name="sequence" type="int4"/>
 		</addColumn>
 		
-		<addColumn tableName="cpq_invoice_line">
+		<addColumn tableName="billing_invoice_line">
 		<column name="sequence" type="int4"/>
 		</addColumn>
 		
-		 <createSequence sequenceName="discount_plan_sequence_seq" />
+		<createSequence sequenceName="discount_plan_sequence_seq" />
 		<sql>
 		alter sequence ${db.schema.adapted}discount_plan_sequence_seq RESTART WITH 1;
 		update ${db.schema.adapted}cat_discount_plan set sequence = nextval('discount_plan_sequence_seq') where sequence is null and discount_plan_type='PRODUCT';
