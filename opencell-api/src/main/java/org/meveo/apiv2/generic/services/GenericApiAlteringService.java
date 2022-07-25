@@ -70,7 +70,7 @@ public class GenericApiAlteringService {
         }
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
         refreshEntityWithDotFields(jsonGenericMapper.readValue(jsonDto, Map.class), iEntity, jsonGenericMapper.parseFromJson(jsonDto, iEntity.getClass()));
-        return jsonGenericMapper.toJson(null, entityClass, persistenceDelegate.update(entityClass, iEntity));
+        return jsonGenericMapper.toJson(null, entityClass, persistenceDelegate.update(entityClass, iEntity), null);
     }
 
 
@@ -94,7 +94,7 @@ public class GenericApiAlteringService {
         persistenceDelegate.remove(entityClass, iEntity);
         return JsonGenericMapper.Builder
                 .getBuilder().withNestedEntities(null).build()
-                .toJson(null, entityClass, iEntity);
+                .toJson(null, entityClass, iEntity, null);
     }
 
     private void refreshEntityWithDotFields(Map<String,Object> readValueMap, Object fetchedEntity, Object parsedEntity) {

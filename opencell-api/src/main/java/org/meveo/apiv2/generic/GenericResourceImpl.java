@@ -30,13 +30,15 @@ public class GenericResourceImpl implements GenericResource {
     public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities))
+        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, excludedFields))        			       		
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
@@ -44,13 +46,15 @@ public class GenericResourceImpl implements GenericResource {
     public Response get(String entityName, Long id, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
+        Set<String> excludedFields = null;
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
             nestedEntities = searchConfig.getNestedEntities();
+            excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return loadService.findByClassNameAndId(entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities)
+        return loadService.findByClassNameAndId(entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, excludedFields)
                 .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
     }
