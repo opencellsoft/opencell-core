@@ -49,7 +49,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 
 
     @Schema(description = "The date of the quote")
-    private Date quoteDate = new Date();
+    private Date quoteDate;
 
     private DatePeriod validity = new DatePeriod();
 
