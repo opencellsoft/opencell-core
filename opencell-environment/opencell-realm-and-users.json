@@ -1878,7 +1878,7 @@
 				"*"
 			],
 			"webOrigins": [
-				"/opencell/*"
+				"*"
 			],
 			"notBefore": 0,
 			"bearerOnly": false,
