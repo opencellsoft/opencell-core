@@ -44,6 +44,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -419,9 +420,9 @@ public class CpqQuoteApi extends BaseApi {
     }
 
 
-    private void newPopulateProduct(QuoteOfferDTO quoteOfferDto, QuoteOffer quoteOffer) {
+	private void newPopulateProduct(QuoteOfferDTO quoteOfferDto, QuoteOffer quoteOffer) {
         List<QuoteProductDTO> quoteProductDtos = quoteOfferDto.getProducts();
-        if (quoteProductDtos != null) {
+        if (!CollectionUtils.isEmpty(quoteProductDtos)) {
             int index = 1;
             quoteOffer.getQuoteProduct().size();
             for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
@@ -431,6 +432,10 @@ public class CpqQuoteApi extends BaseApi {
                     missingParameters.add("products[" + index + "].productVersion");
 
                 handleMissingParameters();
+                
+                if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().intValue() == 0) {
+                    throw new BusinessException("The quantity for product code " + quoteProductDTO.getProductCode() + " must be great than 0" );
+                }
 
                 ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 
@@ -474,6 +479,8 @@ public class CpqQuoteApi extends BaseApi {
                 //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
                 ++index;
             }
+        }else {
+            throw new BusinessException("you must select at least one product");
         }
     }
 
@@ -1102,8 +1109,8 @@ public class CpqQuoteApi extends BaseApi {
                     }
                 }
             }
-        } else if (hasExistingQuotes) {
-            quoteOffer.getQuoteProduct().removeAll(existencQuoteProducts);
+        } else{
+            throw new BusinessException("you must select at least one product");
         }
     }
 
@@ -1166,6 +1173,9 @@ public class CpqQuoteApi extends BaseApi {
         }
 
         q.setProductVersion(productVersion);
+        if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().intValue() == 0) {
+            throw new BusinessException("The quantity for product code " + quoteProductDTO.getProductCode() + " must be great than 0");
+        }
         q.setQuantity(quoteProductDTO.getQuantity());
         
     	if(quoteProductDTO.getDeliveryDate()!=null && quoteProductDTO.getDeliveryDate().before(new Date())) {
