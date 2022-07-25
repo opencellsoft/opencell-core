@@ -12,9 +12,6 @@ public class OpenOrderQuoteService extends BusinessService<OpenOrderQuote> {
     public OpenOrderQuote changeStatus(OpenOrderQuote ooq, OpenOrderQuoteStatusEnum newStatus) {
         ooq.setStatus(newStatus);
         super.update(ooq);
-
         return ooq;
     }
-    
-   
 }

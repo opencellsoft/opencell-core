@@ -124,6 +124,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
         fields.add("priceWithoutTax");
         fields.add("pricePlanMatrixVersion");
         fields.add("pricePlanMatrixValues");
+        fields.add("priceEL");
         fields.add("priority");
 
         response.put("data", mapper.readValue(mapper.toJson(fields, PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));

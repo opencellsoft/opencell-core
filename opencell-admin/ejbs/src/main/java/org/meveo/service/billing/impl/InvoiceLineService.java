@@ -207,14 +207,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         super.create(entity);
         
         if(!isDuplicated && entity.getDiscountPlan() != null) {
-        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller, entity);
+        	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
         }
     }
     
-    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
-    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice.getInvoiceDate() );
+    private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
+    	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice!=null?invoice.getInvoiceDate():null);
     	if(isDiscountApplicable) {
-    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, null, invoice.getInvoiceDate());
+    		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, 
+    				null, invoice!=null?invoice.getInvoiceDate():null);
             BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
             entity.setDiscountAmount(invoiceLineDiscountAmount);
     	}
@@ -252,9 +253,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         return invoiceLineDiscountAmount;
     }
+     
     
-   private void addDiscountPlanInvoiceWithInvoiceSource(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, Invoice invoiceSource, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) {
-        var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount, null,null,null, null, invoiceSource.getInvoiceDate(), invoiceLine);
+   private void addDiscountPlanInvoiceWithInvoiceSource(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, Invoice invoiceSource, AccountingArticle accountingArticle, Seller seller, InvoiceLine invoiceLine) { 
+        var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice!=null?invoice.getInvoiceDate():null);
         if(isDiscountApplicable) {
             List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, entity.getDiscountPlan(), null,null, accountingArticle, null, new Date());
             BigDecimal totalDiscountAmount = BigDecimal.ZERO; 

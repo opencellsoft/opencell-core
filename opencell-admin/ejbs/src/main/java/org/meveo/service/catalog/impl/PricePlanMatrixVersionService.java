@@ -41,7 +41,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -80,10 +85,6 @@ import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -387,7 +388,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @SuppressWarnings("unchecked")
     public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
         List<PricePlanMatrixVersion> result = (List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
-            .setParameter("pricePlanMatrixCode", ppmCode).getResultList();
+            .setParameter("pricePlanMatrixCode", ppmCode).setFlushMode(FlushModeType.COMMIT).getResultList();
 
         return result.isEmpty() ? null : result.get(0);
     }

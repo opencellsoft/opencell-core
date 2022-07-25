@@ -347,6 +347,14 @@ public class DiscountPlanItemApi extends BaseApi {
         if(source.getPriority()!=null) {
         	discountPlanItem.setPriority(source.getPriority());
         }
+        if(source.getApplyByArticle()!=null) {
+            discountPlanItem.setApplyByArticle(source.getApplyByArticle()); 
+            }
+        
+        if (source.getSequence() != null) {
+        	discountPlanItem.setSequence(source.getSequence());
+        }
+        discountPlanItem.setLastDiscount(source.getLastDiscount()); 
         return discountPlanItem;
     }
 

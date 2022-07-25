@@ -100,6 +100,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
         discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         discountPlan.setUsedQuantity(postData.getUsedQuantity());
+        discountPlan.setSequence(postData.getSequence());
+        discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice());
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -193,7 +195,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	        if (applicableEntities != null && !applicableEntities.isEmpty()) {
 	            discountPlan.setDiscountPlanaApplicableEntities(applicableEntities);
 	        }
-	        
+	        if (postData.getSequence() != null) {
+	        	discountPlan.setSequence(postData.getSequence());
+	        }
+
+	        discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice());
 	
 	        // populate customFields
 	        try {
