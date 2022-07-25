@@ -92,6 +92,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     public void activate(PaymentPlan paymentPlan) {
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
+        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PLAN);
 
         super.update(paymentPlan);
 
