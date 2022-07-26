@@ -173,7 +173,7 @@ public abstract class LinkGenerator {
     }
     public static UriBuilder getUriBuilderFromResource(Class resourceClass, String... params) {
         UriBuilder uriBuilder = UriBuilder.fromResource(resourceClass);
-        if (Arrays.isNullOrEmpty(params)) {
+        if (params == null || params.length == 0) {
             throw new IllegalArgumentException("Path params should not be null");
         }
        return Stream.of(params).filter(StringUtils::isNotBlank).map(uriBuilder::path).findFirst().orElseThrow(() -> new IllegalArgumentException("Path params should not be "
