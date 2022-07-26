@@ -13829,4 +13829,8 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_role" columnName="role_description"/>
         
     </changeSet>
+     <changeSet id="#INTRD-7666_20220726" author="TarikFA.">
+    	<dropDefaultValue tableName="ar_dunning_action" columnName="is_action_active"/>
+    	<addDefaultValue columnName="is_action_active" tableName="ar_dunning_action" defaultValue="1"/>
+    </changeSet>
 </databaseChangeLog>
