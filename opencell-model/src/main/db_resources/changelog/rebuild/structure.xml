@@ -17726,6 +17726,7 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-7666_20220726" author="TarikFA." />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
