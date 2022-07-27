@@ -16,63 +16,13 @@
 
 					<p:messages id="messages" autoUpdate="true" redisplay="false" />
 
-
-					<hftl:decorateFormField fieldId="readLevel" label="#{messages['roles.genApiReadLevel']}" componentWidth="15">
-						<p:selectOneMenu id="readLevel" value="#{apiSecurityBean.readLevel}">
+					<hftl:decorateFormField fieldId="level" label="#{messages['roles.genApiLevel']}" componentWidth="15">
+						<p:selectOneMenu id="level" value="#{apiSecurityBean.level}">
 							<f:selectItem itemLabel="" />
 							<f:selectItems value="#{apiSecurityBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
 							<f:converter converterId="enumConverter" />
 						</p:selectOneMenu>
 					</hftl:decorateFormField>
-
-
-					<hftl:decorateFormField fieldId="createLevel" label="#{messages['roles.genApiCreateLevel']}" componentWidth="15">
-						<p:selectOneMenu id="createLevel" value="#{apiSecurityBean.createLevel}">
-							<f:selectItem itemLabel="" />
-							<f:selectItems value="#{apiSecurityBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
-							<f:converter converterId="enumConverter" />
-						</p:selectOneMenu>
-					</hftl:decorateFormField>
-
-
-					<hftl:decorateFormField fieldId="updateLevel" label="#{messages['roles.genApiUpdateLevel']}" componentWidth="15">
-						<p:selectOneMenu id="updateLevel" value="#{apiSecurityBean.updateLevel}">
-							<f:selectItem itemLabel="" />
-							<f:selectItems value="#{apiSecurityBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
-							<f:converter converterId="enumConverter" />
-						</p:selectOneMenu>
-					</hftl:decorateFormField>
-
-
-					<hftl:decorateFormField fieldId="deleteLevel" label="#{messages['roles.genApiDeleteLevel']}" componentWidth="15">
-						<p:selectOneMenu id="deleteLevel" value="#{apiSecurityBean.deleteLevel}">
-							<f:selectItem itemLabel="" />
-							<f:selectItems value="#{apiSecurityBean.getApiLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
-							<f:converter converterId="enumConverter" />
-						</p:selectOneMenu>
-					</hftl:decorateFormField>
-
-
-					<!-- 					<hftl:decorateFormField fieldId="fullLevel" label="#{messages['roles.fullAccessLevel']}" componentWidth="15"> -->
-					<!-- 						<p:selectManyMenu id="fullLevel" value="#{apiSecurityBean.fullLevel}" showCheckbox="true"> -->
-					<!-- 							<f:selectItems value="#{apiSecurityBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
-					<!-- 							<f:converter converterId="enumConverter" /> -->
-					<!-- 						</p:selectManyMenu> -->
-					<!-- 					</hftl:decorateFormField> -->
-
-					<!-- 					<hftl:decorateFormField fieldId="themeLevel" label="#{messages['roles.themeAccessLevel']}" componentWidth="15"> -->
-					<!-- 						<p:selectManyMenu id="themeLevel" value="#{apiSecurityBean.themeLevel}" showCheckbox="true"> -->
-					<!-- 							<f:selectItems value="#{apiSecurityBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
-					<!-- 							<f:converter converterId="enumConverter" /> -->
-					<!-- 						</p:selectManyMenu> -->
-					<!-- 					</hftl:decorateFormField> -->
-
-					<!-- 					<hftl:decorateFormField fieldId="entityLevel" label="#{messages['roles.entityAccessLevel']}" componentWidth="15"> -->
-					<!-- 						<p:selectManyMenu id="entityLevel" value="#{apiSecurityBean.entityLevel}" showCheckbox="true"> -->
-					<!-- 							<f:selectItems value="#{apiSecurityBean.getAccessScopeLevels()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
-					<!-- 							<f:converter converterId="enumConverter" /> -->
-					<!-- 						</p:selectManyMenu> -->
-					<!-- 					</hftl:decorateFormField> -->
 
 					<p:commandButton action="#{apiSecurityBean.syncApiRoles()}" value="#{messages['roles.syncApiRoles']}" update="form:messages" process="@form" />
 				</h:panelGroup>

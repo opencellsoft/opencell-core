@@ -36,24 +36,9 @@ public class ApiSecurityBean implements Serializable {
     private static final long serialVersionUID = 5761298784298195322L;
 
     /**
-     * Protect API granularity level for find/search access
+     * Protect API granularity level
      */
-    ApiProtectionGranularityEnum readLevel = null;
-
-    /**
-     * Protect API granularity level for create access
-     */
-    ApiProtectionGranularityEnum createLevel = null;
-
-    /**
-     * Protect API granularity level for update access
-     */
-    ApiProtectionGranularityEnum updateLevel = null;
-
-    /**
-     * Protect API granularity level for delete access
-     */
-    ApiProtectionGranularityEnum deleteLevel = null;
+    ApiProtectionGranularityEnum level = null;
 
     @Inject
     protected Messages messages;
@@ -68,39 +53,15 @@ public class ApiSecurityBean implements Serializable {
     @ActionMethod
     public void syncApiRoles() {
 
-        keycloakAdminClientService.syncApiProtection(readLevel, createLevel, updateLevel, deleteLevel);
+        keycloakAdminClientService.syncApiProtection(level);
         messages.info(new BundleKey("messages", "roles.apiRolesGenerated"));
     }
 
-    public ApiProtectionGranularityEnum getReadLevel() {
-        return readLevel;
+    public ApiProtectionGranularityEnum getLevel() {
+        return level;
     }
 
-    public void setReadLevel(ApiProtectionGranularityEnum readLevel) {
-        this.readLevel = readLevel;
-    }
-
-    public ApiProtectionGranularityEnum getCreateLevel() {
-        return createLevel;
-    }
-
-    public void setCreateLevel(ApiProtectionGranularityEnum createLevel) {
-        this.createLevel = createLevel;
-    }
-
-    public ApiProtectionGranularityEnum getUpdateLevel() {
-        return updateLevel;
-    }
-
-    public void setUpdateLevel(ApiProtectionGranularityEnum updateLevel) {
-        this.updateLevel = updateLevel;
-    }
-
-    public ApiProtectionGranularityEnum getDeleteLevel() {
-        return deleteLevel;
-    }
-
-    public void setDeleteLevel(ApiProtectionGranularityEnum deleteLevel) {
-        this.deleteLevel = deleteLevel;
+    public void setLevel(ApiProtectionGranularityEnum level) {
+        this.level = level;
     }
 }
