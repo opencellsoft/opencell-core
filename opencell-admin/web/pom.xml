@@ -172,6 +172,21 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
+                        <id>copy-resources-apiv0</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>./target/opencell/pages/docs/v0</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./target/swagger-ui-master/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-resources-apiv1</id>
                         <phase>package</phase>
                         <goals>
@@ -209,6 +224,25 @@
                 <version>1.5.3</version>
                 <executions>
                     <execution>
+                        <id>apiv0</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <includes>
+                                <include>${project.build.directory}/opencell/pages/docs/v0/index.html</include>
+                            </includes>
+                            <file>${project.build.directory}/opencell/pages/docs/v0/index.html</file>
+                            <replacements>
+                                <replacement>
+                                    <token>https://petstore.swagger.io/v2/swagger.json</token>
+                                    <value>/opencell/api/rest/v0/openapi.json</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>replace-version-location</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -222,25 +256,25 @@
                             <goal>replace</goal>
                         </goals>
                     </execution>
-            <execution>
-                <id>replace-apiv1</id>
-                <goals>
-                    <goal>replace</goal>
-                </goals>
-                <phase>verify</phase>
-                <configuration>
-                    <includes>
-                         <include>${project.build.directory}/opencell/pages/docs/v1/index.html</include> 
-                    </includes>
-                     <file>${project.build.directory}/opencell/pages/docs/v1/index.html</file>
-                    <replacements>
-                          <replacement>
-                            <token>https://petstore.swagger.io/v2/swagger.json</token>
-                            <value>/opencell/api/rest/v1/openapiv1.json</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </execution>
+                    <execution>
+                        <id>replace-apiv1</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <includes>
+                                <include>${project.build.directory}/opencell/pages/docs/v1/index.html</include>
+                            </includes>
+                            <file>${project.build.directory}/opencell/pages/docs/v1/index.html</file>
+                            <replacements>
+                                <replacement>
+                                    <token>https://petstore.swagger.io/v2/swagger.json</token>
+                                    <value>/opencell/api/rest/v1/openapi.json</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <includes>
