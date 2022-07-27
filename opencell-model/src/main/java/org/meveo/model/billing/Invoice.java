@@ -678,12 +678,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private BigDecimal convertedRawAmount= ZERO;
 
     /**
-     * Converted discount rate
-     */
-    @Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedDiscountRate;
-
-    /**
      * Converted discount amount
      */
     @Column(name = "converted_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -809,8 +803,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 ? this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedDiscountAmount = this.discountAmount != null
                 ? this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-        this.convertedDiscountRate = this.discountRate != null
-                ? this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedNetToPay = this.netToPay != null
                 ? this.netToPay.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedRawAmount = this.rawAmount != null
@@ -1807,14 +1799,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
         this.convertedRawAmount = convertedRawAmount;
-    }
-
-    public BigDecimal getConvertedDiscountRate() {
-        return convertedDiscountRate;
-    }
-
-    public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
-        this.convertedDiscountRate = convertedDiscountRate;
     }
 
     public BigDecimal getConvertedDiscountAmount() {
