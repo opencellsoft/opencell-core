@@ -1582,7 +1582,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
-            filter.setPollingQuery(buildPollingQuery(queryBuilder));
+            filter.setPollingQuery(buildPollingQuery(queryBuilder) + " AND a.status = 'OPEN' AND a.billingRun IS null");
         }
         return filter;
     }

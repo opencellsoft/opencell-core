@@ -83,7 +83,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             }
             List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
             if(billingRuns != null && !billingRuns.isEmpty()) {
-                billingRuns.stream().filter(billingRun -> billingRun.isExceptionalBR()).forEach(this::addExceptionalBillingRunData);
+                billingRuns.stream().filter(billingRun -> billingRun.isExceptionalBR())
+                        .forEach(this::addExceptionalBillingRunData);
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);
                 if (excludedBRCount == billingRuns.size()) {
@@ -115,6 +116,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
+        queryBuilder.addSql(" a.status = 'OPEN' and a.billingRun IS NULL");
         billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
     }
 
