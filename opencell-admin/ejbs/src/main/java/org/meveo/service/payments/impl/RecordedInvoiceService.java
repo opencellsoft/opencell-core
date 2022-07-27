@@ -467,7 +467,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
     
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date dueDate, PaginationConfiguration paginationConfiguration,
+    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate > '")
@@ -519,9 +519,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(customerAccountDescription).ifPresent(caDescription
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
-        
-        ofNullable(dueDate).ifPresent(dd -> qb.addSql("ao.dueDate = '" + DateUtils.formatDateWithPattern(dd, datePattern) + "'"));
-        
+
+        qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+                    + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
+
         if(DateUtils.compare(startDate, new Date()) < 0) {
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
         	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
