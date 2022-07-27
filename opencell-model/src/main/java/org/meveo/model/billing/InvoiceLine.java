@@ -324,18 +324,6 @@ public class InvoiceLine extends AuditableEntity {
 	private BigDecimal convertedAmountWithTax;
 
 	/**
-	 * Converted tax rate
-	 */
-	@Column(name = "converted_tax_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedTaxRate;
-
-	/**
-	 * Converted discount rate
-	 */
-	@Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedDiscountRate = BigDecimal.ZERO;
-
-	/**
 	 * Converted amount tax
 	 */
 	@Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -794,22 +782,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.convertedAmountWithTax = convertedAmountWithTax;
 	}
 
-	public BigDecimal getConvertedTaxRate() {
-		return convertedTaxRate;
-	}
-
-	public void setConvertedTaxRate(BigDecimal convertedTaxRate) {
-		this.convertedTaxRate = convertedTaxRate;
-	}
-
-	public BigDecimal getConvertedDiscountRate() {
-		return convertedDiscountRate;
-	}
-
-	public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
-		this.convertedDiscountRate = convertedDiscountRate;
-	}
-
 	public BigDecimal getConvertedAmountTax() {
 		return convertedAmountTax;
 	}
@@ -864,12 +836,8 @@ public class InvoiceLine extends AuditableEntity {
 				this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedDiscountAmount = this.discountAmount != null ?
 				this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedDiscountRate = this.discountRate != null ?
-				this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedRawAmount = this.rawAmount != null ?
 				this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedTaxRate = this.taxRate != null ?
-				this.taxRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 	}

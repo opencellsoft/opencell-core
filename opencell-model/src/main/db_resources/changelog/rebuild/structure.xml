@@ -2970,7 +2970,6 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_net_to_pay" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="converted_discount_rate" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
@@ -10571,8 +10570,6 @@
             <column name="converted_unit_price" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax" type="numeric(23, 12)" />
             <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_tax_rate" type="numeric(23, 12)" />
-            <column name="converted_discount_rate" type="numeric(23, 12)" />
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
@@ -18317,6 +18314,7 @@
 	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay"/>
 	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-8689_20220727" author="ZBariki"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
