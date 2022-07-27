@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -628,7 +629,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
                 Contract contract = null;
                 if(contracts != null && !contracts.isEmpty()) {
-                	contract = contracts.get(0);
+                	// Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
+                	contract = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
+                		.or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
+                		.or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
+                		.orElse(contracts.get(0)); // Seller Contract
+                	
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
