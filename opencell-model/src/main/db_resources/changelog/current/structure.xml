@@ -13829,12 +13829,4 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_role" columnName="role_description"/>
         
     </changeSet>
-    
-    <changeSet id="#INTRD-8719_20220726" author="TarikRabeh">
-        <addColumn tableName="cpq_price_plan_version">
-            <column name="price"  type="numeric(23, 12)" />           
-        </addColumn>
-        <dropColumn tableName="cpq_price_plan_version" columnName="amount_without_tax"/>
-        <dropColumn tableName="cpq_price_plan_version" columnName="amount_with_tax"/>
-    </changeSet>    
 </databaseChangeLog>
