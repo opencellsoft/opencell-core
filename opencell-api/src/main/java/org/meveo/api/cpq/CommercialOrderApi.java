@@ -16,6 +16,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -1138,14 +1139,18 @@ public class CommercialOrderApi extends BaseApi {
     }
     
 	private void createOrderProduct(List<OrderProductDto> orderProductDtos, OrderOffer orderOffer) {
-		if(orderProductDtos != null && !orderProductDtos.isEmpty()) { 
-			for (OrderProductDto orderProductDto : orderProductDtos) {  
-				OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
-				orderProductService.create(orderProduct);
-				//create order attributes linked to orderProduct
-				createOrderAttribute(orderProductDto.getOrderAttributes(), orderProduct,null);
-				orderOffer.getProducts().add(orderProduct); 
-			}
+	    if(CollectionUtils.isEmpty(orderProductDtos)) { 
+	        missingParameters.add("orderProducts");
+	        handleMissingParameters();
+	    }
+		for (OrderProductDto orderProductDto : orderProductDtos) {  
+		    if(orderProductDto.getQuantity() == null || orderProductDto.getQuantity().intValue() == 0 )
+		        throw new BusinessApiException("The quantity for product code " + orderProductDto.getProductCode() + " must be great than 0" );
+			OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
+			orderProductService.create(orderProduct);
+			//create order attributes linked to orderProduct
+			createOrderAttribute(orderProductDto.getOrderAttributes(), orderProduct,null);
+			orderOffer.getProducts().add(orderProduct); 
 		}
 	}
 	
