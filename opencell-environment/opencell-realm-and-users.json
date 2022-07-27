@@ -2882,6 +2882,14 @@
           "clientRole": true,
           "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
           "attributes": {}
+        },        {
+          "id": "cb057c76-2dcb-11ec-8d3d-0242ac130004",
+          "name": "MENU_QUOTES",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3eeadcfd-ace4-44e0-ba78-9a4d0505eef8",
+          "attributes": {}
         },
         {
           "id": "c526531f-2f61-41a3-8ecd-d7a98e2cf69f",
@@ -2910,7 +2918,8 @@
             "client": {
               "opencell-portal": [
                 "QUERY_MANAGER",
-                "PORTAL_USER"
+                "PORTAL_USER",
+                "MENU_QUOTES"
               ]
             }
           },
@@ -4760,7 +4769,7 @@
               "/api/rest/catalog/serviceTemplate/*",
               "/api/rest/v1/catalog/usageChargeTemplates/*",
               "/api/rest/v1/catalog/offerTemplateCategories/*",
-              "/api/test/catalog/counterTemplate/*",
+              "/api/rest/catalog/counterTemplate/*",
               "/api/rest/v1/catalog/productChargeTemplates/*",
               "/api/rest/catalog/chargeTemplates/*",
               "/api/rest/catalog/recurringChargeTemplate/*",
@@ -4823,6 +4832,7 @@
               "/api/rest/v1/billingCycles/*",
               "/api/rest/billingCycle/*",
               "/api/rest/invoiceSubCategory/*",
+              "/api/rest/invoiceCategory/*",
               "/api/rest/v1/billing/accountingCodes/*",
               "/api/rest/v1/invoiceTypes/*",
               "/api/rest/invoiceType/*",
@@ -4924,6 +4934,28 @@
               "/api/rest/account/title/*",
               "/api/rest/account/customer/createBrand"
             ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
+            ]
+          },
+          {
+            "name": "Api V1 Configuration - Mediation",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "8c6524f5-3b84-4291-b132-08b6de8394d1",
+            "uris": [
+              "/api/rest/v2/mediationSetting/*"            ],
             "scopes": [
               {
                 "name": "DELETE"
@@ -5696,7 +5728,8 @@
               "/api/rest/catalog/usageChargeTemplate/list",
               "/api/rest/catalog/products/cpq/offers",
               "/api/rest/catalog/offerTemplate/list",
-              "/api/rest/catalog/serviceTemplate/list"
+              "/api/rest/catalog/serviceTemplate/list",
+              "/api/rest/v2/priceplanmatrixline/search"
             ],
             "scopes": [
               {
@@ -5728,14 +5761,10 @@
             "attributes": {},
             "_id": "d11ff3ac-62be-4d29-b62b-bd384fbe4633",
             "uris": [
-              "/api/rest/provider/*",
               "/api/rest/provider/listTenants",
               "/api/rest/provider/createTenant"
             ],
             "scopes": [
-              {
-                "name": "DELETE"
-              },
               {
                 "name": "GET"
               },
@@ -5762,6 +5791,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "DELETE"
               }
             ]
           },
@@ -13215,6 +13247,30 @@
             }
           },
           {
+            "id": "65e42ae0-5d86-47da-9469-531051405034",
+            "name": "Api V1 Configuration - Mediation - read",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Configuration - Mediation\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
+            }
+          },
+          {
+            "id": "aef71222-000c-413f-a4a1-ac5f0f05c588",
+            "name": "Api V1 Configuration - Mediation - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Configuration - Mediation\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiAdministrationManagement\"]"
+            }
+          },
+          {
             "id": "65e42ae0-5d86-47da-9469-531051405033",
             "name": "Api V1 Configuration - read",
             "type": "scope",
@@ -13828,6 +13884,18 @@
               "resources": "[\"Api V1 Configuration - Provider\"]",
               "scopes": "[\"PUT\",\"POST\"]",
               "applyPolicies": "[\"Role apiAdministrationManagement\"]"
+            }
+          },
+          {
+            "id": "e3511100-fa44-4f54-8704-e124fcf47157",
+            "name": "Api V1 Configuration - Provider - delete tenant",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Configuration - Provider\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },
           {
