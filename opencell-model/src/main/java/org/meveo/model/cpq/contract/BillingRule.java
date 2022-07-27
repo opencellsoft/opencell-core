@@ -34,10 +34,10 @@ public class BillingRule extends EnableEntity {
 	@Column(name = "priority")
 	private Integer priority;
 
-	@Column(name = "criteriaEL")
+	@Column(name = "criteria_el")
 	private String criteriaEL;
 
-	@Column(name = "invoiceBACodeEL")
+	@Column(name = "invoice_ba_code_el")
 	private String invoicedBACodeEL;
 
 	public Contract getContract() {
