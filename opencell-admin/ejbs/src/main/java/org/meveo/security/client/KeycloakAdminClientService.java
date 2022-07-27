@@ -61,6 +61,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.DecisionStrategy;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
+import org.keycloak.representations.idm.authorization.ResourceOwnerRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ScopePermissionRepresentation;
@@ -892,51 +893,38 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * Synchronize API protection. Creates necessary roles and resources in Keycloak and removes the unneeded ones.
      * 
-     * @param readLevel Protect API granularity level for find/search access
-     * @param createLevel Protect API granularity level for create access
-     * @param updateLevel Protect API granularity level for update access
-     * @param deleteLevel Protect API granularity level for delete access
+     * @param level Protect API granularity level
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void syncApiProtection(ApiProtectionGranularityEnum readLevel, ApiProtectionGranularityEnum createLevel, ApiProtectionGranularityEnum updateLevel, ApiProtectionGranularityEnum deleteLevel) {
+    public void syncApiProtection(ApiProtectionGranularityEnum level) {
 
+        // By default package level protection
         List<AccessScopeEnum> fullLevel = new ArrayList(Arrays.asList(AccessScopeEnum.values()));
         List<AccessScopeEnum> themeLevel = new ArrayList(Arrays.asList(AccessScopeEnum.values()));
         List<AccessScopeEnum> entityLevel = new ArrayList<AccessScopeEnum>();
 
-        if (readLevel == null) {
-            fullLevel.remove(AccessScopeEnum.LIST);
-            themeLevel.remove(AccessScopeEnum.LIST);
-        } else if (readLevel == ApiProtectionGranularityEnum.ENTITY_CLASS) {
-            entityLevel.add(AccessScopeEnum.LIST);
-        }
+        // Requested to remove all protection
+        if (level == null) {
+            fullLevel.clear();
+            themeLevel.clear();
 
-        if (createLevel == null) {
-            fullLevel.remove(AccessScopeEnum.CREATE);
-            themeLevel.remove(AccessScopeEnum.CREATE);
-        } else if (createLevel == ApiProtectionGranularityEnum.ENTITY_CLASS) {
-            entityLevel.add(AccessScopeEnum.CREATE);
-        }
-
-        if (updateLevel == null) {
-            fullLevel.remove(AccessScopeEnum.UPDATE);
-            themeLevel.remove(AccessScopeEnum.UPDATE);
-        } else if (updateLevel == ApiProtectionGranularityEnum.ENTITY_CLASS) {
-            entityLevel.add(AccessScopeEnum.UPDATE);
-        }
-
-        if (deleteLevel == null) {
-            fullLevel.remove(AccessScopeEnum.DELETE);
-            themeLevel.remove(AccessScopeEnum.DELETE);
-        } else if (deleteLevel == ApiProtectionGranularityEnum.ENTITY_CLASS) {
-            entityLevel.add(AccessScopeEnum.DELETE);
+            // Entity class level protection requested
+        } else if (level == ApiProtectionGranularityEnum.ENTITY_CLASS) {
+            entityLevel.addAll(Arrays.asList(AccessScopeEnum.values()));
         }
 
         // Create all necessary roles
-        syncGenericApiRoles(fullLevel, themeLevel, entityLevel);
+        if (level != null) {
+            syncGenericApiRoles(fullLevel, themeLevel, entityLevel);
+        }
 
         // Create resources, policies and permissions in keycloak based on resource protection level chosen
-        createGenericApiAuthorization(readLevel, createLevel, updateLevel, deleteLevel);
+        createGenericApiAuthorization(level);
+
+        if (level == null) {
+            // Will remove all roles
+            syncGenericApiRoles(fullLevel, themeLevel, entityLevel);
+        }
     }
 
     /**
@@ -948,137 +936,125 @@ public class KeycloakAdminClientService implements Serializable {
      * /api/rest/v2/generic/seller/<id> DELETE - delete <br/>
      * /api/rest/v2/generic/seller POST - create <br/>
      * 
-     * @param readLevel Protect API granularity level for find/search access
-     * @param createLevel Protect API granularity level for create access
-     * @param updateLevel Protect API granularity level for update access
-     * @param deleteLevel Protect API granularity level for delete access
+     * @param level Protect API granularity level
      * 
      */
     @SuppressWarnings("rawtypes")
-    private void createGenericApiAuthorization(ApiProtectionGranularityEnum readLevel, ApiProtectionGranularityEnum createLevel, ApiProtectionGranularityEnum updateLevel, ApiProtectionGranularityEnum deleteLevel) {
+    private void createGenericApiAuthorization(ApiProtectionGranularityEnum level) {
 
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
-        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
-
-        // Get realm
-        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
-
-        AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
 
         String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
-        AuthzClient authzClient = AuthzClient.create();
-        ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
 
-        Object[] actions = { AccessScopeEnum.LIST, readLevel, AccessScopeEnum.CREATE, createLevel, AccessScopeEnum.UPDATE, updateLevel, AccessScopeEnum.DELETE, deleteLevel };
+        // Create resources, policies and permissions
+        for (Map.Entry<String, Set<String>> entry : allManagedEntities.entrySet()) {
 
-        for (int i = 0; i < actions.length; i = i + 2) {
+            // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
+            Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+            RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
+            AuthzClient authzClient = AuthzClient.create();
+            ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
 
-            AccessScopeEnum accessScope = (AccessScopeEnum) actions[i];
+            Set<String> subPackageEntities = entry.getValue();
+            String packageName = entry.getKey();
 
-            String operation = accessScope.name().toLowerCase();
-            ApiProtectionGranularityEnum level = (ApiProtectionGranularityEnum) actions[i + 1];
+            String packageLevelResourceNamePrefix = GENERIC_API_RESOURCE_PACKAGE_LEVEL_PREFIX + packageName;
+            String packageLevelPermissionNamePrefix = packageLevelResourceNamePrefix;
+            String packageLevelRoleNamePrefix = GENERIC_API_ROLE_PACKAGE_LEVEL_PREFIX + packageName;
 
-            String scopeName = accessScope == AccessScopeEnum.LIST || accessScope == AccessScopeEnum.CREATE ? "POST" : accessScope == AccessScopeEnum.UPDATE ? "PUT" : "DELETE";
-            ScopeRepresentation scope = authResource.scopes().findByName(scopeName);
+            // When level is Package, create a single resource with multiple urls and a single permision and a single policy
+            if (level == ApiProtectionGranularityEnum.PACKAGE) {
 
-            // Create resources, policies and permissions
-            for (Map.Entry<String, Set<String>> entry : allManagedEntities.entrySet()) {
+                Set<String> listUris = new HashSet<String>();
+                Set<String> createUris = new HashSet<String>();
+                Set<String> fudUris = new HashSet<String>();
 
-                Set<String> subPackageEntities = entry.getValue();
+                // Add all sub class urls
+                for (String entityClass : subPackageEntities) {
+                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                    entityClass = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
 
-                String packageLevelRoleName = GENERIC_API_ROLE_PACKAGE_LEVEL_PREFIX + entry.getKey() + "." + operation;
-                String packageLevelResourceName = GENERIC_API_RESOURCE_PACKAGE_LEVEL_PREFIX + entry.getKey() + " - " + operation;
-                String packageLevelPermissionName = packageLevelResourceName;
-                String packageLevelRolePolicyName = KC_POLICY_ROLE_PREFIX + packageLevelRoleName;
+                    // List
+                    listUris.add("/api/rest/v2/generic/all/" + entityClass);
+                    listUris.add("/api/rest/v2/generic/all/" + entityClass + "/*");
+                    // Create
+                    createUris.add("/api/rest/v2/generic/" + entityClass);
+                    createUris.add("/api/rest/v2/generic/" + entityClass + "/");
+                    // Find
+                    fudUris.add("/api/rest/v2/generic/" + entityClass + "/*");
+                    // Update and delete
+                    fudUris.add("/api/rest/v2/generic/" + entityClass + "/*");
 
-                // When level is Package, create a single resource with multiple urls and a single permision and a single policy
-                if (level == ApiProtectionGranularityEnum.PACKAGE) {
+                }
 
-                    // Add all sub class urls
-                    Set<String> uris = new HashSet<String>();
-                    for (String entityClass : subPackageEntities) {
-                        entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
-                        entityClass = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
-                        if (accessScope == AccessScopeEnum.LIST) {
-                            uris.add("/api/rest/v2/generic/all/" + entityClass);
-                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
-                        } else if (accessScope == AccessScopeEnum.CREATE) {
-                            uris.add("/api/rest/v2/generic/" + entityClass);
-                        } else if (accessScope == AccessScopeEnum.UPDATE) {
-                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
-                        } else if (accessScope == AccessScopeEnum.DELETE) {
-                            uris.add("/api/rest/v2/generic/" + entityClass + "/*");
-                        }
-                    }
+                // Create a resource representing a package level, a resource permission and a role based policy
+                createGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                    clientId, authResource, protectedResource);
 
-                    // Create a resource representing a package level, a resource permission and a role based policy
-                    createGenericApiAuthorizationResource(packageLevelResourceName, packageLevelPermissionName, packageLevelRolePolicyName, packageLevelRoleName, uris, scope, keycloakAdminClientConfig.getClientId(),
-                        authResource, protectedResource);
+                // Remove resources representing a class level, a resource permission and a role based policy
+                for (String entityClass : subPackageEntities) {
+                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
 
-                    // Remove resources representing a class level, a resource permission and a role based policy
-                    for (String entityClass : subPackageEntities) {
-                        entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                    String classLevelResourceNamePrefix = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass;
+                    String classLevelPermissionNamePrefix = classLevelResourceNamePrefix;
+                    String classLevelRoleNamePrefix = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass;
 
-                        String classLevelRoleName = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass + "." + operation;
-                        String classLevelResourceName = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass + " - " + operation;
-                        String classLevelPermissionName = classLevelResourceName;
-                        String classLevelRolePolicyName = KC_POLICY_ROLE_PREFIX + classLevelRoleName;
-                        removeGenericApiAuthorizationResource(classLevelResourceName, classLevelPermissionName, classLevelRolePolicyName, authResource, protectedResource);
-                    }
+                    removeGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, authResource, protectedResource);
+                }
 
-                    // When level is Package, create a separate resource, permission and policy per class
-                } else if (level == ApiProtectionGranularityEnum.ENTITY_CLASS) {
+                // When level is Package, create a separate resource, permission and policy per class
+            } else if (level == ApiProtectionGranularityEnum.ENTITY_CLASS) {
 
-                    // Remove a resource representing a package level, a resource permission and a role based policy
-                    removeGenericApiAuthorizationResource(packageLevelResourceName, packageLevelPermissionName, packageLevelRolePolicyName, authResource, protectedResource);
+                // Remove a resource representing a package level, a resource permission and a role based policy
+                removeGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, authResource, protectedResource);
 
-                    // Create a resource representing a class level, a resource permission and a role based policy
-                    for (String entityClass : subPackageEntities) {
-                        entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                // Create a resource representing a class level, a resource permission and a role based policy
+                for (String entityClass : subPackageEntities) {
+                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
 
-                        String classLevelRoleName = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass + "." + operation;
-                        String classLevelResourceName = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass + " - " + operation;
-                        String classLevelPermissionName = classLevelResourceName;
-                        String classLevelRolePolicyName = KC_POLICY_ROLE_PREFIX + classLevelRoleName;
+                    String classLevelResourceNamePrefix = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass;
+                    String classLevelPermissionNamePrefix = classLevelResourceNamePrefix;
+                    String classLevelRoleNamePrefix = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass;
 
-                        Set<String> uris = new HashSet<String>();
+                    String entityClassForUrl = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
 
-                        String entityClassForUrl = entityClass.substring(0, 1).toLowerCase() + entityClass.substring(1);
+                    Set<String> listUris = new HashSet<String>();
+                    Set<String> createUris = new HashSet<String>();
+                    Set<String> fudUris = new HashSet<String>();
 
-                        if (accessScope == AccessScopeEnum.LIST) {
-                            uris.add("/api/rest/v2/generic/all/" + entityClassForUrl);
-                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
-                        } else if (accessScope == AccessScopeEnum.CREATE) {
-                            uris.add("/api/rest/v2/generic/" + entityClassForUrl);
-                        } else if (accessScope == AccessScopeEnum.UPDATE) {
-                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
-                        } else if (accessScope == AccessScopeEnum.DELETE) {
-                            uris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
-                        }
+                    // List
+                    listUris.add("/api/rest/v2/generic/all/" + entityClassForUrl);
+                    listUris.add("/api/rest/v2/generic/all/" + entityClassForUrl + "/*");
+                    // Create
+                    createUris.add("/api/rest/v2/generic/" + entityClassForUrl);
+                    createUris.add("/api/rest/v2/generic/" + entityClassForUrl + "/");
+                    // Find
+                    fudUris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
+                    // Update and delete
+                    fudUris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
 
-                        createGenericApiAuthorizationResource(classLevelResourceName, classLevelPermissionName, classLevelRolePolicyName, classLevelRoleName, uris, scope, keycloakAdminClientConfig.getClientId(),
-                            authResource, protectedResource);
-                    }
+                    createGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                        clientId, authResource, protectedResource);
+                }
 
-                } else {
+            } else {
 
-                    // Remove a resource representing a package level, a resource permission and a role based policy
-                    removeGenericApiAuthorizationResource(packageLevelResourceName, packageLevelPermissionName, packageLevelRolePolicyName, authResource, protectedResource);
+                // Remove a resource representing a package level, a resource permission and a role based policy
+                removeGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, authResource, protectedResource);
 
-                    // Remove resources representing a class level, a resource permission and a role based policy
-                    for (String entityClass : subPackageEntities) {
-                        entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+                // Remove resources representing a class level, a resource permission and a role based policy
+                for (String entityClass : subPackageEntities) {
+                    entityClass = entityClass.substring(entityClass.lastIndexOf('.') + 1);
 
-                        String classLevelRoleName = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass + "." + operation;
-                        String classLevelResourceName = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass + " - " + operation;
-                        String classLevelPermissionName = classLevelResourceName;
-                        String classLevelRolePolicyName = KC_POLICY_ROLE_PREFIX + classLevelRoleName;
-                        removeGenericApiAuthorizationResource(classLevelResourceName, classLevelPermissionName, classLevelRolePolicyName, authResource, protectedResource);
-                    }
+                    String classLevelResourceNamePrefix = GENERIC_API_RESOURCE_CLASS_LEVEL_PREFIX + entityClass;
+                    String classLevelPermissionNamePrefix = classLevelResourceNamePrefix;
+                    String classLevelRoleNamePrefix = GENERIC_API_ROLE_CLASS_LEVEL_PREFIX + entityClass;
+
+                    removeGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, authResource, protectedResource);
                 }
             }
         }
@@ -1087,42 +1063,140 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * Create a resource, role based policy and permission associated to a resource
      * 
-     * @param resourceName Resource name
-     * @param permissionName Permission name
-     * @param policyName Policy name
-     * @param roleName Role name to link a policy to
-     * @param uris A list of URI to associate with a resource
-     * @param scope Scope
+     * @param resourceNamePrefix Resource name prefix
+     * @param permissionNamePrefix Permission name prefix
+     * @param roleNamePrefix Role name to link a policy to prefix
+     * @param listUris A list of URI to associate with a List action type resource
+     * @param createUris A list of URI to associate with a Create action type resource
+     * @param fudUris A list of URI to associate with a Find, Update, Delete action type resource
+     * @param clientName Client name
      * @param clientId Client id
      * @param authResource Authorization resource endpoint
      * @param protectedResource Protected resource endpoint
      */
-    private void createGenericApiAuthorizationResource(String resourceName, String permissionName, String policyName, String roleName, Set<String> uris, ScopeRepresentation scope, String clientId,
-            AuthorizationResource authResource, ProtectedResource protectedResource) {
+    private void createGenericApiAuthorizationResource(String resourceNamePrefix, String permissionNamePrefix, String roleNamePrefix, Set<String> listUris, Set<String> createUris, Set<String> fudUris, String clientName,
+            String clientId, AuthorizationResource authResource, ProtectedResource protectedResource) {
 
-        // Create/find a resource representing a package level
+        String listResourceName = resourceNamePrefix + " - list";
+        String createResourceName = resourceNamePrefix + " - create";
+        String findUpdateDeleteResourceName = resourceNamePrefix + " - fud";
 
-        String[] resourceIds = protectedResource.find(null, resourceName, null, null, null, null, false, false, null, 1);
+        String listFindRoleName = roleNamePrefix + ".list";
+        String createRoleName = roleNamePrefix + ".create";
+        String updateRoleName = roleNamePrefix + ".update";
+        String deleteRoleName = roleNamePrefix + ".delete";
+
+        String listFindPolicyName = KC_POLICY_ROLE_PREFIX + listFindRoleName;
+        String createPolicyName = KC_POLICY_ROLE_PREFIX + createRoleName;
+        String updatePolicyName = KC_POLICY_ROLE_PREFIX + updateRoleName;
+        String deletePolicyName = KC_POLICY_ROLE_PREFIX + deleteRoleName;
+
+        String listPermissionName = listResourceName + " - list";
+        String findPermissionName = findUpdateDeleteResourceName + " - find";
+        String createPermissionName = createResourceName + " - create";
+        String updatePermissionName = findUpdateDeleteResourceName + " - update";
+        String deletePermissionName = findUpdateDeleteResourceName + " - delete";
+
+        String postScopeName = "POST";
+        String putScopeName = "PUT";
+        String deleteScopeName = "DELETE";
+        ScopeRepresentation postScope = authResource.scopes().findByName(postScopeName);
+        ScopeRepresentation putScope = authResource.scopes().findByName(putScopeName);
+        ScopeRepresentation deleteScope = authResource.scopes().findByName(deleteScopeName);
+
+        // ----------
+        // Create/find a resource representing a LIST action type resource
+
+        String[] resourceIds = protectedResource.find(null, listResourceName, null, null, null, null, false, false, null, 1);
         String resourceId = resourceIds.length > 0 ? resourceIds[0] : null;
         if (resourceId == null) {
-            ResourceRepresentation resource = new ResourceRepresentation(resourceName);
-            resource.addScope(scope);
-            resource.setUris(uris);
+            ResourceRepresentation resource = new ResourceRepresentation(listResourceName);
+            resource.addScope(postScopeName);
+            resource.setUris(listUris);
+            resource.setOwner(new ResourceOwnerRepresentation(clientId));
+            resource.setOwnerManagedAccess(false);
             protectedResource.create(resource);
-            resourceIds = protectedResource.find(null, resourceName, null, null, null, null, false, false, null, 1); // findByName(resourceName, username); // When Resource is owner based
+            resourceIds = protectedResource.find(null, listResourceName, null, null, null, null, false, false, null, 1); // findByName(resourceName, username); // When Resource is owner based
             if (resourceIds.length == 0) {
-                throw new BusinessException("Was not able to create a KC resource for a package " + resourceName);
+                throw new BusinessException("Was not able to create a KC resource for a resource " + listResourceName);
             }
             resourceId = resourceIds[0];
         }
 
+        // Create List policy and permission
+        createPermissionAndPolicyForResource(resourceId, listPermissionName, listFindPolicyName, listFindRoleName, clientName, postScope, authResource);
+
+        // ----------
+        // Create/find a resource representing a Create action type resource
+
+        resourceIds = protectedResource.find(null, createResourceName, null, null, null, null, false, false, null, 1);
+        resourceId = resourceIds.length > 0 ? resourceIds[0] : null;
+        if (resourceId == null) {
+            ResourceRepresentation resource = new ResourceRepresentation(createResourceName);
+            resource.addScope(postScopeName);
+            resource.setUris(createUris);
+            resource.setOwner(new ResourceOwnerRepresentation(clientId));
+            resource.setOwnerManagedAccess(false);
+            protectedResource.create(resource);
+            resourceIds = protectedResource.find(null, createResourceName, null, null, null, null, false, false, null, 1); // findByName(resourceName, username); // When Resource is owner based
+            if (resourceIds.length == 0) {
+                throw new BusinessException("Was not able to create a KC resource for a resource " + createResourceName);
+            }
+            resourceId = resourceIds[0];
+        }
+
+        // Create Create policy and permission
+        createPermissionAndPolicyForResource(resourceId, createPermissionName, createPolicyName, createRoleName, clientName, postScope, authResource);
+
+        // ----------
+        // Create/find a resource representing a Find, Create, Update, Delete action type resource
+
+        resourceIds = protectedResource.find(null, findUpdateDeleteResourceName, null, null, null, null, false, false, null, 1);
+        resourceId = resourceIds.length > 0 ? resourceIds[0] : null;
+        if (resourceId == null) {
+            ResourceRepresentation resource = new ResourceRepresentation(findUpdateDeleteResourceName);
+            resource.addScope(postScopeName);
+            resource.addScope(putScopeName);
+            resource.addScope(deleteScopeName);
+            resource.setUris(fudUris);
+            resource.setOwner(new ResourceOwnerRepresentation(clientId));
+            resource.setOwnerManagedAccess(false);
+            protectedResource.create(resource);
+            resourceIds = protectedResource.find(null, findUpdateDeleteResourceName, null, null, null, null, false, false, null, 1); // findByName(resourceName, username); // When Resource is owner based
+            if (resourceIds.length == 0) {
+                throw new BusinessException("Was not able to create a KC resource for a resource " + findUpdateDeleteResourceName);
+            }
+            resourceId = resourceIds[0];
+        }
+
+        // Create Find policy and permission
+        createPermissionAndPolicyForResource(resourceId, findPermissionName, listFindPolicyName, listFindRoleName, clientName, postScope, authResource);
+        // Create Update policy and permission
+        createPermissionAndPolicyForResource(resourceId, updatePermissionName, updatePolicyName, updateRoleName, clientName, putScope, authResource);
+        // Create Delete policy and permission
+        createPermissionAndPolicyForResource(resourceId, deletePermissionName, deletePolicyName, deleteRoleName, clientName, deleteScope, authResource);
+
+    }
+
+    /**
+     * Create permission and policy for a resource
+     * 
+     * @param resourceId Resource identifier
+     * @param permissionName Permission name
+     * @param policyName Policy name
+     * @param roleName Role name
+     * @param clientName Client name
+     * @param scope Scope
+     * @param authResource Authorization resource
+     */
+    private void createPermissionAndPolicyForResource(String resourceId, String permissionName, String policyName, String roleName, String clientName, ScopeRepresentation scope, AuthorizationResource authResource) {
         // Create/find a role based policy
         PoliciesResource resourcePolicies = authResource.policies();
         PolicyRepresentation rolePolicy = resourcePolicies.findByName(policyName);
         if (rolePolicy == null) {
             RolePolicyRepresentation newPolicy = new RolePolicyRepresentation();
             newPolicy.setName(policyName);
-            newPolicy.addClientRole(clientId, roleName);
+            newPolicy.addClientRole(clientName, roleName);
             resourcePolicies.role().create(newPolicy);
             rolePolicy = resourcePolicies.findByName(policyName);
         }
@@ -1151,33 +1225,62 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * Remove resource, policy and permission associated to a resource
      * 
-     * @param resourceName Resource name
-     * @param permissionName Permission name
-     * @param policyName Policy name
+     * @param resourceNamePrefix Resource name prefix
+     * @param permissionNamePrefix Permission name prefix
+     * @param roleNamePrefix Role name to link a policy to prefix
      * @param authResource Authorization resource endpoint
      * @param protectedResource Protected resource endpoint
      */
-    private void removeGenericApiAuthorizationResource(String resourceName, String permissionName, String policyName, AuthorizationResource authResource, ProtectedResource protectedResource) {
+    private void removeGenericApiAuthorizationResource(String resourceNamePrefix, String permissionNamePrefix, String roleNamePrefix, AuthorizationResource authResource, ProtectedResource protectedResource) {
+
+        String listResourceName = resourceNamePrefix + " - list";
+        String createResourceName = resourceNamePrefix + " - create";
+        String findUpdateDeleteResourceName = resourceNamePrefix + " - fud";
+
+        String listFindRoleName = roleNamePrefix + ".list";
+        String createRoleName = roleNamePrefix + ".create";
+        String updateRoleName = roleNamePrefix + ".update";
+        String deleteRoleName = roleNamePrefix + ".delete";
+
+        String listFindPolicyName = KC_POLICY_ROLE_PREFIX + listFindRoleName;
+        String createPolicyName = KC_POLICY_ROLE_PREFIX + createRoleName;
+        String updatePolicyName = KC_POLICY_ROLE_PREFIX + updateRoleName;
+        String deletePolicyName = KC_POLICY_ROLE_PREFIX + deleteRoleName;
+
+        String listPermissionName = listResourceName + " - list";
+        String findPermissionName = findUpdateDeleteResourceName + " - find";
+        String createPermissionName = createResourceName + " - create";
+        String updatePermissionName = findUpdateDeleteResourceName + " - update";
+        String deletePermissionName = findUpdateDeleteResourceName + " - delete";
+
         // Remove a resource permission
-        ScopePermissionRepresentation resourcePermission = authResource.permissions().scope().findByName(permissionName);
-        if (resourcePermission != null) {
-            authResource.permissions().scope().findById(resourcePermission.getId()).remove();
+        String[] permissionNames = { listPermissionName, findPermissionName, createPermissionName, updatePermissionName, deletePermissionName };
+        for (String permissionName : permissionNames) {
+            ScopePermissionRepresentation resourcePermission = authResource.permissions().scope().findByName(permissionName);
+            if (resourcePermission != null) {
+                authResource.permissions().scope().findById(resourcePermission.getId()).remove();
+            }
         }
 
-        // Remove a resource representing a package level
-        String[] resourceIds = protectedResource.find(null, resourceName, null, null, null, null, false, false, null, 1);
-        String resourceId = resourceIds.length > 0 ? resourceIds[0] : null;
-        if (resourceId != null) {
-            protectedResource.delete(resourceId);
+        // Remove a resource
+        String[] resourceNames = { listResourceName, createResourceName, findUpdateDeleteResourceName };
+        for (String resourceName : resourceNames) {
+            String[] resourceIds = protectedResource.find(null, resourceName, null, null, null, null, false, false, null, 1);
+            String resourceId = resourceIds.length > 0 ? resourceIds[0] : null;
+            if (resourceId != null) {
+                protectedResource.delete(resourceId);
+            }
         }
 
         // Remove a role based policy
-        PoliciesResource resourcePolicies = authResource.policies();
-        PolicyRepresentation rolePolicy = resourcePolicies.findByName(policyName);
-        if (rolePolicy != null) {
-            resourcePolicies.policy(rolePolicy.getId()).remove();
+        String[] policyNames = { listFindPolicyName, createPolicyName, updatePolicyName, deletePolicyName };
+        for (String policyName : policyNames) {
+            PoliciesResource resourcePolicies = authResource.policies();
+            PolicyRepresentation rolePolicy = resourcePolicies.findByName(policyName);
+            if (rolePolicy != null) {
+                resourcePolicies.policy(rolePolicy.getId()).remove();
+            }
         }
-
     }
 
     /**
@@ -1194,17 +1297,17 @@ public class KeycloakAdminClientService implements Serializable {
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
-        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
-
-        // Get realm
-        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
-        ClientResource client = realmResource.clients().get(clientId);
 
         int newPermissionsCreated = 0;
 
         for (AccessScopeEnum accessScope : AccessScopeEnum.values()) {
+
+            // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
+            Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+            RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            ClientResource client = realmResource.clients().get(clientId);
+
             String operationSuffix = "." + accessScope.name().toLowerCase();
 
             boolean fullAccessLevelRoleNeeded = fullLevel.contains(accessScope);
