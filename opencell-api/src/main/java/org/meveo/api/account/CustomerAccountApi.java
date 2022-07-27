@@ -182,7 +182,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
-
+        if (postData.getIsCompany() != null) {
+            associatedCustomer.setIsCompany(postData.getIsCompany());
+        }
         dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel, associatedCustomer);
 
         if (StringUtils.isBlank(postData.getCode())) {
