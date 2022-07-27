@@ -9641,7 +9641,7 @@ public class OrderAdvancement extends ModuleScript {
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="is_action_active" type="${type.boolean}" defaultValueBoolean="true"/>
+            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="action_type" type="varchar(255)" >
                 <constraints nullable="false"/>
             </column>
