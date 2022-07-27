@@ -13836,17 +13836,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="billing_invoice" columnName="converted_discount_rate"/>
     </changeSet>
     
-        
-    <changeSet id="#INTRD-8719_20220726" author="TarikRabeh">
-        <addColumn tableName="cpq_price_plan_version">
-            <column name="price"  type="numeric(23, 12)" />           
-        </addColumn>
-        <addColumn tableName="cpq_price_plan_version">
-        	<column name="amount_without_tax" type="numeric(23,12)"/>
-        	<column name="amount_with_tax" type="numeric(23,12)" />
-       	</addColumn>
-    </changeSet>    
-
 	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
 		<createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
 		<createTable tableName="cpq_billing_rule">
