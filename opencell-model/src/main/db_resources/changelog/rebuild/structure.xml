@@ -328,6 +328,7 @@
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
+        <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
     </changeSet>
 
 
