@@ -135,11 +135,7 @@ public class UserAccountApi extends AccountEntityApi {
         handleMissingParameters(postData);
 
         BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
-        
-        if (postData.getIsCompany() != null) {
-            billingAccount.setIsCompany(postData.getIsCompany());
-        }
-        
+
         if (associatedBA == null && billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
         }
