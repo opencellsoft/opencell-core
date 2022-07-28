@@ -428,6 +428,24 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     public void createCounterPeriodIfMissing(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         methodCallingUtils.callMethodInNewTx(() -> createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance));
     }
+    
+    /**
+     * Create a counter period for a given date. A check is done and no period will be created if one is already present. NOTE: Runs in same Transaction
+     * 
+     * <br/>
+     * <br/>
+     * <u>Method does a concurrency lock by counterInstance.id value</u>
+     *
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @param initDate initial date.
+     * @param chargeInstance Charge instance to associate counter with
+     * @throws CounterInstantiationException Failure to create counter period
+     */
+    @ConcurrencyLock
+    public void createCounterPeriodIfMissingInSameTX(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
+        createCounterPeriodIfMissing_noLock(counterInstance, date, initDate, chargeInstance);
+    }
 
     /**
      * INTERNAL METHOD. To be called within a lock of createCounterPeriodIfMissing().<br/>
@@ -439,8 +457,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param chargeInstance Charge instance to associate counter with
      * @throws CounterInstantiationException Failure to create counter period
      */
-    // @JpaAmpNewTx
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void createCounterPeriodIfMissing_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance) throws CounterInstantiationException {
         getOrCreateCounterPeriod(counterInstance, date, initDate, chargeInstance);
     }
@@ -523,8 +539,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws CounterValueInsufficientException counter value insufficient exception.
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    // @JpaAmpNewTx
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private BigDecimal deduceCounterValue_noLock(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, CounterInstantiationException {
 
         counterInstance = retrieveIfNotManaged(counterInstance);
@@ -581,8 +595,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    // @JpaAmpNewTx
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private CounterValueChangeInfo deduceCounterValue_noLock(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, BigDecimal valueToDeduce, boolean isVirtual)
             throws CounterInstantiationException {
 
@@ -788,8 +800,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param incrementBy Increment by
      * @return The new value, or NULL if value is not tracked (initial value is not set)
      */
-    // @JpaAmpNewTx
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private BigDecimal incrementCounterValue_noLock(Long periodId, BigDecimal incrementBy) {
 
         CounterPeriod counterPeriod = counterPeriodService.findById(periodId);
@@ -859,8 +869,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterValueChangeInfo Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    // @JpaAmpNewTx
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private List<CounterValueChangeInfo> incrementAccumulatorCounterValue_noLock(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) throws CounterInstantiationException {
 
         List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
