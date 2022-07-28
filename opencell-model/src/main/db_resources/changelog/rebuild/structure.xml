@@ -328,6 +328,7 @@
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
+        <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
     </changeSet>
 
 
@@ -17121,7 +17122,34 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
 
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
