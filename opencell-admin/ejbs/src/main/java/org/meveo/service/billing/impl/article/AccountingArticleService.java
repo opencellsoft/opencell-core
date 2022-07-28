@@ -53,54 +53,19 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
-		List<ArticleMappingLine> articleMappingLines = null;
+		List<ArticleMappingLine> articleMappingLines = new ArrayList<>();
 		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
-		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && product != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && offer != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
-		}
-		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
-		}
-		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter2() != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, param2, null);
-		}
-		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
-			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
-		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1())
-							|| walletOperation.getParameter1().equals(articleMappingLine.getParameter1()))
-					.collect(toList());
-		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter2())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter2())
-							|| walletOperation.getParameter2().equals(articleMappingLine.getParameter2()))
-					.collect(toList());
-		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter3())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter3())
-							|| walletOperation.getParameter3().equals(articleMappingLine.getParameter3()))
-					.collect(toList());
-		}
-		if(articleMappingLines != null) {
-			articleMappingLines = articleMappingLines
-					.stream()
-					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
-					.collect(toList());
-		}
+
+		// Best matching logic shall be applied to get AccountingArticle
+		getBestMatchedArticleMappingLines(product, chargeTemplate, offer, param1, param2, param3, articleMappingLines);
+
+		articleMappingLines = articleMappingLines
+				.stream()
+				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
+				.collect(toList());
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
@@ -160,6 +125,60 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			detach(result);
 		}
 		return  result != null ? Optional.of(result) : Optional.empty();
+	}
+
+	private void getBestMatchedArticleMappingLines(Product product,
+												   ChargeTemplate chargeTemplate,
+												   OfferTemplate offer,
+												   String param1, String param2, String param3,
+												   List<ArticleMappingLine> articleMappingLines) {
+		List<ArticleMappingLine> mappings = articleMappingLineService.findAll();
+		Map<Long, Integer> matchingScore = new HashMap<>();
+		mappings.forEach(map -> {
+
+			int offerScore = (map.getOfferTemplate() == null && offer == null) || (map.getOfferTemplate() != null && offer == null) || (map.getOfferTemplate() == null && offer != null) ? 0
+					: (map.getOfferTemplate() != null && offer != null) && map.getOfferTemplate().getId().equals(offer.getId())	? 1 : -1;
+			int productScore = (map.getProduct() == null && product == null) || (map.getProduct() != null && product == null) || (map.getProduct() == null && product != null) ? 0
+					: (map.getProduct() != null && product != null) && map.getProduct().getId().equals(product.getId())	? 1 : -1;
+			int chargeScore = (map.getChargeTemplate() == null && chargeTemplate == null) || (map.getChargeTemplate() != null && chargeTemplate == null) || (map.getProduct() == null && chargeTemplate != null) ? 0
+					: (map.getChargeTemplate() != null && chargeTemplate != null) && map.getChargeTemplate().getId().equals(chargeTemplate.getId())	? 1 : -1;
+			int param1Score = (StringUtils.isBlank(map.getParameter1()) && StringUtils.isBlank(param1)) ||  (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isBlank(param1)) || (StringUtils.isBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) ? 0
+					: (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) && map.getParameter1().equals(param1)	? 1 : -1;
+			int param2Score = (StringUtils.isBlank(map.getParameter2()) && StringUtils.isBlank(param2)) ||  (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isBlank(param2)) || (StringUtils.isBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) ? 0
+					: (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) && map.getParameter2().equals(param2)	? 1 : -1;
+			int param3Score = (StringUtils.isBlank(map.getParameter3()) && StringUtils.isBlank(param3)) ||  (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isBlank(param3)) || (StringUtils.isBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) ? 0
+					: (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) && map.getParameter3().equals(param3)	? 1 : -1;
+
+			int mappingScore = offerScore + productScore + chargeScore + param1Score + param2Score + param3Score;
+			if (mappingScore > 0) {
+				matchingScore.put(map.getId(), mappingScore);
+			}
+
+		});
+
+		if (matchingScore.size() > 0) {
+			List<Integer> results = matchingScore.entrySet()
+					.stream()
+					.sorted(Map.Entry.comparingByValue())
+					.map(Map.Entry::getValue).collect(Collectors.toList());
+
+			Collections.reverse(results);
+
+			if (results.size() > 1) {
+				throw new BusinessException("More than one AccountingArticle found during matching with ArticleMappingLine");
+			}
+
+			AtomicReference<ArticleMappingLine> resultTmp = new AtomicReference<>();
+
+			matchingScore.forEach((mappingId, integer) -> {
+				if (results.get(0).equals(integer)) {
+					mappings.stream().filter(map -> mappingId.equals(map.getId()))
+							.findAny().ifPresent(resultTmp::set);
+				}
+			});
+
+			articleMappingLines.add(resultTmp.get());
+		}
 	}
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
