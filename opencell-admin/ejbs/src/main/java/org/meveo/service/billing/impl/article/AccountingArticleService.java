@@ -137,17 +137,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		mappings.forEach(map -> {
 
 			int offerScore = (map.getOfferTemplate() == null && offer == null) || (map.getOfferTemplate() != null && offer == null) || (map.getOfferTemplate() == null && offer != null) ? 0
-					: (map.getOfferTemplate() != null && offer != null) && map.getOfferTemplate().getId().equals(offer.getId())	? 1 : -1;
+					: (map.getOfferTemplate() != null && offer != null) && map.getOfferTemplate().getId().equals(offer.getId())	? 1 : -10;
 			int productScore = (map.getProduct() == null && product == null) || (map.getProduct() != null && product == null) || (map.getProduct() == null && product != null) ? 0
-					: (map.getProduct() != null && product != null) && map.getProduct().getId().equals(product.getId())	? 1 : -1;
+					: (map.getProduct() != null && product != null) && map.getProduct().getId().equals(product.getId())	? 1 : -10;
 			int chargeScore = (map.getChargeTemplate() == null && chargeTemplate == null) || (map.getChargeTemplate() != null && chargeTemplate == null) || (map.getProduct() == null && chargeTemplate != null) ? 0
-					: (map.getChargeTemplate() != null && chargeTemplate != null) && map.getChargeTemplate().getId().equals(chargeTemplate.getId())	? 1 : -1;
+					: (map.getChargeTemplate() != null && chargeTemplate != null) && map.getChargeTemplate().getId().equals(chargeTemplate.getId())	? 1 : -10;
 			int param1Score = (StringUtils.isBlank(map.getParameter1()) && StringUtils.isBlank(param1)) ||  (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isBlank(param1)) || (StringUtils.isBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) && map.getParameter1().equals(param1)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) && map.getParameter1().equals(param1)	? 1 : -10;
 			int param2Score = (StringUtils.isBlank(map.getParameter2()) && StringUtils.isBlank(param2)) ||  (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isBlank(param2)) || (StringUtils.isBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) && map.getParameter2().equals(param2)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) && map.getParameter2().equals(param2)	? 1 : -10;
 			int param3Score = (StringUtils.isBlank(map.getParameter3()) && StringUtils.isBlank(param3)) ||  (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isBlank(param3)) || (StringUtils.isBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) && map.getParameter3().equals(param3)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) && map.getParameter3().equals(param3)	? 1 : -10;
 
 			int mappingScore = offerScore + productScore + chargeScore + param1Score + param2Score + param3Score;
 			if (mappingScore > 0) {
