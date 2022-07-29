@@ -520,8 +520,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
 
-        qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+        if (startDueDate != null && endDueDate != null) {
+            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
                     + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
+        }
 
         if(DateUtils.compare(startDate, new Date()) < 0) {
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
