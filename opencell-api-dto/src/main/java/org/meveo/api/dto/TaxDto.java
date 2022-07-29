@@ -54,6 +54,13 @@ public class TaxDto extends BusinessEntityDto {
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
+    /** If tax is a composition of other taxes */
+    @XmlElement(required = true)
+    private Boolean composite;
+
+    /** Sub taxes */
+    private List<TaxDto> subTaxes;
+
     /**
      * Instantiates a new tax dto.
      */
@@ -154,6 +161,22 @@ public class TaxDto extends BusinessEntityDto {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public Boolean getComposite() {
+        return composite;
+    }
+
+    public void setComposite(Boolean composite) {
+        this.composite = composite;
+    }
+
+    public List<TaxDto> getSubTaxes() {
+        return subTaxes;
+    }
+
+    public void setSubTaxes(List<TaxDto> subTaxes) {
+        this.subTaxes = subTaxes;
     }
 
     @Override

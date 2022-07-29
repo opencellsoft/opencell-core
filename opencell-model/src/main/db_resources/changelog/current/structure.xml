@@ -13876,7 +13876,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="billing_invoice_line" columnName="converted_discount_rate"/>
         <dropColumn tableName="billing_invoice" columnName="converted_discount_rate"/>
     </changeSet>
-    
+
 	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
 		<createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
 		<createTable tableName="cpq_billing_rule">
@@ -13906,4 +13906,15 @@ order by date_trunc('month', i.invoice_date) DESC
 			</column>
 		</createTable>
 	</changeSet>
+
+    <changeSet id="#INTRD-8700_20220728" author="ZBariki">
+        <addColumn tableName="billing_tax">
+            <column name="composite" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="main_tax_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="main_tax_id" baseTableName="billing_tax"
+                                 constraintName="fk_billing_tax_main_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
 </databaseChangeLog>
