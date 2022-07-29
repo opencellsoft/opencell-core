@@ -1,11 +1,11 @@
 package org.meveo.apiv2.generic.services;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
 import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,10 +21,12 @@ import java.time.format.SignStyle;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -32,6 +34,13 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Stateless
 public class CsvGenericExportManager {
@@ -85,7 +94,16 @@ public class CsvGenericExportManager {
                 writeExcelFile(outputExcelFile, records);
                 return Path.of(saveDirectory + fileName + time + extensionFile);
             }
-        } catch (IOException e) {
+            if(fileType.equalsIgnoreCase("pdf")) {
+                if(!Files.exists(Path.of(saveDirectory))){
+                    Files.createDirectories(Path.of(saveDirectory));
+                }
+                extensionFile = ".pdf";
+                File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
+                writePdfFile(outputExcelFile, records);
+                return Path.of(saveDirectory + fileName + time + extensionFile);
+            }
+        } catch (IOException | DocumentException e) {
             throw new RuntimeException("error during file writing : ", e);
         }
         return null;
@@ -164,5 +182,31 @@ public class CsvGenericExportManager {
 		        fileOut.close();
 		        wb.close();
         }
+    }
+    
+    private void writePdfFile(File file, List<Map<String, Object>> lineRecords) throws IOException, DocumentException{
+        if(!CollectionUtils.isEmpty(lineRecords)) {
+            Document doc = new Document();
+            PdfWriter.getInstance(doc, new FileOutputStream(file));
+            doc.open();
+            final PdfPTable table = new PdfPTable(lineRecords.get(0).size());
+            table.setWidthPercentage(100);
+            addColumns(lineRecords.get(0).keySet(), table);
+            lineRecords.forEach(map -> addRows(map, table));
+            doc.add(table);
+            doc.close();
+        }
+    }
+    
+    private void addColumns(Set<String> columns, PdfPTable table) {
+        columns.forEach(column -> {
+            PdfPCell header = new PdfPCell();
+            header.setPhrase(new Phrase(column));
+            table.addCell(header);
+        });
+    }
+    
+    private void addRows(Map<String, Object> rows, PdfPTable table) {
+        rows.values().forEach(obj -> table.addCell(obj != null ? obj.toString() : ""));
     }
 }

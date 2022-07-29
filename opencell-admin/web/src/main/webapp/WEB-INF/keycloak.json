@@ -29,7 +29,11 @@
 				"enforcement-mode": "DISABLED"
 			},
 			{
-				"path": "/about.*",
+				"path": "/about.jsf",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/about.xhtml",
 				"enforcement-mode": "DISABLED"
 			},
 			{
@@ -38,6 +42,10 @@
 			},
 			{
 				"path": "/stylesheet/*",
+				"enforcement-mode": "DISABLED"
+			},
+			{
+				"path": "/errors/*",
 				"enforcement-mode": "DISABLED"
 			},
 			{

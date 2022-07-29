@@ -234,22 +234,22 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
 	@Deprecated
 	public BigDecimal getAmountWithoutTax() {
-        return price;
+        return amountWithoutTax;
     }
 
 	@Deprecated
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.price = amountWithoutTax;
+        this.amountWithoutTax = amountWithoutTax;
     }
 
 	@Deprecated
     public BigDecimal getAmountWithTax() {
-        return price;
+        return amountWithTax;
     }
 
 	@Deprecated
     public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.price = amountWithTax;
+        this.amountWithTax = amountWithTax;
     }
 
     /**

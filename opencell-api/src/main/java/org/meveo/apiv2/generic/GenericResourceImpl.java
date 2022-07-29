@@ -170,7 +170,7 @@ public class GenericResourceImpl implements GenericResource {
         		throw new MeveoApiException("Generic fields are mandatory");
             genericFields = searchConfig.getGenericFields();
         }
-        if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL")){
+        if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL") && !fileFormat.equalsIgnoreCase("pdf")){
             throw new BadRequestException("format of the price plan matrix version can be only equals (CSV or EXCEL).");
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);

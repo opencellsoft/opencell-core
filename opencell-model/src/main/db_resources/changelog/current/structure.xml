@@ -13876,11 +13876,63 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="billing_invoice_line" columnName="converted_discount_rate"/>
         <dropColumn tableName="billing_invoice" columnName="converted_discount_rate"/>
     </changeSet>
+<<<<<<< .mine
+
+=======
+
+>>>>>>> .theirs
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+    <changeSet id="#INTRD-8700_20220728" author="ZBariki">
+        <addColumn tableName="billing_tax">
+            <column name="composite" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="main_tax_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="main_tax_id" baseTableName="billing_tax"
+                                 constraintName="fk_billing_tax_main_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
+
+    <changeSet id="#INTRD-8812_20220729" author="ZBariki">
+        <dropUniqueConstraint constraintName="open_order_article_unique" tableName="open_order_article"/>
+        <dropColumn tableName="open_order_article" columnName="code"/>
+        <dropColumn tableName="open_order_article" columnName="description"/>
+    </changeSet>
 
     <changeSet id="#INTRD-8719_20220727" author="TarikRabeh">
         <addColumn tableName="cpq_price_plan_version">
-            <column name="price"  type="numeric(23, 12)" />           
+            <column name="price"  type="numeric(23, 12)" />
         </addColumn>
     </changeSet>    
 
+</databaseChangeLog>
 </databaseChangeLog>
