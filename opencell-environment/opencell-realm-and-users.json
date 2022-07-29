@@ -17724,7 +17724,7 @@
       "identityProviderMapper": "oidc-hardcoded-role-idp-mapper",
       "config": {
         "syncMode": "LEGACY",
-        "role": "opencell-web.superAdministrateur"
+        "role": "superAdministrator"
       }
     }
   ],
