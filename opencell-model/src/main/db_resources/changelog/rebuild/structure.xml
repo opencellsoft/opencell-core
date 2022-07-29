@@ -328,6 +328,7 @@
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
+        <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
     </changeSet>
 
 
@@ -3537,6 +3538,8 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
+            <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="main_tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-195">
@@ -11952,16 +11955,8 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_article_unique"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
-
             <!-- Simple fields -->
-            
             <column name="active" type="${type.boolean}"/>
-            
-
             <!-- Dependencies -->
             <column name="accounting_article_id" type="bigint">
                 <constraints nullable="false" />
@@ -16424,7 +16419,14 @@
                                  constraintName="cpq_tag_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-    </changeSet> 
+    </changeSet>
+
+    <changeSet id="#INTRD-8700_20220728_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="main_tax_id" baseTableName="billing_tax"
+                                 constraintName="fk_billing_tax_main_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17120,7 +17122,34 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
 
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -18314,8 +18343,14 @@
 	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-8689_20220727" author="ZBariki"/>
+
+    <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
+    <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
+    <changeSet id="#INTRD-8700_20220728" author="ZBariki"/>
+    <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
+
 	<changeSet id="#INTRD-8719_20220727" author="TarikRabeh"/>
-		
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

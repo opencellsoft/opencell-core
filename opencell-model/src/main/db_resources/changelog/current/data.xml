@@ -7877,47 +7877,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-7663_20220613" author="ZBariki">
-		<sql>UPDATE billing_invoice SET last_applied_rate = 1, last_applied_rate_date = created
-                       WHERE last_applied_rate IS NULL</sql>
-
-		<sql>UPDATE billing_invoice SET converted_amount_without_tax = amount_without_tax
-                       WHERE converted_amount_without_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_amount_with_tax = amount_with_tax
-                       WHERE converted_amount_with_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_amount_tax = amount_tax WHERE converted_amount_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_net_to_pay = net_to_pay WHERE converted_net_to_pay IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_raw_amount = raw_amount WHERE converted_raw_amount IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_discount_rate = discount_rate
-                       WHERE converted_discount_rate IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_discount_amount = discount_amount
-                       WHERE converted_discount_amount IS NULL</sql>
-		<sql>UPDATE billing_invoice SET converted_amount_without_tax_before_discount = amount_without_tax_before_discount
-                       WHERE converted_amount_without_tax_before_discount IS NULL</sql>
-
-		<sql>UPDATE billing_invoice_line SET converted_unit_price = unit_price WHERE converted_unit_price IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_amount_without_tax = amount_without_tax
-                            WHERE converted_amount_without_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_amount_with_tax = amount_with_tax
-                            WHERE converted_amount_with_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_tax_rate = tax_rate WHERE converted_tax_rate IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_discount_rate = discount_rate
-                            WHERE converted_tax_rate IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_amount_tax = amount_tax WHERE converted_amount_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_discount_amount = discount_amount
-                            WHERE converted_discount_amount IS NULL</sql>
-		<sql>UPDATE billing_invoice_line SET converted_raw_amount = raw_amount WHERE converted_raw_amount IS NULL</sql>
-	</changeSet>
-
-	<changeSet id="#INTRD-7872_20220615" author="ZBariki">
-		<sql>UPDATE billing_invoice_agregate SET converted_amount_without_tax = amount_without_tax
-                                WHERE converted_amount_without_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice_agregate SET converted_amount_with_tax = amount_with_tax
-                                WHERE converted_amount_with_tax IS NULL</sql>
-		<sql>UPDATE billing_invoice_agregate SET converted_amount_tax = amount_tax
-                                WHERE converted_amount_tax IS NULL</sql>
-	</changeSet>
-
 	<changeSet id="#INTRD-7722_20220618" author="ZBariki">
 		<delete tableName="adm_custom_generic_entity_code" />
 		<delete tableName="generic_sequence" />
@@ -8048,6 +8007,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		<update tableName="cpq_attribute">
 			<column name="el_value">${sub.getSubscriptionDate()}</column>
 			<where>id=-8</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-8700_20220728" author="ZBariki">
+		<update tableName="billing_tax">
+			<column name="composite" valueNumeric="0"/>
+			<where>composite IS NULL</where>
 		</update>
 	</changeSet>
 </databaseChangeLog>

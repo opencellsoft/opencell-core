@@ -134,7 +134,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		update(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}
-	
+
 	private void populateArticleMappingLine(ArticleMappingLine articleMappingLine) {
     	if(articleMappingLine.getOfferTemplate() != null){
             OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
@@ -192,4 +192,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		}
 	 	return articleMapping;
 	}
+
+    public List<ArticleMappingLine> findAll() {
+        return getEntityManager().createNamedQuery("ArticleMappingLine.findAll").getResultList();
+    }
 }

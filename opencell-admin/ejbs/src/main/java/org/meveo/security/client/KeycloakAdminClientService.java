@@ -986,6 +986,7 @@ public class KeycloakAdminClientService implements Serializable {
                     createUris.add("/api/rest/v2/generic/" + entityClass + "/");
                     // Find
                     fudUris.add("/api/rest/v2/generic/" + entityClass + "/*");
+                    fudUris.add("/api/rest/v2/generic/export/" + entityClass + "/*");
                     // Update and delete
                     fudUris.add("/api/rest/v2/generic/" + entityClass + "/*");
 

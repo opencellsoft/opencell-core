@@ -44,6 +44,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -421,60 +422,66 @@ public class CpqQuoteApi extends BaseApi {
 
     private void newPopulateProduct(QuoteOfferDTO quoteOfferDto, QuoteOffer quoteOffer) {
         List<QuoteProductDTO> quoteProductDtos = quoteOfferDto.getProducts();
-        if (quoteProductDtos != null) {
-            int index = 1;
-            quoteOffer.getQuoteProduct().size();
-            for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
-                if (StringUtils.isBlank(quoteProductDTO.getProductCode()))
-                    missingParameters.add("products[" + index + "].productCode");
-                if (quoteProductDTO.getProductVersion() == null)
-                    missingParameters.add("products[" + index + "].productVersion");
-
-                handleMissingParameters();
-
-                ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
-
-                if (productVersion == null)
-                    throw new EntityDoesNotExistsException(ProductVersion.class, "products[" + index + "] = " + quoteProductDTO.getProductCode() + "," + quoteProductDTO.getProductVersion());
-                DiscountPlan discountPlan = null;
-                if (quoteProductDTO.getDiscountPlanCode() != null) {
-                    discountPlan = discountPlanService.findByCode(quoteProductDTO.getDiscountPlanCode());
-                    if (discountPlan == null)
-                        throw new EntityDoesNotExistsException(DiscountPlan.class, quoteProductDTO.getDiscountPlanCode());
-                }
-                QuoteProduct quoteProduct = null;
-                if (quoteProduct == null)
-                    quoteProduct = new QuoteProduct();
-                quoteProduct.setProductVersion(productVersion);
-                quoteProduct.setQuantity(quoteProductDTO.getQuantity());
-                quoteProduct.setQuoteOffer(quoteOffer);
-                quoteProduct.setDiscountPlan(discountPlan);
-                if(quoteProduct.getDiscountPlan() == null){
-                    resolveProductDPIfExist(quoteOffer, quoteProduct);
-                }
-                quoteProduct.setQuote(quoteOffer.getQuoteVersion() != null ? quoteOffer.getQuoteVersion().getQuote() : null);
-                quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
-                
-            	if(quoteProductDTO.getDeliveryDate()!=null && quoteProductDTO.getDeliveryDate().before(new Date())) {
-            		throw new MeveoApiException("Delivery date should be in the future");	
-            	}
-            	quoteProduct.setDeliveryDate(quoteProductDTO.getDeliveryDate());
-                
-                populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
-                quoteProductService.create(quoteProduct);
-                newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
-                quoteOffer.getQuoteProduct().add(quoteProduct);
-                ProductContextDTO productContextDTO = new ProductContextDTO();
-                productContextDTO.setProductCode(productVersion.getProduct().getCode());
-                LinkedHashMap<String, Object> selectedAttributes = new LinkedHashMap<>();
-                quoteProductDTO.getProductAttributes()
-                        .stream()
-                        .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
-                productContextDTO.setSelectedAttributes(selectedAttributes);
-                //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
-                ++index;
-            }
+        if (CollectionUtils.isEmpty(quoteProductDtos)) {
+            missingParameters.add("products");
+            handleMissingParameters();
         }
+        int index = 1;
+        quoteOffer.getQuoteProduct().size();
+        for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
+            if (StringUtils.isBlank(quoteProductDTO.getProductCode()))
+                missingParameters.add("products[" + index + "].productCode");
+            if (quoteProductDTO.getProductVersion() == null)
+                missingParameters.add("products[" + index + "].productVersion");
+
+            handleMissingParameters();
+            if(quoteProductDTO.getQuantity() == null || quoteProductDTO.getQuantity().intValue() == 0) {
+                throw new BusinessException("The quantity for product code " + quoteProductDTO.getProductCode() + " must be great than 0" );
+            }
+
+            ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
+
+            if (productVersion == null)
+                throw new EntityDoesNotExistsException(ProductVersion.class, "products[" + index + "] = " + quoteProductDTO.getProductCode() + "," + quoteProductDTO.getProductVersion());
+            DiscountPlan discountPlan = null;
+            if (quoteProductDTO.getDiscountPlanCode() != null) {
+                discountPlan = discountPlanService.findByCode(quoteProductDTO.getDiscountPlanCode());
+                if (discountPlan == null)
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, quoteProductDTO.getDiscountPlanCode());
+            }
+            QuoteProduct quoteProduct = null;
+            if (quoteProduct == null)
+                quoteProduct = new QuoteProduct();
+            quoteProduct.setProductVersion(productVersion);
+            quoteProduct.setQuantity(quoteProductDTO.getQuantity());
+            quoteProduct.setQuoteOffer(quoteOffer);
+            quoteProduct.setDiscountPlan(discountPlan);
+            if(quoteProduct.getDiscountPlan() == null){
+                resolveProductDPIfExist(quoteOffer, quoteProduct);
+            }
+            quoteProduct.setQuote(quoteOffer.getQuoteVersion() != null ? quoteOffer.getQuoteVersion().getQuote() : null);
+            quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
+            
+        	if(quoteProductDTO.getDeliveryDate()!=null && quoteProductDTO.getDeliveryDate().before(new Date())) {
+        		throw new MeveoApiException("Delivery date should be in the future");	
+        	}
+        	quoteProduct.setDeliveryDate(quoteProductDTO.getDeliveryDate());
+            
+            populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
+            quoteProductService.create(quoteProduct);
+            newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
+            quoteOffer.getQuoteProduct().add(quoteProduct);
+            ProductContextDTO productContextDTO = new ProductContextDTO();
+            productContextDTO.setProductCode(productVersion.getProduct().getCode());
+            LinkedHashMap<String, Object> selectedAttributes = new LinkedHashMap<>();
+            quoteProductDTO.getProductAttributes()
+                    .stream()
+                    .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
+            productContextDTO.setSelectedAttributes(selectedAttributes);
+            //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
+            ++index;
+        }
+        
     }
 
     private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
@@ -1075,35 +1082,36 @@ public class CpqQuoteApi extends BaseApi {
     private void processQuoteProduct(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
         var quoteProductDtos = quoteOfferDTO.getProducts();
         var hasQuoteProductDtos = quoteProductDtos != null && !quoteProductDtos.isEmpty();
+        
+        if(!hasQuoteProductDtos) {
+            missingParameters.add("products");
+            handleMissingParameters();
+        }
 
         var existencQuoteProducts = quoteOffer.getQuoteProduct();
         var hasExistingQuotes = existencQuoteProducts != null && !existencQuoteProducts.isEmpty();
 
-        if (hasQuoteProductDtos) {
-            var newQuoteProducts = new ArrayList<QuoteProduct>();
-            QuoteProduct quoteProduct = null;
-            int i = 1;
-            for (QuoteProductDTO quoteProductDto : quoteProductDtos) {
-                quoteProduct = getQuoteProductFromDto(quoteProductDto, quoteOffer, i);
-                newQuoteProducts.add(quoteProduct);
-                i++;
-            }
-            if (!hasExistingQuotes) {
-                quoteOffer.getQuoteProduct().addAll(newQuoteProducts);
-            } else {
-                existencQuoteProducts.retainAll(newQuoteProducts);
-                for (QuoteProduct qpNew : newQuoteProducts) {
-                    int index = existencQuoteProducts.indexOf(qpNew);
-                    if (index >= 0) {
-                        QuoteProduct old = existencQuoteProducts.get(index);
-                        old.update(qpNew);
-                    } else {
-                        existencQuoteProducts.add(qpNew);
-                    }
+        var newQuoteProducts = new ArrayList<QuoteProduct>();
+        QuoteProduct quoteProduct = null;
+        int i = 1;
+        for (QuoteProductDTO quoteProductDto : quoteProductDtos) {
+            quoteProduct = getQuoteProductFromDto(quoteProductDto, quoteOffer, i);
+            newQuoteProducts.add(quoteProduct);
+            i++;
+        }
+        if (!hasExistingQuotes) {
+            quoteOffer.getQuoteProduct().addAll(newQuoteProducts);
+        } else {
+            existencQuoteProducts.retainAll(newQuoteProducts);
+            for (QuoteProduct qpNew : newQuoteProducts) {
+                int index = existencQuoteProducts.indexOf(qpNew);
+                if (index >= 0) {
+                    QuoteProduct old = existencQuoteProducts.get(index);
+                    old.update(qpNew);
+                } else {
+                    existencQuoteProducts.add(qpNew);
                 }
             }
-        } else if (hasExistingQuotes) {
-            quoteOffer.getQuoteProduct().removeAll(existencQuoteProducts);
         }
     }
 
