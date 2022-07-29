@@ -18343,6 +18343,8 @@
 	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-8689_20220727" author="ZBariki"/>
+    <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
+    <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

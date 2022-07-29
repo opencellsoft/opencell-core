@@ -12978,6 +12978,38 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-7663_20220613" author="ZBariki">
+		<sql>UPDATE billing_invoice SET last_applied_rate = 1, last_applied_rate_date = created
+                       WHERE last_applied_rate IS NULL</sql>
+
+		<sql>UPDATE billing_invoice SET converted_amount_without_tax = amount_without_tax
+                       WHERE converted_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_amount_with_tax = amount_with_tax
+                       WHERE converted_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_amount_tax = amount_tax WHERE converted_amount_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_net_to_pay = net_to_pay WHERE converted_net_to_pay IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_raw_amount = raw_amount WHERE converted_raw_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_discount_rate = discount_rate
+                       WHERE converted_discount_rate IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_discount_amount = discount_amount
+                       WHERE converted_discount_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice SET converted_amount_without_tax_before_discount = amount_without_tax_before_discount
+                       WHERE converted_amount_without_tax_before_discount IS NULL</sql>
+
+		<sql>UPDATE billing_invoice_line SET converted_unit_price = unit_price WHERE converted_unit_price IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_amount_without_tax = amount_without_tax
+                            WHERE converted_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_amount_with_tax = amount_with_tax
+                            WHERE converted_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_tax_rate = tax_rate WHERE converted_tax_rate IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_discount_rate = discount_rate
+                            WHERE converted_tax_rate IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_amount_tax = amount_tax WHERE converted_amount_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_discount_amount = discount_amount
+                            WHERE converted_discount_amount IS NULL</sql>
+		<sql>UPDATE billing_invoice_line SET converted_raw_amount = raw_amount WHERE converted_raw_amount IS NULL</sql>
+	</changeSet>
+	
      <changeSet id="#INTRD-7352_20220614" author="HatimOUDAD" >
          <dropColumn tableName="open_order_template">
             <column name="number_instantiation" />
@@ -13025,6 +13057,15 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="converted_amount_tax" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-7872_20220615-data" author="ZBariki">
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_without_tax = amount_without_tax
+                                WHERE converted_amount_without_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_with_tax = amount_with_tax
+                                WHERE converted_amount_with_tax IS NULL</sql>
+		<sql>UPDATE billing_invoice_agregate SET converted_amount_tax = amount_tax
+                                WHERE converted_amount_tax IS NULL</sql>
+	</changeSet>
 
     <changeSet id="#INTRD-7605_20220617" author="TarikRabeh">
         <addColumn tableName="cpq_product">

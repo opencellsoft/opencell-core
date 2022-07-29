@@ -603,7 +603,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
             if (bareWalletOperation.getTax() == null) {
 
-                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate(), accountingArticle);
+                TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
                 if(taxInfo==null) {
                 	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
                 }
@@ -790,7 +790,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 	priceWithoutTax = ppmVersion.getAmountWithTax();
                 }
                 if (ppmVersion.getPriceEL() != null) {
-                	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));//HHAN
+                	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
                     if (priceWithoutTax == null) {
                         throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId() + " EL:" + ppmVersion.getPriceEL());
                     }
