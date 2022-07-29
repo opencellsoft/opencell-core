@@ -163,17 +163,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice) accountOperation).getInvoice();
                 if (invoice != null) {
                     if (withWriteOff) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.ABANDONED);
                     } else if (withRefund) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.REFUNDED);
                     } else if (isPplCreationCreditAo) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PENDING_PLAN);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PENDING_PLAN);
                     } else if (fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
                         invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if (!fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
-                    }
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
+                    } 
                     invoice.setPaymentStatusDate(new Date());
                     entityUpdatedEventProducer.fire(invoice);
                 }
@@ -232,14 +232,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if (invoice != null) {
                     if(withWriteOff) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.ABANDONED);
                     } else if(withRefund) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.REFUNDED);
                     } else if(fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
                         invoiceService.triggersCollectionPlanLevelsJob(invoice);
                     } else if(!fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     }
                     invoice.setPaymentStatusDate(new Date());
                 }
@@ -329,20 +329,20 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.UNPAID);
                             invoice.setPaymentStatusDate(new Date());
-                        	entityUpdatedEventProducer.fire(invoice);
-                    	}
+                            entityUpdatedEventProducer.fire(invoice);
+                        }
                     }
                 } else {
                     operation.setMatchingStatus(MatchingStatusEnum.P);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                             invoice.setPaymentStatusDate(new Date());
-                    	}
-                	}
+                        }
+                    }
                 }
                 operation.getMatchingAmounts().remove(matchingAmount);
                 accountOperationService.update(operation);
