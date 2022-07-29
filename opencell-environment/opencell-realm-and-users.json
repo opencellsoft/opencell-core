@@ -17718,6 +17718,17 @@
   ],
   "identityProviderMappers": [
     {
+      "id": "da545145-e3b7-49ab-9614-5de7f4d60d1a",
+      "name": "Language",
+      "identityProviderAlias": "keycloak-oidc-internal",
+      "identityProviderMapper": "hardcoded-attribute-idp-mapper",
+      "config": {
+        "attribute.value": "fr",
+        "syncMode": "INHERIT",
+        "attribute": "locale"
+      }
+    },
+    {
       "id": "0507d16f-7461-444a-8573-7ee01004c79c",
       "name": "SuperAdmin",
       "identityProviderAlias": "keycloak-oidc-internal",
