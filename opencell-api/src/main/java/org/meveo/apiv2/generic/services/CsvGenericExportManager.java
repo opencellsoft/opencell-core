@@ -1,11 +1,11 @@
 package org.meveo.apiv2.generic.services;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
 import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -40,7 +40,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 @Stateless
@@ -191,6 +190,7 @@ public class CsvGenericExportManager {
             PdfWriter.getInstance(doc, new FileOutputStream(file));
             doc.open();
             final PdfPTable table = new PdfPTable(lineRecords.get(0).size());
+            table.setWidthPercentage(100);
             addColumns(lineRecords.get(0).keySet(), table);
             lineRecords.forEach(map -> addRows(map, table));
             doc.add(table);
@@ -207,6 +207,6 @@ public class CsvGenericExportManager {
     }
     
     private void addRows(Map<String, Object> rows, PdfPTable table) {
-        rows.values().forEach(obj -> table.addCell(obj.toString()));
+        rows.values().forEach(obj -> table.addCell(obj != null ? obj.toString() : ""));
     }
 }
