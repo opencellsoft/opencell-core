@@ -77,6 +77,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductChargeTemplateMappingService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.CommercialRuleLineService;
@@ -154,7 +155,7 @@ public class ProductApi extends BaseApi {
 	 private CounterTemplateService counterTemplateService;
 
 	@Inject
-	private ProductVersionAttributeService productVersionAttributeService;
+	private ProductChargeTemplateMappingService productChargeTemplateMappingService;
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -710,15 +711,17 @@ public class ProductApi extends BaseApi {
 		return discountPlan;
 	}
 
-	private void createProductChargeTemplateMappings(Product product, List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDtos) {
+	@SuppressWarnings("unchecked")
+    private void createProductChargeTemplateMappings(Product product, List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDtos) {
 		List<String> persistedChargesCodes = product.getProductCharges().stream().map(x->x.getChargeTemplate().getCode()).collect(Collectors.toList());
 		List<String> dtoChargesCodes = productChargeTemplateMappingDtos.stream().map(x->x.getChargeCode()).collect(Collectors.toList());
 		List<String> removedChargesCodes = persistedChargesCodes.stream().filter(x->!dtoChargesCodes.contains(x)).collect(Collectors.toList());
 		product.getProductCharges().removeIf(x->removedChargesCodes.contains(x.getChargeTemplate().getCode()));
 		//Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
-		product.getProductCharges().addAll(productChargeTemplateMappingDtos.stream()
-				.filter(pctm -> pctm != null && !persistedChargesCodes.contains(pctm.getChargeCode())).map(pctm -> {
-					ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
+		product.getProductCharges().addAll(productChargeTemplateMappingDtos.stream().map(pctm -> {
+					ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = productChargeTemplateMappingService.findByProductAndOfferTemplate(pctm.getProductCode(), pctm.getChargeCode());
+					if(chargeTemplateProductChargeTemplateMapping == null)
+					    chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<ChargeTemplate>();
 					chargeTemplateProductChargeTemplateMapping.setProduct(product);
 					if(!Strings.isEmpty(pctm.getChargeCode()))
 						chargeTemplateProductChargeTemplateMapping.setChargeTemplate(loadEntityByCode(chargeTemplateService, pctm.getChargeCode(), ChargeTemplate.class));

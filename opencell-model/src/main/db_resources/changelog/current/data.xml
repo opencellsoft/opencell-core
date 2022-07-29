@@ -8009,4 +8009,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>id=-8</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-8700_20220728" author="ZBariki">
+		<update tableName="billing_tax">
+			<column name="composite" valueNumeric="0"/>
+			<where>composite IS NULL</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

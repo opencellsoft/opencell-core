@@ -48,7 +48,7 @@ public class OpenOrderSettingService extends BusinessService<OpenOrderSetting> {
 
     public OpenOrderSetting findLastOne() {
         try {
-            TypedQuery<OpenOrderSetting> query = getEntityManager().createQuery("from OpenOrderSetting g order by g.id desc", entityClass).setMaxResults(1);
+            TypedQuery<OpenOrderSetting> query = getEntityManager().createQuery("from OpenOrderSetting g order by g.id asc", entityClass).setMaxResults(1);
             return query.getSingleResult();
         } catch (NoResultException e) {
             log.debug("No {} found", getEntityClass().getSimpleName());

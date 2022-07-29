@@ -56,6 +56,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -357,6 +358,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 
 		serviceInstance.setSubscription(subscription);
+		
+		if(subscription.getOrder() != null) {
+			if(subscription.getOrder().getQuote() != null) {
+				if(PriceVersionDateSettingEnum.QUOTE.equals(product.getPriceVersionDateSetting())) {
+					serviceInstance.setPriceVersionDate(subscription.getOrder().getQuote().getQuoteDate());
+				}
+			}
+		}
 		
 	Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
 		
