@@ -470,16 +470,16 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
     	String datePattern = "yyyy-MM-dd";
-        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate > '")
+        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
                 .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
     	if(stepInDays != null && numberOfPeriods != null) {
     	    String alias;
     	    int step;
     	    if(numberOfPeriods > 1) {
-                query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + ",")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + "_awt,")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
+                query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + ",")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + "_awt,")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
                 for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
                     step = iteration * stepInDays;
                     alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
