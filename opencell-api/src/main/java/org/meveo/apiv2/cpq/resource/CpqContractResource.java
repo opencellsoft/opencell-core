@@ -44,7 +44,7 @@ public interface CpqContractResource {
             @ApiResponse(responseCode = "412", description = "missing required paramter for billingRule.The required params are : contractCode, criteriaEl, InvoicedBACodeEL"),
             @ApiResponse(responseCode = "404", description = "the contract code does not exist")
     })
-	public Response updateBillingRule(@PathParam("contractCode") @NotNull String contractCode, @PathParam("id") @NotNull String billingRuleId);
+	public Response updateBillingRule(@PathParam("contractCode") @NotNull String contractCode, @PathParam("id") @NotNull Long billingRuleId, BillingRuleDto billingRuleDto);
 
 	@DELETE
 	@Path("/{contractCode}/billingRule/{id}")
@@ -57,6 +57,6 @@ public interface CpqContractResource {
 	            @ApiResponse(responseCode = "404", description = "the contract code does not exist")
 			}
 	)
-	public Response deleteBillingRule(@PathParam("contractCode") @NotNull String contractCode, @PathParam("id") @NotNull String billingRuleId);
+	public Response deleteBillingRule(@PathParam("contractCode") @NotNull String contractCode, @PathParam("id") @NotNull Long billingRuleId);
 	
 }
