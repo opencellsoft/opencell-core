@@ -12,6 +12,11 @@
 			"enabled": false
 		},
 		{
+			"key": "CDRs_per_cust",
+			"value": "10",
+			"enabled": false
+		},
+		{
 			"key": "FROM",
 			"value": "1",
 			"enabled": false
@@ -23,12 +28,12 @@
 		},
 		{
 			"key": "request.label",
-			"value": "Run|code=CRM_CDR_GEN_JOB",
+			"value": "Create|code=CRM_CDR_GEN_JOB",
 			"enabled": true
 		},
 		{
 			"key": "request.label.0",
-			"value": "Run",
+			"value": "Create",
 			"enabled": true
 		},
 		{
@@ -38,12 +43,12 @@
 		},
 		{
 			"key": "request.label.2",
-			"value": "CRMCDRScript",
+			"value": "Generate Customers and CDR files",
 			"enabled": true
 		},
 		{
 			"key": "timestamp.iso",
-			"value": "2021-03-05T14:11:06.352Z",
+			"value": "2021-03-24T13:09:12.219Z",
 			"enabled": true
 		},
 		{
@@ -53,7 +58,7 @@
 		},
 		{
 			"key": "request.label.3",
-			"value": "Generate Customers and CDR files",
+			"value": "FROM",
 			"enabled": true
 		},
 		{
@@ -63,12 +68,12 @@
 		},
 		{
 			"key": "desc",
-			"value": "BOM with BSMs and Services",
+			"value": "all_in_one_services",
 			"enabled": true
 		},
 		{
 			"key": "nextJob",
-			"value": "Acco_Job Copy 6",
+			"value": "Acco_Job Copy",
 			"enabled": true
 		},
 		{
@@ -93,7 +98,7 @@
 		},
 		{
 			"key": "request.label.4",
-			"value": "FROM",
+			"value": "NB_cust",
 			"enabled": true
 		},
 		{
@@ -108,7 +113,7 @@
 		},
 		{
 			"key": "request.label.5",
-			"value": "NB_cust",
+			"value": "NB_SUBS",
 			"enabled": true
 		},
 		{
@@ -143,7 +148,7 @@
 		},
 		{
 			"key": "target",
-			"value": "PR_PRD",
+			"value": "WalletOperation",
 			"enabled": true
 		},
 		{
@@ -158,7 +163,7 @@
 		},
 		{
 			"key": "offer.services",
-			"value": "{\"serviceTemplate\":{\"code\":\"SE_OSS\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_OST\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_REC_ADV\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_USG_UNIT\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}",
+			"value": "{\"serviceTemplate\":{\"code\":\"SE_OSS_OST_USG_RECU\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}",
 			"enabled": true
 		},
 		{
@@ -243,22 +248,299 @@
 		},
 		{
 			"key": "request.label.6",
-			"value": "NB_SUBS",
+			"value": "NB_Files",
 			"enabled": true
 		},
 		{
 			"key": "request.label.7",
-			"value": "NB_Files",
+			"value": "",
 			"enabled": true
 		},
 		{
 			"key": "request.label.8",
 			"value": "",
 			"enabled": true
+		},
+		{
+			"key": "FROM",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_cust",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_SUBS",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "NB_Files",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "aggregationId",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "field",
+			"value": "cf_WO_test",
+			"enabled": true
+		},
+		{
+			"key": "action",
+			"value": "MIN",
+			"enabled": true
+		},
+		{
+			"key": "value",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "alias",
+			"value": "cf_rt_test",
+			"enabled": true
+		},
+		{
+			"key": "aggregationRule",
+			"value": "aggreg_by_day",
+			"enabled": true
+		},
+		{
+			"key": "filterId",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "RG",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "firstmonthday",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "variable_key",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "firstofthecurrentmonth",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "lastofthepastmonth",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "Tax",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p6",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p7",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p8",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.9",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "p9",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.10",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d1",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.11",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d2",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.12",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.13",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.14",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "d5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.15",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n1",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.16",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n2",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.17",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n3",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.18",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n4",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.19",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "n5",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "request.label.20",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "extraParameter",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "paymentMethod.id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "displayInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "productRefPerfect",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "taxesInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "paymentsInfos",
+			"value": "[object Object]",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "JSON_text",
+			"value": "{\\\"displayInfos\\\":{\\\"subscription_parent_id\\\":\\\"par_sub_1\\\",\\\"subscription_id\\\":\\\"sub_1\\\",\\\"mandatory_addon\\\":\\\"false\\\",\\\"charge_type\\\":\\\"ONESHOT\\\",\\\"order_id\\\":\\\"ord_1\\\",\\\"purchase_order_reference\\\":\\\"ord_1_1\\\",\\\"customer_reference\\\":\\\"cust_1\\\",\\\"unit\\\":\\\"GB\\\",\\\"currency\\\":\\\"EUR\\\",\\\"document_line_label\\\":\\\"description\\\",\\\"product_reference\\\":\\\"ref_1\\\",\\\"product_name\\\":\\\"prod_1\\\",\\\"resourcename\\\":\\\"ress_1\\\",\\\"cdr_index\\\":\\\"cdr_1\\\",\\\"total_cdr\\\":\\\"10000\\\"},\\\"productRefPerfect\\\":{\\\"brand\\\":\\\"OC\\\",\\\"actively_sold\\\":\\\"1000\\\",\\\"rental_consumption\\\":\\\"1000\\\",\\\"product_nature\\\":\\\"OC\\\",\\\"default_dc_location\\\":\\\"EUROPE\\\",\\\"revenue_class\\\":\\\"MIDDLE\\\",\\\"service_type\\\":\\\"OSE\\\",\\\"product_source\\\":\\\"OC\\\",\\\"universe\\\":\\\"OC\\\",\\\"range\\\":\\\"OC\\\",\\\"line\\\":\\\"OC\\\",\\\"category\\\":\\\"OC\\\",\\\"subcategory\\\":\\\"OC\\\",\\\"family\\\":\\\"OC\\\"},\\\"taxesInfos\\\":[{\\\"gl_tax_account\\\":\\\"french_service_vat\\\",\\\"application\\\":\\\"percent\\\",\\\"type\\\":\\\"vat\\\",\\\"value\\\":\\\"integer\\\",\\\"tax_base_amount\\\":\\\"integer\\\",\\\"tax_rate_code\\\":\\\"string\\\",\\\"tax_rate_in_percent\\\":\\\"integer\\\"}],\\\"paymentsInfos\\\":[{\\\"payment_method_type\\\":\\\"paypal\\\",\\\"payment_method_id\\\":\\\"paymentcenter_9987987\\\",\\\"payment_transaction_id\\\":\\\"hrh24hr87146\\\",\\\"payment_amount\\\":\\\"integer\\\",\\\"payment_currency\\\":\\\"EURO\\\",\\\"payment_date\\\":\\\"2021-01-01T12:00:27.87\\\",\\\"payment_status\\\":\\\"PAID\\\"}]}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "validDateFrom",
+			"value": "2020-03-11",
+			"type": "default",
+			"enabled": true
 		}
 	],
-	"name": "My Workspace Globals",
+	"name": "Globals",
 	"_postman_variable_scope": "globals",
-	"_postman_exported_at": "2021-03-08T08:45:40.914Z",
-	"_postman_exported_using": "Postman/8.0.6"
+	"_postman_exported_at": "2022-02-18T09:26:57.606Z",
+	"_postman_exported_using": "Postman/9.13.2"
 }
