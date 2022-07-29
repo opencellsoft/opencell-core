@@ -18,8 +18,12 @@
 
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.service.base.PersistenceService;
 
@@ -30,4 +34,16 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ProductChargeTemplateMappingService extends PersistenceService<ProductChargeTemplateMapping> {
 
+    @SuppressWarnings("unchecked")
+    public ProductChargeTemplateMapping findByProductAndOfferTemplate(String productCode, String chargeTemplateCode) {
+        QueryBuilder builder = new QueryBuilder(ProductChargeTemplateMapping.class, "ptm");
+        builder.addCriterion("ptm.product.code", "=", productCode, false);
+        if(chargeTemplateCode != null)
+            builder.addCriterion("ptm.chargeTemplate.code", "=", chargeTemplateCode, false);
+        
+        var query = builder.getQuery(getEntityManager());
+        var results = (List<ProductChargeTemplateMapping>) query.setMaxResults(1).getResultList();
+        
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
 }
