@@ -13917,4 +13917,10 @@ order by date_trunc('month', i.invoice_date) DESC
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
+
+    <changeSet id="#INTRD-8812_20220729" author="ZBariki">
+        <dropUniqueConstraint constraintName="open_order_article_unique" tableName="open_order_article"/>
+        <dropColumn tableName="open_order_article" columnName="code"/>
+        <dropColumn tableName="open_order_article" columnName="description"/>
+    </changeSet>
 </databaseChangeLog>

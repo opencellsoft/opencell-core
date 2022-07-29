@@ -11956,16 +11956,8 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_article_unique"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
-
             <!-- Simple fields -->
-            
             <column name="active" type="${type.boolean}"/>
-            
-
             <!-- Dependencies -->
             <column name="accounting_article_id" type="bigint">
                 <constraints nullable="false" />
@@ -18355,7 +18347,8 @@
     <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
     <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
     <changeSet id="#INTRD-8700_20220728" author="ZBariki"/>
-
+    <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
