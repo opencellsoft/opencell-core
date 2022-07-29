@@ -9692,7 +9692,9 @@
               "/api/rest/dunning/dunningDocument/*",
               "/api/rest/v2/payment/dunning/*",
               "/api/rest/payment/*",
-              "/api/rest/v2/payment-plan/*"
+              "/api/rest/v2/payment-plan/*",
+              "/api/rest/v2/accounting/*"
+
             ],
             "scopes": [
               {
