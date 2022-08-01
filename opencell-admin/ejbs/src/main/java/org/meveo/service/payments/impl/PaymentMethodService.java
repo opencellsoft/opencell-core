@@ -197,6 +197,30 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
     }
+    
+    public void obtainAndSetSepaToken(DDPaymentMethod ddPaymentMethod, CustomerAccount customerAccount) throws BusinessException {
+        if (!StringUtils.isBlank(ddPaymentMethod.getTokenId())) {
+            return;
+        }
+ 
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+        } catch (Exception e) {
+            // Create the card even if there no payment gateway
+            log.warn("Cant find payment gateway");
+        }
+
+    
+       gatewayPaymentInterface.createMandate(customerAccount, ddPaymentMethod.getBankCoordinates().getIban(), ddPaymentMethod.getMandateIdentification());
+
+            
+       
+    }
 
     /**
      * Find by token id.

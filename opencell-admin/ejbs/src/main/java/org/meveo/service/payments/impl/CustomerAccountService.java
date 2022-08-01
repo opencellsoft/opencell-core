@@ -46,6 +46,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -728,6 +729,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
 
+        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
+            paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, ddPaymentMethod.getCustomerAccount());
+        }
+        
+        
         entity.ensureOnePreferredPaymentMethod();
         super.create(entity);
     }

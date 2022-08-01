@@ -2,6 +2,7 @@ package org.meveo.service.payments.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,7 +296,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         String transactionReference = System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId();
         
         if(hostedCheckoutInput.isOneShotPayment()) {
-        	transactionReference = "oneShot"+transactionReference;
+            transactionReference = "oneShot"+transactionReference;
 		}
         
         
@@ -308,14 +309,14 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         		"|orderChannel="+OrderChannel.INTERNET.name()+
         		"|transactionReference="+transactionReference+
         		"|paymentPattern="+PaymentPattern.RECURRING_1.name()+
-                "|normalReturnUrl=" + returnUrl +
-                "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
-                "|fraudData.challengeMode3DS=CHALLENGE_MANDATE"+
-                "|captureMode="+CaptureMode.AUTHOR_CAPTURE.name()+
-                "|captureDay=0"+
-                "|merchantWalletId=" + merchantWalletId +
-                "|keyVersion=" + paymentGateway.getWebhooksKeyId()+
-                "|sealAlgorithm="+paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256");
+            "|normalReturnUrl=" + returnUrl +
+            "|merchantSessionId=" + hostedCheckoutInput.getCustomerAccountId() +
+            "|fraudData.challengeMode3DS=CHALLENGE_MANDATE"+
+            "|captureMode="+CaptureMode.AUTHOR_CAPTURE.name()+
+            "|captureDay=0"+
+            "|merchantWalletId=" + merchantWalletId +
+            "|keyVersion=" + paymentGateway.getWebhooksKeyId()+
+            "|sealAlgorithm="+paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256");
                 
         		
 
@@ -531,5 +532,32 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
         }
 
         return paymentMethodService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#createSepaDirectDebitToken(org.meveo.model.payments.CustomerAccount, java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#createMandate(org.meveo.model.payments.CustomerAccount, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#approveSepaDDMandate(java.lang.String, java.util.Date)
+     */
+    @Override
+    public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -46,7 +46,8 @@ import org.slf4j.LoggerFactory;
  * 
  *  @author anasseh
  *  @author Mounir Bahije
- *  @lastModifiedVersion 5.2
+ *  @author Mbarek Ait-yaazza
+ *  @lastModifiedVersion 10.0.0
  */
 
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
@@ -67,7 +68,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
             CreditCardTypeEnum cardType) throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<>();
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
         scriptContext.put(PaymentScript.CONTEXT_ALIAS, alias);
@@ -116,6 +117,8 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
         scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
+        
 
         paymentScriptInterface.doPaymentCard(scriptContext);
 
@@ -180,6 +183,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
         scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
 
         paymentScriptInterface.doRefundCard(scriptContext);
 
@@ -230,7 +234,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         mandatInfoDto.setReference((String) scriptContext.get(PaymentScript.RESULT_MANDAT_REF));
         mandatInfoDto.setState((MandatStateEnum) scriptContext.get(PaymentScript.RESULT_STATE));
         mandatInfoDto.setStandard((String) scriptContext.get(PaymentScript.RESULT_STANDARD));
-        mandatInfoDto.setInitialScore((int) scriptContext.get(PaymentScript.RESULT_INT_SCORE));
+        mandatInfoDto.setInitialScore((Integer) scriptContext.get(PaymentScript.RESULT_INT_SCORE));
         mandatInfoDto.setDateCreated((Date) scriptContext.get(PaymentScript.RESULT_DATE_CREATED));
         mandatInfoDto.setDateSigned((Date) scriptContext.get(PaymentScript.RESULT_DATE_SIGNED));
         mandatInfoDto.setPaymentScheme((String) scriptContext.get(PaymentScript.RESULT_SCHEME));
@@ -311,6 +315,46 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
          String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
         
          return hostedCheckoutUrl;
+	}
+
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		   Map<String, Object> scriptContext = new HashMap<String, Object>();
+	        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+	        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
+	        scriptContext.put(PaymentScript.CONTEXT_ALIAS, alias);
+	        scriptContext.put(PaymentScript.CONTEXT_ACCOUNT_HOLDER_NAME, accountHolderName);
+	        scriptContext.put(PaymentScript.CONTEXT_IBAN, iban);
+
+	        paymentScriptInterface.createSepaDirectDebitToken(scriptContext);
+
+	        return (String) scriptContext.get(PaymentScript.RESULT_TOKEN);
+	}
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException {
+		  Map<String, Object> scriptContext = new HashMap<String, Object>();
+	        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+	        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
+	        scriptContext.put(PaymentScript.CONTEXT_MANDATE_REFERENCE, mandateReference);
+	        scriptContext.put(PaymentScript.CONTEXT_IBAN, iban);
+	        scriptContext.put(PaymentScript.RESULT_STATE, MandatStateEnum.created);
+	        
+	        paymentScriptInterface.createMandate(scriptContext);
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		  Map<String, Object> scriptContext = new HashMap<String, Object>();
+	        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+	        scriptContext.put(PaymentScript.RESULT_TOKEN, token);
+	        scriptContext.put(PaymentScript.CONTEXT_SIGNATURE_DATE, signatureDate);
+	        scriptContext.put(PaymentScript.RESULT_STATE, MandatStateEnum.active);
+
+	        paymentScriptInterface.createMandate(scriptContext);
+		
 	}
 
 }

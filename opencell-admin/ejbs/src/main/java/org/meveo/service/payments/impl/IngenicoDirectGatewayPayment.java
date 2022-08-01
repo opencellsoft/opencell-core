@@ -92,6 +92,7 @@ import com.onlinepayments.domain.TokenCardData;
 
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -781,4 +782,31 @@ public class IngenicoDirectGatewayPayment implements GatewayPaymentInterface {
 		customerDevice.setBrowserData(browserData);
 		return customerDevice;
 	}
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#createSepaDirectDebitToken(org.meveo.model.payments.CustomerAccount, java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#createMandate(org.meveo.model.payments.CustomerAccount, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#approveSepaDDMandate(java.lang.String, java.util.Date)
+     */
+    @Override
+    public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
 }
