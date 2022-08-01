@@ -35,7 +35,7 @@
             </hftl:actionsColumn>
         </hftl:dataList>
         
-        <p:dialog header="Run Report" widgetVar="dlgRunReport" width="80%" id="runReportDialog">
+        <p:dialog header="Run Report" widgetVar="dlgRunReport" width="80%" id="runReportDialog" style="overflow-y: scroll; bottom: 20px" onShow="disableDeletedParams()" >
             <h:form id="runReportForm">
                 <div class="ui-g">
                     <hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showFormButtons="false">
@@ -51,6 +51,11 @@
                 </div>
             </h:form>
         </p:dialog>
+        <script type="application/javascript">
+			function disableDeletedParams() {
+				$("#runReportForm button[class*=ui-button-icon-only]").addClass("ui-state-disabled");
+			}
+		</script>
     </ui:define>
 
 </ui:composition>
