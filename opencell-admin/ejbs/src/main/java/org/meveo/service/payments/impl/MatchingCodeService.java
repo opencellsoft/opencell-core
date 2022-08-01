@@ -50,6 +50,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * MatchingCode service implementation.
@@ -68,6 +69,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+    
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     @Updated
@@ -143,18 +147,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice) accountOperation).getInvoice();
                 if (invoice != null) {
                     if (withWriteOff) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.ABANDONED);
                     } else if (withRefund) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.REFUNDED);
                     } else if (fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
                     } else if (!fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     }
                     entityUpdatedEventProducer.fire(invoice);
                 }
             }
-
 
             if(0 != amountToMatch.longValue()){
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
@@ -208,13 +211,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if (invoice != null) {
                     if(withWriteOff) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.ABANDONED);
                     } else if(withRefund) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.REFUNDED);
                     } else if(fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
                     } else if(!fullMatch) {
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     }
                 }
             }
@@ -297,7 +300,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+                            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.UNPAID);
                         	entityUpdatedEventProducer.fire(invoice);
                     	}
                     }
@@ -306,7 +309,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
                         if (invoice != null) {
-                            invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
+                            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     	}
                 	}
                 }
