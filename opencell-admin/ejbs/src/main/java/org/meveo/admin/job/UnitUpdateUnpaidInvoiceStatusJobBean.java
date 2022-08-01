@@ -59,7 +59,7 @@ public class UnitUpdateUnpaidInvoiceStatusJobBean {
         log.debug("update Invoice[id={}] status to unpaid", unpaidInvoiceId);
         try {
             Invoice invoice = invoiceService.findById(unpaidInvoiceId);
-            invoice.setPaymentStatus(InvoicePaymentStatusEnum.UNPAID);
+            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.UNPAID);
             invoice.setPaymentStatusDate(new Date());
             invoice = invoiceService.updateNoCheck(invoice);
             entityUpdatedEventProducer.fire(invoice);
