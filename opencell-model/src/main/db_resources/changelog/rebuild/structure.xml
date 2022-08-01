@@ -9424,8 +9424,7 @@
             </column>
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
-            <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="price" type="numeric(23, 12)" />
             <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
@@ -18344,10 +18343,13 @@
 	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-8689_20220727" author="ZBariki"/>
+
     <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
     <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
     <changeSet id="#INTRD-8700_20220728" author="ZBariki"/>
     <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
+
+	<changeSet id="#INTRD-8719_20220727" author="TarikRabeh"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
