@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -157,6 +158,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
 		}
 	}
 	
+	@Transactional
 	@Override
 	public Response createQueryScheduler(Long reportId, QuerySchedulerInput queryScheduler) {
 		ReportQuery reportQuery = reportQueryApiService.findById(reportId)

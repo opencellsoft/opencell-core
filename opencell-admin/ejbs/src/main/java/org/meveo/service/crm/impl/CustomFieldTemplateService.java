@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -535,6 +537,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException business exception.
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
         return createMissingTemplates(appliesTo, templates, false, false);
     }

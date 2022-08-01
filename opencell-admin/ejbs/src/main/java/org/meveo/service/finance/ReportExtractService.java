@@ -421,7 +421,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
         List<Map<String, Object>> records = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(Objects.requireNonNull(StorageFactory.getReader(path)))) {
+        if(StorageFactory.getReader(path) == null)
+            throw new BusinessException("Path for reading generated file must not be null");
+        try (BufferedReader br = new BufferedReader(StorageFactory.getReader(path))) {
             String line;
             String[] header = br.readLine().split(separator);
             while ((line = br.readLine()) != null) {

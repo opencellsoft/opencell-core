@@ -164,9 +164,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private ContractItemService contractItemService;
     
     @Inject
-    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
-
-    @Inject
     protected CounterInstanceService counterInstanceService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
@@ -274,7 +271,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, Reservation reservation, boolean isVirtual) throws InvalidELException, RatingException {
 
         WalletOperation walletOperation = null;
-        chargeInstance=chargeInstanceService.retrieveIfNotManaged(chargeInstance);
         if (quantityInChargeUnits == null) {
             quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
         }
@@ -607,7 +603,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
                 Contract contract = null;
                 if(contracts != null && !contracts.isEmpty()) {
-                	contract = contracts.get(0);
+                	// Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
+                	contract = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
+                		.or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
+                		.or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
+                		.orElse(contracts.get(0)); // Seller Contract
+                	
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
@@ -1378,7 +1379,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Map<ChargeInstance, List<WalletOperation>> groupedWOByChargeInstance = walletOperations.stream().collect(Collectors.groupingBy(wo -> wo.getChargeInstance()));
 
         for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
-            ChargeInstance chargeInstance = chargeInstanceService.retrieveIfNotManaged(groupedWos.getKey());
+        	ChargeInstance chargeInstance = groupedWos.getKey();
             if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
                 List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
                 ratingResult.addCounterChange(counterChangeInfo);

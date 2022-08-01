@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
@@ -19,8 +17,6 @@ import org.meveo.apiv2.standardReport.service.StandardReportApiService;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
-
-import static java.lang.Long.valueOf;
 
 public class StandardReportResourceImpl implements StandardReportResource {
 
@@ -47,15 +43,8 @@ public class StandardReportResourceImpl implements StandardReportResource {
         agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
                 ? agedReceivableMapper.toEntityList(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, numberOfPeriods);
-    	EntityTag etag = new EntityTag(Integer.toString(agedReceivablesList.hashCode()));
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(1000);
-        Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-        if (builder != null) {
-            builder.cacheControl(cc);
-            return builder.build();
-        }
-        ImmutableAgedReceivable[] agedReceivablesData = agedReceivablesList
+
+    	ImmutableAgedReceivable[] agedReceivablesData = agedReceivablesList
                 .stream()
                 .map(AgedReceivableDto -> agedReceivableMapper.toResourceAgedReceivable(agedReceivableMapper.toResource(AgedReceivableDto)))
                 .toArray(ImmutableAgedReceivable[]::new);
@@ -63,6 +52,6 @@ public class StandardReportResourceImpl implements StandardReportResource {
         AgedReceivables agedReceivables = ImmutableAgedReceivables.builder().addData(agedReceivablesData).startDate(DateUtils.formatDateWithPattern(startDate, "dd/MM/yyyy").toString()).offset(offset).limit(limit).total(count)
                 .build().withLinks(new LinkGenerator.PaginationLinkGenerator(StandardReportResource.class)
                         .offset(offset).limit(limit).total(count).build());
-        return Response.ok().cacheControl(cc).tag(etag).entity(agedReceivables).build();
+        return Response.ok().entity(agedReceivables).build();
     }
 }

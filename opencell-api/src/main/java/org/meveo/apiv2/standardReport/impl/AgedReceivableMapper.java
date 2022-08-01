@@ -28,6 +28,7 @@ import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.standardReport.AgedReceivable;
 import org.meveo.apiv2.standardReport.ImmutableAgedReceivable;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
@@ -52,7 +53,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.sum_90_up(agedReceivableDto.getSum90Up())
 				.general_total(agedReceivableDto.getGeneralTotal())
 				.dueDate(agedReceivableDto.getDueDate())
-				.funcCurrency(appProvider.getCurrency().getCurrencyCode())
+				.funcCurrency(appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : StringUtils.EMPTY)
 				.netAmountByPeriod(agedReceivableDto.getNetAmountByPeriod())
 				.taxAmountByPeriod(agedReceivableDto.getTaxAmountByPeriod())
 				.totalAmountByPeriod(agedReceivableDto.getTotalAmountByPeriod())
@@ -148,7 +149,7 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
-			agedReceivableDto.setFuncCurrency(appProvider.getCurrency().getCurrencyCode());
+			agedReceivableDto.setFuncCurrency(appProvider.getCurrency() != null ? appProvider.getCurrency().getCurrencyCode() : StringUtils.EMPTY);
 			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
 			responseDto.add(agedReceivableDto);
 		}
