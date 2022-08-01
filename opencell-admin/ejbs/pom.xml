@@ -651,6 +651,12 @@
             <artifactId>connect-sdk-java</artifactId>
             <version>${version.ingenico-connect-sdk}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.worldline-solutions</groupId>
+            <artifactId>onlinepayments-sdk-java</artifactId>
+            <version>${version.worldline.onlinepayments-sdk}</version>
+        </dependency>        
 
 		<dependency>
 		  <groupId>com.paypal.sdk</groupId>
