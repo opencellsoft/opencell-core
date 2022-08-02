@@ -293,7 +293,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Objects.hash(price, amountWithTax, amountWithoutTax, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
+        result = prime * result + Objects.hash(price, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
           priority, status, statusChangeLog, statusDate, validity);
         return result;
     }
