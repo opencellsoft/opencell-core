@@ -90,12 +90,12 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal price;
 
-    @Column(name = "price", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "price", insertable = false, updatable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     @Deprecated
     private BigDecimal amountWithoutTax;
 
-    @Column(name = "price", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "price", insertable = false, updatable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     @Deprecated
     private BigDecimal amountWithTax;
@@ -128,8 +128,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.validity = copy.validity;
         this.isMatrix = copy.isMatrix;
         this.price = copy.price;
-        this.amountWithoutTax = copy.amountWithoutTax;
-        this.amountWithTax = copy.amountWithTax;
         this.priceEL = copy.priceEL;
         this.lines = new HashSet<>();
         this.columns = new HashSet<>();
@@ -234,22 +232,22 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
 	@Deprecated
 	public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
+        return price;
     }
 
 	@Deprecated
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
+        this.price = amountWithoutTax;
     }
 
 	@Deprecated
     public BigDecimal getAmountWithTax() {
-        return amountWithTax;
+        return price;
     }
 
 	@Deprecated
     public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.amountWithTax = amountWithTax;
+        this.price = amountWithTax;
     }
 
     /**
