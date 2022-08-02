@@ -212,10 +212,10 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
             throw new BusinessException("At least a product must be linked to the open order when open order type is PRODUCTS");
         }
         if(openOrderQuote.getEndOfValidityDate() != null) {
-            if(openOrderQuote.getEndOfValidityDate().compareTo(setTimeToZero(new Date())) <= 0) {
+            if(setTimeToZero(openOrderQuote.getEndOfValidityDate()).compareTo(setTimeToZero(new Date())) <= 0) {
                 throw new BusinessException("End of validity date should be > current date");
             }
-            if(openOrderQuote.getEndOfValidityDate().compareTo(openOrderQuote.getActivationDate()) <= 0) {
+            if(setTimeToZero(openOrderQuote.getEndOfValidityDate()).compareTo(openOrderQuote.getActivationDate()) <= 0) {
                 throw new BusinessException("End of validity date should be > activation date");
             }
         }
