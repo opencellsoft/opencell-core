@@ -11549,6 +11549,15 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-8743_8743_20220802" author="HichamHANINE">		
+		<addColumn tableName="billing_rated_transaction">
+            <column name="reject_reason" type="varchar(4000)" />
+            <column name="origin_billing_account" type="bigint" />
+        </addColumn>
+		
+		<addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	</changeSet>
 
     <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI">
         <addColumn tableName="crm_provider">
