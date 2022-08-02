@@ -1551,6 +1551,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("update c");
 
             CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
+            customerDto.setIsCompany(postData.getCompany());
             accountEntity = customerApi.update(customerDto, true, businessAccountModel);
         }
 
@@ -1559,6 +1560,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("update ca");
 
             CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
+            customerAccountDto.setIsCompany(postData.getCompany());
             accountEntity = customerAccountApi.update(customerAccountDto, true, businessAccountModel);
         }
 
@@ -1569,6 +1571,7 @@ public class AccountHierarchyApi extends BaseApi {
             	terminateCRMAccountHierarchy(postData);
             }else {
             	BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
+            	billingAccountDto.setIsCompany(postData.getCompany());
             	accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
             	setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
             }
@@ -1579,6 +1582,7 @@ public class AccountHierarchyApi extends BaseApi {
             log.debug("update ua");
 
             UserAccountDto userAccountDto = createUserAccountDto(postData, accountHierarchyTypeEnum);
+            userAccountDto.setIsCompany(postData.getCompany());
             accountEntity = userAccountApi.update(userAccountDto, true, businessAccountModel);
         }
 

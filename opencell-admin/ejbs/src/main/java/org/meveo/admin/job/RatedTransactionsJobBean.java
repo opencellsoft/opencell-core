@@ -30,7 +30,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.assertj.core.util.Arrays;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -176,6 +175,11 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         		RatedTransaction discountRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getId());
             	
         		discountRatedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        		discountRatedTransaction.setDiscountPlan(walletOperation.getDiscountPlan());
+        		discountRatedTransaction.setDiscountPlanItem(walletOperation.getDiscountPlanItem());
+        		discountRatedTransaction.setDiscountPlanType(walletOperation.getDiscountPlanType());
+        		discountRatedTransaction.setDiscountValue(walletOperation.getDiscountValue());
+        		discountRatedTransaction.setSequence(walletOperation.getSequence());
         		ratedTransactionService.update(discountRatedTransaction);
         	}
     		

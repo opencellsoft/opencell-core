@@ -161,7 +161,7 @@ public class ImportCustomerBankDetailsJobBean {
             String bicArrivee = newModification.getUpdatedPartyAndAccount().getAgent().getFinInstnId().getBicFi();
             log.debug("(ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}] ibanDepart: [{}])"
                 , ibanDepart, bicDepart, ibanArrivee, bicArrivee);
-            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart, false);
+            List<PaymentMethod> paymentMethods = paymentMethodService.listByIbanAndBicFi(ibanDepart, bicDepart);
             log.debug("paymentMethodsDepart.size(): {}", paymentMethods.size());
             List<PaymentMethod> paymentMethodsArrivee = paymentMethodService.listByIbanAndBicFi(ibanArrivee, bicArrivee);
             log.debug("paymentMethodsArrivee.size(): {}", paymentMethodsArrivee.size());

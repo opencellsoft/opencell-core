@@ -13,6 +13,22 @@
             ]
           }
         }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
+                "entityClass": "org.meveo.model.admin.Seller"
+              }
+            ]
+          }
+        }
       }
     ]
   },

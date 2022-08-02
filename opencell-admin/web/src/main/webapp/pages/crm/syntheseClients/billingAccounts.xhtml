@@ -34,8 +34,7 @@
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
 			<hftl:column label="#{messages['address.address1']}" field="address".address1" />
-			<hftl:actionsColumn editView="/pages/crm/syntheseClients/syntheseClientDetail.xhtml"
-				permission="#{currentUser.hasRole('accountManagement') or currentUser.hasRole('customerSummaryVisualization')}" />
+			<hftl:actionsColumn editView="/pages/crm/syntheseClients/syntheseClientDetail.xhtml" />
 		</hftl:dataList>
 
 

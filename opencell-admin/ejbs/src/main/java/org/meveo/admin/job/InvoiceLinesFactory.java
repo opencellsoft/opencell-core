@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -109,6 +110,7 @@ public class InvoiceLinesFactory {
             			invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
             			invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
             			invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
+            			invoiceLine.setSequence(discountRatedTransaction.getSequence());
             		}
         		}
         		

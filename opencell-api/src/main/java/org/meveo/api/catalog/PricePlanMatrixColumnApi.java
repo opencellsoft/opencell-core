@@ -5,14 +5,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -105,13 +104,13 @@ public class PricePlanMatrixColumnApi extends BaseApi {
         pricePlanMatrixColumnService.removePricePlanColumn(pricePlanMatrixColumn.getId());
     }
 
-    private void checkMissingParameters(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) {
+    private void checkMissingParameters(String pricePlanMatrixCode, Integer version, PricePlanMatrixColumnDto dtoData) {
 
 
         if (StringUtils.isBlank(pricePlanMatrixCode)) {
             missingParameters.add("pricePlanMatrixCode");
         }
-        if (StringUtils.isBlank(version)) {
+        if (version == null) {
             missingParameters.add("pricePlanMatrixVersion");
         }
 
@@ -128,9 +127,9 @@ public class PricePlanMatrixColumnApi extends BaseApi {
 
     private void populatePricePlanMatrixColumn(PricePlanMatrixColumnDto dtoData, PricePlanMatrixColumn pricePlanMatrixColumn, PricePlanMatrixVersion pricePlanMatrixVersion) {
         pricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        if(!Strings.isEmpty(dtoData.getProductCode()))
+        if(!StringUtils.isEmpty(dtoData.getProductCode()))
         	pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
-        if(!Strings.isEmpty(dtoData.getOfferTemplateCode()))
+        if(!StringUtils.isEmpty(dtoData.getOfferTemplateCode()))
         	pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));
         pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());

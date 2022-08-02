@@ -92,6 +92,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
 
     public void activate(PaymentPlan paymentPlan) {
         paymentPlan.setStatus(PaymentPlanStatusEnum.ACTIVE);
+        changeInvoicePaymentStatus(paymentPlan, InvoicePaymentStatusEnum.PENDING_PLAN);
 
         super.update(paymentPlan);
 
@@ -163,7 +164,7 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
         paymentPlan.getTargetedAos().forEach(accountOperation -> {
             if (accountOperation instanceof RecordedInvoice) {
                 Invoice inv = ((RecordedInvoice) accountOperation).getInvoice();
-                inv.setPaymentStatus(paymentStatus);
+                invoiceService.checkAndUpdatePaymentStatus(inv, inv.getPaymentStatus(), paymentStatus);
                 inv.setPaymentStatusDate(new Date());
                 inv.setPaymentPlan(paymentPlan);
                 invoiceService.update(inv);

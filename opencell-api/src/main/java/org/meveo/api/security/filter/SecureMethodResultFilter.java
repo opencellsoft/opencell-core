@@ -25,8 +25,8 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.config.FilterResultsConfig;
-import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.SecuredEntity;
 import org.slf4j.Logger;
 
 /**
@@ -49,6 +49,6 @@ public abstract class SecureMethodResultFilter {
      * @return The filtered result object.
      * @throws MeveoApiException Meveo api exception
      */
-    public abstract Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException;
+    public abstract Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<String, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException;
 
 }

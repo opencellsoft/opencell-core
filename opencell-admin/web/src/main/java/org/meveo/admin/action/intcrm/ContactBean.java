@@ -37,6 +37,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.slf4j.Logger;
 
+import com.opencsv.exceptions.CsvException;
+
 
 @Named
 @ViewScoped
@@ -107,7 +109,7 @@ public class ContactBean extends BaseBean<Contact> {
 		    	if(message != null)
 		    		return message;
 		    	else return "Success";
-			} catch (IOException e) {
+			} catch (IOException | CsvException e) {
 				return "Failed to read error log";
 			}
 	}

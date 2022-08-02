@@ -1,84 +1,87 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.opencellsoft</groupId>
-		<artifactId>opencell</artifactId>
-		<relativePath>../pom.xml</relativePath>
-		<version>13.0.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>opencell-tmforum</artifactId>
-	<name>Opencell tmforum API</name>
+    <parent>
+        <groupId>com.opencellsoft</groupId>
+        <artifactId>opencell</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>13.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>opencell-tmforum</artifactId>
+    <name>Opencell tmforum API</name>
 
-	<dependencies>
+    <dependencies>
 
-		<!-- Primeface and xtream are used for api documention generation -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.primefaces</groupId> -->
-		<!-- <artifactId>primefaces</artifactId> -->
-		<!-- <version>5.2</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.thoughtworks.xstream</groupId> -->
-		<!-- <artifactId>xstream</artifactId> -->
-		<!-- <version>1.4.8</version> -->
-		<!-- </dependency> -->
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-admin-ejbs</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>com.opencellsoft</groupId>
-			<artifactId>opencell-admin-ejbs</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jboss.spec.javax.xml.bind</groupId> -->
-<!-- 			<artifactId>jboss-jaxb-api_2.2_spec</artifactId> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.ws.rs</groupId>
-			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.xml.bind</groupId>
+            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-		<plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
-                    	<release>11</release>
-                    </configuration>
-                   	<dependencies>
-                    	<dependency>
-								<groupId>org.ow2.asm</groupId>
-								<artifactId>asm</artifactId>
-								<version>7.2</version>
-							</dependency>
-					</dependencies>
-                </plugin>         
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <release>11</release>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>9.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

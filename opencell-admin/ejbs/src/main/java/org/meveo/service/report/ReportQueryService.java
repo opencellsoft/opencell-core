@@ -105,7 +105,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     /**
      * List of report queries allowed for the current user.
      * return all PUBLIC/ PROTECTED and only PRIVATE created by the user queries
-     * If the current user has query_manager all report queries are returned
+     * If the current user has queryManagement all report queries are returned
      *
      * @param configuration : filtering & pagination configuration used by the query
      * @param currentUser      : current user
@@ -113,7 +113,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      */
     public List<ReportQuery> reportQueriesAllowedForUser(PaginationConfiguration configuration, MeveoUser currentUser) {
         Map<String, Object> filters = ofNullable(configuration.getFilters()).orElse(new HashMap<>());
-        if(!currentUser.getRoles().contains("query_manager")) {
+        if(!currentUser.hasRole("queryManagement")) {
             configuration.setFilters(createQueryFilters(currentUser.getUserName(), filters));
         }
         return list(configuration);
@@ -137,14 +137,8 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	List<Object> result = execute(reportQuery, targetEntity, false);
     	List<String> response = new ArrayList<>();
 		for(Object object : result) {
-    		var line = "";
-				Map<String, Object> entries = (Map<String, Object>)object;
-				for (Object entry : entries.values()) {
-					if(entry != null)
-						line += entry.toString() +";"; 
-					else
-						line += ";";
-				}
+			Map<String, Object> entries = (Map<String, Object>)object;
+			var line = reportQuery.getFields().stream().map(e -> entries.getOrDefault((String) e, "").toString()).collect(Collectors.joining(";"));
     		response.add(line);
 		}
     	return response;
@@ -153,7 +147,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
 	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
     	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV, targetEntity);
-    }
+    }	
 
 	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName, Class<?> targetEntity) throws IOException, BusinessException {
     	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL, targetEntity);
@@ -623,7 +617,7 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
      * @return number of ReportQueries
      */
     public Long countAllowedQueriesForUser(MeveoUser currentUser, Map<String, Object> filters) {
-        if(currentUser.getRoles().contains("query_manager")) {
+        if(currentUser.hasRole("queryManagement")) {
                 return count(new PaginationConfiguration(filters));
         } else {
             return count(new PaginationConfiguration(createQueryFilters(currentUser.getUserName(), filters)));

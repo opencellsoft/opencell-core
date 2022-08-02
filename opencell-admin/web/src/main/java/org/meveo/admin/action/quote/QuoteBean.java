@@ -39,9 +39,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -52,7 +52,6 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
@@ -64,11 +63,9 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
-import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -104,9 +101,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     @Inject
     private ProductOfferingService productOfferingService;
-
-    @Inject
-    private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject
     private WorkflowService workflowService;
@@ -838,9 +832,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         boolean editable = isValidationFailed() || entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
-            User user = userService.findByUsername(currentUser.getUserName());
-            editable = userGroup.isUserBelongsHereOrHigher(user);
+            editable = userService.isUserBelongsGroup(entity.getRoutedToUserGroup());
         }
 
         return editable;

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import javax.ws.rs.NotFoundException;
 
@@ -73,7 +74,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			queryBuilder.addSql("am.parameter3 is null ");
 		}
 		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
+		return query.setFlushMode(FlushModeType.COMMIT).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,7 +134,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		update(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}
-	
+
 	private void populateArticleMappingLine(ArticleMappingLine articleMappingLine) {
     	if(articleMappingLine.getOfferTemplate() != null){
             OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
@@ -191,4 +192,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		}
 	 	return articleMapping;
 	}
+
+    public List<ArticleMappingLine> findAll() {
+        return getEntityManager().createNamedQuery("ArticleMappingLine.findAll").getResultList();
+    }
 }

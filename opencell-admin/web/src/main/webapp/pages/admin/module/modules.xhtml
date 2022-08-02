@@ -40,7 +40,7 @@
                     rendered="#{entity.downloaded}" />
                 <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
             </p:column>
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="false" />
+            <hftl:actionsColumn useCustomIdParam="true" renderEnableLink="false" />
             <ui:define name="add-on-buttons">
                 <p:commandButton id="downloadMeveoModuleButton" rendered="#{meveoModuleListBean.canUserUpdateEntity()}" value="#{messages['meveoModule.downloadAndInstallModules']}"
                     update=":#{p:component('meveoModulesDialog')}" oncomplete="PF('meveoModulesDialog').show()">

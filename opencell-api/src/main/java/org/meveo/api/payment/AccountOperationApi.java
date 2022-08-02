@@ -41,7 +41,13 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
-import org.meveo.api.dto.payment.*;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.LitigationRequestDto;
+import org.meveo.api.dto.payment.MatchOperationRequestDto;
+import org.meveo.api.dto.payment.MatchingAmountDto;
+import org.meveo.api.dto.payment.MatchingCodeDto;
+import org.meveo.api.dto.payment.OtherCreditAndChargeDto;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
@@ -57,13 +63,24 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.*;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.UserService;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationRejectionReason;
+import org.meveo.model.payments.AccountOperationStatus;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Journal;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.Refund;
+import org.meveo.model.payments.RejectedPayment;
+import org.meveo.model.payments.WriteOff;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -110,13 +127,6 @@ public class AccountOperationApi extends BaseApi {
     
     @Inject
     private JournalReportService journalService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
 
     @Inject
     private PaymentPlanService paymentPlanService;
@@ -671,25 +681,10 @@ public class AccountOperationApi extends BaseApi {
         if (accountOperation.getStatus().equals(EXPORTED)) {
             throw new BusinessException("Can not update accounting date, account operation is EXPORTED");
         }
-        if(!hasPermission(currentUser.getUserName())) {
-            throw new BusinessException("Operation not allowed for "
-                    + currentUser.getUserName() + ", user does not have financeManagement permission");
-        }
         accountOperation.setAccountingDate(accountingDate);
         accountOperation.setReason(AccountOperationRejectionReason.FORCED);
         
         return accountOperationService.update(accountOperation);
-    }
-
-    private boolean hasPermission(String userName) {
-        User user = ofNullable(userService.findByUsername(userName))
-                .orElseThrow(() -> new BusinessException(userName + "not found"));
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            return false;
-        }
-        return user.getRoles()
-                .stream()
-                .anyMatch(role -> role.getPermissions() != null && role.hasPermission("financeManagement"));
     }
 
 	/**

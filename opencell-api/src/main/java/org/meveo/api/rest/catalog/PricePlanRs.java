@@ -220,6 +220,19 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "the product verion with product code and current version in param does not exist ")
             })
     Response createOrUpdateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto);
+    
+    @PUT
+    @Path("/pricePlanMatrixVersion")
+    @Operation(summary = "update a price plan version",
+            tags = { "Price Plan" },
+            description ="update an existing price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan version successfully updated",
+                            content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Unkonw product to attach to product version"),
+                    @ApiResponse(responseCode = "400", description = "the product verion with product code and current version in param does not exist ")
+            })
+    Response updateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto);
 
     /**
      *

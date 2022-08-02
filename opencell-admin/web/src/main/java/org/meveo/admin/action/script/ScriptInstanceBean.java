@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,7 +33,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -45,8 +43,8 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit, view, delete operations). It
+ * works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
  * @author melyoussoufi
@@ -64,13 +62,13 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private ScriptInstanceService scriptInstanceService;
 
     @Inject
-    private RoleService roleService;
-
-    @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
-    private DualListModel<Role> execRolesDM;
-    private DualListModel<Role> sourcRolesDM;
+    @Inject
+    private RoleService roleService;
+
+    private DualListModel<String> execRolesDM;
+    private DualListModel<String> sourcRolesDM;
 
     private String logMessages;
 
@@ -91,39 +89,39 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
     }
 
-    public DualListModel<Role> getExecRolesDM() {
+    public DualListModel<String> getExecRolesDM() {
 
         if (execRolesDM == null) {
-            List<Role> perksSource = roleService.getAllRoles();
-            List<Role> perksTarget = new ArrayList<Role>();
+            List<String> perksSource = roleService.listRoleNames(null);
+            List<String> perksTarget = new ArrayList<String>();
             if (getEntity().getExecutionRoles() != null) {
                 perksTarget.addAll(getEntity().getExecutionRoles());
             }
             perksSource.removeAll(perksTarget);
-            execRolesDM = new DualListModel<Role>(perksSource, perksTarget);
+            execRolesDM = new DualListModel<String>(perksSource, perksTarget);
         }
         return execRolesDM;
     }
 
-    public DualListModel<Role> getSourcRolesDM() {
+    public DualListModel<String> getSourcRolesDM() {
 
         if (sourcRolesDM == null) {
-            List<Role> perksSource = roleService.getAllRoles();
-            List<Role> perksTarget = new ArrayList<Role>();
+            List<String> perksSource = roleService.listRoleNames(null);
+            List<String> perksTarget = new ArrayList<String>();
             if (getEntity().getSourcingRoles() != null) {
                 perksTarget.addAll(getEntity().getSourcingRoles());
             }
             perksSource.removeAll(perksTarget);
-            sourcRolesDM = new DualListModel<Role>(perksSource, perksTarget);
+            sourcRolesDM = new DualListModel<String>(perksSource, perksTarget);
         }
         return sourcRolesDM;
     }
 
-    public void setExecRolesDM(DualListModel<Role> perks) {
+    public void setExecRolesDM(DualListModel<String> perks) {
         this.execRolesDM = perks;
     }
 
-    public void setSourcRolesDM(DualListModel<Role> perks) {
+    public void setSourcRolesDM(DualListModel<String> perks) {
         this.sourcRolesDM = perks;
     }
 
@@ -183,13 +181,13 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         // Update roles
         getEntity().getExecutionRoles().clear();
         if (execRolesDM != null) {
-            getEntity().getExecutionRoles().addAll(roleService.refreshOrRetrieve(execRolesDM.getTarget()));
+            getEntity().getExecutionRoles().addAll(execRolesDM.getTarget());
         }
 
         // Update roles
         getEntity().getSourcingRoles().clear();
         if (sourcRolesDM != null) {
-            getEntity().getSourcingRoles().addAll(roleService.refreshOrRetrieve(sourcRolesDM.getTarget()));
+            getEntity().getSourcingRoles().addAll(sourcRolesDM.getTarget());
         }
 
         String result = super.saveOrUpdate(killConversation);
@@ -253,5 +251,4 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
         return null;
     }
-
 }

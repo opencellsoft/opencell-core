@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -62,6 +63,8 @@ import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 
+import com.opencsv.exceptions.CsvException;
+
 /**
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -97,6 +100,7 @@ public class ContactApi extends BaseApi {
     @Inject
     CustomerCategoryService customerCategoryService;
 
+    @TransactionAttribute
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
         if (postData.getName() == null) {
@@ -471,7 +475,7 @@ public class ContactApi extends BaseApi {
         return result;
     }
 
-    public ContactsDto importCSVText(String context) throws IOException {
+    public ContactsDto importCSVText(String context) throws IOException, CsvException {
         List<Contact> failedToPersist = new ArrayList<Contact>();
         List<Contact> contacts = null;
         List<String> failedToPersistLog = new ArrayList<String>();

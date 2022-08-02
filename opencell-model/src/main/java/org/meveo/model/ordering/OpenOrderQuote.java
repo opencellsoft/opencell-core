@@ -1,6 +1,7 @@
 package org.meveo.model.ordering;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
@@ -73,8 +75,8 @@ public class OpenOrderQuote extends BusinessEntity {
 	@NotNull
 	private Date activationDate;
 	
-	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Threshold> thresholds;
+	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Threshold> thresholds = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "open_order_quote_products", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
@@ -123,7 +125,10 @@ public class OpenOrderQuote extends BusinessEntity {
     }
 
     public void setThresholds(List<Threshold> thresholds) {
-        this.thresholds = thresholds;
+		if (CollectionUtils.isNotEmpty(thresholds)) {
+			this.thresholds.clear();
+			this.thresholds.addAll(thresholds);
+		}
     }
 
 	public String getExternalReference() {

@@ -20,11 +20,7 @@ package org.meveo.admin.action.order;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.meveo.model.admin.User;
-import org.meveo.service.admin.impl.UserService;
 
 @Named
 @ConversationScoped
@@ -33,9 +29,6 @@ public class OrderListBean extends OrderBean {
     private static final long serialVersionUID = 6301829745333803753L;
     public static final String SEARCH_USER_GROUP = "routedToUserGroup";
     
-    @Inject
-    private UserService userService;
-
     private boolean showMyOrdersOnly = true;
 
     public boolean isShowMyOrdersOnly() {
@@ -52,10 +45,9 @@ public class OrderListBean extends OrderBean {
     @Override
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
-        boolean isAdmin = currentUser.hasRole("administrationManagement");
+        boolean isAdmin = currentUser.hasRoles("administrationVisualization", "administrationManagement");
         if (isAdmin && showMyOrdersOnly) {
-            User user = userService.findByUsername(currentUser.getUserName());
-            searchCriteria.put(SEARCH_USER_GROUP, user.getUserLevel());
+            searchCriteria.put(SEARCH_USER_GROUP, currentUser.getUserGroup());
         }
 
         return searchCriteria;

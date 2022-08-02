@@ -18,21 +18,15 @@
 package org.meveo.util.view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.search.SearchResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.index.ElasticClient;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyDataModel<T> {
 
@@ -53,111 +47,17 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
             sortOrder = getDefaultSortOrderImpl();
         }
 
-        String fullTextSearchValue = getFullTextSearchValue(loadingFilters);
+        PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField, sortOrder);
 
-        // Do a regular search
-        if (fullTextSearchValue == null) {
-
-            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField,
-                sortOrder);
-
-            if (first == 0) {
-                setRowCount(countRecords(paginationConfig));
-            }
-            if (getRowCount() > 0) {
-                return loadData(paginationConfig);
-            }
-
-            // Do a full text search first and then do a regular search limiting with what full text search has returned
-        } else {
-
-            // Do a full text search to retrieve relevant entity identifiers (codes)
-            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, null, fullTextSearchValue, Arrays.asList("code"), sortField, sortOrder);
-
-            ElasticSearchResults esResults = retrieveDataFromES(paginationConfig);
-            setRowCount(esResults.hits);
-
-            // Retrieve the actual data limited to entity codes
-            if (getRowCount() > 0) {
-
-                Map<String, Object> dataFilters = new HashMap<String, Object>();
-                dataFilters.put("id", esResults.ids);
-
-                paginationConfig = new PaginationConfiguration(0, pageSize, dataFilters, null, getListFieldsToFetchImpl(), sortField, sortOrder);
-                return loadData(paginationConfig);
-            }
+        if (first == 0) {
+            setRowCount(countRecords(paginationConfig));
+        }
+        if (getRowCount() > 0) {
+            return loadData(paginationConfig);
         }
 
         return new ArrayList<T>();
 
-    }
-
-    /**
-     * Perform search in Elastic Search retrieving only identifiers (codes). Json returned from Elastic Search is :<code>{
-     *   "took" : 12,
-     *   "timed_out" : false,
-     *   "_shards" : {
-     *     "total" : 5,
-     *     "successful" : 5,
-     *     "failed" : 0
-     *   },
-     *   "hits" : {
-     *     "total" : 2,
-     *     "max_score" : null,
-     *     "hits" : [ {
-     *       "_index" : "demo_accounts_v1",
-     *       "_type" : "AccountEntity",
-     *       "_id" : "Andrius_",
-     *       "_score" : null,
-     *       "fields" : {
-     *         "code" : [ "Andrius " ]
-     *       },
-     *       "sort" : [ "Andrius " ]
-     *     }, {
-     *       "_index" : "demo_accounts_v1",
-     *       "_type" : "AccountEntity",
-     *       "_id" : "Andrius_3",
-     *       "_score" : null,
-     *       "fields" : {
-     *         "code" : [ "Andrius 3" ]
-     *       },
-     *       "sort" : [ "Andrius 3" ]
-     *     } ]
-     *   }
-     * }
-     * </code>
-     * 
-     * @param paginationConfig PaginationConfiguration data holds filtering/pagination information
-     * @return A number of total records matched and entity identifiers (codes) corresponding to a given page.
-     */
-    private ElasticSearchResults retrieveDataFromES(PaginationConfiguration paginationConfig) {
-
-        SearchResponse searchResult = null;
-        try {
-            searchResult = getElasticClientImpl().search(paginationConfig, new String[] { getPersistenceServiceImpl().getEntityClass().getName() });
-
-            if (searchResult == null) {
-                return new ElasticSearchResults(0);
-            }
-
-            // Get number of hits
-
-            int rowCount = new Long(searchResult.getHits().getTotalHits()).intValue();
-
-            List<String> ids = new ArrayList<>();
-
-            searchResult.getHits().forEach(hit -> {
-                ids.add((String) hit.getSourceAsMap().get(ESBasedDataModel.RECORD_ID));
-                // codes.add(hit.getFields().get(ESBasedDataModel.RECORD_CODE).getValue());
-            });
-
-            return new ElasticSearchResults(rowCount, ids);
-
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to search in ES with {} or parse data retrieved {}", paginationConfig, searchResult, e);
-        }
-        return new ElasticSearchResults(0);
     }
 
     @Override
@@ -291,42 +191,5 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      */
     public Integer size() {
         return getRowCount();
-    }
-
-    /**
-     * Get a value for full text search.
-     * 
-     * @param loadingFilters Datatable filters
-     * @return fullText search value
-     */
-    protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-        if (loadingFilters != null) {
-            return (String) loadingFilters.get(ESBasedDataModel.FILTER_PE_FULL_TEXT);
-        }
-        return null;
-    }
-
-    /**
-     * Method that return Elastic client
-     * 
-     * @return Elastic client
-     */
-    protected abstract ElasticClient getElasticClientImpl();
-
-    /**
-     * Elastic Search search results- number of total records matched and entity identifiers of records matched in current page
-     */
-    private class ElasticSearchResults {
-        protected int hits;
-        protected List<String> ids;
-
-        public ElasticSearchResults(int hits) {
-            this.hits = hits;
-        }
-
-        public ElasticSearchResults(int hits, List<String> ids) {
-            this.hits = hits;
-            this.ids = ids;
-        }
     }
 }

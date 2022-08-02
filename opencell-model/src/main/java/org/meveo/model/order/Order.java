@@ -68,7 +68,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
@@ -197,9 +196,8 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     /**
      * User group that order processing is routed to
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routed_to_user_group_id")
-    private UserHierarchyLevel routedToUserGroup;
+    @Column(name = "routed_to_user_group")
+    private String routedToUserGroup;
 
     /**
      * Application/source that order was received from
@@ -407,11 +405,11 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
         this.orderItems.add(orderItem);
     }
 
-    public UserHierarchyLevel getRoutedToUserGroup() {
+    public String getRoutedToUserGroup() {
         return routedToUserGroup;
     }
 
-    public void setRoutedToUserGroup(UserHierarchyLevel routedToUserGroup) {
+    public void setRoutedToUserGroup(String routedToUserGroup) {
         this.routedToUserGroup = routedToUserGroup;
     }
 

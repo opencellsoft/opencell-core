@@ -1,16 +1,15 @@
 package org.meveo.service.cpq;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -120,13 +119,13 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-    public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
-    	try {
-			return getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId()).getResultList();
-    	} catch (NoResultException e) {
-            return null;
-        }
-    }
+	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
+	    	try {
+				return getEntityManager().createNamedQuery("Contract.findByAccounts")
+						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
+						.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
+	    	} catch (NoResultException e) {
+	            return null;
+	        }
+	    }
 }

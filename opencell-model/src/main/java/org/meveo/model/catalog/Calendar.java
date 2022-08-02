@@ -81,7 +81,7 @@ public abstract class Calendar extends BusinessEntity {
      * Calendar initialization date
      */
     @Transient
-    private transient ThreadLocal<Date> initDate = new ThreadLocal<Date>();
+    private transient ThreadLocal<Date> initDate = new ThreadLocal<>();
 
     /**
      * Get the period end date for a given date

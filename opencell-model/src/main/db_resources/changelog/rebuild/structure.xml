@@ -64,8 +64,8 @@
         <createSequence sequenceName="adm_language_seq" startValue="34" />
         <createSequence sequenceName="adm_notif_history_seq" />
         <createSequence sequenceName="adm_notification_seq" />
-        <createSequence sequenceName="adm_permission_seq" startValue="18" />
         <createSequence sequenceName="adm_role_seq" startValue="5" />
+        <createSequence sequenceName="adm_secured_entity_seq" startValue="1" />
         <createSequence sequenceName="adm_title_seq" startValue="38" />
         <createSequence sequenceName="adm_user_seq" startValue="3" />
         <createSequence sequenceName="ar_account_operation_seq" />
@@ -283,6 +283,7 @@
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+        <createSequence sequenceName="discount_plan_sequence_seq" startValue="1" />
         <createSequence sequenceName="report_query_seq" startValue="1"/>
         <createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createSequence sequenceName="query_result_seq" startValue="1" />
@@ -327,6 +328,7 @@
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
+        <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
     </changeSet>
 
 
@@ -2682,6 +2684,8 @@
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
 			<column name="reactivation_date" type="datetime" />
+			<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+		    <column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -2967,7 +2971,6 @@
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_net_to_pay" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
-            <column name="converted_discount_rate" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax_before_discount" type="numeric(23, 12)" />
             <column name="payment_plan_id" type="bigint" />
@@ -3238,6 +3241,7 @@
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
+            <column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3534,6 +3538,8 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
+            <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="main_tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-195">
@@ -3830,6 +3836,8 @@
             <column name="user_account_id" type="bigint" />
             <column name="billing_account_id" type="bigint" />
             <column name="old_wallet_id" type="bigint" />
+            <column name="discounted_amount" type="numeric(23,12)"/>
+            <column name="sequence" type="int4"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4137,6 +4145,8 @@
             <column name="discount_plan_id" type="bigint"/>
             <column name="expression_el" type="varchar(2000)" />
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="applicable_on_discounted_price" type="${type.boolean}"/>
+            <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -4181,6 +4191,9 @@
             <column name="accounting_article_id" type="bigint"></column>
             <column name="priorty" type="bigint"></column>
             <column name="price_plan_matrix_id" type="bigint" />
+            <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="sequence" type="int4"/>
+             <column name="last_discount" type="${type.boolean}"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -5248,6 +5261,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="default_starting_date_of_plan" type="varchar(255)" />
+             <column name="activate_cascading_discounts" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -5395,7 +5409,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="msr_qty_id" type="bigint" />
-            <column name="role_id" type="bigint" />
+            <column name="role" type="varchar(50)"/>
             <column name="width" type="varchar(10)" />
             <column name="height" type="varchar(10)" />
             <column name="visible" type="${type.boolean}" defaultValueNumeric="0" />
@@ -6292,22 +6306,18 @@
             <column name="script_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="role" type="varchar(50)"/>
         </createTable>
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
+        <addPrimaryKey columnNames="script_instance_id, role" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-307">
         <createTable tableName="adm_script_sourc_role">
             <column name="script_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="role_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="role" type="varchar(50)"/>
         </createTable>
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
+        <addPrimaryKey columnNames="script_instance_id, role" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-308">
         <createTable tableName="cat_offer_template_category">
@@ -6576,10 +6586,10 @@
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-321">
         <createTable tableName="adm_secured_entity">
-            <column name="user_id" type="bigint">
+         	<column name="id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="code" type="varchar(255)">
+            <column name="entity_code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="entity_class" type="varchar(255)">
@@ -6588,8 +6598,12 @@
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
+            <column name="user_name" type="varchar(255)"/>
+            <column name="role_name" type="varchar(255)"/> 
+            <column name="entity_id" type="bigint"/>
+            <column name="permission" type="varchar(6)"/>
         </createTable>
-        <addPrimaryKey columnNames="user_id, code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
+        <addPrimaryKey columnNames="user_name, entity_code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-322">
@@ -6866,7 +6880,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="status_message" type="varchar(2000)" />
-            <column name="routed_to_user_group_id" type="bigint" />
+            <column name="routed_to_user_group" type="varchar(50)" />
             <column name="received_from" type="varchar(50)" />
             <column name="start_date" type="datetime" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
@@ -7043,7 +7057,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="status_message" type="varchar(2000)" />
-            <column name="routed_to_user_group_id" type="bigint" />
+            <column name="routed_to_user_group" type="varchar(50)" />
             <column name="received_from" type="varchar(50)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
@@ -9410,8 +9424,7 @@
             </column>
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
-            <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="price" type="numeric(23, 12)" />
             <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
@@ -9788,6 +9801,10 @@
     		<column name="discount_value" type="numeric(23,12)" />
 			<column name="discount_plan_type" type="varchar(50)" />
 			<column name="discount_plan_item_id" type="bigint" />
+		  <column name="apply_discounts_on_overriden_price" type="${type.boolean}" />
+			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+			<column name="discounted_amount" type="numeric(23,12)"/>
+			<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10387,7 +10404,12 @@
     		<column name="quantity" type="numeric(19,2)" />
     		<column name="discounted_order_price" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
-            
+                <column name="discount_value" type="numeric(23,12)" />
+			<column name="discount_plan_type" type="varchar(50)" />
+			<column name="discount_plan_item_id" type="bigint" />
+    		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
+    		<column name="discounted_amount" type="numeric(23,12)"/>
+    		<column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -10550,12 +10572,11 @@
             <column name="converted_unit_price" type="numeric(23, 12)" />
             <column name="converted_amount_without_tax" type="numeric(23, 12)" />
             <column name="converted_amount_with_tax" type="numeric(23, 12)" />
-            <column name="converted_tax_rate" type="numeric(23, 12)" />
-            <column name="converted_discount_rate" type="numeric(23, 12)" />
             <column name="converted_amount_tax" type="numeric(23, 12)" />
             <column name="converted_discount_amount" type="numeric(23, 12)" />
             <column name="converted_raw_amount" type="numeric(23, 12)" />
             <column name="open_order_number" type="varchar(255)" />
+             <column name="sequence" type="int4"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -11803,6 +11824,20 @@
                              constraintName="open_order_template_articles_pkey"
                              tableName="open_order_template_articles"/>
     </changeSet>
+    
+    <changeSet id="rebuild-str-tbl-504" author="Mbarek-Ay">
+		<createTable tableName="cpq_assigned_attributes">
+			<column name="attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="assigned_attribute_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey
+			columnNames="attribute_id,assigned_attribute_id"
+			tableName="cpq_assigned_attributes" />
+	</changeSet>
 
     <changeSet id="#INTRD-5908-20220330-tbl" author="AmineBENAICHA">
         <createTable tableName="global_settings">
@@ -11821,19 +11856,7 @@
             </column>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
-    </changeSet>
-
-   <changeSet id="rebuild-str-540-5991-tbl-1" author="Mbarek-Ay">
-        <createTable tableName="cpq_assigned_attributes">
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="assigned_attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="attribute_id,assigned_attribute_id" tableName="cpq_assigned_attributes"/>
-    </changeSet>
+    </changeSet> 
     
     <changeSet id="#INTRD-8026_20220622-tbl" author="HatimOUDAD">
         <createTable tableName="open_order_quote">
@@ -11932,16 +11955,8 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="open_order_article_unique"/>
-            </column>
-            <column name="description" type="varchar(255)"/>
-
             <!-- Simple fields -->
-            
             <column name="active" type="${type.boolean}"/>
-            
-
             <!-- Dependencies -->
             <column name="accounting_article_id" type="bigint">
                 <constraints nullable="false" />
@@ -13060,10 +13075,6 @@
         <addForeignKeyConstraint baseColumnNames="pr_language_id" baseTableName="billing_billing_run" constraintName="fk_kh24jie5tlw4y93g44d4aq4es" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_language" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-834">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="dwh_chart" constraintName="fk_kjno1ku2jpqxlh7s4tpekd40k" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-837">
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="cat_price_plan_matrix" constraintName="fk_kwd24d6mb0ac27a9smche8u8u" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
@@ -13401,17 +13412,9 @@
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_exec_role" constraintName="fk_sc_exc_role_sc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1051">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_exec_role" constraintName="fk_sc_exc_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1052">
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="adm_script_sourc_role" constraintName="fk_sc_src_role_sc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1053">
-        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="adm_script_sourc_role" constraintName="fk_sc_src_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1057">
         <addForeignKeyConstraint baseColumnNames="offer_template_category_id" baseTableName="cat_offer_template_category" constraintName="fk_offer_cat_template_offer_cat_template" deferrable="false"
@@ -13610,10 +13613,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
-        <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1151">
         <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_ord_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -16421,6 +16420,13 @@
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="#INTRD-8700_20220728_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="main_tax_id" baseTableName="billing_tax"
+                                 constraintName="fk_billing_tax_main_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16465,7 +16471,6 @@
         <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
         <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
         <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
-        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema.adapted}adm_script_sourc_role(role_id);</sql>
         <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
         <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
         <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
@@ -17117,7 +17122,34 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
 
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -18301,7 +18333,24 @@
     <changeSet id="#INTRD-8106_20220630" author="TarikFA." />
     <changeSet id="#INTRD-8027_20220629" author="aelmalki" />
 	<changeSet id="#INTRD-8580_20220714" author="aelmalki" />
-    
+    <changeSet id="#20220326_M540_178" author="Mbarek-Ay"/>
+	<changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220412_M540_172" author="Mbarek-Ay"/>
+	<changeSet id="#20220412_M540_6533" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6609" author="Mbarek-Ay"/>
+	<changeSet id="#20220415_M540_6296" author="Rachid.Aityaazza"/>
+	<changeSet id="#20220415_M540_6931" author="Mbarek-Ay"/>
+	<changeSet id="#20220519_M540_7341" author="Mbarek-Ay"/>
+	<changeSet id="#INTRD-4681_20220407" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-8689_20220727" author="ZBariki"/>
+
+    <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
+    <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
+    <changeSet id="#INTRD-8700_20220728" author="ZBariki"/>
+    <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
+
+	<changeSet id="#INTRD-8719_20220727" author="TarikRabeh"/>
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

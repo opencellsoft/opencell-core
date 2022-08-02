@@ -104,7 +104,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.listUnpaidInvoicesIds", query = "SELECT inv.id FROM Invoice inv "
-                                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
+                                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "
+                                + " AND inv.paymentStatus not in (org.meveo.model.billing.InvoicePaymentStatusEnum.PAID, org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID)"),
         @NamedQuery(name = "Invoice.detachAOFromInvoice", query = "UPDATE Invoice set recordedInvoice = null where recordedInvoice = :ri"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
         "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
@@ -677,12 +678,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private BigDecimal convertedRawAmount= ZERO;
 
     /**
-     * Converted discount rate
-     */
-    @Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedDiscountRate;
-
-    /**
      * Converted discount amount
      */
     @Column(name = "converted_discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -808,8 +803,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 ? this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedDiscountAmount = this.discountAmount != null
                 ? this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-        this.convertedDiscountRate = this.discountRate != null
-                ? this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedNetToPay = this.netToPay != null
                 ? this.netToPay.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
         this.convertedRawAmount = this.rawAmount != null
@@ -1806,14 +1799,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setConvertedRawAmount(BigDecimal convertedRawAmount) {
         this.convertedRawAmount = convertedRawAmount;
-    }
-
-    public BigDecimal getConvertedDiscountRate() {
-        return convertedDiscountRate;
-    }
-
-    public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
-        this.convertedDiscountRate = convertedDiscountRate;
     }
 
     public BigDecimal getConvertedDiscountAmount() {

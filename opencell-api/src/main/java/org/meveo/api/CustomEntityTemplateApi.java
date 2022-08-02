@@ -18,11 +18,28 @@
 
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.*;
-import org.meveo.api.exception.*;
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomEntityTemplateDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
+import org.meveo.api.dto.EntityCustomActionDto;
+import org.meveo.api.dto.EntityCustomizationDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
@@ -34,20 +51,13 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.admin.impl.PermissionService;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Andrius Karpavicius
@@ -78,7 +88,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
     private EntityCustomActionService entityCustomActionService;
 
     @Inject
-	private PermissionService permissionService;
+    private RoleService roleService;
 
     @Override
     public CustomEntityTemplate create(CustomEntityTemplateDto dto) throws MeveoApiException, BusinessException {
@@ -161,8 +171,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             }
         }
         try {
-            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            roleService.create(new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
+            roleService.create(new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -527,11 +537,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         if (dto.getStoreInES() != null) {
             cet.setStoreInES(dto.getStoreInES());
         }
-        
+
         if (dto.getDisableable() != null) {
             cet.setDisableable(dto.getDisableable());
         }
-        
+
         if (dto.getVersioned() != null) {
             cet.setVersioned(dto.getVersioned());
         }
