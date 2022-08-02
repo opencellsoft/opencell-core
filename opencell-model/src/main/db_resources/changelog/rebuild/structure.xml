@@ -17122,6 +17122,26 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-8777_20220728-rebuild" author="aelmalki">
+		<createTable tableName="billing_run_job_execution">
+			<column name="billing_run_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="job_execution_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="#INTRD-8777_20220728-rebuild-fk-br" author="aelmalki">
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="billing_run_id"
+								 constraintName="billing_run_job_execution_billing_run_id_fk" referencedTableName="billing_billing_run"
+								 referencedColumnNames="id"/>
+	</changeSet>
+	<changeSet id="#INTRD-8777_20220728-rebuild-fk-jexec" author="aelmalki">
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
+								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
+								 referencedColumnNames="id"/>
+	</changeSet>
 	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
 		<createTable tableName="cpq_billing_rule">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -18351,6 +18371,7 @@
 
 	<changeSet id="#INTRD-8719_20220727" author="TarikRabeh"/>
 	<changeSet id="#INTRD-8721_20220728" author="TarikRabeh"/>
+	<changeSet id="#INTRD-8777_20220728" author="aelmalki" />
 		
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

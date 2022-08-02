@@ -26,12 +26,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -56,6 +58,7 @@ import org.meveo.model.ReferenceIdentifierQuery;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 
 /**
  * Billing run
@@ -412,6 +415,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @OneToOne
     @JoinColumn(name = "origin_billing_run_id")
     private BillingRun originBillingRun;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "billing_run_job_execution", joinColumns = @JoinColumn(name = "billing_run_id"), inverseJoinColumns = @JoinColumn(name = "job_execution_id"))
+    protected List<JobExecutionResultImpl> jobExecutions = new ArrayList<>();
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -971,6 +978,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setOriginBillingRun(BillingRun originBillingRun) {
 		this.originBillingRun = originBillingRun;
 	}
-	
-	
+
+    public List<JobExecutionResultImpl> getJobExecutions() {
+        return jobExecutions;
+    }
+
+    public void setJobExecutions(List<JobExecutionResultImpl> jobExecutions) {
+        this.jobExecutions = jobExecutions;
+    }
+
+    public void addJobExecutions(JobExecutionResultImpl jobExecution) {
+        this.jobExecutions.add(jobExecution);
+    }
 }
