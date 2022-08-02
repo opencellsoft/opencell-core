@@ -307,9 +307,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
-        return Objects.equals(price, other.price) 
-                && Objects.equals(amountWithTax, other.amountWithTax) 
-                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(priceEL, other.priceEL)
+        return Objects.equals(price, other.price)
+                && Objects.equals(priceEL, other.priceEL)
                 && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);

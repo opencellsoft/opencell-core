@@ -130,40 +130,23 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             missingParameters.add("isMatrix");
         }
         if (isMatrix!=null && !isMatrix) {
-        	int priceFilledParametersCounter = 0;
-        	
-        	if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getPrice())){
-        		priceFilledParametersCounter++;
+        	if(StringUtils.isBlank(pricePlanMatrixVersionDto.getPrice())) {
+        	    if(StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax()) && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
+        	        throw new MeveoApiException("price must be provided for non-grid price version");
+        	    }
+        	    
+        	    if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+                    missingParameters.add("amountWithTax");
+                }
+                if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
+                    missingParameters.add("amountWithoutTax");
+                }
+        	} else {
+        	    if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax()) || !StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+        	        throw new MeveoApiException("'amountWithoutTax' and 'amountWithTax' are deprecated, please use only property 'price' to provide unit price");
+                }
         	}
-        	
-        	if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())){
-        		priceFilledParametersCounter++;
-        	}
-
-        	if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())){
-        		priceFilledParametersCounter++;
-        	}
-        	
-        	if(priceFilledParametersCounter == 0) {
-                throw new MeveoApiException("price must be provided for non-grid price version");
-        	}
-        	
-        	if(priceFilledParametersCounter > 1) {
-                throw new MeveoApiException("'amountWithoutTax' and 'amountWithTax' are deprecated, please use only property 'price' to provide unit price");
-        	}
-        	
-        	if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
-                missingParameters.add("amountWithTax");
-            }
-            if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
-                missingParameters.add("amountWithoutTax");
-            }
         }
-        
-        
-        
-        
-        
 
         if (StringUtils.isBlank(pricePlanMatrixCode)) {
             missingParameters.add("pricePlanMatrixCode");
