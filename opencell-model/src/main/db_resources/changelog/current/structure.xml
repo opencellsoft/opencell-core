@@ -13923,12 +13923,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="open_order_article" columnName="code"/>
         <dropColumn tableName="open_order_article" columnName="description"/>
     </changeSet>
-
-    <changeSet id="#INTRD-8719_20220727" author="TarikRabeh">
+  
+   	<changeSet id="#INTRD-8719_20220727" author="TarikRabeh">
         <addColumn tableName="cpq_price_plan_version">
             <column name="price"  type="numeric(23, 12)" />           
         </addColumn>
-    </changeSet>    
+    </changeSet>  
 
     <changeSet id="#INTRD-8721_20220728" author="TarikRabeh">
         <sql>update cpq_price_plan_version set price = amount_without_tax where 1 in (select cp.entreprise from crm_provider cp)</sql>

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -99,6 +100,7 @@ public class ContactApi extends BaseApi {
     @Inject
     CustomerCategoryService customerCategoryService;
 
+    @TransactionAttribute
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
         if (postData.getName() == null) {

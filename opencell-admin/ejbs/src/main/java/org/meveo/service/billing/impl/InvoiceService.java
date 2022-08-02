@@ -5074,7 +5074,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
         invoice.setOrder(order);
-
         invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
         invoice.setStartDate(invoiceDate);
         invoice.setAmountWithTax(amountWithTax);
@@ -6123,11 +6122,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return Updated invoice
      */
     public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {
-        boolean isFire = false;
         toUpdate = refreshOrRetrieve(toUpdate);
-        if (!toUpdate.getPaymentStatus().equals(invoiceResource.getPaymentStatus())) {
-            isFire = true;
-        }
         final InvoiceStatusEnum status = toUpdate.getStatus();
         if (!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status) || InvoiceStatusEnum.NEW.equals(status))) {
             throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
@@ -6196,10 +6191,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if(invoiceResource.getDiscount() == null && toUpdate.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             toUpdate.setDiscountAmount(BigDecimal.ZERO);
-        }
-        
-        if (isFire) {
-            invoicePaymentStatusUpdated.fire(toUpdate);
         }
 
         return update(toUpdate);
@@ -6445,14 +6436,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .getResultList();
     }
     
-    @Override
-    public Invoice update(Invoice entity) throws BusinessException {
-        Invoice invoiceOld = findById(entity.getId());
-        if (!invoiceOld.getPaymentStatus().equals(entity.getPaymentStatus())) {
+    public void checkAndUpdatePaymentStatus(Invoice entity,InvoicePaymentStatusEnum oldInvoicePaymentStatusEnum, InvoicePaymentStatusEnum newInvoicePaymentStatusEnum) {
+        if (!oldInvoicePaymentStatusEnum.equals(newInvoicePaymentStatusEnum)) {
             invoicePaymentStatusUpdated.fire(entity);
         }
-        super.update(entity);
-        return entity;
+        entity.setPaymentStatus(newInvoicePaymentStatusEnum);
     }
 
 }
