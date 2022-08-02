@@ -134,7 +134,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         validate(openOrderQuote);
         OpenOrder openOrder = new OpenOrder();
         openOrder.setExternalReference(openOrderQuote.getExternalReference());
-        if(openOrderQuote.getActivationDate().after(setTimeToZero(new Date()))) {
+        if(setTimeToZero(openOrderQuote.getActivationDate()).after(setTimeToZero(new Date()))) {
             openOrder.setStatus(NEW);
         } else {
             openOrder.setStatus(IN_USE);
