@@ -30,11 +30,7 @@ import org.meveo.apiv2.admin.providers.ProviderResourceImpl;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
-import org.meveo.apiv2.billing.impl.DiscountPlanInstanceResourceImpl;
-import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
-import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
-import org.meveo.apiv2.billing.impl.MediationResourceImpl;
-import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
+import org.meveo.apiv2.billing.impl.*;
 import org.meveo.apiv2.billing.service.RollbackOnErrorExceptionMapper;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanMatrixResourceImpl;
@@ -143,7 +139,8 @@ public class GenericOpencellRestful extends Application {
                         FinanceSettingsResourceImpl.class, SecurityDepositTemplateResourceImpl.class, SecurityDepositResourceImpl.class, UserAccountsResourceImpl.class,
                         OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
-                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class, SearchPriceLineByAttributeResourceImpl.class)
+                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
+                        SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
