@@ -148,10 +148,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	}
         }
 
-        if (StringUtils.isBlank(pricePlanMatrixCode)) {
-            missingParameters.add("pricePlanMatrixCode");
-        }
-
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
         return pricePlanMatrixCode;
     }
