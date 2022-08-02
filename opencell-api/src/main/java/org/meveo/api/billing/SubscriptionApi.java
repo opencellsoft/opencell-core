@@ -3170,7 +3170,8 @@ public class SubscriptionApi extends BaseApi {
                 throw new BusinessApiException("Invalid ServiceInstance status with code '" + instance.getCode() + "' : expected status INACTIVE / PENDING found " + instance.getStatus());
             }
 
-            serviceInstanceService.remove(serviceInstanceId);
+            instance.setSubscription(null);
+            serviceInstanceService.update(instance);
         });
 
     }

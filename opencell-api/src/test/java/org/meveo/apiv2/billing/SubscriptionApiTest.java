@@ -50,7 +50,7 @@ public class SubscriptionApiTest {
         subscription.setServiceInstances(instances);
 
         Mockito.when(subscriptionService.findById(any())).thenReturn(subscription);
-        Mockito.doNothing().when(serviceInstanceService).remove(1L);
+        Mockito.when(serviceInstanceService.update(any())).thenReturn(null);
 
         subscriptionApi.deleteInactiveServiceInstance(1L, buildDeleteSI(1L));
 
@@ -73,7 +73,7 @@ public class SubscriptionApiTest {
         subscription.setServiceInstances(instances);
 
         Mockito.when(subscriptionService.findById(any())).thenReturn(subscription);
-        Mockito.doNothing().when(serviceInstanceService).remove(1L);
+        Mockito.when(serviceInstanceService.update(any())).thenReturn(null);
 
         subscriptionApi.deleteInactiveServiceInstance(1L, buildDeleteSI(1L));
 
