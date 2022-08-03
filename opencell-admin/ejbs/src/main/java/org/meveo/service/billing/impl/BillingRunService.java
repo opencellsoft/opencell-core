@@ -854,6 +854,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceLinesService.deleteSupplementalILs(excludedPrepaidInvoices);
             invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);
+            invoiceLinesService.unInvoiceByInvoiceIds(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {

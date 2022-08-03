@@ -635,4 +635,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return new ArrayList<InvoiceLine>();
         }
 	}
+
+    public void unInvoiceByInvoiceIds(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("InvoiceLine.unInvoiceByInvoiceIds").setParameter("now", new Date()).setParameter("invoiceIds", invoicesIds).executeUpdate();
+    }
 }
