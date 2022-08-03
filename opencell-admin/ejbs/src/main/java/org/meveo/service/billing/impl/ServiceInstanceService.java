@@ -384,7 +384,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             if (!paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(product.getCode(), subscription, InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
-                    throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + " and subscription code=" + subscription.getCode() + " is already instantiated or activated.");
+                    throw new IncorrectServiceInstanceException("Mutli-instantiation is not active on your environment. Please contact your system administrator.");
                 }
             }
         }

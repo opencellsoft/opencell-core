@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -42,7 +44,6 @@ public class TaxDto extends BusinessEntityDto {
     private static final long serialVersionUID = 5184602572648722134L;
 
     /** The percent. */
-    @XmlElement(required = true)
     private BigDecimal percent;
 
     /** The accounting code. */
@@ -87,8 +88,19 @@ public class TaxDto extends BusinessEntityDto {
 
         } else {
             setAuditableFields(null);
-            setAuditable((AuditableDto) null);
+            setAuditable(null);
         }
+        this.composite = tax.isComposite();
+        if (this.composite) {
+            this.subTaxes = tax.getSubTaxes().
+                    stream()
+                    .map(subTax -> new TaxDto(subTax.getId()))
+                    .collect(toList());
+        }
+    }
+
+    public TaxDto(Long id) {
+        this.id = id;
     }
 
     /**
