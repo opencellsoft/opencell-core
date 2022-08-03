@@ -1024,10 +1024,10 @@ public interface SubscriptionRs extends IBaseRs {
     ActionStatus subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData);
 
 	@DELETE
-	@Path("/delete-si/{subscriptionId}")
+	@Path("/{subscriptionId}/delete-si")
 	@Operation(
-			summary="API to delete 'inactive' serviceInstance from subscription",
-			description="API to delete 'inactive' serviceInstance from subscription",
+			summary="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
+			description="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
 			operationId="DELETE_Subscription_serviceInstance",
 			responses= {
 					@ApiResponse(description=" A subscription ",
