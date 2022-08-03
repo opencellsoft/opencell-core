@@ -29,8 +29,8 @@ public class BillingRule extends EnableEntity {
 	 */
 	private static final long serialVersionUID = 1727135182839389638L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contract_id", referencedColumnName = "id")
+	@ManyToOne
+    @JoinColumn(name = "contract_id")
 	private Contract contract;
 	
 	@Column(name = "priority")

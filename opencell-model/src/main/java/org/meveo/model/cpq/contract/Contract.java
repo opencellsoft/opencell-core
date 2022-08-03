@@ -69,7 +69,7 @@ public class Contract extends EnableBusinessCFEntity {
 	 *  seller attached to quotes
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id", referencedColumnName = "id")
+	@JoinColumn(name = "seller_id", referencedColumnName = "id", nullable = false)
 	private Seller seller;
 	
 	/**
