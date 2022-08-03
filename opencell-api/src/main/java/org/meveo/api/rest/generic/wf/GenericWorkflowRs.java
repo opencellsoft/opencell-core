@@ -331,7 +331,7 @@ public interface GenericWorkflowRs extends IBaseRs {
 			description=" execute transition  ",
 			operationId="    POST_GenericWorkflow_executeTransition",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
