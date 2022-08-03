@@ -181,8 +181,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
             billingRun.setStatus(VALIDATED);
         }
-        billingRunService.update(billingRun);
         billingRunService.updateBillingRunStatistics(billingRun);
+        billingRunService.updateBillingRunJobExecution(billingRun, result);
+        billingRunService.update(billingRun);
     }
 
     /**

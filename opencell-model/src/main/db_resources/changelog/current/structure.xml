@@ -13936,6 +13936,26 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_without_tax"/>
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_with_tax"/>
     </changeSet>
+	
+	<changeSet id="#INTRD-8777_20220728" author="aelmalki">
+		<createTable tableName="billing_run_job_execution">
+			<column name="billing_run_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="job_execution_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="billing_run_id"
+								 constraintName="billing_run_job_execution_billing_run_id_fk" referencedTableName="billing_billing_run"
+								 referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
+								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
+								 referencedColumnNames="id"/>
+							
+	</changeSet>
 
     <changeSet id="#INTRD-8701_20220801" author="ZBariki">
         <dropForeignKeyConstraint baseTableName="billing_tax"

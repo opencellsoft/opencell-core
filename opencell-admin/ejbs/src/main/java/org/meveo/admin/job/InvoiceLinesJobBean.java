@@ -105,6 +105,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(),true);
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntities.size(), INVOICE_LINES_CREATED);
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
+                        billingRunService.updateBillingRunJobExecution(billingRun, result);
+                        billingRunService.update(billingRun);
                     }
                 }
             }
