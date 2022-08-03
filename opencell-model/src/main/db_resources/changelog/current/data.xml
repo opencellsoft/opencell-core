@@ -8022,11 +8022,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
-	<changeSet id="#INTRD-8859" author="hichamELHALOUI">
-		<update tableName="dwh_report_extract">
-			<column name="include_headers" value="1"/>
-		</update>
-	</changeSet>
 
 
 
