@@ -328,6 +328,7 @@
         <createSequence sequenceName="open_order_article_seq"/>
         <createSequence sequenceName="open_order_product_seq"/>
         <createSequence sequenceName="open_order_seq"/>
+        <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
     </changeSet>
 
 
@@ -3241,6 +3242,8 @@
 			<column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
             <column name="sequence" type="int4"/>
+        	<column name="reject_reason" type="varchar(4000)" />
+            <column name="origin_billing_account" type="bigint" />            
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -14608,7 +14611,9 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
-
+	<changeSet author="hichamHANINE" id="rebuild-str-fk1-8743">          
+        <addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
     <!-- media post FK -->
 
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1373">
@@ -17113,6 +17118,34 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -18310,7 +18343,8 @@
     <changeSet id="#INTRD-7663_20220613" author="ZBariki"/>
     <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
     <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
-	
+	<changeSet id="#INTRD-8743_20220802" author="HichamHANINE"/>
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

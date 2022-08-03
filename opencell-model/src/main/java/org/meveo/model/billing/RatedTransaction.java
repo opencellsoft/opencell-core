@@ -212,6 +212,29 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     private BillingAccount billingAccount;
 
     /**
+     * Origin Billing account associated to rated transaction
+     */
+    @ManyToOne
+    @JoinColumn(name = "origin_billing_account")
+    private BillingAccount originBillingAccount;
+    
+    public BillingAccount getOriginBillingAccount() {
+        return originBillingAccount;
+    }
+
+    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
+        this.originBillingAccount = originBillingAccount;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+    
+    /**
      * User account associated to rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -247,6 +270,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @Size(max = 255)
     private String code;
 
+    /**
+     * Reject Reason
+     */
+    @Column(name = "reject_reason")
+    @Size(max = 4000)
+    private String rejectReason;
+    
     /**
      * Description - corresponds in majority of cases to charge description
      */

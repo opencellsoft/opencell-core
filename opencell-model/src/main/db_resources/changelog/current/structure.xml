@@ -11550,7 +11550,16 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
-    <changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI">
+    <changeSet id="#INTRD-8743_8743_20220802" author="HichamHANINE">		
+		<addColumn tableName="billing_rated_transaction">
+            <column name="reject_reason" type="varchar(4000)" />
+            <column name="origin_billing_account" type="bigint" />
+        </addColumn>
+		
+		<addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-5306_2022-02_24" author="hichamELHALOUI">
         <addColumn tableName="crm_provider">
             <column name="functional_currency_flag" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
@@ -13877,6 +13886,35 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="billing_invoice" columnName="converted_discount_rate"/>
     </changeSet>
 
+	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
+		<createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
+		<createTable tableName="cpq_billing_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
     <changeSet id="#INTRD-8812_20220729" author="ZBariki">
         <dropUniqueConstraint constraintName="open_order_article_unique" tableName="open_order_article"/>
         <dropColumn tableName="open_order_article" columnName="code"/>

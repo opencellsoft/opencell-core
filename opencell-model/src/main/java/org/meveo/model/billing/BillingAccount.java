@@ -64,6 +64,7 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -242,6 +243,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    /**
+     * Contracts
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+    private List<Contract> contracts = new ArrayList<>();
+    
     /**
      * A list of rated transactions
      */
@@ -431,6 +438,14 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
         this.discountRate = discountRate;
     }
 
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
+    
     public List<Invoice> getInvoices() {
         return invoices;
     }
