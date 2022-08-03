@@ -17165,6 +17165,26 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
+	
+	<changeSet id="#INTRD-8777_20220728-rebuild" author="aelmalki">
+		<createTable tableName="billing_run_job_execution">
+			<column name="billing_run_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="job_execution_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="billing_run_id"
+								 constraintName="billing_run_job_execution_billing_run_id_fk" referencedTableName="billing_billing_run"
+								 referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
+								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
+								 referencedColumnNames="id"/>
+							
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
