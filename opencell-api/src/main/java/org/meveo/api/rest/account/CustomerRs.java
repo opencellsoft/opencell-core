@@ -559,7 +559,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("{customerCode}/filterCountersByPeriod")
     @Operation(summary = "Filter counters by period date",
             tags = { "Customer management" })
-    GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode, 
+    GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode,
 			   														@Parameter(description = "The date to compare ", required = true) @QueryParam("date") @RestDateParam Date date);
 
 

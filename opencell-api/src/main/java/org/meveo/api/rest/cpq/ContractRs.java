@@ -56,7 +56,7 @@ public interface ContractRs extends IBaseRs {
     description ="Creating a new contract",
     responses = {
             @ApiResponse(responseCode="200", description = "the contract successfully added",
-            		content = @Content(schema = @Schema(implementation = Long.class))),
+            		content = @Content(schema = @Schema(implementation = Number.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for contractDto.The required params are : code, sellerCode, contractDate, beginDate, endDate",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
             @ApiResponse(responseCode = "400", description = "date start is great than date end ", 
@@ -166,7 +166,7 @@ public interface ContractRs extends IBaseRs {
     description ="Creating a new contract Line",
     responses = {
             @ApiResponse(responseCode="200", description = "the contract Line successfully added",
-            		content = @Content(schema = @Schema(implementation = Long.class))),
+            		content = @Content(schema = @Schema(implementation = Number.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for contractDto.The required params are : contractCode, code, serviceTemplateCode",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
             @ApiResponse(responseCode = "302", description = "code of the contract line already exist", 
@@ -184,7 +184,7 @@ public interface ContractRs extends IBaseRs {
     description ="Creating a new contract Line",
     responses = {
             @ApiResponse(responseCode="200", description = "the contract Line successfully added",
-            		content = @Content(schema = @Schema(implementation = Long.class))),
+            		content = @Content(schema = @Schema(implementation = Number.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for contractDto.The required params are : contractCode, code, serviceTemplateCode",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
             @ApiResponse(responseCode = "404", description = "one of these parameters contractCode, serviceTemplateCode doesn't exist", 
