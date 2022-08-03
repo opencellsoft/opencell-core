@@ -11550,7 +11550,7 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-8743_8743_20220802" author="HichamHANINE">		
+    <changeSet id="#INTRD-8743_20220802" author="HichamHANINE">		
 		<addColumn tableName="billing_rated_transaction">
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
