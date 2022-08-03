@@ -588,6 +588,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setInvoice(invoice);
 		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
+		getEntityManager().flush();
 		return invoiceLine;
 	}
 
