@@ -39,6 +39,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.apiv2.billing.ServiceInstanceToDelete;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
@@ -581,5 +582,18 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             processException(e, result);
         }
         return result;
+    }
+
+    @Override
+    public Response deleteInactiveServiceInstance(Long subscriptionId, ServiceInstanceToDelete toDelete) {
+        ActionStatus deletedStatus = new ActionStatus();
+        try {
+            subscriptionApi.deleteInactiveServiceInstance(subscriptionId, toDelete);
+        } catch (Exception e) {
+            processException(e, deletedStatus);
+        }
+        deletedStatus.setStatus(ActionStatusEnum.SUCCESS);
+
+        return Response.ok().entity(deletedStatus).build();
     }
 }

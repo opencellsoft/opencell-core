@@ -13957,4 +13957,27 @@ order by date_trunc('month', i.invoice_date) DESC
 							
 	</changeSet>
 
+    <changeSet id="#INTRD-8701_20220801" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_tax"
+                                  constraintName="fk_billing_tax_main_tax_id"/>
+        <dropColumn tableName="billing_tax" columnName="main_tax_id"/>
+        <createTable tableName="billing_tax_composition">
+            <column name="main_tax_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="sub_tax_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="main_tax_id, sub_tax_id"
+                       constraintName="billing_tax_composition_pkey" tableName="billing_tax_composition" />
+        <addForeignKeyConstraint baseColumnNames="main_tax_id" baseTableName="billing_tax_composition"
+                                 constraintName="fk_billing_tax_composition_main_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="sub_tax_id" baseTableName="billing_tax_composition"
+                                 constraintName="fk_billing_tax_composition_sub_tax_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax" />
+    </changeSet>
 </databaseChangeLog>
