@@ -4691,6 +4691,8 @@
             <column name="registration_no" type="varchar(100)" />
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
+            <column name="reference" type="varchar(80)" />
+            <column name="comment" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -18365,6 +18367,9 @@
 	<changeSet id="#INTRD-8721_20220728" author="TarikRabeh"/>
     <changeSet id="#INTRD-8701_20220801" author="ZBariki" />
 	<changeSet id="#INTRD-8777_20220728" author="aelmalki" />
+
+
+    <changeSet id="#INTRD-8252_20220628" author="Abdelkader.Bouazza" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
