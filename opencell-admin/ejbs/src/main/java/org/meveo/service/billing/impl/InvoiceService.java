@@ -5871,6 +5871,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         detach(invoice);
 
         var duplicateInvoice = new Invoice(invoice);
+        duplicateInvoice.setInvoiceNumber(invoice.getInvoiceNumber() + "_tmp_" + new SimpleDateFormat("HHmmssSSS").format(new Date()));
         this.create(duplicateInvoice);
 
         if (invoiceLinesIds == null || invoiceLinesIds.isEmpty()) {
