@@ -440,15 +440,15 @@ public class PaymentService extends PersistenceService<Payment> {
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);
-            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage(),aoIdsToPay);
+            processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage(),aoIdsToPay);
             throw new BusinessException(e.getMessage());
         }catch (BusinessException e) {
             log.error("Payment not persisted: ", e);
-            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat,null, e.getMessage(),aoIdsToPay);
+            processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat,null, e.getMessage(),aoIdsToPay);
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
-            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage(),aoIdsToPay);
+            processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage(),aoIdsToPay);
             throw new BusinessException(e.getMessage());
         }
         return doPaymentResponseDto;
@@ -596,7 +596,7 @@ public class PaymentService extends PersistenceService<Payment> {
         doPaymentResponseDto.setErrorMessage(msg);
         doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
         doPaymentResponseDto.setErrorCode(code);
-        paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg, doPaymentResponseDto.getPaymentID(),
+        paymentHistoryService.addHistoryInNewTransaction(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg, doPaymentResponseDto.getPaymentID(),
                 PaymentErrorTypeEnum.ERROR, operationCat, paymentGateway == null ? "notFound" : paymentGateway.getCode(), preferredMethod,aoIdsToPay);
         return doPaymentResponseDto;
     }
