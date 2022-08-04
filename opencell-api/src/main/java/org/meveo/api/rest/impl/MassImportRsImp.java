@@ -5,6 +5,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.ImportFileTypeDto;
 import org.meveo.api.rest.MassImportRs;
+import org.meveo.api.rest.admin.impl.FileImportForm;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ public class MassImportRsImp extends BaseRs implements MassImportRs {
 
 
     @Override
-    public List<ImportFileTypeDto> uploadAndImport(FileUploadForm form) {
+    public List<ImportFileTypeDto> uploadAndImport(FileImportForm form) {
         return massImportApi.uploadAndImport(form);
     }
 
