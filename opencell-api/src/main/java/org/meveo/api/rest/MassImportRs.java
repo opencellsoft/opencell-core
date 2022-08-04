@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ImportFileTypeDto;
+import org.meveo.api.rest.admin.impl.FileImportForm;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 
 import javax.ws.rs.*;
@@ -46,7 +47,7 @@ public interface MassImportRs {
                     )}
     )
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    List<ImportFileTypeDto> uploadAndImport(@MultipartForm FileUploadForm form);
+    List<ImportFileTypeDto> uploadAndImport(@MultipartForm FileImportForm form);
 
 
 
