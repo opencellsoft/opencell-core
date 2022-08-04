@@ -6,6 +6,7 @@ import org.meveo.api.admin.FilesApi;
 import org.meveo.api.dto.ImportFileTypeDto;
 import org.meveo.api.dto.ImportTypesEnum;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.admin.impl.FileImportForm;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,21 +44,23 @@ public class MassImportApi {
         return paramBeanFactory.getDefaultChrootDir();
     }
 
-    public List<ImportFileTypeDto> uploadAndImport(FileUploadForm massImportForm) {
+    public List<ImportFileTypeDto> uploadAndImport(FileImportForm massImportForm) {
         if (StringUtils.isBlank(massImportForm.getData())) {
             throw new MissingParameterException("fileToImport");
         }
 
         List<ImportFileTypeDto> fileTypes = new ArrayList<>();
+        String[] filesToImport = massImportForm.getFiles();
         try {
             String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
             Path path = Paths.get(tempDir);
             Files.createDirectories(path);
 
             String importTempDir = TEMP_DIR + massImportForm.getFilename();
-            FlatFile flatFile = filesApi.uploadFile(massImportForm.getData(), importTempDir, massImportForm.getFileFormat());
+            FlatFile flatFile = filesApi.uploadFile(massImportForm.getData(), importTempDir, null);
 
-            File[] files = new File(tempDir).listFiles();
+            File[] files = new File(tempDir).listFiles((file, s) -> Arrays.asList(filesToImport).contains(s));
+
             fileTypes = detectFileType(files);
             moveFiles(fileTypes);
 
