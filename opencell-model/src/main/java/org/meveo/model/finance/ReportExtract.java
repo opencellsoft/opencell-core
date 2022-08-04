@@ -134,6 +134,10 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "maximum_line")
     private Long maximumLine;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "include_headers")
+    private boolean includeHeaders;
+
     public String getFilenameFormat() {
         return filenameFormat;
     }
@@ -284,5 +288,13 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
+    }
+
+    public boolean isIncludeHeaders() {
+        return includeHeaders;
+    }
+
+    public void setIncludeHeaders(boolean includeHeaders) {
+        this.includeHeaders = includeHeaders;
     }
 }

@@ -8021,4 +8021,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
 		</update>
 	</changeSet>
+
+
+
+
+
 </databaseChangeLog>

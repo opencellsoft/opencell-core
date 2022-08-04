@@ -65,7 +65,16 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-        List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", asList("VALIDATED"));
+        List<String> statusNamesList = asList("VALIDATED");
+        var statusValues = this.getParamOrCFValue(jobInstance, "invoicesToProcess");
+        if(statusValues != null) {
+            if(statusValues instanceof List ) {
+                statusNamesList = (List<String>) statusValues;
+            }else if(statusValues instanceof String ) {
+                statusNamesList = asList((String)statusValues);
+            }
+        }
+        
         List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status -> InvoiceStatusEnum.valueOf(status)).collect(toList());
         String parameter = jobInstance.getParametres();
 
