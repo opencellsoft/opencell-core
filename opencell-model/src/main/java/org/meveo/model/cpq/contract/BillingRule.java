@@ -2,7 +2,6 @@ package org.meveo.model.cpq.contract;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
-import org.meveo.model.admin.Seller;
 
 /**
  * 
@@ -25,14 +23,14 @@ import org.meveo.model.admin.Seller;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_billing_rule_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "BillingRule.findByAccounts", query = "select br from BillingRule br where br.contract.status='ACTIVE' and (br.contract.beginDate<=current_date and br.contract.endDate>current_date) "
-            + " and (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
+    @NamedQuery(name = "BillingRule.findByAccounts", query = "select br from BillingRule br where "
+            + " (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
             + " and (br.contract.customerAccount.id is null or br.contract.customerAccount.id=:customerAccountId) "
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null or br.contract.seller.id=:sellerId) "
             + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority "),
-    @NamedQuery(name = "BillingRule.findByAccountsWithSellerNull", query = "select br from BillingRule br where br.contract.status='ACTIVE' and (br.contract.beginDate<=current_date and br.contract.endDate>current_date) "
-            + " and (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
+    @NamedQuery(name = "BillingRule.findByAccountsWithSellerNull", query = "select br from BillingRule br where "
+            + " (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
             + " and (br.contract.customerAccount.id is null or br.contract.customerAccount.id=:customerAccountId) "
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null) "

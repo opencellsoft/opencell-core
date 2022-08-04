@@ -8,21 +8,10 @@ import javax.persistence.NoResultException;
 
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.BillingRule;
-import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
-public class BillingRulesService extends PersistenceService<BillingRule>  {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
-
-    public BillingRulesService() {
-        
-    }    
+public class BillingRulesService extends PersistenceService<BillingRule>  {   
     
     public List<BillingRule> findAllByBillingAccount(BillingAccount billingAccount) {
         try {
@@ -42,7 +31,7 @@ public class BillingRulesService extends PersistenceService<BillingRule>  {
                         .getResultList();
             }            
         } catch (NoResultException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 }
