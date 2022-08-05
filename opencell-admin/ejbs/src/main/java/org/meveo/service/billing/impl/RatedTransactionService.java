@@ -40,12 +40,16 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -96,6 +100,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.*;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -1698,12 +1703,66 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for(RatedTransaction rt : rtsResults) { 
             List<BillingRule> billingRules = billingRulesService.findAllByBillingAccount(rt.getBillingAccount());
             for(BillingRule billingRule : billingRules) { 
-                checkIsMatched(billingRule.getCriteriaEL());
+                if(evaluateExpressionBillingRule(billingRule, billingRule.getCriteriaEL()) != null) {
+                    String invoicedBACodeEL = evaluateExpressionBillingRule(billingRule, billingRule.getInvoicedBACodeEL());
+                    if (invoicedBACodeEL != null) {
+                        BillingAccount billingAccountByCode = billingAccountService.findByCode(invoicedBACodeEL);
+                        if (billingAccountByCode != null) {
+                            rt.setOriginBillingAccount(rt.getBillingAccount());
+                            rt.setBillingAccount(billingAccountByCode);
+                            update(rt);
+                            continue;
+                        }
+                        else {
+                            rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                            rt.setRejectReason("Billing redirection rule [id=" + billingRule.getId() + 
+                                ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
+                                billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
+                                invoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
+                            update(rt);
+                            throw new BusinessApiException("Billing redirection rule [id=" + billingRule.getId() + 
+                                ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
+                                billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
+                                invoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
+                        }
+                    }
+                    else {
+                        rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                        rt.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + 
+                            billingRule.getId() + ", priority=" + billingRule.getPriority() + 
+                            ", invoicedBillingAccountCodeEL = " + billingRule.getInvoicedBACodeEL() + 
+                            "] for RT [id=" + rt.getId() + "}]: Error in invoicedBillingAccountCodeEL evaluation");
+                        update(rt);
+                        throw new BusinessApiException("Error evaluating invoicedBillingAccountCodeEL [id=" + 
+                                billingRule.getId() + ", priority=" + billingRule.getPriority() + 
+                                ", invoicedBillingAccountCodeEL = " + billingRule.getInvoicedBACodeEL() + 
+                                "] for RT [id=" + rt.getId() + "}]: Error in invoicedBillingAccountCodeEL evaluation");
+                    } 
+                }
+                else {
+                    rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                    rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
+                        billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
+                        rt.getId() + "]: Error in criteriaEL evaluation");
+                    update(rt);
+                    throw new BusinessApiException("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
+                            billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
+                            rt.getId() + "]: Error in criteriaEL evaluation");
+                } 
             }
         }
     }
 
-    private void checkIsMatched(String criteriaEL) {
-        // TODO Auto-generated method stub        
+    private String evaluateExpressionBillingRule(BillingRule billingRule, String expression) {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put("billingRule", billingRule);
+        String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        if (code != null) {
+           return code;
+        }
+        return null;       
     }
 }
