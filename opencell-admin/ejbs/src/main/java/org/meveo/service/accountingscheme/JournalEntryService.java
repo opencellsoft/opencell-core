@@ -96,7 +96,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 occT.getOccCategory() == OperationCategoryEnum.DEBIT ?
                         OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                 ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(),
-                null, ao.getOperationNumber() + 1);
+                null, ao.getOperationNumber());
 
         create(firstEntry);
         create(secondEntry);
@@ -191,7 +191,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         // 2- produce the second accounting entry : difference with first on (accountingCode and occtCategory)
         JournalEntry secondAccountingEntry = buildJournalEntry(ao, secondAccountingCode, secondCategory,
-                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber() + 1);
+                ao.getAmount() == null ? BigDecimal.ZERO : ao.getAmount(), null, ao.getOperationNumber());
 
         saved.add(secondAccountingEntry);
 

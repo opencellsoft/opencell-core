@@ -5,7 +5,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.1-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
 
     <modules>
@@ -23,6 +23,7 @@
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>6.31.0</version.ingenico-connect-sdk>
+       <version.worldline.onlinepayments-sdk>3.5.0</version.worldline.onlinepayments-sdk>
         <version.paypal-sdk>1.14.0</version.paypal-sdk>
         <version.keycloak>18.0.0</version.keycloak>
         <version.pdfbox>2.0.26</version.pdfbox>

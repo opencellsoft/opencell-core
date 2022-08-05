@@ -763,6 +763,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
+        auditable.setUpdated(new Date());
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();

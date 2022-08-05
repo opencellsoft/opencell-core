@@ -3824,6 +3824,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "PATCH"
               }
             ]
           },
@@ -8870,6 +8873,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "PATCH"
               }
             ]
           },
@@ -14681,7 +14687,7 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Accounts\"]",
-              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiAccountManagement\"]"
             }
           },
@@ -15830,7 +15836,7 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Api V1 Orders\"]",
-              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiOrderManagement\"]"
             }
           },

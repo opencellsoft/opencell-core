@@ -1748,7 +1748,6 @@ public class CpqQuoteApi extends BaseApi {
                          RatingResult ratingResult = oneShotChargeInstanceService.applyOneShotChargeVirtual(subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                          if (ratingResult != null) {
                              walletOperations.addAll(ratingResult.getWalletOperations());
-                             walletOperations.add(ratingResult.getWalletOperation());
                              productEligibleFixedDiscountItems.addAll(ratingResult.getEligibleFixedDiscountItems());
                          }
 
