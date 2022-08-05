@@ -44,7 +44,15 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistoryInNewTransaction(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
-        addHistory(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoIdsToPay);
+		// DUPLICATED during process issue https://opencellsoft.atlassian.net/browse/INTRD-8946
+		// To void side effect by using new trasction for caller service
+		List<AccountOperation> aoToPay = new ArrayList<>();
+		if(aoIdsToPay != null) {
+			for(Long aoId : aoIdsToPay) {
+				aoToPay.add(accountOperationService.findById(aoId));
+			}
+		}
+		addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, externalPaymentId, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
 
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
