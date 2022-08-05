@@ -1572,9 +1572,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     public void updateBillingRunJobExecution(BillingRun billingRun, JobExecutionResultImpl result) {
         billingRun = billingRunService.refreshOrRetrieve(billingRun);
-        JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(result.getJobInstance(), result.getJobLauncherEnum());
-        jobExecutionResultService.persistResult(jobExecutionResult);
-        billingRun.addJobExecutions(jobExecutionResult);
+        billingRun.addJobExecutions(result);
 
     }
 
