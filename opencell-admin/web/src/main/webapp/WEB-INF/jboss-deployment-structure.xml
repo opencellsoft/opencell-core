@@ -13,6 +13,9 @@
 <!--         <exclusions> -->
 <!--           <module name="org.jboss.resteasy.resteasy-jackson-provider" /> -->
 <!--         </exclusions> -->
+		<exclusions>
+			<module name="org.apache.logging.log4j.api" />
+		</exclusions>
         <dependencies>
 <!--           <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" /> -->
           <module name="org.infinispan" services="export" />
@@ -22,7 +25,7 @@
           <module name="com.fasterxml.jackson.core.jackson-annotations"/> 
           <module name="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml" />   
           <module name="com.google.guava" />     
-          <module name="org.apache.commons.io"/>
+<!--           <module name="org.apache.commons.io"/> -->
           <module name="org.apache.commons.collections"/>
           <module name="org.apache.commons.codec"/>
           <module name="org.apache.commons.beanutils"/>       
