@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -26,6 +27,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,8 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 	private WalletOperationService walletOperationService;
 	@Inject
 	private RatedTransactionService ratedTransactionService;
+	@Inject
+	private UsageRatingService usageRatingService;
 	
 	public String getEventKeyFromEdrVersionRule(EDR edr) {
 		var mediationSettings = this.list();
@@ -128,8 +132,43 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 									previousEdr.setStatus(EDRStatusEnum.CANCELLED);
 									previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
 									wos.forEach(wo -> {
+									    RatingResult rating = usageRatingService.rateUsage(edr, true, false, 0, 0, null, false);
+									    if(rating.getWalletOperations().size() == 0 ) {
+									        throw new BusinessException("Error while rating new Edr version : "  + edr.getEventVersion());
+									    }
+									    WalletOperation woToRetate = rating.getWalletOperations().get(0);
 										wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
 										wo.setEdr(edr);
+										wo.setAccountingArticle(woToRetate.getAccountingArticle());
+										wo.setAccountingCode(woToRetate.getAccountingCode());
+										wo.setAmountTax(woToRetate.getAmountTax());
+										wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
+										wo.setAmountWithTax(woToRetate.getAmountWithTax());
+										wo.setBillingAccount(woToRetate.getBillingAccount());
+										wo.setChargeInstance(woToRetate.getChargeInstance());
+										wo.setChargeMode(woToRetate.getChargeMode());
+										wo.setParameter1(woToRetate.getParameter1());
+										wo.setParameter2(woToRetate.getParameter2());
+										wo.setParameter3(woToRetate.getParameter3());
+										wo.setParameterExtra(woToRetate.getParameterExtra());
+										wo.setTax(woToRetate.getTax());
+										wo.setTaxClass(woToRetate.getTaxClass());
+										wo.setTaxPercent(woToRetate.getTaxPercent());
+										wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
+										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+										wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
+										wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
+										wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
+										wo.setUserAccount(woToRetate.getUserAccount());
+										wo.setType(woToRetate.getType());
+										wo.setSubscription(woToRetate.getSubscription());
+										wo.setCurrency(woToRetate.getCurrency());
+										wo.setCounter(woToRetate.getCounter());
+										wo.setDescription(woToRetate.getDescription());
+										wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
+										wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
+										wo.setInputQuantity(woToRetate.getInputQuantity());
+										wo.setQuantity(woToRetate.getQuantity());
 										walletOperationService.update(wo);
 										if(wo.getRatedTransaction() != null) {
 											wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);

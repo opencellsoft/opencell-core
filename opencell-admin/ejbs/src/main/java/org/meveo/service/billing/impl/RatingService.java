@@ -357,6 +357,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         RatingResult ratedEDRResult = new RatingResult();
         ratedEDRResult.setWalletOperation(walletOperation);
+        ratedEDRResult.getWalletOperations().add(walletOperation);
         
         if(!isVirtual) {
         	walletOperationService.create(walletOperation);
