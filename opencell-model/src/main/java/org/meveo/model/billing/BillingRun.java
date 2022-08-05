@@ -416,7 +416,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @JoinColumn(name = "origin_billing_run_id")
     private BillingRun originBillingRun;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_run_job_execution", joinColumns = @JoinColumn(name = "billing_run_id"), inverseJoinColumns = @JoinColumn(name = "job_execution_id"))
     protected List<JobExecutionResultImpl> jobExecutions = new ArrayList<>();
     
