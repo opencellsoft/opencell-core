@@ -24,9 +24,12 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.TaxRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.commons.utils.ExceptionUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -88,7 +91,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         try {
             taxApi.remove(taxCode);
         } catch (Exception e) {
-            processException(e, result);
+            processException(beautifyForeignConstraintViolationMessage(e, taxCode), result);
         }
 
         return result;
@@ -131,5 +134,13 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         }
 
         return result;
+    }
+
+    private Exception beautifyForeignConstraintViolationMessage(Exception e, String taxCode) {
+        if(ExceptionUtils.getRootCause(e).getMessage().contains("violates foreign key constraint"))
+        {
+            return new InvalidParameterException(String.format("You can only delete a tax if it has not been used. Tax %s is still referenced in other entities.", taxCode));
+        }
+        return e;
     }
 }
