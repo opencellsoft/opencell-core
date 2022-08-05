@@ -139,7 +139,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
     private Exception beautifyForeignConstraintViolationMessage(Exception e, String taxCode) {
         if(ExceptionUtils.getRootCause(e).getMessage().contains("violates foreign key constraint"))
         {
-            return new InvalidParameterException(String.format("You can only delete a tax if it has not been used. Tax {{%s}} is still referenced in other entities.", taxCode));
+            return new InvalidParameterException(String.format("You can only delete a tax if it has not been used. Tax %s is still referenced in other entities.", taxCode));
         }
         return e;
     }
