@@ -85,6 +85,7 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.*;
+import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -99,6 +100,7 @@ import org.meveo.service.billing.impl.article.*;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.cpq.BillingRulesService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
@@ -182,6 +184,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private AccountingArticleService accountingArticleService;
 
+    @Inject
+    private BillingRulesService billingRulesService;
+    
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -1677,5 +1682,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " AND rt.usageDate < :lastTransactionDate AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) " +
                         " AND rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);
+    }
+    
+    public void applyInvoicingRules(List<RatedTransaction> rTs) {
+        List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
+       
+        Query query = getEntityManager().createQuery(
+            "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) "
+                    + " AND  rt.status = 'Open' And rt.originBillingAccount.id is null"
+                    + " GROUP BY rt.billingAccount.id ")
+                .setParameter("ids", ratedTransactionIds);
+
+        List<RatedTransaction> rtsResults = query.getResultList();
+        
+        for(RatedTransaction rt : rtsResults) { 
+            List<BillingRule> billingRules = billingRulesService.findAllByBillingAccount(rt.getBillingAccount());
+            for(BillingRule billingRule : billingRules) { 
+                checkIsMatched(billingRule.getCriteriaEL());
+            }
+        }
+    }
+
+    private void checkIsMatched(String criteriaEL) {
+        // TODO Auto-generated method stub        
     }
 }
