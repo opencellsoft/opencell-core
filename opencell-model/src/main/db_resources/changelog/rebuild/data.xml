@@ -9361,6 +9361,140 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where> code IN ('org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="#INTRD-6131_20220805" author="anas.rouaguebe">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_nbRuns"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="1"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_waitingMillis"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_ddRequestBuilder"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="SEPARequest builder"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="1"/>
+            <column name="entity_clazz" value="org.meveo.model.payments.DDRequestBuilder" />
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:2"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_aoFilterScript"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="SepaJob_aoFilterScript"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.scripts.ScriptInstance" />
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:3"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_seller"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="Sellers"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.admin.Seller" />
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:4"/>
+        </insert>
+        
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_paymentOrRefund"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="Payment or Refund"/>
+            <column name="field_type" value="LIST"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="1"/>
+            <column name="default_value" value="PAYMENT"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:5"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SepaJob_ddRequestStateOp"/>
+            <column name="applies_to" value="JobInstance_SepaDirectDebitJob"/>
+            <column name="description" value="DDRequest State"/>
+            <column name="field_type" value="LIST"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="CREATE"/>
+            <column name="creator" value="applicationInitializer"/>
+			<column name="gui_position" value="tab:Configuration:0;field:6"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'SepaJob_paymentOrRefund')"/>
+            <column name="listvalues" value="PAYMENT"/>
+            <column name="listvalues_key" value="PAYMENT"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'SepaJob_paymentOrRefund')"/>
+            <column name="listvalues" value="REFUND"/>
+            <column name="listvalues_key" value="REFUND"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'SepaJob_ddRequestStateOp')"/>
+            <column name="listvalues" value="CREATE"/>
+            <column name="listvalues_key" value="CREATE"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'SepaJob_ddRequestStateOp')"/>
+            <column name="listvalues" value="PAYMENT"/>
+            <column name="listvalues_key" value="PAYMENT"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'SepaJob_ddRequestStateOp')"/>
+            <column name="listvalues" value="FILE"/>
+            <column name="listvalues_key" value="FILE"/>
+        </insert>
+    </changeSet>
 	
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
