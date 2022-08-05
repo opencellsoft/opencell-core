@@ -38,9 +38,6 @@ import org.meveo.model.EnableEntity;
 }) 
 public class BillingRule extends EnableEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1727135182839389638L;
 
 	@ManyToOne
@@ -87,7 +84,4 @@ public class BillingRule extends EnableEntity {
 	public void setInvoicedBACodeEL(String invoicedBACodeEL) {
 		this.invoicedBACodeEL = invoicedBACodeEL;
 	}
-
-	
-
 }
