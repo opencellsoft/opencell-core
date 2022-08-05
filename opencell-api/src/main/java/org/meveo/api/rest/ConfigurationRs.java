@@ -86,7 +86,7 @@ public interface ConfigurationRs extends IBaseRs {
 			description=" set configuration property ",
 			operationId="    POST_Configuration_create",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -109,7 +109,7 @@ public interface ConfigurationRs extends IBaseRs {
 			description=" set configuration property  ",
 			operationId="    POST_Configuration_properties",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
