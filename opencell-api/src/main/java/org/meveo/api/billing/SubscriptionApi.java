@@ -558,7 +558,8 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
-            updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
+            updateAttributeAndQuantityInstances(subscription, postData.getServices().getServiceInstance());
+
         }
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
@@ -2612,11 +2613,14 @@ public class SubscriptionApi extends BaseApi {
         return subscription;
     }
 
-    private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
+    private void updateAttributeAndQuantityInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
         if(serviceInstanceDtos != null) {
             serviceInstanceDtos.forEach(serviceInstanceDto -> {
                 var serviceInstance = serviceInstanceService.findById(serviceInstanceDto.getId());
                 if(serviceInstance != null) {
+                    if(serviceInstanceDto.getQuantity()!= null){
+                        serviceInstance.setQuantity(serviceInstanceDto.getQuantity());
+                    }
                     serviceInstance.getAttributeInstances().clear();
                     if(serviceInstanceDto.getAttributeInstances() != null) {
                         serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
