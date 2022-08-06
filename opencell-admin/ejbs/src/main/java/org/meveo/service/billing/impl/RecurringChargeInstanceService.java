@@ -22,6 +22,7 @@ import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -33,12 +34,10 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
@@ -251,7 +250,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     }
 
-    public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription, Date subscriptionDate) throws BusinessException {
+    public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription, Date reactivationDate) throws BusinessException {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new BusinessException("subscription is " + subscription.getStatus());
         }
@@ -261,10 +260,50 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 "service instance is " + subscription.getStatus() + ". service Code=" + serviceInst.getCode() + ",subscription Code" + subscription.getCode());
         }
         for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
+            // INTRD-279 fix: if reactivate a suspended recurring charge then update its next charge date
+            // and charged to date. Maybe to review this fix when implementing suspension prorata evol
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED ) {
+                log.debug("Reactivation of Recurring charge instance {} [id={}]: current chargeDate={} and nextChargeDate={}",
+                        recurringChargeInstance.getCode(), recurringChargeInstance.getId(), recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
+
+                DatePeriod reactivationCurrentPeriod = walletOperationService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
+                Date reactivationCurrentPeriodEnd = reactivationCurrentPeriod.getTo();
+
+                if (reactivationCurrentPeriodEnd != null &&
+                        recurringChargeInstance.getNextChargeDate() != null &&
+                        recurringChargeInstance.getNextChargeDate().before(reactivationDate)) {
+
+                    // adjust nextChargeDate only if reactivationCurrentPeriodEnd is before charge termination date
+                    if (recurringChargeInstance.getTerminationDate() == null ||
+                        reactivationCurrentPeriodEnd.before(recurringChargeInstance.getTerminationDate())) {
+
+                        // The rating of charge should start at the end of the current period
+                        // of its reactivation
+                        recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
+
+                        boolean isApplyInAdvance = recurringChargeInstance.getApplyInAdvance() != null && recurringChargeInstance.getApplyInAdvance();
+                        RecurringChargeTemplate recurringChargeTemplate = recurringChargeInstance.getRecurringChargeTemplate();
+                        if (!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
+                            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(),
+                                    recurringChargeInstance.getServiceInstance(), recurringChargeTemplate);
+                        }
+                        // if the charge is not applyInAdvance it shouldn't be rated for period
+                        // before its reactivation
+                        if (!isApplyInAdvance) {
+                            recurringChargeInstance.setChargeDate(reactivationCurrentPeriod.getTo());
+                        }
+                        log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
+                                        "its chargeDate and nextChargeDate are updated to {}, {}.",
+                                recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
+                                recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
+                    }
+                }
+            }
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+                recurringChargeInstance.setTerminationDate(null);
+            }
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-            // recurringChargeInstance.setSubscriptionDate(subscriptionDate);
-            recurringChargeInstance.setTerminationDate(null);
-            recurringChargeInstance.setChargeDate(subscriptionDate);
+            recurringChargeInstance.setReactivationDate(reactivationDate);
             update(recurringChargeInstance);
         }
 
