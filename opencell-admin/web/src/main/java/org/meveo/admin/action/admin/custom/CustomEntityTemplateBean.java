@@ -63,6 +63,7 @@ import static java.util.Comparator.comparing;
 public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 1187554162639618526L;
+    private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -370,11 +371,46 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        super.saveOrUpdate(killConversation);
+        String message = entity.isTransient() ? "save.successful" : "update.successful";
+
+        if (!entity.isTransient()) {
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if ((entity instanceof BusinessEntity)) {
+                if (!currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) && !allowEntityCodeUpdate && isUpdatedEntityCode()) {
+                    messages.error(new BundleKey("messages", "error.superadminpermission.required"));
+                    return null;
+                }
+            }
+        }
+
+        entity = saveOrUpdate(entity);
+
+        if (killConversation) {
+            endConversation();
+        }
+
+        messages.info(new BundleKey("messages", message));
+
 
         return getEditViewName();
     }
+    private boolean isUpdatedEntityCode() {
+        BusinessEntity persistedBusinessEntity = (BusinessEntity) getPersistenceService().findById(getObjectId());
+        BusinessEntity businessEntity = (BusinessEntity) entity;
+        return !persistedBusinessEntity.getCode().equalsIgnoreCase(businessEntity.getCode());
+    }
+    protected CustomEntityTemplate saveOrUpdate(CustomEntityTemplate entity) throws BusinessException {
+        if (entity.isTransient()) {
+            getPersistenceService().create(entity, false);
 
+        } else {
+            entity = getPersistenceService().update(entity);
+        }
+
+        setObjectId((Long) entity.getId());
+
+        return entity;
+    }
     @Override
     public String getEditViewName() {
         return "customizedEntity";
