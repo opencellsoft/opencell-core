@@ -363,15 +363,14 @@ public class PaymentService extends PersistenceService<Payment> {
                     log.warn("Cant create Account operation payment :", e);
                 }
                 if (matchingAO) {
-                    try {
                         List<Long> aoIdsToMatch = new ArrayList<Long>();
                         aoIdsToMatch.addAll(aoIdsToPay);
                         aoIdsToMatch.add(aoPaymentId);
-                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                        // For PaymentAO LETTER, the matching return ERROR,
+                        // Ce comportement est correte, l'AO Refund doit quand meme etre crée meme si l'exception "The operationId NN is already matching" est lancée
+                        // Cette appel dans une nouvelle transaction permet de mettre en place ce comportement
+                        matchingCodeService.matchiOperation(customerAccount, aoIdsToMatch);
                         doPaymentResponseDto.setMatchingCreated(true);
-                    } catch (Exception e) {
-                        log.warn("Cant create matching :", e);
-                    }
                 }
             } 
            
@@ -435,7 +434,9 @@ public class PaymentService extends PersistenceService<Payment> {
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
 
-			paymentHistoryService.addHistoryInNewTransaction(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+            // Le fait de mettre dans une nouvelle transaction crée de probleme de transaction et evite de créer les AO refund (utilisé dans ce payHistory)
+            // avec addHistoryInNewTransaction nous aurons des erreurs comme : ERROR: insert or update on table "ar_payment_history" violates foreign key constraint "fk_payhisto_ao_refund"
+			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
                     doPaymentResponseDto.getPaymentID(), errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {
