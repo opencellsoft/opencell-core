@@ -10,6 +10,7 @@ import static java.util.Optional.ofNullable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
@@ -69,6 +71,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Inject
 	protected ResourceBundle resourceMessages;
 
+	@Inject
+    protected RatedTransactionService ratedTransactionService;
+	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
 	@Override
@@ -356,6 +361,12 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 					.setParameter("id", inv.getId())
 					.getResultList();
 			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));
+			if(true==invoice.isApplyBillingRules()) {
+                Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
+                Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
+	            List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+	            ratedTransactionService.applyInvoicingRules(RTs);
+	        }
 		}
     	return of(generateInvoiceResults);
     }
