@@ -1439,9 +1439,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
-            filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
+            filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
                     billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
-                            .collect(joining(",")) + ")");
+                            .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
             if(filters.containsKey("SQL")) {
