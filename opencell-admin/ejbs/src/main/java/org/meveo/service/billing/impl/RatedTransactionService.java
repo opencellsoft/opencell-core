@@ -1703,10 +1703,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for(RatedTransaction rt : rtsResults) { 
             List<BillingRule> billingRules = billingRulesService.findAllByBillingAccount(rt.getBillingAccount());
             for(BillingRule billingRule : billingRules) { 
-                if(evaluateExpressionBillingRule(billingRule, billingRule.getCriteriaEL()) != null) {
-                    String invoicedBACodeEL = evaluateExpressionBillingRule(billingRule, billingRule.getInvoicedBACodeEL());
-                    if (invoicedBACodeEL != null) {
-                        BillingAccount billingAccountByCode = billingAccountService.findByCode(invoicedBACodeEL);
+                Boolean eCriteriaEL = checkCriteriaEL(rt, billingRule.getCriteriaEL());
+                if(eCriteriaEL != null) {
+                    String eInvoicedBACodeEL = evaluateInvoicedBACodeEL(rt, billingRule.getInvoicedBACodeEL());
+                    if (eInvoicedBACodeEL != null) {
+                        BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL);
                         if (billingAccountByCode != null) {
                             rt.setOriginBillingAccount(rt.getBillingAccount());
                             rt.setBillingAccount(billingAccountByCode);
@@ -1718,12 +1719,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             rt.setRejectReason("Billing redirection rule [id=" + billingRule.getId() + 
                                 ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
                                 billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
-                                invoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
+                                eInvoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
                             update(rt);
                             throw new BusinessApiException("Billing redirection rule [id=" + billingRule.getId() + 
                                 ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
                                 billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
-                                invoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
+                                eInvoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
                         }
                     }
                     else {
@@ -1753,12 +1754,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
-    private String evaluateExpressionBillingRule(BillingRule billingRule, String expression) {
+    private Boolean checkCriteriaEL(RatedTransaction rt, String expression) {
         if (StringUtils.isBlank(expression)) {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("billingRule", billingRule);
+        userMap.put("rt", rt);
+        Boolean code = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        if (code != null) {
+           return code;
+        }
+        return null;       
+    }
+    
+    private String evaluateInvoicedBACodeEL(RatedTransaction rt, String expression) {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put("rt", rt);
         String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         if (code != null) {
            return code;
