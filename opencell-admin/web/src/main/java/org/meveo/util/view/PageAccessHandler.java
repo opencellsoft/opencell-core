@@ -87,6 +87,7 @@ public class PageAccessHandler implements Serializable {
                 boolean isUrlAccesible = urlAccessible[i];
 
                 pageAccess.put(outcomesToCheck.get(i) + "-" + scope, isUrlAccesible);
+                pageAccess.put(urlsToCheck.get(i) + "-" + scope, isUrlAccesible);
 
                 if (isUrlAccesible) {
                     finalIsAccessible = true;
