@@ -679,8 +679,9 @@ public class KeycloakAdminClientService implements Serializable {
         if (isUpdate && roleRepresentation == null) {
             throw new ElementNotFoundException("Role with name " + name + " not found");
 
-        } else if (!isUpdate && roleRepresentation != null) {
-            throw new ElementAlreadyExistsException(name, "Role");
+            // An attempt to create a role again will be ignored and will act as assignment only to a parent role.
+            // } else if (!isUpdate && roleRepresentation != null) {
+            // throw new ElementAlreadyExistsException(name, "Role");
         }
 
         // Create a new role
@@ -688,8 +689,12 @@ public class KeycloakAdminClientService implements Serializable {
             roleRepresentation = new RoleRepresentation(name, description, false);
             if (isClientRole) {
                 client.roles().create(roleRepresentation);
+                List<RoleRepresentation> roleSearch = client.roles().list(name, false);
+                roleRepresentation = roleSearch.size() > 0 ? roleSearch.get(0) : null;
             } else {
                 realmResource.roles().create(roleRepresentation);
+                List<RoleRepresentation> roleSearch = realmResource.roles().list(name, false);
+                roleRepresentation = roleSearch.size() > 0 ? roleSearch.get(0) : null;
             }
 
             // Update existing role

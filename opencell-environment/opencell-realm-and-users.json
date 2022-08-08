@@ -8277,6 +8277,29 @@
             ]
           },
           {
+            "name": "Page Custom entities",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "55e94f83-16b1-4e1b-89a5-8345f89e806f",
+            "uris": [
+              "/pages/admin/customEntities/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
+            ]
+          },
+          {
             "name": "Page Billing (Default)",
             "ownerManagedAccess": false,
             "attributes": {},
@@ -9290,9 +9313,31 @@
             "attributes": {},
             "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c117",
             "uris": [
-              "/api/rest/v1/entityCustomization/entities/*",
-              "/api/rest/entityCustomization/*",
               "/api/rest/customFieldTemplate/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
+            ]
+          },
+          {
+            "name": "Api V1 Customization - entities",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f68e7377-a3d6-4a4d-922b-ac145c39c118",
+            "uris": [
+              "/api/rest/v1/entityCustomization/entities/*",
+              "/api/rest/entityCustomization/*"
             ],
             "scopes": [
               {
@@ -13912,6 +13957,30 @@
             }
           },
           {
+            "id": "52d0f395-6980-40fc-902b-ed1b59aad476",
+            "name": "Page Custom entities - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role superAdminManagement\"]"
+            }
+          },
+          {
+            "id": "52d0f395-6980-40fc-902b-ed1b59aad477",
+            "name": "Page Custom entities - read",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Custom entities\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role administrationManagement\"]"
+            }
+          },
+          {
             "id": "22458ec0-1138-4e1b-9761-a7902f2fcfca",
             "name": "Page Rated transactions - read",
             "type": "scope",
@@ -15109,6 +15178,30 @@
               "resources": "[\"Api V1 Customization\"]",
               "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role apiAdministrationManagement\"]"
+            }
+          },
+          {
+            "id": "ec826c92-aad7-488a-92d3-a91cba22ad83",
+            "name": "Api V1 Customization - entities - read",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role apiAdministrationVisualization\"]"
+            }
+          },
+          {
+            "id": "ecaac485-87f5-4b96-a421-168177f1bc39",
+            "name": "Api V1 Customization - entities - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Api V1 Customization - entities\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "applyPolicies": "[\"Role apiSuperAdminManagement\"]"
             }
           },
           {
