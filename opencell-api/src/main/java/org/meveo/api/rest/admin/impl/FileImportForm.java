@@ -37,12 +37,12 @@ public class FileImportForm {
     private String filename;
 
     @FormParam("filesToImport")
-    @PartType(MediaType.APPLICATION_JSON)
-    private String[] files;
+    @PartType(MediaType.TEXT_PLAIN)
+    private String files;
 
     public FileImportForm() { }
 
-    public FileImportForm(byte[] data, String filename, String[] files) {
+    public FileImportForm(byte[] data, String filename, String files) {
         this.data = data;
         this.filename = filename;
         this.files = files;
@@ -56,7 +56,7 @@ public class FileImportForm {
 
     public void setFilename(String filename) { this.filename = filename; }
 
-    public String[] getFiles() { return files; }
+    public String getFiles() { return files; }
 
-    public void setFiles(String[] files) { this.files = files; }
+    public void setFiles(String files) { this.files = files; }
 }
