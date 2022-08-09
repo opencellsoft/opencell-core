@@ -1833,7 +1833,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="role_description" type="varchar(255)" />
             <column name="role_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
