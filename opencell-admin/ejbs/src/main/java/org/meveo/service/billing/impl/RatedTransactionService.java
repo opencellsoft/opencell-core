@@ -1528,7 +1528,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration, " rt.usageDate");
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billingAccount.id as billing_account__id, "
                 + "              rt.accountingCode.id as accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                + "              sum(rt.unitAmountWithoutTax) as sum_amount_without_tax,"
+                + "              sum(rt.amountWithoutTax) as sum_without_tax, sum(rt.amountWithTax) as sum_with_tax, "
                 + "              sum(rt.amountWithTax) / sum(rt.quantity) as unit_price,"
                 + "              rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id, "
                 + 				 usageDateAggregation + " as usage_date, min(rt.startDate) as start_date, "
