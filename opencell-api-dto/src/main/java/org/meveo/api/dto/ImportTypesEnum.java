@@ -7,7 +7,7 @@ package org.meveo.api.dto;
  * @author Ilham Chafik
  **/
 public enum ImportTypesEnum {
-    CUSTOMER("imports/massImport/customers/input"),
+    CUSTOMER("imports/massImport/customer/input"),
     CUSTOMER_ACCOUNT("imports/massImport/customerAccount/input"),
     PAYMENT_METHOD("imports/massImport/paymentMethod/input"),
     BILLING_ACCOUNT("imports/massImport/billingAccount/input"),
