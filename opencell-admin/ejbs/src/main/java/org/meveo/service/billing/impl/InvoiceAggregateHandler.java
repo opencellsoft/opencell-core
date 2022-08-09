@@ -157,38 +157,12 @@ public class InvoiceAggregateHandler {
      * @lastModifiedVersion 5.0
      */
     private void addOrRemoveRT(Date invoiceDate, RatedTransaction ratedTransaction, boolean isToAdd) throws BusinessException {
-
-        boolean isEnterprise = appProvider.isEntreprise();
-        int rounding = appProvider.getRounding();
-        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
-
-        if (isToAdd) {
-            if (ratedTransaction.getIsEnterpriseAmount(isEnterprise) == null) {
-                if (ratedTransaction.getIsEnterpriseUnitAmount(isEnterprise) == null || ratedTransaction.getQuantity() == null) {
-                    throw new BusinessException("RT.unitAmountWithoutTax/unitAmountWithTax or RT.quantity are null");
-                }
-                ratedTransaction.setIsEnterpriseAmount(isEnterprise, ratedTransaction.getIsEnterpriseUnitAmount(isEnterprise).multiply(ratedTransaction.getQuantity()));
-            }
-
-            if (invoiceDate == null) {
-                invoiceDate = new Date();
-            }
-
-            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getTaxPercent(), isEnterprise, rounding,
-                roundingMode.getRoundingMode());
-
-            ratedTransaction.setAmountWithoutTax(amounts[0]);
-            ratedTransaction.setAmountWithTax(amounts[1]);
-            ratedTransaction.setAmountTax(amounts[2]);
-        }
-
         addRemoveOrUpdateSubCategoryInvoiceAggregate(ratedTransaction.getInvoiceSubCategory(), ratedTransaction.getUserAccount(), ratedTransaction.getInvoiceSubCategory().getDescription(), isToAdd,
             ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction);
 
     }
 
     public void updateSubCategoryCategoryAndTaxAggregateAmounts() {
-
         int rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
         int invoiceRounding = appProvider.getInvoiceRounding();
@@ -216,6 +190,7 @@ public class InvoiceAggregateHandler {
     }
 
     private void updateInvoiceAgregateTax(SubCategoryInvoiceAgregate scAggregate) {
+        
         if (scAggregate.getAmountsByTax() != null) {
             for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amountInfo : scAggregate.getAmountsByTax().entrySet()) {
                 Tax tax = amountInfo.getKey();
@@ -241,7 +216,6 @@ public class InvoiceAggregateHandler {
 
     private void addRemoveOrUpdateSubCategoryInvoiceAggregate(InvoiceSubCategory invoiceSubCategory, UserAccount userAccount, String description, boolean isToAdd, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
             RatedTransaction ratedTransaction) throws BusinessException {
-
         BigDecimal amountTax = amountWithTax.subtract(amountWithoutTax);
 
         SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());

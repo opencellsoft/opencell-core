@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,6 +50,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
@@ -163,6 +165,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private BigDecimal quantity;
     private BigDecimal unitAmountWithoutTax;
     private BigDecimal unitAmountWithTax;
+    private BigDecimal unitAmountTax;
     private String description;
     private String parameter1;
     private String parameter2;
@@ -328,7 +331,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat) {
-
         if (entity.getBillingAccount() == null) {
             messages.error("BillingAccount is required");
             return;
@@ -353,19 +355,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             messages.error("UsageDate is required.");
             return;
         }
-        if (appProvider.isEntreprise()) {
-            if (StringUtils.isBlank(unitAmountWithoutTax)) {
-                messages.error("UnitAmountWithoutTax is required.");
-                return;
-            }
 
-        } else {
-            if (StringUtils.isBlank(unitAmountWithTax)) {
-                messages.error("UnitAmountWithTax is required.");
-                return;
-            }
+        if (StringUtils.isBlank(unitAmountWithoutTax)) {
+            messages.error("UnitAmountWithoutTax is required.");
+            return;
         }
 
+        if (StringUtils.isBlank(unitAmountTax)) {
+            messages.error("UnitAmountTax is required.");
+            return;
+        }
+        
+        
+        unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
         selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
 
         UserAccount ua = getFreshUA();
@@ -383,7 +385,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
 
         // AKK check what happens with tax
-        RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
+        RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax  , quantity, unitAmountWithoutTax.multiply(quantity), unitAmountWithTax.max(quantity), unitAmountTax.multiply(quantity), RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
             seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null, null, null, null);
 
@@ -429,7 +431,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException General business exception
      */
     public void updateAmountsAndLines() throws BusinessException {
-    	amountsAndlinesUpdated=true;
+    	    amountsAndlinesUpdated=true;
         BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 
         aggregateHandler.updateSubCategoryCategoryAndTaxAggregateAmounts();
@@ -447,7 +449,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = entity.getAmountWithTax().add(round(balance, appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+            netToPay = entity.getAmountWithTax().add(balance);
         }
         entity.setNetToPay(netToPay);
     }
@@ -537,23 +539,26 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     private void synchroniseAmounts(RatedTransaction rt) {
-        BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
-        BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
-        BigDecimal newAwot = uawot.multiply(rt.getQuantity());
-        if (newAwot.compareTo(rtAwot) != 0) {
-            BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal newAwt = newAwot.add(amountTax);
-            BigDecimal unitAmountTax = NumberUtils.computeTax(uawot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal uawt = uawot.add(unitAmountTax);
+        BigDecimal unitHT = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal HT = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal newHT = unitHT.multiply(rt.getQuantity());
+        
+        BigDecimal unitT = rt.getUnitAmountTax() != null ? rt.getUnitAmountTax() : BigDecimal.ZERO;
+        BigDecimal T = rt.getAmountTax() != null ? rt.getAmountTax() : BigDecimal.ZERO;
+        BigDecimal newT = unitT.multiply(rt.getQuantity());
+        
+        BigDecimal unitTTC =unitHT.add(unitT);
+        BigDecimal TTC = HT.add(T);
+        BigDecimal newTTC = newHT.add(newT);
 
-            rt.setUnitAmountTax(unitAmountTax);
-            rt.setUnitAmountWithoutTax(uawot);
-            rt.setUnitAmountWithTax(uawt);
+            rt.setUnitAmountTax(unitT);
+            rt.setUnitAmountWithoutTax(unitHT);
+            rt.setUnitAmountWithTax(unitTTC);
 
-            rt.setAmountTax(amountTax);
-            rt.setAmountWithoutTax(newAwot);
-            rt.setAmountWithTax(newAwt);
-        }
+            rt.setAmountTax(newT);
+            rt.setAmountWithoutTax(newHT);
+            rt.setAmountWithTax(newTTC);
+        
     }
 
     /**
@@ -739,6 +744,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.setStatus(InvoiceStatusEnum.VALIDATED);
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
         }
+        
+        
         try {
             entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
         } catch (Exception e) {
@@ -753,9 +760,43 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         return getListViewName();
     }
 
+    private BigDecimal[] computeAmounts(List<RatedTransaction> rts) {
+
+        BigDecimal[] amounts = new BigDecimal[3];
+        amounts[0] = BigDecimal.ZERO;
+        amounts[1] = BigDecimal.ZERO;
+        amounts[2] = BigDecimal.ZERO;
+
+        for (RatedTransaction rt : rts) {
+
+            amounts[0] = amounts[0].add(round(rt.getAmountWithoutTax()));
+            amounts[1] = amounts[1].add(round(rt.getAmountTax()));
+            amounts[2] = amounts[2].add(round(rt.getAmountWithTax()));
+
+        }
+
+        return amounts;
+    }
+
+    private BigDecimal round(BigDecimal amount) {
+        return round(amount, false);
+    }
+
+    private BigDecimal round(BigDecimal amount, boolean stripTrailingZeros) {
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
+        int scale = 2;
+
+        amount = amount.setScale(scale, RoundingMode.HALF_UP);
+        if (stripTrailingZeros) {
+            amount = amount.stripTrailingZeros();
+        }
+        return amount;
+    }
     private List<RatedTransaction> saveRTs() {
         List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
-
+        
         for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
             subCatInvAggr.setInvoice(entity);
             subCatInvAggr.updateAudit(currentUser);
@@ -767,11 +808,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 rts.add(rt);
             }
         }
-
         entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
-
         super.saveOrUpdate(false);
-
         for (RatedTransaction rt : rts) {
             if (rt.getId() == null) {
                 ratedTransactionService.create(rt);
@@ -781,6 +819,28 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
         List<RatedTransaction> RtsToCancel = initialRTList.stream().filter(i -> !rts.contains(i)).collect(Collectors.toList());
         cancelRTs(RtsToCancel);
+
+        BigDecimal[] amounts = computeAmounts(rts);
+        entity.setAmountWithoutTax(amounts[0]);
+        entity.setAmountTax(amounts[1]);
+        entity.setAmountWithTax(amounts[2]);
+
+        BigDecimal balance = BigDecimal.ZERO;
+
+        boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
+        boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
+        if (isBalanceLitigation) {
+            balance = customerAccountService.customerAccountBalanceDue(entity.getBillingAccount().getCustomerAccount(), isBalanceDue ? entity.getInvoiceDate() : null);
+        } else {
+            balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(entity.getBillingAccount().getCustomerAccount(),
+                    isBalanceDue ? entity.getInvoiceDate() : null);
+        }
+
+        entity.setNetToPay(round(round(balance).add(entity.getAmountWithTax())));
+        entity.setComment("Checked");
+
+        invoiceService.updateNoCheck(entity);
+    
         return rts;
     }
 
@@ -797,7 +857,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     @ActionMethod
     public void importFromLinkedInvoices() {
-
         if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
             messages.error("BillingAccount is required.");
             return;
@@ -829,8 +888,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     TaxInfo taxInfo = null;
                     if (rt.getTaxClass() != null) {
                         taxInfo = taxMappingService.determineTax(rt.getTaxClass(), sellerService.refreshOrRetrieve(rt.getSeller()), entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
-                    }
-
+                    }                    
                     RatedTransaction newRT = new RatedTransaction(rt.getUsageDate(), rt.getUnitAmountWithoutTax(), rt.getUnitAmountWithTax(), rt.getUnitAmountTax(), rt.getQuantity(), rt.getAmountWithoutTax(),
                         rt.getAmountWithTax(), rt.getAmountTax(), RatedTransactionStatusEnum.BILLED, ua.getWallet(), entity.getBillingAccount(), ua, rt.getInvoiceSubCategory(), rt.getParameter1(), rt.getParameter2(),
                         rt.getParameter3(), null, rt.getOrderNumber(), null, rt.getUnityDescription(), rt.getRatingUnitDescription(), null, null, null, rt.getCode(), rt.getDescription(), rt.getStartDate(),
@@ -838,7 +896,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         taxInfo != null ? taxInfo.taxClass : null, null, rt.getType(), null,  null);
 
                     newRT.setInvoice(entity);
-
+                    
                     aggregateHandler.addRT(entity.getInvoiceDate(), newRT);
                 }
             } else {
@@ -1081,8 +1139,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     filters.put("inList invoiceType", invoiceTypes);
                 }
             }
-        } catch (Exception e) {
-            log.error("\n\n\n le probleme est ici !!!  \n\n\n\n");
+        } catch (Exception e) {            
             e.printStackTrace();
         }
         return getLazyDataModel();
@@ -1451,4 +1508,20 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public boolean canChangeInvoiceStatusTo(InvoiceStatusEnum newStatus) {
         return entity!=null && entity.getStatus()!=null && newStatus.getPreviousStats().contains(entity.getStatus());
     }
+
+    /**
+     * @return the unitAmountTax
+     */
+    public BigDecimal getUnitAmountTax() {
+        return unitAmountTax;
+    }
+
+    /**
+     * @param unitAmountTax the unitAmountTax to set
+     */
+    public void setUnitAmountTax(BigDecimal unitAmountTax) {
+        this.unitAmountTax = unitAmountTax;
+    }
+    
+    
 }
