@@ -273,6 +273,7 @@ public class ContactService extends BusinessService<Contact> {
         customer.setAdditionalDetails(additionalDetails);
         customer.setAddressbook(addressBook);	        
 		customerService.create(customer);
+		getEntityManager().flush();
 		
 		contact.setAddressBook(addressBook);
 		
@@ -303,6 +304,7 @@ public class ContactService extends BusinessService<Contact> {
         customer.setAdditionalDetails(additionalDetails);
         customer.setAddressbook(addressBook);	        
 		customerService.create(customer);
+		getEntityManager().flush();
 				
 		return customer;
 	}

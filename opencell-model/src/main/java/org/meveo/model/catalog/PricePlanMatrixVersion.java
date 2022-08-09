@@ -86,12 +86,18 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Column(name = "is_matrix")
     private boolean isMatrix;
 
-    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "price", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private BigDecimal price;
+
+    @Column(name = "price", insertable = false, updatable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    @Deprecated
     private BigDecimal amountWithoutTax;
 
-    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "price", insertable = false, updatable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    @Deprecated
     private BigDecimal amountWithTax;
 
     @Column(name = "price_el")
@@ -121,8 +127,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.statusDate = new Date();
         this.validity = copy.validity;
         this.isMatrix = copy.isMatrix;
-        this.amountWithoutTax = copy.amountWithoutTax;
-        this.amountWithTax = copy.amountWithTax;
+        this.price = copy.price;
         this.priceEL = copy.priceEL;
         this.lines = new HashSet<>();
         this.columns = new HashSet<>();
@@ -217,20 +222,32 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.columns = columns;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    @Deprecated
     public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
+        return price;
     }
 
+    @Deprecated
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
+        this.price = amountWithoutTax;
     }
 
+    @Deprecated
     public BigDecimal getAmountWithTax() {
-        return amountWithTax;
+        return price;
     }
 
+    @Deprecated
     public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.amountWithTax = amountWithTax;
+        this.price = amountWithTax;
     }
 
     /**
@@ -276,7 +293,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Objects.hash(amountWithTax, amountWithoutTax, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
+        result = prime * result + Objects.hash(price, priceEL, columns, currentVersion, isMatrix, label, pricePlanMatrix,
           priority, status, statusChangeLog, statusDate, validity);
         return result;
     }
@@ -290,8 +307,8 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         if (!(obj instanceof PricePlanMatrixVersion))
             return false;
         PricePlanMatrixVersion other = (PricePlanMatrixVersion) obj;
-        return Objects.equals(amountWithTax, other.amountWithTax) 
-                && Objects.equals(amountWithoutTax, other.amountWithoutTax) && Objects.equals(priceEL, other.priceEL)
+        return Objects.equals(price, other.price)
+                && Objects.equals(priceEL, other.priceEL)
                 && Objects.equals(columns, other.columns) && currentVersion == other.currentVersion && isMatrix == other.isMatrix && Objects.equals(label, other.label)
                 && Objects.equals(pricePlanMatrix, other.pricePlanMatrix) && priority == other.priority && status == other.status
                 && Objects.equals(statusChangeLog, other.statusChangeLog) && Objects.equals(statusDate, other.statusDate) && Objects.equals(validity, other.validity);
