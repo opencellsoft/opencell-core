@@ -60,7 +60,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 
 /**
  * RecordedInvoice service implementation.
- * 
+ *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author melyoussoufi
@@ -121,7 +121,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     /**
      * @param reference invoice reference
-     * @param invoiceType 
+     * @param invoiceType
      * @return true if recored invoice exist
      */
     public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
@@ -143,11 +143,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
 			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
-        } catch (Exception e) {        	
+        } catch (Exception e) {
         }
         return recordedInvoice;
     }
-    
+
     /**
      * @param invoiceNumber invoice's reference.
      * @return list of RecoredInvoice.
@@ -334,7 +334,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         return;
                     }
                 }
-                
+
             }
 
             RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
@@ -356,7 +356,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
     }
-    
+
     @Override
     public void create(RecordedInvoice entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
@@ -465,7 +465,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
@@ -531,21 +531,21 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
                     + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
-        
+
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
-        
+
         return qb.getQuery(getEntityManager()).getResultList();
     }
-    
+
     public Long getCountAgedReceivables(CustomerAccount customerAccount) {
-		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName()); 
+		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName());
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);
         }
         return (Long) qb.getQuery(getEntityManager()).getSingleResult();
     }
-    
+
     /**
      * Find by invoice id.
      *
@@ -559,7 +559,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             return (RecordedInvoice) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             log.info("Invoice with id {} was not found. Returning null.", invoiceId);
-            return null;  
+            return null;
         }
     }
 

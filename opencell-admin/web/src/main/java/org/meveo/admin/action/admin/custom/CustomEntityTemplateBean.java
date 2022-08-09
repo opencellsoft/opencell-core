@@ -782,4 +782,16 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public List<CustomEntityTemplate> listSortedByName() {
         return getPersistenceService().list(new PaginationConfiguration("name", PagingAndFiltering.SortOrder.ASCENDING));
     }
+
+    public String[] getAllPermissions() {
+        List<CustomEntityTemplate> cets = listSortedByName();
+        List<String> permissions = new ArrayList<String>();
+        permissions.add("ReadAllCE");
+        permissions.add("ModifyAllCE");
+        for (CustomEntityTemplate cet : cets) {
+            permissions.add(cet.getReadPermission());
+            permissions.add(cet.getModifyPermission());
+        }
+        return permissions.toArray(new String[] {});
+    }
 }

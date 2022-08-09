@@ -161,7 +161,7 @@ public class CurrentUserProvider {
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
+        // String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
 
         MeveoUser user = null;
 
@@ -244,7 +244,7 @@ public class CurrentUserProvider {
 
         AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
 
-        AuthzClient authzClient = AuthzClient.create();
+        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
 
         // Get resources best matching the URL
         List<ResourceRepresentation> resources = authzClient.protection(accessToken).resource().findByMatchingUri(url);
@@ -275,7 +275,7 @@ public class CurrentUserProvider {
 
         AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
 
-        AuthzClient authzClient = AuthzClient.create();
+        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
 
         boolean[] result = new boolean[urls.length];
 
