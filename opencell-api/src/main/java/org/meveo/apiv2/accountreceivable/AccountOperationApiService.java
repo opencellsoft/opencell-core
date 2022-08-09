@@ -137,9 +137,12 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				throw new NotFoundException("Customer account does not exits");
 			}
 			accountOperation.setCustomerAccount(customerAccount);
-			accountOperation.setStatus(POSTED);
-			// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
-			accountOperationService.fillOperationNumber(accountOperation);
+			if (accountOperation.getStatus() != POSTED) {
+				accountOperation.setStatus(POSTED);
+				// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
+				accountOperationService.fillOperationNumber(accountOperation);
+			}
+
 			try {
 				accountOperationService.update(accountOperation);
 			} catch (Exception exception) {
