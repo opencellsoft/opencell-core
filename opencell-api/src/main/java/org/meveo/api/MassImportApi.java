@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import com.google.gson.Gson;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.meveo.api.admin.FilesApi;
@@ -50,7 +51,8 @@ public class MassImportApi {
         }
 
         List<ImportFileTypeDto> fileTypes = new ArrayList<>();
-        String[] filesToImport = massImportForm.getFiles().split(",");
+        List<String> filesArray = new Gson().fromJson( massImportForm.getFiles(), List.class );
+        String[] filesToImport = filesArray.toArray(new String[filesArray.size()]);
         try {
             String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
             Path path = Paths.get(tempDir);
