@@ -19,16 +19,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.GenerateInvoiceInput;
-import org.meveo.apiv2.billing.Invoice;
-import org.meveo.apiv2.billing.InvoiceInput;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
-import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
-import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.models.ApiException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -389,5 +380,4 @@ public interface InvoiceResource {
                     @ApiResponse(responseCode = "400", description = "bad request when sub totals is not found") })
     Response deleteSubTotals(
             @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
-
 }

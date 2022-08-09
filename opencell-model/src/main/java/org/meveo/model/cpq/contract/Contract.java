@@ -2,6 +2,7 @@ package org.meveo.model.cpq.contract;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -148,8 +149,18 @@ public class Contract extends EnableBusinessCFEntity {
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<ContractItem> contractItems;
 	
+    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
+    private List<BillingRule> billingRules = new ArrayList<>();
+    
+	public List<BillingRule> getBillingRules() {
+        return billingRules;
+    }
 
-	/**
+    public void setBillingRules(List<BillingRule> billingRules) {
+        this.billingRules = billingRules;
+    }
+
+    /**
 	 * @return the seller
 	 */
 	public Seller getSeller() {

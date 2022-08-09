@@ -356,7 +356,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         RatingResult ratedEDRResult = new RatingResult();
-        ratedEDRResult.addWalletOperation(walletOperation);
+        ratedEDRResult.setWalletOperation(walletOperation);
+        ratedEDRResult.getWalletOperations().add(walletOperation);
         
         if(!isVirtual) {
         	walletOperationService.create(walletOperation);
@@ -784,11 +785,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         if (ppmVersion != null) {
             if (!ppmVersion.isMatrix()) {
-                if (appProvider.isEntreprise()) {
-                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
-                } else {
-                	priceWithoutTax = ppmVersion.getAmountWithTax();
-                }
+//                if (appProvider.isEntreprise()) {
+//                	priceWithoutTax = ppmVersion.getAmountWithoutTax();
+//                } else {
+//                	priceWithoutTax = ppmVersion.getAmountWithTax();
+//                }
+
+            	priceWithoutTax = ppmVersion.getPrice();
+
                 if (ppmVersion.getPriceEL() != null) {
                 	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
                     if (priceWithoutTax == null) {

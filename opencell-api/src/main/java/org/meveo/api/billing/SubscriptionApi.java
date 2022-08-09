@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -100,6 +100,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
+import org.meveo.apiv2.billing.ServiceInstanceToDelete;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
@@ -557,7 +558,8 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
-            updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
+            updateAttributeAndQuantityInstances(subscription, postData.getServices().getServiceInstance());
+
         }
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
         subscription = subscriptionService.update(subscription);
@@ -2611,11 +2613,14 @@ public class SubscriptionApi extends BaseApi {
         return subscription;
     }
 
-    private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
+    private void updateAttributeAndQuantityInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
         if(serviceInstanceDtos != null) {
             serviceInstanceDtos.forEach(serviceInstanceDto -> {
                 var serviceInstance = serviceInstanceService.findById(serviceInstanceDto.getId());
                 if(serviceInstance != null) {
+                    if(serviceInstanceDto.getQuantity()!= null){
+                        serviceInstance.setQuantity(serviceInstanceDto.getQuantity());
+                    }
                     serviceInstance.getAttributeInstances().clear();
                     if(serviceInstanceDto.getAttributeInstances() != null) {
                         serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
@@ -3137,5 +3142,41 @@ public class SubscriptionApi extends BaseApi {
         }
         subscriptionService.activateInstantiatedService(subscription);
         return subscription;
+    }
+
+    public void deleteInactiveServiceInstance(Long subscriptionId, ServiceInstanceToDelete toDelete) {
+
+        Subscription subscription = subscriptionService.findById(subscriptionId);
+
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionId);
+        }
+
+        if (SubscriptionStatusEnum.RESILIATED == subscription.getStatus()) {
+            throw new BusinessApiException("Subscription status is in RESILIATED status");
+        }
+
+        if (CollectionUtils.isEmpty(subscription.getServiceInstances())) {
+            throw new BusinessApiException("No service instance found for subscription [code='" + subscription.getCode() + "']");
+        }
+
+        toDelete.getIds().forEach(serviceInstanceId -> {
+            ServiceInstance instance = subscription.getServiceInstances().stream()
+                    .filter(sInstance -> serviceInstanceId.equals(sInstance.getId()))
+                    .findAny()
+                    .orElse(null);
+
+            if (instance == null) {
+                throw new BusinessApiException("ServiceInstance with [id='" + serviceInstanceId + "'] not found for subscription [code='" + subscription.getCode() + "']");
+            }
+
+            if (InstanceStatusEnum.INACTIVE != instance.getStatus() && InstanceStatusEnum.PENDING != instance.getStatus()) {
+                throw new BusinessApiException("Invalid ServiceInstance status with code '" + instance.getCode() + "' : expected status INACTIVE / PENDING found " + instance.getStatus());
+            }
+
+            instance.setSubscription(null);
+            serviceInstanceService.update(instance);
+        });
+
     }
 }
