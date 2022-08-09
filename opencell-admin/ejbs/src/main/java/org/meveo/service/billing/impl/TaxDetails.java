@@ -1,15 +1,14 @@
 package org.meveo.service.billing.impl;
 
+import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.BaseEntity.NB_DECIMALS;
 
-import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Tax;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,23 +26,27 @@ public class TaxDetails {
 
     private List<TaxDetails> subTaxes;
 
+    private Boolean composite;
+
     public TaxDetails() {
     }
 
     public TaxDetails(Long taxId, String taxCode, BigDecimal percent,
-                      BigDecimal taxAmount, BigDecimal convertedTaxAmount, List<TaxDetails> subTaxes) {
+                      BigDecimal taxAmount, BigDecimal convertedTaxAmount, List<TaxDetails> subTaxes, Boolean composite) {
         this.taxId = taxId;
         this.taxCode = taxCode;
         this.percent = percent;
         this.taxAmount = taxAmount;
         this.convertedTaxAmount = convertedTaxAmount;
         this.subTaxes = subTaxes;
+        this.composite = composite;
     }
 
-    public TaxDetails(Long taxId, String taxCode, BigDecimal percent) {
+    public TaxDetails(Long taxId, String taxCode, BigDecimal percent, Boolean composite) {
         this.taxId = taxId;
         this.taxCode = taxCode;
         this.percent = percent;
+        this.composite = composite;
     }
 
     public Long getTaxId() {
@@ -95,20 +98,22 @@ public class TaxDetails {
     }
 
     public static TaxDetails fromTax(Tax tax, BigDecimal taxAmount, BigDecimal convertedTaxAmount) {
-        TaxDetails mainTaxDetails = new TaxDetails(tax.getId(), tax.getCode(), tax.getPercent());
+        TaxDetails mainTaxDetails = new TaxDetails(tax.getId(), tax.getCode(), tax.getPercent(), TRUE);
         if(tax.getPercent().compareTo(ZERO) == 0) {
             mainTaxDetails.setTaxAmount(ZERO);
             mainTaxDetails.setConvertedTaxAmount(ZERO);
             mainTaxDetails.setSubTaxes(tax.getSubTaxes()
                     .stream()
-                    .map(subTax -> new TaxDetails(subTax.getId(), subTax.getCode(), ZERO, ZERO, ZERO, null))
+                    .map(subTax -> new TaxDetails(subTax.getId(),
+                            subTax.getCode(), ZERO, ZERO, ZERO, null, null))
                     .collect(toList()));
         } else {
             mainTaxDetails.setTaxAmount(taxAmount);
             mainTaxDetails.setConvertedTaxAmount(convertedTaxAmount);
             List<TaxDetails> subTaxesDetails = new ArrayList<>();
             for (Tax subTax : tax.getSubTaxes()) {
-                TaxDetails subTaxDetails = new TaxDetails(subTax.getId(), subTax.getCode(), subTax.getPercent());
+                TaxDetails subTaxDetails =
+                        new TaxDetails(subTax.getId(), subTax.getCode(), subTax.getPercent(), null);
                 BigDecimal percent = subTax.getPercent().divide(tax.getPercent(), NB_DECIMALS, HALF_UP);
                 subTaxDetails.setTaxAmount(taxAmount.multiply(percent));
                 subTaxDetails.setConvertedTaxAmount(convertedTaxAmount.multiply(percent));
@@ -117,5 +122,13 @@ public class TaxDetails {
             mainTaxDetails.setSubTaxes(subTaxesDetails);
         }
         return mainTaxDetails;
+    }
+
+    public Boolean getComposite() {
+        return composite;
+    }
+
+    public void setComposite(Boolean composite) {
+        this.composite = composite;
     }
 }
