@@ -15,6 +15,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public interface Tax extends Resource {
 
 	@Nullable
+	Boolean getComposite();
+
+	@Nullable
 	BigDecimal getPercent();
 
 	@Nullable

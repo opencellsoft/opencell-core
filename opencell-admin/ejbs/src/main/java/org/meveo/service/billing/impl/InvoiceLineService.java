@@ -1,5 +1,6 @@
 package org.meveo.service.billing.impl;
 
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.*;
@@ -1112,7 +1113,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             taxDetails = TaxDetails.fromTax(mainTax, taxAmount, convertedTaxAmount);
         } else {
             taxDetails = new TaxDetails(mainTax.getId(), mainTax.getCode(),
-                    mainTax.getPercent(), taxAmount, convertedTaxAmount, null);
+                    mainTax.getPercent(), taxAmount, convertedTaxAmount, null, FALSE);
         }
         return ofNullable(taxDetails);
     }
