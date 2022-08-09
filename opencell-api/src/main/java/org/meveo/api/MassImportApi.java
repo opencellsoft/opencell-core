@@ -51,8 +51,7 @@ public class MassImportApi {
         }
 
         List<ImportFileTypeDto> fileTypes = new ArrayList<>();
-        List<String> filesArray = new Gson().fromJson( massImportForm.getFiles(), List.class );
-        String[] filesToImport = filesArray.toArray(new String[filesArray.size()]);
+        List<String> filesToImport = new Gson().fromJson( massImportForm.getFiles(), List.class );
         try {
             String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
             Path path = Paths.get(tempDir);
@@ -61,7 +60,7 @@ public class MassImportApi {
             String importTempDir = TEMP_DIR + massImportForm.getFilename();
             FlatFile flatFile = filesApi.uploadFile(massImportForm.getData(), importTempDir, null);
 
-            File[] files = new File(tempDir).listFiles((file, s) -> Arrays.asList(filesToImport).contains(s));
+            File[] files = new File(tempDir).listFiles((file, s) -> filesToImport.contains(s));
 
             fileTypes = detectFileType(files);
             moveFiles(fileTypes);
