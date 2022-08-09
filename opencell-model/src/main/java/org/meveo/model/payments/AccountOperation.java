@@ -45,6 +45,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -1035,5 +1036,10 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
     public void setOperationNumber(Long operationNumber) {
         this.operationNumber = operationNumber;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        auditable.setUpdated(new Date());
     }
 }
