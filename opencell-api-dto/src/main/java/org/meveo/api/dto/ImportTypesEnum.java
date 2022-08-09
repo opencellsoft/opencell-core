@@ -7,16 +7,16 @@ package org.meveo.api.dto;
  * @author Ilham Chafik
  **/
 public enum ImportTypesEnum {
-    CUSTOMER("imports/customers/inputs"),
-    CUSTOMER_ACCOUNT("imports/customerAccount/inputs"),
-    PAYMENT_METHOD("imports/paymentMethod/inputs"),
-    BILLING_ACCOUNT("imports/billingAccount/inputs"),
-    USER_ACCOUNT("imports/userAccount/inputs"),
-    SUBSCRIPTION("imports/subscription/inputs"),
-    SERVICE_INSTANCE("imports/serviceInstance/inputs"),
-    ATTRIBUTE_INSTANCE("imports/attributeInstance/inputs"),
-    ACCESS_POINT("imports/accessPoint/inputs"),
-    COUNTER("imports/counter/inputs"),
+    CUSTOMER("imports/massImport/customers/input"),
+    CUSTOMER_ACCOUNT("imports/massImport/customerAccount/input"),
+    PAYMENT_METHOD("imports/massImport/paymentMethod/input"),
+    BILLING_ACCOUNT("imports/massImport/billingAccount/input"),
+    USER_ACCOUNT("imports/massImport/userAccount/input"),
+    SUBSCRIPTION("imports/massImport/subscription/input"),
+    SERVICE_INSTANCE("imports/massImport/serviceInstance/input"),
+    ATTRIBUTE_INSTANCE("imports/massImport/attributeInstance/input"),
+    ACCESS_POINT("imports/massImport/accessPoint/input"),
+    COUNTER("imports/massImport/counter/input"),
     UNKNOWN("");
 
     public final String path;
