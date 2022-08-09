@@ -41,6 +41,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.util.CollectionUtil;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -3178,5 +3179,24 @@ public class SubscriptionApi extends BaseApi {
             serviceInstanceService.update(instance);
         });
 
+    }
+
+    public void instanciateProduct(String subscriptionCode, List<ProductToInstantiateDto> productToInstanciate) {
+    	
+    	log.info("Instanciate products for subscription {}", subscriptionCode);
+    	
+    	Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+    	if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+    	// Instanciate products
+    	if(!CollectionUtil.isNullOrEmpty(productToInstanciate)) {
+	    	for (ProductToInstantiateDto productToInstantiateDto : productToInstanciate) {
+				processProduct(subscription, productToInstantiateDto);
+			}
+    	}
+    	
+    	log.info("Products instanciated successfully for subscription {}", subscriptionCode);
     }
 }
