@@ -363,14 +363,18 @@ public class PaymentService extends PersistenceService<Payment> {
                     log.warn("Cant create Account operation payment :", e);
                 }
                 if (matchingAO) {
+                    try {
                         List<Long> aoIdsToMatch = new ArrayList<Long>();
                         aoIdsToMatch.addAll(aoIdsToPay);
                         aoIdsToMatch.add(aoPaymentId);
-                        // For PaymentAO LETTER, the matching return ERROR,
-                        // Ce comportement est correte, l'AO Refund doit quand meme etre crée meme si l'exception "The operationId NN is already matching" est lancée
-                        // Cette appel dans une nouvelle transaction permet de mettre en place ce comportement
-                        matchingCodeService.matchiOperation(customerAccount, aoIdsToMatch);
+                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
                         doPaymentResponseDto.setMatchingCreated(true);
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                        if (e instanceof NoAllOperationUnmatchedException) {
+                            throw new PaymentException(PaymentErrorEnum.AO_ALREADY_MATCHED, "Cannot create refund for a matched payment");
+                        }
+                    }
                 }
             } 
            
