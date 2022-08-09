@@ -120,6 +120,10 @@ public class FilterService extends BusinessService<Filter> {
         xStream.alias("primitiveFilterCondition", PrimitiveFilterCondition.class);
         xStream.alias("projector", Projector.class);
 
+        xStream.processAnnotations(new Class[]{AndCompositeFilterCondition.class, Filter.class, FilterCondition.class, FilterSelector.class,
+                NativeFilterCondition.class, OrCompositeFilterCondition.class, OrderCondition.class, Projector.class});
+        xStream.allowTypes(new Class[]{AndCompositeFilterCondition.class, Filter.class, FilterCondition.class, FilterSelector.class,
+                NativeFilterCondition.class, OrCompositeFilterCondition.class, OrderCondition.class, Projector.class});
         xStream.setMode(XStream.NO_REFERENCES);
 
         // rename String to field, arrayList must be specify in the fieldName
