@@ -50,7 +50,7 @@ public class MassImportApi {
         }
 
         List<ImportFileTypeDto> fileTypes = new ArrayList<>();
-        String[] filesToImport = massImportForm.getFiles();
+        String[] filesToImport = massImportForm.getFiles().split(",");
         try {
             String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
             Path path = Paths.get(tempDir);
