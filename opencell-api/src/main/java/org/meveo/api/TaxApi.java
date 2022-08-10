@@ -59,15 +59,13 @@ public class TaxApi extends BaseApi {
     @Inject
     private AccountingCodeService accountingCodeService;
 
-    public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
+    public Tax create(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(Tax.class.getName(), postData);
         }
         validateTaxInput(postData);
-
-        ActionStatus result = new ActionStatus();
-
+        
         // check if tax exists
         if (taxService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Tax.class, postData.getCode());
@@ -106,8 +104,8 @@ public class TaxApi extends BaseApi {
         tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         taxService.create(tax);
-
-        return result;
+        
+        return tax;
     }
 
     private void validateTaxInput(TaxDto postData) {
@@ -151,17 +149,17 @@ public class TaxApi extends BaseApi {
         }
     }
 
-    public ActionStatus update(TaxDto postData) throws MeveoApiException, BusinessException {
+    public Tax update(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
 
-        validateTaxInput(postData);
+        if (StringUtils.isBlank(postData.getPercent())) {
+            missingParameters.add("percent");
+        }
 
         handleMissingParametersAndValidate(postData);
-
-        ActionStatus result = new ActionStatus();
 
         // check if tax exists
         Tax tax = taxService.findByCode(postData.getCode());
@@ -208,7 +206,7 @@ public class TaxApi extends BaseApi {
 
         taxService.update(tax);
 
-        return result;
+        return tax;
     }
 
     public TaxDto find(String taxCode) throws MeveoApiException {
@@ -248,11 +246,11 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+    public Long createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
         if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
-            update(postData);
+            return update(postData).getId();
         } else {
-            create(postData);
+            return create(postData).getId();
         }
     }
 

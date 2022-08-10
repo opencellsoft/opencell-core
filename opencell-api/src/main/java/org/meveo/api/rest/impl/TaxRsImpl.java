@@ -102,7 +102,8 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.createOrUpdate(postData);
+            Long idEntity = taxApi.createOrUpdate(postData);
+            result.setEntityId(idEntity);
         } catch (Exception e) {
             processException(e, result);
         }
