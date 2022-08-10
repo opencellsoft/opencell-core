@@ -350,6 +350,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 create(recordedInvoiceCatAgregate);
             }
             invoice.setRecordedInvoice(recordedInvoice);
+            if(invoice.getDueDate() != null) {
+                var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? InvoicePaymentStatusEnum.PENDING : InvoicePaymentStatusEnum.UNPAID;
+                invoice.setPaymentStatus(currentStatus);
+            }
     	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
