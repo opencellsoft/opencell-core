@@ -529,7 +529,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
         	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
         	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
-                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
+                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
+                    "or (ao.invoice.paymentStatus ='" + InvoicePaymentStatusEnum.UNPAID +"' and ao.invoice.paymentStatusDate <= '"
+                            + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
 
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
