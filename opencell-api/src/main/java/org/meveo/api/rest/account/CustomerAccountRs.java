@@ -141,7 +141,7 @@ public interface CustomerAccountRs extends IBaseRs {
     @Path("/customers/{customerCode}")
     @Operation(summary = "List CustomerAccount filtered by customerCode",
             tags = { "Customer account management" })
-    CustomerAccountsResponseDto listByCustomerV2(@QueryParam("customerCode") String customerCode);
+    CustomerAccountsResponseDto listByCustomerV2(@PathParam("customerCode") String customerCode);
 
     /**
      * List CustomerAccounts matching a given criteria

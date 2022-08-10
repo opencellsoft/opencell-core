@@ -115,7 +115,7 @@ public interface ImportExportRs extends IBaseRs {
 			description=" export data  ",
 			operationId="    POST_ImportExport_exportData",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ImportExportResponseDto response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ImportExportResponseDto.class
@@ -158,7 +158,7 @@ public interface ImportExportRs extends IBaseRs {
 			description=" export Data From Entity List  ",
 			operationId="    POST_ImportExport_exportDataFromEntityList",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ImportExportResponseDto response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ImportExportResponseDto.class
