@@ -31,6 +31,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.bi.FlatFile;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +63,54 @@ public class FilesApi extends BaseApi {
 
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
+    }
+    
+    @PostConstruct
+    public void init() {
+    	createMissingDirectories();
+    }
+
+    private void createMissingDirectories() {
+        log.info("createMissingDirectories() * ");
+        // log.info("Creating required dirs in "+getFilePath());
+        String importDir = getProviderRootDir() + File.separator + "imports" + File.separator + "customers" + File.separator;
+        String customerDirIN = importDir + "input";
+        String customerDirOUT = importDir + "output";
+        String customerDirERR = importDir + "errors";
+        String customerDirWARN = importDir + "warnings";
+        String customerDirKO = importDir + "reject";
+        importDir = getProviderRootDir() + File.separator + "imports" + File.separator + "accounts" + File.separator;
+        String accountDirIN = importDir + "input";
+        String accountDirOUT = importDir + "output";
+        String accountDirERR = importDir + "errors";
+        String accountDirWARN = importDir + "warnings";
+        String accountDirKO = importDir + "reject";
+        importDir = getProviderRootDir() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
+        String subDirIN = importDir + "input";
+        String subDirOUT = importDir + "output";
+        String subDirERR = importDir + "errors";
+        String subDirWARN = importDir + "warnings";
+        String subDirKO = importDir + "reject";
+        importDir = getProviderRootDir() + File.separator + "imports" + File.separator + "catalog" + File.separator;
+        String catDirIN = importDir + "input";
+        String catDirOUT = importDir + "output";
+        String catDirKO = importDir + "reject";
+        importDir = getProviderRootDir() + File.separator + "imports" + File.separator + "metering" + File.separator;
+        String meterDirIN = importDir + "input";
+        String meterDirOUT = importDir + "output";
+        String meterDirKO = importDir + "reject";
+        String invoicePdfDir = getProviderRootDir() + File.separator + "invoices" + File.separator + "pdf";
+        String invoiceXmlDir = getProviderRootDir() + File.separator + "invoices" + File.separator + "xml";
+        String jasperDir = getProviderRootDir() + File.separator + "jasper";
+        String priceplanVersionsDir = getProviderRootDir() + File.separator + "imports" + File.separator + "priceplan_versions";
+        List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR, accountDirWARN, accountDirKO, subDirIN,
+            subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
+        for (String custDirs : filePaths) {
+            File subDir = new File(custDirs);
+            if (!subDir.exists()) {
+                subDir.mkdirs();
+            }
+        }
     }
 
     public List<FileDto> listFiles(String dir) throws BusinessApiException {
