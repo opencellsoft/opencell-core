@@ -157,6 +157,34 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @MeveoAudit
     @Override
+    public void createWithoutNotif(Subscription subscription) throws BusinessException {
+    	
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if(offerTemplate.isDisabled()) {
+        	throw new BusinessException("Cannot subscribe to disabled offer");
+        }
+        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
+        updateSubscribedTillAndRenewalNotifyDates(subscription);
+
+        subscription.createAutoRenewDate();
+        subscription.setVersionNumber(1);
+        super.createWithoutNotif(subscription);
+
+        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
+        
+        // execute subscription script
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
+            try {
+                offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());
+            } catch (BusinessException e) {
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
+            }
+        }
+    }
+
+    @MeveoAudit
+    @Override
     public Subscription update(Subscription subscription) throws BusinessException {
     	Subscription subscriptionOld = this.findById(subscription.getId());
     	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
