@@ -72,9 +72,9 @@ public class TaxApiTest {
         subTaxes.add(new TaxDto(2L));
         taxDto.setSubTaxes(subTaxes);
 
-        ActionStatus status = taxApi.create(taxDto);
+        Tax tax = taxApi.create(taxDto);
 
-        Assert.assertEquals(ActionStatusEnum.SUCCESS, status.getStatus());
+        Assert.assertEquals(tax.getPercent(), new BigDecimal(11));
     }
 
     @Test
@@ -91,9 +91,9 @@ public class TaxApiTest {
         taxDto.setComposite(Boolean.FALSE);
         taxDto.setPercent(BigDecimal.TEN);
 
-        ActionStatus status = taxApi.create(taxDto);
+        Tax tax = taxApi.create(taxDto);
 
-        Assert.assertEquals(ActionStatusEnum.SUCCESS, status.getStatus());
+        Assert.assertEquals(tax.getPercent(), BigDecimal.TEN);
     }
 
     @Test(expected = BadRequestException.class)
