@@ -157,6 +157,10 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+import com.thoughtworks.xstream.security.ArrayTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 /**
  * @author Andrius Karpavicius
@@ -265,6 +269,11 @@ public class EntityExportImportService implements Serializable {
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
 
         xstream.setMode(XStream.NO_REFERENCES);
+        xstream.allowTypes(new Class[] {
+                java.util.List.class,
+                org.meveo.export.ExportTemplate.class,
+                org.meveo.export.RelatedEntityToExport.class
+        });
 
         List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
 
