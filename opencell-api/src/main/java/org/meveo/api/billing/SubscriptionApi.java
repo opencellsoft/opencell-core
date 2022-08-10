@@ -2685,6 +2685,10 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData, List<String> cfsToCopy) {
+    	return createSubscriptionWithoutCheckOnCodeExistence(postData, cfsToCopy, true);
+    }
+    
+    private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData, List<String> cfsToCopy, boolean notifyCreation) {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             postData.setSubscriptionDate(new Date());
         }
@@ -2819,7 +2823,12 @@ public class SubscriptionApi extends BaseApi {
         } else {
             subscription.setStatus(SubscriptionStatusEnum.CREATED);
         }
-        subscriptionService.create(subscription);
+
+        if(notifyCreation) {        	
+        	subscriptionService.create(subscription);
+        } else {
+        	subscriptionService.createWithoutNotif(subscription);
+        }
         subscriptionService.getEntityManager().flush();
         userAccount.getSubscriptions().add(subscription);
 
@@ -2981,7 +2990,7 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
 
-        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy());
+        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy(), false);
 
         //if should not reengage customer then the end agreement date of new version should take the one of the old version,
         // else recalculate end agreement date of new version based on new offer auto end of engagement config
