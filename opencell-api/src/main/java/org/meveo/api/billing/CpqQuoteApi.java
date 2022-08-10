@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -1389,9 +1390,18 @@ public class CpqQuoteApi extends BaseApi {
             throw new MeveoApiException("You can not update the quote version with status = " + quoteVersion.getStatus() + " allowed target status are: " + quoteVersion.getStatus().allowedTargets());
         }
         var quoteVersionPublished = quoteVersionService.findByQuoteIdAndStatusActive(quoteVersion.getQuote().getId());
-        var numberQuoteVersionPublished = quoteVersionPublished.stream().filter(qv -> qv.getQuoteVersion().intValue() != currentVersion).collect(Collectors.toList()).size();
+        var numberQuoteVersionPublished = quoteVersionPublished.stream().filter(qv -> qv.getQuoteVersion().intValue() != currentVersion)
+                                                                        .map(qv -> {
+                                                                            if(qv.getQuote().getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()) && qv.getStatus().equals(VersionStatusEnum.PUBLISHED)) {
+                                                                                    qv.getQuote().setStatus(QuoteStatusEnum.IN_PROGRESS.toString());
+                                                                                    return null;
+                                                                            }
+                                                                            return qv;
+                                                                        })
+                                                                        .filter(Objects::nonNull)
+                                                                        .collect(Collectors.toList()).size();
         if(numberQuoteVersionPublished > 0)
-        	throw new MeveoApiException("There are already publish version.One Version can be published per Quote!!");
+        	throw new MeveoApiException("You already have a published version. Please close it to publish a new one");
         quoteVersion.setStatus(status);
         quoteVersion.setStatusDate(new Date());
         quoteVersionService.update(quoteVersion);
