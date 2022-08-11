@@ -59,6 +59,7 @@
                     <hftl:formField label="#{messages['serviceInstance.status']}" field="status" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.subscriptionDate']}" field="subscriptionDate" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
+					<hftl:formField label="#{messages['serviceInstance.reactivationDate']}" field="reactivationDate" allowEdit="false" rendered="#{not empty serviceInstanceBean.entity.reactivationDate}" />
                     <hftl:formField label="#{messages['serviceInstance.endAgreementDate']}" id="endAgreementDateId" field="endAgreementDate" disabled="#{serviceInstanceBean.entity.autoEndOfEngagement}"/>
                     <hftl:formField label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
                         field="terminationDate" allowEdit="false" />

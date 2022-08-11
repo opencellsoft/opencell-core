@@ -28,6 +28,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -62,11 +63,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.ChargeTemplateService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.catalog.impl.*;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -1543,5 +1540,27 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
                 .setParameter("newWallet", wallet)
                 .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    /**
+     * Determine recurring period start and end dates
+     *
+     * @param chargeInstance Charge instance
+     * @param date Date to calculate period for
+     * @return Recurring period
+     */
+    public DatePeriod getRecurringPeriod(RecurringChargeInstance chargeInstance, Date date) {
+
+        Calendar cal = resolveCalendar(chargeInstance);
+        if (cal == null) {
+            throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
+        }
+
+        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
+
+        Date startPeriodDate = cal.previousCalendarDate(cal.truncateDateTime(date));
+        Date endPeriodDate = cal.nextCalendarDate(cal.truncateDateTime(date));
+
+        return new DatePeriod(startPeriodDate, endPeriodDate);
     }
 }

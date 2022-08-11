@@ -1046,7 +1046,8 @@
                     <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
-                    <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" /> 
+                    <hftl:formField label="#{messages['chargeInstance.reactivationDate']}" field="reactivationDate" edit="false" rendered="#{not empty subscriptionBean.usageChargeInstance.reactivationDate}" />
+                    <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" />
                     
                     <hftl:formField label="#{messages['chargeInstance.criteria1']}" field="criteria1" edit="false" isMessage="false" newLine="true" />
                     <hftl:formField label="#{messages['chargeInstance.criteria2']}" field="criteria2" edit="false" isMessage="false" />
