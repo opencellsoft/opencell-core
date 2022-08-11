@@ -623,6 +623,35 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
+     */
+    public void createWithoutNotif(E entity)  {
+        log.debug("start of create {}", entity.getClass().getSimpleName());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
+
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
+        }
+        // Schedule end of period events
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+
+        getEntityManager().persist(entity);
+
+        // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
+        // if (accumulateCF && entity instanceof ICustomFieldEntity) {
+        // cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
+        // }
+
+        log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
+    }
+
     @Override
     public List<E> list() {
         return list((Boolean) null);
