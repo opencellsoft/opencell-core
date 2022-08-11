@@ -28,7 +28,6 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 
 	@Override
 	public Response create(org.meveo.apiv2.accounting.AccountingPeriod input) {
-		checkRequiredParameters(input);
 		AccountingPeriod accountingPeriodEntity = accountingPeriodApiService.create(accountingPeriodMapper.toEntity(input), input.getUseSubAccountingPeriods());
 		return Response.created(LinkGenerator
 				.getUriBuilderFromResource(AccountingPeriodResource.class, accountingPeriodEntity.getId()).build())
@@ -43,7 +42,6 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 	
 	@Override
 	public Response update(String fiscalYear, org.meveo.apiv2.accounting.AccountingPeriod accountingPeriodResource) {
-		checkRequiredParameters(accountingPeriodResource);
 		final AccountingPeriod accountingPeriod = accountingPeriodApiService.findByFiscalYear(fiscalYear).orElseThrow(NotFoundException::new);
 		AccountingPeriod newValue = accountingPeriodMapper.toEntity(accountingPeriodResource);
 		accountingPeriodApiService.update(accountingPeriod, newValue);
@@ -73,7 +71,8 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear, number, status).build())
                 .build();
 	}
-	
+
+	// Those checks are deprecated, regarding to the need of this issue : https://opencellsoft.atlassian.net/browse/INTRD-8245
 	private void checkRequiredParameters(org.meveo.apiv2.accounting.AccountingPeriod entity) {
 		List<String> missingParameters = new ArrayList<>();
 		if (entity.getRegularUserLockOption() == null) {
