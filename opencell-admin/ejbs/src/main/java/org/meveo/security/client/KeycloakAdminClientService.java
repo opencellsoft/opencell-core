@@ -82,6 +82,7 @@ import org.meveo.security.AccessScopeEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserGroup;
+import org.meveo.security.keycloak.AuthenticationProvider;
 import org.slf4j.Logger;
 
 /**
@@ -146,10 +147,15 @@ public class KeycloakAdminClientService implements Serializable {
     private KeycloakAdminClientConfig loadConfig() {
         KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
         try {
-            // override from system property
-            String keycloakServer = System.getProperty("opencell.keycloak.url");
-            if (!StringUtils.isBlank(keycloakServer)) {
-                keycloakAdminClientConfig.setServerUrl(keycloakServer);
+            // override from system property.
+            // opencell.keycloak.url-internal is used for internal communication with Keycloak and
+            // opencell.keycloak.url is used for a redirect to login in a browser
+            String keycloakServerUrl = System.getProperty("opencell.keycloak.url-internal");
+            if (StringUtils.isBlank(keycloakServerUrl)) {
+                keycloakServerUrl = System.getProperty("opencell.keycloak.url");
+            }
+            if (!StringUtils.isBlank(keycloakServerUrl)) {
+                keycloakAdminClientConfig.setServerUrl(keycloakServerUrl);
             }
             String realm = System.getProperty("opencell.keycloak.realm");
             if (!StringUtils.isBlank(realm)) {
@@ -673,8 +679,9 @@ public class KeycloakAdminClientService implements Serializable {
         if (isUpdate && roleRepresentation == null) {
             throw new ElementNotFoundException("Role with name " + name + " not found");
 
-        } else if (!isUpdate && roleRepresentation != null) {
-            throw new ElementAlreadyExistsException(name, "Role");
+            // An attempt to create a role again will be ignored and will act as assignment only to a parent role.
+            // } else if (!isUpdate && roleRepresentation != null) {
+            // throw new ElementAlreadyExistsException(name, "Role");
         }
 
         // Create a new role
@@ -682,8 +689,12 @@ public class KeycloakAdminClientService implements Serializable {
             roleRepresentation = new RoleRepresentation(name, description, false);
             if (isClientRole) {
                 client.roles().create(roleRepresentation);
+                List<RoleRepresentation> roleSearch = client.roles().list(name, false);
+                roleRepresentation = roleSearch.size() > 0 ? roleSearch.get(0) : null;
             } else {
                 realmResource.roles().create(roleRepresentation);
+                List<RoleRepresentation> roleSearch = realmResource.roles().list(name, false);
+                roleRepresentation = roleSearch.size() > 0 ? roleSearch.get(0) : null;
             }
 
             // Update existing role
@@ -956,7 +967,9 @@ public class KeycloakAdminClientService implements Serializable {
             RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
             String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
             AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
-            AuthzClient authzClient = AuthzClient.create();
+
+            AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
+
             ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
 
             Set<String> subPackageEntities = entry.getValue();

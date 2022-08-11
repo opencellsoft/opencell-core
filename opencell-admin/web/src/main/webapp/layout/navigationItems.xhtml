@@ -178,16 +178,14 @@
 		<p:menuitem id="dataCollectors" value="#{messages['menu.dataCollector']}" outcome="dataCollectors" />
 	</p:submenu>
 
-	<p:submenu id="customEntites" label="#{messages['menu.customEntities']}">
+	<p:submenu id="customEntities" label="#{messages['menu.customEntities']}" rendered="#{currentUser.hasRoles(customEntityTemplateBean.getAllPermissions())}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listSortedByName()}" var="cet">
-			<c:if test="#{currentUser.hasRoles(cet.readPermission,'ReadAllCE')}">
-				<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}">
-					<f:param name="cet" value="#{cet.code}" disable="#{cet.storeAsTable}" />
-					<f:param name="objectId" value="#{cet.id}" disable="#{!cet.storeAsTable}" />
-				</p:menuitem>
-				<c:set var="cetIndex" value="#{cetIndex + 1}" />
-			</c:if>
+			<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}" rendered="#{currentUser.hasRoles(cet.readPermission,cet.modifyPermission,'ReadAllCE','ModifyAllCE')}">
+				<f:param name="cet" value="#{cet.code}" disable="#{cet.storeAsTable}" />
+				<f:param name="objectId" value="#{cet.id}" disable="#{!cet.storeAsTable}" />
+			</p:menuitem>
+			<c:set var="cetIndex" value="#{cetIndex + 1}" />
 		</c:forEach>
 	</p:submenu>
 

@@ -57,6 +57,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -150,6 +151,17 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
      */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private List<Contract> contracts = new ArrayList<>();
+    
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
 
     /**
      * The option on how to check the threshold.

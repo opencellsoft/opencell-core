@@ -103,8 +103,11 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         BasicStatistics basicStatistics = new BasicStatistics();
                         BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
                         iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(),true);
+                        billingRunService.update(billingRun);
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntities.size(), INVOICE_LINES_CREATED);
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
+                        billingRunService.updateBillingRunJobExecution(billingRun, result);
+
                     }
                 }
             }

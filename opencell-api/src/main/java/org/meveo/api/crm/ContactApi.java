@@ -216,6 +216,14 @@ public class ContactApi extends BaseApi {
             contact.setTags(postData.getTags());
         }
 
+        if (postData.getReference() != null) {
+            contact.setReference(postData.getReference());
+        }
+
+        if (postData.getComment() != null) {
+            contact.setComment(postData.getComment());
+        }
+
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
             contact.setCompany(postData.getCompany());
             Customer customer = null;

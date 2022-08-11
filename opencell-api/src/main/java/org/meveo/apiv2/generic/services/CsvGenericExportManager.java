@@ -148,8 +148,6 @@ public class CsvGenericExportManager {
      * @throws IOException
      */
     private void writeExcelFile(File file, List<Map<String, Object>> CSVLineRecords) throws IOException {
-        FileWriter fw = new FileWriter(file, true); 
-        BufferedWriter bw = new BufferedWriter(fw);
         var wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         int i = 0;
@@ -161,7 +159,7 @@ public class CsvGenericExportManager {
 	    		int column = 0;
 	    		for(Entry<String,Object> entry : item.entrySet()) {
 	    			//Header
-	    		    cell = rowHeader.createCell(column++);
+	    		    cell = rowHeader.createCell(column);
 	    		    cell.setCellValue(entry.getKey()); 
 	    		    column++;
 	    		}
@@ -172,7 +170,7 @@ public class CsvGenericExportManager {
 		        int column = 0;
 		        for(Entry<String,Object> entry : item.entrySet()) {
 		        	
-                    cell = rowHeader.createCell(column++);
+                    cell = rowHeader.createCell(column);
                     cell.setCellValue(entry.getValue().toString());
                     column++;
 		            }

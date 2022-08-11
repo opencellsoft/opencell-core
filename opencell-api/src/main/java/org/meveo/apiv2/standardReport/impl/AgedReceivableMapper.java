@@ -99,9 +99,9 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setNetAmountByPeriod(asList((BigDecimal) agedList[2],
 					(BigDecimal) agedList[5], (BigDecimal) agedList[8], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTotalAmountByPeriod(asList((BigDecimal) agedList[3],
-					(BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[11]));
+					(BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[12]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4],
-					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[12]));
+					(BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[13]));
 			agedReceivableDto.setInvoiceId((Long) agedList[19]);
 			agedReceivableDto.setInvoiceNumber((String) agedList[20]);
 			if(agedList[23] == null)

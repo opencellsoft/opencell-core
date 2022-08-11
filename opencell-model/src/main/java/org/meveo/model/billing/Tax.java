@@ -89,16 +89,19 @@ public class Tax extends BusinessCFEntity {
     private boolean composite;
 
     /**
-     * Main tax
+     * Main taxes
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "main_tax_id")
-    private Tax mainTax;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_tax_composition",
+            joinColumns = @JoinColumn(name = "sub_tax_id"), inverseJoinColumns = @JoinColumn(name = "main_tax_id"))
+    private List<Tax> mainTaxes;
 
     /**
      * Sub taxes
      */
-    @OneToMany(mappedBy = "mainTax", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_tax_composition",
+            joinColumns = @JoinColumn(name = "main_tax_id"), inverseJoinColumns = @JoinColumn(name = "sub_tax_id"))
     private List<Tax> subTaxes;
 
     public Tax() {
@@ -162,12 +165,12 @@ public class Tax extends BusinessCFEntity {
         this.composite = composite;
     }
 
-    public Tax getMainTax() {
-        return mainTax;
+    public List<Tax> getMainTaxes() {
+        return mainTaxes;
     }
 
-    public void setMainTax(Tax mainTax) {
-        this.mainTax = mainTax;
+    public void setMainTaxes(List<Tax> mainTaxes) {
+        this.mainTaxes = mainTaxes;
     }
 
     public List<Tax> getSubTaxes() {

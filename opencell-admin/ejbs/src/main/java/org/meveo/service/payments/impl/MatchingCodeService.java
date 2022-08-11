@@ -179,7 +179,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
             }
 
-
             if(0 != amountToMatch.longValue()){
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));

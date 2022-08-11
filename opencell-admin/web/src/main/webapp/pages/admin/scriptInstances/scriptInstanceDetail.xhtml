@@ -60,9 +60,9 @@
                 </hftl:decorateFormField>
             </h:panelGroup>
             <hftl:formField label="#{messages['scriptInstance.executionRoles']}" field="executionRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.execRolesDM}"
-                valueLabelField="name" componentWidth="50" newLine="true"/>
+                componentWidth="50" newLine="true"/>
             <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}"
-                valueLabelField="name" componentWidth="50" />
+                componentWidth="50" />
             <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}"
                 rendered="#{!scriptInstanceBean.entity.transient and scriptInstanceBean.getPartOfModules() != null and scriptInstanceBean.getPartOfModules() != ''}">
                 <h:outputText value="#{scriptInstanceBean.getPartOfModules()}" />

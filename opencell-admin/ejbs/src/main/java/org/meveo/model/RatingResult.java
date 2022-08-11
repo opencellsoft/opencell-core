@@ -54,11 +54,6 @@ public class RatingResult {
     
     
     /**
-     * Wallet operation as result of rating an EDR
-     */
-    private WalletOperation walletOperation;
-    
-    /**
 
     /**
      * Counter period changes with key=<Counter period id> and delta value as a value
@@ -263,14 +258,6 @@ public class RatingResult {
 
 	public void setEligibleFixedDiscountItems(Set<DiscountPlanItem> eligibleFixedDiscountItems) {
 		this.eligibleFixedDiscountItems = eligibleFixedDiscountItems;
-	}
-
-	public WalletOperation getWalletOperation() {
-		return walletOperation;
-	}
-
-	public void setWalletOperation(WalletOperation walletOperation) {
-		this.walletOperation = walletOperation;
 	}
 	
 	
