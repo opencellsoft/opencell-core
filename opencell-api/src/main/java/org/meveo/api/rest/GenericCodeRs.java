@@ -35,7 +35,7 @@ public interface GenericCodeRs extends IBaseRs {
 			description="  create  ",
 			operationId="    POST_GenericCode_create",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -58,7 +58,7 @@ public interface GenericCodeRs extends IBaseRs {
 			description=" update  ",
 			operationId="    PUT_GenericCode_update",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -81,7 +81,7 @@ public interface GenericCodeRs extends IBaseRs {
 			description=" find  ",
 			operationId="    GET_GenericCode_search",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="GetGenericCodeResponseDto response",
 						content=@Content(
 									schema=@Schema(
 											implementation= GetGenericCodeResponseDto.class
@@ -104,7 +104,7 @@ public interface GenericCodeRs extends IBaseRs {
 			description=" getGenericCode  ",
 			operationId="    POST_GenericCode_generateCode",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="GenericCodeResponseDto response",
 						content=@Content(
 									schema=@Schema(
 											implementation= GenericCodeResponseDto.class
@@ -127,7 +127,7 @@ public interface GenericCodeRs extends IBaseRs {
 			description=" createSequence  ",
 			operationId="    POST_GenericCode_sequence_",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
