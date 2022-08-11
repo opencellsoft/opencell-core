@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -67,6 +68,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
+	@Transactional
 	@Override
 	public Response getInvoice(Long id, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
