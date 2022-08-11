@@ -9,6 +9,8 @@ import org.carlspring.cloud.storage.s3fs.S3FileSystemProvider;
 import org.meveo.commons.keystore.KeystoreManager;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -63,6 +65,8 @@ public class StorageFactory {
 
     private static final String NFS = "FileSystem";
     private static final String S3 = "S3";
+    
+    private static Logger logger = LoggerFactory.getLogger(StorageFactory.class);
 
     static {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
@@ -117,7 +121,7 @@ public class StorageFactory {
                 return new FileInputStream(fileName);
             }
             catch (FileNotFoundException e) {
-                System.out.println("file not found : " + e.getMessage());
+                logger.error("file not found : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -131,7 +135,7 @@ public class StorageFactory {
                 return inStream;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -155,7 +159,7 @@ public class StorageFactory {
                 return inStream;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -168,7 +172,7 @@ public class StorageFactory {
                 return new FileReader(file);
             }
             catch (FileNotFoundException e) {
-                System.out.println("File not found exception : " + e.getMessage());
+                logger.error("File not found exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -186,7 +190,7 @@ public class StorageFactory {
                 return inputStreamReader;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -199,7 +203,7 @@ public class StorageFactory {
                 return new FileReader(file);
             }
             catch (FileNotFoundException e) {
-                System.out.println("File not found exception : " + e.getMessage());
+                logger.error("File not found exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -217,7 +221,7 @@ public class StorageFactory {
                 return inputStreamReader;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -230,7 +234,7 @@ public class StorageFactory {
                 return new FileWriter(file);
             }
             catch (IOException e) {
-                System.out.println("IO exception : " + e.getMessage());
+                logger.error("IO exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -248,7 +252,7 @@ public class StorageFactory {
                 return outputStreamWriter;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -261,7 +265,7 @@ public class StorageFactory {
                 return new FileWriter(file);
             }
             catch (IOException e) {
-                System.out.println("File not found exception : " + e.getMessage());
+                logger.error("File not found exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -279,7 +283,7 @@ public class StorageFactory {
                 return outputStreamWriter;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -299,7 +303,7 @@ public class StorageFactory {
                 s3FileSystem.provider().delete(objectPath);
             }
             catch (IOException e) {
-                System.out.println("IOException message : " + e.getMessage());
+                logger.error("IOException message : " + e.getMessage(), e);
             }
         }
     }
@@ -352,7 +356,7 @@ public class StorageFactory {
                 file.createNewFile();
             }
             catch (IOException e) {
-                System.out.println("IO Exception : " + e.getMessage());
+                logger.error("IO Exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -367,7 +371,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
     }
@@ -378,7 +382,7 @@ public class StorageFactory {
                 return new PrintWriter(file);
             }
             catch (FileNotFoundException e) {
-                System.out.println("file not found : " + e.getMessage());
+                logger.error("file not found : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -396,7 +400,7 @@ public class StorageFactory {
                 return printWriter;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -409,7 +413,7 @@ public class StorageFactory {
                 return new FileInputStream(file);
             }
             catch (FileNotFoundException e) {
-                System.out.println("file not found : " + e.getMessage());
+                logger.error("file not found : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -424,7 +428,7 @@ public class StorageFactory {
                 return inStream;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -444,7 +448,7 @@ public class StorageFactory {
                 s3FileSystem.provider().createDirectory(objectPath);
             }
             catch (IOException e) {
-                System.out.println("IOException message : " + e.getMessage());
+                logger.error("IOException message : " + e.getMessage(), e);
             }
         }
 
@@ -456,7 +460,7 @@ public class StorageFactory {
                 return new FileOutputStream(file);
             }
             catch (FileNotFoundException e) {
-                System.out.println("file not found : " + e.getMessage());
+                logger.error("file not found : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -471,7 +475,7 @@ public class StorageFactory {
                 return outStream;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -484,7 +488,7 @@ public class StorageFactory {
                 return new FileOutputStream(fileName);
             }
             catch (FileNotFoundException e) {
-                System.out.println("file not found : " + e.getMessage());
+                logger.error("file not found : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -500,7 +504,7 @@ public class StorageFactory {
                 return outStream;
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -513,7 +517,7 @@ public class StorageFactory {
                 Files.write(path, bytes, options);
             }
             catch (IOException e) {
-                System.out.println("IOException exception : " + e.getMessage());
+                logger.error("IOException exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equals(S3)) {
@@ -530,7 +534,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
 
         }
@@ -542,7 +546,7 @@ public class StorageFactory {
                 return db.parse(file);
             }
             catch (SAXException | IOException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -558,7 +562,7 @@ public class StorageFactory {
                 return db.parse(inStream);
             }
             catch (IOException | SAXException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
 
@@ -571,7 +575,7 @@ public class StorageFactory {
                 marshaller.marshal(obj, file);
             }
             catch (JAXBException e) {
-                System.out.println("marshaller exception : " + e.getMessage());
+                logger.error("marshaller exception : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -588,7 +592,7 @@ public class StorageFactory {
                 outStream.close();
             }
             catch (JAXBException | IOException e) {
-                System.out.println("IO Exception or JAXBException in marshal method : " + e.getMessage());
+                logger.error("IO Exception or JAXBException in marshal method : " + e.getMessage(), e);
             }
         }
     }
@@ -636,7 +640,7 @@ public class StorageFactory {
                 JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
             }
             catch (JRException e) {
-                System.out.println("failed to generate PDF file : " + e.getMessage());
+                logger.error("failed to generate PDF file : " + e.getMessage(), e);
             }
         }
         else if (storageType.equalsIgnoreCase(S3)) {
@@ -648,7 +652,7 @@ public class StorageFactory {
                 JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
             }
             catch (IOException | JRException e) {
-                System.out.println("error message : " + e.getMessage());
+                logger.error("error message : " + e.getMessage(), e);
             }
         }
     }
