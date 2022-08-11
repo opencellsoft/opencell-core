@@ -99,7 +99,7 @@ public interface UserRs extends IBaseRs {
     @Operation(summary = "Search user with a given username.",
             deprecated = true,
             tags = { "Deprecated" })
-    GetUserResponse find(@Parameter(description = "The usename of user", required = true) @QueryParam("username") String username);
+    GetUserResponse find(@Parameter(description = "The username of user", required = true) @QueryParam("username") String username);
 
     /**
      * Search user with a given username.
@@ -111,7 +111,7 @@ public interface UserRs extends IBaseRs {
     @Path("/name/{username}")
     @Operation(summary = "Search user with a given username.",
             tags = { "User management" })
-    GetUserResponse findV2(@Parameter(description = "The usename of user", required = true) @PathParam("username") String username);
+    GetUserResponse findV2(@Parameter(description = "The username of user", required = true) @PathParam("username") String username);
 
     /**
      * Get info of currently logged in user

@@ -228,7 +228,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "Unkonw product line"),
             @ApiResponse(responseCode = "400", description = "the product line with code in param does not exist")
     })
-	Response findProductLineByCode(@Parameter(description = "find an existing product line", required = true) @QueryParam("productLineCode") String code);
+	Response findProductLineByCode(@Parameter(description = "find an existing product line", required = true) @PathParam("productLineCode") String code);
 	
 	
 	 /**

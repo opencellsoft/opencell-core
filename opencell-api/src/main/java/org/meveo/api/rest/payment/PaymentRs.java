@@ -1524,7 +1524,7 @@ public interface PaymentRs extends IBaseRs {
 			description=" approve SepaDDMandate  ",
 			operationId="    GET_Payment_paymentGateway_approveSepaDDMandate",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
