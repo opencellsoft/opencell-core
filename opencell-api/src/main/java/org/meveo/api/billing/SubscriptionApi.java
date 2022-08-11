@@ -108,6 +108,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -155,6 +156,7 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -281,7 +283,7 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private PaymentMethodService paymentMethodService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -306,6 +308,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private AttributeInstanceService attributeInstanceService;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -480,6 +485,11 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        if(postData.isRenewed() == true)
+        {
+            auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, null, "true" );
+
+        }
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -999,12 +1009,12 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstanceDto.getAttributeCode(), Attribute.class));
                 attributeInstance.setServiceInstance(serviceInstance);
                 attributeInstance.setSubscription(subscription);
-                
+
                 attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
                 attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
                 attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
                 attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
-                
+
                 Auditable auditable = new Auditable();
                 auditable.setCreated(new Date());
                 attributeInstance.setAuditable(auditable);
