@@ -33,7 +33,8 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
     PAYMENT(9, "jobCategoryEnum.payment"),
     REPORTING_QUERY(10, "jobCategoryEnum.reporting_query"),
     ACCOUNTING(11, "jobCategoryEnum.accounting"),
-    DUNNING(12, "jobCategoryEnum.dunning");
+    DUNNING(12, "jobCategoryEnum.dunning"),
+    ORDERING(13, "jobCategoryEnum.ordering");
 
     private Integer id;
     private String label;

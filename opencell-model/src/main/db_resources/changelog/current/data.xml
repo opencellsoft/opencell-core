@@ -8104,4 +8104,20 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-8903_08112022" author="ZBariki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2022-08-11 15:13:19.913" />
+			<column name="job_category" value="ORDERING" />
+			<column name="job_template" value="OpenOrderStatusJob" />
+			<column name="code" value="OpenOrderStatusJob" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="timerentity_id"
+					valueComputed="(SELECT id from meveo_timer where code = 'Daily-midnight')" />
+			<column name="uuid" value="OpenOrderStatusJob_Job" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
