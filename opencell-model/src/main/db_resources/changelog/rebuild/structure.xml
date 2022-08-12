@@ -12303,7 +12303,7 @@
         <addUniqueConstraint columnNames="offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" />
     </changeSet>
 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496" dbms="postgresql">
         <addUniqueConstraint columnNames="code" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_type" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
@@ -18390,6 +18390,7 @@
 
 
     <changeSet id="#INTRD-8252_20220628" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
