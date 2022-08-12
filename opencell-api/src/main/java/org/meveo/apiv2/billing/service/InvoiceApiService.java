@@ -368,7 +368,11 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			List<Object[]> invoiceInfo = (List<Object[]>) invoiceService.getEntityManager().createNamedQuery("Invoice.getInvoiceTypeANDRecordedInvoiceID")
 					.setParameter("id", inv.getId())
 					.getResultList();
+<<<<<<< HEAD
 			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));			
+=======
+			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));
+>>>>>>> 72217a8b6e6ba2f2d75a73d02118b751bcb08189
 		}
     	return of(generateInvoiceResults);
     }
