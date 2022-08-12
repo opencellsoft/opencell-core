@@ -29,7 +29,8 @@ import java.util.List;
 				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND product.id = :productId ORDER BY oo.endOfValidityDate"),
 		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles article"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND article.id = :articleId ORDER BY oo.endOfValidityDate")
+				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND article.id = :articleId ORDER BY oo.endOfValidityDate"),
+        @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)")
 })
 public class OpenOrder extends BusinessEntity {
 
