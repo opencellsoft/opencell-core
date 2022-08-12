@@ -1,4 +1,4 @@
-package org.meveo.api;
+package org.meveo.apiv2;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,12 +18,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
- * This class is used to generate Swagger documentation for Legacy endpoints of APIv0
+ * This class is used to generate Swagger documentation for endpoints of APIv2
  *
  * @author Thang Nguyen
  */
 @Path("/openapi.{type:json|yaml}")
-public class ApiLegacySwaggerGeneration extends BaseOpenApiResource {
+public class Apiv2SwaggerGeneration extends BaseOpenApiResource {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -36,7 +36,7 @@ public class ApiLegacySwaggerGeneration extends BaseOpenApiResource {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         try {
-            return Response.ok().entity(mapper.writeValueAsString(LegacyOpencellAPIConfig.oasStandardApi)).build();
+            return Response.ok().entity(mapper.writeValueAsString(GenericOpencellRestful.openAPIv2)).build();
         }
         catch (JsonProcessingException e) {
             log.error("JsonProcessingException {}", e.getMessage());
