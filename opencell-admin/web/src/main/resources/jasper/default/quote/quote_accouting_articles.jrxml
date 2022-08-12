@@ -386,7 +386,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))+"€"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.000" isBlankWhenNull="true">
 				<reportElement x="418" y="0" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="c751cd2d-9a38-42a6-a13f-1e10f6c0a5fd">
