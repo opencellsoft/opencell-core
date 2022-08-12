@@ -1625,12 +1625,6 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCrmAccountType() == null) {
             missingParameters.add("crmAccountType");
         }
-
-        if (postData.getLegalEntityType() == null) {
-            missingParameters.add("legalEntityType");
-        } else if (StringUtils.isBlank(postData.getLegalEntityType().getCode())) {
-            missingParameters.add("legalEntityType.code");
-        }
         
         handleMissingParameters();
 
