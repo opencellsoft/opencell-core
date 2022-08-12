@@ -9873,4 +9873,8 @@ public class OrderAdvancement extends ModuleScript {
 	<changeSet author="hichamhanine" id="#INTRD-7850-20220622">
     	<dropUniqueConstraint tableName="ar_payment_token" uniqueColumns="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle">
+    	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
+    </changeSet>
 </databaseChangeLog>
