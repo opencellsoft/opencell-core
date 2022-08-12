@@ -5,7 +5,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>14.0.0-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
 
     <modules>
@@ -46,6 +46,7 @@
 
         <!-- used to switch dialect between postgres and oracle -->
         <opencell.dialect>${opencell.dialect}</opencell.dialect>
+        <commons.io.version>2.11.0</commons.io.version>
     </properties>
 
     <scm>
@@ -142,7 +143,13 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>2.17.2</version>
+                <version>2.18.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.18.0</version>
             </dependency>
 
             <dependency>
@@ -668,6 +675,12 @@
                 <scope>test</scope>
             </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+        
         </dependencies>
     </dependencyManagement>
 

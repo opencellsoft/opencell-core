@@ -1834,9 +1834,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="role_description" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
+            <column name="role_description" type="varchar(255)" />
             <column name="role_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -3242,6 +3240,8 @@
 			<column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
             <column name="sequence" type="int4"/>
+            <column name="reject_reason" type="varchar(4000)" />
+            <column name="origin_billing_account" type="bigint" />            
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -14611,7 +14611,9 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
-
+    <changeSet author="hichamHANINE" id="rebuild-str-fk1-8743">          
+        <addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
     <!-- media post FK -->
 
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1373">
@@ -18387,10 +18389,9 @@
 	<changeSet id="#INTRD-8721_20220728" author="TarikRabeh"/>
     <changeSet id="#INTRD-8701_20220801" author="ZBariki" />
 	<changeSet id="#INTRD-8777_20220728" author="aelmalki" />
-
-
     <changeSet id="#INTRD-8252_20220628" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
+	<changeSet id="#INTRD-8743_20220802" author="HichamHANINE"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

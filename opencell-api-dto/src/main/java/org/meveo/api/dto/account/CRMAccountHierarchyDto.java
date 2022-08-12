@@ -18,13 +18,24 @@
 
 package org.meveo.api.dto.account;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -32,15 +43,7 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class CRMAccountHierarchyDto.
@@ -273,6 +276,9 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     private ThresholdOptionsEnum customerCheckThreshold;
 
     private String taxCategoryCode;
+
+    @XmlElement
+    private TitleDto legalEntityType;
 
     /**
      * 
@@ -1284,4 +1290,14 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     public void setCompany(Boolean company) {
         isCompany = company;
     }
+
+	public TitleDto getLegalEntityType() {
+		return legalEntityType;
+	}
+
+	public void setLegalEntityType(TitleDto legalEntityType) {
+		this.legalEntityType = legalEntityType;
+	}
+
+    
 }

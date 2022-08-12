@@ -134,6 +134,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	    if(StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax()) && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
         	        throw new MeveoApiException("price must be provided for non-grid price version");
         	    }
+
+                if (StringUtils.isNotBlank(pricePlanMatrixVersionDto.getAmountWithoutTax()) && StringUtils.isNotBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+                    throw new MeveoApiException("'amountWithoutTax' and 'amountWithTax' are deprecated, please use only property 'price' to provide unit price");
+                }
         	    
         	    if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
                     missingParameters.add("amountWithTax");
@@ -142,7 +146,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                     missingParameters.add("amountWithoutTax");
                 }
         	} else {
-        	    if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax()) || !StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+        	    if (StringUtils.isNotBlank(pricePlanMatrixVersionDto.getAmountWithoutTax()) || StringUtils.isNotBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
         	        throw new MeveoApiException("'amountWithoutTax' and 'amountWithTax' are deprecated, please use only property 'price' to provide unit price");
                 }
         	}
@@ -171,8 +175,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             pricePlanMatrixVersion.setStatusDate(statusTime);
         }
         pricePlanMatrixVersion.setPrice(pricePlanMatrixVersionDto.getPrice());
-        pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
-        pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
+        // Update Price with amountWithoutTax if price still null
+        if(pricePlanMatrixVersion.getPrice() == null) {
+        	pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
+        }
+        // Update Price with amountWithTax if price still null after update with amountWithoutTax
+        if(pricePlanMatrixVersion.getPrice() == null) {
+        	pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
+        }
         pricePlanMatrixVersion.setPriceEL(pricePlanMatrixVersionDto.getPriceEL());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());

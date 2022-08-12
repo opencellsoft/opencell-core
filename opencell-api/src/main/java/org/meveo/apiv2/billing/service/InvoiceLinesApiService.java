@@ -84,6 +84,7 @@ public class InvoiceLinesApiService implements ApiService<InvoiceLine>  {
         Tax tax = ImmutableTax.builder()
                 .id(taxDetails.getTaxId())
                 .code(taxDetails.getTaxCode())
+                .composite(taxDetails.getComposite())
                 .percent(taxDetails.getPercent())
                 .build();
         List<TaxDetails> subTaxesDetails = null;

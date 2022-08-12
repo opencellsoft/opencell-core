@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_detail" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="65a19249-db8f-4f97-9625-349e1a11cbe5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="144"/>
+	<property name="ireport.y" value="192"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="InvoiceD2"/>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/invoice]]>
+	</queryString>
+	<field name="countFraisLines" class="java.lang.Integer">
+		<fieldDescription><![CDATA[count(//category[@code='ICAT_FRAIS']//line)]]></fieldDescription>
+	</field>
+	<field name="countTaxLines" class="java.lang.Integer">
+		<fieldDescription><![CDATA[count(//category//line)]]></fieldDescription>
+	</field>
+	<field name="invoiceTotalAmountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="invoiceTotalAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="totalAmountWithTax5_5" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_5_5']/amountHT]]></fieldDescription>
+	</field>
+	<field name="totalAmountWithTax20" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_20']/amountHT]]></fieldDescription>
+	</field>
+	<field name="amountTax5_5" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_5_5']/amount]]></fieldDescription>
+	</field>
+	<field name="amountTax20" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_20']/amount]]></fieldDescription>
+	</field>
+	<field name="subscriptionCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/@code]]></fieldDescription>
+	</field>
+	<field name="offerLabel" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/@offerLabel]]></fieldDescription>
+	</field>
+	<field name="optionTarifaire" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/customFields/customField['cf_sub_option_tarifaire']]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="94">
+			<frame>
+				<reportElement x="0" y="0" width="595" height="94" uuid="60f89adb-9cd3-4547-be7e-925973960157">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="3.0" lineColor="#B41D0A"/>
+				</box>
+				<frame>
+					<reportElement x="27" y="14" width="550" height="83" uuid="544934a4-efa9-41fa-8b81-134e2314d796">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<image>
+						<reportElement x="0" y="5" width="149" height="28" uuid="d97bd4bc-4ada-44ad-a449-186a874ed0a8">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<imageExpression><![CDATA[$P{logoPath}+"Pictos/opencell.png"]]></imageExpression>
+					</image>
+					<staticText>
+						<reportElement x="5" y="34" width="149" height="23" forecolor="#013042" uuid="0a95dfea-8292-4987-88c2-6854f718e669">
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="9"/>
+						</textElement>
+						<text><![CDATA[Be Smart, Be Automated]]></text>
+					</staticText>
+				</frame>
+			</frame>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="2">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$F{countTaxLines} > 0]]></printWhenExpression>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="20" y="0" width="555" height="1" uuid="76b178ae-06ac-48f9-8351-836de88d251a"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/invoice")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"/invoice_taxesDetail.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="680" splitType="Prevent">
+			<rectangle radius="10">
+				<reportElement x="23" y="5" width="496" height="13" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="20156fd7-4878-46d9-9217-df485ef9b51c">
+					<property name="com.jaspersoft.studio.element.name" value="coordonnees_header_top"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle radius="0">
+				<reportElement x="24" y="28" width="496" height="7" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="b56f668a-a97e-49f0-9d9b-c1d3794f1397">
+					<property name="com.jaspersoft.studio.element.name" value="coordonnees_header_bottom"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="23" y="13" width="549" height="15" forecolor="#013042" backcolor="#F2F4F5" uuid="acb910ce-fcdd-4904-8ec6-6397b5c64015">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#841A1B"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12.5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Montant Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="394" y="5" width="180" height="29" forecolor="#FFFFFF" backcolor="#B41D0A" uuid="18a12f31-ab8b-477b-ac51-f75ee6b618b4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#CF1428"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12.5"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="24" y="35" width="550" height="52" uuid="27ce44e1-3953-4783-9cae-18b0f1bcfd9e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+				</box>
+				<frame>
+					<reportElement x="0" y="0" width="550" height="22" uuid="5c1e7f9e-d884-4b50-b0e0-432759f5a829"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="370" height="22" forecolor="#013042" uuid="a6201f14-f125-465b-8d9f-c32ba6b23bd4">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<box topPadding="6" leftPadding="20" bottomPadding="0" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<text><![CDATA[Montant Total hors TVA]]></text>
+					</staticText>
+					<textField pattern="# ##0.00 €;-# ##0.00 €" isBlankWhenNull="true">
+						<reportElement mode="Opaque" x="370" y="0" width="180" height="22" forecolor="#FFFFFF" backcolor="#B41D0A" uuid="284fab44-a1bd-4a20-99c8-f158e437de29">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CF1428"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new BigDecimal($F{invoiceTotalAmountWithoutTax})]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="0" y="22" width="550" height="22" isRemoveLineWhenBlank="true" uuid="ac293016-2df1-40e7-a3c3-eee4f533b0aa">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[new Boolean(new BigDecimal($F{totalAmountWithTax5_5}).compareTo(BigDecimal.ZERO) > 0)]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+					</box>
+					<textField pattern="# ##0.00 €;-# ##0.00 €" isBlankWhenNull="true">
+						<reportElement mode="Opaque" x="370" y="0" width="180" height="22" forecolor="#FFFFFF" backcolor="#B41D0A" uuid="1b3c8ffa-e93b-495d-8790-b7722ab652b9">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CF1428"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new BigDecimal($F{amountTax5_5})]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="70" height="22" forecolor="#013042" uuid="71cd7b7e-ca46-46a3-90b3-ef97233e6180">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<box topPadding="6" leftPadding="20" bottomPadding="0" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<text><![CDATA[Montant TVA]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement mode="Transparent" x="70" y="0" width="296" height="22" forecolor="#013042" uuid="1b3c8ffa-e93b-495d-8790-b7722ab652b9">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA["à 5,5% (sur un montant total de "+new java.text.DecimalFormat("# ##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.FRENCH)).format(new BigDecimal($F{totalAmountWithTax5_5}))+" €)"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="0" y="44" width="550" height="22" isRemoveLineWhenBlank="true" uuid="ce840753-62e7-4b52-a456-7f3d9568132b">
+						<property name="com.jaspersoft.studio.layout"/>
+						<printWhenExpression><![CDATA[new Boolean(new BigDecimal($F{totalAmountWithTax20}).compareTo(BigDecimal.ZERO) > 0)]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+					</box>
+					<textField pattern="# ##0.00 €;-# ##0.00 €" isBlankWhenNull="true">
+						<reportElement mode="Opaque" x="370" y="0" width="180" height="22" forecolor="#FFFFFF" backcolor="#B41D0A" uuid="5fb180fc-f344-4922-bf08-2f2e46dd93aa">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CF1428"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Vista Sans OT Bold" size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new BigDecimal($F{amountTax20})]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="70" height="22" forecolor="#013042" uuid="41a6892f-d32e-49d2-89e3-f24bef85c00f">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<box topPadding="6" leftPadding="20" bottomPadding="0" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<text><![CDATA[Montant TVA]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement mode="Transparent" x="70" y="0" width="296" height="22" forecolor="#013042" uuid="c5f1b5ef-90a4-445e-8a71-da15640f36ce">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font fontName="DejaVu Sans" size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA["à 20% (sur un montant total de "+new java.text.DecimalFormat("# ##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.FRENCH)).format(new BigDecimal($F{totalAmountWithTax20}))+" €)"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="0" y="66" width="550" height="30" uuid="ac33b68d-190e-4e99-81e3-1affd0561af1">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<staticText>
+						<reportElement x="0" y="0" width="370" height="30" forecolor="#013042" uuid="c91d87a5-831e-44d4-b220-a611ad11ced4">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<box topPadding="6" leftPadding="20" bottomPadding="0" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="Vista Sans OT Bold" size="14"/>
+						</textElement>
+						<text><![CDATA[Total]]></text>
+					</staticText>
+					<image>
+						<reportElement x="370" y="0" width="180" height="30" uuid="2136a787-aa50-4505-89a2-8275d3e38f01"/>
+						<imageExpression><![CDATA[$P{logoPath}+"Pictos/totalBG.png"]]></imageExpression>
+					</image>
+					<textField isBlankWhenNull="true">
+						<reportElement mode="Transparent" x="370" y="0" width="180" height="29" forecolor="#FFFFFF" uuid="9a184ba8-0d85-4f76-8e09-553a068e411e">
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box leftPadding="0">
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+							<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#B41D0A"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#B41D0A"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Vista Sans OT Bold" size="14"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.text.DecimalFormat("# ##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.FRENCH)).format(new BigDecimal($F{invoiceTotalAmountWithTax}))+ " € TTC"]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

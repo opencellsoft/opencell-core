@@ -990,7 +990,7 @@ public interface SubscriptionRs extends IBaseRs {
 			description=" rollback offer  ",
 			operationId="    PATCH_Subscription{code}_offer_rollback",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
