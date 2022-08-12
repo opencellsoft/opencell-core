@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TradingCurrency;
@@ -135,5 +137,24 @@ public class InvoiceApiServiceTest {
         expectedException.expectMessage("Refresh rate only allowed for invoices with status : NEW or DRAFT");
 
         invoiceApiService.refreshRate(invoiceId);
+    }
+    
+    @Test
+    public void generateInvoice() {
+        Invoice invoice = new Invoice();
+        invoice.setId(1L);
+        invoice.setInvoiceNumber("OPENSOFT-03");
+
+        when(invoiceService.findById(invoiceId)).thenReturn(invoice);
+        GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+        generateInvoiceRequestDto.setApplyBillingRules(true);
+        generateInvoiceRequestDto.setInvoicingDate(new Date());
+        generateInvoiceRequestDto.setBillingAccountCode(invoice.getCode());
+        FilterDto filter = new FilterDto();
+        filter.setPollingQuery("from RatedTransaction where id in (506,2,3,5,7,8,1,6,4,9,10,15,11,12,13,19,17,18,22,21,20,16,14,503,502,505,504) ");
+        filter.setEntityClass("RatedTransaction");        
+        generateInvoiceRequestDto.setFilter(filter);
+        
+        invoiceApiService.generate(generateInvoiceRequestDto, false);
     }
 }
