@@ -114,7 +114,8 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 		generateInvoiceRequestDto.setFirstTransactionDate(invoiceInput.getFirstTransactionDate());
 		generateInvoiceRequestDto.setSkipValidation(invoiceInput.isSkipValidation());
 		generateInvoiceRequestDto.setOrderNumber(invoiceInput.getOrderNumber());
-		return generateInvoiceRequestDto;
+		generateInvoiceRequestDto.setApplyBillingRules(invoiceInput.isApplyBillingRules());
+        return generateInvoiceRequestDto;
 	}
 
 	public GenerateInvoiceResult toGenerateInvoiceResult(Invoice invoice, String invoiceTypeCode, Long recordedInvoice) {

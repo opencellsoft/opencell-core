@@ -349,6 +349,14 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		ICustomFieldEntity customFieldEntity = new Invoice();
 		customFieldEntity =
 				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
+		
+		if(true==invoice.isApplyBillingRules()) {
+            Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
+            Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
+            List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            ratedTransactionService.applyInvoicingRules(RTs);
+        }
+		
 		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
 				isDraft, customFieldEntity.getCfValues(), true);
 		if (invoices == null || invoices.isEmpty()) {
@@ -360,13 +368,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			List<Object[]> invoiceInfo = (List<Object[]>) invoiceService.getEntityManager().createNamedQuery("Invoice.getInvoiceTypeANDRecordedInvoiceID")
 					.setParameter("id", inv.getId())
 					.getResultList();
-			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));
-			if(true==invoice.isApplyBillingRules()) {
-                Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
-                Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
-	            List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-	            ratedTransactionService.applyInvoicingRules(RTs);
-	        }
+			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));			
 		}
     	return of(generateInvoiceResults);
     }
