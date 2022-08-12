@@ -12015,7 +12015,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496">
         <addUniqueConstraint columnNames="code" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_type" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497" dbms="postgresql">
         <addUniqueConstraint constraintName="uk_billing_invoice" columnNames="invoice_number, invoice_type_id" tableName="billing_invoice" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-498">
@@ -17728,8 +17728,10 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI" />
+    <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
+    <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
