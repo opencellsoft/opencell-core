@@ -28,7 +28,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BasicStatistics;
@@ -36,14 +35,9 @@ import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
 
 @Stateless
 public class InvoiceLinesJobBean extends BaseJobBean {
-
-    @Inject
-    private Logger log;
 
     @Inject
     private BillingRunService billingRunService;
@@ -56,10 +50,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
     
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
@@ -83,7 +73,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             }
             List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
             if(billingRuns != null && !billingRuns.isEmpty()) {
-                billingRuns.stream().filter(billingRun -> billingRun.isExceptionalBR())
+                billingRuns.stream().filter(BillingRun::isExceptionalBR)
                         .forEach(this::addExceptionalBillingRunData);
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);
