@@ -60,7 +60,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 
 /**
  * RecordedInvoice service implementation.
- * 
+ *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author melyoussoufi
@@ -121,7 +121,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     /**
      * @param reference invoice reference
-     * @param invoiceType 
+     * @param invoiceType
      * @return true if recored invoice exist
      */
     public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
@@ -143,11 +143,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
 			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
-        } catch (Exception e) {        	
+        } catch (Exception e) {
         }
         return recordedInvoice;
     }
-    
+
     /**
      * @param invoiceNumber invoice's reference.
      * @return list of RecoredInvoice.
@@ -334,7 +334,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         return;
                     }
                 }
-                
+
             }
 
             RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
@@ -350,13 +350,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 create(recordedInvoiceCatAgregate);
             }
             invoice.setRecordedInvoice(recordedInvoice);
+            if(invoice.getDueDate() != null) {
+                var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? InvoicePaymentStatusEnum.PENDING : InvoicePaymentStatusEnum.UNPAID;
+                invoice.setPaymentStatus(currentStatus);
+            }
     	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
     }
-    
+
     @Override
     public void create(RecordedInvoice entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
@@ -465,7 +469,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
@@ -496,9 +500,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_" + step + "_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
         } else {
-    	    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_30,")
-    	            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_30_awt,")
-    	            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_30_tax,")
+    	    query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_30,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_30_awt,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_30_tax,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_31_60,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_31_60_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_31_60_tax,")
@@ -520,30 +524,34 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
 
-        qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+        if (startDueDate != null && endDueDate != null) {
+            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
                     + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
+        }
 
         if(DateUtils.compare(startDate, new Date()) < 0) {
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
         	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
         	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
-                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
+                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
+                    "or (ao.invoice.paymentStatus ='" + InvoicePaymentStatusEnum.UNPAID +"' and ao.invoice.paymentStatusDate <= '"
+                            + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
-        
+
         qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
-        
+
         return qb.getQuery(getEntityManager()).getResultList();
     }
-    
+
     public Long getCountAgedReceivables(CustomerAccount customerAccount) {
-		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName()); 
+		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName());
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);
         }
         return (Long) qb.getQuery(getEntityManager()).getSingleResult();
     }
-    
+
     /**
      * Find by invoice id.
      *
@@ -557,7 +565,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             return (RecordedInvoice) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             log.info("Invoice with id {} was not found. Returning null.", invoiceId);
-            return null;  
+            return null;
         }
     }
 

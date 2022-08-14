@@ -107,6 +107,10 @@ public class ContactDto extends BusinessEntityDto {
 
     private String socialIdentifier;
 
+    private String reference;
+
+    private String comment;
+
     @JsonProperty("isVip")
     @JsonAlias({ "isVip", "vip" })
     private boolean isVip;
@@ -156,7 +160,9 @@ public class ContactDto extends BusinessEntityDto {
         isVip = contact.isVip();
         isProspect = contact.isProspect();
         agreedToUA = contact.isAgreedToUA();
-        tags = contact.getTags();
+        if (contact.getTags() != null && !contact.getTags().isEmpty()) {
+            tags = contact.getTags();
+        }
 //		messages = contact.getMessages();
 
 //		addressBook = new AddressBookDto(contact.getAddressBook());
@@ -496,5 +502,21 @@ public class ContactDto extends BusinessEntityDto {
      */
     public void setLegalEntityType(TitleDto legalEntityType) {
         this.legalEntityType = legalEntityType;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

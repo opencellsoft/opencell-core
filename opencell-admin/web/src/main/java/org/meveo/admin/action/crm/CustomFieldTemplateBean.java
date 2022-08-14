@@ -58,7 +58,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -94,9 +93,6 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     @Inject
     private ResourceBundle resourceMessages;
     
-    @Inject
-    private CustomTableService customTableService;
-
     private DualListModel<CustomFieldMatrixColumn> childEntityFieldDM;
 
     /**

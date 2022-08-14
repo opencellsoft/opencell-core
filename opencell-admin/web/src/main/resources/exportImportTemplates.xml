@@ -42,7 +42,6 @@
         </classesToExportAsFull>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
-            <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
     <template name="Notification" entityToExport="org.meveo.model.notification.Notification">
@@ -52,7 +51,6 @@
         </classesToExportAsFull>
         <classesToIgnoreFKNotFound>
             <java-class>org.meveo.model.admin.User</java-class>
-            <java-class>org.meveo.model.security.Permission</java-class>
         </classesToIgnoreFKNotFound>
     </template>
     <template name="OfferTemplateCategory" entityToExport="org.meveo.model.catalog.OfferTemplateCategory">

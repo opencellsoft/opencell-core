@@ -1,8 +1,9 @@
 package org.meveo.service.billing.impl;
 
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -588,6 +589,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		invoiceLine.setInvoice(invoice);
 		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
+		getEntityManager().flush();
 		return invoiceLine;
 	}
 
@@ -1093,5 +1095,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return getEntityManager().createNamedQuery("InvoiceLine.listByAssociatedInvoice")
                     .setParameter("invoiceIds", invoiceIds)
                     .getResultList();
+    }
+
+    /**
+     * Get tax details for a given tax
+     * @param mainTax
+     * @param taxAmount
+     * @param convertedTaxAmount
+     * @return Optional TaxDetails
+     */
+    public Optional<TaxDetails> getTaxDetails(Tax mainTax, BigDecimal taxAmount, BigDecimal convertedTaxAmount) {
+        TaxDetails taxDetails;
+        if(mainTax == null) {
+            taxDetails = null;
+        } else if (mainTax.isComposite()) {
+            mainTax = taxService.findById(mainTax.getId(), true);
+            taxDetails = TaxDetails.fromTax(mainTax, taxAmount, convertedTaxAmount);
+        } else {
+            taxDetails = new TaxDetails(mainTax.getId(), mainTax.getCode(),
+                    mainTax.getPercent(), taxAmount, convertedTaxAmount, null, FALSE);
+        }
+        return ofNullable(taxDetails);
     }
 }

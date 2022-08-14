@@ -184,7 +184,7 @@ public class ParamBean {
      * @lastModifiedVersion 5.0
      */
     public boolean isServiceMultiInstantiation() {
-        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "true"));
     }
 
     /**

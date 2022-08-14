@@ -64,6 +64,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.PATCH;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.apiv2.billing.ServiceInstanceToDelete;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -989,7 +990,7 @@ public interface SubscriptionRs extends IBaseRs {
 			description=" rollback offer  ",
 			operationId="    PATCH_Subscription{code}_offer_rollback",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -1021,4 +1022,22 @@ public interface SubscriptionRs extends IBaseRs {
                 )}
     )
     ActionStatus subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData);
+
+	@DELETE
+	@Path("/{subscriptionId}/delete-si")
+	@Operation(
+			summary="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
+			description="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
+			operationId="DELETE_Subscription_serviceInstance",
+			responses= {
+					@ApiResponse(description=" A subscription ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	Response deleteInactiveServiceInstance(@PathParam("subscriptionId") Long subscriptionId, ServiceInstanceToDelete toDelete);
+
 }

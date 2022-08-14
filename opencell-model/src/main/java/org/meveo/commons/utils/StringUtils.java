@@ -71,6 +71,10 @@ public class StringUtils {
         return !isBlank(value);
     }
 
+    public static boolean isNotBlank(Object value) {
+        return !isBlank(value);
+    }
+
     public static String concatenate(String... values) {
         return concatenate(" ", values);
     }

@@ -441,11 +441,9 @@
                         <p:selectBooleanCheckbox itemLabel="#{messages['customFieldTemplate.uniqueConstraint']}" valueChangeListener="#{customFieldTemplateBean.updateUniqueConstraint}" rendered="#{customEntityTemplateBean.customTable}" value="#{customFieldTemplateBean.entity.uniqueConstraint}"/>
                     </p:fieldset>
                 </h:panelGroup>
-                <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">
+                <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching" rendered="#{!customEntityTemplateBean.customTable}">
                     <!-- 					<hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" /> -->
-                    <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" allowEdit="#{customFieldTemplateBean.entity.indexType==null}" componentWidth="10"
-                        required="#{customEntityTemplateBean.customTable}" />
-                    <h:panelGroup id="versioning" rendered="#{!customEntityTemplateBean.customTable}">
+                    <h:panelGroup id="versioning" >
                         <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
                             listenerUpdate=":cftForm:versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
                         <h:panelGroup id="versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}">

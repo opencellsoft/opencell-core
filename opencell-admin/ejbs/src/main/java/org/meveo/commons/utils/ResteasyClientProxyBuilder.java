@@ -28,14 +28,14 @@ import org.slf4j.LoggerFactory;
  */
 public class ResteasyClientProxyBuilder extends ResteasyClientBuilder {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+//    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String PROXY_HOSTNAME_VAR_KEY = "http.proxyHost";
     private static final String PROXY_PORT_VAR_KEY = "http.proxyPort";
 
     public ResteasyClientProxyBuilder() {
         String proxyHostName = System.getProperty(PROXY_HOSTNAME_VAR_KEY);
-        log.debug(" proxyHostName : {} ", proxyHostName);
+//        log.debug(" proxyHostName : {} ", proxyHostName);
         if (StringUtils.isNotBlank(proxyHostName)) {
             Integer proxyPort = getProxyPort();
             if (proxyPort != null) {
@@ -48,10 +48,11 @@ public class ResteasyClientProxyBuilder extends ResteasyClientBuilder {
 
     private Integer getProxyPort() {
         String proxyPort = System.getProperty(PROXY_PORT_VAR_KEY);
-        log.debug(" proxyPort : {} ", proxyPort);
+//        log.debug(" proxyPort : {} ", proxyPort);
         try {
             return Integer.valueOf(proxyPort);
         } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error(" Error getting proxy port : ",e);
             return null;
         }
