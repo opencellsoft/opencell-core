@@ -1510,12 +1510,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "                 rt.usageDate as usage_date, rt.startDate as start_date, rt.endDate as end_date,"
                 + "                 rt.orderNumber as order_number, rt.subscription.id as subscription_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id, "
                 + "                 rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id,"
-                + "                 rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id, rt.discountedRatedTransaction.id as discounted_ratedtransaction_id "
-                + " FROM RatedTransaction rt WHERE rt.id in (:ids) "
+                + "                 rt.infoOrder.orderLot.id as order_lot_id, rt.chargeInstance.id as charge_instance_id, rt.accountingArticle.id as article_id "
+                + " FROM RatedTransaction rt WHERE rt.id in (:ids) and rt.accountingArticle.ignoreAggregation = false"
                 + " GROUP BY rt.billingAccount.id, rt.accountingCode.id, rt.description, "
                 + "         rt.unitAmountWithoutTax, rt.unitAmountWithTax, rt.offerTemplate.id, rt.serviceInstance.id, rt.usageDate, rt.startDate,"
                 + "         rt.endDate, rt.orderNumber, rt.subscription.id, rt.taxPercent, rt.tax.id, "
-                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id, rt.chargeInstance.id, rt.accountingArticle.id, rt.discountedRatedTransaction.id";
+                + "         rt.infoOrder.order.id, rt.infoOrder.productVersion.id, rt.infoOrder.orderLot.id," +
+                "           rt.chargeInstance.id, rt.accountingArticle.id";
+        List<Map<String, Object>> groupedRTsWithAggregation = getSelectQueryAsMap(query, params);
+        groupedRTsWithAggregation.addAll(getNoAggregationRTs(ratedTransactionIds));
+        return groupedRTsWithAggregation;
+    }
+
+    public List<Map<String, Object>> getNoAggregationRTs(List<Long> ratedTransactionIds) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", ratedTransactionIds);
+        String query =
+                "SELECT CAST(rt.id as string) as rated_transaction_ids, rt.billingAccount.id as billing_account__id, rt.accountingCode.id as accounting_code_id," +
+                " rt.description as label,rt.quantity AS quantity," +
+                " rt.amountWithoutTax as sum_without_tax, rt.amountWithTax as sum_with_tax, rt.offerTemplate.id as offer_id, rt.serviceInstance.id as service_instance_id," +
+                " rt.startDate as start_date, rt.endDate as end_date, rt.orderNumber as order_number, " +
+                " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id," +
+                " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id," +
+                " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
+                " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
+                " FROM RatedTransaction rt left join rt.subscription s " +
+                " WHERE rt.id in (:ids) and rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);
     }
 
