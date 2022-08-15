@@ -442,4 +442,18 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 					currentRate, invoice.getTradingCurrency().getCurrentRateFromDate()));
 		}
 	}
+	
+	/**
+	 * Update comment and custom fields in a validated invoice
+	 * @param invoice {@link Invoice}
+	 * @param invoiceResource {@link InvoicePatchInput}
+	 * @return {@link Invoice}
+	 */
+	public Invoice updateValidatedInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoicePatchInput invoiceResource) {      
+    	ICustomFieldEntity customFieldEntity = new Invoice();
+		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
+        Invoice updateInvoice = invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
+        return updateInvoice;
+
+    }
 }

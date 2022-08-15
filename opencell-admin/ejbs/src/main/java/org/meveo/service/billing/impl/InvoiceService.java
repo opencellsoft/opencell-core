@@ -6442,5 +6442,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         entity.setPaymentStatus(newInvoicePaymentStatusEnum);
     }
+        
+    /**
+     * Update validated invoice
+     * @param toUpdate Invoice to update {@link Invoice}
+     * @param comment Comment
+     * @param customFieldValues Custom Field {@link CustomFieldValues}
+     * @return Updated Invoice {@link Invoice}
+     */
+    public Invoice updateValidatedInvoice(Invoice toUpdate, String comment, CustomFieldValues customFieldValues) {
+        toUpdate = refreshOrRetrieve(toUpdate);
+
+        if (isNotBlank(comment)) {
+            toUpdate.setComment(comment);
+        }
+        
+        if(customFieldValues != null) {
+        	toUpdate.setCfValues(customFieldValues);
+        }
+
+        return update(toUpdate);
+    }
 
 }

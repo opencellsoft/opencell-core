@@ -5,6 +5,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
+import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
@@ -491,4 +493,27 @@ public class InvoiceResourceImpl implements InvoiceResource {
         }
 		return result;
 	}
+
+	@Override
+    public Response updateValidateInvoice(Long id, InvoicePatchInput input) {
+        final Invoice invoice = findValidatedInvoiceToUpdate(id);		
+        invoiceApiService.updateValidatedInvoice(invoice, input);
+        return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build()).build();
+    }
+
+    /**
+     * Find validated invoice to patch
+     * @param id Invoice Id
+     * @return {@link org.meveo.apiv2.billing.Invoice}
+     */
+    private Invoice findValidatedInvoiceToUpdate(Long id) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        final InvoiceStatusEnum status = invoice.getStatus();
+
+        if(!(VALIDATED.equals(status))) {
+            throw new ActionForbiddenException("Can only patch VALIDATED invoice. Current invoice status is: " + status.name()) ;
+        }
+
+        return invoice;
+    }
 }
