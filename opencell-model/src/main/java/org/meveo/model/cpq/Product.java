@@ -58,7 +58,6 @@ import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.ordering.OpenOrder;
 
 /**
  * 
@@ -258,10 +257,6 @@ public class Product extends ServiceCharge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_model_id")
     private Product productModel;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "open_order_id")
-	private OpenOrder openOrder;
 
 	/**
 	 * @return the status
@@ -711,12 +706,4 @@ public class Product extends ServiceCharge {
 		this.productModel = productModel;
 	}
 
-
-	public OpenOrder getOpenOrder() {
-		return openOrder;
-	}
-
-	public void setOpenOrder(OpenOrder openOrder) {
-		this.openOrder = openOrder;
-	}
 }

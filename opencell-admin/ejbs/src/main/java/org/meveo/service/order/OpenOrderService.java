@@ -26,6 +26,8 @@ import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
@@ -42,6 +44,10 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
 	/**
 	 * Find Open orders compatible with InvoiceLine in parameter.
@@ -155,8 +161,8 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         if (openOrder.getThresholds() != null) {
             openOrder.setThresholds(new ArrayList<>(openOrderQuote.getThresholds()));
         }
-        openOrder.setArticles(buildArticles(openOrderQuote.getArticles()).orElse(null));
-        openOrder.setProducts(buildProducts(openOrderQuote.getProducts()).orElse(null));
+        buildArticles(openOrder, openOrderQuote.getArticles());
+        buildProducts(openOrder, openOrderQuote.getProducts());
         openOrder.setActivationDate(openOrderQuote.getActivationDate());
         openOrder.setEndOfValidityDate(openOrderQuote.getEndOfValidityDate());
         attachNestedEntities(openOrder);
@@ -221,23 +227,33 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
     }
 
-    private Optional<List<AccountingArticle>> buildArticles(List<OpenOrderArticle> openOrderArticles) {
-        if(openOrderArticles != null && !openOrderArticles.isEmpty()) {
-            return of(openOrderArticles.stream()
-                            .map(OpenOrderArticle::getAccountingArticle)
-                            .collect(toList()));
-        } else {
-            return empty();
+    private void buildArticles(OpenOrder openOrder, List<OpenOrderArticle> openOrderArticles) {
+        if (openOrderArticles != null && !openOrderArticles.isEmpty()) {
+            List<OpenOrderArticle> oorArticles = new ArrayList<>();
+            openOrderArticles.forEach(ooqArticle -> {
+                OpenOrderArticle oorArticle = new OpenOrderArticle();
+                oorArticle.setAccountingArticle(ooqArticle.getAccountingArticle());
+                oorArticle.updateAudit(currentUser);
+                oorArticle.setOpenOrderTemplate(ooqArticle.getOpenOrderTemplate());
+                oorArticles.add(oorArticle);
+            });
+
+            openOrder.setArticles(oorArticles);
         }
     }
 
-    private Optional<List<Product>> buildProducts(List<OpenOrderProduct> openOrderProducts) {
-        if(openOrderProducts != null && !openOrderProducts.isEmpty()) {
-            return of(openOrderProducts.stream()
-                            .map(OpenOrderProduct::getProduct)
-                            .collect(toList()));
-        } else {
-            return empty();
+    private void buildProducts(OpenOrder openOrder, List<OpenOrderProduct> openOrderProducts) {
+        if (openOrderProducts != null && !openOrderProducts.isEmpty()) {
+            List<OpenOrderProduct> oorProducts = new ArrayList<>();
+            openOrderProducts.forEach(ooqProduct -> {
+                OpenOrderProduct oorProduct = new OpenOrderProduct();
+                oorProduct.setProduct(ooqProduct.getProduct());
+                oorProduct.updateAudit(currentUser);
+                oorProduct.setOpenOrderTemplate(ooqProduct.getOpenOrderTemplate());
+                oorProducts.add(oorProduct);
+            });
+
+            openOrder.setProducts(oorProducts);
         }
     }
 
@@ -247,12 +263,6 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
         if(openOrder.getThresholds() != null && !openOrder.getThresholds().isEmpty()) {
             openOrder.getThresholds().forEach(threshold -> threshold.setOpenOrder(openOrder));
-        }
-        if(openOrder.getArticles() != null && !openOrder.getArticles().isEmpty()) {
-            openOrder.getArticles().forEach(article -> article.setOpenOrder(openOrder));
-        }
-        if(openOrder.getProducts() != null && !openOrder.getProducts().isEmpty()) {
-            openOrder.getProducts().forEach(product -> product.setOpenOrder(openOrder));
         }
     }
 

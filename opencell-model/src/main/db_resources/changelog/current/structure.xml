@@ -13999,5 +13999,57 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
+	
+	<changeSet id="#INTRD-9117_20220811" author="aelmalki">
+		<createTable tableName="open_order_products">
+			<column name="open_order_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="open_product_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<createTable tableName="open_order_articles">
+			<column name="open_order_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="open_article_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		 <addPrimaryKey columnNames="open_order_id,open_product_id"
+							 constraintName="open_order_products_pkey"
+							 tableName="open_order_products"/>
+		 <addPrimaryKey columnNames="open_order_id,open_article_id"
+							 constraintName="open_order_articles_pkey"
+							 tableName="open_order_articles"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_products" baseColumnNames="open_order_id"
+                                 constraintName="open_order_products_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_products" baseColumnNames="open_product_id"
+	                                 constraintName="open_order_products_product_id_fk"
+	                                 referencedTableName="open_order_product"
+	                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="open_order_articles" baseColumnNames="open_order_id"
+                                 constraintName="open_order_articles_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_articles" baseColumnNames="open_article_id"
+	                                 constraintName="open_order_articles_article_id_fk"
+	                                 referencedTableName="open_order_article"
+	                                 referencedColumnNames="id"/>
+	</changeSet>
+	
+	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki">
+		<dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+		<dropColumn tableName="cpq_product" columnName="open_order_id" />
+	</changeSet>
 
 </databaseChangeLog>
