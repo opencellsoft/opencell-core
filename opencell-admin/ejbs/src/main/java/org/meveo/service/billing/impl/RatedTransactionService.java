@@ -40,12 +40,16 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -85,6 +89,7 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.*;
+import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -95,10 +100,12 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.*;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.cpq.BillingRulesService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
@@ -182,6 +189,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private AccountingArticleService accountingArticleService;
 
+    @Inject
+    private BillingRulesService billingRulesService;
+    
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -1697,5 +1707,93 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         " AND rt.usageDate < :lastTransactionDate AND (rt.invoicingDate is NULL or rt.invoicingDate < :invoiceUpToDate) " +
                         " AND rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);
+    }
+
+    public void applyInvoicingRules(List<RatedTransaction> rTs) {
+        if (rTs.size() !=0) {
+            List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
+            
+            Query query = getEntityManager().createQuery(
+                "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) "
+                        + " AND  rt.status = 'OPEN' And rt.originBillingAccount.id is null")
+                    .setParameter("ids", ratedTransactionIds);
+
+            List<RatedTransaction> rtsResults = query.getResultList();
+            
+            Map<BillingAccount, List<RatedTransaction>> rtGroupedByBA = rtsResults.stream().collect(Collectors.groupingBy(wo -> wo.getBillingAccount()));
+            
+            for (Entry<BillingAccount, List<RatedTransaction>> rtGrpByBAElement : rtGroupedByBA.entrySet()) {
+                BillingAccount billingAccount = rtGrpByBAElement.getKey();
+                List<BillingRule> billingRules = billingRulesService.findAllByBillingAccount(billingAccount);                
+                List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
+                
+                for(RatedTransaction rt : lstRatedTransaction) {
+                    for(BillingRule billingRule : billingRules) { 
+                        Boolean eCriteriaEL = checkCriteriaEL(rt, billingRule.getCriteriaEL());
+                        if(eCriteriaEL != null && eCriteriaEL) {
+                            String eInvoicedBACodeEL = evaluateInvoicedBACodeEL(rt, billingRule.getInvoicedBACodeEL());
+                            if (eInvoicedBACodeEL != null) {
+                                BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL);
+                                if (billingAccountByCode != null) {
+                                    rt.setOriginBillingAccount(rt.getBillingAccount());
+                                    rt.setBillingAccount(billingAccountByCode);
+                                    update(rt);
+                                    continue;
+                                }
+                                else {
+                                    rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                                    rt.setRejectReason("Billing redirection rule [id=" + billingRule.getId() + 
+                                        ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
+                                        billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
+                                        eInvoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
+                                    update(rt);
+                                }
+                            }
+                            else {
+                                rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                                rt.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + 
+                                    billingRule.getId() + ", priority=" + billingRule.getPriority() + 
+                                    ", invoicedBillingAccountCodeEL = " + billingRule.getInvoicedBACodeEL() + 
+                                    "] for RT [id=" + rt.getId() + "}]: Error in invoicedBillingAccountCodeEL evaluation");
+                                update(rt);
+                            } 
+                        }
+                        else {
+                            rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                            rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
+                                billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
+                                rt.getId() + "]: Error in criteriaEL evaluation");
+                            update(rt);
+                        } 
+                    }
+                }
+            }
+        }        
+    }
+
+    private Boolean checkCriteriaEL(RatedTransaction rt, String expression) {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put("rt", rt);
+        Boolean code = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        if (code != null) {
+           return code;
+        }
+        return null;       
+    }
+    
+    private String evaluateInvoicedBACodeEL(RatedTransaction rt, String expression) {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put("rt", rt);
+        String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        if (code != null) {
+           return code;
+        }
+        return null;       
     }
 }

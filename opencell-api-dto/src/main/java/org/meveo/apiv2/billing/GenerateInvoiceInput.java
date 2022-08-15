@@ -103,10 +103,19 @@ public interface GenerateInvoiceInput extends Resource {
     }
 
     @Nullable
+    @Value.Default
+    @Schema(description = "Apply Billing Rules")
+    @JsonProperty("applyBillingRules")
+    default Boolean isApplyBillingRules() {
+        return FALSE;
+    }
+    
+    @Nullable
     @Schema(description = "Filters on RT")
     FilterDto getFilters();
     
     @Nullable
     @Schema(description = "OpenOrder code")
     String getOpenOrderCode();
+    
 }
