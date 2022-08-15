@@ -40,6 +40,7 @@ import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanMatrixResourceImpl;
 import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
 import org.meveo.apiv2.cpq.impl.CommercialOrderResourceImpl;
+import org.meveo.apiv2.cpq.impl.CpqContractResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqQuoteResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
@@ -145,7 +146,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class, Apiv2SwaggerGeneration.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
-                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class)
+                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
