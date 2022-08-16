@@ -13999,7 +13999,14 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
-	
+    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
+        <update tableName="crm_provider">
+            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
+            <where>email is null</where>
+        </update>
+        <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
+    </changeSet>
+
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki">
 		<createTable tableName="open_order_products">
 			<column name="open_order_id" type="bigint">
@@ -14046,7 +14053,7 @@ order by date_trunc('month', i.invoice_date) DESC
 	                                 referencedTableName="open_order_article"
 	                                 referencedColumnNames="id"/>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki">
 		<dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
 		<dropColumn tableName="cpq_product" columnName="open_order_id" />

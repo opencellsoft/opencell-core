@@ -18,6 +18,7 @@
 
 package org.meveo.api.invoice;
 
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
@@ -527,12 +528,18 @@ public class InvoiceApi extends BaseApi {
         }
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
-        if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
-            invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), UNPAID);
-            invoice.setPaymentStatusDate(today);
-            invoiceService.update(invoice);
+        if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
+            updatePaymentStatus(invoice, today, PENDING);
+        }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
+            updatePaymentStatus(invoice, today, UNPAID);
         }
         return invoice.getInvoiceNumber();
+    }
+
+    private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
+        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), pending);
+        invoice.setPaymentStatusDate(today);
+        invoiceService.update(invoice);
     }
 
     /**
