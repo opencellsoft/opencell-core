@@ -9506,6 +9506,9 @@
               },
               {
                 "name": "PUT"
+              },
+              {
+                "name": "PATCH"
               }
             ]
           },
@@ -15352,7 +15355,7 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Api V1 Billing - Invoices and AO\"]",
-              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\",\"PATCH\"]",
               "applyPolicies": "[\"Role apiCreateInvoice\",\"Role apiBillingManagement\"]"
             }
           },
