@@ -14001,7 +14001,7 @@ order by date_trunc('month', i.invoice_date) DESC
     </changeSet>
     <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
         <update tableName="crm_provider">
-            <column name="email" value="dummy-email@provider.com" type="varchar(100)"/>
+            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
             <where>email is null</where>
         </update>
         <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
