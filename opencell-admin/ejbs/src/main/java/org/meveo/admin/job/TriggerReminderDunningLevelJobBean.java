@@ -32,6 +32,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -160,8 +161,9 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             params.put("invoiceInvoiceNumber", invoice.getInvoiceNumber());
             params.put("invoiceDueDate", emailDateFormatter.format(invoice.getDueDate()));
             params.put("invoiceInvoiceDate", emailDateFormatter.format(new Date()));
-            params.put("invoiceAmountWithTax", invoice.getAmountWithTax());
-            params.put("invoiceAmountWithoutTax", invoice.getAmountWithoutTax());
+            DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+            params.put("invoiceAmountWithTax", decimalFormat.format(invoice.getAmountWithTax()));
+            params.put("invoiceAmountWithoutTax", decimalFormat.format(invoice.getAmountWithoutTax()));
             params.put("invoicePaymentMethodType", invoice.getPaymentMethodType());
             params.put("invoicePaymentStatus", invoice.getPaymentStatus());
             params.put("invoiceOrderOrderNumber", invoice.getOrder() != null ? invoice.getOrder().getOrderNumber() : "");
