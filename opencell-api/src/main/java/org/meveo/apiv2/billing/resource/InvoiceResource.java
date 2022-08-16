@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -380,7 +381,7 @@ public interface InvoiceResource {
     Response deleteSubTotals(
             @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
 	
-	@PUT
+	@PATCH
     @Path("/validated/{id}")
     @Operation(summary = "Update a validated invoice", tags = { "Invoices" }, description = "Update a validated invoice with a set of changes to apply and return the updated invoice",
                     responses = {
