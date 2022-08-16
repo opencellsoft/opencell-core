@@ -1,7 +1,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -50,7 +50,7 @@ public class ContractDto extends BusinessEntityDto {
 	private CustomFieldsDto customFields;
 
 	@Schema(description = "list of billing rules")
-	private Set<BillingRuleDto> billingRules;
+	private List<BillingRuleDto> billingRules;
 
     
 	
@@ -208,14 +208,14 @@ public class ContractDto extends BusinessEntityDto {
 	/**
 	 * @return the billing rules
 	 */
-	public Set<BillingRuleDto> getBillingRules() {
+	public List<BillingRuleDto> getBillingRules() {
 		return billingRules;
 	}
 
 	/**
 	 * @param billingRules the billing rules to set
 	 */
-	public void setBillingRules(Set<BillingRuleDto> billingRules) {
+	public void setBillingRules(List<BillingRuleDto> billingRules) {
 		this.billingRules = billingRules;
 	}
 
