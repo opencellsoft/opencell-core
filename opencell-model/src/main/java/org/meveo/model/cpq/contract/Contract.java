@@ -149,8 +149,8 @@ public class Contract extends EnableBusinessCFEntity {
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<ContractItem> contractItems;
 	
-    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
-    private List<BillingRule> billingRules = new ArrayList<>();
+    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+    private List<BillingRule> billingRules;
     
 	public List<BillingRule> getBillingRules() {
         return billingRules;

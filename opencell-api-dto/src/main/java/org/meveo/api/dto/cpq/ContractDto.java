@@ -1,11 +1,13 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
@@ -46,6 +48,9 @@ public class ContractDto extends BusinessEntityDto {
 	private int contractDuration;
 	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
+
+	@Schema(description = "list of billing rules")
+	private Set<BillingRuleDto> billingRules;
 
     
 	
@@ -199,5 +204,21 @@ public class ContractDto extends BusinessEntityDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	/**
+	 * @return the billing rules
+	 */
+	public Set<BillingRuleDto> getBillingRules() {
+		return billingRules;
+	}
+
+	/**
+	 * @param billingRules the billing rules to set
+	 */
+	public void setBillingRules(Set<BillingRuleDto> billingRules) {
+		this.billingRules = billingRules;
+	}
+
+	
 	
 }
