@@ -28,6 +28,8 @@ import javax.inject.Named;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
@@ -137,7 +139,9 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 //        provider.getPaymentMethods().clear();
         entity.setPaymentMethods(paymentMethodsModel.getTarget());
         String returnTo = super.saveOrUpdate(killConversation);
-
+        if(StringUtils.isBlank(entity.getEmail())){
+            throw new InvalidParameterException("provider's email is mandatory.");
+        }
         if ("appConfiguration".equals(mode)) {
             return "providerSelfDetail";
         }
