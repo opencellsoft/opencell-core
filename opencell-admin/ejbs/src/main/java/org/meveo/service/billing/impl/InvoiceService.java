@@ -2552,6 +2552,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :" + status.name());
         }
         invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        
+        update(invoice);
     }
 
     /**
