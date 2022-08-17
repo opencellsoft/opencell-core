@@ -122,11 +122,18 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     private boolean displayOrders = false;
 
     /**
+     * Should tax details be displayed in the XML invoice
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display_tax_details")
+    private boolean displayTaxDetails = false;
+
+    /**
      * Next to be assigned invoice number
      */
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
-    
+
     /**
      * Default invoice subcategory
      */
@@ -348,7 +355,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     public String toString() {
         return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", " + "displayPricePlans=" + displayPricePlans
                 + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations="
-                + displayWalletOperations + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + "]";
+                + displayWalletOperations + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",displayTaxDetails=" + displayTaxDetails + "]";
     }
 
     /**
@@ -363,6 +370,21 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     public void setDisplayOrders(boolean displayOrders) {
         this.displayOrders = displayOrders;
+    }
+
+    /**
+     * @return the displayTaxDetails
+     */
+    public boolean isDisplayTaxDetails() {
+        return displayTaxDetails;
+    }
+
+    /**
+     * set the display tax Details
+     * @param displayTaxDetails
+     */
+    public void setDisplayTaxDetails(boolean displayTaxDetails) {
+        this.displayTaxDetails = displayTaxDetails;
     }
 
     /**

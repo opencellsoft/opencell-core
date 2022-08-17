@@ -176,6 +176,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     @Inject
     protected InvoiceLineService invoiceLineService;
 
+    @Inject
+    protected InvoiceLineService invoiceLinesService;;
+
     /**
      * transformer factory.
      */
@@ -2412,6 +2415,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 line.appendChild(serviceTag);
             }
         }
+
+        Optional<TaxDetails> oTaxDetails = invoiceLinesService.getTaxDetails(invoiceLine.getTax(), invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+        if(!oTaxDetails.isEmpty()) {
+            Element taxDetailsTag = doc.createElement("taxDetails");
+            TaxDetails taxDetails = oTaxDetails.get();
+            for (TaxDetails subTaxDetails : taxDetails.getSubTaxes()){
+                Element taxDetailTag = doc.createElement("taxDetail");
+                taxDetailTag.setAttribute("code", subTaxDetails.getTaxCode());
+                taxDetailTag.setAttribute("description", getDefaultIfNull(subTaxDetails.getTaxDescription(), ""));
+                taxDetailTag.setAttribute("taxPercent", subTaxDetails.getPercent().toPlainString());
+                taxDetailTag.setAttribute("taxAmount", subTaxDetails.getTaxAmount().toPlainString());
+                taxDetailsTag.appendChild(taxDetailTag);
+            }
+            line.appendChild(taxDetailsTag);
+        }
+
         return line;
     }
 
