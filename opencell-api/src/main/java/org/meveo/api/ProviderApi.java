@@ -655,6 +655,9 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayUserAccountHierarchy() != null) {
                 invoiceConfiguration.setDisplayUserAccountHierarchy(invoiceConfigurationDto.getDisplayUserAccountHierarchy());
             }
+            if (invoiceConfigurationDto.getDisplayTaxDetails() != null) {
+                invoiceConfiguration.setDisplayTaxDetails(invoiceConfigurationDto.getDisplayTaxDetails());
+            }
         }
         return provider;
     }

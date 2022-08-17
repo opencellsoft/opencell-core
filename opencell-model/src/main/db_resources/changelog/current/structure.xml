@@ -14059,4 +14059,10 @@ order by date_trunc('month', i.invoice_date) DESC
 		<dropColumn tableName="cpq_product" columnName="open_order_id" />
 	</changeSet>
 
+    <changeSet id="#INTRD-86_20220815" author="AbdellatifBARI">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
