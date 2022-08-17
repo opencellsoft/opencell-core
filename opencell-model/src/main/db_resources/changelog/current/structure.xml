@@ -13886,4 +13886,10 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle">
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri">
+        <addColumn tableName="open_order">
+            <column name="cancel_reason" type="varchar(4000)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
