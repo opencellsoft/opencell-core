@@ -21,7 +21,6 @@ package org.meveo.api.dto.crm;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.AuditableDto;
@@ -163,6 +162,9 @@ public class ContactDto extends BusinessEntityDto {
         if (contact.getTags() != null && !contact.getTags().isEmpty()) {
             tags = contact.getTags();
         }
+        
+        // Return Job Title
+        jobTitle = contact.getJobTitle();
 //		messages = contact.getMessages();
 
 //		addressBook = new AddressBookDto(contact.getAddressBook());
