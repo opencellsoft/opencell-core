@@ -343,7 +343,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void invoicePaymentStatusUpdated(@Observes @InvoicePaymentStatusUpdated Invoice invoice) throws BusinessException {
-        log.trace("Defaut observer: check cpq invoice payment status updated {}", invoice.getId());
+        log.trace("Defaut observer: check invoice payment status updated {}", invoice.getId());
         checkEvent(NotificationEventTypeEnum.PAYMENT_STATUS_UPDATED, invoice);
     }
     
