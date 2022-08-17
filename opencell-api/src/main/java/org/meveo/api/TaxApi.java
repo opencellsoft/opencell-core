@@ -109,9 +109,6 @@ public class TaxApi extends BaseApi {
     }
 
     private void validateTaxInput(TaxDto postData) {
-        if(postData.getComposite() == null) {
-            throw new BadRequestException("Composite field is required");
-        }
         if(postData.getComposite()) {
             if(postData.getSubTaxes() == null || postData.getSubTaxes().size() < 2) {
                 throw new BadRequestException("SubTaxes must contain at least two taxes");
