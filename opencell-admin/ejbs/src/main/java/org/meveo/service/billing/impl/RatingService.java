@@ -787,7 +787,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if (appProvider.isEntreprise()) {
                 	priceWithoutTax = ppmVersion.getAmountWithoutTax();
                 } else {
-                	priceWithoutTax = ppmVersion.getAmountWithTax();
+                	priceWithTax = ppmVersion.getAmountWithTax();
                 }
                 if (ppmVersion.getPriceEL() != null) {
                 	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));
