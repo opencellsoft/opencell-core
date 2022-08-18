@@ -21,11 +21,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -470,8 +466,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @return
      */
     public List<Long> queryInvoiceIdsForPS() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")
@@ -536,7 +531,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         if(DateUtils.compare(startDate, new Date()) < 0) {
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
         	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
+        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.PENDING + "' or (ao.invoice.paymentStatus = '"
                     + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
                     "or (ao.invoice.paymentStatus ='" + InvoicePaymentStatusEnum.UNPAID +"' and ao.invoice.paymentStatusDate <= '"
                             + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
