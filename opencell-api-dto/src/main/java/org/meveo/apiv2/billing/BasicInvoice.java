@@ -46,5 +46,9 @@ public interface BasicInvoice extends Resource {
 	@Nullable
 	@Schema(description = "The invoice type code")
 	String getInvoiceTypeCode();
+	
+	@Schema(description = "The comment for the invoice")
+	@Nullable
+	String getComment();
 
 }
