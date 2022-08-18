@@ -411,7 +411,7 @@ public class AOReportGeneratorScript extends ReportExtractScript {
         }
         if (ao.getType().equalsIgnoreCase(ReportTransactionType.COM_PSP.getLabel())) {
         	OtherCreditAndCharge occ=(OtherCreditAndCharge)ao;
-        	libCRI="commission du "+occ.getOperationDate();
+        	libCRI="commission du "+format("%-8s", simpleDateFormat.format(occ.getOperationDate()));
         }
         return format("%-25s", libCRI);
     }

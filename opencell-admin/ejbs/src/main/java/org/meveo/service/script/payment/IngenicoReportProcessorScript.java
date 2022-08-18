@@ -196,9 +196,10 @@ public class IngenicoReportProcessorScript extends Script {
         OtherCreditAndCharge commission = new OtherCreditAndCharge();
         commission.setReference(ingenicoData.getPayoutReference());
         commission.setOperationDate(ingenicoData.getPayoutDate());
+        commission.setDepositDate(ingenicoData.getPayoutDate());
         commission.setAmount(ingenicoData.getCommissionAmount());
         commission.setPaymentInfo(ingenicoData.getOperationType());
-        commission.setPaymentInfo1(ingenicoData.getDescription());
+        commission.setPaymentInfo3(ingenicoData.getDescription());
         commission.setCode(occTemplate.getCode());
         commission.setDescription(occTemplate.getDescription());
         commission.setTransactionCategory(OperationCategoryEnum.DEBIT);
