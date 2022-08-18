@@ -18,6 +18,8 @@
 package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.*;
 import static java.util.Arrays.asList;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
@@ -32,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -3791,35 +3794,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 for (Map.Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax : amountCumulativeForTax.entrySet()) {
                     Tax tax = amountByTax.getKey();
+                    boolean alreadyComputed = false;
                     if (BigDecimal.ZERO.compareTo(amountByTax.getValue().getAmount(!isEnterprise)) == 0) {
                         continue;
                     }
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(tax.getCode());
                     if (taxAggregate == null) {
-                        taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
-                        taxAggregate.updateAudit(currentUser);
-                        taxAggregates.put(tax.getCode(), taxAggregate);
-
-                        String translationCKey = "T_" + tax.getId() + "_" + languageCode;
-                        String descTranslated = descriptionMap.get(translationCKey);
-                        if (descTranslated == null) {
-                            descTranslated = tax.getDescriptionOrCode();
-                            if ((tax.getDescriptionI18n() != null) && (tax.getDescriptionI18n().get(languageCode) != null)) {
-                                descTranslated = tax.getDescriptionI18n().get(languageCode);
+                        if(tax.isComposite()) {
+                            alreadyComputed = true;
+                            List<Tax> subTaxes = tax.getSubTaxes();
+                            for (int index = 0; index < subTaxes.size(); index++) {
+                                BigDecimal percent =
+                                        subTaxes.get(index).getPercent().divide(tax.getPercent(), 6, CEILING);
+                                if(taxAggregates.get(subTaxes.get(index).getCode()) != null) {
+                                    taxAggregate = taxAggregates.get(subTaxes.get(index).getCode());
+                                    taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax().multiply(percent));
+                                    taxAggregate.addAmountWithoutTax(index == 0 ? amountByTax.getValue().getAmountWithoutTax() : ZERO);
+                                    taxAggregate.addAmountWithTax(index == 0 ? amountByTax.getValue().getAmountWithTax() : ZERO);
+                                } else {
+                                    taxAggregate =
+                                            createTaxAggregate(invoice, billingAccount, subTaxes.get(index), languageCode);
+                                    taxAggregates.put(subTaxes.get(index).getCode(), taxAggregate);
+                                    taxAggregate.setAmountTax(amountByTax.getValue().getAmountTax().multiply(percent));
+                                    taxAggregate.addAmountWithoutTax(index == 0 ? amountByTax.getValue().getAmountWithoutTax() : ZERO);
+                                    taxAggregate.addAmountWithTax(index == 0 ? amountByTax.getValue().getAmountWithTax() : ZERO);
+                                }
+                                invoice.addInvoiceAggregate(taxAggregate);
                             }
-                            descriptionMap.put(translationCKey, descTranslated);
+                        } else {
+                            taxAggregate = createTaxAggregate(invoice, billingAccount, tax, languageCode);
+                            taxAggregates.put(tax.getCode(), taxAggregate);
+                            invoice.addInvoiceAggregate(taxAggregate);
                         }
-
-                        taxAggregate.setDescription(descTranslated);
-
-                        invoice.addInvoiceAggregate(taxAggregate);
                     }
 
-                    if (isEnterprise) {
+                    if(!alreadyComputed) {
                         taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-
-                    } else {
+                        taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax());
                         taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
                     }
                 }
@@ -3833,9 +3845,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 amounts = NumberUtils.computeDerivedAmounts(taxAggregate.getAmountWithoutTax(), taxAggregate.getAmountWithTax(), taxAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
                     invoiceRoundingMode.getRoundingMode());
-                taxAggregate.setAmountWithoutTax(amounts[0]);
-                taxAggregate.setAmountWithTax(amounts[1]);
-                taxAggregate.setAmountTax(amounts[2]);
+                if(taxAggregate.getAmountWithoutTax() == null || taxAggregate.getAmountWithoutTax().compareTo(ZERO) == 0) {
+                    taxAggregate.setAmountWithoutTax(amounts[0]);
+                }
+                if(taxAggregate.getAmountWithTax() == null || taxAggregate.getAmountWithTax().compareTo(ZERO) == 0) {
+                    taxAggregate.setAmountWithTax(amounts[1]);
+                }
+                if(taxAggregate.getAmountTax() == null || taxAggregate.getAmountTax().compareTo(ZERO) == 0) {
+                    taxAggregate.setAmountTax(amounts[2]);
+                }
 
             }
         }
@@ -3908,8 +3926,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
-        return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions()).map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
+    private TaxInvoiceAgregate createTaxAggregate(Invoice invoice,
+                                                  BillingAccount billingAccount, Tax tax, String languageCode) {
+        TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
+        taxAggregate.updateAudit(currentUser);
+
+        String translationCKey = "T_" + tax.getId() + "_" + languageCode;
+        String descTranslated = descriptionMap.get(translationCKey);
+        if (descTranslated == null) {
+            descTranslated = tax.getDescriptionOrCode();
+            if ((tax.getDescriptionI18n() != null) && (tax.getDescriptionI18n().get(languageCode) != null)) {
+                descTranslated = tax.getDescriptionI18n().get(languageCode);
+            }
+            descriptionMap.put(translationCKey, descTranslated);
+        }
+
+        taxAggregate.setDescription(descTranslated);
+        return taxAggregate;
     }
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
