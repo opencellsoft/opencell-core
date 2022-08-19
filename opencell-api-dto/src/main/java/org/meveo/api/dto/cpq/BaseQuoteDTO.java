@@ -301,14 +301,5 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	public void setSalesPersonName(String salesPersonName) {
 		this.salesPersonName = salesPersonName;
-	}
-
-	
- 
-
-
-
-	
-    
-   
+	} 
 }

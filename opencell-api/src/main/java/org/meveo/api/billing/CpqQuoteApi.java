@@ -711,13 +711,8 @@ public class CpqQuoteApi extends BaseApi {
             quote.setUserAccount(userAccount);
         }
         
-        //Check if the CPQQuote is ACCEPTED then we can update the seller person name 
-        if(QuoteStatusEnum.ACCEPTED.toString().equals(quote.getStatus())) {
-        	quote.setSalesPersonName(quoteDto.getSalesPersonName());
-        } else {
-        	//Return the sales person name persist in DB
-        	quoteDto.setSalesPersonName(quote.getSalesPersonName());
-        }
+        //Update the sales person name
+        quote.setSalesPersonName(quoteDto.getSalesPersonName());
         
         try {
             cpqQuoteService.update(quote);
