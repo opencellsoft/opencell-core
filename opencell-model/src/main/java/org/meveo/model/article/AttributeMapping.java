@@ -2,18 +2,19 @@ package org.meveo.model.article;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "Attribute_Mapping")
@@ -33,12 +34,24 @@ public class AttributeMapping extends AuditableEntity {
     @Column(name = "attribute_value")
     private String attributeValue;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operator", nullable = false)
+    private RuleOperatorEnum operator = RuleOperatorEnum.EQUAL;
+
     public AttributeMapping() {
     }
 
     public AttributeMapping(Attribute attribute, String attributeValue) {
         this.attribute = attribute;
         this.attributeValue = attributeValue;
+        this.operator = RuleOperatorEnum.EQUAL;
+    }
+
+    public AttributeMapping(Attribute attribute, String attributeValue, RuleOperatorEnum operator) {
+        this.attribute = attribute;
+        this.attributeValue = attributeValue;
+        this.operator = operator;
     }
 
     public ArticleMappingLine getArticleMappingLine() {
@@ -63,5 +76,13 @@ public class AttributeMapping extends AuditableEntity {
 
     public void setAttributeValue(String attributeValue) {
         this.attributeValue = attributeValue;
+    }
+
+    public RuleOperatorEnum getOperator() {
+        return operator;
+    }
+
+    public void setOperator(RuleOperatorEnum operator) {
+        this.operator = operator;
     }
 }

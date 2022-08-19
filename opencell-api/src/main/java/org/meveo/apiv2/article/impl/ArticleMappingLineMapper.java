@@ -1,8 +1,5 @@
 package org.meveo.apiv2.article.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableAttributeMapping;
 import org.meveo.apiv2.models.ImmutableResource;
@@ -17,6 +14,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.article.ArticleMappingLine, ArticleMappingLine> {
     @Override
@@ -34,6 +34,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .offer(createResource(entity.getOfferTemplate()))
                 .product(createResource(entity.getProduct()))
                 .charge(createResource(entity.getChargeTemplate()))
+                .attributeOperator(entity.getAttributeOperator())
                 .build();
     }
 
@@ -52,13 +53,14 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
         articleMappingLine.setMappingKelEL(resource.getMappingKeyEL());
+        articleMappingLine.setAttributeOperator(resource.getAttributeOperator());
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
                     .map(attributeMapping -> {
                         Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
                         attribute.setCode(attributeMapping.getAttribute().getCode());
-						return new AttributeMapping(attribute, attributeMapping.getAttributeValue());
+						return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), attributeMapping.getOperator());
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
@@ -87,7 +89,13 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     private Iterable<? extends org.meveo.apiv2.article.AttributeMapping> getAttributesMappingResources(List<AttributeMapping> attributesMapping) {
         return attributesMapping != null ?
                 attributesMapping.stream()
-                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).code(am.getAttribute().getCode()).build()).attributeValue(am.getAttributeValue()).build())
+                        .map(am -> ImmutableAttributeMapping.builder().attribute(
+                            ImmutableResource.builder()
+                                .id(am.getAttribute().getId())
+                                .code(am.getAttribute().getCode()).build())
+                                .attributeValue(am.getAttributeValue())
+                                .operator(am.getOperator())
+                                .build())
                         .collect(Collectors.toList())
                 : null;
     }
