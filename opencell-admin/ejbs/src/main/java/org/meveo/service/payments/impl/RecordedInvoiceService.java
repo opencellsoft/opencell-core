@@ -19,14 +19,13 @@ package org.meveo.service.payments.impl;
 
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -44,8 +43,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
@@ -261,7 +258,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-    	if (invoice.getInvoiceType().isInvoiceAccountable() && InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+    	if (invoice.getInvoiceType().isInvoiceAccountable() && VALIDATED.equals(invoice.getStatus())) {
     		@SuppressWarnings("unchecked")
             List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
             List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
@@ -356,10 +353,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
             invoice.setRecordedInvoice(recordedInvoice);
             if(invoice.getDueDate() != null) {
-                var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? InvoicePaymentStatusEnum.PENDING : InvoicePaymentStatusEnum.UNPAID;
+                var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? PENDING : UNPAID;
                 invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
-    	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+    	} else if(!VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
@@ -471,8 +468,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @return
      */
     public List<Long> queryInvoiceIdsForPS() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")
@@ -536,10 +532,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         if(DateUtils.compare(startDate, new Date()) < 0) {
             var datePatternHours = "yyyy-MM-dd HH:mm:ss";
-        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '"
-                    + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
-                    "or (ao.invoice.paymentStatus ='" + InvoicePaymentStatusEnum.UNPAID +"' and ao.invoice.paymentStatusDate <= '"
+        	qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.statusDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
+        	qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or (ao.invoice.paymentStatus = '"
+                    + PPAID +"' and ao.invoice.paymentStatusDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
+                    "or (ao.invoice.paymentStatus ='" + UNPAID +"' and ao.invoice.paymentStatusDate <= '"
                             + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
 

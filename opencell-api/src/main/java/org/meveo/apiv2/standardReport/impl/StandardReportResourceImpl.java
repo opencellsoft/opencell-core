@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
