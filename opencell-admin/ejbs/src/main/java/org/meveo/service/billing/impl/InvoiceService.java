@@ -5061,15 +5061,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
         final String invoiceTypeCode = resource.getInvoiceTypeCode() != null ? resource.getInvoiceTypeCode() : "ADV";
         InvoiceType advType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
+        String comment = resource.getComment(); 
 
-        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType, comment);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
         return invoice;
     }
 
-    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType) {
+    /**
+     * Initialize a new Invoice from Basic Invoice
+     * @param amountWithTax Amount With Tax
+     * @param invoiceDate Invoice Date
+     * @param order {@link Order}
+     * @param billingAccount {@link BillingAccount} 
+     * @param advType {@link InvoiceType}
+     * @param comment Comment
+     * @return {@link Invoice}
+     */
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
@@ -5090,6 +5101,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setStatus(InvoiceStatusEnum.NEW);
         invoice.setAmountWithoutTaxBeforeDiscount(BigDecimal.ZERO);
+        invoice.setComment(comment);
         return invoice;
     }
 
