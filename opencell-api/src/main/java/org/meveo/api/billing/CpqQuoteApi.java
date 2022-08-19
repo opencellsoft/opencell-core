@@ -326,14 +326,9 @@ public class CpqQuoteApi extends BaseApi {
     	if(quoteDto.getDeliveryDate()!=null && quoteDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");
     	}
-    	cpqQuote.setDeliveryDate(quoteDto.getDeliveryDate());
-        
-        cpqQuote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
-        cpqQuote.setOpportunityRef(quoteDto.getOpportunityRef());
-        cpqQuote.setCustomerRef(quoteDto.getExternalId());
-        cpqQuote.setValidity(quoteDto.getValidity());
-        cpqQuote.setDescription(quoteDto.getDescription());
-        cpqQuote.setQuoteDate(quoteDto.getQuoteDate());
+    	
+    	//Fill the CpqQuote with CpqQouteDto
+    	fillCpqQuote(quoteDto, cpqQuote);
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
         
         try {
@@ -344,9 +339,26 @@ public class CpqQuoteApi extends BaseApi {
         } catch(BusinessApiException e) {
             throw new MeveoApiException(e);
         }
+        
         quoteDto.setStatusDate(cpqQuote.getStatusDate());
         quoteDto.setId(cpqQuote.getId());
         return quoteDto;
+	}
+
+	/**
+	 * Fill Cpq Quate with Quote Dto informations
+	 * @param quoteDto {@link QuoteDTO}
+	 * @param cpqQuote {@link CpqQuote}
+	 */
+	private void fillCpqQuote(QuoteDTO quoteDto, CpqQuote cpqQuote) {
+		cpqQuote.setDeliveryDate(quoteDto.getDeliveryDate());
+        cpqQuote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
+        cpqQuote.setOpportunityRef(quoteDto.getOpportunityRef());
+        cpqQuote.setCustomerRef(quoteDto.getExternalId());
+        cpqQuote.setValidity(quoteDto.getValidity());
+        cpqQuote.setDescription(quoteDto.getDescription());
+        cpqQuote.setQuoteDate(quoteDto.getQuoteDate());
+        cpqQuote.setSalesPersonName(quoteDto.getSalesPersonName());
 	}
 
 	private QuoteVersion populateNewQuoteVersion(QuoteVersionDto quoteVersionDto, CpqQuote cpqQuote) {
@@ -698,6 +710,15 @@ public class CpqQuoteApi extends BaseApi {
             }
             quote.setUserAccount(userAccount);
         }
+        
+        //Check if the CPQQuote is ACCEPTED then we can update the seller person name 
+        if(QuoteStatusEnum.ACCEPTED.toString().equals(quote.getStatus())) {
+        	quote.setSalesPersonName(quoteDto.getSalesPersonName());
+        } else {
+        	//Return the sales person name persist in DB
+        	quoteDto.setSalesPersonName(quote.getSalesPersonName());
+        }
+        
         try {
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
