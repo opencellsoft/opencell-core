@@ -2416,19 +2416,23 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             }
         }
 
-        Optional<TaxDetails> oTaxDetails = invoiceLinesService.getTaxDetails(invoiceLine.getTax(), invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
-        if(!oTaxDetails.isEmpty()) {
-            Element taxDetailsTag = doc.createElement("taxDetails");
-            TaxDetails taxDetails = oTaxDetails.get();
-            for (TaxDetails subTaxDetails : taxDetails.getSubTaxes()){
-                Element taxDetailTag = doc.createElement("taxDetail");
-                taxDetailTag.setAttribute("code", subTaxDetails.getTaxCode());
-                taxDetailTag.setAttribute("description", getDefaultIfNull(subTaxDetails.getTaxDescription(), ""));
-                taxDetailTag.setAttribute("taxPercent", subTaxDetails.getPercent().toPlainString());
-                taxDetailTag.setAttribute("taxAmount", subTaxDetails.getTaxAmount().toPlainString());
-                taxDetailsTag.appendChild(taxDetailTag);
+        if (invoiceConfiguration.isDisplayTaxDetails()) {
+            Optional<TaxDetails> oTaxDetails = invoiceLinesService.getTaxDetails(invoiceLine.getTax(), invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+            if (!oTaxDetails.isEmpty()) {
+                TaxDetails taxDetails = oTaxDetails.get();
+                if (taxDetails.getSubTaxes() != null && !taxDetails.getSubTaxes().isEmpty()) {
+                    Element taxDetailsTag = doc.createElement("taxDetails");
+                    for (TaxDetails subTaxDetails : taxDetails.getSubTaxes()) {
+                        Element taxDetailTag = doc.createElement("taxDetail");
+                        taxDetailTag.setAttribute("code", subTaxDetails.getTaxCode());
+                        taxDetailTag.setAttribute("description", getDefaultIfNull(subTaxDetails.getTaxDescription(), ""));
+                        taxDetailTag.setAttribute("taxPercent", subTaxDetails.getPercent().toPlainString());
+                        taxDetailTag.setAttribute("taxAmount", subTaxDetails.getTaxAmount().toPlainString());
+                        taxDetailsTag.appendChild(taxDetailTag);
+                    }
+                    line.appendChild(taxDetailsTag);
+                }
             }
-            line.appendChild(taxDetailsTag);
         }
 
         return line;
