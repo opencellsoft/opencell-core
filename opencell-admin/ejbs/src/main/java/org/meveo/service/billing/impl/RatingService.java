@@ -363,7 +363,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }else {
         	walletOperation.setUuid(UUID.randomUUID().toString());
         }
-    	//applyDiscount(ratedEDRResult, walletOperation, isVirtual);
+    	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
 
