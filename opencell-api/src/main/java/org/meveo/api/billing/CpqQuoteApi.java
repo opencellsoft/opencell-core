@@ -711,11 +711,11 @@ public class CpqQuoteApi extends BaseApi {
             quote.setUserAccount(userAccount);
         }
         
-        //Check if the CPQQuote is ACCEPTED then we can update the seller person name 
+        //Check if the CPQQuote is ACCEPTED then check if the user is admin 
         boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
         
-        if(QuoteStatusEnum.ACCEPTED.toString().equals(quote.getStatus()) && isAdmin) {
-        	throw new MeveoApiException("The CpqQuote can not be updated if the status is: " + quote.getStatus() + " and the user is not admin");
+        if(QuoteStatusEnum.ACCEPTED.toString().equals(quote.getStatus()) && !isAdmin) {
+        	throw new MeveoApiException("The CpqQuote can not be updated if the status is " + quote.getStatus() + " and the user is not admin");
         } else {
         	//Update the sales person name in CpqQuote
         	quote.setSalesPersonName(quoteDto.getSalesPersonName());
