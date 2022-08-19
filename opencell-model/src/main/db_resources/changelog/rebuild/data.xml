@@ -6956,6 +6956,7 @@
             <column name="rating_rounding" valueNumeric="2" />
             <column name="invoice_rounding" valueNumeric="2" />
             <column name="invoice_config_id" valueNumeric="-1" />
+            <column name="email" value="billing@opencellsoft.com" />
         </insert>
         <insert tableName="crm_provider_contact">
             <column name="id" valueNumeric="-1" />
