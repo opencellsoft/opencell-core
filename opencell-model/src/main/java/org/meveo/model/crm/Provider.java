@@ -317,7 +317,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * Contact email
      */
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, nullable = false)
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 100)
     protected String email;

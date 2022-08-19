@@ -18,6 +18,8 @@ public class TaxDetails {
 
     private String taxCode;
 
+    private String taxDescription;
+
     private BigDecimal percent;
 
     private BigDecimal taxAmount;
@@ -31,10 +33,11 @@ public class TaxDetails {
     public TaxDetails() {
     }
 
-    public TaxDetails(Long taxId, String taxCode, BigDecimal percent,
+    public TaxDetails(Long taxId, String taxCode, String taxDescription, BigDecimal percent,
                       BigDecimal taxAmount, BigDecimal convertedTaxAmount, List<TaxDetails> subTaxes, Boolean composite) {
         this.taxId = taxId;
         this.taxCode = taxCode;
+        this.taxDescription = taxDescription;
         this.percent = percent;
         this.taxAmount = taxAmount;
         this.convertedTaxAmount = convertedTaxAmount;
@@ -42,9 +45,10 @@ public class TaxDetails {
         this.composite = composite;
     }
 
-    public TaxDetails(Long taxId, String taxCode, BigDecimal percent, Boolean composite) {
+    public TaxDetails(Long taxId, String taxCode, String taxDescription, BigDecimal percent, Boolean composite) {
         this.taxId = taxId;
         this.taxCode = taxCode;
+        this.taxDescription = taxDescription;
         this.percent = percent;
         this.composite = composite;
     }
@@ -63,6 +67,14 @@ public class TaxDetails {
 
     public void setTaxCode(String taxCode) {
         this.taxCode = taxCode;
+    }
+
+    public String getTaxDescription() {
+        return taxDescription;
+    }
+
+    public void setTaxDescription(String taxDescription) {
+        this.taxDescription = taxDescription;
     }
 
     public BigDecimal getPercent() {
@@ -99,14 +111,14 @@ public class TaxDetails {
 
     public static TaxDetails fromTax(Tax tax, BigDecimal taxAmount, BigDecimal convertedTaxAmount) {
         TaxDetails mainTaxDetails =
-                new TaxDetails(tax.getId(), tax.getCode(), tax.getPercent().setScale(4, HALF_UP), TRUE);
+                new TaxDetails(tax.getId(), tax.getCode(), tax.getDescription(), tax.getPercent().setScale(4, HALF_UP), TRUE);
         if(tax.getPercent().compareTo(ZERO) == 0) {
             mainTaxDetails.setTaxAmount(ZERO);
             mainTaxDetails.setConvertedTaxAmount(ZERO);
             mainTaxDetails.setSubTaxes(tax.getSubTaxes()
                     .stream()
                     .map(subTax -> new TaxDetails(subTax.getId(),
-                            subTax.getCode(), ZERO, ZERO, ZERO, null, null))
+                            subTax.getCode(),subTax.getDescription(), ZERO, ZERO, ZERO, null, null))
                     .collect(toList()));
         } else {
             mainTaxDetails.setTaxAmount(taxAmount.setScale(4, HALF_UP));
@@ -114,7 +126,7 @@ public class TaxDetails {
             List<TaxDetails> subTaxesDetails = new ArrayList<>();
             for (Tax subTax : tax.getSubTaxes()) {
                 TaxDetails subTaxDetails =
-                        new TaxDetails(subTax.getId(), subTax.getCode(), subTax.getPercent().setScale(4, HALF_UP), null);
+                        new TaxDetails(subTax.getId(), subTax.getCode(), subTax.getDescription(), subTax.getPercent().setScale(4, HALF_UP), null);
                 BigDecimal percent = subTax.getPercent().divide(tax.getPercent(), 4, FLOOR);
                 subTaxDetails.setTaxAmount(taxAmount.multiply(percent).setScale(2, HALF_UP));
                 subTaxDetails.setConvertedTaxAmount(convertedTaxAmount.multiply(percent).setScale(2, HALF_UP));

@@ -96,7 +96,10 @@ public class InvoiceConfigurationDto implements Serializable {
     private String defaultInvoiceMinimumArticleCode;
     
     /** Display user account hierarchy. */
-    private Boolean displayUserAccountHierarchy = Boolean.FALSE;    
+    private Boolean displayUserAccountHierarchy = Boolean.FALSE;
+
+    /** The display tax details. */
+    private Boolean displayTaxDetails;
 
 
 	/**
@@ -129,6 +132,7 @@ public class InvoiceConfigurationDto implements Serializable {
         defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle() != null ? invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode() : null;
         defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle() != null ? invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode() : null;
         displayUserAccountHierarchy = invoiceConfiguration.isDisplayUserAccountHierarchy();
+        displayTaxDetails = invoiceConfiguration.isDisplayTaxDetails();
     }
 
     /**
@@ -183,6 +187,21 @@ public class InvoiceConfigurationDto implements Serializable {
      */
     public void setDisplayOffers(Boolean displayOffers) {
         this.displayOffers = displayOffers;
+    }
+
+    /**
+     * @return the displayTaxDetails
+     */
+    public Boolean getDisplayTaxDetails() {
+        return displayTaxDetails;
+    }
+
+    /**
+     * set the display tax Details
+     * @param displayTaxDetails
+     */
+    public void setDisplayTaxDetails(Boolean displayTaxDetails) {
+        this.displayTaxDetails = displayTaxDetails;
     }
 
     /**
@@ -377,7 +396,7 @@ public class InvoiceConfigurationDto implements Serializable {
                 + ", displayEdrs=" + displayEdrs + ", displayPricePlans=" + displayPricePlans + ", displayCfAsXML=" + displayCfAsXML + ", displayProvider=" + displayProvider
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
                 + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations
-                + ", displayUserAccountHierarchy="+displayUserAccountHierarchy+"]";
+                + ", displayUserAccountHierarchy="+displayUserAccountHierarchy + ", displayTaxDetails=" + displayTaxDetails+"]";
     }
     
     /**

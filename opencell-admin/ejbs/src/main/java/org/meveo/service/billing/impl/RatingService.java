@@ -363,7 +363,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }else {
         	walletOperation.setUuid(UUID.randomUUID().toString());
         }
-    	//applyDiscount(ratedEDRResult, walletOperation, isVirtual);
+    	applyDiscount(ratedEDRResult, walletOperation, isVirtual);
         
         return ratedEDRResult;
 
@@ -787,7 +787,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 if (appProvider.isEntreprise()) {
                 	priceWithoutTax = ppmVersion.getAmountWithoutTax();
                 } else {
-                	priceWithoutTax = ppmVersion.getAmountWithTax();
+                	priceWithTax = ppmVersion.getAmountWithTax();
                 }
                 if (ppmVersion.getPriceEL() != null) {
                 	priceWithoutTax = priceWithoutTax.add(evaluateAmountExpression(ppmVersion.getPriceEL(), wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax));

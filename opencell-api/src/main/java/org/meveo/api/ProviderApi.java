@@ -185,7 +185,9 @@ public class ProviderApi extends BaseApi {
         // search for provider
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
         provider = fromDto(postData, provider);
-
+        if(StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(provider.getEmail())){
+            throw new InvalidParameterException("provider's email is mandatory.");
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false);
@@ -652,6 +654,9 @@ public class ProviderApi extends BaseApi {
             }
             if (invoiceConfigurationDto.getDisplayUserAccountHierarchy() != null) {
                 invoiceConfiguration.setDisplayUserAccountHierarchy(invoiceConfigurationDto.getDisplayUserAccountHierarchy());
+            }
+            if (invoiceConfigurationDto.getDisplayTaxDetails() != null) {
+                invoiceConfiguration.setDisplayTaxDetails(invoiceConfigurationDto.getDisplayTaxDetails());
             }
         }
         return provider;

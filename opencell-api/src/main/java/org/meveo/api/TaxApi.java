@@ -58,6 +58,8 @@ public class TaxApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    private static final String SUBTAXES_MESSAGE_EXCEPTION = "SubTaxes must contain at least two taxes";
 
     public Tax create(TaxDto postData) throws MeveoApiException, BusinessException {
 
@@ -109,12 +111,9 @@ public class TaxApi extends BaseApi {
     }
 
     private void validateTaxInput(TaxDto postData) {
-        if(postData.getComposite() == null) {
-            throw new BadRequestException("Composite field is required");
-        }
         if(postData.getComposite()) {
             if(postData.getSubTaxes() == null || postData.getSubTaxes().size() < 2) {
-                throw new BadRequestException("SubTaxes must contain at least two taxes");
+                throw new BadRequestException(SUBTAXES_MESSAGE_EXCEPTION);
             }
         } else {
             if (StringUtils.isBlank(postData.getPercent())) {
@@ -170,10 +169,15 @@ public class TaxApi extends BaseApi {
         tax.setDescription(postData.getDescription());
         tax.setComposite(postData.getComposite());
         if(tax.isComposite()) {
-            List<Tax> subTaxes = toEntity(postData.getSubTaxes());
-            validateSubTaxes(subTaxes);
-            tax.setPercent(subTaxes.stream().map(Tax::getPercent).reduce(ZERO, BigDecimal::add));
-            tax.setSubTaxes(subTaxes);
+        	//Check if the subTaxes are null or size lower than 2
+        	if(postData.getSubTaxes() == null || postData.getSubTaxes().size() < 2) {
+                throw new BadRequestException(SUBTAXES_MESSAGE_EXCEPTION);
+            } else {
+            	List<Tax> subTaxes = toEntity(postData.getSubTaxes());
+                validateSubTaxes(subTaxes);
+                tax.setPercent(subTaxes.stream().map(Tax::getPercent).reduce(ZERO, BigDecimal::add));
+                tax.setSubTaxes(subTaxes);
+            }
         } else {
             if (tax.getSubTaxes() != null && !tax.getSubTaxes().isEmpty()) {
                 tax.getSubTaxes().clear();

@@ -164,7 +164,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		if (startDate == null) {
 			AccountingPeriod lastAccountingPeriod = findLastAccountingPeriod();
 			startDate = Optional.ofNullable(lastAccountingPeriod).map(AccountingPeriod::getEndDate).orElse(null);
-			if (startDate != null && startDate.after(endDate)) {
+			if (startDate != null &&
+					(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().equals(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+							|| startDate.after(endDate))) {
 				throw new ValidationException("the given end date " + DateUtils.formatAsDate(endDate) + " already exists");
 			}
 		}

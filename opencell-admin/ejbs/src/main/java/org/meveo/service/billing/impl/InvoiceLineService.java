@@ -1112,7 +1112,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             mainTax = taxService.findById(mainTax.getId(), true);
             taxDetails = TaxDetails.fromTax(mainTax, taxAmount, convertedTaxAmount);
         } else {
-            taxDetails = new TaxDetails(mainTax.getId(), mainTax.getCode(),
+            taxDetails = new TaxDetails(mainTax.getId(), mainTax.getCode(), mainTax.getDescription(),
                     mainTax.getPercent(), taxAmount, convertedTaxAmount, null, FALSE);
         }
         return ofNullable(taxDetails);

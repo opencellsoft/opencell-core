@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
@@ -57,6 +58,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
@@ -78,6 +80,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     @Inject
     private AccountOperationService accountOperationService;
 
+    @Inject
+    private InvoiceService invoiceService;
+    
     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception
@@ -352,7 +357,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             invoice.setRecordedInvoice(recordedInvoice);
             if(invoice.getDueDate() != null) {
                 var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? InvoicePaymentStatusEnum.PENDING : InvoicePaymentStatusEnum.UNPAID;
-                invoice.setPaymentStatus(currentStatus);
+                invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
     	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());

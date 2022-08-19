@@ -1,8 +1,11 @@
 package org.meveo.api.cpq;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -25,11 +28,14 @@ import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
+import org.meveo.apiv2.cpq.mapper.BillingRuleMapper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
@@ -43,6 +49,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.BillingRuleService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.ProductService;
@@ -79,6 +86,10 @@ public class ContractApi extends BaseApi{
 	private PricePlanMatrixService pricePlanMatrixService;
 	@Inject
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+	@Inject
+	private BillingRuleService billingRuleService;
+	
+	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACt_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
@@ -186,7 +197,17 @@ public class ContractApi extends BaseApi{
 		contract.setCustomerAccount(null);
 		changeAccountLevel(dto, contract);
 		
-		
+		// update billing rules
+		if(dto.getBillingRules() != null) {
+			contract.getBillingRules().clear();
+			for (BillingRuleDto brDto : dto.getBillingRules()) {
+				BillingRule br = billingRuleMapper.toEntity(brDto);
+				br.setContract(contract);
+				billingRuleService.create(br);
+				contract.getBillingRules().add(br);
+			}
+		}
+
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, false);
 			contractService.update(contract);
@@ -403,6 +424,26 @@ public class ContractApi extends BaseApi{
 			missingParameters.add("beginDate");
 		if(dto.getEndDate() == null)
 			missingParameters.add("endDate");
+		
+		Set<String> brMessages = new HashSet<>();
+		if(dto.getBillingRules() != null) {
+			for (BillingRuleDto brDto : dto.getBillingRules()) {
+				if(brDto.getPriority() == null) {
+					brMessages.add("billingRules.priority");
+				}
+				
+				if(StringUtils.isBlank(brDto.getCriteriaEL())) {
+					brMessages.add("billingRules.criteriaEL");
+				}
+				
+				if(StringUtils.isBlank(brDto.getInvoicedBACodeEL())) {
+					brMessages.add("billingRules.invoicedBACodeEL");
+				}
+			}
+		}
+		
+		missingParameters.addAll(new ArrayList<>(brMessages));
+		
 		handleMissingParameters();
 		
 	}
