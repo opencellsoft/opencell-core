@@ -20,16 +20,16 @@ import java.util.List;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_seq"),})
 @NamedQueries({
-		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products product left join oo.articles article"
+		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products ooProducts left join oo.articles ooArticles"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
 				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
-				+ " AND (product.id = :productId or article.id = :articleId)"),
-		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products product"
+				+ " AND (ooProducts.product.id = :productId or ooArticles.accountingArticle.id = :articleId)"),
+		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products ooProducts"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND product.id = :productId ORDER BY oo.endOfValidityDate"),
-		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles article"
+				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooProducts.product.id = :productId ORDER BY oo.endOfValidityDate"),
+		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles ooArticles"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND article.id = :articleId ORDER BY oo.endOfValidityDate"),
+				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooArticles.accountingArticle.id = :articleId ORDER BY oo.endOfValidityDate"),
         @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)")
 })
 public class OpenOrder extends BusinessEntity {
