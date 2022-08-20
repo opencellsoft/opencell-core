@@ -37,6 +37,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -3079,7 +3080,7 @@ public class SubscriptionApi extends BaseApi {
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        versionRemovedEvent.fire(lastSubscription);
+        versionRemovedEvent.fire((Subscription) Hibernate.unproxy(lastSubscription));
     }
 
     private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
