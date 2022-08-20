@@ -41,7 +41,6 @@ import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -137,6 +136,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	@AdvancementRateIncreased
 	protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
+
+	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
+    private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -229,6 +231,9 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processOrderLot(orderDto, order);
+		
+		//Set the sales person name
+		order.setSalesPersonName(orderDto.getSalesPersonName());
 		commercialOrderService.create(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
@@ -278,6 +283,17 @@ public class CommercialOrderApi extends BaseApi {
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
 			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
+		
+		//Check if the CommercialOrder is FINALIZED or COMPLETED then check if the user is admin 
+        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
+        
+        if((CommercialOrderEnum.FINALIZED.toString().equals(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus())) && !isAdmin) {
+        	throw new MeveoApiException("The CommercialOrder can not be updated if the status is " + order.getStatus() + " and the user is not admin");
+        } else {
+        	//Update the sales person name in CommercialOrder
+        	order.setSalesPersonName(orderDto.getSalesPersonName());
+        }
+        
 		if(!Strings.isEmpty(orderDto.getCode())){
 			order.setCode(orderDto.getCode());
 		}

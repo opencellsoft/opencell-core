@@ -82,6 +82,9 @@ public class CommercialOrderDto extends BaseEntityDto {
 	/** Discount plan code */
     @Schema(description = "The code of the discount plan")
 	private String discountPlanCode;
+    
+    @Schema(description = "The sales person name")
+	private String salesPersonName;
 	
 	public CommercialOrderDto() {
 	}
@@ -94,6 +97,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.orderNumber = order.getOrderNumber();
 		this.label = order.getLabel();
 		this.billingAccountCode = order.getBillingAccount().getCode();
+		this.salesPersonName = order.getSalesPersonName();
 		if(order.getQuote() != null)
 			this.quoteCode = order.getQuote().getCode();
 		if(order.getContract() != null)
@@ -422,5 +426,17 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.discountPlanCode = discountPlanCode;
 	}
 	
-	
+	/**
+	 * @return the sales person name
+	 */
+	public String getSalesPersonName() {
+		return salesPersonName;
+	}
+
+	/**
+	 * @param salesPersonName the sales person name to set
+	 */
+	public void setSalesPersonName(String salesPersonName) {
+		this.salesPersonName = salesPersonName;
+	}
 }
