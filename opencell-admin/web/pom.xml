@@ -233,7 +233,7 @@
                             <includes>
                                 <include>${project.build.directory}/opencell/pages/docs/v0/index.html</include>
                             </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v0/index.html</file>
+                            <file>${project.build.directory}/opencell/pages/docs/v0/swagger-initializer.js</file>
                             <replacements>
                                 <replacement>
                                     <token>https://petstore.swagger.io/v2/swagger.json</token>
