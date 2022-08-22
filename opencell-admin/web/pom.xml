@@ -231,7 +231,7 @@
                         <phase>verify</phase>
                         <configuration>
                             <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v0/index.html</include>
+                                <include>${project.build.directory}/opencell/pages/docs/v0/swagger-initializer.js</include>
                             </includes>
                             <file>${project.build.directory}/opencell/pages/docs/v0/swagger-initializer.js</file>
                             <replacements>
@@ -264,9 +264,9 @@
                         <phase>verify</phase>
                         <configuration>
                             <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v1/index.html</include>
+                                <include>${project.build.directory}/opencell/pages/docs/v1/swagger-initializer.js</include>
                             </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v1/index.html</file>
+                            <file>${project.build.directory}/opencell/pages/docs/v1/swagger-initializer.js</file>
                             <replacements>
                                 <replacement>
                                     <token>https://petstore.swagger.io/v2/swagger.json</token>
