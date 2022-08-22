@@ -86,6 +86,7 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.orderInvoiceType = copy.orderInvoiceType;
 		this.access = copy.access;
 		this.userAccount = copy.userAccount;
+		this.salesPersonName = copy.salesPersonName;
 	}
 
 	/**
@@ -168,6 +169,13 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	@Column(name = "external_reference", length = 50)
 	@Size(max = 50)
 	private String externalReference;
+	
+	/**
+	 * The sales person name
+	 */
+	@Column(name = "sales_person_name", length = 52)
+	@Size(max = 52)
+	private String salesPersonName;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -470,7 +478,20 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	public void setExternalReference(String externalReference) {
 		this.externalReference = externalReference;
 	}
-
+	
+	/**
+	 * @return the salesPersonName
+	 */
+	public String getSalesPersonName() {
+		return salesPersonName;
+	}
+	
+	/**
+	 * @param salesPersonName the salesPersonName to set
+	 */
+	public void setSalesPersonName(String salesPersonName) {
+		this.salesPersonName = salesPersonName;
+	}
 
 	/**
 	 * @return the orderParent
