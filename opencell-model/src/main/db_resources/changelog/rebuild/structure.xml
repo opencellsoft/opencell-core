@@ -18446,6 +18446,7 @@
 	<changeSet id="#INTRD-8743_20220802" author="HichamHANINE"/>
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki" />
 	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki" />
+	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
