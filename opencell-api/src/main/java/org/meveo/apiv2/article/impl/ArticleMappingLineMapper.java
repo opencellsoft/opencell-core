@@ -14,6 +14,8 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.OperatorEnum;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +62,9 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                     .map(attributeMapping -> {
                         Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
                         attribute.setCode(attributeMapping.getAttribute().getCode());
-						return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), attributeMapping.getOperator());
+						// return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), attributeMapping.getOperator());
+                        //  uncommend previous line and remove the following when Frontend and design technique for US INTRD-9233 are done
+                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), RuleOperatorEnum.EQUAL);
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
@@ -83,6 +87,9 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             product.setCode(resource.getProduct().getCode());
             articleMappingLine.setProduct(product);
         }
+
+        // Add default values, waiting for Frontend and design technique for US INTRD-9233
+        articleMappingLine.setAttributeOperator(OperatorEnum.AND);
         return articleMappingLine;
     }
 
