@@ -289,11 +289,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
-
+    public List<RatedTransaction> createRatedTransactionsInBatch(List<WalletOperation> walletOperations) throws BusinessException {
         EntityManager em = getEntityManager();
         boolean eventsEnabled = areEventsEnabled(NotificationEventTypeEnum.CREATED);
-
+        List<RatedTransaction> lstRatedTransaction = new ArrayList<RatedTransaction>();
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
 
@@ -305,7 +304,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.flush();
                 em.clear();
             }
-            RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+            RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);                      
             if(ratedTransaction.getAccountingArticle() == null) {
                 getAccountingArticle(walletOperation).ifPresent(ratedTransaction::setAccountingArticle);
             }
@@ -313,7 +312,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
 
             em.persist(ratedTransaction);
-
+            
+            lstRatedTransaction.add(ratedTransaction);
+            
             // Fire notifications
             if (eventsEnabled) {
                 entityCreatedEventProducer.fire((BaseEntity) ratedTransaction);
@@ -359,6 +360,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
         em.createNamedQuery("WalletOperation.deletePendingTable").executeUpdate();
+        return lstRatedTransaction;
     }
 
     private Optional<AccountingArticle> getAccountingArticle(WalletOperation walletOperation) {
@@ -1719,12 +1721,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .setParameter("ids", ratedTransactionIds);
 
             List<RatedTransaction> rtsResults = query.getResultList();
-            
+            updateBAForRT(rtsResults);
+        }        
+    }
+    
+    public void updateBAForRT(List<RatedTransaction> rtsResults) {
+        if (rtsResults.size() !=0) {            
             Map<BillingAccount, List<RatedTransaction>> rtGroupedByBA = rtsResults.stream().collect(Collectors.groupingBy(wo -> wo.getBillingAccount()));
             
             for (Entry<BillingAccount, List<RatedTransaction>> rtGrpByBAElement : rtGroupedByBA.entrySet()) {
                 BillingAccount billingAccount = rtGrpByBAElement.getKey();
-                List<BillingRule> billingRules = billingRulesService.findAllByBillingAccount(billingAccount);                
+                List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccount(billingAccount);                
                 List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
                 
                 for(RatedTransaction rt : lstRatedTransaction) {

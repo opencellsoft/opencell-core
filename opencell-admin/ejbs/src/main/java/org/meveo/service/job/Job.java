@@ -84,6 +84,11 @@ public abstract class Job {
     public static final String CF_BATCH_SIZE = "batchSize";
     
     /**
+     * Custom field for a applyBilingRules.
+     */
+    public static final String CF_APPLY_BILING_RULES = "applyBilingRules";
+    
+    /**
      * What initiated/launched Job
      */
     public static final String JOB_PARAM_LAUNCHER = "jobLauncher";
