@@ -231,25 +231,6 @@
                         <phase>verify</phase>
                         <configuration>
                             <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v0/swagger-initializer.js</include>
-                            </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v0/swagger-initializer.js</file>
-                            <replacements>
-                                <replacement>
-                                    <token>https://petstore.swagger.io/v2/swagger.json</token>
-                                    <value>/opencell/api/rest/v0/openapi.json</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>apiv0</id>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <includes>
                                 <include>${project.build.directory}/opencell/pages/docs/v0/*</include>
                             </includes>
                             <replacements>
