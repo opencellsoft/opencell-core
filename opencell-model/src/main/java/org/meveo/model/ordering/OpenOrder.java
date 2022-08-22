@@ -83,7 +83,8 @@ public class OpenOrder extends BusinessEntity {
     @NotNull
     private Date activationDate;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "open_order_id")
     private List<Threshold> thresholds;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
