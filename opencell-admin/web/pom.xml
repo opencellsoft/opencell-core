@@ -242,7 +242,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>replace-apiv1</id>
+                        <id>apiv1</id>
                         <goals>
                             <goal>replace</goal>
                         </goals>
@@ -259,20 +259,32 @@
                             </replacements>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>apiv2</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <includes>
+                                <include>${project.build.directory}/opencell/pages/docs/v2/*</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>https://petstore.swagger.io/v2/swagger.json</token>
+                                    <value>/opencell/api/rest/v2/openapi.json</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <includes>
-                        <include>${project.build.directory}/opencell/pages/docs/v2/index.html</include>
                         <include>${project.build.directory}/opencell/layout/*.xhtml</include>
                         <include>${project.build.directory}/opencell/about.xhtml</include>
                         <include>${project.build.outputDirectory}/version.json</include>
                     </includes>
-                    <file>${project.build.directory}/opencell/pages/docs/v2/index.html</file>
                     <replacements>
-                        <replacement>
-                            <token>https://petstore.swagger.io/v2/swagger.json</token>
-                            <value>/opencell/api/rest/v2/openapi.json</value>
-                        </replacement>
                         <replacement>
                             <token>@VERSION_NUMBER@</token>
                             <value>${project.version}</value>
