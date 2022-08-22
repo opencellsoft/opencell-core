@@ -18,14 +18,16 @@
 
 package org.meveo.api.rest.impl;
 
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
+import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
+
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.TaxRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
@@ -47,27 +49,23 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus create(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             taxApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            result = processException(exception);
         }
-
         return result;
     }
 
     @Override
     public ActionStatus update(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             taxApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            result = processException(exception);
         }
-
         return result;
     }
 
@@ -86,7 +84,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus remove(String taxCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
 
         try {
             taxApi.remove(taxCode);
@@ -99,15 +97,24 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus createOrUpdate(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             Long idEntity = taxApi.createOrUpdate(postData);
             result.setEntityId(idEntity);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            result = processException(exception);
         }
+        return result;
+    }
 
+    private ActionStatus processException(Exception exception) {
+        ActionStatus result = new ActionStatus(FAIL, exception.getMessage());
+        if(exception.getMessage() != null) {
+            String[] errorMessage = exception.getMessage().split(":");
+            if(errorMessage.length > 1) {
+                result.setMessage(errorMessage[1]);
+            }
+        }
         return result;
     }
 

@@ -47,6 +47,9 @@ public class ServiceToActivateDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3815026205495621916L;
 
+    /** The id. */
+    private Long id;
+
     /** The code. */
     @XmlAttribute(required = true)
     private String code;
@@ -123,6 +126,24 @@ public class ServiceToActivateDto implements Serializable {
      * The renewal service.
      */
     private SubscriptionRenewalDto serviceRenewal;
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id the new code
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /**
      * Gets the code.
