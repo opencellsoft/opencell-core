@@ -57,6 +57,7 @@ import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 
@@ -94,6 +95,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     @Inject
     private DDRequestBuilderFactory ddRequestBuilderFactory;
 
+	@Inject
+	private SellerService sellerService;
+
 	/**
 	 * Creates the DDRequest lot.
 	 *
@@ -115,7 +119,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
 		ddRequestLOT.setSendDate(new Date());
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-		ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
+		ddRequestLOT.setSeller(ddrequestLotOp.getSeller() != null ? sellerService.findById(ddrequestLotOp.getSeller().getId()) : null);
 		ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
 		create(ddRequestLOT);
 		ddRequestLOT.setFileName(ddRequestBuilderFactory.getInstance(ddRequestBuilder).getDDFileName(ddRequestLOT, appProvider));
