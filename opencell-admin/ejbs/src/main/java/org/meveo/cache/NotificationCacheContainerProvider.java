@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
@@ -283,6 +284,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         List<String> checkNotifications = new ArrayList<String>();
 
         Class entityClass = entity.getClass();
+        // prevent double notification for lazy proxy entities
+        if(entity instanceof HibernateProxy ) {
+        	entityClass = entityClass.getSuperclass();
+        }
+
         int i = 0;
         
         while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
