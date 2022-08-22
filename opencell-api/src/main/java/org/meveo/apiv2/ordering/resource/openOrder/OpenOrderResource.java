@@ -35,7 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-@Path("ordering/openOrder")
+@Path("ordering/open-order")
 @Produces({ "application/json"})
 @Consumes({ "application/json"})
 public interface OpenOrderResource {

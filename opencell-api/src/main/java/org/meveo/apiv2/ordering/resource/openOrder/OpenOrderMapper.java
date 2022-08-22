@@ -41,7 +41,6 @@ public class OpenOrderMapper extends ResourceMapper<OpenOrderDto, OpenOrder> {
     public void fillEntity(OpenOrder entity, OpenOrderDto resource)
     {
         entity.setDescription(resource.getDescription());
-        entity.setId(resource.getId());
         entity.setDescription(resource.getDescription());
         entity.setExternalReference(resource.getExternalReference());
         entity.setEndOfValidityDate(resource.getEndOfValidityDate());

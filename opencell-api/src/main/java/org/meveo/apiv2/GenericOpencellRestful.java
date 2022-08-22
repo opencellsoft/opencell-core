@@ -78,6 +78,7 @@ import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.mediation.impl.MediationSettingResourceImpl;
 import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteResourceImpl;
+import org.meveo.apiv2.ordering.resource.openOrder.OpenOrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
@@ -148,7 +149,7 @@ public class GenericOpencellRestful extends Application {
                         FinanceSettingsResourceImpl.class, SecurityDepositTemplateResourceImpl.class, SecurityDepositResourceImpl.class, UserAccountsResourceImpl.class,
                         OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class, Apiv2SwaggerGeneration.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
-                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class, SearchPriceLineByAttributeResourceImpl.class)
+                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class, SearchPriceLineByAttributeResourceImpl.class, OpenOrderResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);

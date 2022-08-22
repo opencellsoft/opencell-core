@@ -81,6 +81,10 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
         }
         checkParameters(openOrder, dto);
         openOrderMapper.fillEntity(openOrder, dto);
+        if(dto.getThresholds() != null ) {
+            thresholdService.deleteThresholdsByOpenOrderId(openOrder.getId());
+            openOrder.setThresholds(thresholdMapper.toEntities(dto.getThresholds()));
+        }
         if (null != dto.getTags()) openOrder.getTags().addAll(fetchTags(dto.getTags()));
         openOrder = openOrderService.update(openOrder);
         auditLogService.trackOperation("UPDATE", new Date(), openOrder, openOrder.getCode());
@@ -91,6 +95,9 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
 
         if(dto.getEndOfValidityDate().after(new Date()) || dto.getEndOfValidityDate().after(openOrder.getActivationDate())){
             throw new InvalidParameterException(" The EndOfValidityDate field should not be after currente date or the activation date");
+        }
+        if(!(OpenOrderStatusEnum.NEW.equals(openOrder.getStatus()) || OpenOrderStatusEnum.IN_USE.equals(openOrder.getStatus()))){
+            throw new BusinessApiException("Could not modify the open order: "+openOrder.getCode()+" current status: "+openOrder.getStatus());
         }
     }
 
@@ -116,6 +123,9 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
         OpenOrder openOrder = openOrderService.findByCode(code);
         if (null == openOrder) {
             throw new BusinessApiException(String.format("open order with code %s doesn't exist", code));
+        }
+        if(!(OpenOrderStatusEnum.NEW.equals(openOrder.getStatus()) || OpenOrderStatusEnum.IN_USE.equals(openOrder.getStatus()))){
+            throw new BusinessApiException("Could not cancel the open order: "+openOrder.getCode()+" current status: "+openOrder.getStatus());
         }
         openOrder.setStatus(OpenOrderStatusEnum.CANCELED);
         openOrder.setCancelReason(openOrderDto.getCancelReason());

@@ -12,7 +12,8 @@ import java.util.List;
 @Table(name = "open_order_threshold")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_threshold_seq"),})
-@NamedQueries({ @NamedQuery(name = "Threshold.deleteByOpenOrderTemplate", query = "delete from Threshold t where t.openOrderTemplate.id =:openOrderTemplateId ")})
+@NamedQueries({ @NamedQuery(name = "Threshold.deleteByOpenOrderTemplate", query = "delete from Threshold t where t.openOrderTemplate.id =:openOrderTemplateId "),
+        @NamedQuery(name = "Threshold.deleteByOpenOrder", query = "delete from Threshold t where t.openOrder.id =:openOrderId ")})
 public class Threshold extends BaseEntity {
 
     @Column(name = "sequence")
