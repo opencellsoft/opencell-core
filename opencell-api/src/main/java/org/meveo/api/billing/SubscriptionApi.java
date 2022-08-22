@@ -558,6 +558,10 @@ public class SubscriptionApi extends BaseApi {
             }
             handleMissingParameters();
         }
+        
+        if(postData.getSalesPersonName() != null) {
+        	subscription.setSalesPersonName(postData.getSalesPersonName());
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -2762,6 +2766,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
+        subscription.setSalesPersonName(postData.getSalesPersonName());
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
