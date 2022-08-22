@@ -162,7 +162,6 @@ public class ContactDto extends BusinessEntityDto {
         if (contact.getTags() != null && !contact.getTags().isEmpty()) {
             tags = contact.getTags();
         }
-        comment = contact.getComment();
         
         // Return Job Title
         jobTitle = contact.getJobTitle();
