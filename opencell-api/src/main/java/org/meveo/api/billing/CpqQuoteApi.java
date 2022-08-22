@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -142,7 +141,6 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -231,9 +229,6 @@ public class CpqQuoteApi extends BaseApi {
     private DiscountPlanService discountPlanService;
 
     @Inject
-    private DiscountPlanItemService discountPlanItemService;
-
-    @Inject
     private QuoteMapper quoteMapper;
 
     @Inject
@@ -272,6 +267,10 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private WalletOperationService walletOperationService;
+    
+    private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
+    
+    private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 
 	public QuoteDTO createQuote(QuoteDTO quoteDto) {
 	    if(StringUtils.isBlank(quoteDto.getApplicantAccountCode())) {
@@ -326,14 +325,9 @@ public class CpqQuoteApi extends BaseApi {
     	if(quoteDto.getDeliveryDate()!=null && quoteDto.getDeliveryDate().before(new Date())) {
     		throw new MeveoApiException("Delivery date should be in the future");
     	}
-    	cpqQuote.setDeliveryDate(quoteDto.getDeliveryDate());
-        
-        cpqQuote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
-        cpqQuote.setOpportunityRef(quoteDto.getOpportunityRef());
-        cpqQuote.setCustomerRef(quoteDto.getExternalId());
-        cpqQuote.setValidity(quoteDto.getValidity());
-        cpqQuote.setDescription(quoteDto.getDescription());
-        cpqQuote.setQuoteDate(quoteDto.getQuoteDate());
+    	
+    	//Fill the CpqQuote with CpqQouteDto
+    	fillCpqQuote(quoteDto, cpqQuote);
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
         
         try {
@@ -344,9 +338,26 @@ public class CpqQuoteApi extends BaseApi {
         } catch(BusinessApiException e) {
             throw new MeveoApiException(e);
         }
+        
         quoteDto.setStatusDate(cpqQuote.getStatusDate());
         quoteDto.setId(cpqQuote.getId());
         return quoteDto;
+	}
+
+	/**
+	 * Fill Cpq Quate with Quote Dto informations
+	 * @param quoteDto {@link QuoteDTO}
+	 * @param cpqQuote {@link CpqQuote}
+	 */
+	private void fillCpqQuote(QuoteDTO quoteDto, CpqQuote cpqQuote) {
+		cpqQuote.setDeliveryDate(quoteDto.getDeliveryDate());
+        cpqQuote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
+        cpqQuote.setOpportunityRef(quoteDto.getOpportunityRef());
+        cpqQuote.setCustomerRef(quoteDto.getExternalId());
+        cpqQuote.setValidity(quoteDto.getValidity());
+        cpqQuote.setDescription(quoteDto.getDescription());
+        cpqQuote.setQuoteDate(quoteDto.getQuoteDate());
+        cpqQuote.setSalesPersonName(quoteDto.getSalesPersonName());
 	}
 
 	private QuoteVersion populateNewQuoteVersion(QuoteVersionDto quoteVersionDto, CpqQuote cpqQuote) {
@@ -647,6 +658,7 @@ public class CpqQuoteApi extends BaseApi {
         if(StringUtils.isBlank(quoteCode)) {
             missingParameters.add("code");
         }
+        
         final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
@@ -698,6 +710,17 @@ public class CpqQuoteApi extends BaseApi {
             }
             quote.setUserAccount(userAccount);
         }
+        
+        //Check if the CPQQuote is ACCEPTED then check if the user is admin 
+        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
+        
+        if(QuoteStatusEnum.ACCEPTED.toString().equals(quote.getStatus()) && !isAdmin) {
+        	throw new MeveoApiException("The CpqQuote can not be updated if the status is " + quote.getStatus() + " and the user is not admin");
+        } else {
+        	//Update the sales person name in CpqQuote
+        	quote.setSalesPersonName(quoteDto.getSalesPersonName());
+        }
+        
         try {
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();

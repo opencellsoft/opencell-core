@@ -18448,6 +18448,7 @@
 	<changeSet id="#INTRD-8743_20220802" author="HichamHANINE"/>
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki" />
 	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki" />
+	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-7301_20220820_order" author="zelmeliani" />
 	<changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani" />
 
