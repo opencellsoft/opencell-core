@@ -852,9 +852,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
-            invoiceLinesService.deleteSupplementalILs(excludedPrepaidInvoices);
-            invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);
-            invoiceLinesService.unInvoiceByInvoiceIds(excludedPrepaidInvoices);
+            invoiceLinesService.cancelIlByInvoices(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
