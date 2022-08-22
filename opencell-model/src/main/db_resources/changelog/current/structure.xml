@@ -14064,5 +14064,17 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-7301_20220820_order" author="zelmeliani">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani">
+        <addColumn tableName="billing_subscription">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
