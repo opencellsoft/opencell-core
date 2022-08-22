@@ -684,11 +684,14 @@ public class SubscriptionApi extends BaseApi {
             ServiceInstance serviceInstance = null;
 
             if (paramBean.isServiceMultiInstantiation()) {
-                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription, InstanceStatusEnum.INACTIVE);
-                if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
-                    serviceInstance = alreadyInstantiatedServices.get(0);
+                if(!StringUtils.isBlank(serviceToActivateDto.getId())){
+                    serviceInstance = serviceInstanceService.findById(serviceToActivateDto.getId());
+                }else {
+                    List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription, InstanceStatusEnum.INACTIVE);
+                    if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
+                        serviceInstance = alreadyInstantiatedServices.get(0);
+                    }
                 }
-
             } else {
                 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription, InstanceStatusEnum.INACTIVE,
                         InstanceStatusEnum.ACTIVE, InstanceStatusEnum.PENDING);
