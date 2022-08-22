@@ -113,6 +113,7 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
@@ -177,7 +178,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected InvoiceLineService invoiceLineService;
 
     @Inject
-    protected InvoiceLineService invoiceLinesService;;
+    protected InvoiceLineService invoiceLinesService;
 
     /**
      * transformer factory.
@@ -214,11 +215,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @throws SAXException                 sax exception
      * @throws IOException                  IO exception
      */
-    public File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath, boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException {
-
+    public File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath,
+                                      boolean rtBillingProcess) throws BusinessException, ParserConfigurationException, SAXException, IOException {
         Document doc = createDocument(invoice, isVirtual, rtBillingProcess);
-        File file = createFile(doc, invoice, fullXmlFilePath);
-        return file;
+        return createFile(doc, invoice, fullXmlFilePath);
     }
 
     /**
@@ -462,7 +462,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element subscriptionsTag = doc.createElement("subscriptions");
         for (Subscription subscription : subscriptions) {
             if(userAccount == null
-                    || (userAccount.getId() == subscription.getUserAccount().getId()
+                    || (userAccount.getId().equals(subscription.getUserAccount().getId())
                     && userAccount.getCode().equals(subscription.getUserAccount().getCode()))) {
                 Element subscriptionTag = doc.createElement("subscription");
                 subscriptionTag.setAttribute("id", subscription.getId() + "");
@@ -1136,7 +1136,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         } else {
             taxes.setAttribute("total", toPlainString(invoice.getAmountTax()));
             String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-            List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<TaxInvoiceAgregate>();
+            List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<>();
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 if (invoiceAgregate instanceof TaxInvoiceAgregate) {
                     taxInvoiceAgregates.add((TaxInvoiceAgregate) invoiceAgregate);
@@ -1394,7 +1394,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         invoiceTag.setAttribute("id", invoice.getId() != null ? invoice.getId().toString() : "");
         invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCode());
         invoiceTag.setAttribute("customerAccountCode", invoice.getBillingAccount().getCustomerAccount().getCode());
-        Optional.ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
+        ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
         if (isInvoiceAdjustment) {
             Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<>(linkedInvoices)));
@@ -1522,15 +1522,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerAccountTag.setAttribute("vatNo", getDefaultIfNull(customerAccount.getVatNo(), ""));
         addCustomFields(customerAccount, doc, customerAccountTag);
         customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
-        /*
-         * EntityManager em = getEntityManager(); Query billingQuery = em .createQuery(
-         * "select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId" );
-         * billingQuery.setParameter("customerAccountId", customerAccount.getId()); List<ServiceInstance> services = (List<ServiceInstance>) billingQuery .getResultList();
-         *
-         *
-         *
-         * boolean terminated = services.size() > 0 ? isAllServiceInstancesTerminated(services) : false;
-         */
         customerAccountTag.setAttribute("accountTerminated", customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE) + "");
         Element paymentMethodTag = createPaymentMethodSection(doc, customerAccount);
         if (paymentMethodTag != null) {
@@ -1808,12 +1799,23 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createDetailsSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
-
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
+        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
+        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         Element detail = doc.createElement("detail");
         Element userAccountsTag = ratedTransactions != null ? createUserAccountsSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration)
                 :  createUserAccountsSectionIL(doc, invoice, invoiceLines, isVirtual, invoiceConfiguration);
         if (userAccountsTag != null) {
             detail.appendChild(userAccountsTag);
+        }
+        if (invoiceLines != null && !invoiceLines.isEmpty()) {
+            Element lines = doc.createElement("lines");
+            for (InvoiceLine invoiceLine : invoiceLines) {
+                ofNullable(createILSection(doc, invoice, invoiceLine, invoiceDateFormat,
+                        invoiceDateTimeFormat, invoiceConfiguration, invoiceLanguageCode)).ifPresent(lines::appendChild);
+            }
+            detail.appendChild(lines);
         }
         return detail;
     }
@@ -2193,7 +2195,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected List<PricePlanMatrix> getPricePlans(Invoice invoice, boolean isVirtual, List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         List<PricePlanMatrix> pps = new ArrayList<>();
         Set<Long> ppIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2204,7 +2205,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(pps, Comparator.comparing(PricePlanMatrix::getCode));
         return pps;
-        // }
     }
 
     /**
@@ -2221,7 +2221,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected List<Subscription> getSubscriptions(Invoice invoice, UserAccount userAccount, boolean isVirtual, boolean ignoreUA, List<RatedTransaction> ratedTransactions) {
 
         // TODO Need to check performance, maybe its quick enough to avoid searching DB in non-virtual cases
-        // if (isVirtual) {
         List<Subscription> subscriptions = new ArrayList<>();
         Set<Long> subIds = new HashSet<>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -2233,7 +2232,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         Collections.sort(subscriptions, Comparator.comparing(Subscription::getCode));
         return subscriptions;
-        // }
     }
 
     /**
@@ -2252,7 +2250,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         List<InvoiceLine> invoiceLines = null;
         if (invoiceConfiguration.isDisplayOffers() || invoiceConfiguration.isDisplayServices()
                 || invoiceConfiguration.isDisplayPricePlans() || invoiceConfiguration.isDisplayDetail()) {
-            invoiceLines = getInvoiceLines(invoice, isVirtual);
+            invoiceLines = invoice.getInvoiceLines();
         }
         if (invoiceConfiguration.isDisplayOffers()) {
             Element offersTag = createOffersSection(doc, invoice, null, isVirtual, invoiceConfiguration, invoiceLines);
