@@ -8999,7 +8999,7 @@ public class OrderAdvancement extends ModuleScript {
     	<addNotNullConstraint tableName="crm_customer_category" columnName="tax_category_id"/>
     </changeSet>
     
-    <changeSet id="#20210607_540_563" author="TarikFA.">
+    <changeSet id="#20210607_540_563" author="TarikFA." failOnError="false">
     	<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
 				VALUES (nextval('billing_accounting_article_seq'),1,'2021-06-03 16:23:10.262','opencell.admin','PROD-STD','PROD-STD',-1,-2,'{}',0,'63ef9cee-f498-4908-PROD-STD');</sql>
 		<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
@@ -9042,7 +9042,7 @@ public class OrderAdvancement extends ModuleScript {
         ]]></sql>
     </changeSet>
 
-    <changeSet id="#INTRD-242_20210623" author="Zbariki">
+    <changeSet id="#INTRD-242_20210623" author="Zbariki" failOnError="false">
         <addColumn tableName="billing_billing_run">
             <column name="filters" type="text">
                 <constraints nullable="true" />
@@ -9181,7 +9181,7 @@ public class OrderAdvancement extends ModuleScript {
     		<where>charge_template_id  is null</where>
     	</update>
     </changeSet>
-    <changeSet id="INTRD-1310_050821" author="Mbarek-Ay">
+    <changeSet id="INTRD-1310_050821" author="Mbarek-Ay" failOnError="false">
      <addColumn tableName="billing_subscription">
             <column name="order_offer_id" type="bigint" />
         </addColumn>
@@ -9198,7 +9198,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     
     
-     <changeSet author="TarikFA." id="INTRD_1687_20210906">
+     <changeSet author="TarikFA." id="INTRD_1687_20210906" failOnError="false">
           <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
           <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
@@ -9267,7 +9267,7 @@ public class OrderAdvancement extends ModuleScript {
 	
    </changeSet>
    
-   <changeSet id="INTRD_1985_20210923" author="TarikFA.">
+   <changeSet id="INTRD_1985_20210923" author="TarikFA." failOnError="false">
    		<addColumn tableName="quote_offer">
 			<column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
@@ -9293,7 +9293,7 @@ public class OrderAdvancement extends ModuleScript {
     	<dropNotNullConstraint tableName="billing_article_mapping_line" columnName="article_mapping_id"/>
     </changeSet>
     
-     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay">
+     <changeSet id="INTRD-2425_20211014" author="Mbarek-Ay" failOnError="false">
      <addColumn tableName="billing_invoice">
             <column name="cpq_quote_id" type="bigint" />
         </addColumn>
@@ -9322,7 +9322,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     
-     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius">
+     <changeSet id="#INTRD-4682_20220209" author="AndriusKarpavicius" failOnError="false">
         <renameColumn tableName="adm_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
         <renameColumn tableName="adm_role_secured_entity" oldColumnName="disable" newColumnName="disabled" columnDataType="boolean"/>
      </changeSet>
@@ -9339,7 +9339,7 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_price" />
      </changeSet>
 
-    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE">
+    <changeSet id="#INTRD-4798_20220303" author="MohamedSTITANE" failOnError="false">
         <sql>
             create index cpq_commercial_rule_item_header_id_index on cpq_commercial_rule_item (commercial_rule_header_id);
             create index cpq_tag_seller_id_index on cpq_tag (seller_id);
@@ -9426,7 +9426,7 @@ public class OrderAdvancement extends ModuleScript {
 
     </changeSet>
     
-    <changeSet id="#INTRD-6108_20220330" author="TarikFA.">
+    <changeSet id="#INTRD-6108_20220330" author="TarikFA." failOnError="false">
     	<addColumn tableName="order_price">
     		<column name="quantity" type="numeric(19,2)" />
     		<column name="discounted_order_price" type="bigint" />
@@ -9486,13 +9486,13 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
-     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza">
+     <changeSet id="#20220408_M540_6296" author="Rachid.Aityaazza" failOnError="false">
         <addColumn tableName="cat_discount_plan_item">
             <column name="apply_by_article" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
     
-    <changeSet id="#20220412_M540_172" author="Mbarek-Ay">
+    <changeSet id="#20220412_M540_172" author="Mbarek-Ay" failOnError="false">
 	
 		<addColumn tableName="order_price">
 			<column name="discount_value" type="numeric(23,12)" />
@@ -9504,7 +9504,7 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" /> 
       </changeSet>
       
-       <changeSet id="#20220412_M540_6533" author="Mbarek-Ay">
+       <changeSet id="#20220412_M540_6533" author="Mbarek-Ay" failOnError="false">
 		<addColumn tableName="cpq_quote_price">
 		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
 		</addColumn>
@@ -9590,7 +9590,18 @@ public class OrderAdvancement extends ModuleScript {
             CREATE INDEX idx_cpq_attribute_code_lower ON cpq_attribute(lower(code));
         </sql>
     </changeSet>
-
-      
+	
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki">
+        <addColumn tableName="billing_article_mapping_line">
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+        <addColumn tableName="billing_attribute_mapping">
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
