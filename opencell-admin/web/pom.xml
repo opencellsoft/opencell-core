@@ -250,9 +250,8 @@
                         <phase>verify</phase>
                         <configuration>
                             <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v0/index.htlm</include>
+                                <include>${project.build.directory}/opencell/pages/docs/v0/*</include>
                             </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v0/index.html</file>
                             <replacements>
                                 <replacement>
                                     <token>https://petstore.swagger.io/v2/swagger.json</token>
@@ -262,20 +261,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>replace-version-location</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>replace-swagger-json-location</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>replace-apiv1</id>
                         <goals>
                             <goal>replace</goal>
@@ -283,28 +268,8 @@
                         <phase>verify</phase>
                         <configuration>
                             <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v1/swagger-initializer.js</include>
+                                <include>${project.build.directory}/opencell/pages/docs/v1/*</include>
                             </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v1/swagger-initializer.js</file>
-                            <replacements>
-                                <replacement>
-                                    <token>https://petstore.swagger.io/v2/swagger.json</token>
-                                    <value>/opencell/api/rest/v1/openapi.json</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>replace-apiv1</id>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <includes>
-                                <include>${project.build.directory}/opencell/pages/docs/v1/index.html</include>
-                            </includes>
-                            <file>${project.build.directory}/opencell/pages/docs/v1/index.html</file>
                             <replacements>
                                 <replacement>
                                     <token>https://petstore.swagger.io/v2/swagger.json</token>
