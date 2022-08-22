@@ -157,8 +157,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         List<RatedTransaction> lstRatedTransaction = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
         if (isApplyBillingRules) {
             ratedTransactionService.applyInvoicingRules(lstRatedTransaction);
-        }  
-        Boolean ss = true;
+        }
     }
     
 
