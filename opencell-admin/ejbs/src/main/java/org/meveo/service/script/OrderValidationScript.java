@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
@@ -88,6 +89,11 @@ public class OrderValidationScript extends Script {
             }else {
                 subscription.setUserAccount(offer.getUserAccount());
             }
+            
+            // Set Sales Person Name when it's not null in Order
+    		if(StringUtils.isNotEmpty(order.getSalesPersonName())) {
+    			subscription.setSalesPersonName(order.getSalesPersonName());
+    		}
             
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
