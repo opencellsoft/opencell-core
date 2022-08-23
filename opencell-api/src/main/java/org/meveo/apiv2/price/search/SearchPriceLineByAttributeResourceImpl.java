@@ -46,7 +46,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     private String buildQuery(Map<String, Object> searchInfo) {
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
-        queryString.append(" LEFT JOIN FETCH ppml.pricePlanMatrixValues ppmv ");
+        queryString.append(" LEFT JOIN ppml.pricePlanMatrixValues ppmvs ");
         queryString.append(" WHERE (LOWER(ppml.description) LIKE :description OR ppml.description is null) ");
         if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
             queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
@@ -55,12 +55,8 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
             queryString.append(" AND ppml.priceWithoutTax = :priceWithoutTax ");
         }
         if(searchInfo.containsKey("attributes") && !((List)searchInfo.get("attributes")).isEmpty()){
-            queryString.append(" AND ppmv.id IN ");
-            queryString.append("(SELECT ppmv2.id FROM PricePlanMatrixValue ppmv2");
-            queryString.append(" JOIN PricePlanMatrixColumn ppmc ON ppmv2.pricePlanMatrixColumn=ppmc");
-            queryString.append(" WHERE ");
+            queryString.append(" AND EXISTS ");
             queryString.append(appendAttributesToQuery((List<Map<String, Object>>) searchInfo.getOrDefault("attributes", Collections.EMPTY_LIST)));
-            queryString.append(")");
         }
         queryString.append(" ORDER BY ppml." + searchInfo.getOrDefault("sortBy","id"));
         queryString.append(" ");
@@ -71,26 +67,29 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
 
     private String appendAttributesToQuery(List<Map<String, Object>> attributesSearch) {
         return attributesSearch.stream()
-                .map(stringObjectMap -> "(LOWER(ppmc.code)='"
+                .map(stringObjectMap ->
+                        "(SELECT ppmv.id FROM PricePlanMatrixValue ppmv"+
+                                " JOIN PricePlanMatrixColumn ppmc ON ppmv.pricePlanMatrixColumn=ppmc"+
+                                " WHERE (LOWER(ppmc.code)='"
                         + stringObjectMap.get("column").toString().toLowerCase()
                         + "' AND "
                         + resolveType((String) stringObjectMap.get("type"), stringObjectMap.get("value"))
-                        +")")
-                .collect(Collectors.joining(" OR "));
+                        +"AND ppmv.id in elements(ppmvs)))")
+                .collect(Collectors.joining(" AND EXISTS "));
     }
 
     private String resolveType(String type, Object value) {
         switch(type.toLowerCase()){
             case "string":
-                return "(LOWER(ppmv2.stringValue) LIKE '"+value.toString().toLowerCase()+"' OR ppmv2.stringValue IS NULL)";
+                return "(LOWER(ppmv.stringValue) LIKE '"+value.toString().toLowerCase()+"' OR ppmv.stringValue IS NULL)";
             case "long":
-                return "(ppmv2.longValue = " + value + " OR ppmv2.long_value IS NULL)";
+                return "(ppmv.longValue = " + value + " OR ppmv.long_value IS NULL)";
             case "double":
-                return "(ppmv2.doubleValue = " + Double.valueOf(value.toString())+ " OR ppmv2.doubleValue IS NULL)";
+                return "(ppmv.doubleValue = " + Double.valueOf(value.toString())+ " OR ppmv.doubleValue IS NULL)";
             case "boolean":
-                return "(ppmv2.booleanValue = " + Boolean.valueOf(value.toString())+ " OR ppmv2.booleanValue IS NULL)";
+                return "(ppmv.booleanValue = " + Boolean.valueOf(value.toString())+ " OR ppmv.booleanValue IS NULL)";
            case "date":
-                return "(ppmv2.dateValue = '" + new java.sql.Date(parseDate(value).getTime())+ "' OR ppmv2.dateValue IS NULL)";
+                return "(ppmv.dateValue = '" + new java.sql.Date(parseDate(value).getTime())+ "' OR ppmv.dateValue IS NULL)";
            default:
                 return "stringValue = ''";
         }
