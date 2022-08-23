@@ -83,7 +83,8 @@ public class OpenOrder extends BusinessEntity {
     @NotNull
     private Date activationDate;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "open_order_id")
     private List<Threshold> thresholds;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -99,6 +100,9 @@ public class OpenOrder extends BusinessEntity {
 
     @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
     private List<Tag> tags;
+
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 
     public String getExternalReference() {
         return externalReference;
@@ -210,6 +214,14 @@ public class OpenOrder extends BusinessEntity {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 
     public List<OpenOrderProduct> getProducts() {
