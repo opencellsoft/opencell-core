@@ -11549,13 +11549,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#INTRD-8743_20220802" author="HichamHANINE">		
+
+    <changeSet id="#INTRD-8743_20220802" author="HichamHANINE">
 		<addColumn tableName="billing_rated_transaction">
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
         </addColumn>
-		
+
 		<addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
 	</changeSet>
 
@@ -13945,7 +13945,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_without_tax"/>
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_with_tax"/>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-8777_20220728" author="aelmalki">
 		<createTable tableName="billing_run_job_execution">
 			<column name="billing_run_id" type="bigint">
@@ -13963,7 +13963,7 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
 								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
 								 referencedColumnNames="id"/>
-							
+
 	</changeSet>
 
     <changeSet id="#INTRD-8701_20220801" author="ZBariki">
@@ -13995,7 +13995,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="comment" type="varchar(2000)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
@@ -14065,4 +14065,35 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-7301_20220820_order" author="zelmeliani">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani">
+        <addColumn tableName="billing_subscription">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
+	
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki">
+        <addColumn tableName="billing_article_mapping_line">
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+        <addColumn tableName="billing_attribute_mapping">
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri">
+        <addColumn tableName="open_order">
+            <column name="cancel_reason" type="varchar(4000)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

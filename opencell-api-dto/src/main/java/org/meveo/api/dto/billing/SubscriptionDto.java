@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -235,7 +234,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     private PaymentMethodDto paymentMethod;
     
     private String customerService;
-
+    
+    @Schema(description = "The sales person name")
+    private String salesPersonName;
+    
     /**
      * Instantiates a new subscription dto.
      */
@@ -890,5 +892,19 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     public void setProductsToInstantiate(List<ProductToInstantiateDto> productsToInstantiate) {
         this.productsToInstantiate = productsToInstantiate;
+    }
+    
+    /**
+     * @return the sales person name
+     */
+    public String getSalesPersonName() {
+    	return salesPersonName;
+    }
+    
+    /**
+     * @param salesPersonName the sales person name to set
+     */
+    public void setSalesPersonName(String salesPersonName) {
+    	this.salesPersonName = salesPersonName;
     }
 }

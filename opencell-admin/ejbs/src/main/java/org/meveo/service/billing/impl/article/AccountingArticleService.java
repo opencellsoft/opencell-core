@@ -6,17 +6,21 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
@@ -33,6 +37,8 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.OperatorEnum;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -67,40 +73,30 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
 				.collect(toList());
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
+		List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
-			List<AttributeMapping> matchedAttributesMapping = aml.getAttributesMapping().stream().filter(attributeMapping -> {
-				final Attribute attribute = attributeMapping.getAttribute();
-				if (attributes.get(attribute.getCode()) != null) {
-					Object value = attributes.get(attributeMapping.getAttribute().getCode());
-					switch (attribute.getAttributeType()) {
-						case TEXT:
-						case LIST_TEXT:
-						case LIST_NUMERIC:
-							return value.toString().contentEquals(attributeMapping.getAttributeValue());
-						case TOTAL:
-						case COUNT:
-						case NUMERIC:
-							return Double.valueOf(value.toString()).doubleValue() == Double.valueOf(attributeMapping.getAttributeValue()).doubleValue();
-						case LIST_MULTIPLE_TEXT:
-						case LIST_MULTIPLE_NUMERIC:
-							List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
-							List<String> input = Arrays.asList(value.toString().split(";"));
-							Optional<String> valExist = input.stream().filter(val -> {
-								if (source.contains(val))
-									return true;
-								return false;
-							}).findFirst();
-							return valExist.isPresent();
-						case EXPRESSION_LANGUAGE:
-							String result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, String.class);
-							return attributeMapping.getAttributeValue().contentEquals(result);
-						default:
-							return value.toString().contentEquals(attributeMapping.getAttributeValue());
+			AtomicBoolean continueProcess = new AtomicBoolean(true);
+			if (OperatorEnum.AND == aml.getAttributeOperator()) {
+				aml.getAttributesMapping().forEach(attributeMapping -> {
+					if (continueProcess.get()) {
+						if (checkAttribute(product, attributes, attributeMapping)) {
+							matchedAttributesMapping.add(attributeMapping);
+						} else {
+							continueProcess.set(false);
+						}
 					}
-				}
-				return false;
-			}).collect(toList());
+				});
+			} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
+				aml.getAttributesMapping().forEach(attributeMapping -> {
+					if (continueProcess.get()) {
+						if (checkAttribute(product, attributes, attributeMapping)) {
+							matchedAttributesMapping.add(attributeMapping);
+							continueProcess.set(false);
+						}
+					}
+				});
+			}
 
 			//fullMatch
 			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
@@ -374,6 +370,170 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 		return result.get();
 
+	}
+
+	private boolean checkAttribute(Product product, Map<String, Object> attributes, AttributeMapping attributeMapping) {
+		final Attribute attribute = attributeMapping.getAttribute();
+		if (attributes.get(attribute.getCode()) != null) {
+			isValidOperator(attributeMapping.getAttribute(), attributeMapping.getOperator());
+			Object value = attributes.get(attributeMapping.getAttribute().getCode());
+			switch (attribute.getAttributeType()) {
+				case TEXT:
+				case NUMERIC:
+					return valueCompare(attributeMapping.getOperator(), attributeMapping.getAttributeValue(), value);
+				case LIST_TEXT:
+				case LIST_NUMERIC:
+				case LIST_MULTIPLE_TEXT:
+				case LIST_MULTIPLE_NUMERIC:
+					List<String> source = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+					List<Object> input;
+					if (value instanceof Collection) {
+						input = (List) value;
+					} else {
+						input = Arrays.asList(value.toString().split(";"));
+					}
+
+					return valueCompareCollection(attributeMapping.getOperator(), source, input);
+				case EXPRESSION_LANGUAGE:
+					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
+					if (value instanceof Collection) {
+						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(";"));
+						List<Object> inputEL = (List) value;
+						return valueCompareCollection(attributeMapping.getOperator(), sourceEL, inputEL);
+					}
+					return valueCompare(attributeMapping.getOperator(), attributeMapping.getAttributeValue(), result);
+				case TOTAL:
+				case COUNT:
+				default:
+					return valueCompare(attributeMapping.getOperator(), attributeMapping.getAttributeValue(), value);
+			}
+		}
+		return false;
+	}
+
+	private boolean valueCompareCollection(RuleOperatorEnum operator, List<String> source, List<Object> input) {
+		if (CollectionUtils.isEmpty(source) && CollectionUtils.isEmpty(input)) {
+			return true;
+		}
+
+		if ((CollectionUtils.isEmpty(source) && CollectionUtils.isNotEmpty(input)) ||
+				(CollectionUtils.isNotEmpty(source) && CollectionUtils.isEmpty(input))) {
+			return false;
+		}
+
+		List<Object> contains = new ArrayList<>();
+		for (Object o : source) {
+			if (input.contains(o)) {
+				contains.add(o);
+			}
+		}
+
+		switch (operator) {
+			case EQUAL:
+				return contains.size() == input.size();
+			case NOT_EQUAL:
+				return contains.size() == 0;
+			case EXISTS:
+				return contains.size() > 1;
+			default:
+				return false;
+		}
+	}
+
+	private boolean valueCompare(RuleOperatorEnum operator, String sourceAttributeValue, Object convertedValue) {
+		if (convertedValue == null && StringUtils.isBlank(sourceAttributeValue)) {
+			return true;
+		}
+		if (sourceAttributeValue != null && operator != null) {
+			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
+			switch (operator) {
+				case EQUAL:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
+							return true;
+						}
+					}
+					if (sourceAttributeValue.equals(convertedValueStr))
+						return true;
+					break;
+				case NOT_EQUAL:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
+							return true;
+						}
+					}
+					if (!sourceAttributeValue.equals(convertedValueStr))
+						return true;
+					break;
+				case LESS_THAN:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
+							return true;
+					}
+					break;
+				case LESS_THAN_OR_EQUAL:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
+							return true;
+					}
+					break;
+				case GREATER_THAN:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
+							return true;
+					}
+					break;
+
+				case GREATER_THAN_OR_EQUAL:
+					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
+							return true;
+					}
+			}
+		}
+		return false;
+	}
+
+	private void isValidOperator(Attribute attribute, RuleOperatorEnum givenOperator) {
+		switch (attribute.getAttributeType()) {
+			case BOOLEAN:
+			case PHONE:
+			case EMAIL:
+			case TEXT:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case TOTAL:
+			case COUNT:
+			case NUMERIC:
+			case INTEGER:
+			case DATE:
+			case CALENDAR:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL,
+						RuleOperatorEnum.GREATER_THAN, RuleOperatorEnum.GREATER_THAN_OR_EQUAL,
+						RuleOperatorEnum.LESS_THAN_OR_EQUAL, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case LIST_TEXT:
+			case LIST_NUMERIC:
+			case LIST_MULTIPLE_TEXT:
+			case LIST_MULTIPLE_NUMERIC:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case EXPRESSION_LANGUAGE:
+			case INFO:
+			default:
+		}
+	}
+
+	private boolean isNotOneOfOperator(RuleOperatorEnum operator, RuleOperatorEnum... operators) {
+		for (RuleOperatorEnum op : operators) {
+			if (op == operator) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

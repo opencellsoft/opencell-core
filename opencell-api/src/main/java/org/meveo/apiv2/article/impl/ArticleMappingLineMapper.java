@@ -21,6 +21,8 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.OperatorEnum;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.service.base.PersistenceService;
 
 public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.article.ArticleMappingLine, ArticleMappingLine> {
@@ -40,6 +42,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .product(createResource(entity.getProduct()))
                 .charge(createResource(entity.getChargeTemplate()))
                 .description(entity.getDescription())
+                .attributeOperator(entity.getAttributeOperator())
                 .build();
     }
 
@@ -58,13 +61,16 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
         articleMappingLine.setMappingKeyEL(resource.getMappingKeyEL());
+        articleMappingLine.setAttributeOperator(resource.getAttributeOperator());
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
                     .map(attributeMapping -> {
                         Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
                         attribute.setCode(attributeMapping.getAttribute().getCode());
-						return new AttributeMapping(attribute, attributeMapping.getAttributeValue());
+                        // return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), attributeMapping.getOperator());
+                        //  uncomment previous line and remove the following when Frontend and design technique for US INTRD-9233 are done
+                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), RuleOperatorEnum.EQUAL);
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
@@ -88,13 +94,21 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             articleMappingLine.setProduct(product);
         }
         articleMappingLine.setDescription(resource.getDescription());
+        // Add default values, waiting for Frontend and design technique for US INTRD-9233
+        articleMappingLine.setAttributeOperator(OperatorEnum.AND);
         return articleMappingLine;
     }
 
     private Iterable<? extends org.meveo.apiv2.article.AttributeMapping> getAttributesMappingResources(List<AttributeMapping> attributesMapping) {
         return attributesMapping != null ?
                 attributesMapping.stream()
-                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).code(am.getAttribute().getCode()).build()).attributeValue(am.getAttributeValue()).build())
+                        .map(am -> ImmutableAttributeMapping.builder().attribute(
+                                        ImmutableResource.builder()
+                                                .id(am.getAttribute().getId())
+                                                .code(am.getAttribute().getCode()).build())
+                                                .attributeValue(am.getAttributeValue())
+                                                .operator(am.getOperator())
+                                                .build())
                         .collect(Collectors.toList())
                 : null;
     }

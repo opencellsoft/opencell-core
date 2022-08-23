@@ -353,6 +353,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
     private boolean electronicBilling;
+    
+    /**
+     * The sales person name
+     */
+    @Column(name = "sales_person_name", length = 52)
+    @Size(max = 52)
+    private String salesPersonName;
 
     /**
      * Counter instances
@@ -975,6 +982,20 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
+    }
+    
+    /**
+     * @return the salesPersonName
+     */
+    public String getSalesPersonName() {
+    	return salesPersonName;
+    }
+    
+    /**
+     * @param salesPersonName the salesPersonName to set
+     */
+    public void setSalesPersonName(String salesPersonName) {
+    	this.salesPersonName = salesPersonName;
     }
 
     public List<DiscountPlanInstance> getDiscountPlanInstances() {

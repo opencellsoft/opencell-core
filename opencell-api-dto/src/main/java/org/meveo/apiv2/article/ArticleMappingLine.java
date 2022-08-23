@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.cpq.enums.OperatorEnum;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -60,4 +61,8 @@ public interface ArticleMappingLine extends Resource {
     @Schema(description = "article mapping line description")
     @Nullable
     String getDescription();
+
+    @Nullable
+    @Schema(description = "Applied operator for AttributMapping")
+    OperatorEnum getAttributeOperator();
 }

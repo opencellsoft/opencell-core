@@ -37,6 +37,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -556,6 +557,10 @@ public class SubscriptionApi extends BaseApi {
                 missingParameters.add("emailTemplate");
             }
             handleMissingParameters();
+        }
+        
+        if(postData.getSalesPersonName() != null) {
+        	subscription.setSalesPersonName(postData.getSalesPersonName());
         }
         // populate customFields
         try {
@@ -2761,6 +2766,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
+        subscription.setSalesPersonName(postData.getSalesPersonName());
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
@@ -3102,7 +3108,7 @@ public class SubscriptionApi extends BaseApi {
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        versionRemovedEvent.fire(lastSubscription);
+        versionRemovedEvent.fire((Subscription) Hibernate.unproxy(lastSubscription));
     }
 
     private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {

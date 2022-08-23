@@ -13,7 +13,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class BillingRulesService extends PersistenceService<BillingRule>  {   
     
-    public List<BillingRule> findAllByBillingAccount(BillingAccount billingAccount) {
+    public List<BillingRule> findAllBillingRulesByBillingAccount(BillingAccount billingAccount) {
         try {
             if(billingAccount.getCustomerAccount().getCustomer().getSeller() != null) {
                 return getEntityManager().createNamedQuery("BillingRule.findByAccounts")
