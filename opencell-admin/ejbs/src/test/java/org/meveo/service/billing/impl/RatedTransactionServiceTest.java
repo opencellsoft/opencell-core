@@ -108,7 +108,7 @@ import org.mockito.stubbing.Answer;
 public class RatedTransactionServiceTest {
     @Spy
     @InjectMocks
-    private InvoiceService invoiceService;
+    private RatedTransactionService ratedTransactionService;
     
     @Test
     public void test_hic() {
@@ -311,7 +311,7 @@ public class RatedTransactionServiceTest {
         BillingRule br8 = new BillingRule();
         br8.setContract(c8);
         br8.setPriority(8);
-
+        ratedTransactionService.applyInvoicingRules(rts);
         for (RatedTransaction rt : rts) {
             RatedTransactionStatusEnum statusTest = rt.getStatus();
             String rejectReasonTest = rt.getRejectReason();
