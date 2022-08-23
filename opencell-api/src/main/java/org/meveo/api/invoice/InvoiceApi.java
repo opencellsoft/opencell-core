@@ -461,6 +461,10 @@ public class InvoiceApi extends BaseApi {
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
         return invoiceService.getInvoiceXml(invoice);
     }
+    
+    public String getFilePathByInvoiceIdType(Long invoiceId, String type) {
+        return invoiceService.getFilePathByInvoiceIdType(invoiceId, "xml");
+    }
 
     /**
      * 

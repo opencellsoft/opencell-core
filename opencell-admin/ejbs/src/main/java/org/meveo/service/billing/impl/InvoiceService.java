@@ -6442,4 +6442,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         entity.setPaymentStatus(newInvoicePaymentStatusEnum);
     }
 
+    public String getFilePathByInvoiceIdType(Long invoiceId, String type) {
+        String fileName = "";
+        Invoice invoice = findById(invoiceId);
+        if (invoice != null) {
+            if (type == "xml") {
+                fileName = getFullXmlFilePath(invoice, false);
+            }
+            else if (type == "pdf") {
+                fileName = getFullPdfFilePath(invoice, false);
+            }
+        }
+        return fileName;
+    }
+
 }
