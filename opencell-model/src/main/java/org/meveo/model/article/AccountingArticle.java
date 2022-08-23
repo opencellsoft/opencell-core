@@ -15,7 +15,6 @@ import org.meveo.model.accountingScheme.*;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
@@ -88,10 +87,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_aggregation", nullable = false)
     private boolean ignoreAggregation;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_order_id")
-    private OpenOrder openOrder;
 
     public AccountingArticle() {
     }
@@ -259,13 +254,5 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     public void setIgnoreAggregation(boolean ignoreAggregation) {
         this.ignoreAggregation = ignoreAggregation;
-    }
-
-    public OpenOrder getOpenOrder() {
-        return openOrder;
-    }
-
-    public void setOpenOrder(OpenOrder openOrder) {
-        this.openOrder = openOrder;
     }
 }

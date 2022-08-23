@@ -87,11 +87,13 @@ public class OpenOrder extends BusinessEntity {
     @JoinColumn(name = "open_order_id")
     private List<Threshold> thresholds;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
-    private List<Product> products;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_products", joinColumns = @JoinColumn(name = "open_order_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
+    private List<OpenOrderProduct> products;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
-    private List<AccountingArticle> articles;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_articles", joinColumns = @JoinColumn(name = "open_order_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_article_id", referencedColumnName = "id"))
+    private List<OpenOrderArticle> articles;
 
     @Column(name = "balance")
     private BigDecimal balance;
@@ -198,22 +200,6 @@ public class OpenOrder extends BusinessEntity {
         this.thresholds = thresholds;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public List<AccountingArticle> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<AccountingArticle> articles) {
-        this.articles = articles;
-    }
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -236,6 +222,22 @@ public class OpenOrder extends BusinessEntity {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public List<OpenOrderProduct> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<OpenOrderProduct> products) {
+        this.products = products;
+    }
+
+    public List<OpenOrderArticle> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<OpenOrderArticle> articles) {
+        this.articles = articles;
     }
 
     @PostPersist
