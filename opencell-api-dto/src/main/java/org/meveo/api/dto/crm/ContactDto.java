@@ -159,6 +159,7 @@ public class ContactDto extends BusinessEntityDto {
         isVip = contact.isVip();
         isProspect = contact.isProspect();
         agreedToUA = contact.isAgreedToUA();
+        comment = contact.getComment();
         if (contact.getTags() != null && !contact.getTags().isEmpty()) {
             tags = contact.getTags();
         }
