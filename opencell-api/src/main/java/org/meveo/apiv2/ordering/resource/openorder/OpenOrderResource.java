@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.ordering.resource.openOrder;
+package org.meveo.apiv2.ordering.resource.openorder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.ordering.resource.oo.OpenOrderDto;
-import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -64,7 +63,7 @@ public interface OpenOrderResource {
             responses = {
                     @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
-    Response cancelOpenOrderTemplate(@Parameter(description = "code of the open order template ", required = true) @PathParam("code") String code, @Parameter(description = "open order object to be updated", required = true) OpenOrderDto OpenOrderDto);
+    Response cancelOpenOrder(@Parameter(description = "code of the open order ", required = true) @PathParam("code") String code, @Parameter(description = "open order object to be canceled", required = true) OpenOrderDto OpenOrderDto);
 
 
 }

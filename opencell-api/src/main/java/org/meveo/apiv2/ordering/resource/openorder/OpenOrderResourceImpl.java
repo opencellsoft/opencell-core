@@ -1,9 +1,7 @@
-package org.meveo.apiv2.ordering.resource.openOrder;
+package org.meveo.apiv2.ordering.resource.openorder;
 
 import org.meveo.apiv2.ordering.resource.oo.OpenOrderDto;
-import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
 import org.meveo.apiv2.ordering.services.OpenOrderApiService;
-import org.meveo.apiv2.ordering.services.OpenOrderTemplateApiService;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -23,7 +21,7 @@ public class OpenOrderResourceImpl implements OpenOrderResource {
     }
 
     @Override
-    public Response cancelOpenOrderTemplate(String code, OpenOrderDto OpenOrderDto) {
+    public Response cancelOpenOrder(String code, OpenOrderDto OpenOrderDto) {
         OpenOrderDto openOrderDto = openOrderApiService.cancel(code, OpenOrderDto);
         return buildResponse(openOrderDto);
     }
