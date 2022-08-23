@@ -12076,6 +12076,7 @@
             <column name="balance" type="numeric(23, 12)">
                 <constraints nullable="false" />
             </column>
+            <column name="cancel_reason" type="varchar(4000)"/>
         </createTable>
     </changeSet>
     <!-- end tables -->

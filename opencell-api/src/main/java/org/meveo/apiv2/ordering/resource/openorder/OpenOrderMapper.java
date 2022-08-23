@@ -1,4 +1,4 @@
-package org.meveo.apiv2.ordering.resource.openOrder;
+package org.meveo.apiv2.ordering.resource.openorder;
 
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.apiv2.ordering.resource.oo.ImmutableOpenOrderDto;

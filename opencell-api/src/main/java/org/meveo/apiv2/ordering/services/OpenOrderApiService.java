@@ -2,24 +2,12 @@ package org.meveo.apiv2.ordering.services;
 
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.ordering.resource.oo.OpenOrderDto;
-import org.meveo.apiv2.ordering.resource.openOrder.OpenOrderMapper;
-import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateMapper;
+import org.meveo.apiv2.ordering.resource.openorder.OpenOrderMapper;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
-import org.meveo.apiv2.ordering.resource.order.OpenOrderTemplateInput;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrder;
-import org.meveo.model.ordering.OpenOrderArticle;
-import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
-import org.meveo.model.ordering.OpenOrderTemplate;
-import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
-import org.meveo.model.ordering.OpenOrderTypeEnum;
-import org.meveo.model.ordering.Threshold;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -28,19 +16,13 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderService;
-import org.meveo.service.order.OpenOrderTemplateService;
 import org.meveo.service.order.ThresholdService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.meveo.admin.util.CollectionUtil.isNullOrEmpty;
 
 @Stateless
 public class OpenOrderApiService extends PersistenceService<OpenOrder>{
