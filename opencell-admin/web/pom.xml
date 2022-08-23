@@ -296,7 +296,6 @@
                         <goals>
                             <goal>replace</goal>
                         </goals>
-                        <phase>verify</phase>
                         <configuration>
                             <includes>
                                 <include>${project.build.directory}/opencell/layout/*.xhtml</include>
