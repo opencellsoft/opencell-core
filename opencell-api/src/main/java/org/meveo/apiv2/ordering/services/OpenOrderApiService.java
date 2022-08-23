@@ -8,12 +8,8 @@ import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.ThresholdService;
@@ -28,19 +24,11 @@ import java.util.List;
 public class OpenOrderApiService extends PersistenceService<OpenOrder>{
 
     @Inject
-    private ProductService productService;
-    @Inject
-    private AccountingArticleService accountingArticleService;
-    @Inject
     private OpenOrderService openOrderService;
     @Inject
     private ThresholdService thresholdService;
     @Inject
     private TagService tagService;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
 
     @Inject
     private AuditLogService auditLogService;
