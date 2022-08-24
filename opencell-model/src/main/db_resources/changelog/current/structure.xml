@@ -14096,4 +14096,9 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="cancel_reason" type="varchar(4000)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set origin_billing_account = billing_account__id where origin_billing_account is null</sql>
+    </changeSet>
+
 </databaseChangeLog>
