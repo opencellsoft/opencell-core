@@ -96,7 +96,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     executeBillingRun(billingRun, jobInstance, result);
                     initAmounts();
                 }
-                result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
         } catch (Exception exception) {
             result.registerError(exception.getMessage());
