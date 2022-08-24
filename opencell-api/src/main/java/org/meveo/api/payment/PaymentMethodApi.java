@@ -328,6 +328,9 @@ public class PaymentMethodApi extends BaseApi {
             throw new InvalidDTOException("Missing customerAccountCode");
         }
         if (type == PaymentMethodEnum.CARD) {
+        	if (StringUtils.isBlank(paymentMethodDto.getCardNumber())) {
+                throw new InvalidDTOException("Missing cardNumber");
+            }
             int numberLength = paymentMethodDto.getCardNumber().length();
             CreditCardTypeEnum cardType = paymentMethodDto.getCardType();
             if (StringUtils.isBlank(paymentMethodDto.getCardNumber()) || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
