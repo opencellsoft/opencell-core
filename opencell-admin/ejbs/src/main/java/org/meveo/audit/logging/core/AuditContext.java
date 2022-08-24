@@ -28,6 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
 import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.audit.logging.handler.Handler;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +64,11 @@ public class AuditContext {
 		if (System.getProperty(AUDIT_CONFIG) != null) {
 			_propertyFile = System.getProperty(AUDIT_CONFIG);
 		} else {
-			// https://docs.jboss.org/author/display/AS7/Command+line+parameters
-			// http://www.jboss.org/jdf/migrations/war-stories/2012/07/18/jack_wang/
-			if (System.getProperty("jboss.server.config.dir") == null) {
+			String providersRootDir = ParamBean.getInstance().getProvidersRootDir();
+			if (providersRootDir == null) {
 				_propertyFile = ResourceUtils.getFileFromClasspathResource(AUDIT_CONFIG).getAbsolutePath();
 			} else {
-				_propertyFile = System.getProperty("jboss.server.config.dir") + File.separator + AUDIT_CONFIG;
+				_propertyFile = providersRootDir + File.separator + AUDIT_CONFIG;
 			}
 		}
 
