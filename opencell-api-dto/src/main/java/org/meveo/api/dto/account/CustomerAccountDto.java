@@ -238,6 +238,10 @@ public class CustomerAccountDto extends AccountDto {
             setCheckThreshold(e.getCheckThreshold());
             setThresholdPerEntity(e.isThresholdPerEntity());
         }
+
+        if(e.getIsCompany() != null) {
+            setIsCompany(e.getIsCompany());
+        }
     }
     
     public CustomerAccountDto(CustomerAccount e, List<GDPRInfoDto> gdpr) {
