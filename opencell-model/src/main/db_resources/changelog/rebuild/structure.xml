@@ -9975,6 +9975,9 @@
             <column name="parameter_2" type="varchar(255)"/>
             <column name="parameter_3" type="varchar(255)"/>
             <column name="mapping_key_el" type="varchar(255)"/>
+			<column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-470" author="NabilOUACHI">
@@ -9997,6 +10000,9 @@
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
+			<column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-471" author="NabilOUACHI">
@@ -17242,19 +17248,6 @@
 	                                 referencedColumnNames="id"/>
 	</changeSet>
 	
-	<changeSet id="#INTRD-9232_20220819-rebuild" author="aelmalki">
-        <addColumn tableName="billing_article_mapping_line">
-            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
-                <constraints nullable="false"/>
-			</column>
-        </addColumn>
-        <addColumn tableName="billing_attribute_mapping">
-            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
-                <constraints nullable="false"/>
-			</column>
-        </addColumn>
-    </changeSet>
-
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
