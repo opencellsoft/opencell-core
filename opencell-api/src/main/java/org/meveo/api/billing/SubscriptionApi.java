@@ -35,7 +35,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
@@ -3121,18 +3120,20 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
         }
 
-
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
                     OrderAttribute orderAttribute = new OrderAttribute();
-                    if(ai.getOrderAttributeCode()!=null) {
-                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
-                    orderAttribute.setAttribute(attribute);
-                    orderAttribute.setStringValue(ai.getStringValue());
-                    orderAttribute.setDoubleValue(ai.getDoubleValue());
-                    orderAttribute.setDateValue(ai.getDateValue());
-                    orderAttribute.setBooleanValue(ai.getBooleanValue());
+                    String attributeCode = ai.getAttributeCode() != null ? ai.getAttributeCode() : ai.getOrderAttributeCode() != null ? ai.getOrderAttributeCode() : null;
+                    
+                    if(attributeCode != null) {
+                    	Attribute attribute = loadEntityByCode(attributeService, attributeCode, Attribute.class);
+                    	orderAttribute.setAttribute(attribute);
+	                    orderAttribute.setStringValue(ai.getStringValue());
+	                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+	                    orderAttribute.setDateValue(ai.getDateValue());
+	                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                     }
+                    
                     return orderAttribute;
 
                     })
