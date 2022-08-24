@@ -18461,6 +18461,7 @@
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
 
     <changeSet id="#INTRD-8867_20220817-" author="KHorri"/>
+    <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
