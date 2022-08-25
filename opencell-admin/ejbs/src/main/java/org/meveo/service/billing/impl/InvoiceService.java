@@ -5631,6 +5631,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
+                    if (!isDraft) {
+                        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+                    }
                     if (invoice.getId() == null) {
                         // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
                         invoice.setInvoiceNumber(UUID.randomUUID().toString());
