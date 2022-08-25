@@ -30,7 +30,8 @@ import java.util.List;
 		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles ooArticles"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
 				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooArticles.accountingArticle.id = :articleId ORDER BY oo.endOfValidityDate"),
-        @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)")
+        @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)"),
+        @NamedQuery(name = "OpenOrder.findByOpenOrderNumber", query = "SELECT oo FROM OpenOrder oo WHERE oo.openOrderNumber = :openOrderNumber")
 })
 public class OpenOrder extends BusinessEntity {
 
