@@ -920,6 +920,13 @@ public class EntityExportImportService implements Serializable {
             xstream.useAttributeFor(ExportTemplate.class, "name");
             xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
             xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+            
+            xstream.allowTypes(new Class[] {
+                    java.util.List.class,
+                    org.meveo.export.ExportTemplate.class,
+                    org.meveo.export.RelatedEntityToExport.class
+            });
+
             ExportTemplate importTemplate = null;
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
@@ -1018,6 +1025,29 @@ public class EntityExportImportService implements Serializable {
         xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
         xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
 
+//        xstream.allowTypes(new Class[] {
+//                java.util.List.class,
+//                org.meveo.export.ExportTemplate.class,
+//                org.meveo.model.crm.CustomFieldTemplate.class,
+//                org.meveo.export.RelatedEntityToExport.class
+//                org.meveo.model.catalog.OfferTemplate.class,
+//                org.meveo.model.crm.custom.CustomFieldValue.class,
+//                org.meveo.model.cpq.offer.OfferComponent.class,
+//                org.meveo.model.catalog.ChargeTemplate.class,
+//                org.meveo.model.cpq.Product.class,
+//                org.meveo.model.catalog.PricePlanMatrix.class,
+//                org.meveo.model.catalog.UsageChargeTemplate.class,
+//                org.meveo.model.catalog.ProductChargeTemplateMapping.class,
+//                org.meveo.model.catalog.PricePlanMatrixVersion.class,
+//                org.meveo.model.admin.Seller.class
+//          });
+        
+//        xstream.allowTypesByWildcard(new String[] {
+//        	    "org.meveo.model.**"
+//        });
+        
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+        
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
         IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId, currentUser);
         IEntityExportIdentifierConverter entityExportIdentifierConverter = new IEntityExportIdentifierConverter(exportImportConfig, getEntityManagerForImport(), preserveId,
@@ -1119,8 +1149,24 @@ public class EntityExportImportService implements Serializable {
         // //Pass entity manager to converters
         // DataHolder dataHolder = xstream.newDataHolder();
         // dataHolder.put("em", getEntityManagerForImport());
+    	
+        xstream.allowTypes(new String[] {
+        	reader.getNodeName()
+        });
 
-        IEntity entityToSave = (IEntity) xstream.unmarshal(reader);// , null, dataHolder);
+//        
+//      xstream.allowTypesByWildcard(new String[] {
+//    		  reader.getNodeName()
+//      });
+
+//      Class currentClass = Class.forName(reader.getNodeName());
+//      Class<?>[] classes = new Class[] { currentClass.class };
+//      XStream xStream = new XStream();
+//      XStream.setupDefaultSecurity(xStream);
+//      xStream.allowTypes(classes);
+      
+      
+    	IEntity entityToSave = (IEntity) xstream.unmarshal(reader);// , null, dataHolder);
         saveEntityToTarget(entityToSave, lookupById, lookupByCode, importStats, updateExistingOnly, forceToProvider, null, checkForStatus);
     }
 
