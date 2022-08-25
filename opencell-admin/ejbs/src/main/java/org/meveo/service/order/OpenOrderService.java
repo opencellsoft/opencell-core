@@ -302,4 +302,15 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
         return openOrder;
     }
+
+    public OpenOrder findByOpenOrderNumber(String openOrderNumber) {
+        try {
+            return (OpenOrder) getEntityManager()
+                                .createNamedQuery("OpenOrder.findByOpenOrderNumber")
+                                .setParameter("openOrderNumber", openOrderNumber)
+                                .getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
+    }
 }
