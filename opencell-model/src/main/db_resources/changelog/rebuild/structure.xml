@@ -9920,6 +9920,9 @@
             <column name="parameter_2" type="varchar(255)"/>
             <column name="parameter_3" type="varchar(255)"/>
             <column name="mapping_key_el" type="varchar(255)"/>
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-470" author="NabilOUACHI">
@@ -9942,6 +9945,9 @@
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-471" author="NabilOUACHI">
