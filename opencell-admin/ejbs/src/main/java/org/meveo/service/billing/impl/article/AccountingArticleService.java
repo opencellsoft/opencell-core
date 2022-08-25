@@ -73,8 +73,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
 				.collect(toList());
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
-		List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 		articleMappingLines.forEach(aml -> {
+			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 			aml.getAttributesMapping().size();
 			AtomicBoolean continueProcess = new AtomicBoolean(true);
 			if (OperatorEnum.AND == aml.getAttributeOperator()) {
