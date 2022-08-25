@@ -78,14 +78,20 @@ public class InvoiceLinesFactory {
      * @param configuration aggregation configuration
      * @param result        JobExecutionResultImpl
      * @param billingRun
+     * @param openOrderNumber
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record,  Map<Long, Long> iLIdsRtIdsCorrespondence, AggregationConfiguration configuration, JobExecutionResultImpl result, Provider appProvider, BillingRun billingRun) throws BusinessException {
-        InvoiceLine invoiceLine = initInvoiceLine(record, iLIdsRtIdsCorrespondence, result, appProvider, billingRun, configuration);
+    public InvoiceLine create(Map<String, Object> record, Map<Long, Long> iLIdsRtIdsCorrespondence,
+                              AggregationConfiguration configuration, JobExecutionResultImpl result,
+                              Provider appProvider, BillingRun billingRun, String openOrderNumber) throws BusinessException {
+        InvoiceLine invoiceLine = initInvoiceLine(record,
+                iLIdsRtIdsCorrespondence, result, appProvider, billingRun, configuration, openOrderNumber);
         return invoiceLine;
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> record, Map<Long, Long> iLIdsRtIdsCorrespondence, JobExecutionResultImpl report, Provider appProvider, BillingRun billingRun, AggregationConfiguration configuration) {
+    private InvoiceLine initInvoiceLine(Map<String, Object> record, Map<Long, Long> iLIdsRtIdsCorrespondence,
+                                        JobExecutionResultImpl report, Provider appProvider,
+                                        BillingRun billingRun, AggregationConfiguration configuration, String openOrderNumber) {
         InvoiceLine invoiceLine = new InvoiceLine();
         String rtID = (String) record.get("rated_transaction_ids");
         ofNullable(record.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
@@ -168,6 +174,7 @@ public class InvoiceLinesFactory {
             invoiceLine.setAccountingArticle(accountingArticle);
         }
         invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
+        ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
     }
 
