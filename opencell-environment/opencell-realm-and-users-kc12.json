@@ -14145,6 +14145,18 @@
             "config": {
               "resources": "[\"Page Report extracts\"]",
               "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role reportingVisualization\"]"
+            }
+          },
+          {
+            "id": "561f639a-279b-4c87-9557-a31268b3a258",
+            "name": "Page Report extracts - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Report extracts\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role reportExtractManagement\"]"
             }
           },
