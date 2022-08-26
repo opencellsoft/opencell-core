@@ -349,6 +349,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
    				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
    					 return true;
    				 }
+   				 break;
    			    }
     			if (!sourceAttributeValue.equals(convertedValueStr))
     				return true;
