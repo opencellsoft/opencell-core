@@ -281,6 +281,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case TOTAL:
 			case COUNT:
 			case NUMERIC:
@@ -292,6 +293,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						RuleOperatorEnum.LESS_THAN_OR_EQUAL, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case LIST_TEXT:
 			case LIST_NUMERIC:
 			case LIST_MULTIPLE_TEXT:
@@ -299,6 +301,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case EXPRESSION_LANGUAGE:
 			case INFO:
 			default:
