@@ -321,10 +321,10 @@
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/@nid]]></fieldDescription>
 	</field>
 	<field name="openOrderNumber" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/@number]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/@openOrderNumber]]></fieldDescription>
 	</field>
 	<field name="openOrderExternalRef" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/@number]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/@externalReference]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupHeader>
