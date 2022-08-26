@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
@@ -13,7 +13,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="InvoiceD2"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -319,6 +319,12 @@
 	</field>
 	<field name="nextInvoiceDate" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/@nid]]></fieldDescription>
+	</field>
+	<field name="openOrderNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@number]]></fieldDescription>
+	</field>
+	<field name="openOrderExternalRef" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@number]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupHeader>
@@ -789,26 +795,31 @@
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.layout"/>
 					</reportElement>
 					<rectangle radius="6">
-						<reportElement x="0" y="0" width="155" height="70" uuid="56cc0bd3-4a33-4adc-8d7e-fd41caa12cdd">
+						<reportElement x="0" y="0" width="155" height="90" uuid="56cc0bd3-4a33-4adc-8d7e-fd41caa12cdd">
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						</reportElement>
 						<graphicElement>
 							<pen lineWidth="1.25" lineStyle="Solid" lineColor="#F2F4F5"/>
 						</graphicElement>
 					</rectangle>
 					<frame>
-						<reportElement mode="Opaque" x="0" y="5" width="155" height="60" backcolor="rgba(255, 255, 255, 0.0)" uuid="db07e272-4a37-490f-90e4-361e1415d312">
+						<reportElement mode="Opaque" x="0" y="0" width="155" height="85" backcolor="rgba(255, 255, 255, 0.0)" uuid="db07e272-4a37-490f-90e4-361e1415d312">
 							<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						</reportElement>
 						<box topPadding="5" leftPadding="10" bottomPadding="5" rightPadding="10">
 							<pen lineColor="#E1E9ED"/>
 							<leftPen lineWidth="0.0" lineColor="#B41D0A"/>
 						</box>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="0" width="135" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="bc4beaf0-e20c-4e94-8ace-a3eb95dad89d">
+							<reportElement x="0" y="0" width="135" height="15" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="bc4beaf0-e20c-4e94-8ace-a3eb95dad89d">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -819,7 +830,7 @@
 							<textFieldExpression><![CDATA["Facture "]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="14" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="be12938c-727a-41c9-b80a-baab5a184f79">
+							<reportElement x="0" y="15" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="be12938c-727a-41c9-b80a-baab5a184f79">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -831,7 +842,7 @@
 							<textFieldExpression><![CDATA["N° " + $F{invoiceNumber}.toUpperCase()]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="26" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#B41D0A" uuid="9698319e-7098-4f20-9d5b-b9c7b45af98a">
+							<reportElement x="0" y="27" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#B41D0A" uuid="9698319e-7098-4f20-9d5b-b9c7b45af98a">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -843,7 +854,7 @@
 							<textFieldExpression><![CDATA["du " + $F{invoiceDate}]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="38" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
+							<reportElement x="0" y="39" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -854,6 +865,20 @@
 							</textElement>
 							<textFieldExpression><![CDATA["Date d'échéance " +$F{dueDate}]]></textFieldExpression>
 						</textField>
+						<textField>
+							<reportElement x="0" y="51" width="135" height="12" forecolor="#103043" uuid="3c085778-c926-40fb-8d65-d010df568447"/>
+							<textElement>
+								<font fontName="DejaVu Sans" size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Commande ouverte N° " +$F{openOrderNumber}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="63" width="135" height="12" forecolor="#103043" uuid="dc9728f7-d746-4803-bb78-c966167ebf3d"/>
+							<textElement>
+								<font fontName="DejaVu Sans" size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Réf externe "+$F{openOrderExternalRef}]]></textFieldExpression>
+						</textField>
 					</frame>
 				</frame>
 				<frame>
@@ -862,13 +887,16 @@
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<rectangle radius="10">
-						<reportElement x="0" y="10" width="235" height="499" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="153c84f4-3135-43ad-bc3c-9ee1941d366c"/>
+						<reportElement x="0" y="30" width="235" height="499" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="153c84f4-3135-43ad-bc3c-9ee1941d366c">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
 						<graphicElement>
 							<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 						</graphicElement>
 					</rectangle>
 					<staticText>
-						<reportElement x="0" y="14" width="235" height="22" forecolor="#013042" uuid="7be66b5d-54d4-4a88-a652-e7c83653cada">
+						<reportElement x="0" y="34" width="235" height="22" forecolor="#013042" uuid="7be66b5d-54d4-4a88-a652-e7c83653cada">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
@@ -885,9 +913,10 @@
 						<text><![CDATA[Mes informations client]]></text>
 					</staticText>
 					<frame>
-						<reportElement x="0" y="42" width="235" height="185" uuid="1408274d-5bfa-4be7-bfd5-629dd7d1a705">
+						<reportElement x="0" y="62" width="235" height="185" uuid="1408274d-5bfa-4be7-bfd5-629dd7d1a705">
 							<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<staticText>
 							<reportElement x="0" y="0" width="235" height="24" forecolor="#013042" uuid="82ddff3a-d751-400d-bbf7-699b3f29f558"/>
