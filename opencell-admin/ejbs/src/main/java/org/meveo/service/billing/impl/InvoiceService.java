@@ -2345,11 +2345,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             try {
                 List<Long> drafWalletOperationIds;
-                if (isDraft)
+                if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                else
+                }else {
                     drafWalletOperationIds = new ArrayList<>();
+                    invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+                    update(invoice);
+                }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
@@ -5628,9 +5631,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
-                    if (!isDraft) {
-                        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-                    }
                     if (invoice.getId() == null) {
                         // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
                         invoice.setInvoiceNumber(UUID.randomUUID().toString());
