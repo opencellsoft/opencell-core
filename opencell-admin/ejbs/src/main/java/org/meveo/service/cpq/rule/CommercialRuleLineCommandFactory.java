@@ -28,7 +28,16 @@ public class CommercialRuleLineCommandFactory {
             case EQUAL:
                 return new EqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
             case NOT_EQUAL:
-                return new NotEqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
+                return new NotEqualLineCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);  
+            case GREATER_THAN:
+                return new GreaterThanCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
+            case GREATER_THAN_OR_EQUAL:
+                return new GreaterThanOrEqualCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);    
+            case LESS_THAN:
+                return new LessThanCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes);
+            case LESS_THAN_OR_EQUAL:
+                return new LessThanOrEqualCommand(commercialRuleHeader, selectedAttributes, sourceSelectedAttributes); 
+                
 
             default: {
                 log.warn("Only Exist operator can be applied on commercial rules of type replacement");
