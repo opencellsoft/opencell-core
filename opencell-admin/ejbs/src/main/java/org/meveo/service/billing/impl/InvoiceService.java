@@ -1521,62 +1521,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFullFilename = getFullPdfFilePath(invoice, true);
         InputStream reportTemplate = null;
         try {
-            File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-
-            if (!destDir.exists()) {
-
-                log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
-
-                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
-
-                File sourceFile = new File(sourcePath);
-                if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
-                    log.info("default jaspers path : {}", vfDir.getPathName());
-                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-                    sourceFile = new File(vfPath.getPath());
-                    if (!sourceFile.exists()) {
-                        throw new BusinessException("A default embedded jasper PDF report " + sourceFile.getAbsolutePath() + "for invoice is missing..");
-                    }
-                }
-                destDir.mkdirs();
-                FileUtils.copyDirectory(sourceFile, destDir);
-            }
-
-            File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
-            if (!destDirInvoiceAdjustment.exists() && isInvoiceAdjustment) {
-                destDirInvoiceAdjustment.mkdirs();
-                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + "/invoiceAdjustment";
-                File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
-                if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoiceAdjustment");
-                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-                    sourceFileInvoiceAdjustment = new File(vfPath.getPath());
-                    if (!sourceFileInvoiceAdjustment.exists()) {
-
-                        URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
-
-                        if (resource == null) {
-                            resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
-                        }
-
-                        if (resource == null) {
-                            throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
-                        }
-
-                        sourcePathInvoiceAdjustment = resource.getPath();
-
-                        if (!sourceFileInvoiceAdjustment.exists()) {
-                            throw new BusinessException("embedded jasper report for invoice is missing.");
-                        }
-
-                    }
-                }
-                FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
-
-            }
+        	generateInvoiceFile(billingTemplateName, resDir);
+            generateInvoiceAdjustmentFile(isInvoiceAdjustment, billingTemplateName, resDir);
 
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
@@ -1636,6 +1582,81 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);
+        }
+    }
+    
+    /**
+     * Generate Invoice File
+     * @param billingTemplateName Billing Template Name
+     * @param resDir Res Directory
+     * @throws IOException {@link IOException}
+     */
+    public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
+        File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
+        
+        if (!destDir.exists()) {
+            log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
+            String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
+            File sourceFile = new File(sourcePath);
+            
+            if (!sourceFile.exists()) {
+                VirtualFile vfDir = VFS
+                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
+                log.info("default jaspers path : {}", vfDir.getPathName());
+                URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                sourceFile = new File(vfPath.getPath());
+                if (!sourceFile.exists()) {
+                    throw new BusinessException("A default embedded jasper PDF report " + sourceFile.getAbsolutePath() + "for invoice is missing..");
+                }
+            }
+
+            destDir.mkdirs();
+            FileUtils.copyDirectory(sourceFile, destDir);
+        }
+    }
+
+    /**
+     * Generate Invoice Adjustment File
+     * @param isInvoiceAdjustment Is Invoice Adjustment
+     * @param billingTemplateName Billing Template Name
+     * @param resDir Res Directory 
+     * @throws IOException {@link IOException}
+     */
+    public synchronized void generateInvoiceAdjustmentFile(boolean isInvoiceAdjustment, String billingTemplateName, String resDir) throws IOException {
+        File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
+
+        if (!destDirInvoiceAdjustment.exists() && isInvoiceAdjustment) {
+            destDirInvoiceAdjustment.mkdirs();
+            String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + "/invoiceAdjustment";
+            File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
+            
+            if (!sourceFileInvoiceAdjustment.exists()) {
+                VirtualFile vfDir = VFS
+                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoiceAdjustment");
+                URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                sourceFileInvoiceAdjustment = new File(vfPath.getPath());
+                
+                if (!sourceFileInvoiceAdjustment.exists()) {
+                    URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
+
+                    if (resource == null) {
+                        resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
+                    }
+
+                    if (resource == null) {
+                        throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
+                    }
+
+                    sourcePathInvoiceAdjustment = resource.getPath();
+
+                    if (!sourceFileInvoiceAdjustment.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing.");
+                    }
+
+                }
+            }
+            
+            FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
         }
     }
 
