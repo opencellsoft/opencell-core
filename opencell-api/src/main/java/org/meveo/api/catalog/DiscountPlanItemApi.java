@@ -92,16 +92,16 @@ public class DiscountPlanItemApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null) {
-			missingParameters.add("discountValue, discountValueEL");
+        if (postData.getDiscountValue() == null) {
+			missingParameters.add("discountValue");
+		}
+		if (postData.getDiscountValueEL() == null) {
+			missingParameters.add("discountValueEL");
 		}
 		if (postData.getDiscountPlanItemType() == null) {
 			missingParameters.add("discountPlanItemType");
 		}
-		if (postData.getDiscountPlanItemType() != null && postData.getDiscountValue() == null) {
-			missingParameters.add("discountValue");
-		}
-
+		
         handleMissingParameters();
 
         DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(postData.getCode());
