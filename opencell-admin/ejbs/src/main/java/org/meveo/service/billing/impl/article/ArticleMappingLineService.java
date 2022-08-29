@@ -105,9 +105,11 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		ArticleMappingLine articleMappingLineUpdated = findById(id, true);
 		if (articleMappingLineUpdated == null) return Optional.empty();
 
-		AccountingArticle accountingArticle = (AccountingArticle) tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-		articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
-		articleMappingLine.setAccountingArticle(accountingArticle);
+		AccountingArticle accountingArticle = tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+		if(articleMappingLineUpdated.getArticleMapping() == null) {
+			articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
+		}
+		articleMappingLineUpdated.setAccountingArticle(accountingArticle);
 		populateArticleMappingLine(articleMappingLine);
 
 		articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
@@ -123,7 +125,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
 					.stream()
 					.map(am -> {
-						Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
+						Attribute attribute = tryToFindByCodeOrId(am.getAttribute());
 
 						AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue(), am.getOperator());
 						// Check if attributeType is en phase with le RuleOperator. For example : we cannot have greatherThenOrEquals for Text attribute
@@ -135,8 +137,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			articleMappingLineUpdated.getAttributesMapping().addAll(attributesMapping);
 		}
 		articleMappingLineUpdated.setMappingKeyEL(articleMappingLine.getMappingKeyEL());
+		articleMappingLineUpdated.setDescription(articleMappingLine.getDescription());
 		update(articleMappingLineUpdated);
-		initDeepRelationships(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}
 
@@ -187,7 +189,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	 	if(articleMappingLine.getArticleMapping() != null) {
 			try {
 				articleMapping = tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-			} catch (Exception exception) { }
+			} catch (Exception exception) {
+				log.debug("Default article mapping line will be used");
+			}
 		}
 	 	if(articleMapping == null) {
 			articleMapping = articleMappingService.findByCode(DEFAULT_ARTICLE_MAPPING_CODE);
@@ -201,39 +205,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
     public List<ArticleMappingLine> findAll() {
         return getEntityManager().createNamedQuery("ArticleMappingLine.findAll").getResultList();
     }
-
-	private void populateArticleMappingLineForUpdate(ArticleMappingLine articleMappingLineUpdated, ArticleMappingLine articleMappingLine) {
-		if(articleMappingLine.getOfferTemplate() != null){
-			OfferTemplate offerTemplate = (OfferTemplate) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
-			articleMappingLineUpdated.setOfferTemplate(offerTemplate);
-		}
-		if(articleMappingLine.getProduct() != null){
-			Product product = (Product) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getProduct());
-			articleMappingLineUpdated.setProduct(product);
-		}
-		if(articleMappingLine.getChargeTemplate() != null){
-			ChargeTemplate chargeTemplate = (ChargeTemplate) articleMappingLineService.tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
-			articleMappingLineUpdated.setChargeTemplate(chargeTemplate);
-		}
-	}
-
-	private void initDeepRelationships(ArticleMappingLine articleMappingLineUpdated) {
-		if (articleMappingLineUpdated.getAccountingArticle() != null) {
-			articleMappingLineUpdated.getAccountingArticle().getCode();
-		}
-
-		if (articleMappingLineUpdated.getProduct() != null) {
-			articleMappingLineUpdated.getProduct().getCode();
-		}
-
-		if (articleMappingLineUpdated.getOfferTemplate() != null) {
-			articleMappingLineUpdated.getOfferTemplate().getCode();
-		}
-
-		if (articleMappingLineUpdated.getChargeTemplate() != null) {
-			articleMappingLineUpdated.getChargeTemplate().getCode();
-		}
-	}
 
 	private void isValidOperator(Attribute attribute, RuleOperatorEnum givenOperator) {
 		switch (attribute.getAttributeType()) {
