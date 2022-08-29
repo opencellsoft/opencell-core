@@ -2552,6 +2552,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :" + status.name());
         }
         invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        
+        update(invoice);
     }
 
     /**
@@ -6118,7 +6120,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         detach(invoice);
 
         var duplicateInvoice = new Invoice(invoice);
-        duplicateInvoice.setInvoiceNumber(invoice.getInvoiceNumber() + "_tmp_" + new SimpleDateFormat("HHmmssSSS").format(new Date()));
         this.create(duplicateInvoice);
 
         if (invoiceLinesIds == null || invoiceLinesIds.isEmpty()) {

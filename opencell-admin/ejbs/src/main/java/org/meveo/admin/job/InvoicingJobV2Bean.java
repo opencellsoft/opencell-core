@@ -40,15 +40,11 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
-import org.slf4j.Logger;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
 
     private static final long serialVersionUID = -2523209868278837776L;
-    
-    @Inject
-    private Logger log;
     
     @Inject
     private BillingRunService billingRunService;
@@ -94,10 +90,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             } else {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
-                    if(billingRun.isExceptionalBR()) {
-                        if(addExceptionalInvoiceLineIds(billingRun) == 0) {
-                            result.setReport("Exceptional Billing filters returning no invoice line to process");
-                        }
+                    if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
+                        result.setReport("Exceptional Billing filters returning no invoice line to process");
                     }
                     executeBillingRun(billingRun, jobInstance, result);
                     initAmounts();
@@ -127,7 +121,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        QueryBuilder queryBuilder = invoiceLineService.fromFilters(billingRun.getFilters());
+        Map<String, String> filters = billingRun.getFilters();
+        filters.remove("status");
+        QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
         queryBuilder.addSql(" a.status = 'PROCESSED' and a.billingRun IS NULL");
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions

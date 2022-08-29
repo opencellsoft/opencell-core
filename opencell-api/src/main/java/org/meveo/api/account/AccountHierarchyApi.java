@@ -1292,6 +1292,7 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
         billingAccountDto.setTradingCurrency(postData.getCurrency());
+        billingAccountDto.setLegalEntityType(postData.getLegalEntityType());
 
         return billingAccountDto;
     }
@@ -1624,7 +1625,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCrmAccountType() == null) {
             missingParameters.add("crmAccountType");
         }
-
+        
         handleMissingParameters();
 
         String accountType = postData.getCrmAccountType();
