@@ -84,6 +84,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						if (checkAttribute(product, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 						} else {
+							// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
+							matchedAttributesMapping.clear();
 							continueProcess.set(false);
 						}
 					}
@@ -100,7 +102,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			}
 
 			//fullMatch
-			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
+			if(matchedAttributesMapping.size() > 0 && aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
 				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
