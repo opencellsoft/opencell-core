@@ -33,6 +33,7 @@ public class AttributeMappingLineMatch {
 
     public ArticleMappingLine getBestMatch() {
         List<PartialMatchMappingLine> matches = partialMatchMappingLines.stream()
+                .filter(partialMatchMappingLine -> partialMatchMappingLine.numberOfMatchedAttribute > 0)
                 .sorted(Comparator.comparing(a -> a.numberOfMatchedAttribute))
                 .collect(Collectors.toList());
         return matches.isEmpty() ? null : matches.get(matches.size() - 1).articleMappingLine;
