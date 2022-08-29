@@ -106,8 +106,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		if(articleMappingLineUpdated.getArticleMapping() == null) {
 			articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
 		}
-		articleMappingLine.setAccountingArticle(accountingArticle);
-		populateArticleMappingLineForUpdate(articleMappingLineUpdated, articleMappingLine);
+		articleMappingLineUpdated.setAccountingArticle(accountingArticle);
+		populateArticleMappingLine(articleMappingLine);
 
 		articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 		articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
@@ -136,7 +136,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		articleMappingLineUpdated.setMappingKeyEL(articleMappingLine.getMappingKeyEL());
 		articleMappingLineUpdated.setDescription(articleMappingLine.getDescription());
 		update(articleMappingLineUpdated);
-		initDeepRelationships(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}
 
@@ -203,39 +202,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
     public List<ArticleMappingLine> findAll() {
         return getEntityManager().createNamedQuery("ArticleMappingLine.findAll").getResultList();
     }
-
-	private void populateArticleMappingLineForUpdate(ArticleMappingLine articleMappingLineUpdated, ArticleMappingLine articleMappingLine) {
-		if(articleMappingLine.getOfferTemplate() != null){
-			OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
-			articleMappingLineUpdated.setOfferTemplate(offerTemplate);
-		}
-		if(articleMappingLine.getProduct() != null){
-			Product product = tryToFindByCodeOrId(articleMappingLine.getProduct());
-			articleMappingLineUpdated.setProduct(product);
-		}
-		if(articleMappingLine.getChargeTemplate() != null){
-			ChargeTemplate chargeTemplate = (ChargeTemplate) tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
-			articleMappingLineUpdated.setChargeTemplate(chargeTemplate);
-		}
-	}
-
-	private void initDeepRelationships(ArticleMappingLine articleMappingLineUpdated) {
-		if (articleMappingLineUpdated.getAccountingArticle() != null) {
-			articleMappingLineUpdated.getAccountingArticle().getCode();
-		}
-
-		if (articleMappingLineUpdated.getProduct() != null) {
-			articleMappingLineUpdated.getProduct().getCode();
-		}
-
-		if (articleMappingLineUpdated.getOfferTemplate() != null) {
-			articleMappingLineUpdated.getOfferTemplate().getCode();
-		}
-
-		if (articleMappingLineUpdated.getChargeTemplate() != null) {
-			articleMappingLineUpdated.getChargeTemplate().getCode();
-		}
-	}
 
 	private void isValidOperator(Attribute attribute, RuleOperatorEnum givenOperator) {
 		switch (attribute.getAttributeType()) {
