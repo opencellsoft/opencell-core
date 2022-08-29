@@ -45,4 +45,6 @@ public interface GenericPagingAndFiltering {
     @Value.Default default Set<String> getHaving(){
         return Collections.emptySet();
     }
+    @Nullable
+    @Value.Default default Map<String, String> getTranslations(){ return Collections.emptyMap();}
 }

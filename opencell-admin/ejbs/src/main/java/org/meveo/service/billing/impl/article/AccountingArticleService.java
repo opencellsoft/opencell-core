@@ -59,22 +59,60 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
-		List<ArticleMappingLine> articleMappingLines = new ArrayList<>();
+		List<ArticleMappingLine> articleMappingLines = null;
 		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-
-		// Best matching logic shall be applied to get AccountingArticle
-		getBestMatchedArticleMappingLines(product, chargeTemplate, offer, param1, param2, param3, articleMappingLines);
-
-		articleMappingLines = articleMappingLines
-				.stream()
-				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
-				.collect(toList());
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter2() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, param2, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1())
+							|| walletOperation.getParameter1().equals(articleMappingLine.getParameter1()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter2())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter2())
+							|| walletOperation.getParameter2().equals(articleMappingLine.getParameter2()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter3())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter3())
+							|| walletOperation.getParameter3().equals(articleMappingLine.getParameter3()))
+					.collect(toList());
+		}
+		if(articleMappingLines != null) {
+			articleMappingLines = articleMappingLines
+					.stream()
+					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
+					.collect(toList());
+		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
-		List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 		articleMappingLines.forEach(aml -> {
+			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 			aml.getAttributesMapping().size();
 			AtomicBoolean continueProcess = new AtomicBoolean(true);
 			if (OperatorEnum.AND == aml.getAttributeOperator()) {
@@ -503,6 +541,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case TOTAL:
 			case COUNT:
 			case NUMERIC:
@@ -514,6 +553,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						RuleOperatorEnum.LESS_THAN_OR_EQUAL, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case LIST_TEXT:
 			case LIST_NUMERIC:
 			case LIST_MULTIPLE_TEXT:
@@ -521,6 +561,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case EXPRESSION_LANGUAGE:
 			case INFO:
 			default:

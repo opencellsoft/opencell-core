@@ -1395,6 +1395,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCode());
         invoiceTag.setAttribute("customerAccountCode", invoice.getBillingAccount().getCustomerAccount().getCode());
         ofNullable(invoice.getOpenOrderNumber()).ifPresent(oon -> invoiceTag.setAttribute("openOrderNumber", oon));
+        ofNullable(invoice.getExternalRef()).ifPresent(externalRef
+                -> invoiceTag.setAttribute("externalReference", externalRef));
         if (isInvoiceAdjustment) {
             Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<>(linkedInvoices)));
@@ -2415,25 +2417,35 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
 
         if (invoiceConfiguration.isDisplayTaxDetails()) {
-            Optional<TaxDetails> oTaxDetails = invoiceLinesService.getTaxDetails(invoiceLine.getTax(), invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
-            if (!oTaxDetails.isEmpty()) {
+            Optional<TaxDetails> oTaxDetails = invoiceLinesService.getTaxDetails(invoiceLine.getTax(),
+                    invoiceLine.getAmountTax(), invoiceLine.getConvertedAmountTax());
+            if (oTaxDetails.isPresent()) {
                 TaxDetails taxDetails = oTaxDetails.get();
-                if (taxDetails.getSubTaxes() != null && !taxDetails.getSubTaxes().isEmpty()) {
-                    Element taxDetailsTag = doc.createElement("taxDetails");
-                    for (TaxDetails subTaxDetails : taxDetails.getSubTaxes()) {
-                        Element taxDetailTag = doc.createElement("taxDetail");
-                        taxDetailTag.setAttribute("code", subTaxDetails.getTaxCode());
-                        taxDetailTag.setAttribute("description", getDefaultIfNull(subTaxDetails.getTaxDescription(), ""));
-                        taxDetailTag.setAttribute("taxPercent", subTaxDetails.getPercent().toPlainString());
-                        taxDetailTag.setAttribute("taxAmount", subTaxDetails.getTaxAmount().toPlainString());
-                        taxDetailsTag.appendChild(taxDetailTag);
+                Element taxDetailsTag = doc.createElement("taxDetails");
+                if(taxDetails.getComposite()) {
+                    if (taxDetails.getSubTaxes() != null && !taxDetails.getSubTaxes().isEmpty()) {
+                        for (TaxDetails subTaxDetails : taxDetails.getSubTaxes()) {
+                            taxDetailsTag.appendChild(taxDetailsTag.appendChild(createTaxDetailTag(subTaxDetails, doc)));
+                        }
                     }
-                    line.appendChild(taxDetailsTag);
+                } else {
+                    taxDetailsTag.appendChild(createTaxDetailTag(taxDetails, doc));
                 }
+                line.appendChild(taxDetailsTag);
             }
         }
 
         return line;
+    }
+
+    private Element createTaxDetailTag(TaxDetails taxDetails, Document doc) {
+        Element taxDetailTag = doc.createElement("taxDetail");
+        taxDetailTag.setAttribute("code", taxDetails.getTaxCode());
+        taxDetailTag.setAttribute("description",
+                getDefaultIfNull(taxDetails.getTaxDescription(), ""));
+        taxDetailTag.setAttribute("taxPercent", taxDetails.getPercent().toPlainString());
+        taxDetailTag.setAttribute("taxAmount", taxDetails.getTaxAmount().toPlainString());
+        return taxDetailTag;
     }
 
     /**
