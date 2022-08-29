@@ -19,21 +19,21 @@
 package org.meveo.audit.logging.core;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
 import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.audit.logging.handler.Handler;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
+import com.google.common.io.Files;
 
 /**
  * @author Edward P. Legaspi
@@ -63,12 +63,25 @@ public class AuditContext {
 		if (System.getProperty(AUDIT_CONFIG) != null) {
 			_propertyFile = System.getProperty(AUDIT_CONFIG);
 		} else {
-			// https://docs.jboss.org/author/display/AS7/Command+line+parameters
-			// http://www.jboss.org/jdf/migrations/war-stories/2012/07/18/jack_wang/
-			if (System.getProperty("jboss.server.config.dir") == null) {
+			String providersRootDir = ParamBean.getInstance().getProvidersRootDir();
+			if (providersRootDir == null) {
 				_propertyFile = ResourceUtils.getFileFromClasspathResource(AUDIT_CONFIG).getAbsolutePath();
 			} else {
-				_propertyFile = System.getProperty("jboss.server.config.dir") + File.separator + AUDIT_CONFIG;
+				_propertyFile = providersRootDir + File.separator + AUDIT_CONFIG;
+				
+				// migration process to keep older configuration
+				File newFile = new File(_propertyFile);
+				if(!newFile.exists() && System.getProperty("jboss.server.config.dir") != null) {
+					File oldFile = new File(System.getProperty("jboss.server.config.dir") + File.separator + AUDIT_CONFIG);
+					if(oldFile.exists()) {
+						log.info("Copy {} to the 'opencelldata' folder", AUDIT_CONFIG);
+						try {
+							Files.copy(oldFile, newFile);
+						} catch (IOException e) {
+							log.error("Error while trying to copy {} to the new location", AUDIT_CONFIG);
+						}
+					}
+				}
 			}
 		}
 

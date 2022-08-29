@@ -13886,7 +13886,7 @@ order by date_trunc('month', i.invoice_date) DESC
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle">
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki">
 		<createTable tableName="open_order_products">
 			<column name="open_order_id" type="bigint">
@@ -13940,6 +13940,13 @@ order by date_trunc('month', i.invoice_date) DESC
 		<dropColumn tableName="cpq_product" columnName="open_order_id" />
 	</changeSet>
 
+
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri">
+        <addColumn tableName="open_order">
+            <column name="cancel_reason" type="varchar(4000)"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#INTRD-9232_20220819" author="aelmalki">
         <addColumn tableName="billing_article_mapping_line">
             <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
@@ -13952,5 +13959,5 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
     </changeSet>
-	
+
 </databaseChangeLog>

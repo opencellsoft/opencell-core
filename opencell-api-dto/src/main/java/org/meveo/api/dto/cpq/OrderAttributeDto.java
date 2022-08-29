@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +40,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
  */
 @XmlRootElement(name = "OrderAttributeDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OrderAttributeDto extends BaseEntityDto{
+public class OrderAttributeDto extends AttributeInstanceDto {
 
     /**
 	 * 

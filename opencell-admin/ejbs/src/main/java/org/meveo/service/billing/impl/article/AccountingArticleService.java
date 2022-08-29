@@ -59,19 +59,57 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
-		List<ArticleMappingLine> articleMappingLines = new ArrayList<>();
+		List<ArticleMappingLine> articleMappingLines = null;
 		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-
-		// Best matching logic shall be applied to get AccountingArticle
-		getBestMatchedArticleMappingLines(product, chargeTemplate, offer, param1, param2, param3, articleMappingLines);
-
-		articleMappingLines = articleMappingLines
-				.stream()
-				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
-				.collect(toList());
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter2() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, param2, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1())
+							|| walletOperation.getParameter1().equals(articleMappingLine.getParameter1()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter2())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter2())
+							|| walletOperation.getParameter2().equals(articleMappingLine.getParameter2()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter3())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter3())
+							|| walletOperation.getParameter3().equals(articleMappingLine.getParameter3()))
+					.collect(toList());
+		}
+		if(articleMappingLines != null) {
+			articleMappingLines = articleMappingLines
+					.stream()
+					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
+					.collect(toList());
+		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 		articleMappingLines.forEach(aml -> {
