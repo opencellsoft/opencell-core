@@ -112,13 +112,13 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     /**
      * The absolute or percentage discount amount.
      */
-    @Schema(description = "The absolute or percentage discount amount")
+    @Schema(description = "The absolute or percentage discount amount", required = true)
     private BigDecimal discountValue;
 
     /**
      * The absolute or percentage discount amount EL.
      */
-    @Schema(description = "The absolute or percentage discount amount EL")
+    @Schema(description = "The absolute or percentage discount amount EL", required = true)
     private String discountValueEL;
 
     /** The accountingArticle */
