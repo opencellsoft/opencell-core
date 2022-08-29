@@ -223,7 +223,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			case CALENDAR:
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL,
 						RuleOperatorEnum.GREATER_THAN, RuleOperatorEnum.GREATER_THAN_OR_EQUAL,
-						RuleOperatorEnum.LESS_THAN_OR_EQUAL, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
+						RuleOperatorEnum.LESS_THAN, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
 			case LIST_TEXT:
