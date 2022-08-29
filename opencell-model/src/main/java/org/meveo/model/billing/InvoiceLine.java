@@ -829,16 +829,16 @@ public class InvoiceLine extends AuditableEntity {
 	public void prePersistOrUpdate() {
 		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
-				this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountWithoutTax.multiply(appliedRate) : ZERO;
 		this.convertedAmountWithTax = this.amountWithTax != null ?
-				this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountWithTax.multiply(appliedRate) : ZERO;
 		this.convertedAmountTax = this.amountTax !=null ?
-				this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountTax.multiply(appliedRate) : ZERO;
 		this.convertedDiscountAmount = this.discountAmount != null ?
-				this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.discountAmount.multiply(appliedRate) : ZERO;
 		this.convertedRawAmount = this.rawAmount != null ?
-				this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.rawAmount.multiply(appliedRate) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
-				this.unitPrice.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.unitPrice.multiply(appliedRate) : ZERO;
 	}
 }
