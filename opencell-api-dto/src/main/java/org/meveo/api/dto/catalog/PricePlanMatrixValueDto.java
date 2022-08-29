@@ -66,8 +66,8 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 		dateValue = value.getDateValue();
 		fromDateValue = value.getFromDateValue();
 		toDateValue = value.getToDateValue();
-		fromDoubleValue = value.getToDoubleValue();
-		toDateValue = value.getToDateValue();
+		fromDoubleValue = value.getFromDoubleValue();
+		toDoubleValue = value.getToDoubleValue();
 		booleanValue = value.getBooleanValue();
 	}
 

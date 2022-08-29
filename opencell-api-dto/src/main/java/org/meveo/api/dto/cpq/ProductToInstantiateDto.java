@@ -57,8 +57,6 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
 
     private List<OrderAttributeDto> attributeInstances = new ArrayList<OrderAttributeDto>();
 
-     
-
   
     public String getProductCode() {
 		return productCode;

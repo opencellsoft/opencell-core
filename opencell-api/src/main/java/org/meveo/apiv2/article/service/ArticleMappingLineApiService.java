@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.service.billing.impl.article.ArticleMappingLineService;
@@ -25,10 +26,12 @@ public class ArticleMappingLineApiService{
         return ofNullable(articleMappingLineService.findById(id, fields, true));
     }
 
+    @Transactional
     public ArticleMappingLine create(ArticleMappingLine articleMappingLine) {
         return articleMappingLineService.validateAndCreate(articleMappingLine);
     }
-    
+
+    @Transactional
     public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
     	return articleMappingLineService.update(id, articleMappingLine);
        
