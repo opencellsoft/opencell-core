@@ -1,14 +1,18 @@
 package org.meveo.service.billing.impl.article;
 
+import org.apache.commons.collections4.MapUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 
 public class AttributeMappingLineMatch {
@@ -32,6 +36,8 @@ public class AttributeMappingLineMatch {
     }
 
     public ArticleMappingLine getBestMatch() {
+        checkDuplicatePartiallyMatchedMapping(partialMatchMappingLines);
+
         List<PartialMatchMappingLine> matches = partialMatchMappingLines.stream()
                 .filter(partialMatchMappingLine -> partialMatchMappingLine.numberOfMatchedAttribute > 0)
                 .sorted(Comparator.comparing(a -> a.numberOfMatchedAttribute))
@@ -48,5 +54,29 @@ public class AttributeMappingLineMatch {
             this.numberOfMatchedAttribute = numberOfMatchedAttribute;
             this.articleMappingLine = articleMappingLine;
         }
+
+        public Integer getNumberOfMatchedAttribute() {
+            return numberOfMatchedAttribute;
+        }
     }
+
+    /**
+     * If we have same number of matchedAttribut in partialMatchMappingLines, than means that we have two matched Article matched, and this is not permited
+     *
+     * @param lines partially matched mapping lines
+     */
+    private void checkDuplicatePartiallyMatchedMapping(List<PartialMatchMappingLine> lines) {
+
+        Map<Integer, List<PartialMatchMappingLine>> groupByNBMatchedAttr = lines.stream()
+                .collect(groupingBy(PartialMatchMappingLine::getNumberOfMatchedAttribute));
+
+        if (MapUtils.isNotEmpty(groupByNBMatchedAttr)) {
+            groupByNBMatchedAttr.forEach((nbMatched, mappings) -> {
+                if (nbMatched > 1 && mappings.size() > 1) {
+                    throw new BusinessException("More than one article found");
+                }
+            });
+        }
+    }
+
 }
