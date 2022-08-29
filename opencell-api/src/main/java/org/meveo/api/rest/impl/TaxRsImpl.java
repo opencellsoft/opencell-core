@@ -18,7 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
 import org.meveo.api.TaxApi;
@@ -53,7 +52,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         try {
             taxApi.create(postData);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
@@ -64,7 +63,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         try {
             taxApi.update(postData);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
@@ -102,20 +101,19 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             Long idEntity = taxApi.createOrUpdate(postData);
             result.setEntityId(idEntity);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
 
-    private ActionStatus processException(Exception exception) {
-        ActionStatus result = new ActionStatus(FAIL, exception.getMessage());
+    private MeveoApiException processExceptionMessage(Exception exception) {
         if(exception.getMessage() != null) {
             String[] errorMessage = exception.getMessage().split(":");
             if(errorMessage.length > 1) {
-                result.setMessage(errorMessage[1]);
+                return new MeveoApiException(errorMessage[1].trim());
             }
         }
-        return result;
+        return new MeveoApiException();
     }
 
     @Override
