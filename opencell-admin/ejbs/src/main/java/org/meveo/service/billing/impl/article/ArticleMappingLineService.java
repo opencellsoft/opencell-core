@@ -106,8 +106,8 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		if(articleMappingLineUpdated.getArticleMapping() == null) {
 			articleMappingLineUpdated.setArticleMapping(getArticleMappingFromMappingLine(articleMappingLine));
 		}
-		articleMappingLine.setAccountingArticle(accountingArticle);
-		populateArticleMappingLineForUpdate(articleMappingLineUpdated, articleMappingLine);
+		articleMappingLineUpdated.setAccountingArticle(accountingArticle);
+		populateArticleMappingLine(articleMappingLine);
 
 		articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 		articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
@@ -136,7 +136,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		articleMappingLineUpdated.setMappingKeyEL(articleMappingLine.getMappingKeyEL());
 		articleMappingLineUpdated.setDescription(articleMappingLine.getDescription());
 		update(articleMappingLineUpdated);
-		initDeepRelationships(articleMappingLineUpdated);
 		return Optional.of(articleMappingLineUpdated);
 	}
 
@@ -204,39 +203,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
         return getEntityManager().createNamedQuery("ArticleMappingLine.findAll").getResultList();
     }
 
-	private void populateArticleMappingLineForUpdate(ArticleMappingLine articleMappingLineUpdated, ArticleMappingLine articleMappingLine) {
-		if(articleMappingLine.getOfferTemplate() != null){
-			OfferTemplate offerTemplate = tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
-			articleMappingLineUpdated.setOfferTemplate(offerTemplate);
-		}
-		if(articleMappingLine.getProduct() != null){
-			Product product = tryToFindByCodeOrId(articleMappingLine.getProduct());
-			articleMappingLineUpdated.setProduct(product);
-		}
-		if(articleMappingLine.getChargeTemplate() != null){
-			ChargeTemplate chargeTemplate = (ChargeTemplate) tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
-			articleMappingLineUpdated.setChargeTemplate(chargeTemplate);
-		}
-	}
-
-	private void initDeepRelationships(ArticleMappingLine articleMappingLineUpdated) {
-		if (articleMappingLineUpdated.getAccountingArticle() != null) {
-			articleMappingLineUpdated.getAccountingArticle().getCode();
-		}
-
-		if (articleMappingLineUpdated.getProduct() != null) {
-			articleMappingLineUpdated.getProduct().getCode();
-		}
-
-		if (articleMappingLineUpdated.getOfferTemplate() != null) {
-			articleMappingLineUpdated.getOfferTemplate().getCode();
-		}
-
-		if (articleMappingLineUpdated.getChargeTemplate() != null) {
-			articleMappingLineUpdated.getChargeTemplate().getCode();
-		}
-	}
-
 	private void isValidOperator(Attribute attribute, RuleOperatorEnum givenOperator) {
 		switch (attribute.getAttributeType()) {
 			case BOOLEAN:
@@ -254,7 +220,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 			case CALENDAR:
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL,
 						RuleOperatorEnum.GREATER_THAN, RuleOperatorEnum.GREATER_THAN_OR_EQUAL,
-						RuleOperatorEnum.LESS_THAN_OR_EQUAL, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
+						RuleOperatorEnum.LESS_THAN, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
 			case LIST_TEXT:
