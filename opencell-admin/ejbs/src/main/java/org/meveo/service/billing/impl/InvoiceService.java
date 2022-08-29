@@ -45,21 +45,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -189,6 +176,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.order.Order;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -213,6 +201,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -376,6 +365,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private CommercialOrderService commercialOrderService;
+
+    @Inject
+    private OpenOrderService openOrderService;
 
     /**
      * folder for pdf .
@@ -2353,11 +2345,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             try {
                 List<Long> drafWalletOperationIds;
-                if (isDraft)
+                if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                else
+                }else {
                     drafWalletOperationIds = new ArrayList<>();
+                    invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+                    update(invoice);
+                }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
@@ -2424,7 +2419,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
                 List<InvoiceLine> invoiceLines = new ArrayList<>();
                 invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
-                        null, null, invoiceLines);
+                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
                 invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
@@ -5594,6 +5589,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
+                    if(invoice.getOpenOrderNumber() != null) {
+                        Optional.ofNullable(openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber()))
+                                .map(OpenOrder::getExternalReference)
+                                .ifPresent(invoice::setExternalRef);
+                    }
                     invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);

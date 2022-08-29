@@ -14090,11 +14090,14 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
 
-
     <changeSet id="#INTRD-8867_20220817-" author="KHorri">
         <addColumn tableName="open_order">
             <column name="cancel_reason" type="varchar(4000)"/>
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set origin_billing_account = billing_account__id where origin_billing_account is null</sql>
     </changeSet>
     
     <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani">
@@ -14155,6 +14158,6 @@ order by date_trunc('month', i.invoice_date) DESC
 			and adm_user.firstname &lt;&gt; ''
 			and adm_user.lastname &lt;&gt; '';
 		</sql>
-    </changeSet>
+	</changeSet>
 
 </databaseChangeLog>

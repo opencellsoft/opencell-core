@@ -944,12 +944,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
-    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>());
+    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
     }
     	
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
                 AggregationConfiguration configuration, JobExecutionResultImpl result,
-                                              BillingRun billingRun, List<InvoiceLine> invoiceLines) throws BusinessException {
+                                              BillingRun billingRun, List<InvoiceLine> invoiceLines,
+                                              String openOrderNumber) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         BasicStatistics basicStatistics = new BasicStatistics();
@@ -958,7 +959,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
         for (Map<String, Object> groupedRT : groupedRTs) {
-            invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
+            invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
+                    configuration, result, appProvider, billingRun, openOrderNumber);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
             basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
             basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
