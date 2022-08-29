@@ -20,6 +20,7 @@ package org.meveo.api.crm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -123,6 +124,14 @@ public class ContactApi extends BaseApi {
         }
 
         handleMissingParameters();
+
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail()))){
+            String email = postData.getContactInformation().getEmail();
+            List<Contact> list = contactService.list(new PaginationConfiguration(Collections.singletonMap("contactInformation.email", email)));
+            if(list.size() > 0){
+                throw new EntityAlreadyExistsException(Contact.class, email, "email");
+            }
+        }
 
         String code = null;
         if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
