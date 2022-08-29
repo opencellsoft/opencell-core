@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="B2B_Invoice" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.4641000000000013"/>
 	<property name="ireport.x" value="0"/>
@@ -356,6 +356,12 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="@openOrderNumber"/>
 		<fieldDescription><![CDATA[@openOrderNumber]]></fieldDescription>
 	</field>
+	<field name="aaaa" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@aaaa]]></fieldDescription>
+	</field>
+	<field name="externalReference" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@externalReference]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupExpression><![CDATA[$F{user_name}]]></groupExpression>
 		<groupHeader>
@@ -506,7 +512,7 @@ sales@openthing.com]]></text>
 		</groupHeader>
 	</group>
 	<pageHeader>
-		<band height="125">
+		<band height="137">
 			<rectangle>
 				<reportElement mode="Opaque" x="371" y="24" width="209" height="65" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="301bc202-ec47-4be4-9144-1ccecccd72cc"/>
 			</rectangle>
@@ -581,7 +587,7 @@ sales@openthing.com]]></text>
 				<textFieldExpression><![CDATA[$F{invoiceType}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="534" y="105" width="41" height="20" uuid="1352ea8c-67df-4e57-a78f-1218fd2a572a"/>
+				<reportElement x="534" y="117" width="41" height="20" uuid="1352ea8c-67df-4e57-a78f-1218fd2a572a"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
@@ -605,7 +611,7 @@ sales@openthing.com]]></text>
 				<text><![CDATA[Invoice type]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement x="561" y="105" width="19" height="20" uuid="70ddbde0-a609-410d-8301-143597ebd6fe"/>
+				<reportElement x="561" y="117" width="19" height="20" uuid="70ddbde0-a609-410d-8301-143597ebd6fe"/>
 				<textElement textAlignment="Right" markup="html">
 					<font fontName="SansSerif"/>
 				</textElement>
@@ -633,6 +639,29 @@ sales@openthing.com]]></text>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{openOrderNumber}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Opaque" x="371" y="102" width="209" height="13" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="fcb4a4fe-f921-42cc-b7fa-bc16c1686e0c">
+					<printWhenExpression><![CDATA[$F{openOrderNumber} != null && !"".equals($F{openOrderNumber})]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="371" y="102" width="73" height="13" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC" uuid="28820156-184a-4bd1-9c4e-a9a6fb61bd76">
+					<printWhenExpression><![CDATA[$F{openOrderNumber} != null && !"".equals($F{openOrderNumber})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[External Ref #]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="445" y="102" width="135" height="13" isPrintWhenDetailOverflows="true" uuid="65e4bff0-4640-4d30-b7d6-47b6a3dadeb3">
+					<printWhenExpression><![CDATA[$F{externalReference} != null && !"".equals($F{externalReference})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{externalReference}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
