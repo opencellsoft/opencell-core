@@ -1,5 +1,6 @@
 package org.meveo.apiv2.document;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public interface DocumentResource {
     @GET
+    @Hidden
     @Path("/{id}")
     @Operation(summary = "This endpoint allows to retrieve a document information by id document",
             tags = { "Document" },
@@ -30,6 +32,7 @@ public interface DocumentResource {
                          @PathParam("id") @NotNull Long id);
 
     @POST
+    @Hidden
     @Path("/")
     @Operation(summary = "This endpoint allows to create a document and store the associated physical file in disk",
             tags = { "Document" },
