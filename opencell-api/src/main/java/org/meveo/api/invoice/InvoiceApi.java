@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -52,6 +53,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -101,6 +108,7 @@ import org.primefaces.model.SortOrder;
  * @lastModifiedVersion 7.1
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class InvoiceApi extends BaseApi {
 
     @Inject
@@ -247,6 +255,9 @@ public class InvoiceApi extends BaseApi {
         return seller;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class),
+            @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR, boolean includePdf) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -680,6 +691,8 @@ public class InvoiceApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class), @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml)
             throws MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
@@ -811,6 +824,9 @@ public class InvoiceApi extends BaseApi {
      * @return A list of invoices
      * @throws InvalidParameterException invalid parameter exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "invoices", itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class),
+            @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public InvoicesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, Invoice.class);
