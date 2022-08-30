@@ -358,7 +358,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	 * @return the isCompany
 	 */
 	public Boolean getIsCompany() {
-		return isCompany;
+		return isCompany != null && isCompany;
 	}
 
 	/**
