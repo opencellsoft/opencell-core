@@ -1,5 +1,6 @@
 package org.meveo.apiv2.catalog.resource;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.Response;
 public interface DiscountPlanResource {
 
     @GET
+    @Hidden
     @Operation(summary = "Return a list of discountPlans", tags = {
             "Discount Plans" }, description = "Returns a list of discountPlans with pagination feature or non integers will simulate API error conditions", responses = {
             @ApiResponse(headers = {
