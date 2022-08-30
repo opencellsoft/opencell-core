@@ -147,6 +147,9 @@ public class ListFilter extends SecureMethodResultFilter {
      * @throws IllegalAccessException
      */
     private Object getItemsForFiltering(Object obj, String property) throws IllegalAccessException {
+        if (property == null || property.trim().isEmpty()) {
+            return obj;
+        }
         int fieldIndex = property.indexOf(".");
         if (fieldIndex == -1) {
             return FieldUtils.readField(obj, property, true);
