@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,7 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
     private BillingRunService billingRunService;
     
     public List<InvoiceSubTotals> addSubTotals(InvoiceSubTotalsDto invoiceSubTotalsDto) {
-        List<InvoiceSubTotals> lstInvoiceSubTotals = new ArrayList<InvoiceSubTotals>();
+        List<InvoiceSubTotals> lstInvoiceSubTotals = new ArrayList<>();
         
         if (invoiceSubTotalsDto.getInvoiceType() == null || 
                 (invoiceSubTotalsDto.getInvoiceType().getId() == null 
@@ -102,8 +101,9 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
 	
 	@SuppressWarnings("unchecked")
 	public List<InvoiceSubTotals> findByInvoiceType(InvoiceType invoiceType) throws BusinessException {
-		Query query = getEntityManager().createNamedQuery("InvoiceSubTotals.findByInvoiceType").setParameter("invoiceType", invoiceType);
-		return query.getResultList();
+		return getEntityManager().createNamedQuery("InvoiceSubTotals.findByInvoiceType")
+                .setParameter("invoiceType", invoiceType)
+                .getResultList();
 	}
 	
 
@@ -120,7 +120,6 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
 				for (InvoiceLine invl : invoiceLines) {
 				    Boolean evaluateExpr = ist.getSubTotalEl() != null ? ValueExpressionWrapper.evaluateExpression(ist.getSubTotalEl(), Boolean.class, invl) : null;
 					boolean isValid = StringUtils.isNotEmpty(ist.getSubTotalEl()) && evaluateExpr != null ? evaluateExpr : false;
-					                                ;
 					if(isValid) {
 						amountWithTax = amountWithTax.add(invl.getAmountWithTax() != null ? invl.getAmountWithTax() : BigDecimal.ZERO);
 						amountWithoutTax = amountWithoutTax.add(invl.getAmountWithoutTax() != null ? invl.getAmountWithoutTax() : BigDecimal.ZERO);
