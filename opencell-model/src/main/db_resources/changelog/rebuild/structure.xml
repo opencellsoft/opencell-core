@@ -2108,7 +2108,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -2513,7 +2513,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -3685,7 +3685,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -4670,7 +4670,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -4883,7 +4883,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="usecolor" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -5018,7 +5018,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -5166,7 +5166,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="center_code" type="varchar(255)" />
             <column name="creditor_code" type="varchar(255)" />
             <column name="financial_institution_code" type="varchar(255)" />
@@ -5290,7 +5290,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="email" type="varchar(100)" />
             <column name="fax" type="varchar(50)" />
             <column name="firstname" type="varchar(50)" />
@@ -5336,7 +5336,7 @@
             <column name="address_city" type="varchar(50)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -18462,7 +18462,7 @@
     <changeSet id="#INTRD-8867_20220817-" author="KHorri"/>
     <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe" />
     <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani" />
-
+    <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
