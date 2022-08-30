@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
@@ -21,6 +22,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -71,7 +73,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        	articleMappingLineUpdated.setArticleMapping(null);
 	        }
 	        articleMappingLineUpdated.setAccountingArticle(accountingArticle);
-	        populateArticleMappingLineForUpdate(articleMappingLineUpdated,articleMappingLine);
+	        populateArticleMappingLine(articleMappingLine);
 	        
 	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
@@ -84,7 +86,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	                    .map(am -> {
 	                        Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
 
-	                        AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
+							AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue(), am.getOperator());
+							// Check if attributeType is en phase with le RuleOperator. For example : we cannot have greatherThenOrEquals for Text attribute
+							isValidOperator(attribute, am.getOperator());
 	                        attributeMapping.setArticleMappingLine(articleMappingLineUpdated);
 	                        return attributeMapping;
 	                    })
@@ -109,21 +113,6 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
             articleMappingLine.setChargeTemplate(chargeTemplate);
         }
     }
-	
-	private void populateArticleMappingLineForUpdate(ArticleMappingLine updatedArticleMappingLine,ArticleMappingLine articleMappingLine) {
-    	if(articleMappingLine.getOfferTemplate() != null){
-            OfferTemplate offerTemplate = (OfferTemplate) tryToFindByCodeOrId(articleMappingLine.getOfferTemplate());
-            updatedArticleMappingLine.setOfferTemplate(offerTemplate);
-        }
-        if(articleMappingLine.getProduct() != null){
-        	Product product = (Product) tryToFindByCodeOrId(articleMappingLine.getProduct());
-        	updatedArticleMappingLine.setProduct(product);
-        }
-        if(articleMappingLine.getChargeTemplate() != null){
-            ChargeTemplate chargeTemplate = (ChargeTemplate) tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
-            updatedArticleMappingLine.setChargeTemplate(chargeTemplate);
-        }
-    }
 
 	/**
 	 * @param articleMappingLine
@@ -141,7 +130,9 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
                     .stream()
                     .map(am -> {
                         Attribute attribute = (Attribute) tryToFindByCodeOrId(am.getAttribute());
-                        AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
+						AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue(), am.getOperator());
+						// Check if attributeType is en phase with le RuleOperator. For example : we cannot have greatherThenOrEquals for Text attribute
+						isValidOperator(attribute, am.getOperator());
                         attributeMapping.setArticleMappingLine(articleMappingLine);
                         return attributeMapping;
                     })
@@ -153,5 +144,48 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
         create(articleMappingLine);
         return articleMappingLine;
     }
+
+	private void isValidOperator(Attribute attribute, RuleOperatorEnum givenOperator) {
+		switch (attribute.getAttributeType()) {
+			case BOOLEAN:
+			case PHONE:
+			case EMAIL:
+			case TEXT:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case TOTAL:
+			case COUNT:
+			case NUMERIC:
+			case INTEGER:
+			case DATE:
+			case CALENDAR:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL,
+						RuleOperatorEnum.GREATER_THAN, RuleOperatorEnum.GREATER_THAN_OR_EQUAL,
+						RuleOperatorEnum.LESS_THAN, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case LIST_TEXT:
+			case LIST_NUMERIC:
+			case LIST_MULTIPLE_TEXT:
+			case LIST_MULTIPLE_NUMERIC:
+				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
+					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
+				}
+			case EXPRESSION_LANGUAGE:
+			case INFO:
+			default:
+		}
+
+	}
+
+	private boolean isNotOneOfOperator(RuleOperatorEnum operator, RuleOperatorEnum... operators) {
+		for (RuleOperatorEnum op : operators) {
+			if (op == operator) {
+				return false;
+			}
+		}
+		return true;
+	}
     
 }
