@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1e927b49-13de-4f51-92f5-599d055a1567",
+		"_postman_id": "41c00164-5b8f-4ad9-8ba0-070695be3f9b",
 		"name": "OPENCELL_PERF_TESTS_SUITE_13.X",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -3199,34 +3199,6 @@
 						{
 							"name": "Services",
 							"item": [
-								{
-									"name": "RESET SERVICE LIST (DO NOT EDIT)",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"type": "text/javascript",
-												"exec": [
-													""
-												]
-											}
-										}
-									],
-									"request": {
-										"method": "HEAD",
-										"header": [],
-										"url": {
-											"raw": "{{opencell.url}}/provider",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"provider"
-											]
-										}
-									},
-									"response": []
-								},
 								{
 									"name": "SE|code=SE_OSS_OST_USG_RECU|desc=all_in_one_services",
 									"event": [
