@@ -77,6 +77,7 @@ public interface MediationRs extends IBaseRs {
      * @param returnWalletOperations return Wallet Operation IDs
      * @param returnWalletOperationDetails return Wallet Operation details
      * @param returnCounters Return counters that were updated information
+     * @param generateRTs generate automatically RTs.
      * @return Request processing status
      */
     @POST
@@ -85,7 +86,7 @@ public interface MediationRs extends IBaseRs {
             @ApiResponse(description = " Request processing status ", content = @Content(schema = @Schema(implementation = ChargeCDRResponseDto.class))) })
     ChargeCDRResponseDto chargeCdr(String cdr, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr, @QueryParam("maxDepth") Integer maxDepth,
             @QueryParam("returnEDRs") boolean returnEDRs, @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("returnWalletOperationDetails") boolean returnWalletOperationDetails,
-            @QueryParam("returnCounters") boolean returnCounters);
+            @QueryParam("returnCounters") boolean returnCounters, @QueryParam("generateRTs") boolean generateRTs);
 
     /**
      * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)

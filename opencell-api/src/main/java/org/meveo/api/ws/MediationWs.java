@@ -59,12 +59,13 @@ public interface MediationWs extends IBaseWs {
      * @param returnWalletOperations return Wallet Operation IDs
      * @param returnWalletOperationDetails return Wallet Operation details
      * @param returnCounters Return counters that were updated information
+     * @param generateRTs Generate automatically RTs.
      * @return Request processing status
      */
     @WebMethod
     ChargeCDRResponseDto chargeCdr(@WebParam(name = "cdr") String cdr, @WebParam(name = "isVirtual") boolean isVirtual, @WebParam(name = "rateTriggeredEdr") boolean rateTriggeredEdr,
             @WebParam(name = "maxDepth") Integer maxDepth, @WebParam(name = "returnEDRs") boolean returnEDRs, @WebParam(name = "returnWalletOperations") boolean returnWalletOperations,
-            @WebParam(name = "returnWalletOperationDetails") boolean returnWalletOperationDetails, @WebParam(name = "returnCounters") boolean returnCounters
+            @WebParam(name = "returnWalletOperationDetails") boolean returnWalletOperationDetails, @WebParam(name = "returnCounters") boolean returnCounters, @WebParam(name = "generateRTs") boolean generateRTs
 
     );
 
