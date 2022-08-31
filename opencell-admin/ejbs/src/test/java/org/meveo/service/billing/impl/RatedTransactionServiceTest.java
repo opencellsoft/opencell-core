@@ -2,6 +2,8 @@ package org.meveo.service.billing.impl;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -111,7 +113,7 @@ public class RatedTransactionServiceTest {
     private RatedTransactionService ratedTransactionService;
     
     @Test
-    public void test_hic() {
+    public List<RatedTransaction> initData() {
         Seller seller = new Seller();
 
         CustomerAccount ca = new CustomerAccount();
@@ -138,14 +140,6 @@ public class RatedTransactionServiceTest {
         ua1.setId(6L);
 
         UserAccount ua2 = new UserAccount();
-        WalletInstance wallet2 = new WalletInstance();
-        wallet2.setId(1007L);
-        wallet2.setCode("wallet2");
-
-        ua2.setCode("ua2");
-        ua2.setWallet(wallet2);
-        ua2.setBillingAccount(ba);
-        ua2.setId(1008L);
 
         Subscription subscription1 = new Subscription();
         subscription1.setCode("subsc1");
@@ -174,18 +168,9 @@ public class RatedTransactionServiceTest {
 
         subscription1.setDiscountPlanInstances(List.of(discountPlanInstance));
 
-        Subscription subscription2 = new Subscription();
-        subscription2.setCode("subsc2");
-        subscription2.setUserAccount(ua1);
-        subscription2.setId(1010L);
-
         InvoiceCategory cat1 = new InvoiceCategory();
         cat1.setCode("cat1");
         cat1.setId(1011L);
-        InvoiceCategory cat2 = new InvoiceCategory();
-        cat2.setCode("cat2");
-        cat2.setId(1012L);
-
         AccountingCode accountingCode = new AccountingCode();
         accountingCode.setId(19L);        
         
@@ -194,21 +179,6 @@ public class RatedTransactionServiceTest {
         subCat11.setCode("subCat11");
         subCat11.setAccountingCode(accountingCode);
         subCat11.setId(1013L);
-        InvoiceSubCategory subCat12 = new InvoiceSubCategory();
-        subCat12.setInvoiceCategory(cat1);
-        subCat12.setCode("subCat12");
-        subCat12.setAccountingCode(accountingCode);
-        subCat12.setId(1014L);
-        InvoiceSubCategory subCat21 = new InvoiceSubCategory();
-        subCat21.setInvoiceCategory(cat2);
-        subCat21.setCode("subCat21");
-        subCat21.setAccountingCode(accountingCode);
-        subCat21.setId(1015L);        
-        InvoiceSubCategory subCat22 = new InvoiceSubCategory();
-        subCat22.setInvoiceCategory(cat2);
-        subCat22.setCode("subCat22");
-        subCat22.setAccountingCode(accountingCode);
-        subCat22.setId(1016L);
         
         Tax tax = new Tax();
         tax.setId(1017L);
@@ -221,123 +191,112 @@ public class RatedTransactionServiceTest {
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setId(1004L);
         
-        RatedTransaction rt111 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
+        RatedTransaction rt = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat11, null, null, null, null, null, subscription1, null, null, null, null, null, "rt111", "RT111", new Date(), new Date(), seller, tax,
             tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt111.setId(1020L);
-        rts.add(rt111);
-        RatedTransaction rt112 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat12, null, null, null, null, null, subscription1, null, null, null, null, null, "rt112", "RT112", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt112.setId(1021L);
-        rts.add(rt112);
-        RatedTransaction rt121 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat21, null, null, null, null, null, subscription1, null, null, null, null, null, "rt121", "RT121", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt121.setId(1022L);
-        rts.add(rt121);
-        RatedTransaction rt122 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat22, null, null, null, null, null, subscription1, null, null, null, null, null, "rt122", "RT122", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt122.setId(1023L);
-        rts.add(rt122);
-        RatedTransaction rt211 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat11, null, null, null, null, null, subscription2, null, null, null, null, null, "rt211", "RT211", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt211.setId(24L);
-        rts.add(rt211);
-        RatedTransaction rt212 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat12, null, null, null, null, null, subscription2, null, null, null, null, null, "rt212", "RT212", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt212.setId(1025L);
-        rts.add(rt212);
-        RatedTransaction rt221 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat21, null, null, null, null, null, subscription2, null, null, null, null, null, "rt221", "RT221", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt221.setId(1026L);
-        rts.add(rt221);
-        RatedTransaction rt222 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
-            RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat22, null, null, null, null, null, subscription2, null, null, null, null, null, "rt222", "RT222", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null, null, null);
-        rt222.setId(1027L);
-        rts.add(rt222);
+        rt.setId(1020L);
         
+        rts.add(rt);
+        
+        return rts;
+    }
+    
+    void testOk() {
+        List<RatedTransaction> rts = initData();
+        RatedTransaction rt = rts.get(0);
         Contract c1 = new Contract();
-        c1.setBillingAccount(rt111.getBillingAccount());
+        c1.setBillingAccount(rt.getBillingAccount());
         c1.setId(1028L);
-        Contract c2 = new Contract();
-        c2.setBillingAccount(rt112.getBillingAccount());
-        c2.setId(1029L);
-        Contract c3 = new Contract();
-        c3.setBillingAccount(rt121.getBillingAccount());
-        c3.setId(1030L);
-        Contract c4 = new Contract();
-        c4.setBillingAccount(rt122.getBillingAccount());
-        c4.setId(1031L);
-        Contract c5 = new Contract();
-        c5.setBillingAccount(rt211.getBillingAccount());
-        c5.setId(1032L);
-        Contract c6 = new Contract();
-        c6.setBillingAccount(rt212.getBillingAccount());
-        c6.setId(1033L);
-        Contract c7 = new Contract();
-        c7.setBillingAccount(rt221.getBillingAccount());
-        c7.setId(1034L);
-        Contract c8 = new Contract();
-        c8.setBillingAccount(rt222.getBillingAccount());
-        c8.setId(1035L);        
         
         BillingRule br1 = new BillingRule();
         br1.setContract(c1);
         br1.setPriority(1);
         br1.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br1.setCriteriaEL("#{rt.getUserAccount() != null}");     
+        br1.setCriteriaEL("#{rt.getUserAccount() != null}");
+        BillingAccount billingAccountAvant = rt.getBillingAccount();
+        ratedTransactionService.applyInvoicingRules(rts);        
+        BillingAccount originBillingAccountTest = rt.getOriginBillingAccount();
+        BillingAccount billingAccountApres = rt.getBillingAccount();
+        assertEquals(originBillingAccountTest, billingAccountAvant);
+        assertNotEquals(billingAccountApres, billingAccountAvant);
+    }
+    
+    void testOnlyOneRuleRedirect() {
+        List<RatedTransaction> rts = initData();
+        RatedTransaction rt = rts.get(0);
+        Contract c1 = new Contract();
+        c1.setBillingAccount(rt.getBillingAccount());
+        c1.setId(1028L);
+        
+        BillingRule br1 = new BillingRule();
+        br1.setContract(c1);
+        br1.setPriority(1);
+        br1.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
+        br1.setCriteriaEL("#{rt.getUserAccount() != null}");
+        
         BillingRule br2 = new BillingRule();
-        br2.setContract(c2);
-        br2.setPriority(2);
-        br2.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br2.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br3 = new BillingRule();
-        br3.setContract(c3);
-        br3.setPriority(3);
-        br3.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br3.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br4 = new BillingRule();
-        br4.setContract(c4);
-        br4.setPriority(4);
-        br4.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br4.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br5 = new BillingRule();
-        br5.setContract(c5);
-        br5.setPriority(5);
-        br5.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br5.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br6 = new BillingRule();
-        br6.setContract(c6);
-        br6.setPriority(6);
-        br6.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br6.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br7 = new BillingRule();
-        br7.setContract(c7);
-        br7.setPriority(7);
-        br7.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br7.setCriteriaEL("#{rt.getUserAccount() != null}"); 
-        BillingRule br8 = new BillingRule();
-        br8.setContract(c8);
-        br8.setPriority(8);
-        br8.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
-        br8.setCriteriaEL("#{rt.getUserAccount() != null}"); 
+        br2.setContract(c1);
+        br2.setPriority(1);
+        br2.setInvoicedBACodeEL("");
+        br2.setCriteriaEL("");
+        
+        BillingAccount billingAccountAvant = rt.getBillingAccount();
+        ratedTransactionService.applyInvoicingRules(rts);        
+        BillingAccount originBillingAccountTest = rt.getOriginBillingAccount();
+        BillingAccount billingAccountApres = rt.getBillingAccount();
+        assertEquals(originBillingAccountTest, billingAccountAvant);
+        assertNotEquals(billingAccountApres, billingAccountAvant);
+    }
+    
+    void testNotEvaluateInvoicedBACodeEL() {
+        List<RatedTransaction> rts = initData();
+        RatedTransaction rt = rts.get(0);
+        Contract c1 = new Contract();
+        c1.setBillingAccount(rt.getBillingAccount());
+        c1.setId(1028L);
+        
+        BillingRule br1 = new BillingRule();
+        br1.setContract(c1);
+        br1.setPriority(1);
+        br1.setInvoicedBACodeEL("");
+        br1.setCriteriaEL("#{rt.getUserAccount() != null}");
+        
+        BillingRule br2 = new BillingRule();
+        br2.setContract(c1);
+        br2.setPriority(1);
+        br2.setInvoicedBACodeEL("");
+        br2.setCriteriaEL("");
+        
+        ratedTransactionService.applyInvoicingRules(rts);        
+        RatedTransactionStatusEnum statusTest = rt.getStatus();
+        String rejectReasonTest = rt.getRejectReason();
+        assertTrue(statusTest.equals(RatedTransactionStatusEnum.REJECTED));
+        assertTrue(rejectReasonTest.contains("Error evaluating invoicedBillingAccountCodeEL"));
+    }
+    
+    void testNotEvaluateCriteriaEL() {
+        List<RatedTransaction> rts = initData();
+        RatedTransaction rt = rts.get(0);
+        Contract c1 = new Contract();
+        c1.setBillingAccount(rt.getBillingAccount());
+        c1.setId(1028L);
+        
+        BillingRule br1 = new BillingRule();
+        br1.setContract(c1);
+        br1.setPriority(1);
+        br1.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
+        br1.setCriteriaEL("");
+        
+        BillingRule br2 = new BillingRule();
+        br2.setContract(c1);
+        br2.setPriority(1);
+        br2.setInvoicedBACodeEL("");
+        br2.setCriteriaEL("");
+        
         ratedTransactionService.applyInvoicingRules(rts);
-        for (RatedTransaction rt : rts) {
-            RatedTransactionStatusEnum statusTest = rt.getStatus();
-            String rejectReasonTest = rt.getRejectReason();
-            if (statusTest.equals(RatedTransactionStatusEnum.REJECTED)) {
-                assertTrue(rejectReasonTest != "");
-            }
-            
-            BillingAccount billingAccountTest = rt.getBillingAccount();
-            BillingAccount originBillingAccountTest = rt.getOriginBillingAccount();
-            assertTrue((billingAccountTest != null) || (originBillingAccountTest != null));
-        }
+        RatedTransactionStatusEnum statusTest = rt.getStatus();
+        String rejectReasonTest = rt.getRejectReason();
+        assertTrue(statusTest.equals(RatedTransactionStatusEnum.REJECTED));
+        assertTrue(rejectReasonTest.contains("Error evaluating criteriaEL"));
     }
 }
