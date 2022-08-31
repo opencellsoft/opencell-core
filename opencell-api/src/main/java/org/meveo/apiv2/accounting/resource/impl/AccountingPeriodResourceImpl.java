@@ -13,6 +13,7 @@ import org.meveo.apiv2.accounting.resource.AccountingPeriodResource;
 import org.meveo.apiv2.accounting.service.AccountingPeriodApiService;
 import org.meveo.apiv2.accounting.service.SubAccountingPeriodApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
 
@@ -74,7 +75,7 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
                 .build();
 	}
 
-	// Those checks are deprecated, regarding to the need of this issue : https://opencellsoft.atlassian.net/browse/INTRD-8245
+	// Those checks are deprecated, regarding to the need of this issue : INTRD-8245 / INTRD-9452
 	private void checkRequiredParameters(org.meveo.apiv2.accounting.AccountingPeriod entity) {
 		if (entity.getUseSubAccountingPeriods() != null && entity.getUseSubAccountingPeriods()) {
 			List<String> missingParameters = new ArrayList<>();
@@ -83,6 +84,9 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 			}
 			if (entity.getAccountingOperationAction() == null) {
 				missingParameters.add("accountingOperationAction");
+			}
+			if (StringUtils.isBlank(entity.getSubAccountingPeriodType())) {
+				missingParameters.add("subAccountingPeriodType");
 			}
 			if (!missingParameters.isEmpty()) {
 				throw new MissingParameterException(missingParameters);
