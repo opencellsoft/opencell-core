@@ -13,14 +13,12 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.BusinessApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.CustomLockOption;
 import org.meveo.model.accounting.RegularUserLockOption;
-import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
