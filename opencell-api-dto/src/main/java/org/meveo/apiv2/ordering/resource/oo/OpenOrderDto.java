@@ -30,4 +30,7 @@ public interface OpenOrderDto extends Resource  {
 
 	@Nullable
 	String getCancelReason();
+
+	@Nullable
+	String getTemplateName();
 }

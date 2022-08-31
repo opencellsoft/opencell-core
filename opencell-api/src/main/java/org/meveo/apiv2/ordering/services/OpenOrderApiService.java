@@ -30,6 +30,7 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
     @Inject
     private TagService tagService;
 
+
     @Inject
     private AuditLogService auditLogService;
 
@@ -63,7 +64,7 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
 
     private void checkParameters(OpenOrder openOrder, OpenOrderDto dto) {
 
-        if(dto.getEndOfValidityDate().after(new Date()) || dto.getEndOfValidityDate().after(openOrder.getActivationDate())){
+        if(dto.getEndOfValidityDate() != null && (dto.getEndOfValidityDate().after(new Date()) || dto.getEndOfValidityDate().after(openOrder.getActivationDate()))){
             throw new InvalidParameterException(" The EndOfValidityDate field should not be after currente date or the activation date");
         }
         if(!(OpenOrderStatusEnum.NEW.equals(openOrder.getStatus()) || OpenOrderStatusEnum.IN_USE.equals(openOrder.getStatus()))){
