@@ -118,7 +118,9 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
 				BigDecimal convertedAmountWithoutTax = BigDecimal.ZERO;
 				BigDecimal convertedAmountWithTax = BigDecimal.ZERO;
 				for (InvoiceLine invl : invoiceLines) {
-					boolean isValid = StringUtils.isNotEmpty(ist.getSubTotalEl()) && ValueExpressionWrapper.evaluateExpression(ist.getSubTotalEl(), Boolean.class, invl);
+				    Boolean evaluateExpr = ist.getSubTotalEl() != null ? ValueExpressionWrapper.evaluateExpression(ist.getSubTotalEl(), Boolean.class, invl) : null;
+					boolean isValid = StringUtils.isNotEmpty(ist.getSubTotalEl()) && evaluateExpr != null ? evaluateExpr : false;
+					                                ;
 					if(isValid) {
 						amountWithTax = amountWithTax.add(invl.getAmountWithTax() != null ? invl.getAmountWithTax() : BigDecimal.ZERO);
 						amountWithoutTax = amountWithoutTax.add(invl.getAmountWithoutTax() != null ? invl.getAmountWithoutTax() : BigDecimal.ZERO);

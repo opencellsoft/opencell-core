@@ -72,6 +72,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
@@ -379,15 +380,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            if (paramBean.isServiceMultiInstantiation()) {
-                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(product.getCode(), subscription, InstanceStatusEnum.INACTIVE);
-                if (serviceInstances != null && !serviceInstances.isEmpty()) {
-                    throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " is already instantiated.");
-                }
-            } else {
+        	// Fix INTRD-8842 : Allow multi instance of the same product for a subscription
+            if (!paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(product.getCode(), subscription, InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
-                    throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + " and subscription code=" + subscription.getCode() + " is already instantiated or activated.");
+                    throw new IncorrectServiceInstanceException("Mutli-instantiation is not active on your environment. Please contact your system administrator.");
                 }
             }
         }
@@ -402,9 +399,23 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setDescription(product.getDescription());
+        serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        
+		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
+		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate((serviceInstance.getRenewalNotifiedDate() != null && serviceInstance.isRenewed())?serviceInstance.getRenewalNotifiedDate():serviceInstance.getSubscriptionDate()); 
+		}else if(PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+			if(serviceInstance.getPriceVersionDate() == null) {
+				serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
+			}
+		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+			serviceInstance.setPriceVersionDate(null); 
+		}
 
         if (!isVirtual) {
             create(serviceInstance);
+            getEntityManager().flush();
         } else {
             serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }
@@ -600,7 +611,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(!eligibleFixedDiscountItems.isEmpty()) {
         	//TODO : v12 & dev change new Date() with delivered != null
         	String description = StringUtils.isBlank(serviceInstance.getDescription()) ? serviceInstance.getCode() : serviceInstance.getDescription();
-            discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), new BigDecimal(1d), null , 
+            discountPlanService.calculateDiscountplanItems(eligibleFixedDiscountItems, subscription.getSeller(), subscription.getUserAccount().getBillingAccount(), new Date(), serviceInstance.getQuantity(), null , 
             												serviceInstance.getCode(), subscription.getUserAccount().getWallet(), subscription.getOffer(), null, subscription, description, false, null, null, DiscountPlanTypeEnum.PRODUCT);
         }
         
@@ -1212,12 +1223,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         // Accumulator counters
         for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
             if (counterInstance != null) {
-                counterInstanceService.createCounterPeriodIfMissing(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+                counterInstanceService.createCounterPeriodIfMissingInSameTX(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
             }
         }
         // Standard counter
         if (chargeInstance.getCounter() != null) {
-            counterInstanceService.createCounterPeriodIfMissing(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            counterInstanceService.createCounterPeriodIfMissingInSameTX(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
         }
     } 
     

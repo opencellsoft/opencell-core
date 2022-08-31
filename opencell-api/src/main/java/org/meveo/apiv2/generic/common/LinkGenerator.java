@@ -1,15 +1,15 @@
 package org.meveo.apiv2.generic.common;
 
-import org.assertj.core.util.Arrays;
-import org.meveo.commons.utils.StringUtils;
-
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.UriBuilder;
+
+import org.meveo.commons.utils.StringUtils;
 
 public abstract class LinkGenerator {
 
@@ -155,7 +155,7 @@ public abstract class LinkGenerator {
     }
     public static UriBuilder getUriBuilderFromResource(Class resourceClass, String... params) {
         UriBuilder uriBuilder = UriBuilder.fromResource(resourceClass);
-        if (Arrays.isNullOrEmpty(params)) {
+        if (params == null) {
             throw new IllegalArgumentException("Path params should not be null");
         }
         return Stream.of(params).filter(StringUtils::isNotBlank).map(uriBuilder::path).findFirst().orElseThrow(() -> new IllegalArgumentException("Path params should not be "

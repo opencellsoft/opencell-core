@@ -22,7 +22,7 @@ public class EdrVersioningRuleMapper extends ResourceMapper<org.meveo.apiv2.medi
 			return ImmutableEdrVersioningRule.builder()
 					.id(entity.getId())
 					.priority(edrVersioningRule.getPriority())
-					.criterialEL(edrVersioningRule.getCriterialEL())
+					.criteriaEL(edrVersioningRule.getCriteriaEL())
 					.isNewVersionEL(edrVersioningRule.getIsNewVersionEL())
 					.keyEL(edrVersioningRule.getKeyEL())
 					.mediationSetting(edrVersioningRule.getMediationSetting() != null ? ImmutableMediationSetting.builder().id(edrVersioningRule.getMediationSetting().getId()).enableEdrVersioning(edrVersioningRule.getMediationSetting().isEnableEdrVersioning()).build() : null)
@@ -38,7 +38,7 @@ public class EdrVersioningRuleMapper extends ResourceMapper<org.meveo.apiv2.medi
 			EdrVersioningRule entity = new EdrVersioningRule();
 			entity.setId(resource.getId());
 			entity.setPriority(resource.getPriority());
-			entity.setCriterialEL(resource.getCriterialEL());
+			entity.setCriteriaEL(resource.getCriteriaEL());
 			entity.setKeyEL(resource.getKeyEL());
 			entity.setIsNewVersionEL(resource.getIsNewVersionEL());
 			if(resource.getMediationSetting() != null) {

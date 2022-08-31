@@ -70,7 +70,7 @@ public class ProviderResourceImpl implements ProviderResource {
     private DunningPauseReasonsService dunningPauseReasonsService;
 
     @Override
-    public Response updateDunningTemplate(String providerCode, Provider provider) {
+    public Response updateProvider(String providerCode, Provider provider) {
         org.meveo.model.crm.Provider providerByCode = providerService.findByCode(providerCode);
         if (providerByCode == null) {
             throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
@@ -287,8 +287,8 @@ public class ProviderResourceImpl implements ProviderResource {
                 listAllowedCreditCategories.add(creditCategory);
             }
             providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
-            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
-                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
+            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null && paymentPlanPolicy.getDunningDefaultPauseReason().getId() != null) {
+                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 if (dunningPauseReason == null) {
                     throw new EntityDoesNotExistsException(DunningPauseReason.class, paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 }

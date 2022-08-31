@@ -177,22 +177,13 @@ public class ProviderApi extends BaseApi {
     public ProviderDto find() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
-        } else {
-            throw new ActionForbiddenException("User has no permission to access provider");
-        }
+        return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
     }
 
     public void update(ProviderDto postData) throws MeveoApiException, BusinessException {
 
         // search for provider
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-
-        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage provider " + provider.getCode());
-        }
-
         provider = fromDto(postData, provider);
 
         // populate customFields
@@ -217,10 +208,6 @@ public class ProviderApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
-
-        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-            throw new ActionForbiddenException("User has no permission to access provider");
-        }
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
@@ -256,11 +243,6 @@ public class ProviderApi extends BaseApi {
      * @throws MeveoApiException meveo exception.
      */
     public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
-
-        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement")
-                || ((currentUser.hasRole("administrationVisualization") || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
-            throw new ActionForbiddenException("User has no permission to access provider");
-        }
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
@@ -361,10 +343,6 @@ public class ProviderApi extends BaseApi {
 
     public void updateProviderCF(ProviderDto postData) throws MeveoApiException, BusinessException {
 
-        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage provider ");
-        }
-
         Provider provider = providerService.findById(appProvider.getId());
         // populate customFields
         try {
@@ -383,11 +361,7 @@ public class ProviderApi extends BaseApi {
     public ProviderDto findProviderCF() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId());
-        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
-        } else {
-            throw new ActionForbiddenException("User has no permission to access provider");
-        }
+        return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
     }
 
     public Provider fromDto(ProviderDto postData, Provider entity) throws MeveoApiException {
@@ -699,8 +673,6 @@ public class ProviderApi extends BaseApi {
         } else if (currentUser.getProviderCode() != null) {
             throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
 
-        } else if (!currentUser.hasRole("superAdminManagement")) {
-            throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -737,8 +709,6 @@ public class ProviderApi extends BaseApi {
         } else if (currentUser.getProviderCode() != null) {
             throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
 
-        } else if (!currentUser.hasRole("superAdminManagement")) {
-            throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, null, Provider.class);
@@ -774,8 +744,6 @@ public class ProviderApi extends BaseApi {
         } else if (currentUser.getProviderCode() != null) {
             throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
 
-        } else if (!currentUser.hasRole("superAdminManagement")) {
-            throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
         if (StringUtils.isBlank(providerCode)) {

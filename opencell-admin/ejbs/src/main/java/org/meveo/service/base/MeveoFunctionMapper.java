@@ -35,6 +35,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -47,6 +48,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -1984,6 +1986,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
     	return null;
     }
     public static Object getProductAttributeValue(ServiceInstance serviceInstance, String attributeCode) { 
+    	return getProductElAttributeValue(serviceInstance, attributeCode,null);
+    }
+    public static Object getProductElAttributeValue(ServiceInstance serviceInstance, String attributeCode,WalletOperation walletOperation) { 
     	Attribute  attribute =getAttributeService().findByCode(attributeCode);
     	if(attribute == null)
     		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
@@ -1996,17 +2001,37 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case COUNT :
 			case NUMERIC :
 			case INTEGER:
+				
 				if(attributInstance.get().getDoubleValue()!=null) {
-				return attributInstance.get().getDoubleValue(); 
-				}break;
+					return attributInstance.get().getDoubleValue(); 
+				}
+				if(NumberUtils.isCreatable(attributInstance.get().toString().trim())) {
+					return Double.valueOf(attributInstance.get().toString().trim());
+				}
+				
+				break;
 				
 			case LIST_MULTIPLE_TEXT:
 			case LIST_TEXT:
-			case EXPRESSION_LANGUAGE :
 			case TEXT:	
 				if(!StringUtils.isBlank(attributInstance.get().getStringValue())) {
 					return attributInstance.get().getStringValue();  
-				}break;						
+				}break;
+				
+			case EXPRESSION_LANGUAGE :
+				String value=null;
+				if(walletOperation!=null) {
+					 value = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance,walletOperation);
+				}else {
+					 value  = ValueExpressionWrapper.evaluateExpression(attributInstance.get().getStringValue(), String.class, serviceInstance);
+				}
+				if(NumberUtils.isCreatable(value.toString().trim())) {
+					return Double.valueOf(value.toString().trim());
+				}else {
+					return value;
+				}
+				 
+				
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  

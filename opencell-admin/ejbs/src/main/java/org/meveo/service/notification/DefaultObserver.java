@@ -31,10 +31,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.ftp.event.FileDelete;
-import org.meveo.admin.ftp.event.FileDownload;
-import org.meveo.admin.ftp.event.FileRename;
-import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.audit.AuditableFieldEvent;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.event.CFEndPeriodEvent;
@@ -53,6 +49,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
@@ -77,7 +74,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.generic.wf.GenericWorkflow;
-import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -268,26 +264,6 @@ public class DefaultObserver {
         log.trace("DefaultObserver.knownMeveoInstance" + event);
     }
 
-    public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile) throws BusinessException {
-        log.trace("Defaut observer:  a file upload event ");
-        checkEvent(NotificationEventTypeEnum.FILE_UPLOAD, importedFile);
-    }
-
-    public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile) throws BusinessException {
-        log.trace("Defaut observer: a file download event ");
-        checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD, importedFile);
-    }
-
-    public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile) throws BusinessException {
-        log.trace("Defaut observer: a file delete event ");
-        checkEvent(NotificationEventTypeEnum.FILE_DELETE, importedFile);
-    }
-
-    public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) throws BusinessException {
-        log.trace("Defaut observer: a file rename event ");
-        checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
-    }
-
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.trace("Defaut observer: Counter period deduced " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
@@ -360,6 +336,17 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.ADVT_RATE_INCREASED, commercialOrder);
     }
 
+    /**
+     * Handle PaymentStatus from Invoice
+     *
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void invoicePaymentStatusUpdated(@Observes @InvoicePaymentStatusUpdated Invoice invoice) throws BusinessException {
+        log.trace("Defaut observer: check cpq invoice payment status updated {}", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.PAYMENT_STATUS_UPDATED, invoice);
+    }
+    
     public void quoteStatusUpdated(@Observes @StatusUpdated CpqQuote cpqQuote){
         log.trace("Defaut observer: check cpq quote status updated {}", cpqQuote.getId());
         checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, cpqQuote);

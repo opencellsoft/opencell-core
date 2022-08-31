@@ -364,7 +364,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     }
 
     public BigDecimal getUnitMultiplicator() {
-        return unitMultiplicator;
+    	return unitMultiplicator != null ? unitMultiplicator : calculateUnitMultiplicator(BigDecimal.ONE, ratingUnitOfMeasure, inputUnitOfMeasure);
     }
 
     public void setUnitMultiplicator(BigDecimal unitMultiplicator) {

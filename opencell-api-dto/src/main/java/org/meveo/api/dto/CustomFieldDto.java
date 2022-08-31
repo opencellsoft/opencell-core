@@ -20,6 +20,7 @@ package org.meveo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -105,6 +106,7 @@ public class CustomFieldDto {
     /** The list value. */
     @XmlElementWrapper(name = "listValue")
     @XmlElement(name = "value")
+    @JsonProperty("value")
     protected List<CustomFieldValueDto> listValue;
 
     /** The map value. */

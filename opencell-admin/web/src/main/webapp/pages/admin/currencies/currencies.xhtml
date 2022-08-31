@@ -36,7 +36,7 @@
 		<hftl:dataList label="#{messages['currency.title']}"    backingBean="#{currencyListBean}">
 			<hftl:column label="#{messages['currency.code']}" edit="#{currentUser.hasRole('currencyManagement')}" 	field="currencyCode" width="10%" entityView="currencyDetail" valueIdField="id"/>
 			<hftl:column label="#{messages['currency.name']}" field="descriptionEn" />
-			<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" />
+			<hftl:actionsColumn />
 		</hftl:dataList>
 
 	</ui:define>

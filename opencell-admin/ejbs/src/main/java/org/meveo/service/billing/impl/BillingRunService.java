@@ -1571,9 +1571,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
-            filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
-                            .collect(joining(",")) + ")");
+            filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
+                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                            .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
             if(filters.containsKey("SQL")) {
@@ -1582,7 +1582,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
-            filter.setPollingQuery(buildPollingQuery(queryBuilder));
+            filter.setPollingQuery(buildPollingQuery(queryBuilder) + " AND a.status = 'OPEN' AND a.billingRun IS null");
         }
         return filter;
     }

@@ -91,8 +91,10 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	public Map<String, Currency> getListCurrency() {
 		listCurrency.clear();
 		if(tradingCurrencyService.list().size()>0 && tradingCurrencyService.list()!=null){
-			for(TradingCurrency trading :tradingCurrencyService.list() ){
-				listCurrency.put(trading.getCurrency().getCurrencyCode(),trading.getCurrency());
+			for(TradingCurrency trading : tradingCurrencyService.list()) {
+				if(trading.getCurrency() != null) {
+					listCurrency.put(trading.getCurrency().getCurrencyCode(), trading.getCurrency());
+				}
             }
         }
 		return listCurrency;

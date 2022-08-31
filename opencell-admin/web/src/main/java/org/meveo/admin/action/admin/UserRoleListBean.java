@@ -17,12 +17,53 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
+
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.security.Role;
+import org.meveo.util.view.LazyDataModelWSize;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
 public class UserRoleListBean extends UserRoleBean {
 
     private static final long serialVersionUID = 3202016025277911165L;
+
+    private LazyDataModel<Role> filteredRoles = null;
+
+    public LazyDataModel<Role> getFilteredLazyDataModel() {
+
+        if (filteredRoles == null) {
+
+            filteredRoles = new LazyDataModelWSize<Role>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                @SuppressWarnings("rawtypes")
+                public List<Role> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
+
+                    PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, filters, null, null);
+                    List<Role> roles = userRoleService.list(paginationConfig);
+                    setRowCount(roles.size());
+
+                    if (getRowCount() > 0) {
+
+                        return roles.subList(first, roles.size() > first + pageSize ? first + pageSize : roles.size());
+                    } else {
+                        return new ArrayList<Role>();
+                    }
+                }
+            };
+        }
+
+        return filteredRoles;
+    }
 }

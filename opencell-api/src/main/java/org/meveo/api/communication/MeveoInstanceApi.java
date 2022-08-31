@@ -106,7 +106,7 @@ public class MeveoInstanceApi extends BaseApi{
   			meveoInstance.setCustomer(customer);
   		}
   		if(!StringUtils.isBlank(postData.getUser())){
-  			User user=userService.findByUsername(postData.getUser());
+  			User user=userService.findByUsername(postData.getUser(), false);
   			if(user==null){
   				throw new EntityDoesNotExistsException(User.class, postData.getUser());
   			}
@@ -161,7 +161,7 @@ public class MeveoInstanceApi extends BaseApi{
   			meveoInstance.setCustomer(customer);
   		}
   		if(!StringUtils.isBlank(postData.getUser())){
-  			User user=userService.findByUsername(postData.getUser());
+  			User user=userService.findByUsername(postData.getUser(), false);
   			if(user==null){
   				throw new EntityDoesNotExistsException(User.class, postData.getUser());
   			}

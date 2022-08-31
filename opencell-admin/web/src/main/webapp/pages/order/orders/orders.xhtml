@@ -30,7 +30,7 @@
             <hftl:searchField label="#{messages['order.orderDate']}" field="orderDate" />
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
             <hftl:decorateFormField fieldId="showMyOrdersOnly" label="#{messages['orders.showMyOrdersOnly']}"
-                rendered="#{currentUser.hasRole('administrationVisualization')}">
+                rendered="#{currentUser.hasRoles('administrationVisualization','administrationManagement')}">
                 <p:selectBooleanCheckbox id="showMyOrdersOnly" value="#{orderListBean.showMyOrdersOnly}" />
             </hftl:decorateFormField>
         </hftl:searchPanel>
@@ -44,7 +44,7 @@
             <hftl:column label="#{messages['order.completionDate']}" field="completionDate" isDate="true"/>
             <hftl:column label="#{messages['order.receivedFromApp']}" field="receivedFromApp" />
             <hftl:column label="#{messages['order.routedTo']}" field="routedToUserGroup.descriptionOrCode" />
-            <hftl:actionsColumn permission="#{currentUser.hasRole('orderManagement')}" />
+            <hftl:actionsColumn />
         </hftl:dataList>
 
     </ui:define>

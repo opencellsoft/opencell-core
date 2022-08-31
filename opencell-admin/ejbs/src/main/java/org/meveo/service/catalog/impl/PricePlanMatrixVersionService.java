@@ -41,9 +41,14 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.collections4.CollectionUtils;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -60,6 +65,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
@@ -70,6 +76,7 @@ import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
@@ -78,10 +85,6 @@ import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -385,27 +388,56 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @SuppressWarnings("unchecked")
     public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
         List<PricePlanMatrixVersion> result = (List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
-            .setParameter("pricePlanMatrixCode", ppmCode).getResultList();
+            .setParameter("pricePlanMatrixCode", ppmCode).setFlushMode(FlushModeType.COMMIT).getResultList();
 
         return result.isEmpty() ? null : result.get(0);
     }
+
+	/**
+	 * get pricePlanVersion Valid for the given operationDate
+	 * @param ppmCode
+	 * @param serviceInstance
+	 * @param operationDate
+	 * @return PricePlanMatrixVersion
+	 */
+
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
+		Date operationDateParam = new Date();
+		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+			operationDateParam = operationDate; 
+		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting()) 
+			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+				operationDateParam = serviceInstance.getPriceVersionDate(); 
+		}
+		
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate")
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam).getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+        	return null;
+        }
+        if(result.size()>1) {
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+		return result.get(0);
+	}
 
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() != null) {
 
-            String serviceCode = chargeInstance.getServiceInstance().getCode();
-            Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances().stream()
-                .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation)).collect(Collectors.toSet());
-
-            return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode, walletOperation);
+     	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                    .stream()
+                    .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
+                    .collect(Collectors.toSet());
+     	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, walletOperation);
         }
 
         return null;
     }
 
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode, Set<AttributeValue> attributeValues) throws NoPricePlanException {
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode, null);
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, null);
     }
 
     @SuppressWarnings("unchecked")

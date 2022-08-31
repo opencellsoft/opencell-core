@@ -49,7 +49,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.base.IEntityService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.job.JobExecutionResultService;
@@ -357,11 +356,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
                 protected IPersistenceService<JobExecutionResultImpl> getPersistenceServiceImpl() {
                     return jobExecutionResultService;
                 }
-
-                @Override
-                protected ElasticClient getElasticClientImpl() {
-                    return null;
-                }
             };
 
         }
@@ -398,11 +392,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
                 @Override
                 protected IPersistenceService<JobExecutionError> getPersistenceServiceImpl() {
                     return jobExecutionErrorService;
-                }
-
-                @Override
-                protected ElasticClient getElasticClientImpl() {
-                    return null;
                 }
 
                 @Override

@@ -71,6 +71,50 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
     @Override
     public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionDto.getVersion()==null ? null: pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
+        if (pricePlanMatrixVersion == null) {
+            pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
+            pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
+        } else {
+            throw new MeveoApiException("PricePlanMatrixVersion[code=" + pricePlanMatrixVersionDto.getLabel() + ",version=" + pricePlanMatrixVersionDto.getVersion() + "] already exists");
+        }
+        pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
+
+        return pricePlanMatrixVersion;
+    }    
+    
+    public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        String pricePlanMatrixCode = checkPricePlanMatrixVersion(pricePlanMatrixVersionDto);
+        final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
+        if(validity!=null) {
+            Date from = validity.getFrom();
+            Date to = validity.getTo();
+            if(from!=null && to!=null && to.before(from)) {
+                throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
+            }
+        }
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
+        if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
+            if(validity==null || validity.getTo()==null) {
+                throw new InvalidParameterException("ending date must not be null to update a published pricePlanMatrixVersion ");
+            } else if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
+                throw new InvalidParameterException("ending date must be greater than today");
+            }
+            pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
+        } else {
+            populatePricePlanMatrixVersion(pricePlanMatrixVersion, pricePlanMatrixVersionDto, pricePlanMatrixVersionDto.getStatusEnum(), pricePlanMatrixVersionDto.getStatusDate());
+            try {
+                pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
+            } catch(BusinessException e) {
+                throw new MeveoApiException(e.getMessage());
+            }
+        }
+        pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
+        return pricePlanMatrixVersion;
+    }
+
+    private String checkPricePlanMatrixVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
 
@@ -83,48 +127,16 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (StringUtils.isBlank(isMatrix)) {
             missingParameters.add("isMatrix");
         }
-		if (isMatrix!=null && !isMatrix) {
-			if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
-				missingParameters.add("amountWithTax");
-			}
-			if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
-				missingParameters.add("amountWithoutTax");
-			}
-		}
+        if (isMatrix!=null && !isMatrix) {
+            if (!appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithTax())) {
+                missingParameters.add("amountWithTax");
+            }
+            if (appProvider.isEntreprise() && StringUtils.isBlank(pricePlanMatrixVersionDto.getAmountWithoutTax())) {
+                missingParameters.add("price");
+            }
+        }
         handleMissingParametersAndValidate(pricePlanMatrixVersionDto);
-        final DatePeriod validity = pricePlanMatrixVersionDto.getValidity();
-		if(validity!=null) {
-        	Date from = validity.getFrom();
-        	Date to = validity.getTo();
-			if(from!=null && to!=null && to.before(from)) {
-        		throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
-        	}
-        }
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionDto.getVersion()==null ? null: pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, pricePlanMatrixVersionDto.getVersion());
-
-        if (pricePlanMatrixVersion == null) {
-            pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
-            pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
-        } else {
-        	if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
-				if(validity==null || validity.getTo()==null) {
-					throw new InvalidParameterException("ending date must not be null to update a published pricePlanMatrixVersion ");
-        		} else if(validity.getTo().before(org.meveo.model.shared.DateUtils.setDateToEndOfDay(new Date()))) {
-                	throw new InvalidParameterException("ending date must be greater than today");
-                }
-        		pricePlanMatrixVersionService.updatePublishedPricePlanMatrixVersion(pricePlanMatrixVersion, validity.getTo());
-        	} else {
-	            populatePricePlanMatrixVersion(pricePlanMatrixVersion, pricePlanMatrixVersionDto, pricePlanMatrixVersionDto.getStatusEnum(), pricePlanMatrixVersionDto.getStatusDate());
-	            try {
-	            	pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
-	            } catch(BusinessException e) {
-	            	throw new MeveoApiException(e.getMessage());
-	            }
-        	}
-        }
-        pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
-
-        return pricePlanMatrixVersion;
+        return pricePlanMatrixCode;
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {

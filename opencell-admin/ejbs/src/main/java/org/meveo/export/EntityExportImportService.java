@@ -18,8 +18,23 @@
 
 package org.meveo.export;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,12 +127,10 @@ import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.LazyDataModel;
@@ -144,6 +157,10 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+import com.thoughtworks.xstream.security.ArrayTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 /**
  * @author Andrius Karpavicius
@@ -196,9 +213,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
-
-    @Inject
-    private ElasticSearchIndexPopulationService esPopulationService;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -255,6 +269,11 @@ public class EntityExportImportService implements Serializable {
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
 
         xstream.setMode(XStream.NO_REFERENCES);
+        xstream.allowTypes(new Class[] {
+                java.util.List.class,
+                org.meveo.export.ExportTemplate.class,
+                org.meveo.export.RelatedEntityToExport.class
+        });
 
         List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
 
@@ -339,14 +358,6 @@ public class EntityExportImportService implements Serializable {
                     exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
                 }
                 exportTemplate.getClassesToExportAsShort().add(Provider.class);
-            }
-            if (!Permission.class.isAssignableFrom(clazz)
-                    && (exportTemplate.getClassesToExportAsShort() == null || !exportTemplate.getClassesToExportAsShort().contains(Permission.class))
-                    && (exportTemplate.getClassesToExportAsFull() == null || !exportTemplate.getClassesToExportAsFull().contains(Permission.class))) {
-                if (exportTemplate.getClassesToExportAsShort() == null) {
-                    exportTemplate.setClassesToExportAsShort(new ArrayList<Class<? extends IEntity>>());
-                }
-                exportTemplate.getClassesToExportAsShort().add(Permission.class);
             }
         }
     }
@@ -2407,7 +2418,6 @@ public class EntityExportImportService implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
-        esPopulationService.refreshCache(null);
         scriptInstanceService.refreshCache(null);
     }
 

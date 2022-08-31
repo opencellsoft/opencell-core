@@ -62,7 +62,7 @@
 			<hftl:formField id="roleId" label="#{messages['chart.role']}"
 				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole"
-				rendered="#{currentUser.hasRole('administrationVisualization')}" />
+				rendered="#{currentUser.hasRoles('administrationVisualization','administrationManagement')}" />
 
 			<hftl:formField label="#{messages['commons.width']}" field="width" />
 			<hftl:formField label="#{messages['commons.height']}" field="height" />

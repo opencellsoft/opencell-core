@@ -121,7 +121,10 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        QueryBuilder queryBuilder = invoiceLineService.fromFilters(billingRun.getFilters());
+        Map<String, String> filters = billingRun.getFilters();
+        filters.remove("status");
+        QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
+        queryBuilder.addSql(" a.status = 'PROCESSED' and a.billingRun IS NULL");
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
                 .stream()
@@ -181,6 +184,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             billingRun.setStatus(VALIDATED);
         }
         billingRunService.update(billingRun);
+        billingRunService.updateBillingRunStatistics(billingRun);
     }
 
     /**

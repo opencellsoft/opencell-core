@@ -269,6 +269,13 @@ public class InvoiceLine extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**
+   	 * 
+   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+   	 */
+   	@Column(name = "sequence")
+   	private Integer sequence;
 
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
@@ -315,18 +322,6 @@ public class InvoiceLine extends AuditableEntity {
 	 */
 	@Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal convertedAmountWithTax;
-
-	/**
-	 * Converted tax rate
-	 */
-	@Column(name = "converted_tax_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedTaxRate;
-
-	/**
-	 * Converted discount rate
-	 */
-	@Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedDiscountRate = BigDecimal.ZERO;
 
 	/**
 	 * Converted amount tax
@@ -787,22 +782,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.convertedAmountWithTax = convertedAmountWithTax;
 	}
 
-	public BigDecimal getConvertedTaxRate() {
-		return convertedTaxRate;
-	}
-
-	public void setConvertedTaxRate(BigDecimal convertedTaxRate) {
-		this.convertedTaxRate = convertedTaxRate;
-	}
-
-	public BigDecimal getConvertedDiscountRate() {
-		return convertedDiscountRate;
-	}
-
-	public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
-		this.convertedDiscountRate = convertedDiscountRate;
-	}
-
 	public BigDecimal getConvertedAmountTax() {
 		return convertedAmountTax;
 	}
@@ -834,6 +813,16 @@ public class InvoiceLine extends AuditableEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
+	
+	
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
 	@PrePersist
 	@PreUpdate
@@ -847,12 +836,8 @@ public class InvoiceLine extends AuditableEntity {
 				this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedDiscountAmount = this.discountAmount != null ?
 				this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedDiscountRate = this.discountRate != null ?
-				this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedRawAmount = this.rawAmount != null ?
 				this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedTaxRate = this.taxRate != null ?
-				this.taxRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
 				this.unitPrice.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
 	}

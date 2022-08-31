@@ -28,6 +28,17 @@ public class OpenOrderQuoteResourceImpl implements OpenOrderQuoteResource {
     }
 
     @Override
+    public Response duplicate(Long iqOOQ) {
+        Long updatedOOQId = openOrderQuoteApi.duplicate(iqOOQ);
+
+        ActionStatus updatedStatus = new ActionStatus();
+        updatedStatus.setStatus(ActionStatusEnum.SUCCESS);
+        updatedStatus.setEntityId(updatedOOQId);
+
+        return Response.ok().entity(updatedStatus).build();
+    }
+
+    @Override
     public Response update(Long id, OpenOrderQuoteDto dto) {
         Long updatedOOQId = openOrderQuoteApi.update(id, dto);
 

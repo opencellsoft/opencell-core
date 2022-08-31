@@ -21,8 +21,8 @@ package org.meveo.api.security.config;
 import javax.interceptor.InvocationContext;
 
 /**
- * Configuration factory that is responsible to build an instance of
- * {@code SecuredBusinessEntityConfig} depending on the configuration implementation
+ * Configuration factory that is responsible to build an instance of {@code SecuredBusinessEntityConfig} depending on the configuration implementation
+ * 
  * @author Mounir Boukayoua
  * @since 10.0
  */
@@ -30,8 +30,17 @@ public interface SecuredBusinessEntityConfigFactory {
 
     /**
      * Get secured entities configuration defined on a method
+     * 
      * @param context method's invocation context
      * @return {@code SecuredBusinessEntityConfig} instance
      */
     SecuredBusinessEntityConfig get(InvocationContext context);
+
+    /**
+     * Get the Json based config corresponding to the entity name and method name
+     * 
+     * @param context API method invocation context
+     * @return an instance of {@link SecuredBusinessEntityJsonConfig}
+     */
+    SecuredBusinessEntityConfig get(Class<?> entityClass, String methodName);
 }

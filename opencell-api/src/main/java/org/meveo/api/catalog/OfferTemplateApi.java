@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-
+import static org.meveo.service.base.PersistenceService.SEARCH_IS_NULL;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -953,7 +953,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 		if(tags!=null) {
 		pagingAndFiltering.addFilter("inList tags", tags);
 		offersWithoutTags=offerTemplateService.list().stream().filter(offer -> offer.getTags().isEmpty()).collect(Collectors.toList());
-		}
+		}else {
+		pagingAndFiltering.addFilter("tags", SEARCH_IS_NULL);
+	    }
 		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
 		List<OfferTemplate> offers=offerTemplateService.list(paginationConfig);
 		if(offersWithoutTags!=null && !offersWithoutTags.isEmpty()) {

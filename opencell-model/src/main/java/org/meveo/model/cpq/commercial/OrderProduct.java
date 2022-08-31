@@ -16,6 +16,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -44,6 +46,9 @@ import org.meveo.model.quote.QuoteProduct;
 @CustomFieldEntity(cftCodePrefix = "OrderProduct",inheritCFValuesFrom = "quoteProduct")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_product_seq")})
+@NamedQueries({
+	@NamedQuery(name = "OrderProduct.findOrderProductByOrder", query = "FROM OrderProduct op WHERE op.order.id = :commercialOrderId")
+})
 public class OrderProduct extends AuditableCFEntity {
 
 

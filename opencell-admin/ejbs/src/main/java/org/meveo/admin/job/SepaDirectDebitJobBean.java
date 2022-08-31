@@ -202,7 +202,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
 						if (paymentOrRefundEnum == PaymentOrRefundEnum.REFUND && listAoToPay != null) {
 						    listAoToPay = listAoToPay.stream()
-	                                .filter(accountOperation -> (OperationActionEnum.TO_REFUND.equals(accountOperation.getOperationAction())))
+	                                .filter(accountOperation -> (!OperationActionEnum.NONE.equals(accountOperation.getOperationAction())))
 	                                .collect(Collectors.toList());
                         }						
 						ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder);

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -44,16 +44,16 @@ public interface OpenOrderQuoteDto {
     Date getActivationDate();
 
     @Nullable
-    List<ThresholdInput> getThresholds();
+    Set<ThresholdInput> getThresholds();
 
     @Nullable
-    List<String> getTags();
+    Set<String> getTags();
 
     @Nullable
-    List<String> getArticles();
+    Set<String> getArticles();
 
     @Nullable
-    List<String> getProducts();
+    Set<String> getProducts();
 
 
 }
