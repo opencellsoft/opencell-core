@@ -13,6 +13,7 @@ import org.meveo.apiv2.accounting.resource.AccountingPeriodResource;
 import org.meveo.apiv2.accounting.service.AccountingPeriodApiService;
 import org.meveo.apiv2.accounting.service.SubAccountingPeriodApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriod;
 
@@ -81,6 +82,9 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 		}
 		if (entity.getAccountingOperationAction() == null) {
 			missingParameters.add("accountingOperationAction");
+		}
+		if (StringUtils.isBlank(entity.getSubAccountingPeriodType())) {
+			missingParameters.add("subAccountingPeriodType");
 		}
 		if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(missingParameters);
