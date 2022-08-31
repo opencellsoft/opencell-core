@@ -7,10 +7,8 @@ import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,11 +51,11 @@ public class CsvGenericExportManager {
     private static final String PATH_STRING_FOLDER = "exports" + File.separator + "generic"+ File.separator;
     private String saveDirectory;
 
-    public String export(String entityName, List<Map<String, Object>> mapResult, String fileType){
+    public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, String> translations){
     	log.debug("Save directory "+paramBeanFactory.getChrootDir());
     	saveDirectory = paramBeanFactory.getChrootDir() + File.separator + PATH_STRING_FOLDER;
         if (mapResult != null && !mapResult.isEmpty()) {        	
-            Path filePath = saveAsRecord(entityName, mapResult, fileType);            
+            Path filePath = saveAsRecord(entityName, mapResult, fileType, translations);            
             return filePath == null? null : filePath.toString();
         }
         return null;
@@ -69,10 +68,15 @@ public class CsvGenericExportManager {
      * @param fileType
      * @return
      */
-    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType) {        
+    private Path saveAsRecord(String fileName, List<Map<String, Object>> records, String fileType, Map<String, String> translations) {        
         String extensionFile = ".csv";
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
         		.appendLiteral('-').appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).appendValue(SECOND_OF_MINUTE, 2).toFormatter();
+        
+        if(translations == null) {
+        	translations = Collections.emptyMap();
+        }
+        
         try {
         	String time = LocalDateTime.now().format(formatter);
         	//CSV
@@ -81,7 +85,7 @@ public class CsvGenericExportManager {
                     Files.createDirectories(Path.of(saveDirectory));
                 }
                 File csvFile = new File(saveDirectory + fileName + time + extensionFile);
-                writeCsvFile(records, csvFile);
+                writeCsvFile(records, csvFile, translations);
                 return Path.of(saveDirectory, fileName + time + extensionFile);
             }
             //EXCEL
@@ -91,7 +95,7 @@ public class CsvGenericExportManager {
                 }
                 extensionFile = ".xlsx";
                 File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
-                writeExcelFile(outputExcelFile, records);
+                writeExcelFile(outputExcelFile, records, translations);
                 return Path.of(saveDirectory + fileName + time + extensionFile);
             }
             if(fileType.equalsIgnoreCase("pdf")) {
@@ -100,7 +104,7 @@ public class CsvGenericExportManager {
                 }
                 extensionFile = ".pdf";
                 File outputExcelFile = new File(saveDirectory + fileName + time + extensionFile);
-                writePdfFile(outputExcelFile, records);
+                writePdfFile(outputExcelFile, records, translations);
                 return Path.of(saveDirectory + fileName + time + extensionFile);
             }
         } catch (IOException | DocumentException e) {
@@ -109,18 +113,20 @@ public class CsvGenericExportManager {
         return null;
     }
 
+    
+
     /**
      * 
      * @param records
      * @param csvFile
      * @throws IOException
      */
-	private void writeCsvFile(List<Map<String, Object>> records, File csvFile) throws IOException {
+	private void writeCsvFile(List<Map<String, Object>> records, File csvFile, Map<String, String> translations) throws IOException {
 		CsvBuilder csv = new CsvBuilder();
 		for(Map<String,Object> item : records) {
 			for(Entry<String,Object> entry : item.entrySet()) {
 				//Header
-				csv.appendValue(entry.getKey());
+				csv.appendValue(translations.getOrDefault(entry.getKey(), entry.getKey()));
 			}
 			break;
 		}
@@ -147,13 +153,11 @@ public class CsvGenericExportManager {
      * @param CSVLineRecords
      * @throws IOException
      */
-    private void writeExcelFile(File file, List<Map<String, Object>> CSVLineRecords) throws IOException {
-        FileWriter fw = new FileWriter(file, true); 
-        BufferedWriter bw = new BufferedWriter(fw);
+    private void writeExcelFile(File file, List<Map<String, Object>> CSVLineRecords, Map<String, String> translations) throws IOException {
         var wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         int i = 0;
-              
+        
         if (CSVLineRecords != null && !CSVLineRecords.isEmpty()) {
         	Cell cell;
         	var rowHeader = sheet.createRow(i++);
@@ -161,8 +165,8 @@ public class CsvGenericExportManager {
 	    		int column = 0;
 	    		for(Entry<String,Object> entry : item.entrySet()) {
 	    			//Header
-	    		    cell = rowHeader.createCell(column++);
-	    		    cell.setCellValue(entry.getKey()); 
+	    		    cell = rowHeader.createCell(column);
+	    		    cell.setCellValue(translations.getOrDefault(entry.getKey(), entry.getKey())); 
 	    		    column++;
 	    		}
 	    	}
@@ -172,7 +176,7 @@ public class CsvGenericExportManager {
 		        int column = 0;
 		        for(Entry<String,Object> entry : item.entrySet()) {
 		        	
-                    cell = rowHeader.createCell(column++);
+                    cell = rowHeader.createCell(column);
                     cell.setCellValue(entry.getValue().toString());
                     column++;
 		            }
@@ -184,24 +188,24 @@ public class CsvGenericExportManager {
         }
     }
     
-    private void writePdfFile(File file, List<Map<String, Object>> lineRecords) throws IOException, DocumentException{
+    private void writePdfFile(File file, List<Map<String, Object>> lineRecords, Map<String, String> translations) throws IOException, DocumentException{
         if(!CollectionUtils.isEmpty(lineRecords)) {
             Document doc = new Document();
             PdfWriter.getInstance(doc, new FileOutputStream(file));
             doc.open();
             final PdfPTable table = new PdfPTable(lineRecords.get(0).size());
             table.setWidthPercentage(100);
-            addColumns(lineRecords.get(0).keySet(), table);
+            addColumns(lineRecords.get(0).keySet(), table, translations);
             lineRecords.forEach(map -> addRows(map, table));
             doc.add(table);
             doc.close();
         }
     }
     
-    private void addColumns(Set<String> columns, PdfPTable table) {
+    private void addColumns(Set<String> columns, PdfPTable table, Map<String, String> translations) {
         columns.forEach(column -> {
             PdfPCell header = new PdfPCell();
-            header.setPhrase(new Phrase(column));
+            header.setPhrase(new Phrase(translations.getOrDefault(column, column)));
             table.addCell(header);
         });
     }

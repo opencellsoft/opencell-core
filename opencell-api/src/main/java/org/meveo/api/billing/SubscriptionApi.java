@@ -35,8 +35,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -108,6 +108,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -155,6 +156,7 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -281,7 +283,7 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private PaymentMethodService paymentMethodService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -306,6 +308,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private AttributeInstanceService attributeInstanceService;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -480,6 +485,11 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        if(postData.isRenewed() == true)
+        {
+            auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, null, "true" );
+
+        }
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -999,6 +1009,12 @@ public class SubscriptionApi extends BaseApi {
                         attributeInstanceDto.getAttributeCode(), Attribute.class));
                 attributeInstance.setServiceInstance(serviceInstance);
                 attributeInstance.setSubscription(subscription);
+
+                attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+                attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+                attributeInstance.setBooleanValue(attributeInstanceDto.getBooleanValue());
+                attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+
                 Auditable auditable = new Auditable();
                 auditable.setCreated(new Date());
                 attributeInstance.setAuditable(auditable);
@@ -2683,6 +2699,10 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData, List<String> cfsToCopy) {
+    	return createSubscriptionWithoutCheckOnCodeExistence(postData, cfsToCopy, true);
+    }
+    
+    private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData, List<String> cfsToCopy, boolean notifyCreation) {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             postData.setSubscriptionDate(new Date());
         }
@@ -2817,7 +2837,12 @@ public class SubscriptionApi extends BaseApi {
         } else {
             subscription.setStatus(SubscriptionStatusEnum.CREATED);
         }
-        subscriptionService.create(subscription);
+
+        if(notifyCreation) {        	
+        	subscriptionService.create(subscription);
+        } else {
+        	subscriptionService.createWithoutNotif(subscription);
+        }
         subscriptionService.getEntityManager().flush();
         userAccount.getSubscriptions().add(subscription);
 
@@ -2979,7 +3004,7 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
 
-        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy());
+        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy(), false);
 
         //if should not reengage customer then the end agreement date of new version should take the one of the old version,
         // else recalculate end agreement date of new version based on new offer auto end of engagement config
@@ -3068,7 +3093,7 @@ public class SubscriptionApi extends BaseApi {
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        versionRemovedEvent.fire(lastSubscription);
+        versionRemovedEvent.fire((Subscription) Hibernate.unproxy(lastSubscription));
     }
 
     private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
@@ -3095,18 +3120,20 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
         }
 
-
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
                     OrderAttribute orderAttribute = new OrderAttribute();
-                    if(ai.getOrderAttributeCode()!=null) {
-                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
-                    orderAttribute.setAttribute(attribute);
-                    orderAttribute.setStringValue(ai.getStringValue());
-                    orderAttribute.setDoubleValue(ai.getDoubleValue());
-                    orderAttribute.setDateValue(ai.getDateValue());
-                    orderAttribute.setBooleanValue(ai.getBooleanValue());
+                    String attributeCode = ai.getAttributeCode() != null ? ai.getAttributeCode() : ai.getOrderAttributeCode() != null ? ai.getOrderAttributeCode() : null;
+                    
+                    if(attributeCode != null) {
+                    	Attribute attribute = loadEntityByCode(attributeService, attributeCode, Attribute.class);
+                    	orderAttribute.setAttribute(attribute);
+	                    orderAttribute.setStringValue(ai.getStringValue());
+	                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+	                    orderAttribute.setDateValue(ai.getDateValue());
+	                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                     }
+                    
                     return orderAttribute;
 
                     })

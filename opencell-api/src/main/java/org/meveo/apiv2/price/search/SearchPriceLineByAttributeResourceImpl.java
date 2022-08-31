@@ -90,7 +90,7 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
             case "boolean":
                 return "(ppmv2.booleanValue = " + Boolean.valueOf(value.toString())+ " OR ppmv2.booleanValue IS NULL)";
            case "date":
-                return "(ppmv2.dateValue = " + parseDate(value)+ " OR ppmv2.dateValue IS NULL)";
+                return "(ppmv2.dateValue = '" + new java.sql.Date(parseDate(value).getTime())+ "' OR ppmv2.dateValue IS NULL)";
            default:
                 return "stringValue = ''";
         }
@@ -99,7 +99,8 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     private Date parseDate(Object value) {
         if(value instanceof String) {
             try {
-                return ((String) value).matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value)) : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(value));
+                return ((String) value).matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value))
+                        : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(value));
             } catch (ParseException e) {
                 throw new IllegalArgumentException("date attribute has not a valid filter value, hint : yyyy-MM-dd or dd/MM/yyyy");
             }

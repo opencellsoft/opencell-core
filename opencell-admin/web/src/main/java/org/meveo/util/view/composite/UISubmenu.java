@@ -1,7 +1,8 @@
 package org.meveo.util.view.composite;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.faces.component.UIComponent;
@@ -17,15 +18,17 @@ public class UISubmenu extends org.primefaces.component.submenu.UISubmenu {
 
         boolean accessible = super.isRendered();
 
-        List<String> outcomes = getChildrenOutcomes(getChildren());
-        PageAccessHandler pageAccessHandler = (PageAccessHandler) CDI.current().select(PageAccessHandler.class).get();
-        accessible = accessible && pageAccessHandler.isOutcomeAccesible(AccessScopeEnum.LIST.getHttpMethod(), outcomes.toArray(new String[0]));
+        Set<String> outcomes = getChildrenOutcomes(getChildren());
+        if (!outcomes.isEmpty()) {
+            PageAccessHandler pageAccessHandler = (PageAccessHandler) CDI.current().select(PageAccessHandler.class).get();
+            accessible = accessible && pageAccessHandler.isOutcomeAccesible(AccessScopeEnum.LIST.getHttpMethod(), outcomes.toArray(new String[0]));
+        }
         return accessible;
     }
 
-    private List<String> getChildrenOutcomes(List<UIComponent> children) {
+    private Set<String> getChildrenOutcomes(List<UIComponent> children) {
 
-        List<String> outcomes = new ArrayList<String>();
+        Set<String> outcomes = new HashSet<String>();
         for (UIComponent child : children) {
             if (child instanceof UIMenuItem) {
                 outcomes.add(((UIMenuItem) child).getOutcome());

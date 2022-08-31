@@ -108,7 +108,7 @@ public class RoleService extends PersistenceService<Role> {
     }
 
     /**
-     * Create a role in Keycloak and then in Opencell.
+     * Create a role in Keycloak and then in Opencell. An attempt to create a role again will be ignored and will act as assignment only to a parent role.
      */
     @Override
     public void create(Role role) throws BusinessException {

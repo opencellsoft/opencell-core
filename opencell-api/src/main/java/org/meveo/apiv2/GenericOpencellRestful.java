@@ -16,6 +16,10 @@ import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -74,12 +78,12 @@ import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.media.file.upload.FileUploadResourceImpl;
 import org.meveo.apiv2.mediation.impl.MediationSettingResourceImpl;
 import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteResourceImpl;
+import org.meveo.apiv2.ordering.resource.openorder.OpenOrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.openOrderTemplate.OpenOrderTemplateResourceImpl;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.payments.resource.PaymentPlanResourceImpl;
-import org.meveo.apiv2.price.search.SearchPriceLineByAttributeResourceImpl;
 import org.meveo.apiv2.price.search.SearchPriceLineByAttributeResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
@@ -92,8 +96,6 @@ import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceIm
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
-
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 
 @ApplicationPath("/api/rest/v2")
 public class GenericOpencellRestful extends Application {
@@ -111,6 +113,8 @@ public class GenericOpencellRestful extends Application {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    public static OpenAPI openAPIv2;
+
     @PostConstruct
     public void init() {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
@@ -118,6 +122,7 @@ public class GenericOpencellRestful extends Application {
         GENERIC_API_REQUEST_EXTRACT_LIST = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY, "true"));
         loadVersionInformation();
         loadEntitiesList();
+        loadOpenAPI();
     }
 
     @Override
@@ -127,7 +132,7 @@ public class GenericOpencellRestful extends Application {
                 MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
                 EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class,
                 EntityDoesNotExistsExceptionMapper.class,
-                OpenApiResource.class, DocumentResourceImpl.class,
+                DocumentResourceImpl.class,
                 GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
                 OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class, ReportingResourceImpl.class,
                 ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class, AccountingPeriodResourceImpl.class,
@@ -141,9 +146,9 @@ public class GenericOpencellRestful extends Application {
                 RollbackOnErrorExceptionMapper.class, ProviderResourceImpl.class, ImportExportResourceImpl.class,
                 DunningCollectionPlanResourceImpl.class, AccountReceivableDeferralPaymentsResourceImpl.class,
                         FinanceSettingsResourceImpl.class, SecurityDepositTemplateResourceImpl.class, SecurityDepositResourceImpl.class, UserAccountsResourceImpl.class,
-                        OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class,
+                        OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class, Apiv2SwaggerGeneration.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
-                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class, SearchPriceLineByAttributeResourceImpl.class)
+                        OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class, SearchPriceLineByAttributeResourceImpl.class, OpenOrderResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
@@ -190,6 +195,19 @@ public class GenericOpencellRestful extends Application {
             listEntities.add(entry.getValue().getSimpleName());
         }
         ENTITIES_MAP.put("entities", listEntities);
+    }
+
+    private void loadOpenAPI() {
+        try {
+            OpenApiContext ctx = new JaxrsOpenApiContextBuilder<>()
+                    .ctxId("apiv2")
+                    .configLocation("/openapi-configuration-apiv2.json")
+                    .buildContext(true);
+
+            openAPIv2 = ctx.read();
+        } catch (OpenApiConfigurationException e) {
+            log.error("OpenApiConfigurationException : {}", e.getMessage());
+        }
     }
 
     public boolean shouldExtractList() {

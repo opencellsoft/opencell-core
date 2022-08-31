@@ -370,7 +370,10 @@ public class PaymentService extends PersistenceService<Payment> {
                         matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
                         doPaymentResponseDto.setMatchingCreated(true);
                     } catch (Exception e) {
-                        log.warn("Cant create matching :", e);
+                        log.error(e.getMessage(), e);
+                        if (e instanceof NoAllOperationUnmatchedException) {
+                            throw new PaymentException(PaymentErrorEnum.AO_ALREADY_MATCHED, "Cannot create refund for a matched payment");
+                        }
                     }
                 }
             } 
@@ -435,7 +438,7 @@ public class PaymentService extends PersistenceService<Payment> {
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
 
-			paymentHistoryService.addHistoryInNewTransaction(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, doPaymentResponseDto.getPaymentStatus(),doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
                     doPaymentResponseDto.getPaymentID(), errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {

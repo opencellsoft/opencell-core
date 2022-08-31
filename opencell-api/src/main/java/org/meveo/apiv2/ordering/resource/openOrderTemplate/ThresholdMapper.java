@@ -46,6 +46,12 @@ public class ThresholdMapper extends ResourceMapper<ThresholdInput, Threshold> {
         return entities.stream().map(this::toResource).collect(Collectors.toList());
     }
 
+    public List<Threshold>  toEntities(List<ThresholdInput> resources)
+    {
+        if(resources == null || resources.isEmpty()) return null;
+        return resources.stream().map(this::toEntity).collect(Collectors.toList());
+    }
+
     @Override
     public Threshold toEntity(ThresholdInput input) {
 

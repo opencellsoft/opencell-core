@@ -1,17 +1,17 @@
 package org.meveo.service.order;
 
+import static java.math.BigDecimal.ZERO;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.meveo.model.ordering.OpenOrderStatusEnum.*;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -23,6 +23,8 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.settings.OpenOrderSetting;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
@@ -30,9 +32,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.ordering.*;
-
-import java.util.Date;
-import java.util.Optional;
 
 @Stateless
 public class OpenOrderService extends BusinessService<OpenOrder> {
@@ -42,6 +41,10 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
 	/**
 	 * Find Open orders compatible with InvoiceLine in parameter.
@@ -100,7 +103,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 	 * Check and retrieve available OpenOrder for given Billing account and article
 	 * 
 	 * @param billingAccount
-	 * @param product
+	 * @param article
 	 * @param eventDate
 	 * @return
 	 */
@@ -155,8 +158,8 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         if (openOrder.getThresholds() != null) {
             openOrder.setThresholds(new ArrayList<>(openOrderQuote.getThresholds()));
         }
-        openOrder.setArticles(buildArticles(openOrderQuote.getArticles()).orElse(null));
-        openOrder.setProducts(buildProducts(openOrderQuote.getProducts()).orElse(null));
+        buildArticles(openOrder, openOrderQuote.getArticles());
+        buildProducts(openOrder, openOrderQuote.getProducts());
         openOrder.setActivationDate(openOrderQuote.getActivationDate());
         openOrder.setEndOfValidityDate(openOrderQuote.getEndOfValidityDate());
         attachNestedEntities(openOrder);
@@ -221,23 +224,33 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         }
     }
 
-    private Optional<List<AccountingArticle>> buildArticles(List<OpenOrderArticle> openOrderArticles) {
-        if(openOrderArticles != null && !openOrderArticles.isEmpty()) {
-            return of(openOrderArticles.stream()
-                            .map(OpenOrderArticle::getAccountingArticle)
-                            .collect(toList()));
-        } else {
-            return empty();
+    private void buildArticles(OpenOrder openOrder, List<OpenOrderArticle> openOrderArticles) {
+        if (openOrderArticles != null && !openOrderArticles.isEmpty()) {
+            List<OpenOrderArticle> oorArticles = new ArrayList<>();
+            openOrderArticles.forEach(ooqArticle -> {
+                OpenOrderArticle oorArticle = new OpenOrderArticle();
+                oorArticle.setAccountingArticle(ooqArticle.getAccountingArticle());
+                oorArticle.updateAudit(currentUser);
+                oorArticle.setOpenOrderTemplate(ooqArticle.getOpenOrderTemplate());
+                oorArticles.add(oorArticle);
+            });
+
+            openOrder.setArticles(oorArticles);
         }
     }
 
-    private Optional<List<Product>> buildProducts(List<OpenOrderProduct> openOrderProducts) {
-        if(openOrderProducts != null && !openOrderProducts.isEmpty()) {
-            return of(openOrderProducts.stream()
-                            .map(OpenOrderProduct::getProduct)
-                            .collect(toList()));
-        } else {
-            return empty();
+    private void buildProducts(OpenOrder openOrder, List<OpenOrderProduct> openOrderProducts) {
+        if (openOrderProducts != null && !openOrderProducts.isEmpty()) {
+            List<OpenOrderProduct> oorProducts = new ArrayList<>();
+            openOrderProducts.forEach(ooqProduct -> {
+                OpenOrderProduct oorProduct = new OpenOrderProduct();
+                oorProduct.setProduct(ooqProduct.getProduct());
+                oorProduct.updateAudit(currentUser);
+                oorProduct.setOpenOrderTemplate(ooqProduct.getOpenOrderTemplate());
+                oorProducts.add(oorProduct);
+            });
+
+            openOrder.setProducts(oorProducts);
         }
     }
 
@@ -248,11 +261,53 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         if(openOrder.getThresholds() != null && !openOrder.getThresholds().isEmpty()) {
             openOrder.getThresholds().forEach(threshold -> threshold.setOpenOrder(openOrder));
         }
-        if(openOrder.getArticles() != null && !openOrder.getArticles().isEmpty()) {
-            openOrder.getArticles().forEach(article -> article.setOpenOrder(openOrder));
+    }
+
+    /**
+     * List open orders by status a given status list
+     * @param status
+     * @return Open order ids list
+     */
+    public List<Long> listOpenOrderIdsByStatus(List<OpenOrderStatusEnum> status) {
+        if(status == null || status.isEmpty()) {
+            return emptyList();
         }
-        if(openOrder.getProducts() != null && !openOrder.getProducts().isEmpty()) {
-            openOrder.getProducts().forEach(product -> product.setOpenOrder(openOrder));
+        return getEntityManager().createNamedQuery("OpenOrder.ListOOIdsByStatus")
+                    .setParameter("status", status)
+                    .getResultList();
+    }
+
+    /**
+     * Update openOder status based on activation date / end of validity date / balance
+     * @param openOrder
+     * @return updated open order
+     */
+    public OpenOrder changeStatus(OpenOrder openOrder) {
+        Date today = setTimeToZero(new Date());
+        OpenOrderStatusEnum initialStatus = openOrder.getStatus();
+        if (today.compareTo(setTimeToZero(openOrder.getActivationDate())) >= 0) {
+            openOrder.setStatus(IN_USE);
+        }
+        if(openOrder.getEndOfValidityDate() != null && today.compareTo(openOrder.getEndOfValidityDate()) > 0) {
+            openOrder.setStatus(EXPIRED);
+        }
+        if(openOrder.getBalance().compareTo(ZERO) == 0) {
+            openOrder.setStatus(SOLD_OUT);
+        }
+        if(initialStatus != openOrder.getStatus()) {
+            update(openOrder);
+        }
+        return openOrder;
+    }
+
+    public OpenOrder findByOpenOrderNumber(String openOrderNumber) {
+        try {
+            return (OpenOrder) getEntityManager()
+                                .createNamedQuery("OpenOrder.findByOpenOrderNumber")
+                                .setParameter("openOrderNumber", openOrderNumber)
+                                .getSingleResult();
+        } catch (Exception exception) {
+            return null;
         }
     }
 }

@@ -86,6 +86,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	
 	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
 	
+	@Transactional
 	@Override
 	public Response getInvoice(Long id, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);

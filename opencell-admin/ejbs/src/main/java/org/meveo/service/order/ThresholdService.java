@@ -16,7 +16,9 @@ public void deleteThresholdsByOpenOrderTemplateId(Long id)
 				.executeUpdate();
 }
 
-
-
-
+	public void deleteThresholdsByOpenOrderId(Long id) {
+		getEntityManager().createNamedQuery("Threshold.deleteByOpenOrder")
+				.setParameter("openOrderId", id)
+				.executeUpdate();
+	}
 }
