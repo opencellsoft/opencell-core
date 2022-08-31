@@ -277,23 +277,41 @@ public class CommercialOrderApi extends BaseApi {
 		if(orderDto.getId() == null)
 			missingParameters.add("id");
 		handleMissingParameters();
-		final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
-		if(order == null)
+final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
+		
+		if(order == null) {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
+		}
+		
+		//Get the administration roles
+        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
+			
+        //Check if the status completed or validate, if yes check if the user is admin to update the salesPerosnName
+		if(CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus()) || CommercialOrderEnum.VALIDATED.toString().equals(order.getStatus())) {
+	        if(!isAdmin) {
+	        	if(!orderDto.getSalesPersonName().equalsIgnoreCase(order.getSalesPersonName())) {
+	        		throw new MeveoApiException("The SalesPersonName can not be updated if the status of the order is " + order.getStatus() + " and the user is not admin");
+	        	}
+	        } else {
+	            order.setSalesPersonName(orderDto.getSalesPersonName());
+	            commercialOrderService.update(order);
+	    		CommercialOrderDto dto = new CommercialOrderDto(order);
+	    		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+	    		return dto;       	
+	        }
+		}
+		
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
 			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
 		
-		//Check if the CommercialOrder is FINALIZED or COMPLETED then check if the user is admin 
-        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
-        
-        if((CommercialOrderEnum.FINALIZED.toString().equals(order.getStatus()) || CommercialOrderEnum.COMPLETED.toString().equals(order.getStatus())) && !isAdmin) {
-        	throw new MeveoApiException("The CommercialOrder can not be updated if the status is " + order.getStatus() + " and the user is not admin");
-        } else {
-        	//Update the sales person name in CommercialOrder
-        	order.setSalesPersonName(orderDto.getSalesPersonName());
-        }
-        
+		//Check if the status is finalized and the user is admin and salesPersonName is updated
+		if(CommercialOrderEnum.FINALIZED.toString().equals(order.getStatus()) && !isAdmin && !orderDto.getSalesPersonName().equalsIgnoreCase(order.getSalesPersonName())) {
+			throw new MeveoApiException("The SalesPersonName can not be updated if the status of the order is " + order.getStatus() + " and the user is not admin");
+		}
+		
+		order.setSalesPersonName(orderDto.getSalesPersonName());
+		        
 		if(!Strings.isEmpty(orderDto.getCode())){
 			order.setCode(orderDto.getCode());
 		}
