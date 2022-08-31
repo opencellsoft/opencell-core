@@ -6,7 +6,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.meveo.model.ordering.OpenOrderStatusEnum.*;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.ARTICLES;
 import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
@@ -25,9 +24,6 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
 import org.meveo.model.settings.OpenOrderSetting;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
@@ -44,10 +40,6 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
 
 	/**
 	 * Find Open orders compatible with InvoiceLine in parameter.
@@ -312,5 +304,18 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
         } catch (Exception exception) {
             return null;
         }
+    }
+
+    /**
+     * Update openOder initial amount
+     * @param id openOrder id
+     * @param currentBalance new amount to set
+     */
+    public void updateBalance(Long id, BigDecimal currentBalance) {
+        getEntityManager()
+                .createNamedQuery("OpenOrder.UpdateBalance")
+                .setParameter("balance", currentBalance)
+                .setParameter("id", id)
+                .executeUpdate();
     }
 }

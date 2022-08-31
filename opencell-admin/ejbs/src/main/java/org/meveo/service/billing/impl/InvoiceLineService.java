@@ -1124,4 +1124,22 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         return ofNullable(taxDetails);
     }
+
+    /**
+     * Invoiced amount by open order and billing account
+     * @param openOrderNumber open order number
+     * @param billingAccountId billing account id
+     * @return  invoiced amount
+     */
+    public BigDecimal invoicedAmountByOpenOrder(String openOrderNumber, Long billingAccountId) {
+        try {
+            BigDecimal invoicedAmount =  (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.sumAmountByOpenOrderNumberAndBA")
+                                                        .setParameter("openOrderNumber", openOrderNumber)
+                                                        .setParameter("billingAccountId", billingAccountId)
+                                                        .getSingleResult();
+            return invoicedAmount != null ? invoicedAmount : BigDecimal.ZERO;
+        } catch (NoResultException exception) {
+            return BigDecimal.ZERO;
+        }
+    }
 }

@@ -2,7 +2,6 @@ package org.meveo.model.billing;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.HALF_UP;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -116,7 +115,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
 		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)"),
-        @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)")
+        @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)"),
+        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId")
 
 	})
 public class InvoiceLine extends AuditableEntity {
