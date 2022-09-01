@@ -77,7 +77,7 @@ public class ProviderResourceImpl implements ProviderResource {
             throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
         }
         org.meveo.model.crm.Provider providerUpdateInfos = provider.toEntity();
-        if (provider.getEmail() == null) {
+        if (provider.getEmail() == null && providerByCode.getEmail() == null ) {
             throw new InvalidParameterException("provider's email is mandatory.");
         }
         if (provider.getDescription() != null) {
