@@ -18,6 +18,7 @@ import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.article.ArticleMappingLine, ArticleMappingLine> {
@@ -55,16 +56,14 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
         articleMappingLine.setMappingKelEL(resource.getMappingKeyEL());
-        OperatorEnum operator = resource.getAttributeOperator() == null ? OperatorEnum.AND : resource.getAttributeOperator();
-        articleMappingLine.setAttributeOperator(operator);
+        articleMappingLine.setAttributeOperator(Optional.ofNullable(resource.getAttributeOperator()).orElse(OperatorEnum.AND));
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
                     .map(attributeMapping -> {
                         Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
                         attribute.setCode(attributeMapping.getAttribute().getCode());
-                        RuleOperatorEnum ruleOperator = attributeMapping.getOperator() == null ? RuleOperatorEnum.EQUAL : attributeMapping.getOperator();
-                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), ruleOperator);
+                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), Optional.ofNullable(attributeMapping.getOperator()).orElse(RuleOperatorEnum.EQUAL));
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
