@@ -62,7 +62,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
         articleMappingLine.setMappingKeyEL(resource.getMappingKeyEL());
-        articleMappingLine.setAttributeOperator(resource.getAttributeOperator());
+        articleMappingLine.setAttributeOperator(Optional.ofNullable(resource.getAttributeOperator()).orElse(OperatorEnum.AND));
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
@@ -95,8 +95,6 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             articleMappingLine.setProduct(product);
         }
         articleMappingLine.setDescription(resource.getDescription());
-        // Add default values, waiting for Frontend and design technique for US INTRD-9233
-        articleMappingLine.setAttributeOperator(OperatorEnum.AND);
         return articleMappingLine;
     }
 
