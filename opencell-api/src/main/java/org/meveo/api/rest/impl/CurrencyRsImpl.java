@@ -22,6 +22,7 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.ImportExchangeRatesDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
@@ -202,4 +203,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         }
         return result;
     }
+
+
+    
 }

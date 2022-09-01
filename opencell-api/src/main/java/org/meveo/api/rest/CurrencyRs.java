@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest;
 
+import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;
@@ -50,7 +53,7 @@ import javax.ws.rs.core.Response;
  **/
 @Path("/currency")
 @Tag(name = "Currency", description = "@%Currency")
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.MULTIPART_FORM_DATA })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface CurrencyRs extends IBaseRs {
@@ -317,4 +320,18 @@ public interface CurrencyRs extends IBaseRs {
     })
     ActionStatus removeExchangeRateById(@Parameter(description = "id of the exchange rate", required = true) @PathParam("id") Long id);
 
+    
+	@POST
+    @Path("/importExchangeRate")
+    @Operation(summary = "API to import an exchange Rate from a file",
+            tags = { "ImportExchangeRate" },
+            description = "Import an exchange Rate from a file",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(responseCode = "400", description = "Failed action"),
+                    @ApiResponse(responseCode = "404", description = "Entity does not exist."),
+                    @ApiResponse(responseCode = "412", description = "Missing parameters")
+            })
+    @Consumes(MULTIPART_FORM_DATA)
+    Response importExchangeRate(MultipartFormDataInput input);
 }
