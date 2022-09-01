@@ -107,6 +107,7 @@
             "opencell-web": [
               "apiAdministrateur",
               "administrateur",
+              "apiSuperAdministrateur",
               "inboundAccess"
             ],
             "opencell-portal": [
