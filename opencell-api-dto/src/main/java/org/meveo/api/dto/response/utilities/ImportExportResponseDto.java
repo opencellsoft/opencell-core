@@ -20,6 +20,7 @@ package org.meveo.api.dto.response.utilities;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -50,6 +51,9 @@ public class ImportExportResponseDto extends BaseResponse {
 
     /** Stores a list of field names that were not imported because of differences between original and current model - fields do not exist in current model. */
     private Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported = null;
+
+    /** Imported DATA */
+    private List<ImportResultDto> importResultDto;
 
     /** Occurred exception. */
     private String exceptionMessage;
@@ -208,7 +212,26 @@ public class ImportExportResponseDto extends BaseResponse {
     public void setFieldsNotImported(Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported) {
         this.fieldsNotImported = fieldsNotImported;
     }
+
     /**
+     * Gets the imported data
+     * 
+     * @return the imported data
+     */
+    public List<ImportResultDto> getImportResultDto() {
+		return importResultDto;
+	}
+
+    /**
+     * Sets the imported data
+     * 
+     * @param importResultDto the imported data
+     */
+	public void setImportResultDto(List<ImportResultDto> importResultDto) {
+		this.importResultDto = importResultDto;
+	}
+
+	/**
      * To string.
      *
      * @param collection collection
