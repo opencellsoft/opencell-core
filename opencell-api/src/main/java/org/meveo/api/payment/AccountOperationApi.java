@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -46,6 +47,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
@@ -78,6 +86,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * @lastModifiedVersion 8.0.0
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountOperationApi extends BaseApi {
 
     /** The customer account service. */
@@ -264,6 +273,9 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = {
+            @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
@@ -295,6 +307,7 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public AccountOperationsResponseDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -474,6 +487,8 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operation dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationDto find(Long id) throws MeveoApiException {
         AccountOperation ao = accountOperationService.findById(id);
         if (ao != null) {

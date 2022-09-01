@@ -202,6 +202,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         setTransactionDate(accountOp.getTransactionDate());
         setTransactionCategory(accountOp.getTransactionCategory());
         setReference(accountOp.getReference());
+        setCustomerAccount(accountOp.getCustomerAccount().getCode());
         if (accountOp.getAccountingCode() != null) {
             setAccountingCode(accountOp.getAccountingCode().getCode());
             setAccountCode(accountOp.getAccountingCode().getCode());
