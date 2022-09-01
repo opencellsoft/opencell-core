@@ -106,7 +106,8 @@
           "client": {
             "opencell-web": [
               "apiAdministrateur",
-              "administrateur"
+              "administrateur",
+              "inboundAccess"
             ],
             "opencell-portal": [
               "PORTAL_USER",
