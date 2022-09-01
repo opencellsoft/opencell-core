@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -51,11 +52,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -98,6 +101,7 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion 8.0.0
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountOperationApi extends BaseApi {
 
     /** The customer account service. */
@@ -115,10 +119,10 @@ public class AccountOperationApi extends BaseApi {
     /** The matching amount service. */
     @Inject
     private MatchingAmountService matchingAmountService;
-    
+
     @Inject
     private AccountingCodeService accountingCodeService;
-    
+
     @Inject
     private JournalReportService journalService;
 
@@ -218,7 +222,7 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.setAccountingCode(accountingCode);
             } 
         }
-        
+
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setAmount(postData.getAmount());
         accountOperation.setMatchingAmount(postData.getMatchingAmount());
@@ -241,7 +245,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
         accountOperation.setCollectionDate(postData.getCollectionDate() == null ? postData.getBankCollectionDate() : postData.getCollectionDate());
-        
+
         if (!StringUtils.isBlank(postData.getJournalCode())) {
         	Journal journal = journalService.findByCode(postData.getJournalCode());
             if (journal == null) {
@@ -264,7 +268,7 @@ public class AccountOperationApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         accountOperationService.handleAccountingPeriods(accountOperation);
         accountOperationService.create(accountOperation);
 
@@ -317,7 +321,8 @@ public class AccountOperationApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = AccountOperation.class) })
+    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = {
+            @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
@@ -498,7 +503,7 @@ public class AccountOperationApi extends BaseApi {
         if (!customerAccount.getAccountOperations().contains(accountOperation)) {
             throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
         }
-        
+
     }
 
     /**
@@ -532,6 +537,8 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operation dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationDto find(Long id) throws MeveoApiException {
         AccountOperation ao = accountOperationService.findById(id);
         if (ao != null) {
@@ -630,7 +637,7 @@ public class AccountOperationApi extends BaseApi {
         }
         accountOperation.setAccountingDate(accountingDate);
         accountOperation.setReason(AccountOperationRejectionReason.FORCED);
-        
+
         return accountOperationService.update(accountOperation);
     }
 
@@ -659,6 +666,6 @@ public class AccountOperationApi extends BaseApi {
         } else {
         	throw new ConflictException("not possible to change accountOperation status from '"+accountOperation.getStatus()+"' to '"+newStatus+"'");
         }
-		
+
 	}
 }
