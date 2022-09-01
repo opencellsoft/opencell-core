@@ -3571,6 +3571,82 @@
 			"name": "Perf_test_jobs",
 			"item": [
 				{
+					"name": "Reset configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.superadmin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.superadmin",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"property\": \"cache.cacheCFT\",\r\n    \"value\": \"false\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/configurations",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"configurations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "SCRIPT|CreateAccess|Creates Mail Notification",
 					"event": [
 						{
@@ -4167,7 +4243,7 @@
 					"response": []
 				},
 				{
-					"name": "Create|code=CRM_GEN_JOB Copy",
+					"name": "Create|code=CRM_GEN_JOB",
 					"event": [
 						{
 							"listen": "test",
