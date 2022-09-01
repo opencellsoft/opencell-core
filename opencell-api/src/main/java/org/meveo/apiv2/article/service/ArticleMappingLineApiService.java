@@ -194,6 +194,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
                 if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
                     throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
                 }
+                break;
             case TOTAL:
             case COUNT:
             case NUMERIC:
@@ -205,6 +206,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
                         RuleOperatorEnum.LESS_THAN, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
                     throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
                 }
+                break;
             case LIST_TEXT:
             case LIST_NUMERIC:
             case LIST_MULTIPLE_TEXT:
@@ -212,6 +214,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
                 if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
                     throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
                 }
+                break;
             case EXPRESSION_LANGUAGE:
             case INFO:
             default:

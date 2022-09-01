@@ -55,16 +55,16 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
         articleMappingLine.setMappingKelEL(resource.getMappingKeyEL());
-        articleMappingLine.setAttributeOperator(resource.getAttributeOperator());
+        OperatorEnum operator = resource.getAttributeOperator() == null ? OperatorEnum.AND : resource.getAttributeOperator();
+        articleMappingLine.setAttributeOperator(operator);
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
                     .map(attributeMapping -> {
                         Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
                         attribute.setCode(attributeMapping.getAttribute().getCode());
-						// return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), attributeMapping.getOperator());
-                        //  uncommend previous line and remove the following when Frontend and design technique for US INTRD-9233 are done
-                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), RuleOperatorEnum.EQUAL);
+                        RuleOperatorEnum ruleOperator = attributeMapping.getOperator() == null ? RuleOperatorEnum.EQUAL : attributeMapping.getOperator();
+                        return new AttributeMapping(attribute, attributeMapping.getAttributeValue(), ruleOperator);
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
@@ -88,8 +88,6 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             articleMappingLine.setProduct(product);
         }
 
-        // Add default values, waiting for Frontend and design technique for US INTRD-9233
-        articleMappingLine.setAttributeOperator(OperatorEnum.AND);
         return articleMappingLine;
     }
 
