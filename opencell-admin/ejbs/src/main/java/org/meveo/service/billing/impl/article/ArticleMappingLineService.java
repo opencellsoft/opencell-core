@@ -78,6 +78,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
 	        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
 	        articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
+			articleMappingLineUpdated.setAttributeOperator(articleMappingLine.getAttributeOperator());
 	        
 	        articleMappingLineUpdated.getAttributesMapping().clear();
 	        if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
@@ -154,6 +155,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case TOTAL:
 			case COUNT:
 			case NUMERIC:
@@ -165,6 +167,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 						RuleOperatorEnum.LESS_THAN, RuleOperatorEnum.LESS_THAN_OR_EQUAL)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case LIST_TEXT:
 			case LIST_NUMERIC:
 			case LIST_MULTIPLE_TEXT:
@@ -172,6 +175,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 				if (isNotOneOfOperator(givenOperator, RuleOperatorEnum.EQUAL, RuleOperatorEnum.NOT_EQUAL, RuleOperatorEnum.EXISTS)) {
 					throw new BusinessException(attribute.getAttributeType() + " Atttribut type cannot have operation : " + givenOperator);
 				}
+				break;
 			case EXPRESSION_LANGUAGE:
 			case INFO:
 			default:
