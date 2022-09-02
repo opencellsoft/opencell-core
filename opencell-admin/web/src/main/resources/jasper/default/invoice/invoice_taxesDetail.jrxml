@@ -102,7 +102,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12.5" isBold="false"/>
+						<font fontName="Arial" size="12.5" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Taxes et contributions]]></text>
 				</staticText>
@@ -118,7 +118,7 @@
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Montant 
 hors TVA]]></text>
@@ -130,7 +130,7 @@ hors TVA]]></text>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Taux de 
 TVA]]></text>
@@ -144,7 +144,7 @@ TVA]]></text>
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="8"/>
+						<font fontName="Arial" size="8"/>
 					</textElement>
 					<text><![CDATA[Total HT]]></text>
 				</staticText>
@@ -200,7 +200,7 @@ TVA]]></text>
 				<textField pattern="#,##0.00 €;-#,##0.00 €" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="492" y="1" width="63" height="27" forecolor="#FFFFFF" backcolor="#B41D0A" uuid="3529f84b-f379-4f2a-bdb6-58afdc9995d5"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10.5"/>
+						<font fontName="Arial" size="10.5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[""]]></textFieldExpression>
 				</textField>

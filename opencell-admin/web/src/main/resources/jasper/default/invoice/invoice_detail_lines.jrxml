@@ -174,7 +174,10 @@
 		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
 	</field>
 	<field name="unit" class="java.lang.String">
-		<fieldDescription><![CDATA[unit]]></fieldDescription>
+		<fieldDescription><![CDATA[unitPrice]]></fieldDescription>
+	</field>
+	<field name="amountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountTax]]></fieldDescription>
 	</field>
 	<field name="usageDate" class="java.lang.String">
 		<fieldDescription><![CDATA[usageDate]]></fieldDescription>
@@ -231,57 +234,57 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="314" y="4" width="60" height="30" forecolor="#013042" uuid="0514f96d-e493-442b-a218-8de78dae0706">
+					<reportElement x="282" y="4" width="60" height="30" forecolor="#013042" uuid="0514f96d-e493-442b-a218-8de78dae0706">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Period]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="374" y="4" width="40" height="30" forecolor="#013042" uuid="d1a0067b-4996-45c3-92e4-abece53d88c1">
+					<reportElement x="338" y="4" width="40" height="30" forecolor="#013042" uuid="d1a0067b-4996-45c3-92e4-abece53d88c1">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="414" y="4" width="40" height="30" forecolor="#013042" uuid="05f152ac-b0ee-4f4d-9ca8-f11d300eb24b">
+					<reportElement x="393" y="4" width="40" height="30" forecolor="#013042" uuid="05f152ac-b0ee-4f4d-9ca8-f11d300eb24b">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Unit]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="454" y="4" width="40" height="30" forecolor="#013042" uuid="2992a0e3-c179-435b-8439-2afb339fe801">
+					<reportElement x="445" y="4" width="40" height="30" forecolor="#013042" uuid="2992a0e3-c179-435b-8439-2afb339fe801">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Price w/o
 Tax]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="494" y="4" width="40" height="30" forecolor="#013042" uuid="2f52820d-815c-4777-b35d-ee38fe6f50c4">
+					<reportElement x="491" y="4" width="40" height="30" forecolor="#013042" uuid="2f52820d-815c-4777-b35d-ee38fe6f50c4">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="7"/>
+						<font fontName="Arial" size="7"/>
 					</textElement>
 					<text><![CDATA[Tax]]></text>
 				</staticText>
@@ -310,7 +313,7 @@ Tax]]></text>
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="8"/>
+						<font fontName="Arial" size="8"/>
 					</textElement>
 					<text><![CDATA[Total
 w/o Tax]]></text>
@@ -328,7 +331,7 @@ w/o Tax]]></text>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12.5" isBold="false"/>
+						<font fontName="Arial" size="12.5" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Taxes et contributions]]></text>
 				</staticText>
@@ -340,7 +343,7 @@ w/o Tax]]></text>
 		<groupHeader>
 			<band height="20">
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="2" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="374" y="0" width="40" height="15" isPrintWhenDetailOverflows="true" uuid="e0af6223-26d1-4cfa-a956-382e45a88ded"/>
+					<reportElement positionType="Float" x="341" y="0" width="40" height="15" isPrintWhenDetailOverflows="true" uuid="e0af6223-26d1-4cfa-a956-382e45a88ded"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -362,22 +365,22 @@ w/o Tax]]></text>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.000000").format(Double.valueOf($V{amountWithoutTax_1}))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="MMM-yy" isBlankWhenNull="true">
-					<reportElement x="314" y="0" width="58" height="15" uuid="a3729a4b-61ce-4e22-8dc7-177cd79b03e2"/>
+					<reportElement x="282" y="0" width="58" height="15" uuid="a3729a4b-61ce-4e22-8dc7-177cd79b03e2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").parse($F{usageDate})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="2" pattern="###0.0" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="494" y="0" width="40" height="15" isPrintWhenDetailOverflows="true" uuid="720b0a0c-ab58-47fe-acad-85f690554947"/>
+					<reportElement positionType="Float" x="491" y="0" width="40" height="15" isPrintWhenDetailOverflows="true" uuid="720b0a0c-ab58-47fe-acad-85f690554947"/>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{taxPercent}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{amountTax}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Transparent" x="454" y="0" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
+					<reportElement positionType="Float" mode="Transparent" x="445" y="0" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9" isBold="false"/>
@@ -391,7 +394,7 @@ w/o Tax]]></text>
 					</graphicElement>
 				</line>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="414" y="0" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="60b3330f-b794-40e2-bb15-3e1ec1ad0502"/>
+					<reportElement positionType="Float" x="393" y="0" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="60b3330f-b794-40e2-bb15-3e1ec1ad0502"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>

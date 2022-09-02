@@ -22,6 +22,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -155,6 +156,8 @@ public class ExportAccountsJobBean {
             dto.setElectronicBilling(ba.getElectronicBilling() + "");
             if(ba.getContactInformation() != null) {
                 dto.setEmail(ba.getContactInformation().getEmail() == null ? null : ba.getContactInformation().getEmail());
+                dto.setMobile(Optional.of(ba.getContactInformation().getMobile()).orElse(null));
+                dto.setPhone(Optional.of(ba.getContactInformation().getPhone()).orElse(null));
             }
             dto.setTradingCountryCode(ba.getTradingCountry() == null ? null : ba.getTradingCountry().getCountryCode());
             dto.setTradingLanguageCode(ba.getTradingLanguage() == null ? null : ba.getTradingLanguage().getLanguageCode());
