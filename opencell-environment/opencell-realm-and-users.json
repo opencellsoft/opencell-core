@@ -112,7 +112,17 @@
             ],
             "opencell-portal": [
               "PORTAL_USER",
-              "ADMIN"
+              "ADMIN",
+              "QUERY_MANAGER",
+              "MENU_QUOTES",
+              "ADVANCED_USER",
+              "QUERY_USER",
+              "FINANCE_MANAGER",
+              "CFO",
+              "C_CARE",
+              "SALES",
+              "PRODUCT/ADV",
+              "MARKETING_MANAGER"
             ]
           }
         },
@@ -2933,7 +2943,15 @@
               "opencell-portal": [
                 "QUERY_MANAGER",
                 "PORTAL_USER",
-                "MENU_QUOTES"
+                "MENU_QUOTES",
+                "ADVANCED_USER",
+                "QUERY_USER",
+                "FINANCE_MANAGER",
+                "CFO",
+                "C_CARE",
+                "SALES",
+                "PRODUCT/ADV",
+                "MARKETING_MANAGER"
               ]
             }
           },
