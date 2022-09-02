@@ -60,7 +60,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
     	query.setParameter("ilAmountWithTax", il.getAmountWithTax());
     	query.setParameter("status", OpenOrderStatusEnum.CANCELED);
     	query.setParameter("ilValueDate", il.getValueDate());
-    	query.setParameter("productId", ofNullable(il.getProductVersion()).map(ilp -> ilp.getProduct().getId()).orElse(null));
+    	query.setParameter("productId", ofNullable(il.getServiceInstance()).map(si -> si.getProductVersion()).map(pv -> pv.getProduct().getId()).orElse(null));
     	query.setParameter("articleId", ofNullable(il.getAccountingArticle()).map(ila -> ila.getId()).orElse(null));
     	
     	List<OpenOrder> result = query.getResultList();
