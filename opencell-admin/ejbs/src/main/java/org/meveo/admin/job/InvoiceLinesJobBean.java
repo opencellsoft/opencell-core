@@ -109,7 +109,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
-        queryBuilder.addSql(" a.status = 'OPEN' and a.billingRun IS NULL");
+        if (!billingRun.getFilters().containsKey("SQL")) {
+            queryBuilder.addSql(" a.status = 'OPEN' and a.billingRun IS NULL");
+        }
         billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
     }
 
