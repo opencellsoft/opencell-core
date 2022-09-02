@@ -94,8 +94,8 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
     }
     
     private void failedCDR(JobExecutionResultImpl jobExecutionResult, CDR cdr, CDRStatusEnum status) {
-        log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), cdr.getRejectReason());
-        jobExecutionResult.registerError("line=" + cdr.getLine() + ": " + cdr.getRejectReason());
+        log.error("Failed to process a CDR id = {}. Reason: {}", cdr.getId(), cdr.getRejectReason());
+        jobExecutionResult.registerError("id=" + cdr.getId() + ": " + cdr.getRejectReason());
         jobExecutionResult.unRegisterSucces();
         cdr.setStatus(status);
         rejectededCdrEventProducer.fire(cdr);
@@ -157,15 +157,15 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
                         .append(String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
                 }
                 errorReason = builder.toString();
-                log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), errorReason);
+                log.error("Failed to process a CDR id: {}, Reason: {}", cdr.getId(), errorReason);
             } else if (e instanceof CDRParsingException) {
-                log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), errorReason);
+                log.error("Failed to process a CDR id: {}, Reason: {}", cdr.getId(), errorReason);
             } else {
-                log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), errorReason, e);
+                log.error("Failed to process a CDR id: {}, Reason: {}", cdr.getId(), errorReason, e);
             }
 
 
-            jobExecutionResult.registerError("line=" + cdr.getLine() + ": " + errorReason);
+            jobExecutionResult.registerError("id=" + cdr.getId() + ": " + errorReason);
             cdr.setStatus(CDRStatusEnum.ERROR);
             cdr.setRejectReason(e.getMessage());
 
