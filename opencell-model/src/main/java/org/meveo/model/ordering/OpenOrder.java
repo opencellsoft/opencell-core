@@ -20,7 +20,7 @@ import java.util.List;
 @NamedQueries({
 		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products ooProducts left join oo.articles ooArticles"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
-				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
+				+ " AND (oo.endOfValidityDate is null OR oo.endOfValidityDate >= :ilValueDate) AND oo.activationDate <= :ilValueDate"
 				+ " AND (ooProducts.product.id = :productId or ooArticles.accountingArticle.id = :articleId)"),
 		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products ooProducts"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
