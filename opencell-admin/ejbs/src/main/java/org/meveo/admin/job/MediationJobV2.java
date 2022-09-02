@@ -56,18 +56,8 @@ public class MediationJobV2 extends Job {
 
     private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationJobV2";
 
-    private static final String MEDIATION_JOB_PARSER = "MediationJob_parser";
-
-    private static final String MEDIATION_JOB_READER = "MediationJob_reader";
-
-    private static final String MEDIATION_JOB_FILE_FORMAT = "MediationJob_fileFormat";
-
-    private static final String EMPTY_STRING = "";
-
-    private static final String TWO_POINTS_PARENT_DIR = "\\..";
-
     @Inject
-    private MediationJobBean mediationJobBean;
+    private MediationJobBeanV2 mediationJobBeanV2;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -77,100 +67,9 @@ public class MediationJobV2 extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-
-        Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
-
-//        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-//        String readerCode = reader != null ? reader.getCode() : null;
-//        
-//        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-//        String parserCode = parser != null ? parser.getCode() : null;
-        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-
-        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-        ParamBean parambean = paramBeanFactory.getInstance();
-        String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
-        ArrayList<String> cdrExtensions = new ArrayList<String>();
-        cdrExtensions.add(cdrExtension);
-
-        String inputDir = null;
-        String outputDir = null;
-        String rejectDir = null;
-        String archiveDir = null;
-        String mappingConf = null;
-        String recordName = null;
-        EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
-        FileFormat fileFormat = null;
-        if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
-            fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
-        }
-        String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator;
-        if (fileFormat != null) {
-            inputDir = meteringDir + fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            outputDir = meteringDir + fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            rejectDir = meteringDir + fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            archiveDir = meteringDir + fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            mappingConf = fileFormat.getConfigurationTemplate();
-            recordName = fileFormat.getRecordName();
-        } else {
-            meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
-            inputDir = meteringDir + "input";
-            outputDir = meteringDir + "output";
-            rejectDir = meteringDir + "reject";
-            archiveDir = meteringDir + "archive";
-        }
-        File f = new File(inputDir);
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        f = new File(outputDir);
-        if (!f.exists()) {
-            log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
-            log.debug("outputDir {} creation ok", outputDir);
-        }
-        f = new File(rejectDir);
-        if (!f.exists()) {
-            log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
-            log.debug("rejectDir {} creation ok", rejectDir);
-        }
-        f = new File(archiveDir);
-        if (!f.exists()) {
-            log.debug("archiveDir {} not exist", archiveDir);
-            f.mkdirs();
-            log.debug("archiveDir {} creation ok", archiveDir);
-        }
-
-        File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
-        if (files == null || files.length == 0) {
-            log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
-            return result;
-        }
-
-        for (File file : files) {
-            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
-                break;
-            }
-
-            // File might have been processed by another mediation job, so continue with a next file
-            if (!file.exists()) {
-                continue;
-            }
-
-            mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), readerCode, parserCode, mappingConf, recordName);
-
-            if (oneFilePerJob) {
-                break;
-            }
-        }
-
-        // Process one file at a time
-        if (oneFilePerJob && files.length > 1) {
-            result.setMoreToProcess(true);
-        }
-
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException 
+    {
+        mediationJobBeanV2.execute(result, jobInstance);
         return result;
     }
 
@@ -205,58 +104,6 @@ public class MediationJobV2 extends Job {
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
 
-        CustomFieldTemplate oneFilePerJob = new CustomFieldTemplate();
-        oneFilePerJob.setCode("oneFilePerJob");
-        oneFilePerJob.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
-        oneFilePerJob.setActive(true);
-        oneFilePerJob.setDescription(resourceMessages.getString("jobExecution.oneFilePerJob"));
-        oneFilePerJob.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        oneFilePerJob.setDefaultValue("false");
-        oneFilePerJob.setValueRequired(false);
-        oneFilePerJob.setGuiPosition("tab:Configuration:0;field:2");
-        result.put("oneFilePerJob", oneFilePerJob);
-
-        CustomFieldTemplate fileFormatCF = new CustomFieldTemplate();
-        fileFormatCF.setCode(MEDIATION_JOB_FILE_FORMAT);
-        fileFormatCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
-        fileFormatCF.setActive(true);
-        fileFormatCF.setDescription(resourceMessages.getString("mediationJob.fileFormat"));
-        fileFormatCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        fileFormatCF.setEntityClazz(FileFormat.class.getName());
-        fileFormatCF.setDefaultValue(null);
-        fileFormatCF.setValueRequired(false);
-        fileFormatCF.setMaxValue(256L);
-        fileFormatCF.setGuiPosition("tab:Configuration:0;field:3");
-        result.put(MEDIATION_JOB_FILE_FORMAT, fileFormatCF);
-
-        CustomFieldTemplate parserCF = new CustomFieldTemplate();
-        parserCF.setCode(MEDIATION_JOB_PARSER);
-        parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
-        parserCF.setActive(true);
-        parserCF.setDescription(resourceMessages.getString("mediationJob.parser"));
-        parserCF.setFieldType(CustomFieldTypeEnum.STRING);
-//        parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-//        parserCF.setEntityClazz(ScriptInstance.class.getName());
-        parserCF.setDefaultValue(null);
-        parserCF.setValueRequired(false);
-        parserCF.setMaxValue(256L);
-        parserCF.setGuiPosition("tab:Configuration:0;field:4");
-        result.put(MEDIATION_JOB_PARSER, parserCF);
-
-        CustomFieldTemplate readerCF = new CustomFieldTemplate();
-        readerCF.setCode(MEDIATION_JOB_READER);
-        readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
-        readerCF.setActive(true);
-        readerCF.setDescription(resourceMessages.getString("mediationJob.reader"));
-        readerCF.setFieldType(CustomFieldTypeEnum.STRING);
-//        readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-//        readerCF.setEntityClazz(ScriptInstance.class.getName());
-        readerCF.setDefaultValue(null);
-        readerCF.setValueRequired(false);
-        readerCF.setMaxValue(256L);
-        readerCF.setGuiPosition("tab:Configuration:0;field:5");
-        result.put(MEDIATION_JOB_READER, readerCF);
-        
         CustomFieldTemplate batchSize = new CustomFieldTemplate();
         batchSize.setCode(CF_BATCH_SIZE);
         batchSize.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
