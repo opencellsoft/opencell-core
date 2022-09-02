@@ -19,6 +19,7 @@
 package org.meveo.api.dto.crm;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -109,6 +110,9 @@ public class ContactDto extends BusinessEntityDto {
     private String reference;
 
     private String comment;
+
+    private Set<AddressBookContactDto> AddressBookContacts;
+
 
     @JsonProperty("isVip")
     @JsonAlias({ "isVip", "vip" })
@@ -521,5 +525,13 @@ public class ContactDto extends BusinessEntityDto {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Set<AddressBookContactDto> getAddressBookContacts() {
+        return AddressBookContacts;
+    }
+
+    public void setAddressBookContacts(Set<AddressBookContactDto> addressBookContacts) {
+        AddressBookContacts = addressBookContacts;
     }
 }
