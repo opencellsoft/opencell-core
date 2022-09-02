@@ -47,7 +47,7 @@ public class AgedReceivableMapperTest {
 
         assertTrue(nonNull(response));
         assertEquals(responseDtoSize, response.size());
-        assertEquals(new BigDecimal(100), response.get(0).getGeneralTotal());
+        assertEquals(new BigDecimal(80), response.get(0).getGeneralTotal());
         assertEquals(DunningLevelEnum.R1, response.get(0).getDunningLevel());
         assertEquals("EUR", response.get(0).getTradingCurrency());
         assertEquals(List.of(new BigDecimal(20), ZERO), response.get(0).getTaxAmountByPeriod());
@@ -74,6 +74,6 @@ public class AgedReceivableMapperTest {
         assertEquals(responseDtoSize, response.size());
         assertEquals("EUR", response.get(0).getTradingCurrency());
         assertEquals(new BigDecimal(100), response.get(0).getSum1To30());
-        assertEquals(new BigDecimal(600), response.get(0).getGeneralTotal());
+        assertEquals(new BigDecimal(540), response.get(0).getGeneralTotal());
     }
 }
