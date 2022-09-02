@@ -289,7 +289,7 @@ Tax]]></text>
 					<text><![CDATA[Tax]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="10" y="10" width="174" height="20" uuid="65abad80-d033-4433-b77b-f02072a6b357"/>
+					<reportElement x="14" y="10" width="170" height="20" uuid="65abad80-d033-4433-b77b-f02072a6b357"/>
 					<box leftPadding="10">
 						<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#FF9900"/>
 					</box>
@@ -333,7 +333,7 @@ w/o Tax]]></text>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="12.5" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Taxes et contributions]]></text>
+					<text><![CDATA[]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
