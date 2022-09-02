@@ -17254,7 +17254,32 @@
 	                                 referencedTableName="open_order_article"
 	                                 referencedColumnNames="id"/>
 	</changeSet>
-	
+
+    <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza">
+        <createTable tableName="crm_address_book_contact">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_contact_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="address_book_id" type="bigint" />
+            <column name="contact_id" type="bigint" />
+            <column name="position" type="varchar(30)" />
+            <column name="main_contact" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
+                                 constraintName="address_book_contact_address_book_fk"
+                                 referencedTableName="crm_address_book"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="contact_id"
+                                 constraintName="address_book_contact_contact_fk"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint columnNames="id,address_book_id,contact_id" constraintName="id_address_book_id_contact_id_UNIQUE" tableName="crm_address_book_contact" />
+        <addColumn tableName="com_contact">
+            <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
 
