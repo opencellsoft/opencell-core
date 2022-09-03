@@ -163,20 +163,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 			Collections.reverse(results);
 
-			if (results.size() > 1) {
-				throw new BusinessException("More than one AccountingArticle found during matching with ArticleMappingLine");
-			}
 
-			AtomicReference<ArticleMappingLine> resultTmp = new AtomicReference<>();
-
+			Integer highScore = results.get(0);
+			List<ArticleMappingLine> matchedArticleMappingLine = new ArrayList<>();
+			// Keep only the highest score matched mapping lines
 			matchingScore.forEach((mappingId, integer) -> {
-				if (results.get(0).equals(integer)) {
-					mappings.stream().filter(map -> mappingId.equals(map.getId()))
-							.findAny().ifPresent(resultTmp::set);
+				if (highScore.equals(integer)) {
+					matchedArticleMappingLine.addAll(mappings.stream().filter(map -> mappingId.equals(map.getId())).collect(Collectors.toList()));
 				}
 			});
 
-			articleMappingLines.add(resultTmp.get());
+			articleMappingLines.addAll(matchedArticleMappingLine);
 		}
 	}
 
