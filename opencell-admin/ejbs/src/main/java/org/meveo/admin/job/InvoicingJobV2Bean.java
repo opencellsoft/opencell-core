@@ -32,6 +32,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -124,10 +125,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         Map<String, String> filters = billingRun.getFilters();
         filters.remove("status");
         QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
-        queryBuilder.addSql(" a.status = 'PROCESSED' and a.billingRun IS NULL");
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
-                .stream()
+                .stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.PROCESSED && rt.getBillingRun() == null))
                 .map(RatedTransaction::getInvoiceLine)
                 .map(InvoiceLine::getId)
                 .collect(toList()));
