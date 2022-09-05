@@ -211,6 +211,8 @@ public class SubscriptionApi extends BaseApi {
      * Default sort for list call.
      */
     private static final String DEFAULT_SORT_ORDER_ID = "id";
+    private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
+    private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -433,8 +435,21 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getCode(), postData.getValidityDate());
         }
 
+      //Get the administration roles
+        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
+
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-            throw new MeveoApiException("Subscription is already RESILIATED.");
+        	if(!isAdmin) {
+        		throw new MeveoApiException("Subscription is already RESILIATED.");
+        	} else {
+        		if(postData.getSalesPersonName() != null) {
+                	subscription.setSalesPersonName(postData.getSalesPersonName());
+                	subscription = subscriptionService.update(subscription);
+                	return subscription;
+                } else {
+                	return subscription;
+                }
+        	}
         }
 
         if (!StringUtils.isBlank(postData.getUserAccount())) {
