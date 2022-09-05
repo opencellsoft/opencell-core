@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -55,11 +56,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -101,6 +104,7 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion 8.0.0
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountOperationApi extends BaseApi {
 
     private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
@@ -338,7 +342,8 @@ public class AccountOperationApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = AccountOperation.class) })
+    @FilterResults(propertyToFilter = "accountOperations.accountOperation", itemPropertiesToFilter = {
+            @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", PagingAndFiltering.SortOrder.DESCENDING, null, pagingAndFiltering,
@@ -589,6 +594,8 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operation dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "customerAccount", entityClass = CustomerAccount.class)})
     public AccountOperationDto find(Long id) throws MeveoApiException {
         AccountOperation ao = accountOperationService.findById(id);
         if (ao != null) {

@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.provider.Provider;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
@@ -76,6 +77,9 @@ public class ProviderResourceImpl implements ProviderResource {
             throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
         }
         org.meveo.model.crm.Provider providerUpdateInfos = provider.toEntity();
+        if (provider.getEmail() == null && providerByCode.getEmail() == null ) {
+            throw new InvalidParameterException("provider's email is mandatory.");
+        }
         if (provider.getDescription() != null) {
             providerByCode.setDescription(providerUpdateInfos.getDescription());
         }

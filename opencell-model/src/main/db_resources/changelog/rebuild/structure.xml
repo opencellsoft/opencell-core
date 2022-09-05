@@ -5144,7 +5144,9 @@
             <column name="display_free_tx_in_invoice" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="email" type="varchar(100)" />
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
             <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -9965,6 +9967,9 @@
             <column name="parameter_2" type="varchar(255)"/>
             <column name="parameter_3" type="varchar(255)"/>
             <column name="mapping_key_el" type="varchar(255)"/>
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-470" author="NabilOUACHI">
@@ -9987,6 +9992,9 @@
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-471" author="NabilOUACHI">
@@ -12076,6 +12084,7 @@
             <column name="balance" type="numeric(23, 12)">
                 <constraints nullable="false" />
             </column>
+            <column name="cancel_reason" type="varchar(4000)"/>
         </createTable>
     </changeSet>
     <!-- end tables -->
@@ -17110,7 +17119,54 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
+	<changeSet id="#INTRD-9117_20220811-init-table" author="aelmalki">
+		<createTable tableName="open_order_products">
+			<column name="open_order_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="open_product_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
 
+		<createTable tableName="open_order_articles">
+			<column name="open_order_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="open_article_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		 <addPrimaryKey columnNames="open_order_id,open_product_id"
+							 constraintName="open_order_products_pkey"
+							 tableName="open_order_products"/>
+		 <addPrimaryKey columnNames="open_order_id,open_article_id"
+							 constraintName="open_order_articles_pkey"
+							 tableName="open_order_articles"/>
+	</changeSet>
+
+	<changeSet id="#INTRD-9117_20220811-FK" author="aelmalki">
+        <addForeignKeyConstraint baseTableName="open_order_products" baseColumnNames="open_order_id"
+                                 constraintName="open_order_products_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_products" baseColumnNames="open_product_id"
+	                                 constraintName="open_order_products_product_id_fk"
+	                                 referencedTableName="open_order_product"
+	                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_articles" baseColumnNames="open_order_id"
+                                 constraintName="open_order_articles_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_articles" baseColumnNames="open_article_id"
+	                                 constraintName="open_order_articles_article_id_fk"
+	                                 referencedTableName="open_order_article"
+	                                 referencedColumnNames="id"/>
+	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -18308,7 +18364,12 @@
     <changeSet id="#INTRD-7872_20220615-data" author="ZBariki"/>
     <changeSet id="#INTRD-8812_20220729" author="ZBariki" />
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
-	
+	<changeSet id="#INTRD-9117_20220811" author="aelmalki" />
+	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki" />
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri"/>
+    <changeSet id="#INTRD-9232_20220819" author="aelmalki" />
+    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

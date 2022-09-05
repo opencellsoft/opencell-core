@@ -33,30 +33,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties({"services","products","productInstances"})
 public class SubscriptionAndProductsToInstantiateDto extends SubscriptionDto { 
+	
     private static final long serialVersionUID = 178969317101107648L;
-    
     
     /** The productToInstantiateDto. */
     @XmlElement(required = true)
     private List<ProductToInstantiateDto> productToInstantiateDto;
 
-
 	public List<ProductToInstantiateDto> getProductToInstantiateDto() {
 		return productToInstantiateDto;
 	}
 
-
 	public void setProductToInstantiateDto(List<ProductToInstantiateDto> productToInstantiateDto) {
 		this.productToInstantiateDto = productToInstantiateDto;
 	}
-
-
-
-
-
-	
-    
-    
-
-    
 }

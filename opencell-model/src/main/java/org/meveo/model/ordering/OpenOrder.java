@@ -3,10 +3,8 @@ package org.meveo.model.ordering;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 
 import javax.persistence.*;
@@ -20,17 +18,18 @@ import java.util.List;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_seq"),})
 @NamedQueries({
-		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products product left join oo.articles article"
-				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
-				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
-				+ " AND (product.id = :productId or article.id = :articleId)"),
-		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products product"
-				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND product.id = :productId ORDER BY oo.endOfValidityDate"),
-		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles article"
-				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
-				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND article.id = :articleId ORDER BY oo.endOfValidityDate"),
-        @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)")
+		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products ooProducts left join oo.articles ooArticles"
+			+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
+			+ " AND (oo.endOfValidityDate is null OR oo.endOfValidityDate >= :ilValueDate) AND oo.activationDate <= :ilValueDate"
+			+ " AND (ooProducts.product.id = :productId or ooArticles.accountingArticle.id = :articleId)"),
+		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products ooProducts"
+			+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
+			+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooProducts.product.id = :productId ORDER BY oo.endOfValidityDate"),
+		@NamedQuery(name = "OpenOrder.availableOOForArticle", query = "SELECT oo FROM OpenOrder oo join fetch oo.articles ooArticles"
+			+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
+			+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooArticles.accountingArticle.id = :articleId ORDER BY oo.endOfValidityDate"),
+		@NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)"),
+		@NamedQuery(name = "OpenOrder.findByOpenOrderNumber", query = "SELECT oo FROM OpenOrder oo WHERE oo.openOrderNumber = :openOrderNumber")
 })
 public class OpenOrder extends BusinessEntity {
 
@@ -83,20 +82,26 @@ public class OpenOrder extends BusinessEntity {
     @NotNull
     private Date activationDate;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "open_order_id")
     private List<Threshold> thresholds;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
-    private List<Product> products;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_products", joinColumns = @JoinColumn(name = "open_order_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
+    private List<OpenOrderProduct> products;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
-    private List<AccountingArticle> articles;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "open_order_articles", joinColumns = @JoinColumn(name = "open_order_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_article_id", referencedColumnName = "id"))
+    private List<OpenOrderArticle> articles;
 
     @Column(name = "balance")
     private BigDecimal balance;
 
     @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
     private List<Tag> tags;
+
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 
     public String getExternalReference() {
         return externalReference;
@@ -194,22 +199,6 @@ public class OpenOrder extends BusinessEntity {
         this.thresholds = thresholds;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public List<AccountingArticle> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<AccountingArticle> articles) {
-        this.articles = articles;
-    }
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -224,6 +213,30 @@ public class OpenOrder extends BusinessEntity {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public List<OpenOrderProduct> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<OpenOrderProduct> products) {
+        this.products = products;
+    }
+
+    public List<OpenOrderArticle> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<OpenOrderArticle> articles) {
+        this.articles = articles;
     }
 
     @PostPersist

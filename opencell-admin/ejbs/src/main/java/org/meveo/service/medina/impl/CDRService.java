@@ -24,7 +24,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -177,6 +179,21 @@ public class CDRService extends PersistenceService<CDR> {
     @SuppressWarnings("unchecked")
     public List<CDR> getCDRsToReprocess() { 
         return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
+    }
+    
+    /**
+     * Get a list of unprocessed CDRs to process
+     *
+     * @return List of CDR we can process.
+     */
+    public List<Long> getCDRsToProcess() {
+
+        StringBuilder strQuery = new StringBuilder();
+        strQuery.append("SELECT cdr.id from CDR cdr where cdr.status='OPEN'");
+
+        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
+        return query.getResultList();
+
     }
     
     /**
