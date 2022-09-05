@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.*;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -241,6 +243,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	@SuppressWarnings("rawtypes")
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance, WalletOperation walletOperation) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;
