@@ -16,6 +16,8 @@ public interface GenericPagingAndFiltering {
     @Nullable
     @Value.Default default Set<String> getGenericFields(){ return Collections.emptySet();}
     @Nullable
+    @Value.Default default Set<GenericFieldDetails> getGenericFieldDetails(){ return Collections.emptySet();}
+    @Nullable
     @Value.Default default Set<String> getNestedEntities(){ return Collections.emptySet();}
     @Nullable
     @Value.Default default Long getNestedDepth(){ return 0L;}

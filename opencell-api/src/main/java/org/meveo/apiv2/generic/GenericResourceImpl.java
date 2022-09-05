@@ -1,6 +1,7 @@
 package org.meveo.apiv2.generic;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.GenericOpencellRestful;
@@ -159,16 +160,21 @@ public class GenericResourceImpl implements GenericResource {
     @Override
     public Response export(String entityName, String fileFormat, GenericPagingAndFiltering searchConfig) throws ClassNotFoundException {
         Set<String> genericFields = null;
-        Set<String> nestedEntities = null;
-        Set<String> excludedFields = null;
+        Set<GenericFieldDetails> genericFieldDetails = null;
         Map<String, String> translations = Collections.emptyMap();
         
         if(searchConfig != null){
-        	if(searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty())
-        		throw new MeveoApiException("Nested entities are not handled by the export api");
-        	if(searchConfig.getGenericFields() == null || searchConfig.getGenericFields().isEmpty())
-        		throw new MeveoApiException("Generic fields are mandatory");
+        	if (searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty()) {
+                throw new MeveoApiException("Nested entities are not handled by the export api");
+            }
+        	if (CollectionUtils.isEmpty(searchConfig.getGenericFields()) && CollectionUtils.isEmpty(searchConfig.getGenericFieldDetails())) {
+                throw new MeveoApiException("One of 'Generic fields' or 'Generic field details' are mandatory");
+            }
+            if (CollectionUtils.isNotEmpty(searchConfig.getGenericFields()) && CollectionUtils.isNotEmpty(searchConfig.getGenericFieldDetails())) {
+                throw new MeveoApiException("Only one of 'Generic fields' or 'Generic field details' shall be specified");
+            }
             genericFields = searchConfig.getGenericFields();
+            genericFieldDetails = searchConfig.getGenericFieldDetails();
             
             if(searchConfig.getTranslations() != null && !searchConfig.getTranslations().isEmpty()) {
             	translations = searchConfig.getTranslations();
@@ -184,7 +190,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, translations, fileFormat, entityName);
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, genericFieldDetails, translations, fileFormat, entityName);
         return Response.ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
                 .build();
