@@ -36,6 +36,7 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -350,11 +351,16 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		customFieldEntity =
 				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
 		
-		if(true==invoice.isApplyBillingRules()) {
+		BillingAccount billingAccountAfter = null;
+        if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-            ratedTransactionService.applyInvoicingRules(RTs);
+            billingAccountAfter = ratedTransactionService.applyInvoicingRules(RTs);
+        }
+        
+        if (billingAccountAfter != null) {
+            entity = billingAccountAfter;
         }
 		
 		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,

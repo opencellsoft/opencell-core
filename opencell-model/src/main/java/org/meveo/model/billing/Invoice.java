@@ -19,7 +19,6 @@ package org.meveo.model.billing;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

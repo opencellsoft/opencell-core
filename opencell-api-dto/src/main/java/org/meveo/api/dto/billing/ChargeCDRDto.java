@@ -78,6 +78,11 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     private boolean returnCounters;
 
+    /**
+     * If true, the API will automatically generate RTs.
+     */
+    private boolean generateRTs;
+
     public ChargeCDRDto() {
         virtual = false;
         rateTriggeredEdr = false;
@@ -86,7 +91,7 @@ public class ChargeCDRDto extends BaseEntityDto {
     }
 
     public ChargeCDRDto(String cdr, String ip, boolean virtual, boolean rateTriggeredEdr, Integer maxDepth, boolean returnEDRs, boolean returnWalletOperations, boolean returnWalletOperationDetails,
-            boolean returnCounters) {
+            boolean returnCounters, boolean generateRTs) {
         this.cdr = cdr;
         this.ip = ip;
         this.virtual = virtual;
@@ -96,6 +101,7 @@ public class ChargeCDRDto extends BaseEntityDto {
         this.returnWalletOperationDetails = returnWalletOperationDetails;
         this.returnEDRs = returnEDRs;
         this.returnCounters = returnCounters;
+        this.generateRTs = generateRTs;
     }
 
     public String getCdr() {
@@ -229,5 +235,19 @@ public class ChargeCDRDto extends BaseEntityDto {
      */
     public void setReturnCounters(boolean returnCounters) {
         this.returnCounters = returnCounters;
+    }
+
+    /**
+     * @return If true, the API will automatically generate RTs.
+     */
+    public boolean isGenerateRTs() {
+        return generateRTs;
+    }
+
+    /**
+     * @param generateRTs If true, the API will automatically generate RTs.
+     */
+    public void setGenerateRTs(boolean generateRTs) {
+        this.generateRTs = generateRTs;
     }
 }

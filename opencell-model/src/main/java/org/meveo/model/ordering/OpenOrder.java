@@ -3,10 +3,8 @@ package org.meveo.model.ordering;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 
 import javax.persistence.*;
@@ -22,7 +20,7 @@ import java.util.List;
 @NamedQueries({
 		@NamedQuery(name = "OpenOrder.getOpenOrderCompatibleForIL", query = "SELECT oo FROM OpenOrder oo left join oo.products ooProducts left join oo.articles ooArticles"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance >= :ilAmountWithTax AND oo.status != :status"
-				+ " AND oo.endOfValidityDate >= :ilValueDate AND oo.activationDate <= :ilValueDate"
+				+ " AND (oo.endOfValidityDate is null OR oo.endOfValidityDate >= :ilValueDate) AND oo.activationDate <= :ilValueDate"
 				+ " AND (ooProducts.product.id = :productId or ooArticles.accountingArticle.id = :articleId)"),
 		@NamedQuery(name = "OpenOrder.availableOOForProduct", query = "SELECT oo FROM OpenOrder oo join fetch oo.products ooProducts"
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
@@ -31,7 +29,8 @@ import java.util.List;
 				+ " WHERE oo.billingAccount.id = :billingAccountId AND oo.balance > 0 AND oo.status != :status"
 				+ " AND (oo.endOfValidityDate >= :eventDate or oo.endOfValidityDate is null) AND ooArticles.accountingArticle.id = :articleId ORDER BY oo.endOfValidityDate"),
         @NamedQuery(name = "OpenOrder.ListOOIdsByStatus", query = "SELECT oo.id FROM OpenOrder oo WHERE oo.status IN (:status)"),
-        @NamedQuery(name = "OpenOrder.findByOpenOrderNumber", query = "SELECT oo FROM OpenOrder oo WHERE oo.openOrderNumber = :openOrderNumber")
+        @NamedQuery(name = "OpenOrder.findByOpenOrderNumber", query = "SELECT oo FROM OpenOrder oo WHERE oo.openOrderNumber = :openOrderNumber"),
+        @NamedQuery(name = "OpenOrder.UpdateBalance", query = "UPDATE OpenOrder oo SET oo.balance = :balance WHERE oo.id = :id")
 })
 public class OpenOrder extends BusinessEntity {
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.crm.AddressBookContactDto;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -50,6 +52,8 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.intcrm.AddressBookContact;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -61,6 +65,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
+import org.meveo.service.intcrm.impl.AddressBookContactService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 
@@ -78,7 +83,7 @@ public class ContactApi extends BaseApi {
     ContactService contactService;
 
     @Inject
-    SellerService sellerService;
+    private AddressBookContactService addressBookContactService;
 
     @Inject
     private TitleService titleService;
@@ -152,10 +157,25 @@ public class ContactApi extends BaseApi {
         }
 
         dtoToEntity(contact, postData);
-
         contactService.create(contact);
+        linkToAddressBook(contact, postData.getAddressBookContacts());
 
         return contact;
+    }
+
+    private void linkToAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
+        if(addressBookContacts != null && !addressBookContacts.isEmpty()){
+            addressBookContacts.stream()
+                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
+                    .forEach(abcDto -> {
+                        AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
+                        if(addressBookServiceById == null){
+                            throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
+                        }
+                        AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
+                        addressBookContactService.create(addressBookContact);
+                    });
+        }
     }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {

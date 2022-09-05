@@ -5610,14 +5610,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
-                    if(invoice.getOpenOrderNumber() != null) {
-                        Optional.ofNullable(openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber()))
-                                .map(OpenOrder::getExternalReference)
-                                .ifPresent(invoice::setExternalRef);
-                    }
                     invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
+                    if(invoice.getOpenOrderNumber() != null) {
+                        OpenOrder openOrder = openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber());
+                        Optional.ofNullable(openOrder)
+                                .map(OpenOrder::getExternalReference)
+                                .ifPresent(invoice::setExternalRef);
+                        BigDecimal initialAmount = Optional.ofNullable(openOrder.getInitialAmount()).orElse(ZERO);
+                        BigDecimal invoicedAmount = computeInvoicedAmount(openOrder, invoiceLinesGroup.getInvoiceLines());
+                        openOrderService.updateBalance(openOrder.getId(), initialAmount.subtract(invoicedAmount));
+                    }
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5711,6 +5715,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
         return invoiceList;
 
+    }
+
+    private BigDecimal computeInvoicedAmount(OpenOrder openOrder, List<InvoiceLine> invoiceLines) {
+        BigDecimal invoicedAmount = invoiceLinesService
+                .invoicedAmountByOpenOrder(openOrder.getOpenOrderNumber(), openOrder.getBillingAccount().getId());
+        if(invoiceLines != null && !invoiceLines.isEmpty()) {
+            invoicedAmount = invoicedAmount.add(invoiceLines.stream()
+                                    .map(InvoiceLine::getAmountWithTax)
+                                    .reduce(ZERO, BigDecimal::add));
+        }
+        return invoicedAmount;
     }
 
     private void applyExchangeRateToInvoiceLineAndAggregate(List<Invoice> invoices) {
@@ -6452,7 +6467,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
         List<Long> invoiceIds = new ArrayList<>();
-        List<Invoice> invoices = new ArrayList<Invoice>();
+        List<Invoice> invoices = new ArrayList<>();
         
         invoiceIds.add(invoice.getId());
         BillingRun billingRun = invoice.getBillingRun();

@@ -1450,12 +1450,28 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
          * doc.createTextNode (billingAccount.getName().getTitle().getIsCompany() + ""); billingAccountTag.appendChild(companyTxt); }
          */
         Element email = doc.createElement("email");
+        Element phone = doc.createElement("phone");
+        Element mobile = doc.createElement("mobile");
         if (billingAccount.getContactInformation() != null) {
+            // Email
             String billingEmail = billingAccount.getContactInformation().getEmail();
             Text emailTxt = this.createTextNode(doc, billingEmail != null ? billingEmail : "");
             email.appendChild(emailTxt);
             billingAccountTag.appendChild(email);
+
+            // Phone
+            String billingPhone = billingAccount.getContactInformation().getPhone();
+            Text phoneTxt = this.createTextNode(doc, billingPhone != null ? billingPhone : "");
+            phone.appendChild(phoneTxt);
+            billingAccountTag.appendChild(phone);
+
+            // Mobile
+            String billingMobile = billingAccount.getContactInformation().getMobile();
+            Text mobileTxt = this.createTextNode(doc, billingMobile != null ? billingMobile : "");
+            mobile.appendChild(mobileTxt);
+            billingAccountTag.appendChild(mobile);
         }
+
         Element nameTag = createNameSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             billingAccountTag.appendChild(nameTag);

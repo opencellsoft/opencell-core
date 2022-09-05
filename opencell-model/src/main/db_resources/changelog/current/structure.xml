@@ -14096,6 +14096,17 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
     </changeSet>
     
+    <changeSet id="#INTRD-9442_20220831" author="HichamHANINE">
+		<addColumn tableName="billing_rated_transaction">
+            <column name="rules_contract_id" type="bigint" />
+        </addColumn>
+		<addColumn tableName="billing_wallet_operation">
+            <column name="rules_contract_id" type="bigint" />
+        </addColumn>
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wa_op_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+	</changeSet>
+    
     <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe">
         <sql>update ${db.schema.adapted}billing_rated_transaction set origin_billing_account = billing_account__id where origin_billing_account is null</sql>
     </changeSet>
@@ -14170,6 +14181,31 @@ order by date_trunc('month', i.invoice_date) DESC
         <modifyDataType tableName="crm_provider_contact" columnName="address_zipcode" newDataType="varchar(20)" />
         <modifyDataType tableName="crm_seller" columnName="address_zipcode" newDataType="varchar(20)" />
         <modifyDataType tableName="ord_order_item" columnName="address_zipcode" newDataType="varchar(20)" />
+    </changeSet>
+
+    <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza">
+        <createTable tableName="crm_address_book_contact">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_contact_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="address_book_id" type="bigint" />
+            <column name="contact_id" type="bigint" />
+            <column name="position" type="varchar(30)" />
+            <column name="main_contact" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
+                                 constraintName="address_book_contact_address_book_fk"
+                                 referencedTableName="crm_address_book"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="contact_id"
+                                 constraintName="address_book_contact_contact_fk"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint columnNames="id,address_book_id,contact_id" constraintName="id_address_book_id_contact_id_UNIQUE" tableName="crm_address_book_contact" />
+        <addColumn tableName="com_contact">
+            <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>
