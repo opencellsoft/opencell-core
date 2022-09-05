@@ -8,6 +8,7 @@ import org.meveo.apiv2.ordering.resource.openOrderTemplate.ThresholdMapper;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderStatusEnum;
+import org.meveo.model.ordering.Threshold;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.cpq.TagService;
@@ -54,9 +55,26 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
         openOrderMapper.fillEntity(openOrder, dto);
         if(dto.getThresholds() != null ) {
             thresholdService.deleteThresholdsByOpenOrderId(openOrder.getId());
-            openOrder.setThresholds(thresholdMapper.toEntities(dto.getThresholds()));
+            List<Threshold> thresholds = new ArrayList<>();
+            if(openOrder.getOpenOrderQuote().getThresholds() != null){
+                thresholds.addAll(openOrder.getOpenOrderQuote().getThresholds());
+            }
+            thresholds.addAll(thresholdMapper.toEntities(dto.getThresholds()));
+            openOrder.setThresholds(thresholds);
         }
-        if (null != dto.getTags()) openOrder.getTags().addAll(fetchTags(dto.getTags()));
+        if (null != dto.getTags()) {
+            List<Tag> tags = fetchTags(dto.getTags());
+            if (openOrder.getOpenOrderQuote() != null) {
+                openOrder.setTags(new ArrayList<>(openOrder.getOpenOrderQuote().getTags()));
+            }
+            for(Tag tag : tags){
+                if (!openOrder.getTags().contains(tag)){
+                    openOrder.getTags().add(tag);
+                }
+            }
+
+
+        }
         openOrder = openOrderService.update(openOrder);
         auditLogService.trackOperation("UPDATE", new Date(), openOrder, openOrder.getCode());
         return openOrderMapper.toResource(openOrder);

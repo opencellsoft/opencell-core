@@ -250,9 +250,7 @@ public class OpenOrderService extends BusinessService<OpenOrder> {
     }
 
     private void attachNestedEntities(OpenOrder openOrder) {
-        if(openOrder.getTags() != null && !openOrder.getTags().isEmpty()) {
-            openOrder.getTags().forEach(tag -> tag.setOpenOrder(openOrder));
-        }
+
         if(openOrder.getThresholds() != null && !openOrder.getThresholds().isEmpty()) {
             openOrder.getThresholds().forEach(threshold -> threshold.setOpenOrder(openOrder));
         }
