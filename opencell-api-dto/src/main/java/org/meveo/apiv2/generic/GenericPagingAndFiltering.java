@@ -5,6 +5,8 @@ import org.immutables.value.Value;
 import org.meveo.api.dto.response.PagingAndFiltering;
 
 import javax.annotation.Nullable;
+import javax.persistence.criteria.JoinType;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -47,4 +49,7 @@ public interface GenericPagingAndFiltering {
     }
     @Nullable
     @Value.Default default Map<String, String> getTranslations(){ return Collections.emptyMap();}
+    
+    @Nullable
+    JoinType getJoinType();
 }
