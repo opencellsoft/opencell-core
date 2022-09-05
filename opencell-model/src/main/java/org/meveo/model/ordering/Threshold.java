@@ -5,7 +5,10 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -18,10 +21,13 @@ public class Threshold extends BaseEntity {
 
     @Column(name = "sequence")
     @NotNull
+    @Min(value = 1, message = "Field sequence should be positive value")
     private Integer sequence;
 
     @Column(name = "percentage")
     @NotNull
+    @Min(value = 0)
+    @Max(value = 100)
     private Integer percentage;
 
     @ElementCollection(targetClass = ThresholdRecipientsEnum.class)
