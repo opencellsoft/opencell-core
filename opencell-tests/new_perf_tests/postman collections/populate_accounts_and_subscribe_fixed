@@ -5,29 +5,29 @@ AS $$
 declare 
     counter integer := 0;
 	var_seller_id integer := 15;
-	var_customer_brand_id integer :=0;
-	var_customer_category_id integer := 0;
-	var_billing_cycle_id integer := 0;
-	var_offer_id integer :=0;
+	var_customer_brand_id integer :=-1;
+	var_customer_category_id integer := -2;
+	var_billing_cycle_id integer := -1;
+	var_offer_id integer :=1;
 	var_offer_code varchar :='OF_BASIC';
-	var_oss_charge_id integer :=0;
+	var_oss_charge_id integer :=4;
 	var_oss_charge_code varchar := 'ISCAT_OSS';
-	var_ost_charge_id integer :=0;
-	var_rec_charge_id integer :=0;
+	var_ost_charge_id integer :=5;
+	var_rec_charge_id integer :=2;
 	var_rec_charge_code varchar := 'ISCAT_REC';
-	var_usg_charge_id integer :=0;
-	var_service_template_id integer :=0;
-	var_trading_country_id integer :=0;
-	var_trading_language_id integer :=0;
-	var_trading_currency_id integer :=0;
-	var_tax_id integer := 0;
-	var_tax_class_id integer := 0;
-	var_tax_cat_id integer := 0;
-	var_currency_id integer := 0;
-	var_invoice_subcat_id integer :=0;
+	var_usg_charge_id integer :=3;
+	var_service_template_id integer :=1;
+	var_trading_country_id integer :=-2;
+	var_trading_language_id integer :=1;
+	var_trading_currency_id integer :=1;
+	var_tax_id integer := 1;
+	var_tax_class_id integer := 1;
+	var_tax_cat_id integer := 1;
+	var_currency_id integer := 1;
+	var_invoice_subcat_id integer :=1;
 	var_foo integer :=0;
 	var_bc_id integer := 1;
-	var_title_id integer := 0;
+	var_title_id integer := -3;
 	var_rec_cal_id integer := 0;
 	var_customer_iterations integer := 1;
 	var_max_ae_id integer := 1;
@@ -136,8 +136,8 @@ BEGIN
 	
 	IF param_step_to_run IS NULL or lower(param_step_to_run) ='ba' THEN
 			
-		INSERT INTO billing_billing_account(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, br_amount_with_tax, br_amount_without_tax, discount_rate, electronic_billing, invoice_prefix, next_invoice_date, status, status_date, subscription_date, termination_date, billing_cycle, billing_run, customer_account_id, termin_reason_id, trading_country_id, trading_language_id, invoicing_threshold, mailing_type, cced_emails, email_template_id, minimum_invoice_sub_category_id, tax_category_id, check_threshold, payment_method_id, threshold_per_entity) 	
-		(select nextval('account_entity_seq'),0,now(),null,'ba_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ba_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, 0, 'test', now() ,'ACTIVE', NOW(), TO_DATE('2021-03-01','YYYY-MM-DD'), null, var_bc_id, null, id, null, var_trading_country_id, var_trading_language_id, null, null, null, null, null, var_tax_cat_id, null, null, 0 from ar_customer_account);
+		INSERT INTO billing_billing_account(id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode, default_level, external_ref_1, external_ref_2, firstname, lastname, provider_contact, creator, updater, title_id, primary_contact, uuid, bam_id, cf_values, job_title, email, fax, mobile, phone, vat_no, registration_no, minimum_amount_el, minimum_label_el, minimum_charge_template_id, br_amount_with_tax, br_amount_without_tax, discount_rate, electronic_billing, invoice_prefix, next_invoice_date, status, status_date, subscription_date, termination_date, billing_cycle, billing_run, customer_account_id, termin_reason_id, trading_country_id, trading_language_id, trading_currency_id, invoicing_threshold, mailing_type, cced_emails, email_template_id, minimum_invoice_sub_category_id, tax_category_id, check_threshold, payment_method_id, threshold_per_entity)
+		(select nextval('account_entity_seq'),0,now(),null,'ba_'||currval('account_entity_seq'),'Demo Distributor',null,null,null,null,null,null,null,1,null,null,null,null,null,null,null,null,null,'ba_'||currval('account_entity_seq')||currval('account_entity_seq'),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, 0, 'test', now() ,'ACTIVE', NOW(), TO_DATE('2021-03-01','YYYY-MM-DD'), null, var_bc_id, null, id, null, var_trading_country_id, var_trading_language_id, var_trading_currency_id, null, null, null, null, null, var_tax_cat_id, null, null, 0 from ar_customer_account);
 
 	END IF;
 
