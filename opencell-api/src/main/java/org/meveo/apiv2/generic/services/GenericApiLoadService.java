@@ -177,8 +177,8 @@ public class GenericApiLoadService {
     }
 
 	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields,
-                         Set<GenericFieldDetails> genericFieldDetails,
-                         Map<String, String> translations, String fileFormat, String entityName) throws ClassNotFoundException {
+                         List<GenericFieldDetails> genericFieldDetails,
+                         String fileFormat, String entityName) throws ClassNotFoundException {
 		
 		//SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
         Map<String, GenericFieldDetails> fieldDetails = new HashMap<>();
@@ -197,7 +197,7 @@ public class GenericApiLoadService {
 										        .map(line -> addResultLine(line, searchConfig.getFetchFields().iterator()))
 										        .collect(Collectors.toList());
 
-        String filePath = csvGenericExportManager.export(entityName, mapResult, fileFormat, translations, fieldDetails);
+        String filePath = csvGenericExportManager.export(entityName, mapResult, fileFormat, fieldDetails);
 
 		return filePath;
 	}
