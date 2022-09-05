@@ -101,7 +101,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * Job schedule
      */
     @JoinColumn(name = "timerentity_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private TimerEntity timerEntity;
 
     /**
