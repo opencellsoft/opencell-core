@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.impl;
 
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -203,6 +204,12 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         }
         return result;
     }
+
+	@Override
+	public Response importExchangeRate(MultipartFormDataInput input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
     
