@@ -32,6 +32,7 @@ import org.meveo.api.rest.TaxRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.ExceptionUtils;
 
+import javax.ejb.EJBException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -107,13 +108,10 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
     }
 
     private MeveoApiException processExceptionMessage(Exception exception) {
-        if(exception.getMessage() != null) {
-            String[] errorMessage = exception.getMessage().split(":");
-            if(errorMessage.length > 1) {
-                return new MeveoApiException(errorMessage[1].trim());
-            }
+        if(exception instanceof EJBException) {
+            return new MeveoApiException(exception.getCause().getMessage());
         }
-        return new MeveoApiException();
+        return new MeveoApiException(exception.getMessage());
     }
 
     @Override

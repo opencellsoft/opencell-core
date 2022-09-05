@@ -174,6 +174,9 @@ public class TaxApi extends BaseApi {
                 throw new BadRequestException(SUBTAXES_MESSAGE_EXCEPTION);
             } else {
             	List<Tax> subTaxes = toEntity(postData.getSubTaxes());
+            	if(subTaxes.stream().anyMatch(st -> st.getId().equals(postData.getId()))) {
+            		throw new BadRequestException("A tax cannot be sub-tax of itself");
+            	}
                 validateSubTaxes(subTaxes);
                 tax.setPercent(subTaxes.stream().map(Tax::getPercent).reduce(ZERO, BigDecimal::add));
                 tax.setSubTaxes(subTaxes);
