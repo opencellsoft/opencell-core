@@ -8,6 +8,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "crm_address_book_contact")
+@NamedQueries({
+        @NamedQuery(name = "AddressBookContact.findAddressBookMainContact", query = "select abc from AddressBookContact abc where abc.addressBook.id=:addressBookId and abc.mainContact=true"),
+        @NamedQuery(name = "AddressBookContact.findAddressBookContactByContact", query = "select abc from AddressBookContact abc where abc.contact.id=:contactId")
+})
 public class AddressBookContact extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

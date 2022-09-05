@@ -1,8 +1,11 @@
 package org.meveo.api.dto.crm;
 
+import org.meveo.api.dto.IEntityDto;
+
 import java.util.Map;
 
-public class AddressBookContactDto {
+public class AddressBookContactDto implements IEntityDto {
+    private Long id;
     private Map<String, Long> AddressBook;
     private String position;
     protected Boolean mainContact = Boolean.FALSE;
@@ -29,5 +32,15 @@ public class AddressBookContactDto {
 
     public void setMainContact(Boolean mainContact) {
         this.mainContact = mainContact;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }
