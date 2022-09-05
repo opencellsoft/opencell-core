@@ -14207,5 +14207,16 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-
+    <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza">
+        <modifyDataType tableName="ar_customer_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="billing_billing_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="billing_user_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="com_contact" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="com_sender_config" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_customer" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_provider" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_provider_contact" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_seller" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="ord_order_item" columnName="address_city" newDataType="varchar(100)" />
+    </changeSet>
 </databaseChangeLog>

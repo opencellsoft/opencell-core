@@ -85,7 +85,7 @@ public class Address implements Serializable, Cloneable {
      * City
      */
     @Column(name = "address_city", length = 50)
-    @Size(max = 50)
+    @Size(max = 100)
     protected String city;
 
     /**
