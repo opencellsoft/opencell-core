@@ -74,20 +74,23 @@ public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(AccountingPeriodResource.class, fiscalYear, number, status).build())
                 .build();
 	}
-	
+
+	// Those checks are deprecated, regarding to the need of this issue : INTRD-8245 / INTRD-9452
 	private void checkRequiredParameters(org.meveo.apiv2.accounting.AccountingPeriod entity) {
-		List<String> missingParameters = new ArrayList<>();
-		if (entity.getRegularUserLockOption() == null) {
-			missingParameters.add("regularUserLockOption");
-		}
-		if (entity.getAccountingOperationAction() == null) {
-			missingParameters.add("accountingOperationAction");
-		}
-		if (StringUtils.isBlank(entity.getSubAccountingPeriodType())) {
-			missingParameters.add("subAccountingPeriodType");
-		}
-		if (!missingParameters.isEmpty()) {
-            throw new MissingParameterException(missingParameters);
+		if (entity.getUseSubAccountingPeriods() != null && entity.getUseSubAccountingPeriods()) {
+			List<String> missingParameters = new ArrayList<>();
+			if (entity.getRegularUserLockOption() == null) {
+				missingParameters.add("regularUserLockOption");
+			}
+			if (entity.getAccountingOperationAction() == null) {
+				missingParameters.add("accountingOperationAction");
+			}
+			if (StringUtils.isBlank(entity.getSubAccountingPeriodType())) {
+				missingParameters.add("subAccountingPeriodType");
+			}
+			if (!missingParameters.isEmpty()) {
+				throw new MissingParameterException(missingParameters);
+			}
 		}
 	}
 
