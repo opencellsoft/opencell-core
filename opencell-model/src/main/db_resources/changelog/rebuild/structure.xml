@@ -12087,6 +12087,23 @@
             <column name="cancel_reason" type="varchar(4000)"/>
         </createTable>
     </changeSet>
+    <changeSet id="#INTRD-9451_20220902_rebuild" author="KhalidHORRI" >
+
+        <createTable tableName="open_order_tags">
+            <column name="open_order_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="open_order_id,tag_id"
+                       constraintName="open_order_tags_pkey"
+                       tableName="open_order_tags"/>
+        <dropColumn tableName="cpq_tag">
+            <column name="open_order_id" />
+        </dropColumn>
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -16419,10 +16436,6 @@
                                  constraintName="billing_accounting_article_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
-                                 constraintName="cpq_tag_open_order_id_fk"
-                                 referencedTableName="open_order"
-                                 referencedColumnNames="id"/>
     </changeSet> 
     <!-- end fk -->
 
@@ -17167,6 +17180,16 @@
 	                                 referencedTableName="open_order_article"
 	                                 referencedColumnNames="id"/>
 	</changeSet>
+    <changeSet id="#INTRD-9451_20220902_fk" author="KhalidHORRI" >
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="open_order_id"
+                                 constraintName="open_order_tags_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
