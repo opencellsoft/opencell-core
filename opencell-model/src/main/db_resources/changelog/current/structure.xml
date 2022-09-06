@@ -14219,4 +14219,12 @@ order by date_trunc('month', i.invoice_date) DESC
         <modifyDataType tableName="crm_seller" columnName="address_city" newDataType="varchar(100)" />
         <modifyDataType tableName="ord_order_item" columnName="address_city" newDataType="varchar(100)" />
     </changeSet>
+
+	<changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe">
+		<addColumn tableName="billing_billing_run">
+            <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
 </databaseChangeLog>
