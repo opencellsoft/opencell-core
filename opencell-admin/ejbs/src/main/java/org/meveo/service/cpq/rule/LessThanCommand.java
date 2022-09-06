@@ -21,8 +21,13 @@ public class LessThanCommand implements CommercialRuleLineCommand {
     @Override
     public boolean execute(CommercialRuleLine commercialRuleLine) {
         Optional<SelectedAttributes> exist = getSelectedSourceAttributeWitchMatchWithRuleLine(this.selectedSourceAttributes, commercialRuleLine);
+        boolean lessThan=false;
+        if(exist.isPresent()) {
         var attributeValue=exist.get().getSelectedAttributesMap().get(commercialRuleLine.getSourceAttribute().getCode());
-        return exist.isPresent() && Double.valueOf(attributeValue.toString())<Double.valueOf((commercialRuleLine.getSourceAttributeValue()));
+        if((attributeValue!=null && !attributeValue.equals("")) && (commercialRuleLine.getSourceAttributeValue()!=null && !commercialRuleLine.getSourceAttributeValue().equals(""))) 
+        	lessThan=Double.valueOf(attributeValue.toString())<Double.valueOf((commercialRuleLine.getSourceAttributeValue()));
+        }
+        return lessThan;
     }
 
     public void replace(CommercialRuleLine commercialRuleLine) {
