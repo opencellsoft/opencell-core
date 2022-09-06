@@ -2601,6 +2601,9 @@
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="description_i18n" type="${type.json}" />
+            <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -18494,6 +18497,7 @@
     <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza"/>
     <changeSet id="#INTRD-9442_20220831" author="HichamHANINE"/>
     <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
