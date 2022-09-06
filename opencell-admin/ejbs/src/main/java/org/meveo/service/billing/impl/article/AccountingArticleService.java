@@ -76,6 +76,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if(articleMappingLines.isEmpty() && offer != null && product != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
 		}
+		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
+		}
 		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
 		}
