@@ -193,6 +193,8 @@ public class TaxApi extends BaseApi {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             tax.setAccountingCode(accountingCode);
+        } else {
+        	tax.setAccountingCode(null);
         }
 
         if (postData.getLanguageDescriptions() != null) {
