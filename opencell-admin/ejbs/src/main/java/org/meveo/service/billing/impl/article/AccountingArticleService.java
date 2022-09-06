@@ -144,7 +144,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
-				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
+					attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				}
+
 			}
 
 		});
