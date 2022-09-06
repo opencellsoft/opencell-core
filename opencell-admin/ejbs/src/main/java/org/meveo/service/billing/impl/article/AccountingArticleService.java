@@ -57,10 +57,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getAccountingArticle(product, null, attributes, null);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, OfferTemplate offer,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
 		List<ArticleMappingLine> articleMappingLines = null;
-		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
@@ -144,11 +143,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			}else{
 				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
 			}
-			
+
 		});
-        if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-            throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
-        }
+		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
+			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
@@ -161,6 +160,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			detach(result);
 		}
 		return  result != null ? Optional.of(result) : Optional.empty();
+	}
+
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
+		return getAccountingArticle(product, chargeTemplate,  ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null), attributes, walletOperation);
 	}
 
 	private void getBestMatchedArticleMappingLines(Product product,
@@ -256,7 +260,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle;
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, walletOperation);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null,
+				chargeInstance.getChargeTemplate(),
+				chargeInstance.getSubscription().getOffer(),
+				attributes,
+				walletOperation);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
