@@ -13986,9 +13986,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
                                  constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
                                  referencedColumnNames="id"/>
-        <dropColumn tableName="cpq_tag">
-            <column name="open_order_id" />
-        </dropColumn>
     </changeSet>
 
     
