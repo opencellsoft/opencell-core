@@ -172,9 +172,16 @@ public class ContactApi extends BaseApi {
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
                         }
+                        checkMainContactExistance(abcDto, addressBookServiceById);
                         AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
                         addressBookContactService.create(addressBookContact);
                     });
+        }
+    }
+
+    private void checkMainContactExistance(AddressBookContactDto abcDto, AddressBook addressBookServiceById) {
+        if (abcDto.getMainContact() && addressBookContactService.hasMainContact(addressBookServiceById)) {
+            throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
         }
     }
 
@@ -199,9 +206,49 @@ public class ContactApi extends BaseApi {
         }
 
         dtoToEntity(contact, postData);
-
+        updateContactAddressBook(contact, postData.getAddressBookContacts());
         contact = contactService.update(contact);
         return contact;
+    }
+
+    private void updateContactAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
+        if(addressBookContacts != null && !addressBookContacts.isEmpty()){
+            addressBookContacts.stream()
+                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
+                    .forEach(abcDto -> {
+                        AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
+                        if(addressBookServiceById == null){
+                            throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
+                        }
+                        checkMainContactExistance(abcDto, addressBookServiceById);
+                        // update existing
+                        if(abcDto.getId() != null){
+                            AddressBookContact addressBookContact = addressBookContactService.findById(abcDto.getId());
+                            if(addressBookContact == null){
+                                throw new EntityDoesNotExistsException("addressBookContact with id "+abcDto.getId()+" does not exist");
+                            }
+                            if(abcDto.getPosition() != null){
+                                addressBookContact.setPosition(abcDto.getPosition());
+                            }
+                            if(abcDto.getMainContact() != null){
+                                addressBookContact.setMainContact(abcDto.getMainContact());
+                            }
+                            addressBookContactService.update(addressBookContact);
+                        } else {
+                            AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
+                            addressBookContactService.create(addressBookContact);
+                        }
+                    });
+            List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
+            abcs.stream()
+                    .filter(abc -> addressBookContacts.stream()
+                            .filter(addressBookContactDto -> abc.getId().equals(addressBookContactDto.getId()))
+                            .filter(addressBookContactDto -> abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id")))
+                            .findFirst()
+                            .isEmpty())
+                    .forEach(abc -> addressBookContactService.remove(abc.getId()));
+
+        }
     }
 
     /**

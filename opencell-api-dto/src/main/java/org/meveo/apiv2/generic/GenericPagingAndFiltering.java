@@ -1,15 +1,17 @@
 package org.meveo.apiv2.generic;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.immutables.value.Value;
-import org.meveo.api.dto.response.PagingAndFiltering;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.persistence.criteria.JoinType;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import org.immutables.value.Value;
+import org.meveo.api.dto.response.PagingAndFiltering;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
@@ -17,6 +19,8 @@ import java.util.Set;
 public interface GenericPagingAndFiltering {
     @Nullable
     @Value.Default default Set<String> getGenericFields(){ return Collections.emptySet();}
+    @Nullable
+    @Value.Default default List<GenericFieldDetails> getGenericFieldDetails(){ return Collections.emptyList();}
     @Nullable
     @Value.Default default Set<String> getNestedEntities(){ return Collections.emptySet();}
     @Nullable

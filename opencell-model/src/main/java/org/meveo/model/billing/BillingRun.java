@@ -419,6 +419,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_run_job_execution", joinColumns = @JoinColumn(name = "billing_run_id"), inverseJoinColumns = @JoinColumn(name = "job_execution_id"))
     protected List<JobExecutionResultImpl> jobExecutions = new ArrayList<>();
+
+    /**
+     * To decide whether or not generate account oeprations.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_ao", nullable = false)
+    private Boolean generateAO = false;
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -990,4 +997,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void addJobExecutions(JobExecutionResultImpl jobExecution) {
         this.jobExecutions.add(jobExecution);
     }
+
+	public Boolean getGenerateAO() {
+		return generateAO;
+	}
+
+	public void setGenerateAO(Boolean generateAO) {
+		this.generateAO = generateAO;
+	}
+
 }

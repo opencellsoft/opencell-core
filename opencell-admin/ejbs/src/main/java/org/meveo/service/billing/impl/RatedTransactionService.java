@@ -1545,7 +1545,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id," +
                 " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id," +
                 " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
-                " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
+                " rt.discountedRatedTransaction as discounted_ratedtransaction_id," +
+                " rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax " +
                 " FROM RatedTransaction rt left join rt.subscription s " +
                 " WHERE rt.id in (:ids) and rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);

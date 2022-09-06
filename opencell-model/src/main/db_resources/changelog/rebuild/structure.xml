@@ -2105,7 +2105,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -2510,7 +2510,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -2601,6 +2601,9 @@
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="description_i18n" type="${type.json}" />
+            <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -3683,7 +3686,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -4669,7 +4672,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -4883,7 +4886,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -5018,7 +5021,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -5166,7 +5169,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -5290,7 +5293,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -5336,7 +5339,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(20)" />
@@ -6940,7 +6943,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(10)" />
@@ -18493,6 +18496,8 @@
     <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani" />
     <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza"/>
     <changeSet id="#INTRD-9442_20220831" author="HichamHANINE"/>
+    <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
