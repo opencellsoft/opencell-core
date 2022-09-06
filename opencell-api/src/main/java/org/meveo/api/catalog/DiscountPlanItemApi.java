@@ -86,7 +86,7 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public DiscountPlanItem create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
+    	if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
 		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null) {

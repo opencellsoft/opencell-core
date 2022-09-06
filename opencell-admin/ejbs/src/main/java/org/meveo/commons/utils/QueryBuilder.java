@@ -62,7 +62,8 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 12.x
  */
 public class QueryBuilder {
 
@@ -189,6 +190,9 @@ public class QueryBuilder {
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
+        if(sql.toLowerCase().contains("where")){
+            hasOneOrMoreCriteria = true;
+        }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
     }
