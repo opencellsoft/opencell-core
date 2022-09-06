@@ -60,20 +60,11 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 		if(parameter1 != null) {
 			queryBuilder.addCriterionEntity("am.parameter1", parameter1);
 		}
-		if(parameter1 == null) {
-			queryBuilder.addSql("am.parameter1 is null ");
-		}
 		if(parameter2 != null) {
 			queryBuilder.addCriterionEntity("am.parameter2", parameter2);
 		}
-		if(parameter2 == null) {
-			queryBuilder.addSql("am.parameter2 is null ");
-		}
 		if(parameter3 != null) {
 			queryBuilder.addCriterionEntity("am.parameter3", parameter3);
-		}
-		if(parameter3 == null) {
-			queryBuilder.addSql("am.parameter3 is null ");
 		}
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.setFlushMode(FlushModeType.COMMIT).getResultList();

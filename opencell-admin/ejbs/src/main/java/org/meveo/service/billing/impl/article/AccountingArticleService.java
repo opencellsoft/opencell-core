@@ -63,7 +63,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
 		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
 		}
