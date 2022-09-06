@@ -17736,6 +17736,20 @@
     <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI" />
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
+	
+	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
+	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
+	<changeSet id="#FIX-INTRD-634_20210706" author="AkadidAbdelmounaim" />
+	<changeSet id="#FIX2-INTRD-634_20210706" author="AkadidAbdelmounaim" />
+	<changeSet id="INTRD-2547-2480-2482-2478_20211021" author="khalidHORRI" />
+	<changeSet id="INTRD-2511-1_20211029" author="Mohammed_ElAzzouzi" />
+	<changeSet id="INTRD-2511-2_20211029" author="Mohammed_ElAzzouzi" />
+	<changeSet id="#FIX-INTRD-2601_20211102-changeset" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-3250part2_20211123" author="AmineBENAICHA" />
+	<changeSet id="#INTRD-5380_2022_02_28" author="ZBariki" />
+	<changeSet id="#INTRD-5533_2022_03_07" author="ZBariki" />
+	<changeSet id="#INTRD-4590-20220308" author="HatimOUDAD" />
+	
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <!-- DONT REMOVE THIS CHANGESET -->
