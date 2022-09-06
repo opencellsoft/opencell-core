@@ -8975,7 +8975,6 @@
             <column name="tag_type_id" type="bigint" />
             <column name="parent_tag_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)"/>
-            <column name="open_order_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -12112,9 +12111,6 @@
         <addPrimaryKey columnNames="open_order_id,tag_id"
                        constraintName="open_order_tags_pkey"
                        tableName="open_order_tags"/>
-        <dropColumn tableName="cpq_tag">
-            <column name="open_order_id" />
-        </dropColumn>
     </changeSet>
     <!-- end tables -->
 
