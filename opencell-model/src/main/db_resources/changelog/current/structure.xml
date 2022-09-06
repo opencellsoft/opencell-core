@@ -13651,6 +13651,10 @@ order by date_trunc('month', i.invoice_date) DESC
                                  constraintName="billing_accounting_article_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
+                                 constraintName="cpq_tag_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
     </changeSet>
     
     <changeSet id="#INTRD-8106_20220630" author="TarikFA.">
@@ -13986,6 +13990,11 @@ order by date_trunc('month', i.invoice_date) DESC
         <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
                                  constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
                                  referencedColumnNames="id"/>
+         <dropForeignKeyConstraint baseTableName="cpq_tag"
+                                  constraintName="cpq_tag_open_order_id_fk"/>
+        <dropColumn tableName="cpq_tag">
+            <column name="open_order_id" />
+        </dropColumn>
     </changeSet>
 
     
