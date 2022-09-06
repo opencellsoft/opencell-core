@@ -64,8 +64,8 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
 
     private void checkParameters(OpenOrder openOrder, OpenOrderDto dto) {
 
-        if(dto.getEndOfValidityDate() != null && (dto.getEndOfValidityDate().after(new Date()) || dto.getEndOfValidityDate().after(openOrder.getActivationDate()))){
-            throw new InvalidParameterException(" The EndOfValidityDate field should not be after currente date or the activation date");
+        if(dto.getEndOfValidityDate() != null && (dto.getEndOfValidityDate().before(new Date()) || dto.getEndOfValidityDate().before(openOrder.getActivationDate()))){
+            throw new InvalidParameterException(" The EndOfValidityDate field should not be before current date or the activation date");
         }
         if(!(OpenOrderStatusEnum.NEW.equals(openOrder.getStatus()) || OpenOrderStatusEnum.IN_USE.equals(openOrder.getStatus()))){
             throw new BusinessApiException("Could not modify the open order: "+openOrder.getCode()+" current status: "+openOrder.getStatus());
