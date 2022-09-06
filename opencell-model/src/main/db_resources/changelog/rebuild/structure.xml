@@ -9519,6 +9519,9 @@
             <column name="parameter_2" type="varchar(255)"/>
             <column name="parameter_3" type="varchar(255)"/>
             <column name="mapping_key_el" type="varchar(255)"/>
+			<column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-470" author="NabilOUACHI">
@@ -9541,6 +9544,9 @@
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
+			<column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-471" author="NabilOUACHI">
@@ -10663,7 +10669,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496">
         <addUniqueConstraint columnNames="code" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_type" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497" dbms="postgresql">
         <addUniqueConstraint constraintName="uk_billing_invoice" columnNames="invoice_number, invoice_type_id" tableName="billing_invoice" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-498">
@@ -16060,6 +16066,8 @@
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view" dbms="postgresql"/>
     <changeSet author="AbdelmounaimAkadid" id="#INTRD-828-create-view-oracle" dbms="oracle"/>
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
+    <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 

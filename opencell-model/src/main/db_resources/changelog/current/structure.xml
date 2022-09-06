@@ -9641,7 +9641,7 @@ public class OrderAdvancement extends ModuleScript {
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="varchar(255)" />
-            <column name="is_action_active" type="${type.boolean}" defaultValueBoolean="true"/>
+            <column name="is_action_active" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="action_type" type="varchar(255)" >
                 <constraints nullable="false"/>
             </column>
@@ -9872,5 +9872,23 @@ public class OrderAdvancement extends ModuleScript {
 
 	<changeSet author="hichamhanine" id="#INTRD-7850-20220622">
     	<dropUniqueConstraint tableName="ar_payment_token" uniqueColumns="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle">
+    	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
+    </changeSet>
+	
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki">
+        <addColumn tableName="billing_article_mapping_line">
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+
+        <addColumn tableName="billing_attribute_mapping">
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
