@@ -22,6 +22,8 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -183,7 +185,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         
         billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if(billingRun.getStatus() == POSTVALIDATED) {
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+            assignInvoiceNumberAndIncrementBAInvoiceDatesAndGenerateAO(billingRun, result);
             billingRun.setStatus(VALIDATED);
         }
         billingRunService.update(billingRun);
@@ -199,7 +201,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
      * @param jobExecutionResult the Job execution result
      * @throws BusinessException the business exception
      */
-    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDatesAndGenerateAO(BillingRun billingRun, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
 
         log.info("Will assign invoice numbers to invoices of Billing run {}", billingRun.getId());
 
@@ -249,6 +251,17 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             task = (baId, jobResult) -> invoiceService.incrementBAInvoiceDate(billingRun, baId);
 
             iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            
+            if(billingRun.getGenerateAO()) {
+            	task = (invoiceId, jobResult) -> {
+    				try {
+    					invoiceService.generateRecordedInvoiceAO(invoiceId);
+    				} catch (BusinessException | InvoiceExistException | ImportInvoiceException e) {
+    					throw new BusinessException(String.format("Error while trying to generate Account Operation for BR: %s, Invoice: %s", billingRun.getId(), invoiceId));
+    				}
+    			};
+    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            }
         }
     }
 
