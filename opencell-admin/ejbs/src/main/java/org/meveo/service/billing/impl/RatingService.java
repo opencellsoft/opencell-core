@@ -664,6 +664,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             unitPriceWithoutTax = contractItem.getAmountWithoutTax();
                         }
                     }
+
                 }
 
                 if (unitPriceWithoutTax == null) {
@@ -674,17 +675,33 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                     log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
 
+
                     Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
 
                     // A price discount is applied to a default price by a contract
-                    if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) && contractItem.getRate() > 0) {
-                        BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
-                        if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
-                            unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
-
+                    if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                        if(contractItem.getRate() > 0){
+                            BigDecimal amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                            if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
+                                unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
+                        } else if (contractItem.getPricePlan() != null) {
+                            PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
+                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+                            if (ppmVersion != null) {
+                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
+                                BigDecimal discountRate= pricePlanMatrixLine.getPriceWithoutTax();
+                                if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
+                                    BigDecimal amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
+                                    if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
+                                        unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
+                                }
+                            }
+                        }
                     }
+
+
                 }
             }else {
                      bareWalletOperation.setOverrodePrice(true);
