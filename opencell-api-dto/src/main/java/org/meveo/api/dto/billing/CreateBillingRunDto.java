@@ -118,6 +118,11 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private BillingRunAutomaticActionEnum suspectAutoAction; 
 
     /**
+     * To decide whether or not generate AO.
+     */
+    private Boolean generateAO = false;
+
+    /**
      * The description I18N.
      */
     private List<LanguageDescriptionDto> descriptionsTranslated;
@@ -347,6 +352,24 @@ public class CreateBillingRunDto extends BaseEntityDto {
 
 	public void setDescriptionsTranslated(List<LanguageDescriptionDto> descriptionsTranslated) {
 		this.descriptionsTranslated = descriptionsTranslated;
+	}
+
+	/**
+	 * Gets the generateAO
+	 * 
+	 * @return
+	 */
+	public Boolean getGenerateAO() {
+		return generateAO;
+	}
+
+	/**
+	 * Set the generateAO
+	 * 
+	 * @param generateAO
+	 */
+	public void setGenerateAO(Boolean generateAO) {
+		this.generateAO = generateAO;
 	}
 
 	@Override

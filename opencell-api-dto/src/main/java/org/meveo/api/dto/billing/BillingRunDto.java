@@ -175,6 +175,11 @@ public class BillingRunDto extends AuditableEntityDto {
     private Boolean computeDatesAtValidation;
 
     /**
+     * To decide whether or not generate AO.
+     */
+    private Boolean generateAO;
+
+    /**
      * Instantiates a new billing run dto.
      */
     public BillingRunDto() {
@@ -715,6 +720,24 @@ public class BillingRunDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the generateAO
+     * 
+     * @return
+     */
+    public Boolean getGenerateAO() {
+		return generateAO;
+	}
+
+    /**
+     * Set the generateAO
+     * 
+     * @param generateAO
+     */
+	public void setGenerateAO(Boolean generateAO) {
+		this.generateAO = generateAO;
+	}
+
+	/**
      * Sets the from entity.
      *
      * @param billingRunEntity the new from entity
@@ -754,6 +777,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setSkipValidationScript(billingRunEntity.isSkipValidationScript());
         setRejectAutoAction(billingRunEntity.getRejectAutoAction());
         setSuspectAutoAction(billingRunEntity.getSuspectAutoAction());
+        setGenerateAO(billingRunEntity.getGenerateAO());
     }
 
     @Override
@@ -785,6 +809,7 @@ public class BillingRunDto extends AuditableEntityDto {
                 ", languageCode='" + languageCode + '\'' +
                 ", selectedBillingAccounts='" + selectedBillingAccounts + '\'' +
                 ", customFields=" + customFields +
+                ", generateAO=" + generateAO +
                 '}';
     }
 }
