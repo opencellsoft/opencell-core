@@ -1736,10 +1736,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             for (Entry<BillingAccount, List<RatedTransaction>> rtGrpByBAElement : rtGroupedByBA.entrySet()) {
                 BillingAccount billingAccount = rtGrpByBAElement.getKey();
-                List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccount(billingAccount);                
                 List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
                 boolean isApply = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
+                    List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());                
+
                     for(BillingRule billingRule : billingRules) { 
                         if(!isApply) {
                             Boolean eCriteriaEL = false;
