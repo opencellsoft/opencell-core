@@ -119,7 +119,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
-        billingRun.setExceptionalILIds(ratedTransactions
+        billingRun.setExceptionalRTIds(ratedTransactions
                 .stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
                 .map(rt -> rt.getId()).collect(toList()));
     }
