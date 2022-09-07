@@ -8,9 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.persistence.criteria.JoinType;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
@@ -115,13 +112,6 @@ public class NativeExpressionFactory {
                     orClauseItems.keySet().stream().filter(orItemKey -> orClauseItems.get(orItemKey) != null).forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
 
                     queryBuilder.endOrClause();
-
-                } else if (key.startsWith(PersistenceService.ANY_MATCH)) {
-                	queryBuilder.startOrClause();
-                	queryBuilder.setJoinType(JoinType.LEFT);
-                	Map<String, Object> orClauseItems = Stream.of(key.split(" ")).skip(1).collect(Collectors.toMap(s -> s, s -> value));
-                	orClauseItems.keySet().stream().filter(orItemKey -> orClauseItems.get(orItemKey) != null).forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
-                	queryBuilder.endOrClause();
 
                 } else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value)) {
                     addNullFilters(exp.getFieldName(), false);
