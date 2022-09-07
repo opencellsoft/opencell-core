@@ -3843,6 +3843,9 @@
             <column name="discounted_amount" type="numeric(23,12)"/>
             <column name="sequence" type="int4"/>
             <column name="rules_contract_id" type="bigint" />
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -17297,6 +17300,26 @@
                                  constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-9581_20220907_FK" author="TarikFA.">
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_id_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_id_fk" 
+								 referencedTableName="cpq_contract" 
+								 baseColumnNames="contract_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -18523,6 +18546,8 @@
     <changeSet id="#INTRD-9442_20220831" author="HichamHANINE"/>
     <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
+	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
