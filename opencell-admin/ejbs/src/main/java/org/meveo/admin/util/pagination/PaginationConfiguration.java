@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.criteria.JoinType;
-
 /**
  * @author Andrius
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
@@ -66,8 +64,6 @@ public class PaginationConfiguration implements Serializable {
      * Sort field and order repeated multiple times
      */
     private Object[] ordering;
-    
-    private JoinType joinType;
 
     /**
      * 
@@ -107,11 +103,6 @@ public class PaginationConfiguration implements Serializable {
         this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
     }
 
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
-    	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
-    	this.joinType=joinType;
-    }
-    
     /**
      * Constructor
      *
@@ -280,12 +271,4 @@ public class PaginationConfiguration implements Serializable {
     public String toString() {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, fetchFields=%s, ordering=%s]", firstRow, numberOfRows, fullTextFilter, filters, fetchFields, ordering);
     }
-
-	public JoinType getJoinType() {
-		return joinType;
-	}
-
-	public void setJoinType(JoinType joinType) {
-		this.joinType = joinType;
-	}
 }

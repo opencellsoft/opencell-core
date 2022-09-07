@@ -98,7 +98,8 @@ public class OpenOrder extends BusinessEntity {
     @Column(name = "balance")
     private BigDecimal balance;
 
-    @OneToMany(mappedBy = "openOrder", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "open_order_tags", joinColumns = @JoinColumn(name = "open_order_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
 
     @Column(name = "cancel_reason")
