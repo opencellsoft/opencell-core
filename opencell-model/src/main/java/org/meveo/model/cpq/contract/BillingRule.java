@@ -40,14 +40,14 @@ import org.meveo.model.admin.Seller;
             + " and (br.contract.seller.id is null) "
             + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST"),
     @NamedQuery(name = "BillingRule.findByAccountsAndContract", query = "select br from BillingRule br where "
-            + " br.contract=:contractId "
+            + " br.contract.id=:contractId "
             + " and (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
             + " and (br.contract.customerAccount.id is null or br.contract.customerAccount.id=:customerAccountId) "
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null or br.contract.seller.id=:sellerId) "
             + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST"),
     @NamedQuery(name = "BillingRule.findByAccountsAndContractWithSellerNull", query = "select br from BillingRule br where "
-            + " br.contract=:contractId "
+            + " br.contract.id=:contractId "
             + " and (br.contract.billingAccount.id is null or br.contract.billingAccount.id=:billingAccountId) "
             + " and (br.contract.customerAccount.id is null or br.contract.customerAccount.id=:customerAccountId) "
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
