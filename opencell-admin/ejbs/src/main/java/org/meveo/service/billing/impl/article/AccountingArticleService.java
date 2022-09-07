@@ -57,14 +57,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getAccountingArticle(product, null, attributes, null);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, OfferTemplate offer,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
 		List<ArticleMappingLine> articleMappingLines = null;
-		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, param1, param2, param3);
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
 		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
 		}
@@ -76,6 +75,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		if(articleMappingLines.isEmpty() && offer != null && product != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
 		}
 		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
@@ -142,13 +144,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
-				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
+					attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				}
 			}
 			
 		});
-        if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-            throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
-        }
+		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
+			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
@@ -161,6 +165,12 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			detach(result);
 		}
 		return  result != null ? Optional.of(result) : Optional.empty();
+	}
+
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
+		return getAccountingArticle(product, chargeTemplate,  ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null), attributes, walletOperation);
+
 	}
 
 	private void getBestMatchedArticleMappingLines(Product product,
@@ -256,7 +266,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle;
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, walletOperation);
+		accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null,
+				chargeInstance.getChargeTemplate(),
+				chargeInstance.getSubscription().getOffer(),
+				attributes,
+				walletOperation);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
