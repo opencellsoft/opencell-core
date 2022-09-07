@@ -168,10 +168,10 @@
 		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
 	</field>
 	<field name="numContrat" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/subscription/@code]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/subscriptions/subscription/@code]]></fieldDescription>
 	</field>
 	<field name="refPOD" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/subscription/access/pod/@id]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/detail/subscription/access/pod/@id]]></fieldDescription>
 	</field>
 	<field name="floorAddressPOD" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/subscription/access/pod/@address_floor]]></fieldDescription>
@@ -245,15 +245,6 @@
 	<field name="sellerAddrZip" class="java.lang.String">
 		<fieldDescription><![CDATA[header/seller/address/postalCode]]></fieldDescription>
 	</field>
-	<field name="sellerAddrCity" class="java.lang.String">
-		<fieldDescription><![CDATA[header/seller/address/city]]></fieldDescription>
-	</field>
-	<field name="sellerAddrPhone" class="java.lang.String">
-		<fieldDescription><![CDATA[header/seller/contact/@phone]]></fieldDescription>
-	</field>
-	<field name="sellerAddrEmail" class="java.lang.String">
-		<fieldDescription><![CDATA[header/seller/contact/@email]]></fieldDescription>
-	</field>
 	<field name="servicesPrestationsAnnexesAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[sum(/invoice/header/categories/category[@code="CONSUMPTION"]/amountWithoutTax)]]></fieldDescription>
 	</field>
@@ -265,6 +256,9 @@
 	</field>
 	<field name="tvaAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[sum(/invoice/amount/taxes/@total)]]></fieldDescription>
+	</field>
+	<field name="withTaxAmount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[sum(/invoice/amount/amountWithTax)]]></fieldDescription>
 	</field>
 	<field name="netToPay" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[sum(/invoice/header/categories/category[@code="CONSUMPTION"]/amountWithTax)]]></fieldDescription>
@@ -309,16 +303,19 @@
 		<fieldDescription><![CDATA[/invoice/header/customerAccount/@currency]]></fieldDescription>
 	</field>
 	<field name="custAccEmail" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/@email]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/email]]></fieldDescription>
 	</field>
 	<field name="custAccPhone" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/@phone]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/phone]]></fieldDescription>
 	</field>
 	<field name="custAccMobile" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/@mobile]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/mobile]]></fieldDescription>
 	</field>
-	<field name="nextInvoiceDate" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/header/billingAccount/@nid]]></fieldDescription>
+	<field name="openOrderNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@openOrderNumber]]></fieldDescription>
+	</field>
+	<field name="openOrderExternalRef" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@externalReference]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupHeader>
@@ -361,7 +358,7 @@
 							<reportElement x="-14" y="33" width="194" height="21" forecolor="#013042" uuid="7f44ca4f-cb65-49a1-a2fb-036d361e005d"/>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="DejaVu Sans" size="9"/>
+								<font fontName="Arial" size="9"/>
 							</textElement>
 							<text><![CDATA[Be Smart, Be Automated]]></text>
 						</staticText>
@@ -413,16 +410,16 @@
 							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="Vista Sans OT Reg" size="8" isBold="false"/>
+							<font fontName="Arial" size="8" isBold="false"/>
 						</textElement>
-						<textFieldExpression><![CDATA[($F{baQuality} != null ? $F{baQuality} + " " : "") + $F{baName} + " " + $F{baFirstName}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[($F{baQuality} != null ? $F{baQuality} + " " : "") + ($F{baName} != null ? $F{baName} + " "  : "") + ($F{baFirstName}!= null ? $F{baFirstName} : "")]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement x="0" y="11" width="275" height="11" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" forecolor="#013042" uuid="8766364e-8443-4fd9-8903-b2bbd96a3dd5">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="Vista Sans OT Reg" size="8" isBold="false"/>
+							<font fontName="Arial" size="8" isBold="false"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{baAddrLine1}==null?"":$F{baAddrLine1}]]></textFieldExpression>
 					</textField>
@@ -431,7 +428,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="Vista Sans OT Reg" size="8" isBold="false"/>
+							<font fontName="Arial" size="8" isBold="false"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{baAddrLine2}==null?"":$F{baAddrLine2}]]></textFieldExpression>
 					</textField>
@@ -440,7 +437,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="Vista Sans OT Reg" size="8" isBold="false"/>
+							<font fontName="Arial" size="8" isBold="false"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{baAddrLine3}==null?"":$F{baAddrLine3}]]></textFieldExpression>
 					</textField>
@@ -449,7 +446,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="Vista Sans OT Reg" size="8" isBold="false"/>
+							<font fontName="Arial" size="8" isBold="false"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{baAddrZip}.toUpperCase() + " " + $F{baAddrCity}.toUpperCase()]]></textFieldExpression>
 					</textField>
@@ -521,7 +518,7 @@
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Left" verticalAlignment="Middle">
-										<font fontName="DejaVu Sans" size="12.5" isBold="false"/>
+										<font fontName="Arial" size="12.5" isBold="true"/>
 									</textElement>
 									<text><![CDATA[Ma Facture]]></text>
 								</staticText>
@@ -531,13 +528,13 @@
 									<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<property name="com.jaspersoft.studio.unit.y" value="px"/>
-									<printWhenExpression><![CDATA[$F{servicesPrestationsAnnexesAmount} != null && $F{servicesPrestationsAnnexesAmount}.compareTo(BigDecimal.ZERO) != 0]]></printWhenExpression>
+									<printWhenExpression><![CDATA[$F{withoutTaxAmount} != null && $F{withoutTaxAmount}.compareTo(BigDecimal.ZERO) != 0]]></printWhenExpression>
 								</reportElement>
 								<staticText>
 									<reportElement positionType="Float" x="0" y="0" width="190" height="21" isRemoveLineWhenBlank="true" forecolor="#013042" uuid="5b5451ec-c9fe-47fe-9a0e-49f044a3f4dc"/>
 									<box leftPadding="20"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="DejaVu Sans" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<text><![CDATA[Consommations]]></text>
 								</staticText>
@@ -545,15 +542,15 @@
 									<reportElement x="175" y="0" width="100" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="DejaVu Sans" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
-									<textFieldExpression><![CDATA[($F{servicesPrestationsAnnexesAmount}==null ?0:$F{servicesPrestationsAnnexesAmount})]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{withoutTaxAmount}==null ?0:$F{withoutTaxAmount})]]></textFieldExpression>
 								</textField>
 								<textField>
 									<reportElement x="170" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="DejaVu Sans" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{custAccCurrency}.equals("EUR") ? " €" : " $")]]></textFieldExpression>
 								</textField>
@@ -563,13 +560,13 @@
 									<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									<property name="com.jaspersoft.studio.unit.y" value="px"/>
-									<printWhenExpression><![CDATA[$F{taxesContributionsAmount} != null && $F{taxesContributionsAmount}.compareTo(BigDecimal.ZERO) != 0]]></printWhenExpression>
+									<printWhenExpression><![CDATA[$F{tvaAmount} != null && $F{tvaAmount}.compareTo(BigDecimal.ZERO) != 0]]></printWhenExpression>
 								</reportElement>
 								<staticText>
 									<reportElement positionType="Float" x="0" y="0" width="190" height="21" isRemoveLineWhenBlank="true" forecolor="#013042" uuid="5824a109-adef-484d-90d6-3171a9d346f7"/>
 									<box leftPadding="20"/>
 									<textElement verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Reg" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<text><![CDATA[Taxes]]></text>
 								</staticText>
@@ -577,7 +574,7 @@
 									<reportElement x="175" y="0" width="100" height="21" forecolor="#013042" uuid="abc7669a-425a-4d07-b4b4-2e2ea577af74"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OTCE Medium" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{tvaAmount}==null?0:$F{tvaAmount}]]></textFieldExpression>
 								</textField>
@@ -585,7 +582,7 @@
 									<reportElement x="170" y="0" width="120" height="21" forecolor="#013042" uuid="019075be-f538-46ea-8d85-12026f36efa0"/>
 									<box rightPadding="3"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="DejaVu Sans" size="9"/>
+										<font fontName="Arial" size="9"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{custAccCurrency}.equals("EUR") ? " €" : " $")]]></textFieldExpression>
 								</textField>
@@ -606,9 +603,9 @@
 										<property name="com.jaspersoft.studio.unit.width" value="px"/>
 									</reportElement>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="14.5" isBold="false"/>
+										<font fontName="Arial" size="14.5" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{netToPay}==null?0:$F{netToPay}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{withTaxAmount}==null?0:$F{withTaxAmount}]]></textFieldExpression>
 								</textField>
 								<textField>
 									<reportElement x="227" y="10" width="26" height="26" forecolor="#FFFFFF" uuid="354b5b9c-5561-4e2c-98aa-34982692507c">
@@ -624,18 +621,9 @@
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="14.5" isBold="false"/>
+										<font fontName="Arial" size="14.5" isBold="false"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{custAccCurrency}.equals("EUR") ? "€" : "$")]]></textFieldExpression>
-								</textField>
-								<textField>
-									<reportElement x="98" y="25" width="58" height="12" forecolor="#FFFFFF" uuid="c4640f02-a711-45b7-b2f6-609eed312d03">
-										<property name="com.jaspersoft.studio.unit.height" value="px"/>
-									</reportElement>
-									<textElement>
-										<font fontName="Vista Sans OT Reg" size="9.7"/>
-									</textElement>
-									<textFieldExpression><![CDATA["TO DEFINE"]]></textFieldExpression>
 								</textField>
 								<staticText>
 									<reportElement x="244" y="10" width="36" height="26" forecolor="#FFFFFF" uuid="742ba430-fb08-4fee-abc1-b9083f2684bc">
@@ -651,7 +639,7 @@
 										<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Reg" size="14.5" isBold="false"/>
+										<font fontName="Arial" size="14.5" isBold="false"/>
 									</textElement>
 									<text><![CDATA[TTC]]></text>
 								</staticText>
@@ -676,7 +664,7 @@
 						</graphicElement>
 					</rectangle>
 					<staticText>
-						<reportElement mode="Opaque" x="0" y="206" width="295" height="15" forecolor="#013042" backcolor="#F2F4F5" uuid="6a8542e8-6d4c-44d9-b392-90fda5ab904a">
+						<reportElement mode="Opaque" x="0" y="205" width="295" height="17" forecolor="#013042" backcolor="#F2F4F5" uuid="6a8542e8-6d4c-44d9-b392-90fda5ab904a">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						</reportElement>
 						<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
@@ -687,24 +675,24 @@
 							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						</box>
 						<textElement textAlignment="Left">
-							<font fontName="DejaVu Sans" size="12.5" isBold="false"/>
+							<font fontName="Arial" size="12.5" isBold="true"/>
 						</textElement>
-						<text><![CDATA[Mes coordonnées bancaires]]></text>
+						<text><![CDATA[Mon moyen de paiement]]></text>
 					</staticText>
 					<textField>
-						<reportElement x="1" y="222" width="285" height="11" forecolor="#013042" uuid="58b71501-1db9-4b16-bfae-be7d236cb983">
+						<reportElement x="1" y="226" width="285" height="11" forecolor="#013042" uuid="58b71501-1db9-4b16-bfae-be7d236cb983">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9"/>
+							<font fontName="Arial" size="9"/>
 						</textElement>
 						<textFieldExpression><![CDATA["Je serai prélevé sur le RIB suivant :"]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="0" y="238" width="155" height="11" forecolor="#013042" uuid="2ac82456-d174-4670-ba41-6a1dfdb0cb6e">
+						<reportElement x="0" y="242" width="120" height="11" forecolor="#013042" uuid="2ac82456-d174-4670-ba41-6a1dfdb0cb6e">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -712,23 +700,23 @@
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9" isBold="false"/>
+							<font fontName="Arial" size="9" isBold="false"/>
 						</textElement>
 						<text><![CDATA[Nom du titulaire du compte : ]]></text>
 					</staticText>
 					<textField>
-						<reportElement x="155" y="238" width="140" height="11" forecolor="#013042" uuid="0eb91171-f978-4184-b70b-88445598bf53">
+						<reportElement x="120" y="242" width="174" height="11" forecolor="#013042" uuid="0eb91171-f978-4184-b70b-88445598bf53">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9"/>
+							<font fontName="Arial" size="9"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{accountOwner} != null ? $F{accountOwner} : "Non spécifié"]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="0" y="252" width="155" height="11" forecolor="#013042" uuid="1adaabac-7e76-43a4-8fb6-37ad1a3937cf">
+						<reportElement x="0" y="258" width="120" height="11" forecolor="#013042" uuid="1adaabac-7e76-43a4-8fb6-37ad1a3937cf">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -736,23 +724,23 @@
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9" isBold="false"/>
+							<font fontName="Arial" size="9" isBold="false"/>
 						</textElement>
 						<text><![CDATA[Numéro de compte :]]></text>
 					</staticText>
 					<textField>
-						<reportElement x="155" y="252" width="140" height="11" forecolor="#013042" uuid="9193f200-03e2-4cef-8c58-91bd6f8871c7">
+						<reportElement x="120" y="258" width="174" height="11" forecolor="#013042" uuid="9193f200-03e2-4cef-8c58-91bd6f8871c7">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9"/>
+							<font fontName="Arial" size="9"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{accountNumber} != null ? $F{accountNumber} : "Non spécifié"]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="0" y="266" width="155" height="11" forecolor="#013042" uuid="eef90cc1-460a-4b73-8cb3-3d702267a08b">
+						<reportElement x="0" y="274" width="120" height="11" forecolor="#013042" uuid="eef90cc1-460a-4b73-8cb3-3d702267a08b">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -760,18 +748,18 @@
 						</reportElement>
 						<box leftPadding="5"/>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9" isBold="false"/>
+							<font fontName="Arial" size="9" isBold="false"/>
 						</textElement>
 						<text><![CDATA[IBAN :]]></text>
 					</staticText>
 					<textField>
-						<reportElement x="155" y="266" width="140" height="11" forecolor="#013042" uuid="bac04dfd-ea9a-42d0-8f66-93b20ae207d8">
+						<reportElement x="120" y="274" width="174" height="11" forecolor="#013042" uuid="bac04dfd-ea9a-42d0-8f66-93b20ae207d8">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="9"/>
+							<font fontName="Arial" size="9"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{iban} != null ? $F{iban} : "Non spécifié"]]></textFieldExpression>
 					</textField>
@@ -785,13 +773,13 @@
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 				</reportElement>
 				<frame>
-					<reportElement x="0" y="0" width="155" height="74" uuid="2d6122b2-5bac-48b0-a82d-03c275016da4">
+					<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="215" height="74" uuid="2d6122b2-5bac-48b0-a82d-03c275016da4">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<rectangle radius="6">
-						<reportElement x="0" y="0" width="155" height="70" uuid="56cc0bd3-4a33-4adc-8d7e-fd41caa12cdd">
+						<reportElement x="0" y="-6" width="215" height="80" uuid="56cc0bd3-4a33-4adc-8d7e-fd41caa12cdd">
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<graphicElement>
@@ -799,7 +787,7 @@
 						</graphicElement>
 					</rectangle>
 					<frame>
-						<reportElement mode="Opaque" x="0" y="5" width="155" height="60" backcolor="rgba(255, 255, 255, 0.0)" uuid="db07e272-4a37-490f-90e4-361e1415d312">
+						<reportElement mode="Opaque" x="0" y="-6" width="200" height="80" backcolor="rgba(255, 255, 255, 0.0)" uuid="db07e272-4a37-490f-90e4-361e1415d312">
 							<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
@@ -808,51 +796,63 @@
 							<leftPen lineWidth="0.0" lineColor="#B41D0A"/>
 						</box>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="0" width="135" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="bc4beaf0-e20c-4e94-8ace-a3eb95dad89d">
+							<reportElement x="0" y="0" width="180" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="bc4beaf0-e20c-4e94-8ace-a3eb95dad89d">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="8"/>
+								<font fontName="Arial" size="8"/>
 							</textElement>
-							<textFieldExpression><![CDATA["Facture "]]></textFieldExpression>
+							<textFieldExpression><![CDATA["Facture N° " + $F{invoiceNumber}.toUpperCase()]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="14" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="be12938c-727a-41c9-b80a-baab5a184f79">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<property name="com.jaspersoft.studio.unit.y" value="px"/>
-								<property name="com.jaspersoft.studio.unit.x" value="px"/>
-								<printWhenExpression><![CDATA[!$F{invoiceNumber}.equalsIgnoreCase("")]]></printWhenExpression>
-							</reportElement>
-							<textElement verticalAlignment="Middle">
-								<font fontName="DejaVu Sans" size="8"/>
-							</textElement>
-							<textFieldExpression><![CDATA["N° " + $F{invoiceNumber}.toUpperCase()]]></textFieldExpression>
-						</textField>
-						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="26" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#B41D0A" uuid="9698319e-7098-4f20-9d5b-b9c7b45af98a">
+							<reportElement x="0" y="14" width="180" height="14" isRemoveLineWhenBlank="true" forecolor="#B41D0A" uuid="9698319e-7098-4f20-9d5b-b9c7b45af98a">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="DejaVu Sans" size="8"/>
+								<font fontName="Arial" size="8"/>
 							</textElement>
 							<textFieldExpression><![CDATA["du " + $F{invoiceDate}]]></textFieldExpression>
 						</textField>
 						<textField isBlankWhenNull="true">
-							<reportElement x="0" y="38" width="135" height="12" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
+							<reportElement x="0" y="28" width="180" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Middle">
-								<font fontName="DejaVu Sans" size="8"/>
+								<font fontName="Arial" size="8"/>
 							</textElement>
 							<textFieldExpression><![CDATA["Date d'échéance " +$F{dueDate}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="0" y="42" width="180" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.y" value="px"/>
+								<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							</reportElement>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Arial" size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{openOrderNumber} != null ? ("Commande ouverte N° " +$F{openOrderNumber}) : ""]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement x="0" y="56" width="180" height="14" isRemoveLineWhenBlank="true" forecolor="#013043" uuid="61a09617-2042-4efb-8b05-fc39fb17518a">
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.y" value="px"/>
+								<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							</reportElement>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Arial" size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{openOrderExternalRef} != null ? ("Réf externe "+$F{openOrderExternalRef}) : ""]]></textFieldExpression>
 						</textField>
 					</frame>
 				</frame>
@@ -880,7 +880,7 @@
 							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						</box>
 						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font fontName="DejaVu Sans" size="12.5" isBold="false"/>
+							<font fontName="Arial" size="12.5" isBold="true"/>
 						</textElement>
 						<text><![CDATA[Mes informations client]]></text>
 					</staticText>
@@ -893,7 +893,7 @@
 							<reportElement x="0" y="0" width="235" height="24" forecolor="#013042" uuid="82ddff3a-d751-400d-bbf7-699b3f29f558"/>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+								<font fontName="Arial" size="10" isBold="true"/>
 							</textElement>
 							<text><![CDATA[Titulaire(s)]]></text>
 						</staticText>
@@ -905,7 +905,7 @@
 							</reportElement>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Reg" size="9"/>
+								<font fontName="Arial" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[($F{custAccQuality} !=null ? $F{custAccQuality} + " " : "") + $F{custAccName} + " " + $F{custAccFirstname}]]></textFieldExpression>
 						</textField>
@@ -913,7 +913,7 @@
 							<reportElement x="0" y="47" width="235" height="23" forecolor="#013042" uuid="b3c5f172-1bd8-4fce-a382-17a8450e58d7"/>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+								<font fontName="Arial" size="10" isBold="true"/>
 							</textElement>
 							<text><![CDATA[N° Client]]></text>
 						</staticText>
@@ -925,7 +925,7 @@
 							</reportElement>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Reg" size="9"/>
+								<font fontName="Arial" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{custAccCode}==null?"":$F{custAccCode}]]></textFieldExpression>
 						</textField>
@@ -933,9 +933,9 @@
 							<reportElement x="0" y="93" width="235" height="23" forecolor="#013042" uuid="6db8b214-2f3c-45eb-9edd-00d9e3f3e33a"/>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+								<font fontName="Arial" size="10" isBold="true"/>
 							</textElement>
-							<text><![CDATA[Identifiant Internet]]></text>
+							<text><![CDATA[Email]]></text>
 						</staticText>
 						<textField>
 							<reportElement x="0" y="116" width="235" height="23" forecolor="#013042" uuid="817aa4d1-8cac-4d1a-aaf0-1c532987ae3e">
@@ -945,7 +945,7 @@
 							</reportElement>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Reg" size="9"/>
+								<font fontName="Arial" size="9"/>
 							</textElement>
 							<textFieldExpression><![CDATA[($F{custAccEmail}==null || $F{custAccEmail}.isEmpty())? "Non spécifié":$F{custAccEmail}]]></textFieldExpression>
 						</textField>
@@ -953,9 +953,9 @@
 							<reportElement x="0" y="139" width="235" height="23" forecolor="#013042" uuid="1e3469a7-57f7-4403-94ea-dc892eaeca64"/>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+								<font fontName="Arial" size="10" isBold="true"/>
 							</textElement>
-							<text><![CDATA[N° Contrat]]></text>
+							<text><![CDATA[Phone]]></text>
 						</staticText>
 						<textField>
 							<reportElement x="0" y="162" width="235" height="23" forecolor="#013042" uuid="b0fd815a-1d9a-4672-8ff5-5141407b1b16">
@@ -965,11 +965,51 @@
 							</reportElement>
 							<box leftPadding="20"/>
 							<textElement verticalAlignment="Middle">
-								<font fontName="Vista Sans OT Reg" size="9"/>
+								<font fontName="Arial" size="9"/>
 							</textElement>
-							<textFieldExpression><![CDATA[($F{numContrat} != null ? $F{numContrat} : "Non spécifié")]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{custAccPhone} != null ? $F{custAccPhone} : "Non spécifié")]]></textFieldExpression>
 						</textField>
 					</frame>
+					<staticText>
+						<reportElement x="0" y="227" width="235" height="23" forecolor="#013042" uuid="c4b1e3d2-512f-40c3-afde-da1dc7f1832d"/>
+						<box leftPadding="20"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="10" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Mobile]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="250" width="235" height="23" forecolor="#013042" uuid="6e09510b-f024-49a7-8a0b-9c9aebf54eb3">
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box leftPadding="20"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="9"/>
+						</textElement>
+						<textFieldExpression><![CDATA[($F{custAccMobile} != null ? $F{custAccMobile} : "Non spécifié")]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="273" width="235" height="23" forecolor="#013042" uuid="a9a8e45e-0396-4903-b9d0-a792d2b75204"/>
+						<box leftPadding="20"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="10" isBold="true"/>
+						</textElement>
+						<text><![CDATA[N° Contrat]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="296" width="235" height="23" forecolor="#013042" uuid="6d3882da-c76f-46bf-ab0f-1dfb0c8ec0f9">
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box leftPadding="20"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Arial" size="9"/>
+						</textElement>
+						<textFieldExpression><![CDATA[($F{numContrat} != null ? $F{numContrat} : "Non spécifié")]]></textFieldExpression>
+					</textField>
 				</frame>
 			</frame>
 		</band>
@@ -979,6 +1019,18 @@
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="595" height="39" backcolor="#841A1B" uuid="b3aa9cd3-7f5b-4311-8676-e336dd139100"/>
+				<textField>
+					<reportElement x="220" y="8" width="364" height="23" forecolor="#FFFFFF" uuid="2eb66f2c-42b2-4a97-83d2-4001e447f537">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page : " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</pageFooter>

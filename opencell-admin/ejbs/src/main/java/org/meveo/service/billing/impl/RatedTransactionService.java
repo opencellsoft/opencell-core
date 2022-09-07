@@ -1545,7 +1545,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 " s.id as subscription_id, s.order.id as commercial_order_id, rt.taxPercent as tax_percent, rt.tax.id as tax_id," +
                 " rt.infoOrder.order.id as order_id, rt.infoOrder.productVersion.id as product_version_id, rt.infoOrder.orderLot.id as order_lot_id," +
                 " rt.chargeInstance.id as charge_instance_id, rt.parameter2 as parameter_2, rt.accountingArticle.id as article_id," +
-                " rt.discountedRatedTransaction as discounted_ratedtransaction_id" +
+                " rt.discountedRatedTransaction as discounted_ratedtransaction_id," +
+                " rt.unitAmountWithoutTax as unit_amount_without_tax, rt.unitAmountWithTax as unit_amount_with_tax " +
                 " FROM RatedTransaction rt left join rt.subscription s " +
                 " WHERE rt.id in (:ids) and rt.accountingArticle.ignoreAggregation = true";
         return getSelectQueryAsMap(query, params);
@@ -1711,7 +1712,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public void applyInvoicingRules(List<RatedTransaction> rTs) {
+    public BillingAccount applyInvoicingRules(List<RatedTransaction> rTs) {
+        BillingAccount billingAccount = null;
         if (rTs.size() !=0) {
             List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
             
@@ -1721,64 +1723,69 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .setParameter("ids", ratedTransactionIds);
 
             List<RatedTransaction> rtsResults = query.getResultList();
-            updateBAForRT(rtsResults);
-        }        
+            billingAccount = updateBAForRT(rtsResults);
+        }
+        return billingAccount;
     }
     
-    public void updateBAForRT(List<RatedTransaction> rtsResults) {
-        if (rtsResults.size() !=0) {            
+    public BillingAccount updateBAForRT(List<RatedTransaction> rtsResults) {
+        BillingAccount billingAccountAfter = null;
+        if (rtsResults.size() !=0) {  
+            
             Map<BillingAccount, List<RatedTransaction>> rtGroupedByBA = rtsResults.stream().collect(Collectors.groupingBy(wo -> wo.getBillingAccount()));
             
             for (Entry<BillingAccount, List<RatedTransaction>> rtGrpByBAElement : rtGroupedByBA.entrySet()) {
                 BillingAccount billingAccount = rtGrpByBAElement.getKey();
-                List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccount(billingAccount);                
                 List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
-                
+                boolean isApply = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
+                    List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());                
+
                     for(BillingRule billingRule : billingRules) { 
-                        Boolean eCriteriaEL = checkCriteriaEL(rt, billingRule.getCriteriaEL());
-                        if(eCriteriaEL != null && eCriteriaEL) {
-                            String eInvoicedBACodeEL = evaluateInvoicedBACodeEL(rt, billingRule.getInvoicedBACodeEL());
-                            if (eInvoicedBACodeEL != null) {
-                                BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL);
-                                if (billingAccountByCode != null) {
-                                    rt.setOriginBillingAccount(rt.getBillingAccount());
-                                    rt.setBillingAccount(billingAccountByCode);
-                                    update(rt);
-                                    continue;
-                                }
-                                else {
-                                    rt.setStatus(RatedTransactionStatusEnum.REJECTED);
-                                    rt.setRejectReason("Billing redirection rule [id=" + billingRule.getId() + 
-                                        ", priority= " + billingRule.getPriority() + ", invoicedBillingAccountCodeEL = " + 
-                                        billingRule.getInvoicedBACodeEL() + "] redirects to unknown billing account [code=" + 
-                                        eInvoicedBACodeEL + "] for RT [id=" + rt.getId() + "]");
-                                    update(rt);
-                                }
-                            }
-                            else {
+                        if(!isApply) {
+                            Boolean eCriteriaEL = false;
+                            try {
+                                eCriteriaEL = checkCriteriaEL(rt, billingRule.getCriteriaEL());
+                            } catch (BusinessException e) {
                                 rt.setStatus(RatedTransactionStatusEnum.REJECTED);
-                                rt.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + 
-                                    billingRule.getId() + ", priority=" + billingRule.getPriority() + 
-                                    ", invoicedBillingAccountCodeEL = " + billingRule.getInvoicedBACodeEL() + 
-                                    "] for RT [id=" + rt.getId() + "}]: Error in invoicedBillingAccountCodeEL evaluation");
+                                rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
+                                    billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
+                                    rt.getId() + "]: Error in criteriaEL evaluation");
                                 update(rt);
                             } 
-                        }
-                        else {
-                            rt.setStatus(RatedTransactionStatusEnum.REJECTED);
-                            rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
-                                billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
-                                rt.getId() + "]: Error in criteriaEL evaluation");
-                            update(rt);
-                        } 
+                            
+                            if(eCriteriaEL != null && eCriteriaEL) {                            
+                                String eInvoicedBACodeEL = null;
+                                try {
+                                    eInvoicedBACodeEL = evaluateInvoicedBACodeEL(rt, billingRule.getInvoicedBACodeEL());
+                                } catch (BusinessException e) {
+                                    rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                                    rt.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + 
+                                        billingRule.getId() + ", priority=" + billingRule.getPriority() + 
+                                        ", invoicedBillingAccountCodeEL = " + billingRule.getInvoicedBACodeEL() + 
+                                        "] for RT [id=" + rt.getId() + "}]: Error in invoicedBillingAccountCodeEL evaluation");
+                                    update(rt);
+                                }
+                                if (eInvoicedBACodeEL != null) {
+                                    BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL);
+                                    if (billingAccountByCode != null) {
+                                        rt.setOriginBillingAccount(rt.getBillingAccount());
+                                        rt.setBillingAccount(billingAccountByCode);
+                                        update(rt);
+                                        billingAccountAfter = billingAccountByCode;
+                                        isApply = true;
+                                    }
+                                }
+                            }
+                        }                        
                     }
                 }
             }
-        }        
+        }
+        return billingAccountAfter;
     }
 
-    private Boolean checkCriteriaEL(RatedTransaction rt, String expression) {
+    private Boolean checkCriteriaEL(RatedTransaction rt, String expression) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
             return null;
         }
@@ -1791,7 +1798,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return null;       
     }
     
-    private String evaluateInvoicedBACodeEL(RatedTransaction rt, String expression) {
+    private String evaluateInvoicedBACodeEL(RatedTransaction rt, String expression) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
             return null;
         }

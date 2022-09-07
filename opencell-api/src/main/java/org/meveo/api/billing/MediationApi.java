@@ -125,7 +125,7 @@ public class MediationApi extends BaseApi {
 
         ChargeCdrListInput cdrListInput = ImmutableChargeCdrListInput.builder().addCdrs(chargeCDRDto.getCdr()).mode(ProcessCdrListModeEnum.PROCESS_ALL).isVirtual(chargeCDRDto.isVirtual())
             .isRateTriggeredEdr(chargeCDRDto.isRateTriggeredEdr()).maxDepth(chargeCDRDto.getMaxDepth()).isReturnEDRs(chargeCDRDto.isReturnEDRs()).isReturnWalletOperations(chargeCDRDto.isReturnWalletOperations())
-            .isReturnWalletOperationDetails(chargeCDRDto.isReturnWalletOperationDetails()).isReturnCounters(chargeCDRDto.isReturnCounters()).build();
+            .isReturnWalletOperationDetails(chargeCDRDto.isReturnWalletOperationDetails()).isReturnCounters(chargeCDRDto.isReturnCounters()).isGenerateRTs(chargeCDRDto.isGenerateRTs()).build();
         ProcessCdrListResult processCdrListResult = mediationApiService.chargeCdrList(cdrListInput, chargeCDRDto.getIp());
 
         ChargeCDRResponseDto chargeCDRResponseDto = null;

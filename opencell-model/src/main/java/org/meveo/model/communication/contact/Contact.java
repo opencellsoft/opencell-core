@@ -139,6 +139,10 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @Type(type = "numeric_boolean")
     protected Boolean isCompany = Boolean.FALSE;
 
+    @Column(name = "entreprise")
+    @Type(type = "numeric_boolean")
+    protected Boolean isEnterprise = Boolean.FALSE;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legal_entity_type_id")
     protected Title legalEntityType;
@@ -159,7 +163,9 @@ public class Contact extends BusinessCFEntity implements ISearchable {
 
     /**
      * Position
+     * deprecated, please use the AddressBookContact position field instead
      */
+    @Deprecated
     @Column(name = "position", length = 200)
     @Size(max = 200)
     private String position;
@@ -482,6 +488,15 @@ public class Contact extends BusinessCFEntity implements ISearchable {
      */
     public void setIsCompany(Boolean isCompany) {
         this.isCompany = isCompany;
+    }
+
+
+    public Boolean getEnterprise() {
+        return isEnterprise;
+    }
+
+    public void setEnterprise(Boolean enterprise) {
+        isEnterprise = enterprise;
     }
 
     /**

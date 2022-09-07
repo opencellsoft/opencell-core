@@ -80,7 +80,7 @@
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="8"/>
+						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{subCategoryLabel}.contains( "CTA" ) ? "Contribution Tarifaire d’Acheminement (CTA)" : $F{subCategoryLabel}.contains( "CSPE" ) ? "Contribution au Service Public de l’Electricité (CSPE)" :
 $F{subCategoryLabel}.contains( "TDCFE" ) ? "Taxe Départementale sur la Consommation Finale d'Électricité (TDCFE)" : $F{subCategoryLabel}.contains( "TCCFE" ) ? "Taxe Communale sur la Consommation Finale d'Électricité (TCCFE)" : ""]]></textFieldExpression>
@@ -96,7 +96,7 @@ $F{subCategoryLabel}.contains( "TDCFE" ) ? "Taxe Départementale sur la Consomma
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Reg" size="9"/>
+						<font fontName="Arial" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#.#").format(new BigDecimal($F{taxPercent})) + " %"]]></textFieldExpression>
 				</textField>
@@ -112,7 +112,7 @@ $F{subCategoryLabel}.contains( "TDCFE" ) ? "Taxe Départementale sur la Consomma
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Reg" size="9"/>
+						<font fontName="Arial" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[""]]></textFieldExpression>
 				</textField>

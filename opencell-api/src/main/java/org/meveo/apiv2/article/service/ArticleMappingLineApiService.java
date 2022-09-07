@@ -31,6 +31,7 @@ public class ArticleMappingLineApiService{
         return articleMappingLineService.validateAndCreate(articleMappingLine);
     }
 
+    @Transactional
     public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
     	return articleMappingLineService.update(id, articleMappingLine);
        

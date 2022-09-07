@@ -8,21 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -34,6 +20,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -121,9 +108,11 @@ public class QuoteProduct extends AuditableCFEntity {
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
 
+	@OneToOne(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private OrderProduct orderProduct;
+
 	public QuoteProduct() {
 	}
-
 
 	public QuoteProduct(QuoteProduct copy) {
 		this.quote = copy.quote;
@@ -328,4 +317,11 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.terminationReason = terminationReason;
 	}
 
+	public OrderProduct getOrderProduct() {
+		return orderProduct;
+	}
+
+	public void setOrderProduct(OrderProduct orderProduct) {
+		this.orderProduct = orderProduct;
+	}
 }

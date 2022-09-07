@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -906,8 +907,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
-        if (filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+        if (!StringUtils.isBlank(filterValue)) {
+            queryBuilder = new QueryBuilder(filterValue);
         } else {
             FilterConverter converter = new FilterConverter(RatedTransaction.class);
             PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
@@ -1123,5 +1125,23 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     mainTax.getPercent(), taxAmount, convertedTaxAmount, null, FALSE);
         }
         return ofNullable(taxDetails);
+    }
+
+    /**
+     * Invoiced amount by open order and billing account
+     * @param openOrderNumber open order number
+     * @param billingAccountId billing account id
+     * @return  invoiced amount
+     */
+    public BigDecimal invoicedAmountByOpenOrder(String openOrderNumber, Long billingAccountId) {
+        try {
+            BigDecimal invoicedAmount =  (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.sumAmountByOpenOrderNumberAndBA")
+                                                        .setParameter("openOrderNumber", openOrderNumber)
+                                                        .setParameter("billingAccountId", billingAccountId)
+                                                        .getSingleResult();
+            return invoicedAmount != null ? invoicedAmount : BigDecimal.ZERO;
+        } catch (NoResultException exception) {
+            return BigDecimal.ZERO;
+        }
     }
 }

@@ -21,6 +21,7 @@ package org.meveo.service.medina.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
@@ -53,6 +55,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
 
     @Inject
     private CDRService cdrService;
+    
+    @Inject
+    private AccessService accessService;
 
     /**
      * Source of CDR record
@@ -237,5 +242,78 @@ public class CDRParsingService extends PersistenceService<EDR> {
             cdrReader = new MEVEOCdrReader();
         }
         return cdrReader;
+    }
+    
+    public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
+        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
+        if (accesses == null || accesses.isEmpty()) {
+            throw new InvalidAccessException("No matching access point " + cdr.getAccessCode() + " was found");
+        }
+        return accesses;
+    }
+
+    public List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException {
+
+        List<EDR> edrs = new ArrayList<EDR>();
+        boolean foundMatchingAccess = false;
+
+        for (Access accessPoint : accessPoints) {
+            if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
+                    && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
+                foundMatchingAccess = true;
+                EDR edr = cdrToEdr(cdr, accessPoint, accessPoint.getSubscription());
+                edrs.add(edr);
+            }
+        }
+
+        if (!foundMatchingAccess) {
+            throw new InvalidAccessException(cdr);
+        }
+        return edrs;
+    }
+
+    /**
+     * Convert CDR to EDR
+     * 
+     * @param cdr CDR to convert
+     * @param accessPoint Access point to bind to
+     * @param subscription Subscription to bind to
+     * @return EDR
+     */
+    private EDR cdrToEdr(CDR cdr, Access accessPoint, Subscription subscription) {
+        EDR edr = new EDR();
+        edr.setCreated(new Date());
+        edr.setEventDate(cdr.getEventDate());
+        edr.setOriginBatch(cdr.getOriginBatch());
+        edr.setOriginRecord(cdr.getOriginRecord());
+        edr.setParameter1(cdr.getParameter1());
+        edr.setParameter2(cdr.getParameter2());
+        edr.setParameter3(cdr.getParameter3());
+        edr.setParameter4(cdr.getParameter4());
+        edr.setParameter5(cdr.getParameter5());
+        edr.setParameter6(cdr.getParameter6());
+        edr.setParameter7(cdr.getParameter7());
+        edr.setParameter8(cdr.getParameter8());
+        edr.setParameter9(cdr.getParameter9());
+        edr.setDateParam1(cdr.getDateParam1());
+        edr.setDateParam2(cdr.getDateParam2());
+        edr.setDateParam3(cdr.getDateParam3());
+        edr.setDateParam4(cdr.getDateParam4());
+        edr.setDateParam5(cdr.getDateParam5());
+        edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setQuantity(cdr.getQuantity().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+        edr.setExtraParameter(cdr.getExtraParam());
+
+        if (accessPoint != null) {
+            edr.setAccessCode(accessPoint.getAccessUserId());
+        }
+
+        edr.setSubscription(subscription);
+
+        return edr;
     }
 }

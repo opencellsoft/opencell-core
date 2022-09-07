@@ -203,6 +203,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());

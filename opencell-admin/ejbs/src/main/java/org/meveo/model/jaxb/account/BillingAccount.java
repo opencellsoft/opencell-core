@@ -129,6 +129,10 @@ public class BillingAccount {
     protected String billingCycle;
     @XmlAttribute(name="ignoreCheck")
     protected Boolean ignoreCheck;
+    @XmlElement(name="phone")
+    protected String phone;
+    @XmlElement(name="mobile")
+    protected String mobile;
 
     public BillingAccount(){
     	
@@ -532,4 +536,19 @@ public class BillingAccount {
 		this.ignoreCheck = ignoreCheck;
 	}
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 }

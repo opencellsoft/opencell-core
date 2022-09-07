@@ -181,6 +181,9 @@ public class OpenOrderTemplateApiService extends PersistenceService<OpenOrderTem
                 if (thresholds.get(i).getPercentage() < thresholds.get(i - 1).getPercentage()) {
                     throw new BusinessApiException("Threshold sequence and percentage dosn’t match, threshold with high sequence number should contain the highest percentage");
                 }
+                if (thresholds.get(i).getPercentage().equals(thresholds.get(i - 1).getPercentage())) {
+                    throw new BusinessApiException("This percentage already exists");
+                }
             }
         }
 

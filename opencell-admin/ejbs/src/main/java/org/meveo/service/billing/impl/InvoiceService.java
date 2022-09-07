@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -1521,62 +1522,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFullFilename = getFullPdfFilePath(invoice, true);
         InputStream reportTemplate = null;
         try {
-            File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-
-            if (!destDir.exists()) {
-
-                log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
-
-                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
-
-                File sourceFile = new File(sourcePath);
-                if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
-                    log.info("default jaspers path : {}", vfDir.getPathName());
-                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-                    sourceFile = new File(vfPath.getPath());
-                    if (!sourceFile.exists()) {
-                        throw new BusinessException("A default embedded jasper PDF report " + sourceFile.getAbsolutePath() + "for invoice is missing..");
-                    }
-                }
-                destDir.mkdirs();
-                FileUtils.copyDirectory(sourceFile, destDir);
-            }
-
-            File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
-            if (!destDirInvoiceAdjustment.exists() && isInvoiceAdjustment) {
-                destDirInvoiceAdjustment.mkdirs();
-                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + "/invoiceAdjustment";
-                File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
-                if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS
-                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoiceAdjustment");
-                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-                    sourceFileInvoiceAdjustment = new File(vfPath.getPath());
-                    if (!sourceFileInvoiceAdjustment.exists()) {
-
-                        URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
-
-                        if (resource == null) {
-                            resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
-                        }
-
-                        if (resource == null) {
-                            throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
-                        }
-
-                        sourcePathInvoiceAdjustment = resource.getPath();
-
-                        if (!sourceFileInvoiceAdjustment.exists()) {
-                            throw new BusinessException("embedded jasper report for invoice is missing.");
-                        }
-
-                    }
-                }
-                FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
-
-            }
+        	generateInvoiceFile(billingTemplateName, resDir);
+            generateInvoiceAdjustmentFile(isInvoiceAdjustment, billingTemplateName, resDir);
 
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
@@ -1636,6 +1583,81 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);
+        }
+    }
+    
+    /**
+     * Generate Invoice File
+     * @param billingTemplateName Billing Template Name
+     * @param resDir Res Directory
+     * @throws IOException {@link IOException}
+     */
+    public synchronized void generateInvoiceFile(String billingTemplateName, String resDir) throws IOException {
+        File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
+        
+        if (!destDir.exists()) {
+            log.warn("PDF jasper report {} was not found. A default report will be used.", destDir.getAbsolutePath());
+            String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
+            File sourceFile = new File(sourcePath);
+            
+            if (!sourceFile.exists()) {
+                VirtualFile vfDir = VFS
+                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
+                log.info("default jaspers path : {}", vfDir.getPathName());
+                URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                sourceFile = new File(vfPath.getPath());
+                if (!sourceFile.exists()) {
+                    throw new BusinessException("A default embedded jasper PDF report " + sourceFile.getAbsolutePath() + "for invoice is missing..");
+                }
+            }
+
+            destDir.mkdirs();
+            FileUtils.copyDirectory(sourceFile, destDir);
+        }
+    }
+
+    /**
+     * Generate Invoice Adjustment File
+     * @param isInvoiceAdjustment Is Invoice Adjustment
+     * @param billingTemplateName Billing Template Name
+     * @param resDir Res Directory 
+     * @throws IOException {@link IOException}
+     */
+    public synchronized void generateInvoiceAdjustmentFile(boolean isInvoiceAdjustment, String billingTemplateName, String resDir) throws IOException {
+        File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
+
+        if (!destDirInvoiceAdjustment.exists() && isInvoiceAdjustment) {
+            destDirInvoiceAdjustment.mkdirs();
+            String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + "/invoiceAdjustment";
+            File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
+            
+            if (!sourceFileInvoiceAdjustment.exists()) {
+                VirtualFile vfDir = VFS
+                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoiceAdjustment");
+                URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                sourceFileInvoiceAdjustment = new File(vfPath.getPath());
+                
+                if (!sourceFileInvoiceAdjustment.exists()) {
+                    URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
+
+                    if (resource == null) {
+                        resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
+                    }
+
+                    if (resource == null) {
+                        throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
+                    }
+
+                    sourcePathInvoiceAdjustment = resource.getPath();
+
+                    if (!sourceFileInvoiceAdjustment.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing.");
+                    }
+
+                }
+            }
+            
+            FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
         }
     }
 
@@ -2345,11 +2367,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             try {
                 List<Long> drafWalletOperationIds;
-                if (isDraft)
+                if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                else
+                }else {
                     drafWalletOperationIds = new ArrayList<>();
+                    invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+                    update(invoice);
+                }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
@@ -3786,46 +3811,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 for (Map.Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax : amountCumulativeForTax.entrySet()) {
                     Tax tax = amountByTax.getKey();
-                    boolean alreadyComputed = false;
                     if (BigDecimal.ZERO.compareTo(amountByTax.getValue().getAmount(!isEnterprise)) == 0) {
                         continue;
                     }
 
-                    TaxInvoiceAgregate taxAggregate = taxAggregates.get(tax.getCode());
-                    if (taxAggregate == null) {
-                        if(tax.isComposite()) {
-                            alreadyComputed = true;
-                            List<Tax> subTaxes = tax.getSubTaxes();
-                            for (int index = 0; index < subTaxes.size(); index++) {
-                                BigDecimal percent =
-                                        subTaxes.get(index).getPercent().divide(tax.getPercent(), 6, CEILING);
-                                if(taxAggregates.get(subTaxes.get(index).getCode()) != null) {
-                                    taxAggregate = taxAggregates.get(subTaxes.get(index).getCode());
-                                    taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax().multiply(percent));
-                                    taxAggregate.addAmountWithoutTax(index == 0 ? amountByTax.getValue().getAmountWithoutTax() : ZERO);
-                                    taxAggregate.addAmountWithTax(index == 0 ? amountByTax.getValue().getAmountWithTax() : ZERO);
-                                } else {
-                                    taxAggregate =
-                                            createTaxAggregate(invoice, billingAccount, subTaxes.get(index), languageCode);
-                                    taxAggregates.put(subTaxes.get(index).getCode(), taxAggregate);
-                                    taxAggregate.setAmountTax(amountByTax.getValue().getAmountTax().multiply(percent));
-                                    taxAggregate.addAmountWithoutTax(index == 0 ? amountByTax.getValue().getAmountWithoutTax() : ZERO);
-                                    taxAggregate.addAmountWithTax(index == 0 ? amountByTax.getValue().getAmountWithTax() : ZERO);
-                                }
-                                invoice.addInvoiceAggregate(taxAggregate);
-                            }
-                        } else {
-                            taxAggregate = createTaxAggregate(invoice, billingAccount, tax, languageCode);
-                            taxAggregates.put(tax.getCode(), taxAggregate);
-                            invoice.addInvoiceAggregate(taxAggregate);
-                        }
-                    }
-
-                    if(!alreadyComputed) {
-                        taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-                        taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax());
-                        taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-                    }
+                    TaxInvoiceAgregate taxAggregate = addTaxAggregate(invoice, billingAccount, isEnterprise, languageCode, taxAggregates, amountByTax, tax);
                 }
             }
 
@@ -3833,21 +3823,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Calculate derived tax aggregate amounts
         if (calculateTaxOnSubCategoryLevel && !isExonerated) {
-            for (TaxInvoiceAgregate taxAggregate : taxAggregates.values()) {
-
-                amounts = NumberUtils.computeDerivedAmounts(taxAggregate.getAmountWithoutTax(), taxAggregate.getAmountWithTax(), taxAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
-                    invoiceRoundingMode.getRoundingMode());
-                if(taxAggregate.getAmountWithoutTax() == null || taxAggregate.getAmountWithoutTax().compareTo(ZERO) == 0) {
-                    taxAggregate.setAmountWithoutTax(amounts[0]);
-                }
-                if(taxAggregate.getAmountWithTax() == null || taxAggregate.getAmountWithTax().compareTo(ZERO) == 0) {
-                    taxAggregate.setAmountWithTax(amounts[1]);
-                }
-                if(taxAggregate.getAmountTax() == null || taxAggregate.getAmountTax().compareTo(ZERO) == 0) {
-                    taxAggregate.setAmountTax(amounts[2]);
-                }
-
-            }
+            calculateDerivedTaxAggregateAmounts(taxAggregates);
         }
 
         // If tax calculation is not done at subcategory level, then call a global script to do calculation for the whole invoice
@@ -3872,6 +3848,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addAmountWithTax(taxAggregate.getAmountWithTax());
                 invoice.addAmountTax(taxAggregate.getAmountTax());
             }
+            Map<String, TaxInvoiceAgregate> simpleTaxMap = taxAggregates.entrySet().stream()
+          		  .filter(x -> !x.getValue().getTax().isComposite())
+          		  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            
+            Map<String, TaxInvoiceAgregate> compositeTaxMap = taxAggregates.entrySet().stream()
+            		  .filter(x -> x.getValue().getTax().isComposite()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            compositeTaxMap.values().stream().forEach(a-> addCompositeTaxAggregate(invoice, billingAccount, isEnterprise, languageCode, simpleTaxMap, a));
+            taxAggregates = simpleTaxMap;
+            calculateDerivedTaxAggregateAmounts(taxAggregates);
+            
         } else {
             invoice.setHasTaxes(true);
             if (!discountAggregates.isEmpty()) {
@@ -3918,24 +3904,71 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private TaxInvoiceAgregate createTaxAggregate(Invoice invoice,
-                                                  BillingAccount billingAccount, Tax tax, String languageCode) {
-        TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
-        taxAggregate.updateAudit(currentUser);
+	private void calculateDerivedTaxAggregateAmounts( Map<String, TaxInvoiceAgregate> taxAggregates) {
+		BigDecimal[] amounts;
+		for (TaxInvoiceAgregate taxAggregate : taxAggregates.values()) {
 
-        String translationCKey = "T_" + tax.getId() + "_" + languageCode;
-        String descTranslated = descriptionMap.get(translationCKey);
-        if (descTranslated == null) {
-            descTranslated = tax.getDescriptionOrCode();
-            if ((tax.getDescriptionI18n() != null) && (tax.getDescriptionI18n().get(languageCode) != null)) {
-                descTranslated = tax.getDescriptionI18n().get(languageCode);
-            }
-            descriptionMap.put(translationCKey, descTranslated);
-        }
+		    amounts = NumberUtils.computeDerivedAmounts(taxAggregate.getAmountWithoutTax(), taxAggregate.getAmountWithTax(), taxAggregate.getTaxPercent(), appProvider.isEntreprise(), appProvider.getInvoiceRounding(),
+		    		appProvider.getInvoiceRoundingMode().getRoundingMode());
+		    taxAggregate.setAmountWithoutTax(amounts[0]);
+		    taxAggregate.setAmountWithTax(amounts[1]);
+		    taxAggregate.setAmountTax(amounts[2]);
 
-        taxAggregate.setDescription(descTranslated);
-        return taxAggregate;
-    }
+		}
+	}
+
+	private void addCompositeTaxAggregate(Invoice invoice, BillingAccount billingAccount, boolean isEnterprise,
+			String languageCode, Map<String, TaxInvoiceAgregate> taxAggregates, TaxInvoiceAgregate compositeTaxAgregate) {
+		invoice.getInvoiceAgregates().remove(compositeTaxAgregate);
+		Tax compositeTax = compositeTaxAgregate.getTax();
+		BigDecimal compositePercent = compositeTax.getPercent();
+		List<Tax> subTaxes = compositeTax.getSubTaxes();
+		BigDecimal amountWithoutTax=compositeTaxAgregate.getAmountWithoutTax();
+		BigDecimal composteTaxAmount=compositeTaxAgregate.getAmountTax();
+		BigDecimal subTaxTotalAmount=BigDecimal.ZERO;
+		MathContext mc = new MathContext(appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
+		for(int i=0; i<subTaxes.size(); i++) {
+			Tax subTax = subTaxes.get(i);
+			BigDecimal amountTax = BigDecimal.ZERO.equals(compositePercent)? BigDecimal.ZERO
+					: (i==subTaxes.size()-1)? composteTaxAmount.subtract(subTaxTotalAmount)
+							: composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent, mc);
+			SubcategoryInvoiceAgregateAmount subcategoryInvoiceAgregateAmount= new SubcategoryInvoiceAgregateAmount(amountWithoutTax,amountWithoutTax.add(amountTax),amountTax);
+			addTaxAggregate(invoice, billingAccount, isEnterprise, languageCode, taxAggregates, new AbstractMap.SimpleEntry<>(subTax, subcategoryInvoiceAgregateAmount), subTax);
+		}
+	}
+
+	private TaxInvoiceAgregate addTaxAggregate(Invoice invoice, BillingAccount billingAccount, boolean isEnterprise,
+			String languageCode, Map<String, TaxInvoiceAgregate> taxAggregates,
+			Map.Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax, Tax tax) {
+		TaxInvoiceAgregate taxAggregate = taxAggregates.get(tax.getCode());
+		if (taxAggregate == null) {
+		    taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
+		    taxAggregate.updateAudit(currentUser);
+		    taxAggregates.put(tax.getCode(), taxAggregate);
+
+		    String translationCKey = "T_" + tax.getId() + "_" + languageCode;
+		    String descTranslated = descriptionMap.get(translationCKey);
+		    if (descTranslated == null) {
+		        descTranslated = tax.getDescriptionOrCode();
+		        if ((tax.getDescriptionI18n() != null) && (tax.getDescriptionI18n().get(languageCode) != null)) {
+		            descTranslated = tax.getDescriptionI18n().get(languageCode);
+		        }
+		        descriptionMap.put(translationCKey, descTranslated);
+		    }
+
+		    taxAggregate.setDescription(descTranslated);
+
+		    invoice.addInvoiceAggregate(taxAggregate);
+		}
+
+		if (isEnterprise) {
+		    taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+		} else {
+		    taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
+		}
+		return taxAggregate;
+	}
+
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
         return subscriptions.stream().map(Subscription::getDiscountPlanInstances).flatMap(Collection::stream).collect(toList());
@@ -5586,14 +5619,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
-                    if(invoice.getOpenOrderNumber() != null) {
-                        Optional.ofNullable(openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber()))
-                                .map(OpenOrder::getExternalReference)
-                                .ifPresent(invoice::setExternalRef);
-                    }
                     invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
+                    if(invoice.getOpenOrderNumber() != null) {
+                        OpenOrder openOrder = openOrderService.findByOpenOrderNumber(invoice.getOpenOrderNumber());
+                        Optional.ofNullable(openOrder)
+                                .map(OpenOrder::getExternalReference)
+                                .ifPresent(invoice::setExternalRef);
+                        BigDecimal initialAmount = Optional.ofNullable(openOrder.getInitialAmount()).orElse(ZERO);
+                        BigDecimal invoicedAmount = computeInvoicedAmount(openOrder, invoiceLinesGroup.getInvoiceLines());
+                        openOrderService.updateBalance(openOrder.getId(), initialAmount.subtract(invoicedAmount));
+                    }
                     List<Object[]> ilMassUpdates = new ArrayList<>();
                     List<Object[]> ilUpdates = new ArrayList<>();
 
@@ -5628,9 +5665,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
                     invoice.setHasMinimum(true);
-                    if (!isDraft) {
-                        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-                    }
                     if (invoice.getId() == null) {
                         // temporary set random string in the invoice number to avoid violate constraint uk_billing_invoice on oracle while running InvoicingJobV2
                         invoice.setInvoiceNumber(UUID.randomUUID().toString());
@@ -5690,6 +5724,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
         return invoiceList;
 
+    }
+
+    private BigDecimal computeInvoicedAmount(OpenOrder openOrder, List<InvoiceLine> invoiceLines) {
+        BigDecimal invoicedAmount = invoiceLinesService
+                .invoicedAmountByOpenOrder(openOrder.getOpenOrderNumber(), openOrder.getBillingAccount().getId());
+        if(invoiceLines != null && !invoiceLines.isEmpty()) {
+            invoicedAmount = invoicedAmount.add(invoiceLines.stream()
+                                    .map(InvoiceLine::getAmountWithTax)
+                                    .reduce(ZERO, BigDecimal::add));
+        }
+        return invoicedAmount;
     }
 
     private void applyExchangeRateToInvoiceLineAndAggregate(List<Invoice> invoices) {
@@ -6431,7 +6476,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long quarantineBillingRun(Invoice invoice, QuarantineBillingRunDto quarantineBillingRunDto) {
         List<Long> invoiceIds = new ArrayList<>();
-        List<Invoice> invoices = new ArrayList<Invoice>();
+        List<Invoice> invoices = new ArrayList<>();
         
         invoiceIds.add(invoice.getId());
         BillingRun billingRun = invoice.getBillingRun();

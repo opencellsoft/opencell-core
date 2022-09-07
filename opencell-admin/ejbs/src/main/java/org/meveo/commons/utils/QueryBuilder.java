@@ -62,7 +62,8 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 12.x
  */
 public class QueryBuilder {
 
@@ -189,6 +190,9 @@ public class QueryBuilder {
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
+        if (sql.toLowerCase().contains("where")) {
+            hasOneOrMoreCriteria = true;
+        }
         inOrClause = false;
         nbCriteriaInOrClause = 0;
     }
@@ -1579,4 +1583,26 @@ public class QueryBuilder {
     // q.insert(0, "select distinct " + aliasName + " ");
     // }
     // }
+
+    /**
+     * Get the filter value for the provided key
+     *
+     * @param filters the filters map.
+     * @param key the searched key
+     * @return the filter value for the provided key.
+     */
+    public static String getFilterByKey(Map<String, String> filters, String key) {
+
+        String value = null;
+        if (filters != null && !filters.isEmpty() && !StringUtils.isBlank(key)) {
+            Map<String, String> upperCasefilters = filters.entrySet().stream().collect(
+                    Collectors.toMap(
+                            entry -> entry.getKey().toUpperCase(),
+                            entry -> entry.getValue()
+                    )
+            );
+            value = (upperCasefilters.get(key.toUpperCase()));
+        }
+        return value;
+    }
 }
