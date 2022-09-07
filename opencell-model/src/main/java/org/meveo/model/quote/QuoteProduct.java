@@ -108,9 +108,6 @@ public class QuoteProduct extends AuditableCFEntity {
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
 
-	@OneToOne(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private OrderProduct orderProduct;
-
 	public QuoteProduct() {
 	}
 
@@ -315,13 +312,5 @@ public class QuoteProduct extends AuditableCFEntity {
 
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
-	}
-
-	public OrderProduct getOrderProduct() {
-		return orderProduct;
-	}
-
-	public void setOrderProduct(OrderProduct orderProduct) {
-		this.orderProduct = orderProduct;
 	}
 }
