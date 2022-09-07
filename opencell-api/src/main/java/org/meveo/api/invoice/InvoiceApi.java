@@ -552,6 +552,8 @@ public class InvoiceApi extends BaseApi {
     }
 
     private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
+        log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                invoice.getPaymentStatus() + " - newPaymentStatus : " + pending + "]");
         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), pending);
         invoice.setPaymentStatusDate(today);
         invoiceService.update(invoice);
