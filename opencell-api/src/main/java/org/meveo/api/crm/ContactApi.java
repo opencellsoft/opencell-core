@@ -164,7 +164,7 @@ public class ContactApi extends BaseApi {
     private void linkToAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
         if(addressBookContacts != null && !addressBookContacts.isEmpty()){
             addressBookContacts.stream()
-                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
+                    .filter(abcDto -> abcDto.getAddressBook() != null && abcDto.getAddressBook().containsKey("id"))
                     .forEach(abcDto -> {
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){

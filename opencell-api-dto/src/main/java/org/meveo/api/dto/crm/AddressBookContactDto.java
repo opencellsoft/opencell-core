@@ -17,6 +17,10 @@ public class AddressBookContactDto implements IEntityDto {
     protected Boolean mainContact = Boolean.FALSE;
     private CustomerDto customer;
 
+    public AddressBookContactDto() {
+
+    }
+
     public AddressBookContactDto(Long id, AddressBook addressBook, String position, Boolean mainContact, Customer customer) {
         this.id = id;
         this.addressBook = Collections.singletonMap("id", addressBook.getId());
