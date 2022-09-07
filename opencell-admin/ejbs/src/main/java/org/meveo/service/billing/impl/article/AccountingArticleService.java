@@ -57,22 +57,61 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getAccountingArticle(product, null, attributes, null);
 	}
 
-	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, OfferTemplate offer,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
-		List<ArticleMappingLine> articleMappingLines = new ArrayList<>();
-
-		OfferTemplate offer = ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null);
+		List<ArticleMappingLine> articleMappingLines = null;
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
-
-		// Best matching logic shall be applied to get AccountingArticle
-		getBestMatchedArticleMappingLines(product, chargeTemplate, offer, param1, param2, param3, articleMappingLines);
-
-		articleMappingLines = articleMappingLines
-				.stream()
-				.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
-				.collect(toList());
+		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
+		if(articleMappingLines.isEmpty() && chargeTemplate != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && offer != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, null, offer, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter1() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, param1, null, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter2() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, param2, null);
+		}
+		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
+			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1())
+							|| walletOperation.getParameter1().equals(articleMappingLine.getParameter1()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter2())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter2())
+							|| walletOperation.getParameter2().equals(articleMappingLine.getParameter2()))
+					.collect(toList());
+		}
+		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter3())) {
+			articleMappingLines = articleMappingLines.stream()
+					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter3())
+							|| walletOperation.getParameter3().equals(articleMappingLine.getParameter3()))
+					.collect(toList());
+		}
+		if(articleMappingLines != null) {
+			articleMappingLines = articleMappingLines
+					.stream()
+					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
+					.collect(toList());
+		}
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
@@ -105,13 +144,16 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributesMapping.size() == attributes.keySet().size())) {
 				attributeMappingLineMatch.addFullMatch(aml);
 			}else{
-				attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
+					attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+				}
+
 			}
-			
+
 		});
-        if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-            throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
-        }
+		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
+			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
@@ -126,6 +168,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return  result != null ? Optional.of(result) : Optional.empty();
 	}
 
+	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
+															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
+		return getAccountingArticle(product, chargeTemplate,  ofNullable(walletOperation).map(WalletOperation::getOfferTemplate).orElse(null), attributes, walletOperation);
+	}
+
 	private void getBestMatchedArticleMappingLines(Product product,
 												   ChargeTemplate chargeTemplate,
 												   OfferTemplate offer,
@@ -136,17 +183,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		mappings.forEach(map -> {
 
 			int offerScore = (map.getOfferTemplate() == null && offer == null) || (map.getOfferTemplate() != null && offer == null) || (map.getOfferTemplate() == null && offer != null) ? 0
-					: (map.getOfferTemplate() != null && offer != null) && map.getOfferTemplate().getId().equals(offer.getId())	? 1 : -1;
+					: (map.getOfferTemplate() != null && offer != null) && map.getOfferTemplate().getId().equals(offer.getId())	? 1 : -10;
 			int productScore = (map.getProduct() == null && product == null) || (map.getProduct() != null && product == null) || (map.getProduct() == null && product != null) ? 0
-					: (map.getProduct() != null && product != null) && map.getProduct().getId().equals(product.getId())	? 1 : -1;
+					: (map.getProduct() != null && product != null) && map.getProduct().getId().equals(product.getId())	? 1 : -10;
 			int chargeScore = (map.getChargeTemplate() == null && chargeTemplate == null) || (map.getChargeTemplate() != null && chargeTemplate == null) || (map.getProduct() == null && chargeTemplate != null) ? 0
-					: (map.getChargeTemplate() != null && chargeTemplate != null) && map.getChargeTemplate().getId().equals(chargeTemplate.getId())	? 1 : -1;
+					: (map.getChargeTemplate() != null && chargeTemplate != null) && map.getChargeTemplate().getId().equals(chargeTemplate.getId())	? 1 : -10;
 			int param1Score = (StringUtils.isBlank(map.getParameter1()) && StringUtils.isBlank(param1)) ||  (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isBlank(param1)) || (StringUtils.isBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) && map.getParameter1().equals(param1)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter1()) && StringUtils.isNotBlank(param1)) && map.getParameter1().equals(param1)	? 1 : -10;
 			int param2Score = (StringUtils.isBlank(map.getParameter2()) && StringUtils.isBlank(param2)) ||  (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isBlank(param2)) || (StringUtils.isBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) && map.getParameter2().equals(param2)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter2()) && StringUtils.isNotBlank(param2)) && map.getParameter2().equals(param2)	? 1 : -10;
 			int param3Score = (StringUtils.isBlank(map.getParameter3()) && StringUtils.isBlank(param3)) ||  (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isBlank(param3)) || (StringUtils.isBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) ? 0
-					: (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) && map.getParameter3().equals(param3)	? 1 : -1;
+					: (StringUtils.isNotBlank(map.getParameter3()) && StringUtils.isNotBlank(param3)) && map.getParameter3().equals(param3)	? 1 : -10;
 
 			int mappingScore = offerScore + productScore + chargeScore + param1Score + param2Score + param3Score;
 			if (mappingScore > 0) {
@@ -179,8 +226,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	private boolean filterMappingLines(WalletOperation walletOperation, String mappingExpressionEl) {
 		if (!StringUtils.isBlank(mappingExpressionEl)) {
-			Object result = evaluateExpression(mappingExpressionEl,
-					Map.of("walletOperation", walletOperation), Boolean.class);
+			Map<Object, Object> context = new HashMap<>();
+			context.put("walletOperation",walletOperation);
+			Object result = evaluateExpression(mappingExpressionEl, context, Boolean.class);
 			try {
 				return (Boolean) result;
 			} catch (Exception exception) {
@@ -218,7 +266,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             }
         }
         Optional<AccountingArticle> accountingArticle;
-        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeInstance.getChargeTemplate(), attributes, walletOperation);
+        accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null,
+				chargeInstance.getChargeTemplate(),
+				chargeInstance.getSubscription().getOffer(),
+				attributes,
+				walletOperation);
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
@@ -254,7 +306,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		List<AccountingCodeMapping> codeMappings = getEntityManager().createNamedQuery("AccountingCodeMapping.findByAccountingArticle")
 				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
 
-		if (codeMappings == null || !codeMappings.isEmpty()) {
+		if (codeMappings != null && !codeMappings.isEmpty()) {
 			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
 
 			if (accountingCode != null) {
@@ -307,13 +359,33 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 		mappings.forEach(map -> {
 
-			int mappingScore = 0;
-			mappingScore += ((map.getBillingCountry() == null && billingCountry == null) || (map.getBillingCountry() != null && billingCountry == null)) ? 0 : (map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId()) ? 1000 : -1000;
-			mappingScore += ((map.getBillingCurrency() == null && billingCurrency == null) || (map.getBillingCurrency() != null && billingCurrency == null))  ? 0 : (map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId()) ? 500 : -500;
-			mappingScore += ((map.getSellerCountry() == null && sellerCountry == null) || (map.getSellerCountry() != null && sellerCountry == null))  ? 0 : (map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId()) ? 250 : -250;
-			mappingScore += ((map.getSeller() == null && seller == null) || (map.getSeller() != null && seller == null))  ? 0 : (map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId()) ? 150 : -150;
-			mappingScore += ((map.getCriteriaElValue() == null && StringUtils.isBlank(columCriteriaEL) || map.getCriteriaElValue() != null && StringUtils.isBlank(columCriteriaEL))) ? 0 : (map.getCriteriaElValue() != null && map.getCriteriaElValue().equals(columCriteriaEL)) ? 50 : -50;
+			int billCountryScore = map.getBillingCountry() == null && billingCountry == null ? 0
+					: map.getBillingCountry() != null && billingCountry == null ? -1000
+					: (map.getBillingCountry() != null && billingCountry != null) && map.getBillingCountry().getId().equals(billingCountry.getId())	? 1000
+					: map.getBillingCountry() == null && billingCountry != null ? -1000
+					: -9999;
+			int billCurrencyScore = map.getBillingCurrency() == null && billingCurrency == null ? 0
+					: map.getBillingCurrency() != null && billingCurrency == null ? -500
+					: (map.getBillingCurrency() != null && billingCurrency != null) && map.getBillingCurrency().getId().equals(billingCurrency.getId())	? 500
+					: map.getBillingCurrency() == null && billingCurrency != null ? -500
+					: -9999;
+			int sellerCountryScore = map.getSellerCountry() == null && sellerCountry == null ? 0
+					: map.getSellerCountry() != null && sellerCountry == null ? -250
+					: (map.getSellerCountry() != null && sellerCountry != null) && map.getSellerCountry().getId().equals(sellerCountry.getId())	? 250
+					: map.getSellerCountry() == null && sellerCountry != null ? -250
+					: -9999;
+			int sellerScore = map.getSeller() == null && seller == null ? 0
+					: map.getSeller() != null && seller == null ? -150
+					: (map.getSeller() != null && seller != null) && map.getSeller().getId().equals(seller.getId())	? 150
+					: map.getSeller() == null && seller != null ? -150
+					: -9999;
+			int columCriteriaELScore = StringUtils.isBlank(map.getCriteriaElValue()) && StringUtils.isBlank(columCriteriaEL) ? 0
+					: StringUtils.isNotBlank(map.getCriteriaElValue()) && StringUtils.isBlank(columCriteriaEL) ? 0 // If no "Column criteria EL" is set, the "Criteria EL value" column is ignored
+					: (StringUtils.isNotBlank(map.getCriteriaElValue()) && StringUtils.isNotBlank(columCriteriaEL)) && map.getCriteriaElValue().equals(columCriteriaEL)	? 50
+					: StringUtils.isBlank(map.getCriteriaElValue()) && StringUtils.isNotBlank(columCriteriaEL) ? -50
+					: -9999;
 
+			int mappingScore = billCountryScore + billCurrencyScore + sellerCountryScore + sellerScore + columCriteriaELScore;
 			if (mappingScore > 0) {
 				matchingScore.put(map.getId(), mappingScore);
 			}
@@ -371,6 +443,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 					} else {
 						input = Arrays.asList(value.toString().split(";"));
 					}
+
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
 					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
@@ -422,7 +495,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if (convertedValue == null && StringUtils.isBlank(sourceAttributeValue)) {
 			return true;
 		}
-
 		if (sourceAttributeValue != null && operator != null) {
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
