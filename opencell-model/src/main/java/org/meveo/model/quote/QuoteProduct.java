@@ -20,7 +20,6 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
-import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -107,9 +106,6 @@ public class QuoteProduct extends AuditableCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
-
-	@OneToOne(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private OrderProduct orderProduct;
 
 	public QuoteProduct() {
 	}
@@ -315,13 +311,5 @@ public class QuoteProduct extends AuditableCFEntity {
 
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
-	}
-
-	public OrderProduct getOrderProduct() {
-		return orderProduct;
-	}
-
-	public void setOrderProduct(OrderProduct orderProduct) {
-		this.orderProduct = orderProduct;
 	}
 }
