@@ -503,7 +503,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Offer template
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
