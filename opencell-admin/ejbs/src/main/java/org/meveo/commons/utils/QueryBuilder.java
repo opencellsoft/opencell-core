@@ -39,16 +39,15 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.JoinType;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * Query builder class for building JPA queries.
@@ -96,19 +95,8 @@ public class QueryBuilder {
     public static final String  JOIN_AS = " as ";
     
     private static Set<String> joinAlias = new TreeSet<String>();
-    
-    private JoinType joinType = JoinType.INNER ;
 
-
-	public JoinType getJoinType() {
-		return joinType;
-	}
-
-	public void setJoinType(JoinType joinType) {
-		this.joinType = joinType;
-	}
-
-	public Class<?> getEntityClass() {
+    public Class<?> getEntityClass() {
         return clazz;
     }
 
@@ -133,7 +121,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-					return String.format(joinType.toString() + " join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+                    return String.format("inner join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -222,12 +210,6 @@ public class QueryBuilder {
         this.inOrClause = qb.inOrClause;
         this.nbCriteriaInOrClause = qb.nbCriteriaInOrClause;
     }
-    
-    
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
-		this(getInitQuery(clazz, alias, fetchFields), alias);
-		this.joinType = joinType != null ? joinType : JoinType.INNER;
-	}
 
     /**
      * Constructor.
@@ -346,7 +328,6 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
-        this.joinType=paginationConfiguration.getJoinType();
         return this;
     }
 
@@ -410,13 +391,11 @@ public class QueryBuilder {
         }
 
         if (hasOneOrMoreCriteria) {
-        	if(!sql.startsWith(" or ")) {
-	            if (inOrClause && nbCriteriaInOrClause != 0) {
-	                q.append(" or ");
-	            } else {
-	                q.append(" and ");
-	            }
-        	}
+            if (inOrClause && nbCriteriaInOrClause != 0) {
+                q.append(" or ");
+            } else {
+                q.append(" and ");
+            }
         } else {
             q.append(" where ");
         }
@@ -1604,4 +1583,26 @@ public class QueryBuilder {
     // q.insert(0, "select distinct " + aliasName + " ");
     // }
     // }
+
+    /**
+     * Get the filter value for the provided key
+     *
+     * @param filters the filters map.
+     * @param key the searched key
+     * @return the filter value for the provided key.
+     */
+    public static String getFilterByKey(Map<String, String> filters, String key) {
+
+        String value = null;
+        if (filters != null && !filters.isEmpty() && !StringUtils.isBlank(key)) {
+            Map<String, String> upperCasefilters = filters.entrySet().stream().collect(
+                    Collectors.toMap(
+                            entry -> entry.getKey().toUpperCase(),
+                            entry -> entry.getValue()
+                    )
+            );
+            value = (upperCasefilters.get(key.toUpperCase()));
+        }
+        return value;
+    }
 }
