@@ -628,20 +628,20 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 Customer customer = customerAccount.getCustomer();
                 List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
                 Contract contract = null;
-                Contract BillingRuleContract = null;
+                Contract contractWithRules = null;
                 if(contracts != null && !contracts.isEmpty()) {
-                	// Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
-                	contract = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
-                		.or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
-                		.or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
-                		.orElse(contracts.get(0)); // Seller Contract
-                	
-                	// To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
-                	BillingRuleContract = contracts.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
+                    // Prioritize BA Contract then CA Contract then Customer Contract then Seller Contract
+                    contract = contracts.stream().filter(c -> c.getBillingAccount() != null).findFirst() // BA Contract
+                        .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null).findFirst()) // CA Contract
+                        .or(() -> contracts.stream().filter(c -> c.getCustomer() != null).findFirst()) // Customer Contract
+                        .orElse(contracts.get(0)); // Seller Contract
+                    
+                    // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
+                    contractWithRules = contracts.stream().filter(c -> c.getBillingAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst() // BA Contract
                             .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // CA Contract
                             .or(() -> contracts.stream().filter(c -> c.getCustomer() != null && c.getBillingRules()!=null && !c.getBillingRules().isEmpty()).findFirst()) // Customer Contract
-                            .orElse(contracts.get(0)); // Seller Contract 1536
-                	bareWalletOperation.setRulesContract(BillingRuleContract);
+                            .orElse(contracts.get(0));
+                    bareWalletOperation.setRulesContract(contractWithRules);
                 }
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
