@@ -677,7 +677,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             associatedRtIds = stream(((String) record.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId());
         }
-        basicStatistics.setCount(associatedRtIds.size());
+        basicStatistics.setCount(associatedRtIds == null? 0 : associatedRtIds.size());
         return basicStatistics;
     }
 
