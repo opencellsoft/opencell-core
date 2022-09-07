@@ -66,6 +66,8 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
@@ -618,6 +620,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
+
+    @ManyToOne
+    @JoinColumn(name = "price_plan_matrix_version_id")
+    private PricePlanMatrixVersion pricePlanMatrixVersion;
+
+    @ManyToOne
+    @JoinColumn(name = "price_plan_matrix_line_id")
+    private PricePlanMatrixLine pricePlanMatrixLine;
+    
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
     
     /**
      * Constructor
@@ -1661,5 +1676,29 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public void setRulesContract(Contract rulesContract) {
         this.rulesContract = rulesContract;
     }
+
+	public PricePlanMatrixVersion getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	public void setPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
+
+	public PricePlanMatrixLine getPricePlanMatrixLine() {
+		return pricePlanMatrixLine;
+	}
+
+	public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
+		this.pricePlanMatrixLine = pricePlanMatrixLine;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 
 }
