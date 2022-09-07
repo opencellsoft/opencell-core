@@ -1576,8 +1576,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
-            if(filters.containsKey("SQL")) {
-                queryBuilder = new QueryBuilder(filters.get("SQL"));
+            String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+            if (!StringUtils.isBlank(filterValue)) {
+                queryBuilder = new QueryBuilder(filterValue);
             } else {
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
