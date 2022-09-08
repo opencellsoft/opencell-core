@@ -7519,6 +7519,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="customer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-365">
@@ -16476,6 +16477,11 @@
                                  constraintName="address_book_contact_contact_fk"
                                  referencedTableName="com_contact"
                                  referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="address_book_crm_customer_id_fk"
+                                 baseColumnNames="customer_id"
+                                 baseTableName="crm_address_book"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
 
