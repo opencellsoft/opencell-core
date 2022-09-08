@@ -21,11 +21,7 @@ package org.meveo.model.intcrm;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -34,6 +30,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
 
 /**
  * Address book
@@ -54,7 +51,14 @@ public class AddressBook extends BusinessEntity {
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Contact> contacts = new HashSet<Contact>();
+    private Set<Contact> contacts = new HashSet<>();
+
+    /**
+     * customer
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     public AddressBook() {
 
@@ -73,4 +77,11 @@ public class AddressBook extends BusinessEntity {
         this.contacts = contacts;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }
