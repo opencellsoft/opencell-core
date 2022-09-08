@@ -39,7 +39,6 @@ public class AttributeMappingLineMatch {
         checkDuplicatePartiallyMatchedMapping(partialMatchMappingLines);
 
         List<PartialMatchMappingLine> matches = partialMatchMappingLines.stream()
-                .filter(partialMatchMappingLine -> partialMatchMappingLine.numberOfMatchedAttribute > 0)
                 .sorted(Comparator.comparing(a -> a.numberOfMatchedAttribute))
                 .collect(Collectors.toList());
         return matches.isEmpty() ? null : matches.get(matches.size() - 1).articleMappingLine;
@@ -71,7 +70,7 @@ public class AttributeMappingLineMatch {
 
         if (MapUtils.isNotEmpty(groupByNBMatchedAttr)) {
             groupByNBMatchedAttr.forEach((nbMatched, mappings) -> {
-                if (nbMatched > 1 && mappings.size() > 1) {
+                if (mappings.size() > 1) {
                     throw new BusinessException("More than one article found");
                 }
             });

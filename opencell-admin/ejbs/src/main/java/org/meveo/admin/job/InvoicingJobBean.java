@@ -39,6 +39,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -273,8 +274,9 @@ public class InvoicingJobBean extends BaseJobBean {
 
     private QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
-        if(filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+        if (!StringUtils.isBlank(filterValue)) {
+            queryBuilder = new QueryBuilder(filterValue);
         } else {
             FilterConverter converter = new FilterConverter(RatedTransaction.class);
             PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));

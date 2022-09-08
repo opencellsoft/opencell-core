@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -37,6 +38,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -900,8 +902,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
-        if (filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+        if (!StringUtils.isBlank(filterValue)) {
+            queryBuilder = new QueryBuilder(filterValue);
         } else {
             FilterConverter converter = new FilterConverter(RatedTransaction.class);
             PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
