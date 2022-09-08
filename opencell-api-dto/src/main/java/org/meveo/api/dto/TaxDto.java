@@ -18,12 +18,13 @@
 
 package org.meveo.api.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.Tax;
@@ -42,7 +43,6 @@ public class TaxDto extends BusinessEntityDto {
     private static final long serialVersionUID = 5184602572648722134L;
 
     /** The percent. */
-    @XmlElement(required = true)
     private BigDecimal percent;
 
     /** The accounting code. */
@@ -53,6 +53,12 @@ public class TaxDto extends BusinessEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    /** If tax is a composition of other taxes */
+    private Boolean composite = false;
+
+    /** Sub taxes */
+    private List<TaxDto> subTaxes;
 
     /**
      * Instantiates a new tax dto.
@@ -80,8 +86,19 @@ public class TaxDto extends BusinessEntityDto {
 
         } else {
             setAuditableFields(null);
-            setAuditable((AuditableDto) null);
+            setAuditable(null);
         }
+        this.composite = tax.isComposite();
+        if (this.composite) {
+            this.subTaxes = tax.getSubTaxes().
+                    stream()
+                    .map(subTax -> new TaxDto(subTax.getId()))
+                    .collect(toList());
+        }
+    }
+
+    public TaxDto(Long id) {
+        this.id = id;
     }
 
     /**
@@ -154,6 +171,22 @@ public class TaxDto extends BusinessEntityDto {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public Boolean getComposite() {
+        return composite;
+    }
+
+    public void setComposite(Boolean composite) {
+        this.composite = composite;
+    }
+
+    public List<TaxDto> getSubTaxes() {
+        return subTaxes;
+    }
+
+    public void setSubTaxes(List<TaxDto> subTaxes) {
+        this.subTaxes = subTaxes;
     }
 
     @Override

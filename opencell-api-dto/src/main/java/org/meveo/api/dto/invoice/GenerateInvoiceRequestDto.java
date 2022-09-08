@@ -48,7 +48,12 @@ public class GenerateInvoiceRequestDto {
 
     @XmlElement()
     private String billingAccountCode;
+    
+    @XmlElement()
+    private String openOrderCode;
 
+    @XmlElement()
+    private boolean applyBillingRules = false;
     /**
      * The invoicing date.
      */
@@ -395,4 +400,27 @@ public class GenerateInvoiceRequestDto {
 	public void setSkipValidation(Boolean skipValidation) {
 		this.skipValidation = skipValidation;
 	}
+
+	/**
+	 * @return the openOrderCode
+	 */
+	public String getOpenOrderCode() {
+		return openOrderCode;
+	}
+
+	/**
+	 * @param openOrderCode the openOrderCode to set
+	 */
+	public void setOpenOrderCode(String openOrderCode) {
+		this.openOrderCode = openOrderCode;
+	}
+
+    public boolean isApplyBillingRules() {
+        return applyBillingRules;
+    }
+
+    public void setApplyBillingRules(boolean applyBillingRules) {
+        this.applyBillingRules = applyBillingRules;
+    }
+	
 }

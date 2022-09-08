@@ -41,6 +41,8 @@ import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
@@ -49,6 +51,8 @@ import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -73,6 +77,12 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     @Inject
     private WorkflowHistoryService workflowHistoryService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
     static Set<Class<?>> meveo_classes;
     static {
@@ -102,7 +112,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @return list of all workflow types.
      */
     public List<Class<?>> getAllWFTypes() {
-        List<Class<?>> result = new ArrayList<Class<?>>();
+        List<Class<?>> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(meveo_classes)) {
             for (Class<?> cls : meveo_classes) {
                 if (!Modifier.isAbstract(cls.getModifiers())) {
@@ -130,7 +140,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      */
     @SuppressWarnings("rawtypes")
     private List<Class<?>> getWFTypeByEntity(Class<? extends BusinessEntity> entityClass) {
-        List<Class<?>> result = new ArrayList<Class<?>>();
+        List<Class<?>> result = new ArrayList<>();
         for (Class<?> clazz : getAllWFTypes()) {
             Class<?> genericClass = null;
             while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
@@ -157,7 +167,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @return list of workflow
      */
     public List<Workflow> findByEntity(Class<? extends BusinessEntity> entityClass) {
-        List<Workflow> result = new ArrayList<Workflow>();
+        List<Workflow> result = new ArrayList<>();
         List<Class<?>> listWFType = getWFTypeByEntity(entityClass);
         for (Class<?> wfTypeclass : listWFType) {
             result.addAll(findByWFType(wfTypeclass.getName()));
@@ -245,7 +255,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                     WorkflowHistory wfHistory = new WorkflowHistory();
                     if (workflow.isEnableHistory()) {
                         wfHistory.setActionDate(new Date());
-                        wfHistory.setEntityInstanceCode(entity.getCode());
+                        wfHistory.setEntityInstanceCode(mapWFBaseEntityCode(entity));
                         wfHistory.setFromStatus(wfTransition.getFromStatus());
                         wfHistory.setToStatus(wfTransition.getToStatus());
                         wfHistory.setTransitionName(wfTransition.getDescription());
@@ -274,7 +284,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                         workflowHistoryService.create(wfHistory);
                     }
 
-                    wfType.setEntity((BusinessEntity) entity);
+                    wfType.setEntity(entity);
                     wfType.changeStatus(wfTransition.getToStatus());
 
                     log.trace("Entity status will be updated to {}. Entity {}", entity, wfTransition.getToStatus());
@@ -289,6 +299,41 @@ public class WorkflowService extends BusinessService<Workflow> {
         }
 
         return entity;
+    }
+
+    /**
+     * map WF entity instance code depending on the entity type.
+     * By default return entity's code
+     * @param entity to use to build the code
+     * @return WF entity instance code
+     */
+    public String mapWFBaseEntityCode(BusinessEntity entity) {
+        if (entity instanceof RecordedInvoice) {
+            Invoice invoice = invoiceService.retrieveIfNotManaged(((RecordedInvoice) entity).getInvoice());
+            return invoice.getInvoiceNumber();
+        }
+        return entity.getCode();
+    }
+
+    /**
+     * map business entity instance using a WF entity instance class name and a WF entity instance code.
+     * By default return entity which is an instance of WF entity instance class
+     * and which code equals to entityCode
+     * @param wfEntityInstanceClass WF entity instance class
+     * @param wfEntityInstanceCode WF entity instance code
+     * @return business entity instance code mapped by wfEntityInstanceClass and wfEntityInstanceCode
+     */
+    public BusinessEntity mapWFBaseEntityInstance(String wfEntityInstanceClass, String wfEntityInstanceCode) throws ClassNotFoundException {
+        if (RecordedInvoice.class.getName().equals(wfEntityInstanceClass)) {
+            Invoice invoice = invoiceService.getInvoiceByNumber(wfEntityInstanceCode);
+            if (invoice != null && invoice.getRecordedInvoice() != null) {
+                return recordedInvoiceService.findById(invoice.getRecordedInvoice().getId()) ;
+            } else {
+                return null;
+            }
+        }
+        Class<BusinessEntity> clazz = (Class<BusinessEntity>) Class.forName(wfEntityInstanceClass);
+        return businessEntityService.findByEntityClassAndCode(clazz, wfEntityInstanceCode);
     }
 
     /**
@@ -320,7 +365,7 @@ public class WorkflowService extends BusinessService<Workflow> {
         if (StringUtils.isBlank(expression)) {
             return true;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         if (expression.indexOf("entity") >= 0) {
             userMap.put("entity", object);
         }
@@ -331,7 +376,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     private Object executeExpression(String expression, Object object) throws BusinessException {
 
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("entity", object);
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
@@ -349,7 +394,7 @@ public class WorkflowService extends BusinessService<Workflow> {
         entity.setId(null);
 
         List<WFTransition> wfTransitions = entity.getTransitions();
-        entity.setTransitions(new ArrayList<WFTransition>());
+        entity.setTransitions(new ArrayList<>());
 
         entity.setCode(code);
         create(entity);

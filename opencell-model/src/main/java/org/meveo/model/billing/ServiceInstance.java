@@ -48,7 +48,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -92,7 +91,7 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
+@CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = {"productVersion.product", "serviceTemplate"})
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -310,7 +309,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     @MapKey(name = "code")
-    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
      * Initial service renewal configuration
@@ -699,6 +698,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public ICustomFieldEntity[] getParentCFEntities() {
         if (serviceTemplate != null) {
             return new ICustomFieldEntity[] { serviceTemplate };
+        }
+        if (productVersion != null) {
+            return new ICustomFieldEntity[] { productVersion.getProduct() };
         }
         return null;
     }
@@ -1194,7 +1196,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 	}
 
 	public void addAttributeInstance(AttributeInstance attributeInstance) {
-		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<>();
 		if(attributeInstance!=null) {
 			attributeInstances.add(attributeInstance);
 		}
@@ -1260,7 +1262,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         usageChargeInstances = new ArrayList<>();
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
-            PersistenceUtils.initializeAndUnproxy(chargeInstance);
+            chargeInstance = PersistenceUtils.initializeAndUnproxy(chargeInstance);
 
             if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);

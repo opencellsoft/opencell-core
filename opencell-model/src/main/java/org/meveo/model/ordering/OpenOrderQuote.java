@@ -1,6 +1,7 @@
 package org.meveo.model.ordering;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -20,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
@@ -31,6 +36,8 @@ import org.meveo.model.cpq.tags.Tag;
 @Table(name = "open_order_quote")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_quote_seq"),})
+@NamedQueries({
+    @NamedQuery(name = "OpenOrderQuote.findByOpenOrderTemplate", query = "select o from OpenOrderQuote o where o.openOrderTemplate = :openOrderTemplate") })
 public class OpenOrderQuote extends BusinessEntity {
 	
 	@Column(name = "external_reference")
@@ -41,14 +48,14 @@ public class OpenOrderQuote extends BusinessEntity {
     @NotNull
     private OpenOrderTypeEnum openOrderType;
     
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "open_order_template_id")
 	@NotNull
     private OpenOrderTemplate openOrderTemplate;
 	
-	@Column(name = "open_order_number", updatable = false)
+	@Column(name = "quote_number", updatable = false)
 	@NotNull
-	private String openOrderNumber;
+	private String quoteNumber;
 	
 	@Column(name = "max_amount")
 	@NotNull
@@ -68,8 +75,8 @@ public class OpenOrderQuote extends BusinessEntity {
 	@NotNull
 	private Date activationDate;
 	
-	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY)
-    private List<Threshold> thresholds;
+	@OneToMany(mappedBy = "openOrderQuote", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Threshold> thresholds = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "open_order_quote_products", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "open_product_id", referencedColumnName = "id"))
@@ -92,9 +99,10 @@ public class OpenOrderQuote extends BusinessEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "open_order_quote_tags", joinColumns = @JoinColumn(name = "open_order_quote_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
-    
 
-
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "open_order_id", nullable = false)
+	private OpenOrder openOrder;
 
     public OpenOrderTypeEnum getOpenOrderType() {
         return openOrderType;
@@ -117,7 +125,10 @@ public class OpenOrderQuote extends BusinessEntity {
     }
 
     public void setThresholds(List<Threshold> thresholds) {
-        this.thresholds = thresholds;
+		if (CollectionUtils.isNotEmpty(thresholds)) {
+			this.thresholds.clear();
+			this.thresholds.addAll(thresholds);
+		}
     }
 
 	public String getExternalReference() {
@@ -134,14 +145,6 @@ public class OpenOrderQuote extends BusinessEntity {
 
 	public void setOpenOrderTemplate(OpenOrderTemplate openOrderTemplate) {
 		this.openOrderTemplate = openOrderTemplate;
-	}
-
-	public String getOpenOrderNumber() {
-		return openOrderNumber;
-	}
-
-	public void setOpenOrderNumber(String openOrderNumber) {
-		this.openOrderNumber = openOrderNumber;
 	}
 
 	public BigDecimal getMaxAmount() {
@@ -206,5 +209,21 @@ public class OpenOrderQuote extends BusinessEntity {
 
 	public void setArticles(List<OpenOrderArticle> articles) {
 		this.articles = articles;
-	} 
+	}
+
+	public String getQuoteNumber() {
+		return quoteNumber;
+	}
+
+	public void setQuoteNumber(String quoteNumber) {
+		this.quoteNumber = quoteNumber;
+	}
+
+	public OpenOrder getOpenOrder() {
+		return openOrder;
+	}
+
+	public void setOpenOrder(OpenOrder openOrder) {
+		this.openOrder = openOrder;
+	}
 }

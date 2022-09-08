@@ -4,7 +4,7 @@
     <groupId>info.opencell.tests</groupId>
     <artifactId>opencelltests</artifactId>
     <name>Opencell tests</name>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>14.0.0-SNAPSHOT</version>
     
     <pluginRepositories>
         <pluginRepository>
@@ -61,7 +61,6 @@
                     <projectProperties>
                         <value>opencell.url=${opencell.url}</value>
                         <value>opencell.url2=${opencell.url2}</value>
-                        <value>elasticSearchUrl=${elasticSearchUrl}</value>
                         <value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
                         <value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
                         <value>ingenico.merchantId=${ingenico.merchantId}</value>

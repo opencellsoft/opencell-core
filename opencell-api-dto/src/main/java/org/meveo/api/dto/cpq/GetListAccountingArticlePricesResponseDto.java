@@ -56,18 +56,7 @@ public class GetListAccountingArticlePricesResponseDto extends SearchResponse {
      */
     
     private String discountPlanItemCode;
-    
-    
-    /**
-     * Discount item type
-     */
-    
-    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-    
-    /**
-     * Discount value
-     */
-    private String discountValue;
+ 
 
     /**
      * Instantiates a new gets the list offer template response dto.
@@ -110,35 +99,6 @@ public class GetListAccountingArticlePricesResponseDto extends SearchResponse {
 	 */
 	public void setDiscountPlanItemCode(String discountPlanItemCode) {
 		this.discountPlanItemCode = discountPlanItemCode;
-	}
-
-	/**
-	 * @return the discountPlanItemType
-	 */
-	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
-		return discountPlanItemType;
-	}
-
-	/**
-	 * @param discountPlanItemType the discountPlanItemType to set
-	 */
-	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
-		this.discountPlanItemType = discountPlanItemType;
-	}
-
-	/**
-	 * @return the discountValue
-	 */
-	public String getDiscountValue() {
-		return discountValue;
-	}
-
-	/**
-	 * @param discountValue the discountValue to set
-	 */
-	public void setDiscountValue(String discountValue) {
-		this.discountValue = discountValue;
-	}
-
+	} 
    
 }

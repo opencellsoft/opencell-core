@@ -30,7 +30,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.assertj.core.util.Arrays;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -153,8 +152,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
+        Boolean isApplyBillingRules = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), Job.CF_APPLY_BILING_RULES);
 
-        ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
+        List<RatedTransaction> lstRatedTransaction = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
+        if (isApplyBillingRules) {
+            ratedTransactionService.applyInvoicingRules(lstRatedTransaction);
+        }
     }
     
 
@@ -176,6 +179,11 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         		RatedTransaction discountRatedTransaction = ratedTransactionService.findByWalletOperationId(walletOperation.getId());
             	
         		discountRatedTransaction.setDiscountedRatedTransaction(discountedRatedTransaction.getId());
+        		discountRatedTransaction.setDiscountPlan(walletOperation.getDiscountPlan());
+        		discountRatedTransaction.setDiscountPlanItem(walletOperation.getDiscountPlanItem());
+        		discountRatedTransaction.setDiscountPlanType(walletOperation.getDiscountPlanType());
+        		discountRatedTransaction.setDiscountValue(walletOperation.getDiscountValue());
+        		discountRatedTransaction.setSequence(walletOperation.getSequence());
         		ratedTransactionService.update(discountRatedTransaction);
         	}
     		

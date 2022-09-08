@@ -26,15 +26,18 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -86,7 +89,7 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public DiscountPlanItem create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
+    	if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
 		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null) {
@@ -95,10 +98,7 @@ public class DiscountPlanItemApi extends BaseApi {
 		if (postData.getDiscountPlanItemType() == null) {
 			missingParameters.add("discountPlanItemType");
 		}
-		if (postData.getDiscountPlanItemType() != null && postData.getDiscountValue() == null) {
-			missingParameters.add("discountValue");
-		}
-
+		
         handleMissingParameters();
 
         DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(postData.getCode());
@@ -338,12 +338,20 @@ public class DiscountPlanItemApi extends BaseApi {
         if (source.isAllowToNegate() != null) {
             discountPlanItem.setAllowToNegate(source.isAllowToNegate());
         }
-        if(!Strings.isEmpty(source.getDescription())) {
+        if(!StringUtils.isEmpty(source.getDescription())) {
         	discountPlanItem.setDescription(source.getDescription());
         }
         if(source.getPriority()!=null) {
         	discountPlanItem.setPriority(source.getPriority());
         }
+        if(source.getApplyByArticle()!=null) {
+            discountPlanItem.setApplyByArticle(source.getApplyByArticle()); 
+            }
+        
+        if (source.getSequence() != null) {
+        	discountPlanItem.setSequence(source.getSequence());
+        }
+        discountPlanItem.setLastDiscount(source.getLastDiscount()); 
         return discountPlanItem;
     }
 

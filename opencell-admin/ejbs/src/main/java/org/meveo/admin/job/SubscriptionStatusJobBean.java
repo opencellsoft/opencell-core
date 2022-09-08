@@ -34,12 +34,19 @@ import javax.inject.Inject;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.EndOfTerm;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.audit.AuditOrigin;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.CalendarService;
 
@@ -59,8 +66,17 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
     private SubscriptionService subscriptionService;
 
     @Inject
+    private ServiceInstanceService serviceInstanceService;
+
+    @Inject
     @EndOfTerm
     protected Event<Subscription> endOfTermEventProducer;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
+
+    @Inject
+    private AuditOrigin auditOrigin;
 
     private Date untilDate;
 
@@ -95,6 +111,9 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
      */
     public void updateSubscriptionStatus(Long subscriptionId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
 
+    	auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
+    	auditOrigin.setAuditOriginName(jobExecutionResult.getJobInstance().getJobTemplate() + "/" +jobExecutionResult.getJobInstance().getCode());
+    	
         Subscription subscription = subscriptionService.findById(subscriptionId);
         // Handle subscription renewal or termination
         if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE || subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.SUSPENDED)) {
@@ -120,6 +139,7 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
                         calendarDate = calendar.getTime();
                     }
                     subscription.setSubscribedTillDate(calendarDate);
+                    auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, Boolean.toString(subscription.isRenewed()), "true" );
                     subscription.setRenewed(true);
                     subscription.setRenewalNotifiedDate(null);
 
@@ -128,6 +148,17 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
                     }
 
                     subscription = subscriptionService.update(subscription);
+
+                    List<ServiceInstance> serviceInstances = serviceInstanceService.findBySubscription(subscription);
+
+                    if(serviceInstances != null && !serviceInstances.isEmpty()) {
+                    	for(ServiceInstance serviceInstance:serviceInstances) {
+                    		if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+                    			serviceInstance.setPriceVersionDate(subscribedTillDate);
+                    			serviceInstanceService.update(serviceInstance);
+                    		}
+                    	}
+                    }
 
                     log.debug("Subscription {} has beed renewed to date {} with end agreement date of {}", subscription.getCode(), subscription.getSubscribedTillDate(), subscription.getEndAgreementDate());
                     subscribedTillDate = subscription.getSubscribedTillDate();

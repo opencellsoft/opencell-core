@@ -21,8 +21,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.GenericOpencellRestful;
+import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.model.IEntity;
@@ -42,6 +44,9 @@ public class GenericApiLoadService {
 
     @Inject
     private GenericApiPersistenceDelegate persistenceDelegate;
+    
+    @Inject
+    private CsvGenericExportManager csvGenericExportManager;
 
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
         if(genericFields != null && isAggregationQueries(genericFields)){
@@ -170,6 +175,32 @@ public class GenericApiLoadService {
                         .build()
                         .toJson(genericFields, entityClass, Collections.singletonMap("data", entity), excludedFields));
     }
+
+	public String export(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields,
+                         List<GenericFieldDetails> genericFieldDetails,
+                         String fileFormat, String entityName) throws ClassNotFoundException {
+		
+		//SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
+        Map<String, GenericFieldDetails> fieldDetails = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(genericFields)) {
+            searchConfig.setFetchFields(new ArrayList<>(genericFields));
+        } else if (CollectionUtils.isNotEmpty(genericFieldDetails)) {
+            searchConfig.setFetchFields(genericFieldDetails.stream().map(GenericFieldDetails::getName).collect(Collectors.toList()));
+            fieldDetails = genericFieldDetails.stream().collect(Collectors.toMap(GenericFieldDetails::getName, Function.identity()));
+        }
+
+        List<List<Object>> list = (List<List<Object>>) nativePersistenceService.getQuery(entityClass.getCanonicalName(), searchConfig, null)
+                .find(nativePersistenceService.getEntityManager()).stream()
+                .map(ObjectArrays -> Arrays.asList(ObjectArrays))
+                .collect(Collectors.toList());
+        List<Map<String, Object>> mapResult = list.stream()
+										        .map(line -> addResultLine(line, searchConfig.getFetchFields().iterator()))
+										        .collect(Collectors.toList());
+
+        String filePath = csvGenericExportManager.export(entityName, mapResult, fileFormat, fieldDetails);
+
+		return filePath;
+	}
     
 
 }

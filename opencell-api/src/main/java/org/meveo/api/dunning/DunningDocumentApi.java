@@ -113,7 +113,9 @@ public class DunningDocumentApi extends BaseApi {
                 if (invoice.getRecordedInvoice() == null) {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
-                invoice.setPaymentStatus(InvoicePaymentStatusEnum.DISPUTED);
+                log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                        invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.DISPUTED + "]");
+                invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.DISPUTED);
                 invoice.setPaymentStatusDate(new Date());
                 entityUpdatedEventProducer.fire(invoice);
                 RecordedInvoice ri = invoice.getRecordedInvoice();

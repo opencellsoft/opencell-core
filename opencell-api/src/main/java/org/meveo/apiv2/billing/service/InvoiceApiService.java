@@ -10,6 +10,7 @@ import static java.util.Optional.ofNullable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -29,27 +30,23 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.GenerateInvoiceResult;
-import org.meveo.apiv2.billing.ImmutableInvoiceLine;
-import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLine;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.filter.FilterService;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
@@ -75,6 +72,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Inject
 	protected ResourceBundle resourceMessages;
 
+	@Inject
+    protected RatedTransactionService ratedTransactionService;
+	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
 	@Override
@@ -220,6 +220,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			result.addInvoiceLines(invoiceLineResource);
 		}
 		invoiceService.calculateInvoice(invoice);
+		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
 		return result.build();
 	}
@@ -240,6 +241,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
 		invoiceLinesService.update(invoice, invoiceLineInput.getInvoiceLine(), lineId);
 		invoiceService.calculateInvoice(invoice);
+		invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -249,6 +251,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void removeLine(Invoice invoice, Long lineId) {
 		invoiceLinesService.remove(invoice, lineId);
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 
 	/**
@@ -283,6 +286,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceResource) {       
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
+        invoiceService.updateBillingRunStatistics(updateInvoice);
         return updateInvoice;
     }
 
@@ -291,6 +295,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void calculateInvoice(Invoice invoice) {
 		invoiceService.calculateInvoice(invoice);
+        invoiceService.updateBillingRunStatistics(invoice);
 	}
 	
 	public Invoice duplicate(Invoice invoice) {
@@ -345,6 +350,19 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		ICustomFieldEntity customFieldEntity = new Invoice();
 		customFieldEntity =
 				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
+		
+		BillingAccount billingAccountAfter = null;
+        if(true==invoice.isApplyBillingRules()) {
+            Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
+            Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
+            List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            billingAccountAfter = ratedTransactionService.applyInvoicingRules(RTs);
+        }
+        
+        if (billingAccountAfter != null) {
+            entity = billingAccountAfter;
+        }
+		
 		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
 				isDraft, customFieldEntity.getCfValues(), true);
 		if (invoices == null || invoices.isEmpty()) {
@@ -356,13 +374,19 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 			List<Object[]> invoiceInfo = (List<Object[]>) invoiceService.getEntityManager().createNamedQuery("Invoice.getInvoiceTypeANDRecordedInvoiceID")
 					.setParameter("id", inv.getId())
 					.getResultList();
-			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));
+			generateInvoiceResults.add(invoiceMapper.toGenerateInvoiceResult(inv, (String) invoiceInfo.get(0)[0], (Long) invoiceInfo.get(0)[1]));			
 		}
     	return of(generateInvoiceResults);
     }
 
 	private Filter getFilterFromInput(FilterDto filterDto) throws MeveoApiException {
 		Filter filter = null;
+		if(!StringUtils.isBlank(filterDto.getPollingQuery()) && RatedTransaction.class.getSimpleName().equals(filterDto.getEntityClass())){
+			filter = new Filter();
+			filter.setPollingQuery(filterDto.getPollingQuery() + "AND status = 'OPEN'");
+			filter.setEntityClass(filterDto.getEntityClass());
+			return filter;
+		}
 		if (StringUtils.isBlank(filterDto.getCode()) && StringUtils.isBlank(filterDto.getInputXml())) {
 			throw new BadRequestException("code or inputXml");
 		}
@@ -437,4 +461,18 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 					currentRate, invoice.getTradingCurrency().getCurrentRateFromDate()));
 		}
 	}
+	
+	/**
+	 * Update comment and custom fields in a validated invoice
+	 * @param invoice {@link Invoice}
+	 * @param invoiceResource {@link InvoicePatchInput}
+	 * @return {@link Invoice}
+	 */
+	public Invoice updateValidatedInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoicePatchInput invoiceResource) {      
+    	ICustomFieldEntity customFieldEntity = new Invoice();
+		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
+        Invoice updateInvoice = invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
+        return updateInvoice;
+
+    }
 }

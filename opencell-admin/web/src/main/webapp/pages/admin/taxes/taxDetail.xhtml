@@ -36,7 +36,7 @@
                 <p:tab title="#{messages['customer.tab.information']}">
                     <hftl:formField label="#{messages['tax.code']}" field="code" required="true" />
                     <hftl:formLanguageFields field="description"/>
-                    <hftl:formField label="#{messages['tax.percent']}" field="percent" required="true" />
+                    <hftl:formField label="#{messages['tax.percent']}" field="percent" required="true" disabled = "#{taxBean.entity.composite}"/>
 
 	                <hftl:formField id="accountingCodeId"
 							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"

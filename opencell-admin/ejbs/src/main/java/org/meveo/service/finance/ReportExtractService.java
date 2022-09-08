@@ -186,7 +186,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
             context.put(ReportExtractScript.LINE_COUNT, entity.getMaximumLine().intValue());
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
-            List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + "\\" + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
+            List<Map<String, Object>> resultList = readGeneratedFile(resultContext.get("DIR") + File.separator + resultContext.get("FILENAME"), ofNullable(entity.getFileSeparator()).orElse(";"));
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
 
@@ -421,7 +421,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
         List<Map<String, Object>> records = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(Objects.requireNonNull(StorageFactory.getReader(path)))) {
+        if(StorageFactory.getReader(path) == null)
+            throw new BusinessException("Path for reading generated file must not be null");
+        try (BufferedReader br = new BufferedReader(StorageFactory.getReader(path))) {
             String line;
             String[] header = br.readLine().split(separator);
             while ((line = br.readLine()) != null) {

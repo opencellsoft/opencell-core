@@ -8,21 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -34,6 +20,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -45,6 +32,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
+		@NamedQuery(name = "QuoteProduct.findByQuoteVersionId", query = "select q from QuoteProduct q where q.quoteVersion.id=:id"),
 		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffer qqo left join q.productVersion pv where qq.id=:quoteVersionId and qqo.code=:quoteOfferCode and pv.product.code=:productCode"),
 		@NamedQuery(name = "QuoteProduct.findQuoteAttribute", query = "select qp from QuoteProduct qp left join qp.quoteVersion qv left join qp.quoteOffer qf left join qp.productVersion pv "
 				+ " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode and pv.product.code=:productCode ")
@@ -122,7 +110,6 @@ public class QuoteProduct extends AuditableCFEntity {
 
 	public QuoteProduct() {
 	}
-
 
 	public QuoteProduct(QuoteProduct copy) {
 		this.quote = copy.quote;
@@ -326,5 +313,4 @@ public class QuoteProduct extends AuditableCFEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
-
 }

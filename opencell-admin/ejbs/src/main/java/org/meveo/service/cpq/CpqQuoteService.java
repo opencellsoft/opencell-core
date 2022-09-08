@@ -33,7 +33,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.util.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -332,6 +332,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            Map<String, Object> parameters = new HashMap<>();
 	            String templateDir = new StringBuilder(resDir).toString();
 	            parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir + File.separator);
+	            parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir + File.separator);
 
 	            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 

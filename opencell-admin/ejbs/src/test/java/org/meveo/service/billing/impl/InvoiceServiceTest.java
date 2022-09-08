@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -1089,7 +1090,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null, null, null);
         assertThat(invoiceLinesGroups).isNotNull();
         Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesGroups.invoiceLinesGroups.get(0);
@@ -1111,7 +1112,7 @@ public class InvoiceServiceTest {
         when(ba.getCustomerAccount()).thenReturn(customerAccount);
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(customer.getSeller()).thenReturn(seller);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null,null, false, paymentMethod, null, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null, null, null,null, false, paymentMethod, null, null, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1137,7 +1138,7 @@ public class InvoiceServiceTest {
         when(customerAccount.getCustomer()).thenReturn(customer);
         when(subscription.getSeller()).thenReturn(sellerSub);
         when(customer.getSeller()).thenReturn(sellerCust);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba, null, bc, invoiceType, null,null, null, null, false, paymentMethod, null, null, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
         Assert.assertEquals(invoiceLinesGroup.getSeller().getCode(), "Seller_code");
@@ -1152,7 +1153,7 @@ public class InvoiceServiceTest {
         InvoiceType invoiceType = new InvoiceType();
         PaymentMethod paymentMethod = new CardPaymentMethod();
         InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class),null, mock(Date.class), mock(Date.class), false,
-            paymentMethod, null, null);
+            paymentMethod, null, null, null, null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1835,5 +1836,307 @@ public class InvoiceServiceTest {
         assertThat(invoice.getAmountWithTax().doubleValue()).isEqualTo(46d);
         assertThat(invoice.getAmountWithoutTax().doubleValue()).isEqualTo(40d);
         assertThat(invoice.getAmountTax().doubleValue()).isEqualTo(6d);
+    }
+
+    @Test
+    public void testCompositeTax() {
+        Invoice invoice = new Invoice();
+
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        BillingAccount ba = new BillingAccount();
+        ba.setCustomerAccount(ca);
+        ba.setId(2L);
+
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        tradingLanguage.setLanguageCode("en");
+        tradingLanguage.setId(3L);
+
+        ba.setTradingLanguage(tradingLanguage);
+
+        UserAccount ua1 = new UserAccount();
+        WalletInstance wallet1 = new WalletInstance();
+        wallet1.setId(5L);
+        wallet1.setCode("wallet1");
+        ua1.setCode("ua1");
+        ua1.setWallet(wallet1);
+        ua1.setBillingAccount(ba);
+        ua1.setId(6L);
+
+        UserAccount ua2 = new UserAccount();
+        WalletInstance wallet2 = new WalletInstance();
+        wallet2.setId(7L);
+        wallet2.setCode("wallet2");
+
+        ua2.setCode("ua2");
+        ua2.setWallet(wallet2);
+        ua2.setBillingAccount(ba);
+        ua2.setId(8L);
+
+        Subscription subscription1 = new Subscription();
+        subscription1.setCode("subsc1");
+        subscription1.setUserAccount(ua1);
+        subscription1.setId(9L);
+
+        DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setDiscountPlanType(DiscountPlanTypeEnum.PROMO_CODE);
+        discountPlan.setStatus(DiscountPlanStatusEnum.IN_USE);
+
+        DiscountPlanItem dpi = new DiscountPlanItem();
+        dpi.setDiscountPlan(discountPlan);
+        dpi.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        dpi.setDiscountValue(BigDecimal.TEN);
+        invoice.setAmountTax(new BigDecimal(1.5));
+        discountPlan.setDiscountPlanItems(List.of(dpi));
+
+        DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        discountPlanInstance.setDiscountPlan(discountPlan);
+        discountPlanInstance.setSubscription(subscription1);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(Calendar.MONTH, -2);
+        discountPlanInstance.setStartDate(cal.getTime());
+        cal.add(Calendar.MONTH, 8);
+        discountPlanInstance.setEndDate(cal.getTime());
+        discountPlanInstance.setStatus(DiscountPlanInstanceStatusEnum.ACTIVE);
+
+        subscription1.setDiscountPlanInstances(List.of(discountPlanInstance));
+
+        Subscription subscription2 = new Subscription();
+        subscription2.setCode("subsc2");
+        subscription2.setUserAccount(ua1);
+        subscription2.setId(10L);
+
+        InvoiceCategory cat1 = new InvoiceCategory();
+        cat1.setCode("cat1");
+        cat1.setId(11L);
+
+        InvoiceCategory cat2 = new InvoiceCategory();
+        cat2.setCode("cat2");
+        cat2.setId(12L);
+
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
+        InvoiceSubCategory subCat11 = new InvoiceSubCategory();
+        subCat11.setInvoiceCategory(cat1);
+        subCat11.setCode("subCat11");
+        subCat11.setAccountingCode(accountingCode);
+        subCat11.setId(13L);
+
+        InvoiceSubCategory subCat12 = new InvoiceSubCategory();
+        subCat12.setInvoiceCategory(cat1);
+        subCat12.setCode("subCat12");
+        subCat12.setAccountingCode(accountingCode);
+        subCat12.setId(14L);
+
+        InvoiceSubCategory subCat21 = new InvoiceSubCategory();
+        subCat21.setInvoiceCategory(cat2);
+        subCat21.setCode("subCat21");
+        subCat21.setAccountingCode(accountingCode);
+        subCat21.setId(15L);
+
+        InvoiceSubCategory subCat22 = new InvoiceSubCategory();
+        subCat22.setInvoiceCategory(cat2);
+        subCat22.setCode("subCat22");
+        subCat22.setAccountingCode(accountingCode);
+        subCat22.setId(16L);
+
+        Tax mainTax = new Tax();
+        mainTax.setId(1L);
+        mainTax.setCode("tax1");
+        mainTax.setComposite(true);
+        Tax subTax = new Tax();
+        subTax.setId(2L);
+        subTax.setCode("sub_tax01");
+        subTax.setComposite(false);
+        subTax.setPercent(new BigDecimal(10));
+        Tax subTax2 = new Tax();
+        subTax.setId(2L);
+        subTax.setCode("sub_tax02");
+        subTax.setComposite(false);
+        subTax.setPercent(new BigDecimal(5));
+        mainTax.setSubTaxes(List.of(subTax, subTax2));
+        mainTax.setPercent(new BigDecimal(15));
+
+        TaxClass taxClass = new TaxClass();
+        taxClass.setId(18L);
+
+        InvoiceType invoiceType = new InvoiceType();
+        invoiceType.setId(4L);
+
+        AccountingArticle accountingArticle = new AccountingArticle();
+        accountingArticle.setDescription("accounting");
+        accountingArticle.setInvoiceSubCategory(subCat11);
+
+        InvoiceLine invoiceLine = new InvoiceLine(new Date(), new BigDecimal(1),
+                new BigDecimal(10), new BigDecimal(15), new BigDecimal(5),
+                InvoiceLineStatusEnum.OPEN, ba, "label", mainTax, mainTax.getPercent(), accountingArticle);
+
+        invoice.setInvoiceType(invoiceType);
+        invoice.setBillingAccount(ba);
+        invoice.setSubscription(subscription1);
+        invoice.setInvoiceDate(new Date());
+
+        ParamBean paramBean = mock(ParamBean.class);
+        when(paramBean.getPropertyAsBoolean(eq("invoice.agregateByUA"), anyBoolean())).thenReturn(true);
+
+        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, Arrays.asList(invoiceLine),
+                false, null, true);
+
+        BigDecimal amountTax = new BigDecimal(1.5);
+        Assert.assertEquals(amountTax, invoice.getAmountTax());
+    }
+
+    @Test
+    public void testTaxAggregates() {
+        Invoice invoice = new Invoice();
+
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        BillingAccount ba = new BillingAccount();
+        ba.setCustomerAccount(ca);
+        ba.setId(2L);
+
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        tradingLanguage.setLanguageCode("en");
+        tradingLanguage.setId(3L);
+
+        ba.setTradingLanguage(tradingLanguage);
+
+        UserAccount ua1 = new UserAccount();
+        WalletInstance wallet1 = new WalletInstance();
+        wallet1.setId(5L);
+        wallet1.setCode("wallet1");
+        ua1.setCode("ua1");
+        ua1.setWallet(wallet1);
+        ua1.setBillingAccount(ba);
+        ua1.setId(6L);
+
+        UserAccount ua2 = new UserAccount();
+        WalletInstance wallet2 = new WalletInstance();
+        wallet2.setId(7L);
+        wallet2.setCode("wallet2");
+
+        ua2.setCode("ua2");
+        ua2.setWallet(wallet2);
+        ua2.setBillingAccount(ba);
+        ua2.setId(8L);
+
+        Subscription subscription1 = new Subscription();
+        subscription1.setCode("subsc1");
+        subscription1.setUserAccount(ua1);
+        subscription1.setId(9L);
+
+        DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setDiscountPlanType(DiscountPlanTypeEnum.PROMO_CODE);
+        discountPlan.setStatus(DiscountPlanStatusEnum.IN_USE);
+
+        DiscountPlanItem dpi = new DiscountPlanItem();
+        dpi.setDiscountPlan(discountPlan);
+        dpi.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        dpi.setDiscountValue(BigDecimal.TEN);
+        invoice.setAmountTax(new BigDecimal(1.5));
+        discountPlan.setDiscountPlanItems(List.of(dpi));
+
+        DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        discountPlanInstance.setDiscountPlan(discountPlan);
+        discountPlanInstance.setSubscription(subscription1);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(Calendar.MONTH, -2);
+        discountPlanInstance.setStartDate(cal.getTime());
+        cal.add(Calendar.MONTH, 8);
+        discountPlanInstance.setEndDate(cal.getTime());
+        discountPlanInstance.setStatus(DiscountPlanInstanceStatusEnum.ACTIVE);
+
+        subscription1.setDiscountPlanInstances(List.of(discountPlanInstance));
+
+        Subscription subscription2 = new Subscription();
+        subscription2.setCode("subsc2");
+        subscription2.setUserAccount(ua1);
+        subscription2.setId(10L);
+
+        InvoiceCategory cat1 = new InvoiceCategory();
+        cat1.setCode("cat1");
+        cat1.setId(11L);
+
+        InvoiceCategory cat2 = new InvoiceCategory();
+        cat2.setCode("cat2");
+        cat2.setId(12L);
+
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
+        InvoiceSubCategory subCat11 = new InvoiceSubCategory();
+        subCat11.setInvoiceCategory(cat1);
+        subCat11.setCode("subCat11");
+        subCat11.setAccountingCode(accountingCode);
+        subCat11.setId(13L);
+
+        InvoiceSubCategory subCat12 = new InvoiceSubCategory();
+        subCat12.setInvoiceCategory(cat1);
+        subCat12.setCode("subCat12");
+        subCat12.setAccountingCode(accountingCode);
+        subCat12.setId(14L);
+
+        InvoiceSubCategory subCat21 = new InvoiceSubCategory();
+        subCat21.setInvoiceCategory(cat2);
+        subCat21.setCode("subCat21");
+        subCat21.setAccountingCode(accountingCode);
+        subCat21.setId(15L);
+
+        InvoiceSubCategory subCat22 = new InvoiceSubCategory();
+        subCat22.setInvoiceCategory(cat2);
+        subCat22.setCode("subCat22");
+        subCat22.setAccountingCode(accountingCode);
+        subCat22.setId(16L);
+
+        Tax mainTax = new Tax();
+        mainTax.setId(1L);
+        mainTax.setCode("tax1");
+        mainTax.setComposite(true);
+        Tax subTax = new Tax();
+        subTax.setId(2L);
+        subTax.setCode("sub_tax01");
+        subTax.setComposite(false);
+        subTax.setPercent(new BigDecimal(10));
+        Tax subTax2 = new Tax();
+        subTax.setId(2L);
+        subTax.setCode("sub_tax02");
+        subTax.setComposite(false);
+        subTax.setPercent(new BigDecimal(5));
+        mainTax.setSubTaxes(List.of(subTax, subTax2));
+        mainTax.setPercent(new BigDecimal(15));
+
+        TaxClass taxClass = new TaxClass();
+        taxClass.setId(18L);
+
+        InvoiceType invoiceType = new InvoiceType();
+        invoiceType.setId(4L);
+
+        AccountingArticle accountingArticle = new AccountingArticle();
+        accountingArticle.setDescription("accounting");
+        accountingArticle.setInvoiceSubCategory(subCat11);
+
+        InvoiceLine invoiceLine = new InvoiceLine(new Date(), new BigDecimal(1),
+                new BigDecimal(10), new BigDecimal(15), new BigDecimal(5),
+                InvoiceLineStatusEnum.OPEN, ba, "label", mainTax, mainTax.getPercent(), accountingArticle);
+
+        invoice.setInvoiceType(invoiceType);
+        invoice.setBillingAccount(ba);
+        invoice.setSubscription(subscription1);
+        invoice.setInvoiceDate(new Date());
+
+        ParamBean paramBean = mock(ParamBean.class);
+        when(paramBean.getPropertyAsBoolean(eq("invoice.agregateByUA"), anyBoolean())).thenReturn(true);
+
+        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, Arrays.asList(invoiceLine),
+                false, null, true);
+
+        Assert.assertEquals(1, invoice.getInvoiceAgregates().size());
+        Assert.assertEquals(new BigDecimal(5), invoice.getInvoiceAgregates().get(0).getAmountTax());
     }
 }

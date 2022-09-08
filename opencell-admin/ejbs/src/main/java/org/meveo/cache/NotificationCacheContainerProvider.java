@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
@@ -280,16 +281,24 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         Object entity = getEntity(entityOrEvent);
 
         List<Notification> notifications = new ArrayList<Notification>();
+        List<String> checkNotifications = new ArrayList<String>();
 
         Class entityClass = entity.getClass();
-        int i = 0;
+        // prevent double notification for lazy proxy entities
+        if(entity instanceof HibernateProxy ) {
+        	entityClass = entityClass.getSuperclass();
+        }
 
+        int i = 0;
+        
         while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
                 && !entityClass.isAssignableFrom(AuditableEntity.class) && !entityClass.isAssignableFrom(Object.class)) {
-
+            
             CacheKeyStr cacheKey = getCacheKey(eventType, entityClass);
-            if (eventNotificationCache.containsKey(cacheKey)) {
+            String cacheKeyStr = cacheKey.toString();
+            if (eventNotificationCache.containsKey(cacheKey) && !checkNotifications.contains(cacheKeyStr)) {
                 notifications.addAll(eventNotificationCache.get(cacheKey));
+                checkNotifications.add(cacheKeyStr);
 
                 // If cache was not prepopulated or cache record was removed by cache itself (limit or cache entries, expiration, etc..)
                 // and there is no cache entry for the base class, then return null, as cache needs to be populated first

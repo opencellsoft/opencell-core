@@ -18,9 +18,6 @@
 
 package org.meveo.security.keycloak;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +27,11 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
+import org.keycloak.AuthorizationContext;
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.authorization.client.AuthzClient;
+import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -45,8 +44,6 @@ import org.slf4j.MDC;
 @Stateless
 public class CurrentUserProvider {
 
-    @Inject
-    private UserInfoManagement userInfoManagement;
     @Resource
     private SessionContext ctx;
 
@@ -92,8 +89,8 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired
-     * trigger (scheduled jobs, other timed event expirations), current user might be lost, thus there is a need to reestablish.
+     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     * expirations), current user might be lost, thus there is a need to reestablish.
      * 
      * @param lastCurrentUser Last authenticated user. Note: Pass a unproxied version of MeveoUser (currentUser.unProxy()), as otherwise it will access CurrentUser producer method
      */
@@ -164,46 +161,24 @@ public class CurrentUserProvider {
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
+        // String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername.get());
 
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername.get() != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername.get(), getCurrentTenant(), userInfoManagement.getAdditionalRoles(username, em), userInfoManagement.getRoleToPermissionMapping(providerCode, em));
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername.get(), getCurrentTenant(), null, null);
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, null, userInfoManagement.getAdditionalRoles(username, em), userInfoManagement.getRoleToPermissionMapping(providerCode, em));
+            user = new MeveoUserKeyCloakImpl(ctx, null, null, null, null);
         }
         // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
         // getCurrentTenant());
-        if (!userInfoManagement.supplementUserInApp(user, em, forcedUserUsername.get())) {
-            userInfoManagement.createUserInApp(user, em, forcedUserUsername.get());
-        }
 
         if (log.isTraceEnabled()) {
             log.trace("Current user is {}", user.toStringLong());
         }
         return user;
-    }
-
-    /**
-     * Register a user in application if accessing for the first time with that username
-     * 
-     * @param currentUser Authenticated current user
-     */
-
-
-
-
-
-
-
-    /**
-     * Invalidate cached role to permission mapping (usually after role save/update event)
-     */
-    public void invalidateRoleToPermissionMapping() {
-        UserInfoManagement.invalidateRoleToPermissionMapping();
     }
 
     /**
@@ -216,8 +191,8 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or
-     * initialize current provider value instead.
+     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or initialize current provider value
+     * instead.
      * 
      * @return Current provider code
      */
@@ -239,26 +214,84 @@ public class CurrentUserProvider {
      * Get roles by application. Applies to Keycloak implementation only.
      *
      * @param currentUser Currently logged-in user
-     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains
-     *         a mix or realm roles, client roles, roles defined in opencell and their resolution to permissions.
+     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains a mix or realm roles, client roles,
+     *         roles defined in opencell and their resolution to permissions.
      */
     public Map<String, Set<String>> getRolesByApplication(MeveoUser currentUser) {
 
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             Map<String, Set<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
-
-            // Supplement admin application roles with ones resolved in a current user,
-            String adminClientName = System.getProperty("opencell.keycloak.client");
-            Set<String> adminRoles = rolesByApplication.get(adminClientName);
-            if (adminRoles == null) {
-                adminRoles = new HashSet<String>();
-            }
-            adminRoles.addAll(currentUser.getRoles());
-            rolesByApplication.put(adminClientName, adminRoles);
-
             return rolesByApplication;
         }
         return null;
+    }
+
+    /**
+     * Check if URL for a given scope, is allowed for a current user
+     * 
+     * @param url URL to check
+     * @param scope Scope to match
+     * @return True if the URL is accessible
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isLinkAccesible(String url, String scope) {
+
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+            return true;
+        }
+
+        String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
+
+        AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
+
+        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
+
+        // Get resources best matching the URL
+        List<ResourceRepresentation> resources = authzClient.protection(accessToken).resource().findByMatchingUri(url);
+
+        boolean permited = false;
+        for (ResourceRepresentation resourceRepresentation : resources) {
+            permited = permited || authContext.hasPermission(resourceRepresentation.getName(), scope);
+        }
+
+        return permited;
+    }
+
+    /**
+     * Check if URLs for a given scope are allowed for a current user
+     * 
+     * @param scope Scope to match
+     * @param urls A list of URLs to match
+     * @return A corresponding set of True/false if the URL is accessible
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean[] isLinkAccesible(String scope, String... urls) {
+
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+            return new boolean[urls.length];
+        }
+
+        String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
+
+        AuthorizationContext authContext = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getAuthorizationContext();
+
+        AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
+
+        boolean[] result = new boolean[urls.length];
+
+        for (int i = 0; i < urls.length; i++) {
+            String url = urls[i];
+
+            // Get resources best matching the URL
+            List<ResourceRepresentation> resources = authzClient.protection(accessToken).resource().findByMatchingUri(url);
+
+            boolean permited = false;
+            for (ResourceRepresentation resourceRepresentation : resources) {
+                permited = permited || authContext.hasPermission(resourceRepresentation.getName(), scope);
+            }
+            result[i] = permited;
+        }
+        return result;
     }
 
 }

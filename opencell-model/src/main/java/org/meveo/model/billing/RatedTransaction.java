@@ -60,6 +60,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -210,6 +211,29 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "billing_account__id", nullable = false)
     @NotNull
     private BillingAccount billingAccount;
+    
+    /**
+     * Origin Billing account associated to rated transaction
+     */
+    @ManyToOne
+    @JoinColumn(name = "origin_billing_account")
+    private BillingAccount originBillingAccount;
+    
+    public BillingAccount getOriginBillingAccount() {
+        return originBillingAccount;
+    }
+
+    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
+        this.originBillingAccount = originBillingAccount;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
 
     /**
      * User account associated to rated transaction
@@ -246,6 +270,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @Column(name = "code", length = 255)
     @Size(max = 255)
     private String code;
+
+    /**
+     * Reject Reason
+     */
+    @Column(name = "reject_reason")
+    @Size(max = 4000)
+    private String rejectReason;
 
     /**
      * Description - corresponds in majority of cases to charge description
@@ -573,8 +604,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
-    private DiscountPlan discountPlan;
-    
+    private DiscountPlan discountPlan;    
     
     @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
@@ -589,6 +619,17 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    @ManyToOne
+    @JoinColumn(name = "rules_contract_id")
+    private Contract rulesContract;
+    
+    /**
+  	 * 
+  	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+  	 */
+  	@Column(name = "sequence")
+  	private Integer sequence;
     
     public RatedTransaction() {
         super();
@@ -742,6 +783,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.sortIndex = walletOperation.getSortIndex();
         this.cfValues = walletOperation.getCfValues();
         this.discountPlan = walletOperation.getDiscountPlan();
+        this.rulesContract = walletOperation.getRulesContract();
     }
 
     public WalletInstance getWallet() {
@@ -1509,7 +1551,28 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 		this.discountPlanItem = discountPlanItem;
 	}
 
-	
-	
+	public OrderInfo getInfoOrder() {
+		return infoOrder;
+	}
+
+	public void setInfoOrder(OrderInfo infoOrder) {
+		this.infoOrder = infoOrder;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+    public Contract getRulesContract() {
+        return rulesContract;
+    }
+
+    public void setRulesContract(Contract rulesContract) {
+        this.rulesContract = rulesContract;
+    }	
 	
 }

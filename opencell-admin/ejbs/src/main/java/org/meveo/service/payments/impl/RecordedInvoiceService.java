@@ -18,13 +18,14 @@
 package org.meveo.service.payments.impl;
 
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -42,8 +43,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
@@ -56,10 +55,11 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
- * 
+ *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author melyoussoufi
@@ -77,6 +77,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     @Inject
     private AccountOperationService accountOperationService;
 
+    @Inject
+    private InvoiceService invoiceService;
+    
     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception
@@ -120,7 +123,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     /**
      * @param reference invoice reference
-     * @param invoiceType 
+     * @param invoiceType
      * @return true if recored invoice exist
      */
     public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
@@ -142,11 +145,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
 			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
-        } catch (Exception e) {        	
+        } catch (Exception e) {
         }
         return recordedInvoice;
     }
-    
+
     /**
      * @param invoiceNumber invoice's reference.
      * @return list of RecoredInvoice.
@@ -170,7 +173,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     @SuppressWarnings("unchecked")
     public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o, boolean dunningExclusion) {
-        List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
+        List<RecordedInvoice> invoices = new ArrayList<>();
         try {
 
             if (dunningExclusion) {
@@ -222,7 +225,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     private Map<Object, Object> constructElContext(String expression, Invoice invoice, BillingRun billingRun) {
 
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
@@ -255,7 +258,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-    	if (invoice.getInvoiceType().isInvoiceAccountable() && InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+    	if (invoice.getInvoiceType().isInvoiceAccountable() && VALIDATED.equals(invoice.getStatus())) {
     		@SuppressWarnings("unchecked")
             List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
             List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
@@ -333,7 +336,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         return;
                     }
                 }
-                
+
             }
 
             RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
@@ -349,13 +352,19 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 create(recordedInvoiceCatAgregate);
             }
             invoice.setRecordedInvoice(recordedInvoice);
-    	} else if(!InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+            if(invoice.getDueDate() != null) {
+                var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? PENDING : UNPAID;
+                log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                        invoice.getPaymentStatus() + " - newPaymentStatus : " + currentStatus + "]");
+                invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
+            }
+    	} else if(!VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
     	} else {
     		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
     	}
     }
-    
+
     @Override
     public void create(RecordedInvoice entity) throws BusinessException {
         accountOperationService.handleAccountingPeriods(entity);
@@ -452,6 +461,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
         recordedInvoice.setAccountingDate(invoice.getInvoiceDate());
+        recordedInvoice.setPaymentMethod(invoice.getPaymentMethodType());
 
         return recordedInvoice;
     }
@@ -460,54 +470,53 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @return
      */
     public List<Long> queryInvoiceIdsForPS() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyList();
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date dueDate, PaginationConfiguration paginationConfiguration,
+    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
                                              Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
     	String datePattern = "yyyy-MM-dd";
-        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate > '")
+        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
                 .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
     	if(stepInDays != null && numberOfPeriods != null) {
     	    String alias;
     	    int step;
     	    if(numberOfPeriods > 1) {
-                query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + ",")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + "_awt,")
-                        .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
+                query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + ",")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + "_awt,")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
                 for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
                     step = iteration * stepInDays;
                     alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
-                    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.unMatchingAmount else 0 end ) ")
+                    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.amountWithoutTax else 0 end ) ")
                             .append(alias).append(" , ")
-                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.amountWithoutTax else 0 end ) ")
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.unMatchingAmount  else 0 end ) ")
                             .append(alias).append("_awt, ")
                             .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.taxAmount else 0 end ) ")
                             .append(alias).append("_tax, ");
                 }
             }
             step = numberOfPeriods > 1  ? stepInDays * (numberOfPeriods - 1) : stepInDays;
-            query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then  ao.unMatchingAmount else 0 end ) as sum_" + step + "_up,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_" + step + "_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
+            query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_" + step + "_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_" + step + "_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
         } else {
-    	    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_1_30,")
-    	            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_1_30_awt,")
-    	            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_1_30_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_31_60,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_31_60_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_31_60_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.unMatchingAmount else 0 end ) as sum_61_90,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.amountWithoutTax else 0 end ) as sum_61_90_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then  ao.taxAmount else 0 end ) as sum_61_90_tax,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.unMatchingAmount else 0 end ) as sum_90_up,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.amountWithoutTax else 0 end ) as sum_90_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then  ao.taxAmount else 0 end ) as sum_90_up_tax,");
+    	    query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_30,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_30_awt,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_30_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.amountWithoutTax  else 0 end ) as sum_31_60,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_31_60_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.taxAmount else 0 end ) as sum_31_60_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_61_90,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_61_90_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.taxAmount else 0 end ) as sum_61_90_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_90_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -517,28 +526,37 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(customerAccountDescription).ifPresent(caDescription
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
-        
-        ofNullable(dueDate).ifPresent(dd -> qb.addSql("ao.dueDate = '" + DateUtils.formatDateWithPattern(dd, datePattern) + "'"));
-        
-        if(DateUtils.compare(startDate, new Date()) < 0) {
-        	qb.addSql("ao.invoice.status = '" + InvoiceStatusEnum.VALIDATED + "' and ao.invoice.statusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'");
-        	qb.addSql("(ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.NONE + "' or (ao.invoice.paymentStatus = '" + InvoicePaymentStatusEnum.PPAID +"' and ao.invoice.paymentStatusDate <= '" + DateUtils.formatDateWithPattern(startDate, datePattern) + "'))");
+
+        if (startDueDate != null && endDueDate != null) {
+            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+                    + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
         }
-        
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.customerAccount.customer.id ");
+
+        if(DateUtils.compare(startDate, new Date()) < 0) {
+            var datePatternHours = "yyyy-MM-dd HH:mm:ss";
+        	qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.statusDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'");
+        	qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or (ao.invoice.paymentStatus = '"
+                    + PPAID +"' and ao.invoice.paymentStatusDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "') " +
+                    "or (ao.invoice.paymentStatus ='" + UNPAID +"' and ao.invoice.paymentStatusDate <= '"
+                            + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
+        }
+
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
-        
+
         return qb.getQuery(getEntityManager()).getResultList();
     }
-    
+
     public Long getCountAgedReceivables(CustomerAccount customerAccount) {
-		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName()); 
+		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName());
         if(customerAccount != null) {
         	qb.addCriterionEntity("customerAccount", customerAccount);
         }
         return (Long) qb.getQuery(getEntityManager()).getSingleResult();
     }
-    
+
     /**
      * Find by invoice id.
      *
@@ -552,7 +570,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             return (RecordedInvoice) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             log.info("Invoice with id {} was not found. Returning null.", invoiceId);
-            return null;  
+            return null;
         }
     }
 

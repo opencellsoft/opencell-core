@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.apiv2.provider.Provider;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
@@ -70,12 +71,15 @@ public class ProviderResourceImpl implements ProviderResource {
     private DunningPauseReasonsService dunningPauseReasonsService;
 
     @Override
-    public Response updateDunningTemplate(String providerCode, Provider provider) {
+    public Response updateProvider(String providerCode, Provider provider) {
         org.meveo.model.crm.Provider providerByCode = providerService.findByCode(providerCode);
         if (providerByCode == null) {
             throw new EntityDoesNotExistsException("provider with code " + providerCode + " does not exist.");
         }
         org.meveo.model.crm.Provider providerUpdateInfos = provider.toEntity();
+        if (provider.getEmail() == null && providerByCode.getEmail() == null ) {
+            throw new InvalidParameterException("provider's email is mandatory.");
+        }
         if (provider.getDescription() != null) {
             providerByCode.setDescription(providerUpdateInfos.getDescription());
         }
@@ -287,8 +291,8 @@ public class ProviderResourceImpl implements ProviderResource {
                 listAllowedCreditCategories.add(creditCategory);
             }
             providerUpdateInfos.getPaymentPlanPolicy().setAllowedCreditCategories(listAllowedCreditCategories);
-            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null) {
-                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(providerUpdateInfos.getPaymentPlanPolicy().getDunningDefaultPauseReason().getId());
+            if (paymentPlanPolicy.getDunningDefaultPauseReason() != null && paymentPlanPolicy.getDunningDefaultPauseReason().getId() != null) {
+                DunningPauseReason dunningPauseReason = dunningPauseReasonsService.findById(paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 if (dunningPauseReason == null) {
                     throw new EntityDoesNotExistsException(DunningPauseReason.class, paymentPlanPolicy.getDunningDefaultPauseReason().getId());
                 }

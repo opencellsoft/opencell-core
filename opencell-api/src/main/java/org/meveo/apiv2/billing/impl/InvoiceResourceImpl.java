@@ -5,6 +5,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
@@ -29,6 +31,7 @@ import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.InvoiceTypeRs;
@@ -47,6 +50,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
+import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
@@ -56,11 +60,14 @@ import org.meveo.model.billing.*;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
+
+	private static final String PPL_CREATION = "PPL_CREATION";
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
@@ -81,6 +88,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	
 	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
 	
+	@Transactional
 	@Override
 	public Response getInvoice(Long id, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
@@ -155,7 +163,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
 								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
 										.forEach(matchingAmountAo -> {
-											if (!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+											if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
+													!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+											 		!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
 												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
 											}
 										});
@@ -229,6 +239,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 
+	@Transactional
 	@Override
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
@@ -437,11 +448,15 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response calculateSubTotals(Long invoiceId) {
 		Invoice invoice = invoiceApiService.findById(invoiceId).orElseThrow(NotFoundException::new);
+		try {
 		var invoiceSubtotalsList = invoiceSubTotalsApiService.calculateSubTotals(invoice);
 		  return Response
 	                .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
 	                .entity(toResourceInvoiceSubTotalsWithLink(invoiceSubTotalMapper.toResources(invoiceSubtotalsList)))
 	                .build();
+		}catch(Exception e) {
+		    throw new BusinessApiException(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+		}
 	}
 	
 	@Override
@@ -478,4 +493,27 @@ public class InvoiceResourceImpl implements InvoiceResource {
         }
 		return result;
 	}
+
+	@Override
+    public Response updateValidateInvoice(Long id, InvoicePatchInput input) {
+        final Invoice invoice = findValidatedInvoiceToUpdate(id);		
+        invoiceApiService.updateValidatedInvoice(invoice, input);
+        return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build()).build();
+    }
+
+    /**
+     * Find validated invoice to patch
+     * @param id Invoice Id
+     * @return {@link org.meveo.apiv2.billing.Invoice}
+     */
+    private Invoice findValidatedInvoiceToUpdate(Long id) {
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        final InvoiceStatusEnum status = invoice.getStatus();
+
+        if(!(VALIDATED.equals(status))) {
+            throw new ActionForbiddenException("Can only patch VALIDATED invoice. Current invoice status is: " + status.name()) ;
+        }
+
+        return invoice;
+    }
 }

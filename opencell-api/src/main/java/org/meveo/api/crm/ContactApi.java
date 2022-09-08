@@ -19,10 +19,11 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.crm.AddressBookContactDto;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -48,6 +50,8 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.intcrm.AddressBookContact;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -59,8 +63,11 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
+import org.meveo.service.intcrm.impl.AddressBookContactService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
+
+import com.opencsv.exceptions.CsvException;
 
 /**
  * @author Abdellatif BARI
@@ -74,7 +81,7 @@ public class ContactApi extends BaseApi {
     ContactService contactService;
 
     @Inject
-    SellerService sellerService;
+    private AddressBookContactService addressBookContactService;
 
     @Inject
     private TitleService titleService;
@@ -97,6 +104,7 @@ public class ContactApi extends BaseApi {
     @Inject
     CustomerCategoryService customerCategoryService;
 
+    @TransactionAttribute
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
         if (postData.getName() == null) {
@@ -120,6 +128,14 @@ public class ContactApi extends BaseApi {
 
         handleMissingParameters();
 
+        if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail()))){
+            String email = postData.getContactInformation().getEmail();
+            List<Contact> list = contactService.list(new PaginationConfiguration(Collections.singletonMap("contactInformation.email", email)));
+            if(list.size() > 0){
+                throw new EntityAlreadyExistsException(Contact.class, email, "email");
+            }
+        }
+
         String code = null;
         if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             code = postData.getContactInformation().getEmail();
@@ -139,10 +155,32 @@ public class ContactApi extends BaseApi {
         }
 
         dtoToEntity(contact, postData);
-
         contactService.create(contact);
+        linkToAddressBook(contact, postData.getAddressBookContacts());
 
         return contact;
+    }
+
+    private void linkToAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
+        if(addressBookContacts != null && !addressBookContacts.isEmpty()){
+            addressBookContacts.stream()
+                    .filter(abcDto -> abcDto.getAddressBook() != null && abcDto.getAddressBook().containsKey("id"))
+                    .forEach(abcDto -> {
+                        AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
+                        if(addressBookServiceById == null){
+                            throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
+                        }
+                        checkMainContactExistance(abcDto, addressBookServiceById);
+                        AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
+                        addressBookContactService.create(addressBookContact);
+                    });
+        }
+    }
+
+    private void checkMainContactExistance(AddressBookContactDto abcDto, AddressBook addressBookServiceById) {
+        if (abcDto.getMainContact() && addressBookContactService.hasMainContact(addressBookServiceById)) {
+            throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
+        }
     }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
@@ -166,9 +204,49 @@ public class ContactApi extends BaseApi {
         }
 
         dtoToEntity(contact, postData);
-
+        updateContactAddressBook(contact, postData.getAddressBookContacts());
         contact = contactService.update(contact);
         return contact;
+    }
+
+    private void updateContactAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
+        if(addressBookContacts != null && !addressBookContacts.isEmpty()){
+            addressBookContacts.stream()
+                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
+                    .forEach(abcDto -> {
+                        AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
+                        if(addressBookServiceById == null){
+                            throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
+                        }
+                        checkMainContactExistance(abcDto, addressBookServiceById);
+                        // update existing
+                        if(abcDto.getId() != null){
+                            AddressBookContact addressBookContact = addressBookContactService.findById(abcDto.getId());
+                            if(addressBookContact == null){
+                                throw new EntityDoesNotExistsException("addressBookContact with id "+abcDto.getId()+" does not exist");
+                            }
+                            if(abcDto.getPosition() != null){
+                                addressBookContact.setPosition(abcDto.getPosition());
+                            }
+                            if(abcDto.getMainContact() != null){
+                                addressBookContact.setMainContact(abcDto.getMainContact());
+                            }
+                            addressBookContactService.update(addressBookContact);
+                        } else {
+                            AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
+                            addressBookContactService.create(addressBookContact);
+                        }
+                    });
+            List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
+            abcs.stream()
+                    .filter(abc -> addressBookContacts.stream()
+                            .filter(addressBookContactDto -> abc.getId().equals(addressBookContactDto.getId()))
+                            .filter(addressBookContactDto -> abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id")))
+                            .findFirst()
+                            .isEmpty())
+                    .forEach(abc -> addressBookContactService.remove(abc.getId()));
+
+        }
     }
 
     /**
@@ -210,6 +288,14 @@ public class ContactApi extends BaseApi {
 
         if (postData.getTags() != null) {
             contact.setTags(postData.getTags());
+        }
+
+        if (postData.getReference() != null) {
+            contact.setReference(postData.getReference());
+        }
+
+        if (postData.getComment() != null) {
+            contact.setComment(postData.getComment());
         }
 
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
@@ -405,16 +491,27 @@ public class ContactApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        ContactDto contactDto = null;
         Contact contact = contactService.findByCode(code);
 
         if (contact == null) {
             throw new EntityDoesNotExistsException(Contact.class, code, "code");
         }
+        return buildContactDto(contact);
+    }
 
-        contactDto = new ContactDto(contact);
-
+    private ContactDto buildContactDto(Contact contact) {
+        ContactDto contactDto;
+        List<AddressBookContact> addressBookContactServiceByContact = addressBookContactService.findByContact(contact);
+        if(addressBookContactServiceByContact != null){
+            Map<AddressBookContact, Customer> addressBookContactCustomers = new HashMap<>();
+            addressBookContactServiceByContact
+                    .stream()
+                    .filter(abc -> abc.getAddressBook() != null)
+                    .forEach(abc -> addressBookContactCustomers.put(abc, customerService.findByAddressBook(abc.getAddressBook().getId())));
+            contactDto = new ContactDto(contact, addressBookContactCustomers);
+        } else {
+            contactDto = new ContactDto(contact);
+        }
         return contactDto;
     }
 
@@ -424,9 +521,10 @@ public class ContactApi extends BaseApi {
 
         List<Contact> contacts = contactService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (contacts != null) {
-            for (Contact contact : contacts) {
-                result.getContacts().getContact().add(new ContactDto(contact));
-            }
+            result.getContacts().setContact(contacts.stream()
+                            .map(contact -> buildContactDto(contact))
+                    .collect(Collectors.toList()));
+            result.getContacts().setTotalNumberOfRecords(Long.valueOf(result.getContacts().getContact().size()));
         }
 
         return result;
@@ -464,14 +562,14 @@ public class ContactApi extends BaseApi {
         if (totalCount > 0) {
             List<Contact> contacts = contactService.list(paginationConfig);
             for (Contact c : contacts) {
-                contactsDto.getContact().add(new ContactDto(c));
+                contactsDto.getContact().add(buildContactDto(c));
             }
         }
         result.setContacts(contactsDto);
         return result;
     }
 
-    public ContactsDto importCSVText(String context) throws IOException {
+    public ContactsDto importCSVText(String context) throws IOException, CsvException {
         List<Contact> failedToPersist = new ArrayList<Contact>();
         List<Contact> contacts = null;
         List<String> failedToPersistLog = new ArrayList<String>();

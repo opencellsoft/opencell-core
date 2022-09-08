@@ -8,23 +8,31 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.OperatorEnum;
 
 @Entity
 @Table(name = "billing_article_mapping_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq"), })
+        parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq") })
+@NamedQueries({
+        @NamedQuery(name = "ArticleMappingLine.findAll", query = "SELECT a FROM ArticleMappingLine a")})
 public class ArticleMappingLine extends BusinessEntity {
 
     /**
@@ -43,6 +51,11 @@ public class ArticleMappingLine extends BusinessEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "article_id")
     private AccountingArticle accountingArticle;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "attribute_operator", nullable = false)
+    private OperatorEnum attributeOperator = OperatorEnum.AND;
 
     @OneToMany(mappedBy = "articleMappingLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeMapping> attributesMapping = new ArrayList<AttributeMapping>();
@@ -149,5 +162,13 @@ public class ArticleMappingLine extends BusinessEntity {
 
     public void setMappingKeyEL(String mappingKelEL) {
         this.mappingKeyEL = mappingKelEL;
+    }
+
+    public OperatorEnum getAttributeOperator() {
+        return attributeOperator;
+    }
+
+    public void setAttributeOperator(OperatorEnum attributeOperator) {
+        this.attributeOperator = attributeOperator;
     }
 }

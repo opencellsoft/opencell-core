@@ -22,7 +22,6 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.xml.Offer;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -41,10 +40,12 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -55,6 +56,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -82,8 +84,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	private SubscriptionService subscriptionService;
     @Inject
     private DiscountPlanService discountPlanService;
-    @Inject
-    private OrderLotService orderLotService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
@@ -203,6 +203,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
@@ -320,7 +321,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
         
 	}
 	
-	public void processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
+	public ServiceInstance processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
 		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
 		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 		if(orderProduct.getDiscountPlan() != null) {
@@ -337,6 +338,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			serviceInstance.getDiscountPlanInstances().add(dpi);
 			orderProduct.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE);
 		}
+		return serviceInstance;
 	}
 
 	public ServiceInstance processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate) {
@@ -356,16 +358,27 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		serviceInstance.setSubscription(subscription);
 		
-	Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
-		
-		for (OrderAttribute orderAttribute : orderAttributes) {
-			if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
-			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
-			attributeInstance.setServiceInstance(serviceInstance);
-			attributeInstance.setSubscription(subscription);
-			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+		if(subscription.getOrder() != null) {
+			if(subscription.getOrder().getQuote() != null) {
+				if(PriceVersionDateSettingEnum.QUOTE.equals(product.getPriceVersionDateSetting())) {
+					serviceInstance.setPriceVersionDate(subscription.getOrder().getQuote().getQuoteDate());
+				}
 			}
 		}
+		
+		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<String, AttributeInstance>();
+		
+		if(orderAttributes != null && orderAttributes.size() > 0) {
+			for (OrderAttribute orderAttribute : orderAttributes) {
+				if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
+					AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
+					attributeInstance.setServiceInstance(serviceInstance);
+					attributeInstance.setSubscription(subscription);
+					instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+				}
+			}
+		}
+		
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
@@ -381,14 +394,24 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 			if(!StringUtils.isBlank(productVersionAttribute.getDefaultValue())){
 				switch (attribute.getAttributeType()) {
-				case BOOLEAN:
-					if(attributeInstance.getBooleanValue()==null)
-						attributeInstance.setBooleanValue(Boolean.valueOf(productVersionAttribute.getDefaultValue()));
-					break;
-				case NUMERIC:
-					if(attributeInstance.getDoubleValue()==null)
-						attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
-					break;
+					case BOOLEAN:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
+					case TOTAL :
+					case COUNT :
+					case NUMERIC :
+					case INTEGER:
+						if(attributeInstance.getDoubleValue()==null)
+							attributeInstance.setDoubleValue(Double.valueOf(productVersionAttribute.getDefaultValue()));
+						break;
+					case LIST_MULTIPLE_TEXT:
+					case LIST_TEXT:
+					case EXPRESSION_LANGUAGE :
+					case TEXT:
+						if(attributeInstance.getStringValue()==null)
+							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
+						break;
 				default:
 					if(attributeInstance.getStringValue()==null)
 						attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
@@ -524,4 +547,59 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 	}
 	
+	public void processSubscriptionAttributes(Subscription subscription,OfferTemplate offer,List<OrderAttribute> orderAttributes) {
+		Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		
+		for (OrderAttribute orderAttribute : orderAttributes) {
+			if(orderAttribute.getAttribute()!=null && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType()) ) {
+			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser); 
+			attributeInstance.setSubscription(subscription);
+			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+			}
+		}
+		//add missing attribute instances
+		AttributeInstance attributeInstance=null;
+		Attribute attribute=null;
+		for(OfferTemplateAttribute offerAttribute:offer.getOfferAttributes()) {
+		    attribute =offerAttribute.getAttribute();
+			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
+				attributeInstance = new AttributeInstance(currentUser);
+				attributeInstance.setAttribute(attribute);
+				attributeInstance.setSubscription(subscription);
+			
+			}else {
+				attributeInstance=instantiatedAttributes.get(attribute.getCode());
+			}
+			//set default value if value is null
+			if(!StringUtils.isBlank(offerAttribute.getDefaultValue())){
+				switch (attribute.getAttributeType()) {
+				case BOOLEAN:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(offerAttribute.getDefaultValue());
+					break;	
+				case TOTAL :
+				case COUNT :
+				case NUMERIC :
+				case INTEGER:
+					if(attributeInstance.getDoubleValue()==null)
+						attributeInstance.setDoubleValue(Double.valueOf(offerAttribute.getDefaultValue()));
+					break;
+				case LIST_MULTIPLE_TEXT:
+				case LIST_TEXT:
+				case EXPRESSION_LANGUAGE :
+				case TEXT:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(offerAttribute.getDefaultValue());
+					break;
+				default:
+					if(attributeInstance.getStringValue()==null)
+						attributeInstance.setStringValue(offerAttribute.getDefaultValue());
+					break;
+				}
+			}
+			subscription.addAttributeInstance(attributeInstance);
+			
+		}
+		 
+	}
 }

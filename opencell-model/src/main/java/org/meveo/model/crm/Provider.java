@@ -317,7 +317,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     /**
      * Contact email
      */
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, nullable = false)
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 100)
     protected String email;
@@ -419,6 +419,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @Type(type = "numeric_boolean")
     @Column(name = "functional_currency_flag")
     private boolean functionalCurrencyFlag = false;
+    
+    
+    @Type(type = "numeric_boolean")
+ 	@Column(name = "activate_cascading_discounts ")
+ 	private boolean activateCascadingDiscounts=true;
     
 
     public String getCode() {
@@ -876,4 +881,14 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     public void setFunctionalCurrencyFlag(boolean functionalCurrencyFlag) {
         this.functionalCurrencyFlag = functionalCurrencyFlag;
     }
+
+	public boolean isActivateCascadingDiscounts() {
+		return activateCascadingDiscounts;
+	}
+
+	public void setActivateCascadingDiscounts(boolean activateCascadingDiscounts) {
+		this.activateCascadingDiscounts = activateCascadingDiscounts;
+	}
+    
+    
 }

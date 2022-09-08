@@ -98,6 +98,9 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
 
+    private static final String OPEN_ORDER_QUOTE_PREFIX = "OOQ-";
+    private static final String OPEN_ORDER_PREFIX = "OOR-";
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -665,37 +668,56 @@ public class ServiceSingleton {
                 : prefixOverride + generatedCode;
     }
 
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String getNextOpenOrderSequence() {
-        String code = "OOQ-" + (Calendar.getInstance().get(Calendar.YEAR) % 100);
-        InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
-        if (sequence == null) {
-            sequence = new InvoiceSequence();
-            sequence.setCurrentNumber(0L);
-            sequence.setSequenceSize(5);
-            sequence.setCode(code);
-            invoiceSequenceService.create(sequence);
-        }
-        return sequence.getCurrentNumber().toString();
+    private String replaceDigitsWithChars(long epochTimestamp) {
+        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
+                .mapToObj(character ->  replaceNumber((char) character))
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+        return result.toString();
+    }
+
+    private char replaceNumber(char character) {
+        return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 
     private String formatCode(String formatEL, Map<Object, Object> context) {
         if (formatEL.isEmpty()) {
             return (String) context.get(GENERATED_CODE_KEY);
         }
-        return evaluateExpression(formatEL, context, String.class) + context.get(GENERATED_CODE_KEY);
+        if (formatEL.indexOf("#{") < 0) {
+            return formatEL + context.get(GENERATED_CODE_KEY);
+        }
+        return evaluateExpression(formatEL, context, String.class);
     }
 
-    private String replaceDigitsWithChars(long epochTimestamp) {
-        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
-                                    .mapToObj(character ->  replaceNumber((char) character))
-                                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
-        return result.toString();
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getNextOpenOrderSequence() {
+        return numberGenerator(OPEN_ORDER_PREFIX);
     }
 
-    private char replaceNumber(char character) {
-        return character >= '0' && character <= '9' ? mapper.get(character) : character;
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getNextOpenOrderQuoteSequence() {
+        return numberGenerator(OPEN_ORDER_QUOTE_PREFIX);
+    }
+
+    private String numberGenerator(String prefix) {
+        String code = prefix + (Calendar.getInstance().get(Calendar.YEAR) % 100);
+        InvoiceSequence sequence = invoiceSequenceService.findByCode(code);
+        if (sequence == null) {
+            sequence = new InvoiceSequence();
+            sequence.setCurrentNumber(1L);
+            sequence.setSequenceSize(5);
+            sequence.setCode(code);
+            invoiceSequenceService.create(sequence);
+        }
+        String ooqCode =  code + "-" + leftPad(valueOf(sequence.getCurrentNumber()),
+                sequence.getSequenceSize(), '0');
+
+        sequence.setCurrentNumber(sequence.getCurrentNumber()+1);
+
+        return ooqCode;
     }
 }

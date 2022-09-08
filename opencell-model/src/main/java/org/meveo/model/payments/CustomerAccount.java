@@ -65,6 +65,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
@@ -251,8 +252,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	@Column(name = "threshold_per_entity")
 	private boolean thresholdPerEntity;
 
+	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
+    private List<Contract> contracts = new ArrayList<>();
+	
+	public List<Contract> getContracts() {
+        return contracts;
+    }
 
-	@Transient
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
+
+    @Transient
 	private String dueBalance;
 
 	/**

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.meveo.api.dto.cpq.xml.Contract;
 import org.meveo.api.dto.cpq.xml.Details;
 import org.meveo.api.dto.cpq.xml.Header;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
+import org.meveo.api.dto.cpq.xml.Product;
 import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
@@ -139,7 +141,7 @@ public class QuoteToXmlScript extends ModuleScript {
         return new QuoteXmlDto(header, details);
     }
 
-    private Stream<QuoteArticleLine> getAllOffersQuoteLineStream(QuoteVersion quoteVersion) {
+    protected Stream<QuoteArticleLine> getAllOffersQuoteLineStream(QuoteVersion quoteVersion) {
     	List<QuoteArticleLine> QuoteArticleLines=quoteVersion.getQuoteArticleLines();
     	log.info("-----------------getAllOffersQuoteLineStream---------- size={}",QuoteArticleLines.size());
     	return QuoteArticleLines.stream();
@@ -151,7 +153,7 @@ public class QuoteToXmlScript extends ModuleScript {
 //                    .flatMap(identity());
     }
 
-    private org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba, List<QuoteArticleLine> lines){
+    protected org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba, List<QuoteArticleLine> lines){
 
         Map<QuoteLot, List<QuoteArticleLine>> linesByLot = lines.stream()
                 .filter(line -> line.getQuoteLot() != null)
@@ -176,7 +178,7 @@ public class QuoteToXmlScript extends ModuleScript {
 
     }
 
-    private org.meveo.api.dto.cpq.xml.QuoteLot mapToLot(QuoteLot lot, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+    protected org.meveo.api.dto.cpq.xml.QuoteLot mapToLot(QuoteLot lot, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
         Map<InvoiceCategory, List<QuoteArticleLine>> linesByCategory = quoteArticleLines.stream()
                 .collect(groupingBy(quoteArticleLine -> quoteArticleLine.getAccountingArticle().getInvoiceSubCategory().getInvoiceCategory()));
         List<Category> categories = linesByCategory.keySet().stream()
@@ -185,7 +187,7 @@ public class QuoteToXmlScript extends ModuleScript {
         return new org.meveo.api.dto.cpq.xml.QuoteLot(lot, categories);
     }
 
-    private Category mapToCategory(InvoiceCategory category, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+    protected Category mapToCategory(InvoiceCategory category, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
         Map<InvoiceSubCategory, List<QuoteArticleLine>> linesBySubCategory = quoteArticleLines.stream()
                 .collect(groupingBy(line -> line.getAccountingArticle().getInvoiceSubCategory()));
 
@@ -195,7 +197,7 @@ public class QuoteToXmlScript extends ModuleScript {
         return new Category(category, subCategories, getTradingLanguage(ba));
     }
 
-    private SubCategory mapToSubCategory(InvoiceSubCategory subCategory, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+    protected SubCategory mapToSubCategory(InvoiceSubCategory subCategory, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
         Map<AccountingArticle, List<QuoteArticleLine>> linesByAccountingArticle = quoteArticleLines.stream()
                 .collect(groupingBy(line -> line.getAccountingArticle()));
         List<org.meveo.api.dto.cpq.xml.AccountingArticle> articleLines = linesByAccountingArticle.keySet().stream()
@@ -204,34 +206,33 @@ public class QuoteToXmlScript extends ModuleScript {
         return new SubCategory(subCategory, articleLines, getTradingLanguage(ba));
     }
 
-    private org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+    protected org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream().filter(line -> line.getQuoteProduct() != null)
-    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffer())))
+    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct())))
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
     
-    private org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteOffer quoteOffer) {
-    	if(quoteOffer==null) {
-    		return null;
-    	}
-    	org.meveo.api.dto.cpq.xml.Offer quoteOfferDto = new  org.meveo.api.dto.cpq.xml.Offer(quoteOffer,entityToDtoConverter.getCustomFieldsDTO(quoteOffer));
-
-    	quoteOfferDto.setProducts(quoteOffer.getQuoteProduct().stream()
-    			.map(product ->  mapToProduct(product))
-    			.collect(Collectors.toList()));
-    	
-    	quoteOfferDto.setAttributes(quoteOffer.getQuoteAttributes().stream()
-    			.map(product ->  mapToAttribute(product))
-    			.collect(Collectors.toList()));
-    	
-    	return quoteOfferDto; 
+    protected org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteProduct quoteProduct) {
+        if(quoteProduct==null) {
+            return null;
+        }
+        org.meveo.api.dto.cpq.xml.Offer quoteOfferDto = new  org.meveo.api.dto.cpq.xml.Offer(quoteProduct.getQuoteOffer(),entityToDtoConverter.getCustomFieldsDTO(quoteProduct.getQuoteOffer()));
+        List<Product> products=new ArrayList<Product>();
+        products.add(mapToProduct(quoteProduct));
+        quoteOfferDto.setProducts(products);
+        
+        quoteOfferDto.setAttributes(quoteProduct.getQuoteOffer().getQuoteAttributes().stream()
+                .map(product ->  mapToAttribute(product))
+                .collect(Collectors.toList()));
+        
+        return quoteOfferDto;
     }
     
     
-    private org.meveo.api.dto.cpq.xml.Product mapToProduct(QuoteProduct quoteProduct) {
+    protected org.meveo.api.dto.cpq.xml.Product mapToProduct(QuoteProduct quoteProduct) {
 
         List<QuotePrice> prices = quoteProduct.getQuoteArticleLines().stream()
                 .map(line -> line.getQuotePrices().stream())
@@ -246,17 +247,17 @@ public class QuoteToXmlScript extends ModuleScript {
     	return quoteProductDto;  
     }
     
-    private org.meveo.api.dto.cpq.xml.Attribute mapToAttribute(QuoteAttribute quoteAttribute) {
+    protected org.meveo.api.dto.cpq.xml.Attribute mapToAttribute(QuoteAttribute quoteAttribute) {
     	org.meveo.api.dto.cpq.xml.Attribute quoteAttributeDto = new  org.meveo.api.dto.cpq.xml.Attribute(quoteAttribute,entityToDtoConverter.getCustomFieldsDTO(quoteAttribute)); 
     	return quoteAttributeDto; 
     }
 
 
-    private String getTradingLanguage(org.meveo.model.billing.BillingAccount ba) {
+    protected String getTradingLanguage(org.meveo.model.billing.BillingAccount ba) {
         return ba.getTradingLanguage().getLanguageCode();
     }
 
-    private List<PriceDTO> aggregatePricesPerType(List<QuotePrice> baPrices) {
+    protected List<PriceDTO> aggregatePricesPerType(List<QuotePrice> baPrices) {
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = baPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
@@ -269,7 +270,7 @@ public class QuoteToXmlScript extends ModuleScript {
                 .collect(Collectors.toList());
     }
 
-    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType) {
+    protected Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType) {
         return pricesPerType.get(key).stream().reduce((a, b) -> {
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(key);

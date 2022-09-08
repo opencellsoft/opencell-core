@@ -2,6 +2,7 @@ package org.meveo.apiv2.accountreceivable;
 
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 import static org.meveo.model.payments.AccountOperationStatus.POSTED;
 
 import java.util.ArrayList;
@@ -137,9 +138,12 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				throw new NotFoundException("Customer account does not exits");
 			}
 			accountOperation.setCustomerAccount(customerAccount);
-			accountOperation.setStatus(POSTED);
-			// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
-			accountOperationService.fillOperationNumber(accountOperation);
+			if (accountOperation.getStatus() == EXPORTED) {
+				accountOperation.setStatus(POSTED);
+				// In this case, OperationNumber shall be incremented (https://opencellsoft.atlassian.net/browse/INTRD-7017)
+				accountOperationService.fillOperationNumber(accountOperation);
+			}
+
 			try {
 				accountOperationService.update(accountOperation);
 			} catch (Exception exception) {
@@ -197,6 +201,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 						.collect(Collectors.toList())).orElse(Collections.emptyList())
 				.forEach(accountOperation -> {
 					accountOperation.setCustomerAccount(customer);
+					// change status of orphan AO after CA assignement : new requirement added as bug https://opencellsoft.atlassian.net/browse/INTRD-8217
+					accountOperation.setStatus(POSTED);
 					accountOperationService.update(accountOperation);
 				});
 

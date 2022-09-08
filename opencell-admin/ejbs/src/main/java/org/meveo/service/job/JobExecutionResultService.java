@@ -27,7 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -79,7 +79,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
                 log.info("Job execution finished {}", result);
             }
             getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
-                .setParameter("nbItemsToProcess", result.getNbItemsToProcess()).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
+                .setParameter("nbItemsToProcess", (result.getNbItemsToProcess() != 0 ? result.getNbItemsToProcess() : result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning())).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
                 .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
                 .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
         }

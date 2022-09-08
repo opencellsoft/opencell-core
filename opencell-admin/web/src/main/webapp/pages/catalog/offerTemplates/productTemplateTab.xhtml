@@ -32,7 +32,7 @@
             </f:facet>
             <p:commandButton update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails"
                 action="#{mainBackingBean.editOfferProductTemplate(entity)}" icon="ui-icon-document" process="@this" />
-            <p:commandButton action="#{mainBackingBean.deleteOfferProductTemplate(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" icon="ui-icon-trash"
+            <p:commandButton action="#{mainBackingBean.deleteOfferProductTemplate(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserDeleteEntity()}" icon="ui-icon-trash"
                 update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails #{mainFormId}:tabView:offerProducts" process="@this" />
         </p:column>
         <f:facet name="footer">

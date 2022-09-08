@@ -57,6 +57,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -77,6 +78,7 @@ import org.meveo.model.payments.CustomerAccount;
 @Table(name = "crm_customer")
 @NamedQueries({
         @NamedQuery(name = "Customer.getMinimumAmountUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
+        @NamedQuery(name = "Customer.getByAddressBook", query = "select c from Customer c where c.addressbook.id =:addressBookId"),
         @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer"),
         @NamedQuery(name = "Customer.getProspects", query = "select c from Customer c left join c.customerAccounts as ca left join ca.billingAccounts as ba "
                 + "left join ba.invoices as inv left join ba.usersAccounts as ua left join ua.subscriptions as sub "
@@ -150,6 +152,17 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
      */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private List<Contract> contracts = new ArrayList<>();
+    
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
 
     /**
      * The option on how to check the threshold.

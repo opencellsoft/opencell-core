@@ -22,6 +22,8 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -32,6 +34,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -96,7 +99,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                     executeBillingRun(billingRun, jobInstance, result);
                     initAmounts();
                 }
-                result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
         } catch (Exception exception) {
             result.registerError(exception.getMessage());
@@ -121,10 +123,12 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        QueryBuilder queryBuilder = invoiceLineService.fromFilters(billingRun.getFilters());
+        Map<String, String> filters = billingRun.getFilters();
+        QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
                 .stream()
+                .filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.PROCESSED && rt.getBillingRun() == null))
                 .map(RatedTransaction::getInvoiceLine)
                 .map(InvoiceLine::getId)
                 .collect(toList()));
@@ -177,10 +181,13 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         
         billingRun = billingRunService.refreshOrRetrieve(billingRun);
         if(billingRun.getStatus() == POSTVALIDATED) {
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
+            assignInvoiceNumberAndIncrementBAInvoiceDatesAndGenerateAO(billingRun, result);
             billingRun.setStatus(VALIDATED);
         }
         billingRunService.update(billingRun);
+        billingRunService.updateBillingRunStatistics(billingRun);
+        billingRunService.updateBillingRunJobExecution(billingRun, result);
+
     }
 
     /**
@@ -190,7 +197,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
      * @param jobExecutionResult the Job execution result
      * @throws BusinessException the business exception
      */
-    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDatesAndGenerateAO(BillingRun billingRun, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
 
         log.info("Will assign invoice numbers to invoices of Billing run {}", billingRun.getId());
 
@@ -240,6 +247,17 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             task = (baId, jobResult) -> invoiceService.incrementBAInvoiceDate(billingRun, baId);
 
             iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            
+            if(billingRun.getGenerateAO()) {
+            	task = (invoiceId, jobResult) -> {
+    				try {
+    					invoiceService.generateRecordedInvoiceAO(invoiceId);
+    				} catch (BusinessException | InvoiceExistException | ImportInvoiceException e) {
+    					throw new BusinessException(String.format("Error while trying to generate Account Operation for BR: %s, Invoice: %s", billingRun.getId(), invoiceId));
+    				}
+    			};
+    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            }
         }
     }
 

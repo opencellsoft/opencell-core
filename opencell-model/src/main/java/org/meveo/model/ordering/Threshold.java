@@ -5,22 +5,29 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
 @Table(name = "open_order_threshold")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "open_order_threshold_seq"),})
-@NamedQueries({ @NamedQuery(name = "Threshold.deleteByOpenOrderTemplate", query = "delete from Threshold t where t.openOrderTemplate.id =:openOrderTemplateId ")})
+@NamedQueries({ @NamedQuery(name = "Threshold.deleteByOpenOrderTemplate", query = "delete from Threshold t where t.openOrderTemplate.id =:openOrderTemplateId "),
+        @NamedQuery(name = "Threshold.deleteByOpenOrder", query = "delete from Threshold t where t.openOrder.id =:openOrderId ")})
 public class Threshold extends BaseEntity {
 
     @Column(name = "sequence")
     @NotNull
+    @Min(value = 1, message = "Field sequence should be positive value")
     private Integer sequence;
 
     @Column(name = "percentage")
     @NotNull
+    @Min(value = 0)
+    @Max(value = 100)
     private Integer percentage;
 
     @ElementCollection(targetClass = ThresholdRecipientsEnum.class)
@@ -30,7 +37,7 @@ public class Threshold extends BaseEntity {
     private List<ThresholdRecipientsEnum> recipients;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "open_order_template_id", nullable = false, updatable = false)
+    @JoinColumn(name = "open_order_template_id", updatable = false)
     private OpenOrderTemplate openOrderTemplate;
     
     @Column(name = "external_recipient")

@@ -34,7 +34,7 @@
                 <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
                 <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
             </p:column>
-            <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" />
+            <hftl:actionsColumn />
         </hftl:dataList>
 
     </ui:define>

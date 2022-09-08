@@ -84,7 +84,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
@@ -111,7 +110,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
-import org.meveo.service.index.ElasticClient;
 import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -203,9 +201,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-
-    @Inject
-    protected ElasticClient elasticClient;
 
     @Inject
     @InstantiateWF
@@ -464,11 +459,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             // getEntityManager().flush();
 
-            // Remove entity from Elastic Search
-            if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-                elasticClient.remove((BusinessEntity) entity);
-            }
-
             if (entity instanceof IImageUpload) {
                 try {
                     ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
@@ -554,13 +544,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
             entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
         }
-        
-        // Update entity in Elastic Search. ICustomFieldEntity is updated
-        // partially, as entity itself does not have Custom field values
-        if (entity instanceof BusinessCFEntity || entity instanceof ISearchable) {
-            elasticClient.createOrFullUpdate((ISearchable) entity);
-        }
-
+    
         // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
         // if (dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
         // // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
@@ -602,11 +586,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         getEntityManager().persist(entity);
 
-        // Add entity to Elastic Search
-        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((ISearchable) entity);
-        }
-
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
@@ -614,6 +593,35 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (applyGenericWorkflow && entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
             entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
+
+        // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
+        // if (accumulateCF && entity instanceof ICustomFieldEntity) {
+        // cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
+        // }
+
+        log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
+     */
+    public void createWithoutNotif(E entity)  {
+        log.debug("start of create {}", entity.getClass().getSimpleName());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
+
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
+        }
+        // Schedule end of period events
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+
+        getEntityManager().persist(entity);
 
         // Andrius K. Commented out for now as solution is not currently used. Please don't remove it.
         // if (accumulateCF && entity instanceof ICustomFieldEntity) {

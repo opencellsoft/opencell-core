@@ -18,16 +18,21 @@
 
 package org.meveo.api.rest.impl;
 
+import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
+
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.TaxRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.commons.utils.ExceptionUtils;
 
+import javax.ejb.EJBException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -44,27 +49,23 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus create(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             taxApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(processExceptionMessage(exception), result);
         }
-
         return result;
     }
 
     @Override
     public ActionStatus update(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             taxApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
+        } catch (Exception exception) {
+            processException(processExceptionMessage(exception), result);
         }
-
         return result;
     }
 
@@ -83,12 +84,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus remove(String taxCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
 
         try {
             taxApi.remove(taxCode);
         } catch (Exception e) {
-            processException(e, result);
+            processException(beautifyForeignConstraintViolationMessage(e, taxCode), result);
         }
 
         return result;
@@ -96,15 +97,21 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 
     @Override
     public ActionStatus createOrUpdate(TaxDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
-            taxApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
+            Long idEntity = taxApi.createOrUpdate(postData);
+            result.setEntityId(idEntity);
+        } catch (Exception exception) {
+            processException(processExceptionMessage(exception), result);
         }
-
         return result;
+    }
+
+    private MeveoApiException processExceptionMessage(Exception exception) {
+        if(exception instanceof EJBException) {
+            return new MeveoApiException(exception.getCause().getMessage());
+        }
+        return new MeveoApiException(exception.getMessage());
     }
 
     @Override
@@ -131,5 +138,13 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         }
 
         return result;
+    }
+
+    private Exception beautifyForeignConstraintViolationMessage(Exception e, String taxCode) {
+        if(ExceptionUtils.getRootCause(e).getMessage().contains("violates foreign key constraint"))
+        {
+            return new InvalidParameterException(String.format("You can only delete a tax if it has not been used. Tax %s is still referenced in other entities.", taxCode));
+        }
+        return e;
     }
 }

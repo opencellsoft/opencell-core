@@ -139,6 +139,10 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @Type(type = "numeric_boolean")
     protected Boolean isCompany = Boolean.FALSE;
 
+    @Column(name = "entreprise")
+    @Type(type = "numeric_boolean")
+    protected Boolean isEnterprise = Boolean.FALSE;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legal_entity_type_id")
     protected Title legalEntityType;
@@ -159,7 +163,9 @@ public class Contact extends BusinessCFEntity implements ISearchable {
 
     /**
      * Position
+     * deprecated, please use the AddressBookContact position field instead
      */
+    @Deprecated
     @Column(name = "position", length = 200)
     @Size(max = 200)
     private String position;
@@ -246,6 +252,15 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @CollectionTable(name = "com_contact_tag", joinColumns = @JoinColumn(name = "contact_id"))
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
+
+    @Column(name = "reference", length = 80)
+    @Size(max = 80)
+    private String reference;
+
+
+    @Column(name = "comment", length = 2000)
+    @Size(max = 2000)
+    private String comment;
 
     public String getAssistantName() {
         return assistantName;
@@ -475,6 +490,15 @@ public class Contact extends BusinessCFEntity implements ISearchable {
         this.isCompany = isCompany;
     }
 
+
+    public Boolean getEnterprise() {
+        return isEnterprise;
+    }
+
+    public void setEnterprise(Boolean enterprise) {
+        isEnterprise = enterprise;
+    }
+
     /**
      * @return the legalEntityType
      */
@@ -489,4 +513,19 @@ public class Contact extends BusinessCFEntity implements ISearchable {
         this.legalEntityType = legalEntityType;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

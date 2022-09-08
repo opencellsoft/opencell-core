@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,9 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
+    
+    @Inject
+    PricePlanMatrixColumnService pricePlanMatrixColumnService;
 
     @Inject
     private AttributeService attributeService;
@@ -83,7 +87,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         Set<Long> valuesId = ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet());
         if(!valuesId.isEmpty())
             pricePlanMatrixValueService.remove(valuesId);
-        remove(ppmColumn);
+        remove(new HashSet<Long>(Arrays.asList(ppmColumn.getId())));
     }
 
 	public List<PricePlanMatrixColumn> findByCodeAndPricePlanMatrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
@@ -126,25 +130,26 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
             String column = firstLine[i].split("\\[")[0];
             boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
             if (StringUtils.isNotBlank(column) && isValidColumn(column)) {
-                
-                Attribute attribute = attributeService.findByDescription(column);
-                if (attribute == null) {
-                    throw new NotFoundException("Attribute with description= " + column + " does not exists");
+
+                PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(column);
+                if (pricePlanMatrixColumn == null) {
+                    throw new NotFoundException("PricePlanMatrixColumn with code= " + column + " does not exists");
                 }
-                ColumnTypeEnum columnType = attribute.getAttributeType().getColumnType(isRange);
+
+                ColumnTypeEnum columnType = pricePlanMatrixColumn.getAttribute().getAttributeType().getColumnType(isRange);
                 
                 PricePlanMatrixColumn newPricePlanMatrixColumn = new PricePlanMatrixColumn();
                 newPricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
                 newPricePlanMatrixColumn.setPosition(i);
                 newPricePlanMatrixColumn.setType(columnType);
-                newPricePlanMatrixColumn.setElValue(attribute.getElValue());
-                newPricePlanMatrixColumn.setAttribute(attribute);
+                newPricePlanMatrixColumn.setElValue(pricePlanMatrixColumn.getAttribute().getElValue());
+                newPricePlanMatrixColumn.setAttribute(pricePlanMatrixColumn.getAttribute());
                 newPricePlanMatrixColumn.setRange(isRange);
                 newPricePlanMatrixColumn.setCode(column);
                 create(newPricePlanMatrixColumn);
                 pricePlanMatrixVersion.getColumns().add(newPricePlanMatrixColumn);
                 
-                AttributeTypeEnum attributeType = attribute.getAttributeType();
+                AttributeTypeEnum attributeType = pricePlanMatrixColumn.getAttribute().getAttributeType();
 
                 if (attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_MULTIPLE_TEXT) || attributeType.equals(
                         AttributeTypeEnum.LIST_NUMERIC) || attributeType.equals(AttributeTypeEnum.LIST_TEXT)) {

@@ -18,6 +18,9 @@
 
 package org.meveo.api;
 
+import static java.util.Optional.ofNullable;
+import static java.math.BigDecimal.ZERO;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.TaxDto;
@@ -35,6 +38,10 @@ import org.meveo.service.catalog.impl.TaxService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,30 +58,32 @@ public class TaxApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    private static final String SUBTAXES_MESSAGE_EXCEPTION = "SubTaxes must contain at least two taxes";
 
-    public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
+    public Tax create(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(Tax.class.getName(), postData);
         }
-
-        if (StringUtils.isBlank(postData.getPercent())) {
-            missingParameters.add("percent");
-        }
-
-        handleMissingParametersAndValidate(postData);
-
-        ActionStatus result = new ActionStatus();
-
+        validateTaxInput(postData);
+        
         // check if tax exists
         if (taxService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Tax.class, postData.getCode());
         }
-
         Tax tax = new Tax();
         tax.setCode(postData.getCode());
         tax.setDescription(postData.getDescription());
-        tax.setPercent(postData.getPercent());
+        tax.setComposite(postData.getComposite());
+        if(tax.isComposite()) {
+            List<Tax> subTaxes = toEntity(postData.getSubTaxes());
+            validateSubTaxes(subTaxes);
+            tax.setPercent(subTaxes.stream().map(Tax::getPercent).reduce(ZERO, BigDecimal::add));
+            tax.setSubTaxes(subTaxes);
+        } else {
+            tax.setPercent(postData.getPercent());
+        }
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
             AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
             if (accountingCode == null) {
@@ -97,11 +106,49 @@ public class TaxApi extends BaseApi {
         tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         taxService.create(tax);
-
-        return result;
+        
+        return tax;
     }
 
-    public ActionStatus update(TaxDto postData) throws MeveoApiException, BusinessException {
+    private void validateTaxInput(TaxDto postData) {
+        if(postData.getComposite()) {
+            if(postData.getSubTaxes() == null || postData.getSubTaxes().size() < 2) {
+                throw new BadRequestException(SUBTAXES_MESSAGE_EXCEPTION);
+            }
+        } else {
+            if (StringUtils.isBlank(postData.getPercent())) {
+                throw new BadRequestException("Percent is required");
+            }
+            if(postData.getPercent().compareTo(ZERO) < 0
+                    || postData.getPercent().compareTo(BigDecimal.valueOf(100)) > 0) {
+                throw new BadRequestException("Percent must be between 0 and 100");
+            }
+            if(postData.getSubTaxes() != null && !postData.getSubTaxes().isEmpty()) {
+                throw new BadRequestException("Sub taxes must be empty if composition not enabled");
+            }
+        }
+    }
+
+    private List<Tax> toEntity(List<TaxDto> subTaxesInput) {
+        List<Tax> subTaxes = new ArrayList<>();
+        for (TaxDto subTaxDto : subTaxesInput) {
+            Tax subTax = ofNullable(taxService.findById(subTaxDto.getId()))
+                                .orElseThrow(()
+                                        -> new NotFoundException("Sub tax id : " + subTaxDto.getId() + " does not exists"));
+            subTaxes.add(subTax);
+        }
+        return subTaxes;
+    }
+
+    private void validateSubTaxes(List<Tax> subTaxes) {
+        for (Tax subTax : subTaxes) {
+            if(subTax.isComposite()) {
+                throw new BadRequestException("Sub tax id : " + subTax.getId() + " must not be composite");
+            }
+        }
+    }
+
+    public Tax update(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -113,8 +160,6 @@ public class TaxApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        ActionStatus result = new ActionStatus();
-
         // check if tax exists
         Tax tax = taxService.findByCode(postData.getCode());
         if (tax == null) {
@@ -122,13 +167,34 @@ public class TaxApi extends BaseApi {
         }
         tax.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         tax.setDescription(postData.getDescription());
-        tax.setPercent(postData.getPercent());
+        tax.setComposite(postData.getComposite());
+        if(tax.isComposite()) {
+        	//Check if the subTaxes are null or size lower than 2
+        	if(postData.getSubTaxes() == null || postData.getSubTaxes().size() < 2) {
+                throw new BadRequestException(SUBTAXES_MESSAGE_EXCEPTION);
+            } else {
+            	List<Tax> subTaxes = toEntity(postData.getSubTaxes());
+            	if(subTaxes.stream().anyMatch(st -> st.getId().equals(postData.getId()))) {
+            		throw new BadRequestException("A tax cannot be sub-tax of itself");
+            	}
+                validateSubTaxes(subTaxes);
+                tax.setPercent(subTaxes.stream().map(Tax::getPercent).reduce(ZERO, BigDecimal::add));
+                tax.setSubTaxes(subTaxes);
+            }
+        } else {
+            if (tax.getSubTaxes() != null && !tax.getSubTaxes().isEmpty()) {
+                tax.getSubTaxes().clear();
+            }
+            tax.setPercent(postData.getPercent());
+        }
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
             AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
             if (accountingCode == null) {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             tax.setAccountingCode(accountingCode);
+        } else {
+        	tax.setAccountingCode(null);
         }
 
         if (postData.getLanguageDescriptions() != null) {
@@ -147,9 +213,9 @@ public class TaxApi extends BaseApi {
             throw e;
         }
 
-        tax = taxService.update(tax);
+        taxService.update(tax);
 
-        return result;
+        return tax;
     }
 
     public TaxDto find(String taxCode) throws MeveoApiException {
@@ -159,7 +225,7 @@ public class TaxApi extends BaseApi {
             handleMissingParameters();
         }
 
-        TaxDto result = new TaxDto();
+        TaxDto result;
 
         Tax tax = taxService.findByCode(taxCode);
         if (tax == null) {
@@ -189,11 +255,11 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+    public Long createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
         if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
-            update(postData);
+            return update(postData).getId();
         } else {
-            create(postData);
+            return create(postData).getId();
         }
     }
 

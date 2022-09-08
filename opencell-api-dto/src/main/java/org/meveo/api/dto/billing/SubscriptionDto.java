@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,6 +34,7 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.ProductToInstantiateDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
@@ -112,6 +112,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     @XmlElementWrapper(name = "productInstances")
     @XmlElement(name = "productInstances")
     private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
+
+    @XmlElementWrapper(name = "productsToInstantiate")
+    @XmlElement(name = "productsToInstantiate")
+    private List<ProductToInstantiateDto> productsToInstantiate = new ArrayList<ProductToInstantiateDto>();
 
     /** The termination reason. */
     private String terminationReason;
@@ -230,7 +234,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     private PaymentMethodDto paymentMethod;
     
     private String customerService;
-
+    
+    @Schema(description = "The sales person name")
+    private String salesPersonName;
+    
     /**
      * Instantiates a new subscription dto.
      */
@@ -878,4 +885,26 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setCustomerService(String customerService) {
 		this.customerService = customerService;
 	}
+
+    public List<ProductToInstantiateDto> getProductsToInstantiate() {
+        return productsToInstantiate;
+    }
+
+    public void setProductsToInstantiate(List<ProductToInstantiateDto> productsToInstantiate) {
+        this.productsToInstantiate = productsToInstantiate;
+    }
+    
+    /**
+     * @return the sales person name
+     */
+    public String getSalesPersonName() {
+    	return salesPersonName;
+    }
+    
+    /**
+     * @param salesPersonName the sales person name to set
+     */
+    public void setSalesPersonName(String salesPersonName) {
+    	this.salesPersonName = salesPersonName;
+    }
 }

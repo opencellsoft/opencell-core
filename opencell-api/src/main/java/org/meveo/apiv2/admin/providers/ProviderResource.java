@@ -1,5 +1,6 @@
 package org.meveo.apiv2.admin.providers;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 @Consumes({"application/json"})
 public interface ProviderResource {
     @PUT
+    @Hidden
     @Path("/{providerCode}")
     @Operation(summary = "update a Provider",
             tags = {"DunningTemplate"},
@@ -29,6 +31,6 @@ public interface ProviderResource {
                     @ApiResponse(responseCode = "400",
                             description = "Provider update failed")
             })
-    Response updateDunningTemplate(@Parameter(required = true, description = "provider Code") @PathParam("providerCode") String providerCode,
+    Response updateProvider(@Parameter(required = true, description = "provider Code") @PathParam("providerCode") String providerCode,
                                    @Parameter(required = true, description = "provider") Provider provider);
 }

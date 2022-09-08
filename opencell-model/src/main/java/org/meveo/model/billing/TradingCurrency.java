@@ -129,7 +129,7 @@ public class TradingCurrency extends EnableEntity {
     }
 
     public String getCurrencyCode() {
-        return currency.getCurrencyCode();
+        return currency != null ? currency.getCurrencyCode() : null;
     }
 
     public void setCurrencyCode(String currencyCode) {

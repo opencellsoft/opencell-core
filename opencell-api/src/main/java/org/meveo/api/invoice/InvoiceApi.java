@@ -18,6 +18,7 @@
 
 package org.meveo.api.invoice;
 
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -42,6 +44,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.DiscountInvoiceAggregateDto;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.SubcategoryInvoiceAgregateAmountDto;
@@ -61,6 +64,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
@@ -103,6 +112,7 @@ import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @lastModifiedVersion 7.1
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class InvoiceApi extends BaseApi {
 
     @Inject
@@ -146,7 +156,7 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     protected WorkflowInstanceService workflowInstanceService;
-    
+
     @Inject
     private DiscountPlanService discountPlanService;
 
@@ -178,7 +188,7 @@ public class InvoiceApi extends BaseApi {
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
-        
+
         if (!StringUtils.isBlank(invoiceDTO.getDiscountPlanCode())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(invoiceDTO.getDiscountPlanCode());
             if (discountPlan == null) {
@@ -240,7 +250,8 @@ public class InvoiceApi extends BaseApi {
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
         String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
-        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());
+        invoice.setAlias(invoice.getInvoiceNumber());
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());        
         invoice.assignTemporaryInvoiceNumber();
         invoiceDTO.setReturnPdf(Boolean.FALSE);
         invoiceDTO.setReturnXml(Boolean.FALSE);
@@ -259,6 +270,9 @@ public class InvoiceApi extends BaseApi {
         return seller;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class),
+            @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR, boolean includePdf) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -365,10 +379,17 @@ public class InvoiceApi extends BaseApi {
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto.getFilter() != null) {
-            ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
+        final FilterDto filterDto = generateInvoiceRequestDto.getFilter();
+		if (filterDto != null) {
+    		if(!StringUtils.isBlank(filterDto.getPollingQuery()) && RatedTransaction.class.getName().equals(filterDto.getEntityClass())){
+    			ratedTransactionFilter = new Filter();
+    			ratedTransactionFilter.setPollingQuery(filterDto.getPollingQuery());
+    			ratedTransactionFilter.setEntityClass(filterDto.getEntityClass());
+    		} else {
+    			ratedTransactionFilter = filteredListApi.getFilterFromDto(filterDto);
+    		}
             if (ratedTransactionFilter == null) {
-                throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
+                throw new EntityDoesNotExistsException(Filter.class, filterDto.getCode());
             }
         }
 
@@ -439,6 +460,10 @@ public class InvoiceApi extends BaseApi {
     public String getXMLInvoice(Long invoiceId, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
         return invoiceService.getInvoiceXml(invoice);
+    }
+    
+    public String getFilePathByInvoiceIdType(Long invoiceId, String type) {
+        return invoiceService.getFilePathByInvoiceIdType(invoiceId, "xml");
     }
 
     /**
@@ -518,12 +543,20 @@ public class InvoiceApi extends BaseApi {
         }
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
-        if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
-            invoice.setPaymentStatus(UNPAID);
-            invoice.setPaymentStatusDate(today);
-            invoiceService.update(invoice);
+        if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
+            updatePaymentStatus(invoice, today, PENDING);
+        }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
+            updatePaymentStatus(invoice, today, UNPAID);
         }
         return invoice.getInvoiceNumber();
+    }
+
+    private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
+        log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                invoice.getPaymentStatus() + " - newPaymentStatus : " + pending + "]");
+        invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), pending);
+        invoice.setPaymentStatusDate(today);
+        invoiceService.update(invoice);
     }
 
     /**
@@ -671,6 +704,8 @@ public class InvoiceApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class), @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml) throws MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
         return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
@@ -793,7 +828,7 @@ public class InvoiceApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceType");
             }
         }
-        
+
         return invoice;
     }
 
@@ -804,6 +839,9 @@ public class InvoiceApi extends BaseApi {
      * @return A list of invoices
      * @throws InvalidParameterException invalid parameter exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "invoices", itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class),
+            @FilterProperty(property = "billingAccountCode", entityClass = BillingAccount.class) })
     public InvoicesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, Invoice.class);
@@ -861,7 +899,7 @@ public class InvoiceApi extends BaseApi {
         return false;
 
     }
-    
+
 
     /**
      * Send a list of invoices

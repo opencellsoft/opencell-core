@@ -34,10 +34,12 @@ import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.apiv2.billing.ServiceInstanceToDelete;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
@@ -46,6 +48,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
+
 import java.util.Date;
 import java.util.List;
 
@@ -63,33 +67,34 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     private SubscriptionApi subscriptionApi;
 
     @Override
-    public ActionStatus create(SubscriptionDto postData) {
+    public Response create(SubscriptionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             Subscription subscription = subscriptionApi.create(postData);
             result.setEntityCode(subscription.getCode());
             result.setEntityId(subscription.getId());
-        } catch (Exception e) {
-            processException(e, result);
-        }
+            
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        } 
 
-        return result;
     }
 
     @Override
-    public ActionStatus update(SubscriptionDto postData) {
+    public Response update(SubscriptionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             Subscription subscription = subscriptionApi.update(postData);
             result.setEntityCode(subscription.getCode());
             result.setEntityId(subscription.getId());
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+            
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        } 
     }
 
     @Override
@@ -258,7 +263,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(SubscriptionDto postData) {
+    public Response createOrUpdate(SubscriptionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -266,11 +271,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             if (StringUtils.isBlank(postData.getCode())) {
                 result.setEntityCode(subscription.getCode());
             }
-        } catch (Exception e) {
-            processException(e, result);
-        }
+            
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        } 
 
-        return result;
     }
 
     @Override
@@ -567,5 +573,27 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         return result;
     }
 
+    @Override
+    public ActionStatus subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setEntityId(subscriptionApi.subscribeAndActivateProducts(postData).getId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
+    @Override
+    public Response deleteInactiveServiceInstance(Long subscriptionId, ServiceInstanceToDelete toDelete) {
+        ActionStatus deletedStatus = new ActionStatus();
+        try {
+            subscriptionApi.deleteInactiveServiceInstance(subscriptionId, toDelete);
+        } catch (Exception e) {
+            processException(e, deletedStatus);
+        }
+        deletedStatus.setStatus(ActionStatusEnum.SUCCESS);
+
+        return Response.ok().entity(deletedStatus).build();
+    }
 }

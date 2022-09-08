@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_lines" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="65a19249-db8f-4f97-9625-349e1a11cbe5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter1.xml"/>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subCategoryCode" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/invoice]]>
+	</queryString>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[@code]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.String">
+		<fieldDescription><![CDATA[quantity]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+	</field>
+	<field name="unitAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[unitAmountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="taxPercent" class="java.lang.String">
+		<fieldDescription><![CDATA[@taxPercent]]></fieldDescription>
+	</field>
+	<field name="amountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountTax]]></fieldDescription>
+	</field>
+	<field name="subCategoryLabel" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="subCategoryAmountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@amountWithTax]]></fieldDescription>
+	</field>
+	<field name="subCategoryAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="subCategoryAmountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[sum(ancestor::category/subCategories/subCategory/@amountTax)]]></fieldDescription>
+	</field>
+	<field name="catCode" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@code]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="491" height="18" uuid="fee4851c-119e-4a80-8943-24a2ea976ecd">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#F2F4F5"/>
+				</box>
+				<textField isBlankWhenNull="true">
+					<reportElement x="18" y="0" width="362" height="18" forecolor="#013042" uuid="f0ced57b-c62a-456f-bb4c-62393f6b5d2b">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{subCategoryLabel}.contains( "CTA" ) ? "Contribution Tarifaire d’Acheminement (CTA)" : $F{subCategoryLabel}.contains( "CSPE" ) ? "Contribution au Service Public de l’Electricité (CSPE)" :
+$F{subCategoryLabel}.contains( "TDCFE" ) ? "Taxe Départementale sur la Consommation Finale d'Électricité (TDCFE)" : $F{subCategoryLabel}.contains( "TCCFE" ) ? "Taxe Communale sur la Consommation Finale d'Électricité (TCCFE)" : ""]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 €;-#,##0.00 €" isBlankWhenNull="true">
+					<reportElement x="450" y="0" width="40" height="18" forecolor="#013042" uuid="93dd879f-6065-4cfe-bec5-abe1aebf8b6a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box rightPadding="10">
+						<pen lineWidth="0.0" lineColor="#F2F4F5"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#.#").format(new BigDecimal($F{taxPercent})) + " %"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 €;-#,##0.00 €" isBlankWhenNull="true">
+					<reportElement x="390" y="0" width="60" height="18" forecolor="#013042" uuid="a8ac0856-aae6-4842-9d8a-e98055bf08da">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box rightPadding="10">
+						<pen lineWidth="0.0" lineColor="#F2F4F5"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#F2F4F5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

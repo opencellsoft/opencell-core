@@ -69,6 +69,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -82,6 +83,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.order.OrderService;
@@ -185,6 +187,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    private JobExecutionResultService jobExecutionResultService;
     
     private static final  int rtPaginationSize = 30000;
 
@@ -1563,7 +1568,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         billingRun.setBillableBillingAccounts(billingAccounts);
     	billingRun.setBillableBillingAcountNumber(billingAccounts.size());
         
-        billingRunService.update(billingRun);
+    }
+
+    public void updateBillingRunJobExecution(BillingRun billingRun, JobExecutionResultImpl result) {
+        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+        billingRun.addJobExecutions(result);
 
     }
 
@@ -1571,13 +1580,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
-            filter.setPollingQuery("SELECT il from InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
-                            .collect(joining(",")) + ")");
+            filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
+                    billingRun.getExceptionalILIds().stream().map(id -> String.valueOf(id))
+                            .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
-            if(filters.containsKey("SQL")) {
-                queryBuilder = new QueryBuilder(filters.get("SQL"));
+            String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+            if (!StringUtils.isBlank(filterValue)) {
+                queryBuilder = new QueryBuilder(filterValue);
             } else {
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);

@@ -66,9 +66,12 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -602,16 +605,40 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+   	private BigDecimal discountedAmount;
+    
+    /**The amount after discount**/
+    @Column(name = "sequence")
+   	private Integer sequence;
 
     @Transient
     private boolean overrodePrice;
+    
+    @ManyToOne
+    @JoinColumn(name = "rules_contract_id")
+    private Contract rulesContract;
+
+    @ManyToOne
+    @JoinColumn(name = "price_plan_matrix_version_id")
+    private PricePlanMatrixVersion pricePlanMatrixVersion;
+
+    @ManyToOne
+    @JoinColumn(name = "price_plan_matrix_line_id")
+    private PricePlanMatrixLine pricePlanMatrixLine;
+    
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+    
     /**
      * Constructor
      */
     public WalletOperation() {
     }
-
-
     
     /**
      * Constructor
@@ -1504,7 +1531,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @return True if it was applied in advance.
      */
     public boolean isApplyInAdvance() {
-
         if (operationDate.equals(startDate)) {
             return true;
         } else
@@ -1578,75 +1604,101 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setDiscountedWalletOperation(Long discountedWalletOperation) {
 		this.discountedWalletOperation = discountedWalletOperation;
 	}
-
-
+	
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
 	}
-
-
+	
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
-
-
 
 	public OrderInfo getInfoOrder() {
 		return infoOrder;
 	}
 
-
-
 	public void setInfoOrder(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
-
-
 
 	public BigDecimal getDiscountValue() {
 		return discountValue;
 	}
 
-
-
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
 	}
-
-
 
 	public DiscountPlanItemTypeEnum getDiscountPlanType() {
 		return discountPlanType;
 	}
 
-
-
 	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
 		this.discountPlanType = discountPlanType;
 	}
-
-
 
 	public DiscountPlanItem getDiscountPlanItem() {
 		return discountPlanItem;
 	}
 
-
-
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
 	}
-
-
 
 	public boolean isOverrodePrice() {
 		return overrodePrice;
 	}
 
-
-
 	public void setOverrodePrice(boolean overrodePrice) {
 		this.overrodePrice = overrodePrice;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+    public Contract getRulesContract() {
+        return rulesContract;
+    }
+
+    public void setRulesContract(Contract rulesContract) {
+        this.rulesContract = rulesContract;
+    }
+
+	public PricePlanMatrixVersion getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	public void setPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
+
+	public PricePlanMatrixLine getPricePlanMatrixLine() {
+		return pricePlanMatrixLine;
+	}
+
+	public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
+		this.pricePlanMatrixLine = pricePlanMatrixLine;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
 	}
 
 }

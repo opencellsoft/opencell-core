@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.MediationJobBean;
@@ -64,8 +66,10 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -124,20 +128,26 @@ public class MediationApiService {
     @EJB
     private MediationApiService thisNewTX;
 
+    @Inject
+    private MediationsettingService mediationsettingService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult registerCdrList(CdrListInput postData, String ipAddress) {
 
         validate(postData);
-        return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress);
+        return processCdrList(postData.getCdrs(), postData.getMode(), false, false, false, false, null, false, false, true, false, ipAddress, false);
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public ProcessCdrListResult reserveCdrList(CdrListInput postData, String ipAddress) {
 
         validate(postData);
-        return processCdrList(postData.getCdrs(), postData.getMode(), false, false, true, false, null, false, false, true, false, ipAddress);
+        return processCdrList(postData.getCdrs(), postData.getMode(), false, false, true, false, null, false, false, true, false, ipAddress, false);
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -145,7 +155,7 @@ public class MediationApiService {
 
         validate(postData);
         return processCdrList(postData.getCdrs(), postData.getMode(), postData.isVirtual(), true, false, postData.isRateTriggeredEdr(), postData.getMaxDepth(), postData.isReturnWalletOperations(),
-            postData.isReturnWalletOperationDetails(), postData.isReturnEDRs(), postData.isReturnCounters(), ipAddress);
+            postData.isReturnWalletOperationDetails(), postData.isReturnEDRs(), postData.isReturnCounters(), ipAddress, postData.isGenerateRTs());
     }
 
     /**
@@ -163,10 +173,12 @@ public class MediationApiService {
      * @param returnEDRs Return EDR ids
      * @param returnCounters Return counter updates
      * @param ipAddress IP address from the request
+     * @param generateRTs Generate automatically RTs
      * @return CDR processing result
      */
+    @SuppressWarnings("rawtypes")
     private ProcessCdrListResult processCdrList(List<String> cdrLines, ProcessCdrListModeEnum mode, boolean isVirtual, boolean rate, boolean reserve, boolean rateTriggeredEdr, Integer maxDepth,
-            boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, boolean returnCounters, String ipAddress) {
+            boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, boolean returnCounters, String ipAddress, boolean generateRTs) {
 
         ProcessCdrListResult cdrListResult = new ProcessCdrListResult(mode, cdrLines.size());
 
@@ -176,11 +188,10 @@ public class MediationApiService {
 
         boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-//        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
-        int nbThreads = 1;
-//        if (nbThreads > cdrLines.size()) {
-//            nbThreads = cdrLines.size();
-//        }
+        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+        if (nbThreads > cdrLines.size()) {
+            nbThreads = cdrLines.size();
+        }
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
         List<Future> futures = new ArrayList<>();
@@ -202,7 +213,7 @@ public class MediationApiService {
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
                 thisNewTX.processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations, returnWalletOperationDetails, returnEDRs,
-                    cdrListResult, virtualCounters, counterUpdates);
+                    cdrListResult, virtualCounters, counterUpdates, generateRTs);
 
             });
         }
@@ -253,12 +264,13 @@ public class MediationApiService {
      * @param cdrProcessingResult CDR processing result tracking
      * @param virtualCounters Virtual counters
      * @param counterUpdates Counter update tracking
+     * @param generateRTs generate automatically RTs
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRs(SynchronizedIterator<String> cdrLineIterator, ICdrReader cdrReader, ICdrParser cdrParser, boolean isDuplicateCheckOn, boolean isVirtual, boolean rate, boolean reserve,
             boolean rateTriggeredEdrs, Integer maxDepth, boolean returnWalletOperations, boolean returnWalletOperationDetails, boolean returnEDRs, ProcessCdrListResult cdrProcessingResult,
-            Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates) {
+            Map<String, List<CounterPeriod>> virtualCounters, Map<String, List<CounterPeriod>> counterUpdates, boolean generateRTs) {
 
         counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
@@ -296,7 +308,7 @@ public class MediationApiService {
                         }
                         cdrParsingService.createEdrs(edrs, cdr);
                     }
-
+                    mediationsettingService.applyEdrVersioningRule(edrs, cdr);
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
 
@@ -331,10 +343,9 @@ public class MediationApiService {
 
                         // Convert CDR to EDR and rate them
                     } else if (rate) {
-
+                        log.debug("usageRatingService : " + usageRatingService + ", isVirtual : " + isVirtual + ", rateTriggeredEdrs : " + rateTriggeredEdrs + ", maxDepth : " + maxDepth);
                         for (EDR edr : edrs) {
                             RatingResult ratingResult = null;
-
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                                 ratingResult = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, true);
@@ -374,7 +385,7 @@ public class MediationApiService {
                 }
             }
 
-            if (cdr.getStatus() == CDRStatusEnum.ERROR) {
+            if (cdr.getStatus() == CDRStatusEnum.ERROR || cdr.getStatus() == CDRStatusEnum.DISCARDED) {
 
                 String errorReason = cdr.getRejectReason();
                 if (cdr.getRejectReasonException() != null) {
@@ -433,6 +444,14 @@ public class MediationApiService {
             } else {
                 cdrProcessingResult.getStatistics().addSuccess();
             }
+
+            // Generate automatically RTs
+            if (generateRTs && !walletOperations.isEmpty()) {
+                for (WalletOperation walletOperation : walletOperations) {
+                    cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
+                    ratedTransactionService.createRatedTransaction(walletOperation, false);
+                }
+            }
         }
 
     }
@@ -461,7 +480,7 @@ public class MediationApiService {
 
         result.setError(cdrError);
 
-        if (returnEDRs && edrs != null && edrs.get(0).getId() != null) {
+        if (returnEDRs && CollectionUtils.isNotEmpty(edrs) && edrs.get(0).getId() != null) {
             result.setEdrIds(new ArrayList<Long>(edrs.size()));
             for (EDR edr : edrs) {
                 result.getEdrIds().add(edr.getId());

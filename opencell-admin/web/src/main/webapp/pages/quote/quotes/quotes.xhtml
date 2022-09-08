@@ -29,7 +29,7 @@
             <hftl:searchField label="#{messages['quote.quoteDate']}" field="quoteDate" />
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
             <hftl:decorateFormField fieldId="showMyQuotesOnly" label="#{messages['quotes.showMyQuotesOnly']}"
-                rendered="#{currentUser.hasRole('administrationVisualization')}">
+                rendered="#{currentUser.hasRoles('administrationVisualization','administrationManagement')}">
                 <p:selectBooleanCheckbox id="showMyQuotesOnly" value="#{quoteListBean.showMyQuotesOnly}" />
             </hftl:decorateFormField>
         </hftl:searchPanel>
@@ -43,7 +43,7 @@
             <hftl:column label="#{messages['quote.completionDate']}" field="completionDate" isDate="true"/>
             <hftl:column label="#{messages['quote.receivedFromApp']}" field="receivedFromApp" />
             <hftl:column label="#{messages['quote.routedTo']}" field="routedToUserGroup.descriptionOrCode" />
-            <hftl:actionsColumn permission="#{currentUser.hasRole('quoteManagement')}" />
+            <hftl:actionsColumn />
         </hftl:dataList>
 
     </ui:define>

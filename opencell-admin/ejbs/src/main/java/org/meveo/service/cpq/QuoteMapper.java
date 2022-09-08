@@ -35,19 +35,23 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.order.OpenOrderService;
 
 @Stateless
 public class QuoteMapper {
 	
    	@Inject
     public EntityToDtoConverter entityToDtoConverter;
-   	
+
+   	@Inject
+    private OpenOrderService openOrderService;
    	
     
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
@@ -153,7 +157,14 @@ public class QuoteMapper {
     }
 
     private org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
-    	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
+    	Optional<OpenOrder> openOrder = openOrderService.checkAvailableOpenOrderForArticle(ba, accountingArticle, new Date());
+    	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(
+    																												accountingArticle, 
+    																												quoteArticleLines,
+    																												getTradingLanguage(ba), 
+    																												openOrder.map(OpenOrder::getOpenOrderNumber).orElse(null), 
+    																												openOrder.map(OpenOrder::getExternalReference).orElse(null), 
+    																												openOrder.map(OpenOrder::getActivationDate).orElse(null));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
     			.map(line -> new QuoteLine(line,mapToOffer( line.getQuoteProduct() != null?line.getQuoteProduct().getQuoteOffer():null)))

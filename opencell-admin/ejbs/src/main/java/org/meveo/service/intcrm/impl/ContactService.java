@@ -58,6 +58,7 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
 
 @Stateless
@@ -83,10 +84,8 @@ public class ContactService extends BusinessService<Contact> {
 
 	@Inject
 	private AdditionalDetailsService additionalDetailsService;
-	
-	
-	
-	public List<Contact> parseCSVText(String context) throws IOException {
+		
+	public List<Contact> parseCSVText(String context) throws IOException, CsvException {
 		log.debug(context);
 		
 		CSVReader reader = new CSVReader(new StringReader(context));
@@ -232,7 +231,7 @@ public class ContactService extends BusinessService<Contact> {
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
 			contacts = parseCSVText(new String(encoded, Charset.defaultCharset()));
-		} catch (IOException e) {
+		} catch (IOException | CsvException e) {
 			log.error("Failed parsing file={}", e.getMessage());
 		}
 
@@ -274,6 +273,7 @@ public class ContactService extends BusinessService<Contact> {
         customer.setAdditionalDetails(additionalDetails);
         customer.setAddressbook(addressBook);	        
 		customerService.create(customer);
+		getEntityManager().flush();
 		
 		contact.setAddressBook(addressBook);
 		
@@ -304,6 +304,7 @@ public class ContactService extends BusinessService<Contact> {
         customer.setAdditionalDetails(additionalDetails);
         customer.setAddressbook(addressBook);	        
 		customerService.create(customer);
+		getEntityManager().flush();
 				
 		return customer;
 	}

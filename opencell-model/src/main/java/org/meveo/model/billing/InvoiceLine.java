@@ -2,7 +2,6 @@ package org.meveo.model.billing;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.HALF_UP;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
@@ -116,7 +115,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
 		@NamedQuery(name = "InvoiceLine.updateTaxForRateTaxMode", query = "UPDATE InvoiceLine il SET il.tax= null WHERE il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)"),
-        @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)")
+        @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)"),
+        @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId")
 
 	})
 public class InvoiceLine extends AuditableEntity {
@@ -269,6 +269,13 @@ public class InvoiceLine extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+    
+    /**
+   	 * 
+   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+   	 */
+   	@Column(name = "sequence")
+   	private Integer sequence;
 
 	/**
 	 * Subcategory invoice aggregate that invoice line was invoiced under
@@ -315,18 +322,6 @@ public class InvoiceLine extends AuditableEntity {
 	 */
 	@Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal convertedAmountWithTax;
-
-	/**
-	 * Converted tax rate
-	 */
-	@Column(name = "converted_tax_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedTaxRate;
-
-	/**
-	 * Converted discount rate
-	 */
-	@Column(name = "converted_discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedDiscountRate = BigDecimal.ZERO;
 
 	/**
 	 * Converted amount tax
@@ -787,22 +782,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.convertedAmountWithTax = convertedAmountWithTax;
 	}
 
-	public BigDecimal getConvertedTaxRate() {
-		return convertedTaxRate;
-	}
-
-	public void setConvertedTaxRate(BigDecimal convertedTaxRate) {
-		this.convertedTaxRate = convertedTaxRate;
-	}
-
-	public BigDecimal getConvertedDiscountRate() {
-		return convertedDiscountRate;
-	}
-
-	public void setConvertedDiscountRate(BigDecimal convertedDiscountRate) {
-		this.convertedDiscountRate = convertedDiscountRate;
-	}
-
 	public BigDecimal getConvertedAmountTax() {
 		return convertedAmountTax;
 	}
@@ -834,26 +813,32 @@ public class InvoiceLine extends AuditableEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
+	
+	
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
 		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 		this.convertedAmountWithoutTax = this.amountWithoutTax != null ?
-				this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountWithoutTax.multiply(appliedRate) : ZERO;
 		this.convertedAmountWithTax = this.amountWithTax != null ?
-				this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountWithTax.multiply(appliedRate) : ZERO;
 		this.convertedAmountTax = this.amountTax !=null ?
-				this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.amountTax.multiply(appliedRate) : ZERO;
 		this.convertedDiscountAmount = this.discountAmount != null ?
-				this.discountAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedDiscountRate = this.discountRate != null ?
-				this.discountRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.discountAmount.multiply(appliedRate) : ZERO;
 		this.convertedRawAmount = this.rawAmount != null ?
-				this.rawAmount.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
-		this.convertedTaxRate = this.taxRate != null ?
-				this.taxRate.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.rawAmount.multiply(appliedRate) : ZERO;
 		this.convertedUnitPrice = this.unitPrice != null ?
-				this.unitPrice.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+				this.unitPrice.multiply(appliedRate) : ZERO;
 	}
 }

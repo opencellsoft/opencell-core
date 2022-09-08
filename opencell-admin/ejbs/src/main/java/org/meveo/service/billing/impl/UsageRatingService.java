@@ -36,7 +36,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.admin.exception.CounterInstantiationException;
@@ -55,8 +55,10 @@ import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
@@ -64,6 +66,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
@@ -104,6 +107,9 @@ public class UsageRatingService extends RatingService implements Serializable {
     @Inject
     @Rejected
     private Event<Serializable> rejectedEdrProducer;
+    
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     /**
      * Decrease a usage charge counter by EDR quantity. A new counter period matching EDR event date will be instantiated if does not exist yet.
@@ -354,7 +360,7 @@ public class UsageRatingService extends RatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    public RatingResult rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth, Reservation reservation, boolean failSilently) {
+    public RatingResult rateUsage(EDR edr, boolean isVirtual, boolean rateTriggeredEdr, Integer maxDeep, Integer currentRatingDepth, Reservation reservation, boolean failSilently) {
 
         log.trace("Rating EDR={}", edr);
 
@@ -370,7 +376,8 @@ public class UsageRatingService extends RatingService implements Serializable {
             }
 
             List<UsageChargeInstance> usageChargeInstances = null;
-
+            maxDeep = maxDeep != null ? maxDeep : 0;
+            currentRatingDepth = currentRatingDepth != null ? currentRatingDepth : 0;
             // Charges should be already ordered by priority and id (why id??)
             Long subscriptionId = edr.getSubscription().getId();
             if (subscriptionId != null) {
@@ -389,12 +396,15 @@ public class UsageRatingService extends RatingService implements Serializable {
 
             boolean foundPricePlan = true;
             boolean fullyRated = false;
-
+            boolean requirePP=false;
             // Find the first matching charge and rate it
             for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
-
+            	requirePP=true;
                 log.trace("Try to rate EDR {} with charge {}", edr.getId(), usageChargeInstance.getCode());
-                if (!isChargeMatch(usageChargeInstance, edr)) {
+                if (usageChargeInstance != null && usageChargeInstance.getChargeTemplate().getRatingScript() != null) {
+        			requirePP=false;
+        		}
+                if (!isChargeMatch(usageChargeInstance, edr,requirePP)) {
                     continue;
                 }
 
@@ -513,7 +523,7 @@ public class UsageRatingService extends RatingService implements Serializable {
      * @return true if charge is matched
      * @throws InvalidELException Failed to evaluate EL expression
      */
-    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr) throws InvalidELException {
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP)throws InvalidELException {
 
         UsageChargeTemplate chargeTemplate;
         if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
@@ -521,7 +531,12 @@ public class UsageRatingService extends RatingService implements Serializable {
         } else {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
-
+        if(chargeInstance.getServiceInstance()!=null) {
+    		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+        	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
+    	        if(anyFalseAttribute) return false;
+        }
         String filter1 = chargeTemplate.getFilterParam1();
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
@@ -533,6 +548,13 @@ public class UsageRatingService extends RatingService implements Serializable {
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
                         String filterExpression = chargeTemplate.getFilterExpression();
                         if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
+                        	 if (requirePP) {
+                                 String chargeCode = chargeTemplate.getCode();
+                                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(chargeCode);
+                                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
+                                     throw new NoPricePlanException("Charge " + chargeCode + " has no price plan defined");
+                                 }
+                             }
                             return true;
                         }
                     }

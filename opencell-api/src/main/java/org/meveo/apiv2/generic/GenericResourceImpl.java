@@ -1,14 +1,12 @@
 package org.meveo.apiv2.generic;
 
-
-import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
-import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
@@ -16,12 +14,14 @@ import org.meveo.util.Inflector;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
@@ -153,5 +153,35 @@ public class GenericResourceImpl implements GenericResource {
         return new LinkGenerator.SelfLinkGenerator(GenericResource.class)
                 .withGetAction().withPostAction().withId(entityId)
                 .withDeleteAction().build(entityName);
+    }
+    
+    @Override
+    public Response export(String entityName, String fileFormat, GenericPagingAndFiltering searchConfig) throws ClassNotFoundException {
+        Set<String> genericFields = null;
+        List<GenericFieldDetails> genericFieldDetails = null;
+
+        if(searchConfig != null){
+        	if (searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty()) {
+                throw new MeveoApiException("Nested entities are not handled by the export api");
+            }
+        	if (CollectionUtils.isEmpty(searchConfig.getGenericFields()) && CollectionUtils.isEmpty(searchConfig.getGenericFieldDetails())) {
+                throw new MeveoApiException("One of 'Generic fields' or 'Generic field details' are mandatory");
+            }
+            if (CollectionUtils.isNotEmpty(searchConfig.getGenericFields()) && CollectionUtils.isNotEmpty(searchConfig.getGenericFieldDetails())) {
+                throw new MeveoApiException("Only one of 'Generic fields' or 'Generic field details' shall be specified");
+            }
+            genericFields = searchConfig.getGenericFields();
+            genericFieldDetails = searchConfig.getGenericFieldDetails();
+            
+        }
+        if(!fileFormat.equals("CSV") && !fileFormat.equals("EXCEL") && !fileFormat.equalsIgnoreCase("pdf")){
+            throw new BadRequestException("format of the price plan matrix version can be only equals (CSV or EXCEL).");
+        }
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        String filePath = loadService.export(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, genericFieldDetails, fileFormat, entityName);
+        return Response.ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"\"}, \"data\":{ \"filePath\":\""+ filePath +"\"}}")
+                .build();
     }
 }

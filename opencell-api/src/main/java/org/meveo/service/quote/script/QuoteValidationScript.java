@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
@@ -25,6 +26,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -117,6 +119,10 @@ public class QuoteValidationScript extends ModuleScript {
 					}).collect(Collectors.toList());
 			order.setOffers(orderOffers);
 			commercialOrderService.update(order);
+			List<QuotePrice> quotePrices=quoteVersion.getQuotePrices().stream()
+					.filter(qp -> qp.getPriceLevelEnum()==PriceLevelEnum.QUOTE).collect(Collectors.toList());
+			processOrderPrice(quotePrices, null, order, quoteVersion, null, null);
+		
 		});
 		LOGGER.info("End creation order from quote code {}, number of order created is {}", cpqQuote.getCode(), orderByBillingAccount.size());
 		
@@ -145,6 +151,12 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		order.setDeliveryDate(cpqQuote.getDeliveryDate());
 		order.setUserAccount(cpqQuote.getUserAccount());
+		
+		// Set Sales Person Name when it's not null in CpqQuote
+		if(StringUtils.isNotEmpty(cpqQuote.getSalesPersonName())) {
+			order.setSalesPersonName(cpqQuote.getSalesPersonName());
+		}
+		
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
 		if(customFieldsFromQuoteVersion != null && customFieldsFromQuoteVersion.getValues() != null && !customFieldsFromQuoteVersion.getValues().isEmpty()) {
@@ -219,7 +231,9 @@ public class QuoteValidationScript extends ModuleScript {
 		final Map<Long, OrderPrice> quoteToOrder = new HashMap<Long, OrderPrice>();
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer, quoteToOrder);
+			var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLine.getId(), product.getQuoteOffer().getQuoteVersion().getId());
+			processOrderPrice(quotePrices, orderArticleLine, commercialOrder, product.getQuoteOffer().getQuoteVersion(),orderOffer, quoteToOrder);
+		
 		});
 		
 		//set disocuntedOrderPrice
@@ -261,6 +275,9 @@ public class QuoteValidationScript extends ModuleScript {
 	}
 	
 	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
+		if(quoteArticleLine==null || commercialOrder==null) {
+			return null;
+		}
 		OrderArticleLine articleLine = new OrderArticleLine();
 		articleLine.setCode(UUID.randomUUID().toString());
 		articleLine.setOrder(commercialOrder);
@@ -273,14 +290,17 @@ public class QuoteValidationScript extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
-		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
-		quotePrices.forEach( price -> {
+	private void processOrderPrice(List<QuotePrice> quotePrices, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer, Map<Long, OrderPrice> quoteToOrder) {
+	    quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
 			orderPrice.setCode(UUID.randomUUID().toString());
-			orderPrice.setOrderArticleLine(orderArticleLine);
+			if(orderArticleLine==null) {
+				orderPrice.setOrderArticleLine(processOrderArticleLine(price.getQuoteArticleLine(), commercialOrder, null, null));
+			}else {
+				orderPrice.setOrderArticleLine(orderArticleLine);
+			}
 			orderPrice.setOrder(commercialOrder);
-			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
+			orderPrice.setPriceLevelEnum(PriceLevelEnum.QUOTE.equals(price.getPriceLevelEnum())?PriceLevelEnum.ORDER:price.getPriceLevelEnum());
 			orderPrice.setAmountWithTax(price.getAmountWithTax());
 			orderPrice.setUnitPriceWithoutTax(price.getUnitPriceWithoutTax());
 			orderPrice.setAmountWithoutTax(price.getAmountWithoutTax());
@@ -296,12 +316,20 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setPriceTypeEnum(price.getPriceTypeEnum());
 			orderPrice.setQuantity(price.getQuantity());
 			orderPrice.setDiscountPlan(price.getDiscountPlan());
+			orderPrice.setDiscountPlanItem(price.getDiscountPlanItem());
+			orderPrice.setDiscountPlanType(price.getDiscountPlanType());
+			orderPrice.setDiscountValue(price.getDiscountValue());
+			orderPrice.setApplyDiscountsOnOverridenPrice(price.getApplyDiscountsOnOverridenPrice());
+			orderPrice.setSequence(price.getSequence());
+			orderPrice.setDiscountedAmount(price.getDiscountedAmount());
 			
-			if(price.getDiscountedQuotePrice() != null && price.getDiscountPlan() != null) {
+			if( quoteToOrder!=null  &&  price.getDiscountedQuotePrice() != null && price.getDiscountPlan() != null) {
 				orderPrice.setDiscountedOrderPrice(quoteToOrder.get(price.getDiscountedQuotePrice().getId()));
 			}
 			orderPriceService.create(orderPrice);
-			quoteToOrder.put(price.getId(), orderPrice);
+			if(quoteToOrder!=null) {
+				quoteToOrder.put(price.getId(), orderPrice);
+			}
 		});
 	}
 	

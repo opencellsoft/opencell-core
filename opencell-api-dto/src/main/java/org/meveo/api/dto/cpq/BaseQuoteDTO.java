@@ -49,7 +49,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 
 
     @Schema(description = "The date of the quote")
-    private Date quoteDate = new Date();
+    private Date quoteDate;
 
     private DatePeriod validity = new DatePeriod();
 
@@ -90,13 +90,15 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	@Schema(description = "The code of the user account")
 	private String userAccountCode;
 	
+	@Schema(description = "The sales person name")
+	private String salesPersonName;
+	
 	/**
 	 * @return the quoteDate
 	 */
 	public Date getQuoteDate() {
 		return quoteDate;
 	}
-
 
 	/**
 	 * @param quoteDate the quoteDate to set
@@ -105,14 +107,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.quoteDate = quoteDate;
 	}
 
-
 	/**
 	 * @return the validity
 	 */
 	public DatePeriod getValidity() {
 		return validity;
 	}
-
 
 	/**
 	 * @param validity the validity to set
@@ -121,14 +121,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.validity = validity;
 	}
 
-
 	/**
 	 * @return the status
 	 */
 	public String getStatus() {
 		return status;
 	}
-
 
 	/**
 	 * @param status the status to set
@@ -137,15 +135,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.status = status;
 	}
 
-
-
 	/**
 	 * @return the applicantAccountCode
 	 */
 	public String getApplicantAccountCode() {
 		return applicantAccountCode;
 	}
-
 
 	/**
 	 * @param applicantAccountCode the applicantAccountCode to set
@@ -154,14 +149,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.applicantAccountCode = applicantAccountCode;
 	}
 
-
 	/**
 	 * @return the billableAccountCode
 	 */
 	public String getBillableAccountCode() {
 		return billableAccountCode;
 	}
-
 
 	/**
 	 * @param billableAccountCode the billableAccountCode to set
@@ -170,14 +163,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.billableAccountCode = billableAccountCode;
 	}
 
-
 	/**
 	 * @return the opportunityRef
 	 */
 	public String getOpportunityRef() {
 		return opportunityRef;
 	}
-
 
 	/**
 	 * @param opportunityRef the opportunityRef to set
@@ -186,14 +177,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.opportunityRef = opportunityRef;
 	}
 
-
 	/**
 	 * @return the externalId
 	 */
 	public String getExternalId() {
 		return externalId;
 	}
-
 
 	/**
 	 * @param externalId the externalId to set
@@ -202,14 +191,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.externalId = externalId;
 	}
 
-
 	/**
 	 * @return the sellerCode
 	 */
 	public String getSellerCode() {
 		return sellerCode;
 	}
-
 
 	/**
 	 * @param sellerCode the sellerCode to set
@@ -218,14 +205,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.sellerCode = sellerCode;
 	}
 
-
 	/**
 	 * @return the deliveryDate
 	 */
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
-
 
 	/**
 	 * @param deliveryDate the deliveryDate to set
@@ -234,14 +219,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.deliveryDate = deliveryDate;
 	}
 
-
 	/**
 	 * @return the quoteLotDuration
 	 */
 	public int getQuoteLotDuration() {
 		return quoteLotDuration;
 	}
-
 
 	/**
 	 * @param quoteLotDuration the quoteLotDuration to set
@@ -250,14 +233,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.quoteLotDuration = quoteLotDuration;
 	}
 
-
 	/**
 	 * @return the sendDate
 	 */
 	public Date getSendDate() {
 		return sendDate;
 	}
-
 
 	/**
 	 * @param sendDate the sendDate to set
@@ -266,14 +247,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.sendDate = sendDate;
 	}
 
-
 	/**
 	 * @return the quoteNumber
 	 */
 	public String getQuoteNumber() {
 		return quoteNumber;
 	}
-
 
 	/**
 	 * @param quoteNumber the quoteNumber to set
@@ -289,7 +268,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		return statusDate;
 	}
 
-
 	/**
 	 * @param statusDate the statusDate to set
 	 */
@@ -297,22 +275,31 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 		this.statusDate = statusDate;
 	}
 
-
+	/**
+	 * @return the user account code
+	 */
 	public String getUserAccountCode() {
 		return userAccountCode;
 	}
 
-
+	/**
+	 * @param userAccountCode the user account code to set
+	 */
 	public void setUserAccountCode(String userAccountCode) {
 		this.userAccountCode = userAccountCode;
 	}
 
+	/**
+	 * @return the sales person name
+	 */
+	public String getSalesPersonName() {
+		return salesPersonName;
+	}
 
- 
-
-
-
-	
-    
-   
+	/**
+	 * @param salesPersonName the sales person name to set
+	 */
+	public void setSalesPersonName(String salesPersonName) {
+		this.salesPersonName = salesPersonName;
+	} 
 }

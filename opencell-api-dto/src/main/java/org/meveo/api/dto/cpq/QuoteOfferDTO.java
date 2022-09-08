@@ -182,6 +182,8 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		    subscriptionCode = quoteOffer.getSubscription().getCode();
 		}
 	}
+	
+	
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
@@ -202,6 +204,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	}
 
 	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer) {
+		quoteOffer.getQuotePrices().size();
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTax = quotePrices.stream()

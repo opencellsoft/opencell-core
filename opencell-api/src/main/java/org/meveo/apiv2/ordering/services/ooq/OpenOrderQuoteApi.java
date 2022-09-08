@@ -6,40 +6,51 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.resource.ooq.OpenOrderQuoteDto;
 import org.meveo.apiv2.ordering.resource.order.ThresholdInput;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.ordering.OpenOrderArticle;
 import org.meveo.model.ordering.OpenOrderProduct;
 import org.meveo.model.ordering.OpenOrderQuote;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 import org.meveo.model.ordering.OpenOrderTemplate;
+import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.Threshold;
+import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
+import org.meveo.service.order.OpenOrderArticleService;
+import org.meveo.service.order.OpenOrderProductService;
 import org.meveo.service.order.OpenOrderQuoteService;
+import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OpenOrderTemplateService;
-import org.meveo.service.order.ThresholdService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.ACCEPTED;
+import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.CANCELED;
 import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.DRAFT;
 import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.REJECTED;
 import static org.meveo.model.ordering.OpenOrderQuoteStatusEnum.SENT;
@@ -50,6 +61,8 @@ import static org.meveo.model.ordering.OpenOrderTypeEnum.PRODUCTS;
 
 @Stateless
 public class OpenOrderQuoteApi {
+
+    private static final String RECIPIENT_USER = "USER";
 
     @Inject
     @CurrentUser
@@ -65,13 +78,10 @@ public class OpenOrderQuoteApi {
     private OpenOrderTemplateService openOrderTemplateService;
 
     @Inject
-    private ProductService productService;
+    private OpenOrderProductService openOrderProductService;
 
     @Inject
-    private AccountingArticleService accountingArticleService;
-
-    @Inject
-    private ThresholdService thresholdService;
+    private OpenOrderArticleService openOrderArticleService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -82,8 +92,13 @@ public class OpenOrderQuoteApi {
     @Inject
     private ServiceSingleton serviceSingleton;
 
+    @Inject
+    private OpenOrderService openOrderService;
+
     @Transactional
     public Long create(OpenOrderQuoteDto dto) {
+
+        validateSettings(dto);
 
         // init bags used in ooq builder
         List<OpenOrderProduct> products = new ArrayList<>();
@@ -97,10 +112,10 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
-        buildTags(dto, tags);
+        validateTags(dto, tags);
         validateThresholds(dto, template);
         validateAndBuildProductsAndArticles(dto, products, articles, template);
         validateReadOnlyFields(dto, template);
@@ -119,6 +134,8 @@ public class OpenOrderQuoteApi {
     @Transactional
     public Long update(Long idOOQ, OpenOrderQuoteDto dto) {
 
+        validateSettings(dto);
+
         // init bags used in ooq builder
         List<OpenOrderProduct> products = new ArrayList<>();
         List<OpenOrderArticle> articles = new ArrayList<>();
@@ -126,10 +143,10 @@ public class OpenOrderQuoteApi {
         // build tags
         List<Tag> tags = new ArrayList<>();
 
-        OpenOrderQuote ooq = openOrderQuoteService.findById(idOOQ);
+        OpenOrderQuote ooq = getOpenOrderQuote(idOOQ);
 
-        if (ooq == null) {
-            throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
+        if (ACCEPTED == ooq.getStatus() || CANCELED == ooq.getStatus()) {
+            throw new BusinessApiException("Cannot update OpenOrderQuote with status : " + ooq.getStatus());
         }
 
         OpenOrderQuote ooqWithSameCode = openOrderQuoteService.findByCode(dto.getCode());
@@ -138,14 +155,14 @@ public class OpenOrderQuoteApi {
         }
 
         // Load dependencies
-        OpenOrderTemplate template = getOpenOrderTemplate(dto);
+        OpenOrderTemplate template = validateAndGetOpenOrderTemplate(dto);
         BillingAccount billingAccount = getBillingAccount(dto);
 
         if (!template.getId().equals(ooq.getOpenOrderTemplate().getId())) {
             throw new BusinessApiException("Template cannot be updated");
         }
 
-        buildTags(dto, tags);
+        validateTags(dto, tags);
         validateThresholds(dto, template);
         validateAndBuildProductsAndArticles(dto, products, articles, template);
         validateReadOnlyFields(dto, template);
@@ -158,6 +175,94 @@ public class OpenOrderQuoteApi {
         return ooq.getId();
     }
 
+    @Transactional
+    public Long duplicate(Long idOOQ) {
+
+        OpenOrderQuote srcOOQ = getOpenOrderQuote(idOOQ);
+
+        // Build new code
+        String newCode = srcOOQ.getCode() + DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now());
+
+        OpenOrderQuote ooqWithSameCode = openOrderQuoteService.findByCode(newCode);
+        if (ooqWithSameCode != null && !ooqWithSameCode.getId().equals(idOOQ)) {
+            throw new EntityAlreadyExistsException(OpenOrderQuote.class, newCode);
+        }
+
+        // Even if a duplicate operation, the different rules are supposed by checked in created or update service,
+        // so we well only init the id's for prevent Hibernate to persiste new entities
+        OpenOrderQuote dupOOQ = new OpenOrderQuote();
+        dupOOQ.setStatus(DRAFT);
+        dupOOQ.setCode(newCode);
+        dupOOQ.setQuoteNumber(serviceSingleton.getNextOpenOrderQuoteSequence());
+        dupOOQ.setDescription(srcOOQ.getDescription());
+        dupOOQ.setOpenOrderType(srcOOQ.getOpenOrderType());
+        dupOOQ.setMaxAmount(srcOOQ.getMaxAmount());
+        dupOOQ.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate()); // 3.4 template: set at creation, cannot be changed later.
+        dupOOQ.setExternalReference(srcOOQ.getExternalReference());
+        dupOOQ.setEndOfValidityDate(srcOOQ.getEndOfValidityDate());
+        dupOOQ.setBillingAccount(srcOOQ.getBillingAccount());
+        dupOOQ.setCurrency(srcOOQ.getCurrency());
+        dupOOQ.setActivationDate(srcOOQ.getActivationDate());
+
+        List<OpenOrderProduct> products = new ArrayList<>();
+        List<OpenOrderArticle> articles = new ArrayList<>();
+        List<Threshold> thresholds = new ArrayList<>();
+        List<Tag> tags = new ArrayList<>(Optional.ofNullable(srcOOQ.getTags()).orElse(Collections.emptyList()));
+
+        Optional.ofNullable(srcOOQ.getProducts()).orElse(Collections.emptyList())
+                .forEach(product -> {
+                    OpenOrderProduct oop = new OpenOrderProduct();
+                    oop.setActive(true);
+                    oop.setProduct(product.getProduct());
+                    oop.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate());
+                    oop.updateAudit(currentUser);
+
+                    products.add(oop);
+                });
+
+        Optional.ofNullable(srcOOQ.getArticles()).orElse(Collections.emptyList())
+                .forEach(article -> {
+                    OpenOrderArticle ooa = new OpenOrderArticle();
+                    ooa.setActive(true);
+                    ooa.setAccountingArticle(article.getAccountingArticle());
+                    ooa.setOpenOrderTemplate(srcOOQ.getOpenOrderTemplate());
+                    ooa.updateAudit(currentUser);
+
+                    articles.add(ooa);
+                });
+
+        Optional.ofNullable(srcOOQ.getThresholds()).orElse(Collections.emptyList())
+                .forEach(srcTh -> {
+                    Threshold threshold = new Threshold();
+                    threshold.setExternalRecipient(srcTh.getExternalRecipient());
+                    List<ThresholdRecipientsEnum> recipients = new ArrayList<>(Optional.ofNullable(srcTh.getRecipients()).orElse(Collections.emptyList()));
+                    threshold.setRecipients(recipients);
+                    threshold.setSequence(srcTh.getSequence());
+                    threshold.setPercentage(srcTh.getPercentage());
+                    threshold.setOpenOrderQuote(dupOOQ);
+
+                    thresholds.add(threshold);
+                });
+
+        dupOOQ.setTags(tags);
+        dupOOQ.setArticles(articles);
+        dupOOQ.setProducts(products);
+        dupOOQ.setThresholds(thresholds);
+
+        openOrderQuoteService.create(dupOOQ);
+
+        return dupOOQ.getId();
+    }
+
+    private OpenOrderQuote getOpenOrderQuote(Long idOOQ) {
+        OpenOrderQuote srcOOQ = openOrderQuoteService.findById(idOOQ);
+
+        if (srcOOQ == null) {
+            throw new EntityDoesNotExistsException("No OpenOrderQuote found with id '" + idOOQ + "'");
+        }
+        return srcOOQ;
+    }
+
     private BillingAccount getBillingAccount(OpenOrderQuoteDto dto) {
         BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
 
@@ -167,11 +272,16 @@ public class OpenOrderQuoteApi {
         return billingAccount;
     }
 
-    private OpenOrderTemplate getOpenOrderTemplate(OpenOrderQuoteDto dto) {
+    private OpenOrderTemplate validateAndGetOpenOrderTemplate(OpenOrderQuoteDto dto) {
         OpenOrderTemplate template = openOrderTemplateService.findByCode(dto.getOpenOrderTemplate());
 
         if (template == null) {
             throw new EntityDoesNotExistsException("No OpenOrderTemplate found with code '" + dto.getOpenOrderTemplate() + "'");
+        }
+
+        // To activate in SPRINT 21
+        if (OpenOrderTemplateStatusEnum.ACTIVE != template.getStatus()) {
+            throw new BusinessApiException("Template shall be in ACTIVE status");
         }
         return template;
     }
@@ -230,6 +340,10 @@ public class OpenOrderQuoteApi {
                     throw new BusinessApiException("Open Order Quote status must be SENT");
                 }
 
+                OpenOrder oor = openOrderService.create(ooq);
+                ooq.setOpenOrder(oor);
+                openOrderQuoteService.update(ooq);
+
                 break;
 
             case SENT:
@@ -237,12 +351,20 @@ public class OpenOrderQuoteApi {
                 // status in (VALIDATED, SENT)
                 // check that Product/Article list is not empty(depending on type)
 
-                if (setting.getUseManagmentValidationForOOQuotation()) {
-                    throw new BusinessApiException("ASK VALIDATION feature shall not be activated");
+                if (!setting.getUseManagmentValidationForOOQuotation()) {
+                    if (ooq.getStatus() != DRAFT && ooq.getStatus() != SENT) {
+                        throw new BusinessApiException("Open Order Quote status must be DRAFT");
+                    }
+                } else if (ooq.getStatus() != VALIDATED && ooq.getStatus() != SENT) {
+                    throw new BusinessApiException("Open Order Quote status must be VALIDATED");
                 }
 
-                if (ooq.getStatus() != VALIDATED) {
-                    throw new BusinessApiException("Open Order Quote status must be VALIDATED");
+                if (ARTICLES == ooq.getOpenOrderType() && CollectionUtils.isEmpty(ooq.getArticles())) {
+                    throw new BusinessApiException("Articles must not be empty");
+                }
+
+                if (PRODUCTS == ooq.getOpenOrderType() && CollectionUtils.isEmpty(ooq.getProducts())) {
+                    throw new BusinessApiException("Products must not be empty");
                 }
 
                 break;
@@ -273,24 +395,24 @@ public class OpenOrderQuoteApi {
         ooq.setDescription(dto.getDescription());
         ooq.setOpenOrderType(dto.getOpenOrderType());
         ooq.setMaxAmount(dto.getMaxAmount());
-        ooq.setOpenOrderNumber(serviceSingleton.getNextOpenOrderSequence());
+        ooq.setQuoteNumber(serviceSingleton.getNextOpenOrderQuoteSequence());
         ooq.setOpenOrderTemplate(template); // 3.4 template: set at creation, cannot be changed later.
         ooq.setExternalReference(dto.getExternalReference());
         ooq.setEndOfValidityDate(dto.getEndOfValidityDate());
         ooq.setBillingAccount(billingAccount);
-        ooq.setActivationDate(dto.getActivationDate());
+        ooq.setActivationDate(DateUtils.setTimeToZero(dto.getActivationDate()));
         ooq.setArticles(articles);
         ooq.setProducts(products);
         ooq.setTags(tags);
 
         List<Threshold> thresholds = new ArrayList<>();
-        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptyList())
+        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptySet())
                 .forEach(thresholdDto -> {
                     Threshold threshold = new Threshold();
-                    threshold.setOpenOrderTemplate(template);
                     threshold.setExternalRecipient(thresholdDto.getExternalRecipient());
                     threshold.setRecipients(thresholdDto.getRecipients());
                     threshold.setSequence(thresholdDto.getSequence());
+                    threshold.setPercentage(thresholdDto.getPercentage());
                     threshold.setOpenOrderQuote(ooq);
 
                     thresholds.add(threshold);
@@ -321,14 +443,15 @@ public class OpenOrderQuoteApi {
 
             // all products must exist and be active in the openOrderTemplate products list.
             dto.getProducts().forEach(productCode -> {
-                Product product = productService.findByCode(productCode);
-                if (product == null) {
-                    throw new EntityDoesNotExistsException("Product with code '" + productCode + "' is not exist");
+                OpenOrderProduct templateOOP = openOrderProductService.findByProductCodeAndTemplate(productCode, template.getId());
+
+                if (templateOOP == null) {
+                    throw new EntityDoesNotExistsException("Open Order Product with code '" + productCode + "' is not exist in template");
                 }
 
                 OpenOrderProduct oop = new OpenOrderProduct();
                 oop.setActive(true);
-                oop.setProduct(product);
+                oop.setProduct(templateOOP.getProduct());
                 oop.setOpenOrderTemplate(template);
                 oop.updateAudit(currentUser);
 
@@ -346,15 +469,15 @@ public class OpenOrderQuoteApi {
             }
 
             // all articles must exist and be active in the openOrderTemplate articles list.
-            dto.getProducts().forEach(articleCode -> {
-                AccountingArticle article = accountingArticleService.findByCode(articleCode);
+            dto.getArticles().forEach(articleCode -> {
+                OpenOrderArticle article = openOrderArticleService.findByArticleCodeAndTemplate(articleCode, template.getId());
                 if (article == null) {
-                    throw new EntityDoesNotExistsException("Article with code '" + articleCode + "' is not exist");
+                    throw new EntityDoesNotExistsException("Open Order Article with code '" + articleCode + "' is not exist in template");
                 }
 
                 OpenOrderArticle ooa = new OpenOrderArticle();
                 ooa.setActive(true);
-                ooa.setAccountingArticle(article);
+                ooa.setAccountingArticle(article.getAccountingArticle());
                 ooa.setOpenOrderTemplate(template);
                 ooa.updateAudit(currentUser);
 
@@ -366,31 +489,34 @@ public class OpenOrderQuoteApi {
 
     private void validateThresholds(OpenOrderQuoteDto dto, OpenOrderTemplate template) {
         // check thresholds list
-        Optional.ofNullable(dto.getThresholds()).orElse(Collections.emptyList())
-                .forEach(thresholdDto -> {
-                    // "percentage": distinct integers, from 1 to 100
-                    if (thresholdDto.getPercentage() != null && (thresholdDto.getPercentage() < 1 || thresholdDto.getPercentage() > 100)) {
-                        throw new BusinessApiException("Invalid Threshold percentage '" + thresholdDto.getPercentage() + "'. Value must be between 1 and 100");
-                    }
-
-                    // recipients: not null, enum: CUSTOMER,SALES_AGENT,CONSUMER
-                    if (CollectionUtils.isEmpty(thresholdDto.getRecipients())) {
-                        throw new BusinessApiException("Threshold Recipients must not be empty");
-                    }
-
-                    // externalRecipient: should be valid email format :
-                    // use @Email in dto field
-
-                });
-
         if (CollectionUtils.isNotEmpty(dto.getThresholds())) {
-            // Sequence: distinct integers, from 1 to thresholds list size.
-            Set<Integer> dtoSequence = dto.getThresholds().stream()
-                    .sorted(Comparator.comparing(ThresholdInput::getSequence))
-                    .map(ThresholdInput::getSequence).collect(Collectors.toSet());
+            dto.getThresholds().forEach(thresholdDto -> {
+                // "percentage": distinct integers, from 1 to 100
+                if (thresholdDto.getPercentage() != null && (thresholdDto.getPercentage() < 1 || thresholdDto.getPercentage() > 100)) {
+                    throw new BusinessApiException("Invalid Threshold percentage '" + thresholdDto.getPercentage() + "'. Value must be between 1 and 100");
+                }
 
-            if (dtoSequence.size() < dto.getThresholds().size()) {
-                throw new BusinessApiException("Threshold sequence are not correct : expected '" + dto.getThresholds().size() + "', given '" + dtoSequence.size() + "'");
+                // recipients: not null, enum: CUSTOMER,SALES_AGENT,CONSUMER
+                if (CollectionUtils.isEmpty(thresholdDto.getRecipients())) {
+                    throw new BusinessApiException("Threshold Recipients must not be empty");
+                }
+
+                // externalRecipient: should be valid email format :
+                // use @Email in dto field
+
+            });
+
+            // Sequence: distinct integers, from 1 to thresholds list size.
+            List<Integer> dtoSequence = dto.getThresholds().stream()
+                    .sorted(Comparator.comparing(ThresholdInput::getSequence))
+                    .map(ThresholdInput::getSequence).collect(Collectors.toList());
+
+            if (dtoSequence.get(0) != 1) {
+                throw new BusinessApiException("Threshold sequence shall be start by '1'");
+            }
+
+            if (!isConsecutive(dtoSequence)) {
+                throw new BusinessApiException("Threshold sequence are not consecutive " + dtoSequence);
             }
 
             // For the list of thresholds ordered by sequence, the next threshold percent must be greater than the previous one.
@@ -411,7 +537,8 @@ public class OpenOrderQuoteApi {
             }
 
             // all existing thresholds on template must be present in the OpenOrder (percentage is the key).
-            List<Integer> templateThresholdPercentages = template.getThresholds().stream()
+            List<Integer> templateThresholdPercentages = Optional.ofNullable(template.getThresholds()).orElse(Collections.emptyList())
+                    .stream()
                     .sorted(Comparator.comparing(Threshold::getPercentage))
                     .map(Threshold::getPercentage).collect(Collectors.toList());
 
@@ -427,25 +554,35 @@ public class OpenOrderQuoteApi {
             }
 
             // all existing recipients in a template line must be present in the OpenOrder existing line.
-            Set<String> templateThresholdRecipients = template.getThresholds().stream()
-                    .sorted(Comparator.comparing(Threshold::getExternalRecipient, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .map(Threshold::getExternalRecipient).collect(Collectors.toSet());
+            Set<ThresholdRecipientsEnum> templateThresholdRecipients = Optional.ofNullable(template.getThresholds()).orElse(Collections.emptyList())
+                    .stream()
+                    .map(Threshold::getRecipients)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
 
-            Set<String> dtoThresholdRecipients = dto.getThresholds().stream()
-                    .sorted(Comparator.comparing(ThresholdInput::getExternalRecipient, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .map(ThresholdInput::getExternalRecipient)
+            Set<ThresholdRecipientsEnum> dtoThresholdRecipients = dto.getThresholds().stream()
+                    .map(ThresholdInput::getRecipients)
+                    .flatMap(Collection::stream)
                     .collect(Collectors.toSet());
 
             templateThresholdRecipients.removeAll(dtoThresholdRecipients);
 
             if (templateThresholdRecipients.size() > 0) {
-                throw new BusinessApiException("All existing recipients in a template line must be present in the OpenOrder existing line. Missing recipients : " + templateThresholdRecipients);
+                Set<String> missingRecipients = new HashSet<>();
+                templateThresholdRecipients.forEach(r -> {
+                    if (ThresholdRecipientsEnum.CONSUMER == r) {
+                        missingRecipients.add(RECIPIENT_USER); // Specific message to be coerant with Front part (UI use User, and Backend use CONSOMER
+                    } else {
+                        missingRecipients.add(r.name());
+                    }
+                });
+                throw new BusinessApiException("All existing recipients in a template line must be present in the OpenOrder existing line. Missing recipients : " + missingRecipients);
             }
         }
     }
 
-    private void buildTags(OpenOrderQuoteDto dto, List<Tag> tags) {
-        Optional.ofNullable(dto.getTags()).orElse(Collections.emptyList())
+    private void validateTags(OpenOrderQuoteDto dto, List<Tag> tags) {
+        Optional.ofNullable(dto.getTags()).orElse(Collections.emptySet())
                 .forEach(tagCode -> {
                     Tag tag = tagService.findByCode(tagCode);
                     if (tag == null) {
@@ -454,6 +591,64 @@ public class OpenOrderQuoteApi {
 
                     tags.add(tag);
                 });
+    }
+
+    private boolean isConsecutive(List<Integer> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i) != list.get(i + 1) - 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private void validateSettings(OpenOrderQuoteDto dto) {
+        OpenOrderSetting orSettings = openOrderSettingService.findLastOne();
+
+        if (orSettings == null) {
+            throw new EntityDoesNotExistsException("No OpenOrder settings found");
+        }
+
+        // ************************************
+        // DEFINE => AMOUNT / APPLY => DATE !!
+        // ************************************
+        if (!orSettings.getUseOpenOrders()) {
+            throw new BusinessApiException("OpenOrder not enable in settings");
+        }
+
+        if (orSettings.getDefineMaximumValidity() && orSettings.getDefineMaximumValidityValue() != null
+                && dto.getMaxAmount().compareTo(BigDecimal.valueOf(orSettings.getDefineMaximumValidityValue())) > 0) {
+            throw new BusinessApiException("Amount is greater than or equal OpenOrder settings maximum amount");
+        }
+
+        if (orSettings.getApplyMaximumValidity() && dto.getEndOfValidityDate() != null) {
+            if (orSettings.getApplyMaximumValidityValue() == null && orSettings.getApplyMaximumValidityUnit() == null) {
+                throw new BusinessApiException("Invalid OpenOrder settings : Maximum Validity Value and Maximum Validity Unit must not be null");
+            }
+            LocalDate maximumDate = null;
+            switch (orSettings.getApplyMaximumValidityUnit()) {
+                case Days:
+                    maximumDate = LocalDate.now().plusDays(orSettings.getApplyMaximumValidityValue());
+                    break;
+                case Weeks:
+                    maximumDate = LocalDate.now().plusWeeks(orSettings.getApplyMaximumValidityValue());
+                    break;
+                case Months:
+                    maximumDate = LocalDate.now().plusMonths(orSettings.getApplyMaximumValidityValue());
+                    break;
+                case Years:
+                    maximumDate = LocalDate.now().plusYears(orSettings.getApplyMaximumValidityValue());
+                    break;
+                default:
+                    break;
+            }
+            LocalDate givenDate = dto.getEndOfValidityDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (givenDate.isAfter(maximumDate)) {
+                throw new BusinessApiException("Given end validity date '" + givenDate + "' exceed maximum OpenOrder settings '" + maximumDate + "'");
+            }
+
+        }
     }
 
 }

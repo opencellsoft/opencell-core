@@ -6,6 +6,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ import java.util.Set;
 public interface GenericPagingAndFiltering {
     @Nullable
     @Value.Default default Set<String> getGenericFields(){ return Collections.emptySet();}
+    @Nullable
+    @Value.Default default List<GenericFieldDetails> getGenericFieldDetails(){ return Collections.emptyList();}
     @Nullable
     @Value.Default default Set<String> getNestedEntities(){ return Collections.emptySet();}
     @Nullable

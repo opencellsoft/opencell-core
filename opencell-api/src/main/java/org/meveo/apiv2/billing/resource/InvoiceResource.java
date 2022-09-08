@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -19,16 +20,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.InvoiceSubTotalsDto;
 import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.apiv2.billing.BasicInvoice;
-import org.meveo.apiv2.billing.GenerateInvoiceInput;
-import org.meveo.apiv2.billing.Invoice;
-import org.meveo.apiv2.billing.InvoiceInput;
-import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
-import org.meveo.apiv2.billing.InvoiceLinesToDuplicate;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
-import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
-import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.models.ApiException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -267,7 +259,6 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "403", description = "error when calculating invoice") })
 	Response calculateInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 
-
 	@GET
 	@Path("/find/{invoiceNumber}")
 	@Operation(summary = "Return an invoice", tags = {"Invoices" },
@@ -389,5 +380,15 @@ public interface InvoiceResource {
                     @ApiResponse(responseCode = "400", description = "bad request when sub totals is not found") })
     Response deleteSubTotals(
             @Parameter(description = "the add SubTotals", required = true) InvoiceSubTotalsDto invoiceSubTotals);
-
+	
+	@PATCH
+    @Path("/validated/{id}")
+    @Operation(summary = "Update a validated invoice", tags = { "Invoices" }, description = "Update a validated invoice with a set of changes to apply and return the updated invoice",
+                    responses = {
+                    @ApiResponse(responseCode = "200", description = "the Invoice is successfully updated"),
+                    @ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error"),
+                    @ApiResponse(responseCode = "404", description = "product not found") })
+    Response updateValidateInvoice(
+                    @Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+                    @Parameter(description = "the Invoice object", required = true) InvoicePatchInput input);
 }

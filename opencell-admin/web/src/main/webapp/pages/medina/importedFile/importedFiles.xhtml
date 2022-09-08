@@ -41,8 +41,7 @@
 			<hftl:column label="#{messages['transferredFile.lastModified']}"
 				field="lastModification" isDate="true" />
 			<hftl:column label="#{messages['transferredFile.operation']}" field="operation" />
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('billingManagement')}" />
+			<hftl:actionsColumn />
 		</hftl:dataList>
 	</ui:define>
 </ui:composition>

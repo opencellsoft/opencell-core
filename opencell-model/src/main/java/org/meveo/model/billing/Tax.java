@@ -19,19 +19,10 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -90,6 +81,29 @@ public class Tax extends BusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
+    /**
+     * Tax is a composition of other taxes
+     */
+    @Column(name = "composite")
+    @Type(type = "numeric_boolean")
+    private boolean composite;
+
+    /**
+     * Main taxes
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_tax_composition",
+            joinColumns = @JoinColumn(name = "sub_tax_id"), inverseJoinColumns = @JoinColumn(name = "main_tax_id"))
+    private List<Tax> mainTaxes;
+
+    /**
+     * Sub taxes
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_tax_composition",
+            joinColumns = @JoinColumn(name = "main_tax_id"), inverseJoinColumns = @JoinColumn(name = "sub_tax_id"))
+    private List<Tax> subTaxes;
+
     public Tax() {
 
     }
@@ -141,6 +155,30 @@ public class Tax extends BusinessCFEntity {
 
     public String getIdOrCode() {
         return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
+    }
+
+    public boolean isComposite() {
+        return composite;
+    }
+
+    public void setComposite(boolean composite) {
+        this.composite = composite;
+    }
+
+    public List<Tax> getMainTaxes() {
+        return mainTaxes;
+    }
+
+    public void setMainTaxes(List<Tax> mainTaxes) {
+        this.mainTaxes = mainTaxes;
+    }
+
+    public List<Tax> getSubTaxes() {
+        return subTaxes;
+    }
+
+    public void setSubTaxes(List<Tax> subTaxes) {
+        this.subTaxes = subTaxes;
     }
 
     @Override

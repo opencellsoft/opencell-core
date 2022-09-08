@@ -184,7 +184,7 @@ public class ParamBean {
      * @lastModifiedVersion 5.0
      */
     public boolean isServiceMultiInstantiation() {
-        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "true"));
     }
 
     /**
@@ -230,6 +230,14 @@ public class ParamBean {
             dir += instanceByProvider.getProperty("provider.rootDir", provider);
         }
         return dir;
+    }
+
+    public String getProvidersRootDir() {
+    	ParamBean currentInstance = getInstance();
+        if (currentInstance == null) {
+            return null;
+        }
+        return currentInstance.getProperty("providers.rootDir", "./opencelldata");
     }
 
     /**

@@ -27,7 +27,6 @@ import java.util.List;
 import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.ml.job.config.Job;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
@@ -150,6 +149,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
+                events.add(NotificationEventTypeEnum.PAYMENT_STATUS_UPDATED);
             } else if (clazzStr.equals(CommercialOrder.class.getName())) {
                 events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);

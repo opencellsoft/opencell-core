@@ -48,10 +48,15 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @Schema(description = "Indicate is the price plan is a matrix")
     private Boolean isMatrix;
     
+    @Schema(description = "The price")
+    private BigDecimal price;
+
     @Schema(description = "The amount without tax")
+    @Deprecated
     private BigDecimal amountWithoutTax;
     
     @Schema(description = "The amount with tax")
+    @Deprecated
     private BigDecimal amountWithTax;
     
     @Schema(description = "The Price EL")
@@ -76,6 +81,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
+        setPrice(pricePlanMatrixVersion.getPrice());
         setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
         setPriceEL(pricePlanMatrixVersion.getPriceEL());
@@ -148,7 +154,15 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         isMatrix = matrix;
     }
 
-    public BigDecimal getAmountWithoutTax() {
+    public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public BigDecimal getAmountWithoutTax() {
         return amountWithoutTax;
     }
 

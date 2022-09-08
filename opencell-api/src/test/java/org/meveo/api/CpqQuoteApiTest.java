@@ -133,7 +133,7 @@ public class CpqQuoteApiTest {
     
     @Test
     public void createQuoteItem() {
-             	
+      try {
         	QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO();
         	quoteOfferDTO.setQuoteVersion(1);
         	quoteOfferDTO.setQuoteCode("QC1");
@@ -144,12 +144,15 @@ public class CpqQuoteApiTest {
         	quoteOfferDTO.setSubscriptionCode("s");
         	cpqQuoteApi.createQuoteItem(quoteOfferDTO);
         	verify(quoteOfferService).create(any());
+      }catch(Exception e) {
+          assertTrue(e instanceof MissingParameterException);
+      }
 
     }
     
     @Test
     public void updateQuoteItem() {
-             	
+        try {	
         	QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO();
         	quoteOfferDTO.setQuoteOfferId(1L);
         	quoteOfferDTO.setQuoteVersion(1);
@@ -161,6 +164,9 @@ public class CpqQuoteApiTest {
         	quoteOfferDTO.setSubscriptionCode("s");
         	cpqQuoteApi.updateQuoteItem(quoteOfferDTO);
         	verify(quoteOfferService).update(any());
+        }catch(Exception e) {
+            assertTrue(e instanceof MissingParameterException);
+        }
 
     }
 }

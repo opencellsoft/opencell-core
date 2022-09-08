@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
@@ -63,6 +64,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.PATCH;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.apiv2.billing.ServiceInstanceToDelete;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,7 +104,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus create(SubscriptionDto postData);
+    Response create(SubscriptionDto postData);
 
     /**
      * Updates a subscription. It cannot update a subscription with status=RESILIATED
@@ -125,7 +127,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus update(SubscriptionDto postData);
+    Response update(SubscriptionDto postData);
 
     /**
      * Instantiate a Service subscription 
@@ -496,7 +498,7 @@ public interface SubscriptionRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus createOrUpdate(SubscriptionDto subscriptionDto);
+    Response createOrUpdate(SubscriptionDto subscriptionDto);
 
     /**
      * Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if
@@ -988,7 +990,7 @@ public interface SubscriptionRs extends IBaseRs {
 			description=" rollback offer  ",
 			operationId="    PATCH_Subscription{code}_offer_rollback",
 			responses= {
-				@ApiResponse(description=" ",
+				@ApiResponse(description="ActionStatus response",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -997,4 +999,45 @@ public interface SubscriptionRs extends IBaseRs {
 				)}
 	)
     ActionStatus rollbackOffer(@PathParam("code") String code, OfferRollbackDto offerRollbackDto);
+    
+    /**
+     * Create a subscription and instanciate product in a single transaction.
+     * 
+     * @param postData Subscription and products to i
+     * @return Request processing status
+     */
+    @POST
+    @Path("/subscribeAndActivateProducts")
+    @Operation(
+            summary=" subscribe And Activate Products ",
+            description=" Create a subscribe And Activate Products  ",
+            operationId="POST_Subscription_subscribeAndActivateProducts",
+            responses= {
+                @ApiResponse(description=" Request processing status ",
+                        content=@Content(
+                                    schema=@Schema(
+                                            implementation= ActionStatus.class
+                                            )
+                                )
+                )}
+    )
+    ActionStatus subscribeAndActivateProducts(SubscriptionAndProductsToInstantiateDto postData);
+
+	@DELETE
+	@Path("/{subscriptionId}/delete-si")
+	@Operation(
+			summary="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
+			description="API to delete 'INACTIVE' and 'PENDING' serviceInstance from subscription",
+			operationId="DELETE_Subscription_serviceInstance",
+			responses= {
+					@ApiResponse(description=" A subscription ",
+							content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+									)
+							)
+					)}
+	)
+	Response deleteInactiveServiceInstance(@PathParam("subscriptionId") Long subscriptionId, ServiceInstanceToDelete toDelete);
+
 }

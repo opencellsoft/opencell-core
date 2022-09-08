@@ -51,6 +51,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentGateway;
@@ -148,6 +149,17 @@ public class Seller extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_ledger_id")
     private GeneralLedger generalLedger;
+
+    @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
+    private List<Contract> contracts = new ArrayList<>();
+    
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
 
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
