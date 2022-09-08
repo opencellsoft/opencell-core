@@ -1615,14 +1615,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 */
 	public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
 			BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
-		
-		if (filter != null) {
-			//TODO #MEL use of filter must be reviewed
-			List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
-			List<Long> ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
-			if (!ratedTransactionIds.isEmpty()) {
-			    return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
-			}
+
+        if (filter != null) {
+            //TODO #MEL use of filter must be reviewed
+            List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
+            List<Long> ratedTransactionIds = null;
+            if (billingRun.isExceptionalBR()) {
+                ratedTransactionIds = ratedTransactions.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
+                        .map(RatedTransaction::getId)
+                        .collect(toList());
+            } else {
+                ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
+            }
+            if (!ratedTransactionIds.isEmpty()) {
+                return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
+            }
         }
 
         Map<String, Object> params = buildParams(billingRun, lastTransactionDate);
