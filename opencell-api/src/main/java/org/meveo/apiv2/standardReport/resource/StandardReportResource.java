@@ -52,6 +52,8 @@ public interface StandardReportResource {
                                 @QueryParam("startDueDate") Date startDueDate,
                                 @QueryParam("endDueDate") Date endDueDate,
                                 @QueryParam("customerAccountDescription") String customerAccountDescription,
+                                @QueryParam("sellerName") String sellerName,
+                                @QueryParam("sellerCode") String sellerCode,
                                 @QueryParam("invoiceNumber") String invoiceNumber,
                                 @QueryParam("stepInDays") Integer stepInDays,
                                 @QueryParam("numberOfPeriods") Integer numberOfPeriods,

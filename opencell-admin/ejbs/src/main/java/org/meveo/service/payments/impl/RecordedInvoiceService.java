@@ -475,7 +475,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     @SuppressWarnings("unchecked")
     public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
-                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription) {
+                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerName, String sellerCode) {
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
@@ -516,7 +516,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.name, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -525,6 +525,23 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(customerAccount).ifPresent(ca -> qb.addSql("ao.customerAccount.code = '" + ca.getCode() +"'"));
         ofNullable(customerAccountDescription).ifPresent(caDescription
                 -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
+        ofNullable(sellerName).ifPresent(sName -> {
+            String[] nameDetails = sName.split(" "); // get first and last name
+            String firstName = nameDetails.length > 0 ? nameDetails[0].toUpperCase() : "";
+            String lastName = nameDetails.length > 1 ? nameDetails[1].toUpperCase() : "";
+
+            if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+                qb.addSql("(UPPER(ao.seller.name.firstName) = '" + firstName +"' OR UPPER(ao.seller.name.firstName) = '" + lastName + "') AND " +
+                        "(UPPER(ao.seller.name.lastName) = '" + firstName +"' OR UPPER(ao.seller.name.lastName) = '" + lastName + "')");
+            } else if(StringUtils.isNotBlank(firstName) && StringUtils.isBlank(lastName)) {
+                qb.addSql("(UPPER(ao.seller.name.firstName) = '" + firstName +"') OR (UPPER(ao.seller.name.lastName) = '" + firstName +"')");
+            } else if(StringUtils.isBlank(firstName) && StringUtils.isNotBlank(lastName)) {
+                qb.addSql("(UPPER(ao.seller.name.firstName) = '" + lastName +"') OR (UPPER(ao.seller.name.lastName) = '" + lastName +"')");
+            }
+
+
+        });
+        ofNullable(sellerCode).ifPresent(sCode -> qb.addSql("UPPER(ao.seller.code) = '" + sCode.toUpperCase() +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
 
         if (startDueDate != null && endDueDate != null) {
@@ -543,7 +560,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                             + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), datePatternHours) + "'))");
         }
 
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.name, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
 
         return qb.getQuery(getEntityManager()).getResultList();

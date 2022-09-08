@@ -32,8 +32,9 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
     private List<String> fetchFields = asList("fields");
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
-							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription, String invoiceNumber,
-							   Integer stepInDays, Integer numberOfPeriods) {
+							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
+							   String sellerName, String sellerCode,
+							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
@@ -60,9 +61,10 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
 		try {
 			return recordedInvoiceService.getAgedReceivables(customerAccount, startDate, startDueDate, endDueDate,
-					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription);
+					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerName, sellerCode);
 		} catch (Exception exception) {
-			throw new BusinessApiException("Error occurred when listing aged balance report");
+			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
+
 		}
     }
 
