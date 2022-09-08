@@ -656,8 +656,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
                             if (ppmVersion != null) {
-                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                try {
+                                    PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
+                                    unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                    bareWalletOperation.setContract(contract);
+//                                    bareWalletOperation.setPriceplan(pricePlan);
+//                                    bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
+                                }catch(NoPricePlanException e) {
+                                    log.warn("Price not found for contract : " + contract.getCode(), e);
+                                }
                             }
 
                         } else {
@@ -807,6 +814,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), serviceInstance, wo.getOperationDate());
 
         if (ppmVersion != null) {
+            wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
                 if (appProvider.isEntreprise()) {
                 	priceWithoutTax = ppmVersion.getAmountWithoutTax();
@@ -822,6 +830,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
+                    wo.setPricePlanMatrixLine(pricePlanMatrixLine);
                 	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
