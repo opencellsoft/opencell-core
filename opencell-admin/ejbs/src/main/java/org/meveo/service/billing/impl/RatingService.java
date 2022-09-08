@@ -673,8 +673,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 }catch(NoPricePlanException e) {
                                     log.warn("Price not found for contract : " + contract.getCode(), e);
                                 } catch (Exception e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
+                                    log.warn("Error on contract code " + contract.getCode(), e);
                                 }
                             }
 
@@ -815,7 +814,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws PriceELErrorException Amount EL expression evaluated to null
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private Amounts determineUnitPrice(PricePlanMatrix pricePlan, WalletOperation wo) throws PriceELErrorException, InvalidELException {
 
         BigDecimal priceWithoutTax = null;
