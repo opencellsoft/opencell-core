@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
@@ -36,6 +38,7 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
     private BillingRunExtensionService billingRunExtensionService;
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
                 this::generateXml, null, null);
