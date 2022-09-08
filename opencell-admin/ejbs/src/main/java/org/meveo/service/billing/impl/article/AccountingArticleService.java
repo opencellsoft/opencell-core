@@ -230,7 +230,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
 				case EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
 							return true;
 						}
@@ -239,7 +239,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case NOT_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
 							return true;
 						}
@@ -248,26 +248,26 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						return true;
 					break;
 				case LESS_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case LESS_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 
 				case GREATER_THAN_OR_EQUAL:
-					if (convertedValueStr != null && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
