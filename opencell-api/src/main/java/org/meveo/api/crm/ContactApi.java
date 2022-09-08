@@ -19,10 +19,8 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -166,7 +164,7 @@ public class ContactApi extends BaseApi {
     private void linkToAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
         if(addressBookContacts != null && !addressBookContacts.isEmpty()){
             addressBookContacts.stream()
-                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
+                    .filter(abcDto -> abcDto.getAddressBook() != null && abcDto.getAddressBook().containsKey("id"))
                     .forEach(abcDto -> {
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
@@ -493,16 +491,27 @@ public class ContactApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        ContactDto contactDto = null;
         Contact contact = contactService.findByCode(code);
 
         if (contact == null) {
             throw new EntityDoesNotExistsException(Contact.class, code, "code");
         }
+        return buildContactDto(contact);
+    }
 
-        contactDto = new ContactDto(contact);
-
+    private ContactDto buildContactDto(Contact contact) {
+        ContactDto contactDto;
+        List<AddressBookContact> addressBookContactServiceByContact = addressBookContactService.findByContact(contact);
+        if(addressBookContactServiceByContact != null){
+            Map<AddressBookContact, Customer> addressBookContactCustomers = new HashMap<>();
+            addressBookContactServiceByContact
+                    .stream()
+                    .filter(abc -> abc.getAddressBook() != null)
+                    .forEach(abc -> addressBookContactCustomers.put(abc, customerService.findByAddressBook(abc.getAddressBook().getId())));
+            contactDto = new ContactDto(contact, addressBookContactCustomers);
+        } else {
+            contactDto = new ContactDto(contact);
+        }
         return contactDto;
     }
 
@@ -512,9 +521,10 @@ public class ContactApi extends BaseApi {
 
         List<Contact> contacts = contactService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (contacts != null) {
-            for (Contact contact : contacts) {
-                result.getContacts().getContact().add(new ContactDto(contact));
-            }
+            result.getContacts().setContact(contacts.stream()
+                            .map(contact -> buildContactDto(contact))
+                    .collect(Collectors.toList()));
+            result.getContacts().setTotalNumberOfRecords(Long.valueOf(result.getContacts().getContact().size()));
         }
 
         return result;
@@ -552,7 +562,7 @@ public class ContactApi extends BaseApi {
         if (totalCount > 0) {
             List<Contact> contacts = contactService.list(paginationConfig);
             for (Contact c : contacts) {
-                contactsDto.getContact().add(new ContactDto(c));
+                contactsDto.getContact().add(buildContactDto(c));
             }
         }
         result.setContacts(contactsDto);
