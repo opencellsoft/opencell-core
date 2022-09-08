@@ -21,7 +21,6 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,11 +49,13 @@ import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.cpq.OfferContextConfigDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -119,7 +120,6 @@ import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -708,7 +708,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         OfferTemplate offerTemplate = findOfferTemplate(code, validFrom, validTo);
 
-        return fromOfferTemplate(offerTemplate, inheritCF,Boolean.TRUE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan,Boolean.FALSE,Boolean.FALSE,null);
+        return fromOfferTemplate(offerTemplate, inheritCF,Boolean.TRUE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan,Boolean.FALSE,Boolean.FALSE,null,null);
     }
 
     @Override
@@ -718,11 +718,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate) {
-        return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true, true, true, true, true, true,false,false,null);
+        return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true, true, true, true, true, true,false,false,null,null);
     }
 
     public GetOfferTemplateResponseDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes) {
+            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes, OfferContextConfigDTO config) {
 
         GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false, true, true);
 
@@ -965,7 +965,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 		result.getPaging().setTotalNumberOfRecords(offers.size());
 		for (OfferTemplate offerTemplate : offers) {
 			boolean loadTags=customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty();
-			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
+			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes(),null);
 			result.addOffer(new CpqOfferDto(offertemplateDTO));
 		}
 		}
@@ -1019,7 +1019,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             for (OfferTemplate offerTemplate : offers) {
                 result.addOfferTemplate(fromOfferTemplate(offerTemplate, inheritCF,pagingAndFiltering.hasFieldOption("offerProduct"), pagingAndFiltering.hasFieldOption("offerServiceTemplate"),
                     pagingAndFiltering.hasFieldOption("offerProductTemplate"), pagingAndFiltering.hasFieldOption("serviceChargeTemplate"),
-                    pagingAndFiltering.hasFieldOption("productChargeTemplate"), pagingAndFiltering.hasFieldOption("loadAllowedDiscountPlan"),false,false,null));
+                    pagingAndFiltering.hasFieldOption("productChargeTemplate"), pagingAndFiltering.hasFieldOption("loadAllowedDiscountPlan"),false,false,null,null));
             }
         }
 

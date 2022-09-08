@@ -1,6 +1,8 @@
 package org.meveo.api.dto.cpq;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -46,6 +48,18 @@ public class ProductVersionAttributeDTO {
     @NotNull
     @Schema(description = "indicate if the attribute is mandatory")
     protected boolean mandatory=Boolean.FALSE;
+    
+    @Schema(description = "indicate if the attribute is ruled")
+    private boolean ruled=Boolean.FALSE;
+  
+    @Schema(description = "list of commercial rule header codes", example = "commercialRuleCodes : [CODE_1, CODE_2,..]")
+    protected List<String> commercialRuleCodes=new ArrayList<>();
+    
+    @Schema(description = "replaced value")
+    protected Object assignedValue;
+    
+    @Schema(description = "indicate if the attribute is selectable")
+    protected boolean selectable=Boolean.TRUE;
 	  /**
      * Display
      */
@@ -204,4 +218,36 @@ public class ProductVersionAttributeDTO {
 	public void setDisplay(boolean display) {
 		this.display = display;
 	}
+	public boolean isRuled() {
+		return ruled;
+	}
+	public void setRuled(boolean ruled) {
+		this.ruled = ruled;
+	}
+
+
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
+	}
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
+	}
+	public Object getAssignedValue() {
+		return assignedValue;
+	}
+	public void setAssignedValue(Object assignedValue) {
+		this.assignedValue = assignedValue;
+	}
+	public boolean isSelectable() {
+		return selectable;
+	}
+	public void setSelectable(boolean selectable) {
+		this.selectable = selectable;
+	}
+	
+	
+	
+	
+	
+	
 }
