@@ -123,9 +123,6 @@ public class OrderProduct extends AuditableCFEntity {
     @Column(name = "instance_status", length = 10)
    	private InstanceStatusEnum status;
 
-	@OneToOne(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private OrderArticleLine orderArticleLine;
-	
 	public void update(OrderProduct other) {
     	this.orderOffer = other.orderOffer;
     	this.order = other.order;
@@ -322,11 +319,4 @@ public class OrderProduct extends AuditableCFEntity {
 		this.status = status;
 	}
 
-	public OrderArticleLine getOrderArticleLine() {
-		return orderArticleLine;
-	}
-
-	public void setOrderArticleLine(OrderArticleLine orderArticleLine) {
-		this.orderArticleLine = orderArticleLine;
-	}
 }
