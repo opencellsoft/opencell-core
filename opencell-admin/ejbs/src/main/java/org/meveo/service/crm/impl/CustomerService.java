@@ -44,6 +44,12 @@ public class CustomerService extends AccountService<Customer> {
     
     @Inject
     private SellerService sellerService;
+    public Customer findByAddressBook(Long addressBookId) {
+        Query query = getEntityManager().createNamedQuery("Customer.getByAddressBook")
+                .setParameter("addressBookId", addressBookId);
+        List<Customer> resultList = query.getResultList();
+        return resultList != null && !resultList.isEmpty() ? resultList.get(0) : null;
+    }
     /**
      * find customer by code.
      * @param code code of customer

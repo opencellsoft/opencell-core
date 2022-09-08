@@ -14076,7 +14076,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="sales_person_name" type="varchar(52)" />
         </addColumn>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki">
         <addColumn tableName="billing_article_mapping_line">
             <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
@@ -14095,7 +14095,47 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="cancel_reason" type="varchar(4000)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
+         <update tableName="crm_provider">
+            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
+            <where>email is null</where>
+         </update>
+         <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
+	</changeSet>
+
+    <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" >
+
+        <createTable tableName="open_order_tags">
+            <column name="open_order_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="open_order_id,tag_id"
+                       constraintName="open_order_tags_pkey"
+                       tableName="open_order_tags"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="open_order_id"
+                                 constraintName="open_order_tags_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+        <dropForeignKeyConstraint baseTableName="cpq_tag"
+                                  constraintName="cpq_tag_open_order_id_fk"/>
+        <dropColumn tableName="cpq_tag">
+            <column name="open_order_id" />
+        </dropColumn>
+    </changeSet>
+
     
+    
+
     <changeSet id="#INTRD-9442_20220831" author="HichamHANINE">
 		<addColumn tableName="billing_rated_transaction">
             <column name="rules_contract_id" type="bigint" />
@@ -14106,65 +14146,65 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
 		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wa_op_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
 	</changeSet>
-    
+
     <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe">
         <sql>update ${db.schema.adapted}billing_rated_transaction set origin_billing_account = billing_account__id where origin_billing_account is null</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani">
         <sql>
-        	update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(cpq_quote.creator) = lower(adm_user.username) 
+        	update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
 			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
 			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(cpq_quote.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
 			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
 			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user 
-			where lower(cpq_quote.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
 			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
 			and adm_user.firstname != ''
 			and adm_user.lastname != '';
 		</sql>
 		<sql>
-			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(cpq_commercial_order.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
 			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
 			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(cpq_commercial_order.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
 			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
 			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user 
-			where lower(cpq_commercial_order.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
 			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
 			and adm_user.firstname != ''
 			and adm_user.lastname != '';
 		</sql>
 		<sql>
-			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(billing_subscription.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
 			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
 			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user 
-			where lower(billing_subscription.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
 			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
 			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
 		</sql>
 		<sql>
-			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user 
-			where lower(billing_subscription.creator) = lower(adm_user.username) 
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
 			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
 			and adm_user.firstname != ''
 			and adm_user.lastname != '';
@@ -14227,4 +14267,31 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-9581_20200907" author="TarikFA.">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_id" type="bigint" />
+		</addColumn>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_id_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_id_fk" 
+								 referencedTableName="cpq_contract" 
+								 baseColumnNames="contract_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+	</changeSet>
+	
 </databaseChangeLog>
