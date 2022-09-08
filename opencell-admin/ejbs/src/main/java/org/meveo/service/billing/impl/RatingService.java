@@ -32,6 +32,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
@@ -52,6 +54,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -193,6 +196,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private WalletOperationService walletOperationService;
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     /**
      * @param level level enum
@@ -570,6 +575,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws NoPricePlanException No price plan matched for a charge
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
+
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
 
@@ -654,16 +660,21 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                         if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
+                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                 try {
-                                    PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
+                                    final WalletOperation tmpWalletOperation = bareWalletOperation;
+                                    PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
                                     unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
                                     bareWalletOperation.setContract(contract);
-//                                    bareWalletOperation.setPriceplan(pricePlan);
-//                                    bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
+                                    bareWalletOperation.setPriceplan(pricePlanMatrix);
+                                    bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
+                                    bareWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
                                 }catch(NoPricePlanException e) {
                                     log.warn("Price not found for contract : " + contract.getCode(), e);
+                                } catch (Exception e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
                                 }
                             }
 
@@ -804,6 +815,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws PriceELErrorException Amount EL expression evaluated to null
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private Amounts determineUnitPrice(PricePlanMatrix pricePlan, WalletOperation wo) throws PriceELErrorException, InvalidELException {
 
         BigDecimal priceWithoutTax = null;
