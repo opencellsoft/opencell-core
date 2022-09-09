@@ -267,6 +267,10 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact", cascade = CascadeType.ALL)
     private List<AddressBookContact> addressBookContacts;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contact_category_id")
+    private ContactCategory contactCategory; 
+
     public String getAssistantName() {
         return assistantName;
     }
@@ -541,4 +545,13 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     public void setAddressBookContacts(List<AddressBookContact> addressBookContacts) {
         this.addressBookContacts = addressBookContacts;
     }
+
+	public ContactCategory getContactCategory() {
+		return contactCategory;
+	}
+
+	public void setContactCategory(ContactCategory contactCategory) {
+		this.contactCategory = contactCategory;
+	}
+
 }
