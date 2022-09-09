@@ -226,6 +226,7 @@ public class QueryBuilder {
     
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
 		this(getInitQuery(clazz, alias, fetchFields), alias);
+    	this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
 	}
 
@@ -346,7 +347,9 @@ public class QueryBuilder {
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
         this.paginationConfiguration = paginationConfiguration;
-        this.joinType=paginationConfiguration.getJoinType();
+        if(paginationConfiguration.getJoinType() != null) {
+        	this.joinType=paginationConfiguration.getJoinType();
+        }
         return this;
     }
 
