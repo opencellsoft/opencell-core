@@ -122,7 +122,7 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-
+        invoiceLine.setLabel(invoiceLine.getAccountingArticle()!=null?invoiceLine.getAccountingArticle().getDescription() : (String) record.get("label"));
         if (record.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
         	ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById((Long) record.get("charge_instance_id"));
             ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
