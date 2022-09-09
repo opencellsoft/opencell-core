@@ -212,8 +212,10 @@ public class ContactApi extends BaseApi {
     private void updateContactAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
         if(addressBookContacts != null && !addressBookContacts.isEmpty()){
             addressBookContacts.stream()
-                    .filter(abcDto -> abcDto.getAddressBook().containsKey("id"))
                     .forEach(abcDto -> {
+                        if(abcDto.getAddressBook() == null || abcDto.getAddressBook().get("id") == null){
+                            new BusinessException("addressBook contact id is required to assigne contact to an address book");
+                        }
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
@@ -225,6 +227,7 @@ public class ContactApi extends BaseApi {
                             if(addressBookContact == null){
                                 throw new EntityDoesNotExistsException("addressBookContact with id "+abcDto.getId()+" does not exist");
                             }
+                            addressBookContact.setContact(contact);
                             if(abcDto.getPosition() != null){
                                 addressBookContact.setPosition(abcDto.getPosition());
                             }
@@ -240,9 +243,11 @@ public class ContactApi extends BaseApi {
             List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
             abcs.stream()
                     .filter(abc -> addressBookContacts.stream()
-                            .filter(addressBookContactDto -> abc.getId().equals(addressBookContactDto.getId()))
-                            .filter(addressBookContactDto -> abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id")))
-                            .findFirst()
+                            .filter(addressBookContactDto -> abc.getId() != null && abc.getId().equals(addressBookContactDto.getId()))
+                            .filter(addressBookContactDto -> abc.getAddressBook() != null
+                                    && addressBookContactDto.getAddressBook() != null
+                                    && abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id"))
+                            ).findFirst()
                             .isEmpty())
                     .forEach(abc -> addressBookContactService.remove(abc.getId()));
 
