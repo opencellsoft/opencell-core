@@ -22,11 +22,13 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -44,6 +46,9 @@ public class StandardReportApiServiceTest {
     private CustomerAccountService customerAccountService;
 
     @Mock
+    private SellerService sellerService;
+
+    @Mock
     private InvoiceService invoiceService;
 
     @Mock
@@ -56,6 +61,7 @@ public class StandardReportApiServiceTest {
 
     private CustomerAccount customerAccount;
 
+
     private Invoice invoice;
 
     @Before
@@ -64,7 +70,12 @@ public class StandardReportApiServiceTest {
         customerAccount.setCode("CA_CODE");
         invoice = new Invoice();
         invoice.setInvoiceNumber("INV_10000");
+
+        Seller seller = new Seller();
+        seller.setCode("SELLER_CODE");
+
         when(customerAccountService.findByCode("CA_CODE")).thenReturn(customerAccount);
+        when(sellerService.findByCode("SELLER_CODE")).thenReturn(seller);
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
 
     }
@@ -93,19 +104,19 @@ public class StandardReportApiServiceTest {
                 new BigDecimal(100), new BigDecimal(80), new BigDecimal(20),
                 ZERO, ZERO, ZERO,
                 DunningLevelEnum.R1, new Name(new Title(), "TEST", "TEST"),
-                "CA_DESCRIPTION", new Date(), "EUR"};
+                "CA_DESCRIPTION", "SELLER_DESCRIPTION", "SELLER_CODE", new Date(), "EUR"};
         result.add(agedReceivable);
     	
-    	when(recordedInvoiceService.getAgedReceivables(any(CustomerAccount.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
+    	when(recordedInvoiceService.getAgedReceivables(any(CustomerAccount.class), any(Seller.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
     	
-    	List<Object[]> testResult = standardReportApiService.list(0L, 50L, null, null, "CA_CODE", startDate, null, null, null, null, null, null, null, null);
+    	List<Object[]> testResult = standardReportApiService.list(0L, 50L, null, null, "CA_CODE", startDate, null, null, null, null, "SELLER_CODE", null, null, null);
     	
     	assertEquals(1, testResult.size());
     	Object[] anElement = testResult.get(0);
     	
     	assertEquals("CA_CODE", (String) anElement[0]);
     	assertEquals(new BigDecimal(100), (BigDecimal) anElement[2]);
-    	assertEquals("EUR", anElement[12]);
+    	assertEquals("EUR", anElement[14]);
         assertEquals(DunningLevelEnum.R1, anElement[8]);
     }
     

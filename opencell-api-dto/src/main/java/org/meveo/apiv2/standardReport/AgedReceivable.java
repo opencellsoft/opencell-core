@@ -66,7 +66,7 @@ public interface AgedReceivable extends Resource {
     String getCustomerAccountDescription();
 
     @Nullable
-    String getSellerName();
+    String getSellerDescription();
 
     @Nullable
     String getSellerCode();
