@@ -23,7 +23,9 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-    @Inject
+	private static final String DOESNOT_EXIST_ERROR_MESSAGE = " doesn't exist";
+
+	@Inject
     private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
@@ -44,16 +46,10 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, null, fetchFields, orderBy, sort);
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-		Seller seller = null;
 		if (customerAccountCode != null && customerAccount == null) {
-			throw new NotFoundException("Customer account with code " + customerAccountCode + " doesn't exist");
+			throw new NotFoundException("Customer account with code " + customerAccountCode + DOESNOT_EXIST_ERROR_MESSAGE);
 		}
-		if (StringUtils.isNotBlank(sellerCode)) {
-			seller = sellerService.findByCode(sellerCode);
-			if (seller == null) {
-				throw new NotFoundException("Seller with code " + sellerCode + " doesn't exist");
-			}
-		}
+		Seller seller = findSellerByCode(sellerCode);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}
@@ -136,8 +132,20 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	public Long getCountAgedReceivables(String customerAccountCode) {
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
         if (customerAccountCode != null && customerAccount == null) {
-			throw new NotFoundException("Customer account with code "+customerAccountCode+" doesn't exist");
+			throw new NotFoundException("Customer account with code "+customerAccountCode+ DOESNOT_EXIST_ERROR_MESSAGE);
 		}
         return recordedInvoiceService.getCountAgedReceivables(customerAccount);
+	}
+
+	private Seller findSellerByCode(String sellerCode) {
+		if (StringUtils.isNotBlank(sellerCode)) {
+			Seller seller = sellerService.findByCode(sellerCode);
+			if (seller == null) {
+				throw new NotFoundException("Seller with code " + sellerCode + DOESNOT_EXIST_ERROR_MESSAGE);
+			}
+			return seller;
+		}
+
+		return null;
 	}
 }
