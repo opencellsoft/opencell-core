@@ -9668,6 +9668,24 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-8507_20220715" author="ZBariki" />
 	<changeSet id="#INTRD-8946_20220804" author="aelmalki" />
 	
+	<changeSet id="#NTRD-2413_20211028_Business_attributes_add_el" author="MohammedELAZZOUZI" />
+	<changeSet id="#INTRD-4267_20220108" author="AmineBENAICHA" />
+	<changeSet id="INTRD-4680-01032022" author="TarikRabeh" />
+	<changeSet id="#INTRD-4702-20220321" author="ZBariki" />
+	<changeSet id="#INTRD-5960_20220328" author="HichamHANINE" />
+	<changeSet id="#INTRD-4666_20220331" author="HatimOUDAD" />
+	<changeSet id="#INTRD-6298_20220405" author="aelmalki" />
+	<changeSet id="#INTRD-6056_20220415" author="HatimOUDAD" />
+	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
+	<changeSet id="FIX validateBR script compile" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-7360_20220525" author="hichamhanine" />
+	<changeSet id="#INTRD-7573_20220602" author="TarikFA." />
+	<changeSet id="#INTRD-7428_20220524" author="ZBariki" />
+	<changeSet id="#INTRD-7402_20220608" author="aelmalki" />
+	<changeSet id="#INTRD-7632_20220611" author="HatimOUDAD" />
+	<changeSet id="#INTRD-8618-20220719" author="aelmalki" />
+	
+	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
