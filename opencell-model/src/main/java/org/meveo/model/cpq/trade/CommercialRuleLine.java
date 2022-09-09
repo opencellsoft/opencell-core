@@ -13,7 +13,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -316,6 +315,18 @@ public class CommercialRuleLine extends BaseEntity {
 				&& Objects.equals(sourceTag, other.sourceTag);
 	}
 	
+	
+	public boolean isSourceOfferAttribute() {
+		return sourceProduct == null;
+	}
+
+	public String getSourceOfferTemplateCode() {
+		return sourceOfferTemplate != null ? sourceOfferTemplate.getCode() : null;
+	}
+
+	public String getSourceProductCode() {
+		return sourceProduct != null ? sourceProduct.getCode() : null;
+	}
 	
 
  
