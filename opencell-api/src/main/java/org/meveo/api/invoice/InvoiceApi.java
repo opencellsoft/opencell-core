@@ -543,7 +543,7 @@ public class InvoiceApi extends BaseApi {
         serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
 
         Invoice invoice = invoiceService.findById(invoiceId);
-        Boolean brGenerateAO = Optional.of(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
+        Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
