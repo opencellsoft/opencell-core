@@ -10092,7 +10092,6 @@
             </column>
             <column name="aggregate_id_f" type="bigint" />
             <column name="cpq_quote_id" type="bigint"/>
-            <column name="user_account_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -14151,11 +14150,6 @@
         <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_cpq_quote_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
     </changeSet>
-    
-    <changeSet id="rebuild-str-fk-540-1639" author="MohammedELAZZOUZI">
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-    </changeSet> 
 
     <!-- end fk -->
 
@@ -16074,7 +16068,6 @@
     <changeSet id="INTRD-2371_19102021" author="AbdelkaderBouazza" />
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" />
 	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
-	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 

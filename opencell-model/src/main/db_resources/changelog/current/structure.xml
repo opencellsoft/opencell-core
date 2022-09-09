@@ -9891,12 +9891,4 @@ public class OrderAdvancement extends ModuleScript {
 			</column>
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
-     	<addColumn tableName="cpq_invoice_line">
-            <column name="user_account_id" type="bigint"></column>
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-   </changeSet> 
 </databaseChangeLog>

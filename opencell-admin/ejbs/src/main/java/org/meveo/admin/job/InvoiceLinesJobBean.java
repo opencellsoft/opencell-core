@@ -97,8 +97,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 						}
                         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
                         BasicStatistics basicStatistics = new BasicStatistics();
-                        Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000);
-                        assignAccountingArticleIfMissingInRTs(result, billableEntities, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
                         BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
                         iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(),true);
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntities.size(), INVOICE_LINES_CREATED);
@@ -111,42 +109,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             log.error(format("Failed to run invoice lines job: %s", exception));
         }
     }
-    
-    
-    /**
-    	 * @param billingRun
-         * @param waitingMillis 
-    	 * @param waitingMillis
-         * @param jobInstance 
-    	 * @param nbRuns
-         * @param jobExecutionResult 
-         * @param jobInstance 
-         * @param nbRuns 
-    	 */
-    	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
-    			Long maxInvoiceLinesPerTransaction, Long waitingMillis, JobInstance jobInstance, Long nbRuns) {
-    		BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> updateRTAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction);
-    		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(), true);
-    	}
-    
-    	/**
-    	 * @param result
-    	 * @param billingRun
-    	 * @param billableEntity
-    	 * @param maxInvoiceLinesPerTransaction
-    	 * @return
-    	 */
-    	private void updateRTAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Long maxInvoiceLinesPerTransaction) {
-    		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
-    			ratedTransactionService.calculateAccountingArticle(result, billableEntity, null, null);
-    		} else {
-    			int index=0;
-    			int count = maxInvoiceLinesPerTransaction.intValue();
-    			while(count >= maxInvoiceLinesPerTransaction){
-    				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), index++);
-   			}
-    		}
-    	}
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());

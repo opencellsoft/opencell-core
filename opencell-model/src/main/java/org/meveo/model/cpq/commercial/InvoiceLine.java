@@ -48,7 +48,6 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -253,13 +252,6 @@ public class InvoiceLine extends AuditableEntity {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "cpq_quote_id")
     private CpqQuote quote;
-	
-	 /**
-     * User account associated to invoice line
-     */
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
 
 	public InvoiceLine() {
 	}
@@ -315,7 +307,6 @@ public class InvoiceLine extends AuditableEntity {
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
 		this.status = InvoiceLineStatusEnum.OPEN;
-		this.userAccount = copy.userAccount;
 	}
 
 	public Invoice getInvoice() {
@@ -616,13 +607,6 @@ public class InvoiceLine extends AuditableEntity {
 	public void setQuote(CpqQuote quote) {
 		this.quote = quote;
 	}
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+	
 	
 }
