@@ -14293,5 +14293,16 @@ order by date_trunc('month', i.invoice_date) DESC
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
 	</changeSet>
+    <changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza">
+        <addColumn tableName="crm_address_book">
+            <column name="customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="address_book_crm_customer_id_fk"
+                                 baseColumnNames="customer_id"
+                                 baseTableName="crm_address_book"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id" />
+        <sql>update crm_address_book ab set customer_id=(select customer.id from crm_customer customer where customer.address_book_id = ab.id)</sql>
+    </changeSet>
 	
 </databaseChangeLog>
