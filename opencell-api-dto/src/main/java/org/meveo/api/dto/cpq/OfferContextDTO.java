@@ -70,7 +70,8 @@ public class OfferContextDTO extends BaseEntityDto {
     @Schema(description = "The selected services in the quote with their values, DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write")
     private LinkedHashMap<String, Object> selectedOfferAttributes;
     
-   
+    @Schema(description = "Context config")
+	private OfferContextConfigDTO config = new OfferContextConfigDTO();
     
 	 
 	public List<ProductContextDTO> getSelectedProducts() {
@@ -114,6 +115,12 @@ public class OfferContextDTO extends BaseEntityDto {
 	}
 	public void setSelectedOfferAttributes(LinkedHashMap<String, Object> selectedOfferAttributes) {
 		this.selectedOfferAttributes = selectedOfferAttributes;
+	}
+	public OfferContextConfigDTO getConfig() {
+		return config;
+	}
+	public void setConfig(OfferContextConfigDTO config) {
+		this.config = config;
 	}
  
 
