@@ -288,6 +288,18 @@ public class CommercialRuleLine extends BaseEntity {
 	public void setSourceGroupedAttributeValue(String sourceGroupedAttributeValue) {
 		this.sourceGroupedAttributeValue = sourceGroupedAttributeValue;
 	}
+	
+	public boolean isSourceOfferAttribute() {
+		return sourceProduct == null;
+	}
+
+	public String getSourceOfferTemplateCode() {
+		return sourceOfferTemplate != null ? sourceOfferTemplate.getCode() : null;
+	}
+
+	public String getSourceProductCode() {
+		return sourceProduct != null ? sourceProduct.getCode() : null;
+	}
 
 	@Override
 	public int hashCode() {
