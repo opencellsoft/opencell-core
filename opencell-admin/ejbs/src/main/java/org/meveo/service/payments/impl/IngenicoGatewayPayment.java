@@ -28,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -72,6 +73,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.PaymentProductFi
 import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.GetHostedCheckoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.PaymentProductFiltersHostedCheckout;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.CreateMandateRequest;
@@ -930,8 +932,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
 			log.info("RESPONSE:"+marshaller.marshal(response));
 			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
-
-			return new PaymentHostedCheckoutResponseDto(redirectionUrl, null, null);
+			return new PaymentHostedCheckoutResponseDto(redirectionUrl, null, null,response.getHostedCheckoutId());
 		} catch (Exception e) {
 			log.error("Error on getHostedCheckoutUrl:",e);
 			throw new BusinessException(e.getMessage());
@@ -974,4 +975,23 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	public String createInvoice(Invoice invoice) throws BusinessException {
 		 throw new UnsupportedOperationException();
 	}
+
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
+        try {           
+            getClient();           
+            GetHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().get(id);       
+            log.info("RESPONSE:"+marshaller.marshal(response));
+            HostedCheckoutStatusResponseDto hostedCheckoutStatusResponseDto = new HostedCheckoutStatusResponseDto();
+            hostedCheckoutStatusResponseDto.setHostedCheckoutStatus(response.getStatus());
+            if(response.getCreatedPaymentOutput() != null && response.getCreatedPaymentOutput().getPayment() != null ) {
+                hostedCheckoutStatusResponseDto.setPaymentId(response.getCreatedPaymentOutput().getPayment().getId());
+                hostedCheckoutStatusResponseDto.setPaymentStatus(mappingStaus(response.getCreatedPaymentOutput().getPayment().getStatus()));
+            }
+            return hostedCheckoutStatusResponseDto;
+        } catch (Exception e) {
+            log.error("Error on getHostedCheckoutStatus:",e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
 }
