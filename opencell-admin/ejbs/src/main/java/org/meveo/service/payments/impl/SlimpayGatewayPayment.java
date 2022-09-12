@@ -28,6 +28,7 @@ import javax.json.JsonObjectBuilder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -441,5 +442,10 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 			String iban) throws BusinessException {
 		// TODO Auto-generated method stub
 		return null;
-	} 
+	}
+
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
+        throw new UnsupportedOperationException();
+    } 
 }

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -288,15 +289,33 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-    	 Map<String, Object> scriptContext = new HashMap<>();
-         scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
-         scriptContext.put(PaymentScript.CONTEXT_HOSTED_CO, hostedCheckoutInput);
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+        scriptContext.put(PaymentScript.CONTEXT_HOSTED_CO, hostedCheckoutInput);
 
-         paymentScriptInterface.getHostedCheckoutUrl(scriptContext);
+        paymentScriptInterface.getHostedCheckoutUrl(scriptContext);
 
-         String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
+        String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
+        String hostedCheckoutId = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_ID);
 
-         return new PaymentHostedCheckoutResponseDto(hostedCheckoutUrl, null, null);
+        return new PaymentHostedCheckoutResponseDto(hostedCheckoutUrl, null, null, hostedCheckoutId);
+    }
+    
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+        scriptContext.put(PaymentScript.CONTEXT_HOSTED_CO_ID, id);
+
+        paymentScriptInterface.getHostedCheckoutStatus(scriptContext);
+
+        HostedCheckoutStatusResponseDto hostedCheckoutStatusResponseDto = new HostedCheckoutStatusResponseDto();
+        hostedCheckoutStatusResponseDto.setHostedCheckoutStatus((String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_STATUS));
+        hostedCheckoutStatusResponseDto.setPaymentId((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        hostedCheckoutStatusResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+
+        return hostedCheckoutStatusResponseDto;
+
     }
 
     @Override
