@@ -1014,6 +1014,7 @@ public class EntityExportImportService implements Serializable {
 
         xstream.registerConverter(entityExportIdentifierConverter, XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
+        xstream.setMode(XStream.NO_REFERENCES);
 
         ExportImportStatistics importStats = new ExportImportStatistics();
         int totalEntitiesCount = 0;
