@@ -667,6 +667,7 @@ public class EntityExportImportService implements Serializable {
                 // Indicate marshaling strategy to use - maintains references even when marshaling one object at a time
                 xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
                 xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "code");
+                xstream.setMode(XStream.NO_REFERENCES);
 
                 if (pagesProcessedByXstream > -1) {
                     writer.endNode();
@@ -1014,7 +1015,6 @@ public class EntityExportImportService implements Serializable {
 
         xstream.registerConverter(entityExportIdentifierConverter, XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
-        xstream.setMode(XStream.NO_REFERENCES);
 
         ExportImportStatistics importStats = new ExportImportStatistics();
         int totalEntitiesCount = 0;
