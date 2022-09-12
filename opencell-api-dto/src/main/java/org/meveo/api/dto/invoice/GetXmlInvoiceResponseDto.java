@@ -38,6 +38,27 @@ public class GetXmlInvoiceResponseDto extends BaseResponse {
     
     /** The xml content. */
     private String xmlContent;
+    
+    /** The xml FileName. */
+    private String xmlFileName;
+
+    /**
+     * Gets the xml FileName.
+     *
+     * @return the xmlFileName
+     */
+    public String getXmlFileName() {
+        return xmlFileName;
+    }
+
+    /**
+     * Sets the xml FileName.
+     *
+     * @param xmlFileName the xmlFileName to set
+     */
+    public void setXmlFileName(String xmlFileName) {
+        this.xmlFileName = xmlFileName;
+    }
 
     /**
      * Instantiates a new gets the xml invoice response dto.
@@ -66,7 +87,7 @@ public class GetXmlInvoiceResponseDto extends BaseResponse {
 
     @Override
     public String toString() {
-        return "GetXmlInvoiceResponseDto [xmlContent=" + xmlContent + "]";
+        return "GetXmlInvoiceResponseDto [xmlContent=" + xmlContent + ", xmlFileName=" + xmlFileName + "]";
     }
 
 }

@@ -19,7 +19,9 @@
 package org.meveo.api.dto.crm;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -39,6 +41,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AddressBookContact;
 
 public class ContactDto extends BusinessEntityDto {
 
@@ -110,6 +114,9 @@ public class ContactDto extends BusinessEntityDto {
 
     private String comment;
 
+    private Set<AddressBookContactDto> AddressBookContacts;
+
+
     @JsonProperty("isVip")
     @JsonAlias({ "isVip", "vip" })
     private boolean isVip;
@@ -133,6 +140,12 @@ public class ContactDto extends BusinessEntityDto {
 
     }
 
+    public ContactDto(Contact contact, Map<AddressBookContact, Customer> addressBookContactCustomers) {
+        this(contact);
+        this.setAddressBookContacts(addressBookContactCustomers.keySet().stream()
+                .map(abc -> new AddressBookContactDto(abc.getId(), abc.getAddressBook(), abc.getPosition(), abc.getMainContact(), addressBookContactCustomers.get(abc)))
+                .collect(Collectors.toSet()));
+    }
     public ContactDto(Contact contact) {
         super(contact);
         setAuditableEntity(contact);
@@ -159,6 +172,7 @@ public class ContactDto extends BusinessEntityDto {
         isVip = contact.isVip();
         isProspect = contact.isProspect();
         agreedToUA = contact.isAgreedToUA();
+        comment = contact.getComment();
         if (contact.getTags() != null && !contact.getTags().isEmpty()) {
             tags = contact.getTags();
         }
@@ -520,5 +534,13 @@ public class ContactDto extends BusinessEntityDto {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Set<AddressBookContactDto> getAddressBookContacts() {
+        return AddressBookContacts;
+    }
+
+    public void setAddressBookContacts(Set<AddressBookContactDto> addressBookContacts) {
+        AddressBookContacts = addressBookContacts;
     }
 }

@@ -106,11 +106,23 @@
           "client": {
             "opencell-web": [
               "apiAdministrateur",
-              "administrateur"
+              "administrateur",
+              "apiSuperAdministrateur",
+              "inboundAccess"
             ],
             "opencell-portal": [
               "PORTAL_USER",
-              "ADMIN"
+              "ADMIN",
+              "QUERY_MANAGER",
+              "MENU_QUOTES",
+              "ADVANCED_USER",
+              "QUERY_USER",
+              "FINANCE_MANAGER",
+              "CFO",
+              "C_CARE",
+              "SALES",
+              "PRODUCT/ADV",
+              "MARKETING_MANAGER"
             ]
           }
         },
@@ -2931,7 +2943,15 @@
               "opencell-portal": [
                 "QUERY_MANAGER",
                 "PORTAL_USER",
-                "MENU_QUOTES"
+                "MENU_QUOTES",
+                "ADVANCED_USER",
+                "QUERY_USER",
+                "FINANCE_MANAGER",
+                "CFO",
+                "C_CARE",
+                "SALES",
+                "PRODUCT/ADV",
+                "MARKETING_MANAGER"
               ]
             }
           },
@@ -14508,6 +14528,18 @@
             "config": {
               "resources": "[\"Page Report extracts\"]",
               "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Role reportingVisualization\"]"
+            }
+          },
+          {
+            "id": "561f639a-279b-4c87-9557-a31268b3a258",
+            "name": "Page Report extracts - update",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Page Report extracts\"]",
+              "scopes": "[\"PUT\",\"DELETE\",\"POST\"]",
               "applyPolicies": "[\"Role reportExtractManagement\"]"
             }
           },

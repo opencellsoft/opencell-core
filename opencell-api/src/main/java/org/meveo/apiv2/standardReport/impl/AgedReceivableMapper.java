@@ -62,6 +62,8 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 				.tradingCurrency(agedReceivableDto.getTradingCurrency())
 				.billedAmount(agedReceivableDto.getBilledAmount())
 				.customerId(agedReceivableDto.getCustomerId())
+				.sellerDescription(agedReceivableDto.getSellerDescription())
+				.sellerCode(agedReceivableDto.getSellerCode())
 				.build();
     }
 
@@ -87,10 +89,10 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setSum31To60((BigDecimal) agedList[5]);
 			agedReceivableDto.setSum61To90((BigDecimal)agedList[8]);
 			agedReceivableDto.setSum90Up((BigDecimal)agedList[11]);
-			agedReceivableDto.setGeneralTotal(((BigDecimal)agedList[2])
-											.add((BigDecimal)agedList[5])
-											.add((BigDecimal)agedList[8])
-											.add((BigDecimal)agedList[11]));
+			agedReceivableDto.setGeneralTotal(((BigDecimal)agedList[3])
+											.add((BigDecimal)agedList[6])
+											.add((BigDecimal)agedList[9])
+											.add((BigDecimal)agedList[12]));
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[14]);
 			agedReceivableDto.setCustomerAccountName(agedList[15] == null ? null : getName((Name) agedList[15]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedList[16]);
@@ -145,9 +147,11 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedReceivable[startingSumIndex]);
 			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
 			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setSellerDescription((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setSellerCode((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setDueDate(agedReceivable[++startingSumIndex] == null ? null : ((Date) agedReceivable[startingSumIndex]));
 			agedReceivableDto.setTradingCurrency((String) agedReceivable[++startingSumIndex]);
-			BigDecimal generalTotal = agedReceivableDto.getNetAmountByPeriod()
+			BigDecimal generalTotal = agedReceivableDto.getTotalAmountByPeriod()
 					.stream()
 					.reduce(ZERO, BigDecimal::add);
 			agedReceivableDto.setGeneralTotal(generalTotal);

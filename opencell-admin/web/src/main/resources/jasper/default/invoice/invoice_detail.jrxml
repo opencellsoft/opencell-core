@@ -93,7 +93,7 @@
 							<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						</reportElement>
 						<textElement verticalAlignment="Top">
-							<font fontName="DejaVu Sans" size="9"/>
+							<font fontName="Arial" size="9"/>
 						</textElement>
 						<text><![CDATA[Be Smart, Be Automated]]></text>
 					</staticText>

@@ -2105,10 +2105,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -2510,10 +2510,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -2601,6 +2601,9 @@
             <column name="pdf_job_execution_result_id" type="bigint" />
             <column name="is_quarantine" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="description_i18n" type="${type.json}" />
+            <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -3241,7 +3244,8 @@
             <column name="invoicing_date" type="datetime" />
             <column name="sequence" type="int4"/>
             <column name="reject_reason" type="varchar(4000)" />
-            <column name="origin_billing_account" type="bigint" />            
+            <column name="origin_billing_account" type="bigint" />
+            <column name="rules_contract_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -3511,6 +3515,7 @@
             <column name="previous_version" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="sales_person_name" type="varchar(52)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -3681,10 +3686,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -3837,6 +3842,10 @@
             <column name="old_wallet_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)"/>
             <column name="sequence" type="int4"/>
+            <column name="rules_contract_id" type="bigint" />
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4666,10 +4675,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -4693,6 +4702,8 @@
             <column name="legal_entity_type_id" type="bigint" />
             <column name="reference" type="varchar(80)" />
             <column name="comment" type="varchar(2000)" />
+            <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="contact_category_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -4879,10 +4890,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="usecolor" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
@@ -5014,10 +5025,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -5162,10 +5173,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="center_code" type="varchar(255)" />
             <column name="creditor_code" type="varchar(255)" />
             <column name="financial_institution_code" type="varchar(255)" />
@@ -5286,10 +5297,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="email" type="varchar(100)" />
             <column name="fax" type="varchar(50)" />
             <column name="firstname" type="varchar(50)" />
@@ -5332,10 +5343,10 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
-            <column name="address_zipcode" type="varchar(10)" />
+            <column name="address_zipcode" type="varchar(20)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="external_ref_1" type="varchar(255)" />
             <column name="external_ref_2" type="varchar(255)" />
@@ -6936,7 +6947,7 @@
             <column name="address_3" type="varchar(255)" />
             <column name="address_4" type="varchar(255)" />
             <column name="address_5" type="varchar(255)" />
-            <column name="address_city" type="varchar(50)" />
+            <column name="address_city" type="varchar(100)" />
             <column name="address_country_id" type="bigint" />
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(10)" />
@@ -7509,6 +7520,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
+            <column name="customer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-365">
@@ -8971,7 +8983,6 @@
             <column name="tag_type_id" type="bigint" />
             <column name="parent_tag_id" type="bigint" />
             <column name="filter_el" type="varchar(2000)"/>
-            <column name="open_order_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -9432,6 +9443,10 @@
             <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
+            <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
+                <constraints nullable="false"/>
+            </column>
+
         </createTable>
         <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
@@ -9974,6 +9989,9 @@
             <column name="parameter_2" type="varchar(255)"/>
             <column name="parameter_3" type="varchar(255)"/>
             <column name="mapping_key_el" type="varchar(255)"/>
+			<column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-470" author="NabilOUACHI">
@@ -9996,6 +10014,9 @@
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
+			<column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-471" author="NabilOUACHI">
@@ -10089,6 +10110,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
             <column name="discount_plan_id" type="bigint"/>
+            <column name="sales_person_name" type="varchar(52)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -10698,7 +10720,7 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
 			<column name="price_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
-            <column name="price_without_tax" type="numeric(23, 12)" />
+            <column name="value" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -12085,7 +12107,22 @@
             <column name="balance" type="numeric(23, 12)">
                 <constraints nullable="false" />
             </column>
+            <column name="cancel_reason" type="varchar(4000)"/>
         </createTable>
+    </changeSet>
+    <changeSet id="#INTRD-9451_20220902_rebuild" author="KhalidHORRI" >
+
+        <createTable tableName="open_order_tags">
+            <column name="open_order_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="open_order_id,tag_id"
+                       constraintName="open_order_tags_pkey"
+                       tableName="open_order_tags"/>
     </changeSet>
     <!-- end tables -->
 
@@ -12104,7 +12141,19 @@
         <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
         <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
     </changeSet>
-    
+    <changeSet id="crm_address_book_contact-table-creation" author="abdelkader.bouazza">
+        <createTable tableName="crm_address_book_contact">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_contact_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="address_book_id" type="bigint" />
+            <column name="contact_id" type="bigint" />
+            <column name="position" type="varchar(30)" />
+            <column name="main_contact" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addUniqueConstraint columnNames="id,address_book_id,contact_id" constraintName="id_address_book_id_contact_id_UNIQUE" tableName="crm_address_book_contact" />
+    </changeSet>
     
     <!-- start views -->
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-view-1" dbms="postgresql">
@@ -14614,8 +14663,12 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
-    <changeSet author="hichamHANINE" id="rebuild-str-fk1-8743">          
+    <changeSet author="hichamHANINE" id="rebuild-str-fk1-8743">
         <addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
+    <changeSet author="hichamHANINE" id="rebuild-str-fk1-9442">
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wa_op_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
     </changeSet>
     <!-- media post FK -->
 
@@ -16421,10 +16474,19 @@
                                  constraintName="billing_accounting_article_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="cpq_tag" baseColumnNames="open_order_id"
-                                 constraintName="cpq_tag_open_order_id_fk"
-                                 referencedTableName="open_order"
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
+                                 constraintName="address_book_contact_address_book_fk"
+                                 referencedTableName="crm_address_book"
                                  referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="contact_id"
+                                 constraintName="address_book_contact_contact_fk"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="address_book_crm_customer_id_fk"
+                                 baseColumnNames="customer_id"
+                                 baseTableName="crm_address_book"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
 
@@ -17170,7 +17232,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
-	
+
 	<changeSet id="#INTRD-8777_20220728-rebuild" author="aelmalki">
 		<createTable tableName="billing_run_job_execution">
 			<column name="billing_run_id" type="bigint">
@@ -17188,9 +17250,9 @@
 		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
 								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
 								 referencedColumnNames="id"/>
-							
+
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-9117_20220811-init-table" author="aelmalki">
 		<createTable tableName="open_order_products">
 			<column name="open_order_id" type="bigint">
@@ -17216,7 +17278,7 @@
 							 constraintName="open_order_articles_pkey"
 							 tableName="open_order_articles"/>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-9117_20220811-FK" author="aelmalki">
         <addForeignKeyConstraint baseTableName="open_order_products" baseColumnNames="open_order_id"
                                  constraintName="open_order_products_open_order_id_fk"
@@ -17239,6 +17301,68 @@
 	                                 referencedTableName="open_order_article"
 	                                 referencedColumnNames="id"/>
 	</changeSet>
+    <changeSet id="#INTRD-9451_20220902_fk" author="KhalidHORRI" >
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="open_order_id"
+                                 constraintName="open_order_tags_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9581_20220907_FK" author="TarikFA.">
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_id_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_id_fk" 
+								 referencedTableName="cpq_contract" 
+								 baseColumnNames="contract_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-9598-20220909-contact-category" author="a.rouaguebe">
+        <createTable tableName="com_contact_category">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_category_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_com_contact_category_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_category" />
+
+        <addForeignKeyConstraint constraintName="contact_ contact_category_id_fk"
+                                 baseColumnNames="contact_category_id"
+                                 baseTableName="com_contact"
+                                 referencedTableName="com_contact_category"
+                                 referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -18446,6 +18570,26 @@
 	<changeSet id="#INTRD-8743_20220802" author="HichamHANINE"/>
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki" />
 	<changeSet id="#INTRD-9117_20220814-remove-oo-ids" author="aelmalki" />
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri"/>
+    <changeSet id="#INTRD-9232_20220819" author="aelmalki" />
+    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" />
+
+
+	<changeSet id="#INTRD-86_20220815" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-7301_20220820_order" author="zelmeliani" />
+	<changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani" />
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki" />
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri"/>
+    <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani" />
+    <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza"/>
+    <changeSet id="#INTRD-9442_20220831" author="HichamHANINE"/>
+    <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
+    <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
+	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
+	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
+    <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

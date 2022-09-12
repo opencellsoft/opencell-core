@@ -131,10 +131,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
-
             result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, invoiceNumber, invoiceType));
+            result.setXmlFileName(invoiceApi.getFilePathByInvoiceIdType(invoiceId, "xml"));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -157,8 +156,8 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
         try {
-
             result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId, invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
+            result.setPdfFileName(invoiceApi.getFilePathByInvoiceIdType(invoiceId, "pdf"));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
@@ -172,10 +171,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
-
             result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId, invoiceNumber, invoiceType));
+            result.setPdfFileName(invoiceApi.getFilePathByInvoiceIdType(invoiceId, "pdf"));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

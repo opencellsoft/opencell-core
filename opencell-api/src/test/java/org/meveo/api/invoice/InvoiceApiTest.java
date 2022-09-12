@@ -50,6 +50,8 @@ public class InvoiceApiTest {
 
         Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(invoice);
 
+        Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
+        
         String invNumber = invoiceApi.validateInvoice(invoiceId, false, true);
 
         Assert.assertEquals("INV_NUMB1", invNumber);

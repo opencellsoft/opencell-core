@@ -18,6 +18,7 @@ import org.meveo.model.ordering.OpenOrderTemplateStatusEnum;
 import org.meveo.model.ordering.Threshold;
 import org.meveo.model.ordering.ThresholdRecipientsEnum;
 import org.meveo.model.settings.OpenOrderSetting;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -399,7 +400,7 @@ public class OpenOrderQuoteApi {
         ooq.setExternalReference(dto.getExternalReference());
         ooq.setEndOfValidityDate(dto.getEndOfValidityDate());
         ooq.setBillingAccount(billingAccount);
-        ooq.setActivationDate(dto.getActivationDate());
+        ooq.setActivationDate(DateUtils.setTimeToZero(dto.getActivationDate()));
         ooq.setArticles(articles);
         ooq.setProducts(products);
         ooq.setTags(tags);

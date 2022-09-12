@@ -50,4 +50,10 @@ public interface ChargeCdrListInput extends CdrListInput {
     default boolean isReturnCounters() {
         return false;
     }
+
+    @Default
+    @Schema(description = "If true, the API will automatically generate RTs")
+    default boolean isGenerateRTs() {
+        return false;
+    }
 }

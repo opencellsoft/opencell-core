@@ -232,6 +232,14 @@ public class ParamBean {
         return dir;
     }
 
+    public String getProvidersRootDir() {
+    	ParamBean currentInstance = getInstance();
+        if (currentInstance == null) {
+            return null;
+        }
+        return currentInstance.getProperty("providers.rootDir", "./opencelldata");
+    }
+
     /**
      * Get application configuration properties
      * 

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
@@ -150,6 +151,12 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setDiscountPlan(quoteVersion.getDiscountPlan());
 		order.setDeliveryDate(cpqQuote.getDeliveryDate());
 		order.setUserAccount(cpqQuote.getUserAccount());
+		
+		// Set Sales Person Name when it's not null in CpqQuote
+		if(StringUtils.isNotEmpty(cpqQuote.getSalesPersonName())) {
+			order.setSalesPersonName(cpqQuote.getSalesPersonName());
+		}
+		
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
 		if(customFieldsFromQuoteVersion != null && customFieldsFromQuoteVersion.getValues() != null && !customFieldsFromQuoteVersion.getValues().isEmpty()) {

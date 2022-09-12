@@ -85,8 +85,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @Inject
     private DiscountPlanService discountPlanService;
     @Inject
-    private OrderLotService orderLotService;
-    @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
 	@Override
@@ -205,6 +203,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
@@ -367,16 +366,19 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 		}
 		
-	Map<String,AttributeInstance> instantiatedAttributes=new HashMap<String, AttributeInstance>();
+		Map<String,AttributeInstance> instantiatedAttributes = new HashMap<String, AttributeInstance>();
 		
-		for (OrderAttribute orderAttribute : orderAttributes) {
-			if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
-			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
-			attributeInstance.setServiceInstance(serviceInstance);
-			attributeInstance.setSubscription(subscription);
-			instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+		if(orderAttributes != null && orderAttributes.size() > 0) {
+			for (OrderAttribute orderAttribute : orderAttributes) {
+				if(orderAttribute.getAttribute()!=null  && !AttributeTypeEnum.EXPRESSION_LANGUAGE.equals(orderAttribute.getAttribute().getAttributeType())) {
+					AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
+					attributeInstance.setServiceInstance(serviceInstance);
+					attributeInstance.setSubscription(subscription);
+					instantiatedAttributes.put(orderAttribute.getAttribute().getCode(),attributeInstance);
+				}
 			}
 		}
+		
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {

@@ -184,10 +184,10 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
     public void prePersistOrUpdate() {
         BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
         this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                ? this.amountWithoutTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+                ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
         this.convertedAmountTax = this.amountTax != null
-                ? this.amountTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+                ? this.amountTax.multiply(appliedRate) : ZERO;
         this.convertedAmountWithTax = this.amountWithTax != null
-                ? this.amountWithTax.divide(appliedRate, NB_DECIMALS, HALF_UP) : ZERO;
+                ? this.amountWithTax.multiply(appliedRate) : ZERO;
     }
 }

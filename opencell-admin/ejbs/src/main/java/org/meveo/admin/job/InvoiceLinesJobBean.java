@@ -27,6 +27,8 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -109,8 +111,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
         QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
-        queryBuilder.addSql(" a.status = 'OPEN' and a.billingRun IS NULL");
-        billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
+        List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
+        billingRun.setExceptionalRTIds(ratedTransactions
+                .stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
+                .map(rt -> rt.getId()).collect(toList()));
     }
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {

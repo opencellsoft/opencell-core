@@ -18,7 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
 import org.meveo.api.TaxApi;
@@ -33,6 +32,7 @@ import org.meveo.api.rest.TaxRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.ExceptionUtils;
 
+import javax.ejb.EJBException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -53,7 +53,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         try {
             taxApi.create(postData);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
@@ -64,7 +64,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         try {
             taxApi.update(postData);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
@@ -102,20 +102,16 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
             Long idEntity = taxApi.createOrUpdate(postData);
             result.setEntityId(idEntity);
         } catch (Exception exception) {
-            result = processException(exception);
+            processException(processExceptionMessage(exception), result);
         }
         return result;
     }
 
-    private ActionStatus processException(Exception exception) {
-        ActionStatus result = new ActionStatus(FAIL, exception.getMessage());
-        if(exception.getMessage() != null) {
-            String[] errorMessage = exception.getMessage().split(":");
-            if(errorMessage.length > 1) {
-                result.setMessage(errorMessage[1]);
-            }
+    private MeveoApiException processExceptionMessage(Exception exception) {
+        if(exception instanceof EJBException) {
+            return new MeveoApiException(exception.getCause().getMessage());
         }
-        return result;
+        return new MeveoApiException(exception.getMessage());
     }
 
     @Override

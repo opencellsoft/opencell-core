@@ -123,7 +123,6 @@ public class OrderProduct extends AuditableCFEntity {
     @Column(name = "instance_status", length = 10)
    	private InstanceStatusEnum status;
 	
-	
 	public void update(OrderProduct other) {
     	this.orderOffer = other.orderOffer;
     	this.order = other.order;
@@ -319,5 +318,4 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setStatus(InstanceStatusEnum status) {
 		this.status = status;
 	}
-			
 }

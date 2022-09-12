@@ -85,54 +85,47 @@ public class RatedTransactionsJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
-
-        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode(CF_NB_RUNS);
-        customFieldNbRuns.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldNbRuns.setActive(true);
-        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("-1");
-        customFieldNbRuns.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:0");
-        result.put(CF_NB_RUNS, customFieldNbRuns);
-
-        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
-        customFieldNbWaiting.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldNbWaiting.setActive(true);
-        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbWaiting.setDefaultValue("0");
-        customFieldNbWaiting.setValueRequired(false);
-        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:1");
-        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
-
-        CustomFieldTemplate batchSize = new CustomFieldTemplate();
-        batchSize.setCode(CF_BATCH_SIZE);
-        batchSize.setAppliesTo("JobInstance_RatedTransactionsJob");
-        batchSize.setActive(true);
-        batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
-        batchSize.setFieldType(CustomFieldTypeEnum.LONG);
-        batchSize.setValueRequired(true);
-        batchSize.setDefaultValue("10000");
-        batchSize.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:2");
-        result.put(batchSize.getCode(), batchSize);
+        
+        result.put(CF_NB_RUNS, buildCF(CF_NB_RUNS, "jobExecution.nbRuns", CustomFieldTypeEnum.LONG, 
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false, null, null));        
+        
+        result.put(Job.CF_WAITING_MILLIS, buildCF(Job.CF_WAITING_MILLIS, "jobExecution.waitingMillis", CustomFieldTypeEnum.LONG, 
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null));    
+        
+        result.put(CF_BATCH_SIZE, buildCF(CF_BATCH_SIZE, "jobExecution.batchSize", CustomFieldTypeEnum.LONG, 
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "10000", true, null, null));
+        
+        result.put(CF_APPLY_BILING_RULES, buildCF(CF_APPLY_BILING_RULES, "jobExecution.applyBillingRules", 
+            CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "false", true, null, null));//HHAN
         
         // aggregations
-        CustomFieldTemplate customFieldAggregationMatrix = new CustomFieldTemplate();
-        customFieldAggregationMatrix.setCode("woAggregationSettings");
-        customFieldAggregationMatrix.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldAggregationMatrix.setActive(true);
-        customFieldAggregationMatrix.setDescription(resourceMessages.getString("jobExecution.woAggregationSettings"));
-        customFieldAggregationMatrix.setFieldType(CustomFieldTypeEnum.ENTITY);
-        customFieldAggregationMatrix.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        customFieldAggregationMatrix.setEntityClazz("org.meveo.model.billing.WalletOperationAggregationSettings");
-        customFieldAggregationMatrix.setValueRequired(false);
-        customFieldAggregationMatrix.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0");
-        result.put("woAggregationSettings", customFieldAggregationMatrix);
+        result.put("woAggregationSettings", buildCF("woAggregationSettings", "jobExecution.woAggregationSettings", 
+            CustomFieldTypeEnum.ENTITY, "tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0", null, false,
+            CustomFieldStorageTypeEnum.SINGLE, "org.meveo.model.billing.WalletOperationAggregationSettings"));
 
         return result;
+    }
+    
+    private CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum type,
+            String guiPosition, String defaultValue, boolean valueRequire, CustomFieldStorageTypeEnum cFSTEnum, String entityClazz) {
+        CustomFieldTemplate cft = new CustomFieldTemplate();
+        cft.setCode(code);
+        cft.setAppliesTo("JobInstance_RatedTransactionsJob");
+        cft.setActive(true);
+        cft.setDescription(resourceMessages.getString(description));
+        cft.setFieldType(type);
+        cft.setValueRequired(valueRequire);
+        cft.setGuiPosition(guiPosition);
+        if (defaultValue!= null) {
+            cft.setDefaultValue(defaultValue);
+        }        
+        if (cFSTEnum != null) {
+            cft.setStorageType(cFSTEnum);
+        }
+        if (entityClazz != null) {
+            cft.setEntityClazz(entityClazz);
+        }        
+        return cft;
     }
 
 }

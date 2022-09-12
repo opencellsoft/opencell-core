@@ -40,7 +40,7 @@ public class GetPdfInvoiceResponseDto extends BaseResponse {
     
     /** The pdf content. */
     private byte[] pdfContent;
-
+    
     /**
      * Instantiates a new gets the pdf invoice response dto.
      */
@@ -69,6 +69,27 @@ public class GetPdfInvoiceResponseDto extends BaseResponse {
     @Override
     public String toString() {
         return "GetPdfInvoiceResponseDto [pdfContent=" + Arrays.toString(pdfContent) + "]";
+    }
+
+    /** The PDF FileName. */
+    private String pdfFileName;
+    
+    /**
+     * Gets the PDF FileName.
+     *
+     * @return the pdfFileName
+     */
+    public String getPdfFileName() {
+        return pdfFileName;
+    }
+    
+    /**
+     * Sets the PDF FileName.
+     *
+     * @param xmlFileName the pdfFileName to set
+     */
+    public void setPdfFileName(String pdfFileName) {
+        this.pdfFileName = pdfFileName;
     }
 
 }

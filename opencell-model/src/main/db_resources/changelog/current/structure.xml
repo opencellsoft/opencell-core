@@ -11549,13 +11549,13 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="amount_without_tax_before_discount" type="numeric(23, 12)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#INTRD-8743_20220802" author="HichamHANINE">		
+
+    <changeSet id="#INTRD-8743_20220802" author="HichamHANINE">
 		<addColumn tableName="billing_rated_transaction">
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
         </addColumn>
-		
+
 		<addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
 	</changeSet>
 
@@ -13945,7 +13945,7 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_without_tax"/>
         <dropColumn tableName="cpq_price_plan_version" columnName="amount_with_tax"/>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-8777_20220728" author="aelmalki">
 		<createTable tableName="billing_run_job_execution">
 			<column name="billing_run_id" type="bigint">
@@ -13963,7 +13963,7 @@ order by date_trunc('month', i.invoice_date) DESC
 		<addForeignKeyConstraint baseTableName="billing_run_job_execution" baseColumnNames="job_execution_id"
 								 constraintName="billing_run_job_execution_job_execution_id_fk" referencedTableName="job_execution"
 								 referencedColumnNames="id"/>
-							
+
 	</changeSet>
 
     <changeSet id="#INTRD-8701_20220801" author="ZBariki">
@@ -13995,7 +13995,7 @@ order by date_trunc('month', i.invoice_date) DESC
             <column name="comment" type="varchar(2000)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
     </changeSet>
@@ -14063,6 +14063,286 @@ order by date_trunc('month', i.invoice_date) DESC
         <addColumn tableName="billing_invoice_configuration">
             <column name="display_tax_details" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7301_20220820_order" author="zelmeliani">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-7301_20220820_subscription" author="zelmeliani">
+        <addColumn tableName="billing_subscription">
+            <column name="sales_person_name" type="varchar(52)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-9232_20220819" author="aelmalki">
+        <addColumn tableName="billing_article_mapping_line">
+            <column name="attribute_operator" type="varchar(10)" defaultValue="AND">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+        <addColumn tableName="billing_attribute_mapping">
+            <column name="operator" type="varchar(50)" defaultValue="EQUAL">
+                <constraints nullable="false"/>
+			</column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-8867_20220817-" author="KHorri">
+        <addColumn tableName="open_order">
+            <column name="cancel_reason" type="varchar(4000)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
+         <update tableName="crm_provider">
+            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
+            <where>email is null</where>
+         </update>
+         <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
+	</changeSet>
+
+    <changeSet id="#INTRD-9451_20220902" author="KhalidHORRI" >
+
+        <createTable tableName="open_order_tags">
+            <column name="open_order_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="open_order_id,tag_id"
+                       constraintName="open_order_tags_pkey"
+                       tableName="open_order_tags"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="open_order_id"
+                                 constraintName="open_order_tags_open_order_id_fk"
+                                 referencedTableName="open_order"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="open_order_tags" baseColumnNames="tag_id"
+                                 constraintName="open_order_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+        <dropForeignKeyConstraint baseTableName="cpq_tag"
+                                  constraintName="cpq_tag_open_order_id_fk"/>
+        <dropColumn tableName="cpq_tag">
+            <column name="open_order_id" />
+        </dropColumn>
+    </changeSet>
+
+    
+    
+
+    <changeSet id="#INTRD-9442_20220831" author="HichamHANINE">
+		<addColumn tableName="billing_rated_transaction">
+            <column name="rules_contract_id" type="bigint" />
+        </addColumn>
+		<addColumn tableName="billing_wallet_operation">
+            <column name="rules_contract_id" type="bigint" />
+        </addColumn>
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wa_op_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+	</changeSet>
+
+    <changeSet id="#INTRD-9331_20220824_rt_migration" author="anas.rouaguebe">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set origin_billing_account = billing_account__id where origin_billing_account is null</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-7303_20220824_sales_person_name_migration" author="zelmeliani">
+        <sql>
+        	update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
+			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
+			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
+			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
+			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}cpq_quote set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(cpq_quote.creator) = lower(adm_user.username)
+			and (cpq_quote.sales_person_name is null or cpq_quote.sales_person_name = '')
+			and adm_user.firstname != ''
+			and adm_user.lastname != '';
+		</sql>
+		<sql>
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
+			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
+			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
+			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
+			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}cpq_commercial_order set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(cpq_commercial_order.creator) = lower(adm_user.username)
+			and (cpq_commercial_order.sales_person_name is null or cpq_commercial_order.sales_person_name = '')
+			and adm_user.firstname != ''
+			and adm_user.lastname != '';
+		</sql>
+		<sql>
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
+			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
+			and (adm_user.firstname IS NULL or adm_user.firstname = '') and (adm_user.lastname is null or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.username from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
+			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
+			and (adm_user.firstname IS not NULL or adm_user.firstname != '') and (adm_user.lastname is null  or adm_user.lastname = '');
+		</sql>
+		<sql>
+			update ${db.schema.adapted}billing_subscription set sales_person_name = adm_user.firstname || ' ' || adm_user.lastname from ${db.schema.adapted}adm_user
+			where lower(billing_subscription.creator) = lower(adm_user.username)
+			and (billing_subscription.sales_person_name is null or billing_subscription.sales_person_name = '')
+			and adm_user.firstname != ''
+			and adm_user.lastname != '';
+		</sql>
+	</changeSet>
+    <changeSet id="#INTRD-9383-20220830" author="Abdelkader.Bouazza">
+        <modifyDataType tableName="ar_customer_account" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="billing_billing_account" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="billing_user_account" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="com_contact" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="com_sender_config" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="crm_customer" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="crm_provider" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="crm_provider_contact" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="crm_seller" columnName="address_zipcode" newDataType="varchar(20)" />
+        <modifyDataType tableName="ord_order_item" columnName="address_zipcode" newDataType="varchar(20)" />
+    </changeSet>
+
+    <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza">
+        <createTable tableName="crm_address_book_contact">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_contact_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="address_book_id" type="bigint" />
+            <column name="contact_id" type="bigint" />
+            <column name="position" type="varchar(30)" />
+            <column name="main_contact" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
+                                 constraintName="address_book_contact_address_book_fk"
+                                 referencedTableName="crm_address_book"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="contact_id"
+                                 constraintName="address_book_contact_contact_fk"
+                                 referencedTableName="com_contact"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint columnNames="id,address_book_id,contact_id" constraintName="id_address_book_id_contact_id_UNIQUE" tableName="crm_address_book_contact" />
+        <addColumn tableName="com_contact">
+            <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza">
+        <modifyDataType tableName="ar_customer_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="billing_billing_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="billing_user_account" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="com_contact" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="com_sender_config" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_customer" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_provider" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_provider_contact" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="crm_seller" columnName="address_city" newDataType="varchar(100)" />
+        <modifyDataType tableName="ord_order_item" columnName="address_city" newDataType="varchar(100)" />
+    </changeSet>
+
+	<changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe">
+		<addColumn tableName="billing_billing_run">
+            <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-9581_20200907" author="TarikFA.">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_id" type="bigint" />
+		</addColumn>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_id_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_id_fk" 
+								 referencedTableName="cpq_contract" 
+								 baseColumnNames="contract_id" 
+								 baseTableName="billing_wallet_operation" 
+								 referencedColumnNames="id"/>
+	</changeSet>
+    <changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza">
+        <addColumn tableName="crm_address_book">
+            <column name="customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="address_book_crm_customer_id_fk"
+                                 baseColumnNames="customer_id"
+                                 baseTableName="crm_address_book"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id" />
+        <sql>update crm_address_book ab set customer_id=(select customer.id from crm_customer customer where customer.address_book_id = ab.id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-9598-20220909-contact-category" author="a.rouaguebe">
+        <createTable tableName="com_contact_category">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_category_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_com_contact_category_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_category" />
+        <addColumn tableName="com_contact">
+            <column name="contact_category_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="contact_ contact_category_id_fk"
+                                 baseColumnNames="contact_category_id"
+                                 baseTableName="com_contact"
+                                 referencedTableName="com_contact_category"
+                                 referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="#INTRD-9684-20220909" author="khalidHORRI">
+        <addColumn tableName="cpq_price_plan_version">
+            <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <renameColumn tableName="cpq_price_plan_matrix_line" oldColumnName="price_without_tax" newColumnName="value"/>
     </changeSet>
 
 </databaseChangeLog>

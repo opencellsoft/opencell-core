@@ -164,6 +164,8 @@ public class PaymentPlanService extends BusinessService<PaymentPlan> {
         paymentPlan.getTargetedAos().forEach(accountOperation -> {
             if (accountOperation instanceof RecordedInvoice) {
                 Invoice inv = ((RecordedInvoice) accountOperation).getInvoice();
+                log.info("[Inv.id : " + inv.getId() + " - oldPaymentStatus : " + 
+                        inv.getPaymentStatus() + " - newPaymentStatus : " + paymentStatus + "]");
                 invoiceService.checkAndUpdatePaymentStatus(inv, inv.getPaymentStatus(), paymentStatus);
                 inv.setPaymentStatusDate(new Date());
                 inv.setPaymentPlan(paymentPlan);

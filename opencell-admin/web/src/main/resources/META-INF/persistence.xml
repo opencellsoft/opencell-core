@@ -21,7 +21,9 @@
             <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
-
+            <!-- PG driver 42.5.0 needs this to work with partitioned tables -->
+            <property name="hibernate.hbm2dll.extra_physical_table_types" value="PARTITIONED TABLE" />
+                            
             <!-- Group multiple inserts and updates in a single transaction into a single insert or update. https://vladmihalcea.com/how-to-batch-insert-and-update-statements-with-hibernate -->
             <property name="hibernate.jdbc.batch_size" value="500" />
             <property name="hibernate.order_inserts" value="true" />
@@ -65,6 +67,8 @@
             <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <!-- PG driver 42.5.0 needs this to work with partitioned tables -->
+            <property name="hibernate.hbm2dll.extra_physical_table_types" value="PARTITIONED TABLE" />
 
             <!-- Group multiple inserts and updates in a single transaction into a single insert or update. https://vladmihalcea.com/how-to-batch-insert-and-update-statements-with-hibernate -->
             <property name="hibernate.jdbc.batch_size" value="500" />

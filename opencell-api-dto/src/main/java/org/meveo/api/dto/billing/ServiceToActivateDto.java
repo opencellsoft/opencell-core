@@ -47,7 +47,7 @@ public class ServiceToActivateDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3815026205495621916L;
 
-    /** The id. */
+    @JsonIgnore
     private Long id;
 
     /** The code. */
@@ -87,13 +87,13 @@ public class ServiceToActivateDto implements Serializable {
 
     /** The rate until date. */
     private Date rateUntilDate;
-    
+
     /** The amount PS. */
     private BigDecimal amountPS;
-    
+
     /** The calendar PS code. */
     private String calendarPSCode;
-    
+
     /** The payment day in month PS. */
     private Integer paymentDayInMonthPS;
 
@@ -116,30 +116,28 @@ public class ServiceToActivateDto implements Serializable {
      * Corresponding to minimum one shot charge template code.
      */
     private String minimumChargeTemplate;
-    
+
     /**
-     *  The subscribed till date. 
+     *  The subscribed till date.
      */
     private Date subscribedTillDate;
-    
+
     /**
      * The renewal service.
      */
     private SubscriptionRenewalDto serviceRenewal;
 
     /**
-     * Gets the id.
-     *
-     * @return the id
+     * Get ID
+     * @return id
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * Sets the id.
-     *
-     * @param id the new code
+     * Set Id
+     * @param id
      */
     public void setId(Long id) {
         this.id = id;
@@ -305,9 +303,9 @@ public class ServiceToActivateDto implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
-    
+
+
+
     /**
      * Gets the amount PS.
      *
@@ -343,7 +341,7 @@ public class ServiceToActivateDto implements Serializable {
     public void setCalendarPSCode(String calendarPSCode) {
         this.calendarPSCode = calendarPSCode;
     }
-    
+
     /**
      * Gets the payment day in month PS.
      *
@@ -419,7 +417,7 @@ public class ServiceToActivateDto implements Serializable {
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
-    
+
     /**
      * Gets the subscribed till date.
      *
@@ -437,7 +435,7 @@ public class ServiceToActivateDto implements Serializable {
     public void setSubscribedTillDate(Date subscribedTillDate) {
         this.subscribedTillDate = subscribedTillDate;
     }
-    
+
     /**
      * Gets the service renewal
      *

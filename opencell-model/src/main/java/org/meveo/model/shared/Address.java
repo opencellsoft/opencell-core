@@ -77,15 +77,15 @@ public class Address implements Serializable, Cloneable {
     /**
      * Postal code
      */
-    @Column(name = "address_zipcode", length = 10)
-    @Size(max = 10)
+    @Column(name = "address_zipcode", length = 20)
+    @Size(max = 20)
     protected String zipCode;
 
     /**
      * City
      */
     @Column(name = "address_city", length = 50)
-    @Size(max = 50)
+    @Size(max = 100)
     protected String city;
 
     /**

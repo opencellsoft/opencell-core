@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -137,6 +138,7 @@ public class InvoicingApi extends BaseApi {
         if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
         }
+        billingRun.setGenerateAO(Optional.ofNullable(dto.getGenerateAO()).orElse(false));
         
         billingRunService.create(billingRun);
 

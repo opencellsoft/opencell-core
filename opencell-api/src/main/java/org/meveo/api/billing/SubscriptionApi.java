@@ -37,6 +37,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -210,6 +211,8 @@ public class SubscriptionApi extends BaseApi {
      * Default sort for list call.
      */
     private static final String DEFAULT_SORT_ORDER_ID = "id";
+    private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
+    private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -425,13 +428,28 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate());
+        Subscription subscription = Optional.of(postData.getId())
+				.map(id -> subscriptionService.findById(id))
+				.orElse(subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()));
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getCode(), postData.getValidityDate());
         }
 
+      //Get the administration roles
+        boolean isAdmin = currentUser.hasRoles(ADMINISTRATION_VISUALIZATION, ADMINISTRATION_MANAGEMENT);
+
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-            throw new MeveoApiException("Subscription is already RESILIATED.");
+        	if(!isAdmin) {
+        		throw new MeveoApiException("Subscription is already RESILIATED.");
+        	} else {
+        		if(postData.getSalesPersonName() != null) {
+                	subscription.setSalesPersonName(postData.getSalesPersonName());
+                	subscription = subscriptionService.update(subscription);
+                	return subscription;
+                } else {
+                	return subscription;
+                }
+        	}
         }
 
         if (!StringUtils.isBlank(postData.getUserAccount())) {
@@ -556,6 +574,10 @@ public class SubscriptionApi extends BaseApi {
                 missingParameters.add("emailTemplate");
             }
             handleMissingParameters();
+        }
+        
+        if(postData.getSalesPersonName() != null) {
+        	subscription.setSalesPersonName(postData.getSalesPersonName());
         }
         // populate customFields
         try {
@@ -2761,6 +2783,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
+        subscription.setSalesPersonName(postData.getSalesPersonName());
         updateSubscriptionVersions(postData.getNextVersion(), postData.getPreviousVersion(), subscription);
 //        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
 
@@ -3102,7 +3125,7 @@ public class SubscriptionApi extends BaseApi {
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        versionRemovedEvent.fire(lastSubscription);
+        versionRemovedEvent.fire((Subscription) Hibernate.unproxy(lastSubscription));
     }
 
     private void reactivateServices(Subscription lastSubscription, Date changeOfferDate) {
@@ -3129,18 +3152,20 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
         }
 
-
         List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
                 .map(ai -> {
                     OrderAttribute orderAttribute = new OrderAttribute();
-                    if(ai.getOrderAttributeCode()!=null) {
-                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
-                    orderAttribute.setAttribute(attribute);
-                    orderAttribute.setStringValue(ai.getStringValue());
-                    orderAttribute.setDoubleValue(ai.getDoubleValue());
-                    orderAttribute.setDateValue(ai.getDateValue());
-                    orderAttribute.setBooleanValue(ai.getBooleanValue());
+                    String attributeCode = ai.getAttributeCode() != null ? ai.getAttributeCode() : ai.getOrderAttributeCode() != null ? ai.getOrderAttributeCode() : null;
+                    
+                    if(attributeCode != null) {
+                    	Attribute attribute = loadEntityByCode(attributeService, attributeCode, Attribute.class);
+                    	orderAttribute.setAttribute(attribute);
+	                    orderAttribute.setStringValue(ai.getStringValue());
+	                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+	                    orderAttribute.setDateValue(ai.getDateValue());
+	                    orderAttribute.setBooleanValue(ai.getBooleanValue());
                     }
+                    
                     return orderAttribute;
 
                     })

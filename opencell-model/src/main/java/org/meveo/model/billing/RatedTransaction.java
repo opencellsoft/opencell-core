@@ -60,6 +60,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -603,8 +604,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
-    private DiscountPlan discountPlan;
-    
+    private DiscountPlan discountPlan;    
     
     @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
@@ -620,6 +620,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
     
+    @ManyToOne
+    @JoinColumn(name = "rules_contract_id")
+    private Contract rulesContract;
     
     /**
   	 * 
@@ -780,6 +783,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.sortIndex = walletOperation.getSortIndex();
         this.cfValues = walletOperation.getCfValues();
         this.discountPlan = walletOperation.getDiscountPlan();
+        this.rulesContract = walletOperation.getRulesContract();
     }
 
     public WalletInstance getWallet() {
@@ -1563,7 +1567,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 		this.sequence = sequence;
 	}
 
-	
-	
+    public Contract getRulesContract() {
+        return rulesContract;
+    }
+
+    public void setRulesContract(Contract rulesContract) {
+        this.rulesContract = rulesContract;
+    }	
 	
 }
