@@ -1,7 +1,0 @@
-{
-    "oneShotCharge": "RS_BASE_OS_OTHER",
-    "subscription": "RS_FULL_200_SUB_INVOICE",
-    "operationDate": "2017-10-11",
-    "quantity": "4",
-    "description": "Apply description from PP.woDescriptionEL"
-}

@@ -1,8 +1,0 @@
-{
-    "code": "RS_FULL_200_SUB_CAT_SUB_DISCOUNT_ONE_SUBCAT",
-    "description": "Subscription no discount",
-    "userAccount": "RS_FULL_200_SUB_CAT_CUST_DISCOUNT_ONE_SUBCAT",
-    "offerTemplate": "RS_FULL_200_SUB_CAT_OFFER",
-    "subscriptionDate": "2016-02-01",
-    "endAgreementDate": "2016-07-01"
-}

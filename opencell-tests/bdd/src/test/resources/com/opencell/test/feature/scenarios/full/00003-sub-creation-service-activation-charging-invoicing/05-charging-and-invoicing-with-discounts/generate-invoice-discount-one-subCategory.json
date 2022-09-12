@@ -1,8 +1,0 @@
-{
-    "targetCode": "RS_FULL_200_SUB_CAT_CUST_DISCOUNT_ONE_SUBCAT",
-    "targetType": "BILLINGACCOUNT",
-    "invoicingDate": "2016-05-01T00:00:00",
-    "lastTransactionDate": "2016-06-01T00:00:00",
-    "generateXML": true,
-    "generatePDF": false
-}

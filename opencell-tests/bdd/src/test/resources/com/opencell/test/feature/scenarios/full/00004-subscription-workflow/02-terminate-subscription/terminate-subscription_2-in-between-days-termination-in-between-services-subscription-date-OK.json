@@ -1,5 +1,0 @@
-{
-    "subscriptionCode": "RS_FULL_164_SUB_INBETWEEN_TERMINATION",
-    "terminationReason": "TERM_REASON_1",
-    "terminationDate": "${#TestCase#3daysBefore}"
-}
