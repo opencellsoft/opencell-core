@@ -18,6 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -560,4 +561,9 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		throw new UnsupportedOperationException();
 		
 	}
+
+    @Override
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -31,6 +31,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
@@ -424,6 +425,19 @@ public class PaymentMethodApi extends BaseApi {
 
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+    
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id, String customerAccountCode, String sellerCode)  throws BusinessException {
+        
+        if (StringUtils.isBlank(id)) {
+            missingParameters.add("id");
+        }
+        if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
+        }
+        handleMissingParameters();
+        
+        return paymentMethodService.getHostedCheckoutStatus(id, customerAccountCode, sellerCode);
     }
 
 
