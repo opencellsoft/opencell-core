@@ -48,6 +48,7 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.communication.contact.ContactCategory;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
@@ -65,6 +66,7 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookContactService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.intcrm.impl.ContactCategoryService;
 import org.meveo.service.intcrm.impl.ContactService;
 
 import com.opencsv.exceptions.CsvException;
@@ -103,6 +105,9 @@ public class ContactApi extends BaseApi {
 
     @Inject
     CustomerCategoryService customerCategoryService;
+
+    @Inject
+    ContactCategoryService contactCategoryService;
 
     @TransactionAttribute
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
@@ -319,6 +324,16 @@ public class ContactApi extends BaseApi {
                     customer = contactService.createCustomerFromContact(contact);
                 }
             }
+        }
+
+        if(StringUtils.isNotBlank(postData.getContactCategoryCode())) {
+        	ContactCategory contactCategory = contactCategoryService.findByCode(postData.getContactCategoryCode());
+        	if(contactCategory == null) {
+        		throw new EntityDoesNotExistsException(ContactCategory.class, postData.getContactCategoryCode());
+        	}
+        	contact.setContactCategory(contactCategory);
+        } else if("".equals(postData.getContactCategoryCode())) {
+        	contact.setContactCategory(null);
         }
     }
 

@@ -4,8 +4,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.crm.ContactCategoryDto;
@@ -23,7 +27,7 @@ public class ContactCategoryApiService extends BaseApi {
 	
 	@TransactionAttribute
 	public ContactCategory create(ContactCategoryDto postData) {
-		
+		log.info("Delete ContactCategory code={} - description={}", postData.getCode(), postData.getDescription());
 		ContactCategory searchContactCategory = contactCategoryService.findByCode(postData.getCode());
 		if(searchContactCategory != null) {
 			throw new EntityAlreadyExistsException(ContactCategory.class, postData.getCode());
@@ -44,6 +48,49 @@ public class ContactCategoryApiService extends BaseApi {
         contactCategoryService.create(entity);
 		
 		return entity;
+	}
+
+	@TransactionAttribute
+	public ContactCategory update(String contactCategoryCode, ContactCategoryDto postData) {
+		log.info("Delete ContactCategory code={}", contactCategoryCode);
+		ContactCategory searchContactCategory = contactCategoryService.findByCode(contactCategoryCode);
+		if(searchContactCategory == null) {
+			throw new EntityDoesNotExistsException(ContactCategory.class, contactCategoryCode);
+		}
+		
+		searchContactCategory.setDescription(postData.getDescription());
+
+        try {
+            populateCustomFields(postData.getCustomFields(), searchContactCategory, false, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
+        contactCategoryService.update(searchContactCategory);
+		
+		return searchContactCategory;
+	}
+
+	@TransactionAttribute
+	public void delete(String contactCategoryCode) {
+		log.info("Delete ContactCategory code={}", contactCategoryCode);
+		ContactCategory searchContactCategory = contactCategoryService.findByCode(contactCategoryCode);
+		if(searchContactCategory == null) {
+			throw new EntityDoesNotExistsException(ContactCategory.class, contactCategoryCode);
+		}
+		try {
+			contactCategoryService.remove(searchContactCategory);
+			contactCategoryService.getEntityManager().flush();
+		} catch (Exception e) {
+			if(e.getCause() instanceof ConstraintViolationException) {
+				throw new DeleteReferencedEntityException(ContactCategory.class, contactCategoryCode);
+			}
+			throw new BusinessException(e);
+		}
 	}
 
 }

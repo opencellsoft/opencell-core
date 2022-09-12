@@ -25,9 +25,21 @@ public class ContactCategoryResourceImpl implements ContactCategoryResource {
 		return Response.ok(responseStatus).build();
 	}
 
-	public Response update(ContactCategoryDto postData) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response update(String contactCategoryCode, ContactCategoryDto postData) {
+		ContactCategory result = contactCategoryApiService.update(contactCategoryCode, postData);
+
+        ActionStatus responseStatus = new ActionStatus();
+		responseStatus.setStatus(ActionStatusEnum.SUCCESS);
+		responseStatus.setEntityId(result.getId());
+
+		return Response.ok(responseStatus).build();
+	}
+
+	public Response delete(String contactCategoryCode) {
+		ActionStatus responseStatus = new ActionStatus();
+		contactCategoryApiService.delete(contactCategoryCode);
+		responseStatus.setStatus(ActionStatusEnum.SUCCESS);
+		return Response.ok(responseStatus).build();
 	}
 	
 }
