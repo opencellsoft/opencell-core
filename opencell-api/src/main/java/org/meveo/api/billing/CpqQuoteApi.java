@@ -1398,6 +1398,14 @@ public class CpqQuoteApi extends BaseApi {
         try {
             cpqQuoteService.update(cpqQuote);
             cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
+            if (cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString())) {
+                List<QuoteVersion> quoteVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());                
+                for (QuoteVersion quoteVersion: quoteVersions) {
+                    quoteVersion.setStatus(VersionStatusEnum.CLOSED);
+                    quoteVersion.setStatusDate(new Date());
+                    quoteVersionService.update(quoteVersion);
+                }
+            }
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
