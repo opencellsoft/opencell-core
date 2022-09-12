@@ -351,8 +351,8 @@
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
-                <version>1.1.6</version>
-                <scope>provided</scope>
+                 <version>1.1.6</version>
+                 <scope>provided</scope>
             </dependency>
 
             <dependency>

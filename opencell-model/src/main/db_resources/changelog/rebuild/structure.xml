@@ -4703,6 +4703,7 @@
             <column name="reference" type="varchar(80)" />
             <column name="comment" type="varchar(2000)" />
             <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="contact_category_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -17331,6 +17332,36 @@
 								 referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-9598-20220909-contact-category" author="a.rouaguebe">
+        <createTable tableName="com_contact_category">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_category_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_com_contact_category_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_category" />
+
+        <addForeignKeyConstraint constraintName="contact_ contact_category_id_fk"
+                                 baseColumnNames="contact_category_id"
+                                 baseTableName="com_contact"
+                                 referencedTableName="com_contact_category"
+                                 referencedColumnNames="id" />
+    </changeSet>
+
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -18557,8 +18588,9 @@
     <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
+	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
     <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
-	
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
