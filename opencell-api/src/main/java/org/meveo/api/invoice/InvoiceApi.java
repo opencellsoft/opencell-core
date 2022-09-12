@@ -28,10 +28,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -531,14 +533,18 @@ public class InvoiceApi extends BaseApi {
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
      */
+    @TransactionAttribute
     public String validateInvoice(Long invoiceId, boolean generateAO, boolean refreshExchangeRate) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         if (StringUtils.isBlank(invoiceId)) {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-        Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
-        if(generateAO) {
+        serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
+        if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
         Date today = new Date();

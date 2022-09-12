@@ -50,10 +50,18 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
     @Column(name = "price_el")
     private String priceEL;
-    
-	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+
+    @Deprecated
+	@Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS, insertable = false, updatable = false)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal priceWithoutTax;
+
+    /**
+     * Used as price and discount percentage
+     */
+    @Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private BigDecimal value;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
@@ -77,6 +85,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
         this.priority = copy.priority;
         this.priceEL = copy.priceEL;
+        this.value = copy.value;
     }
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
@@ -95,13 +104,14 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.description = description;
     }
 
-
+    @Deprecated
     public BigDecimal getPriceWithoutTax() {
-		return priceWithoutTax;
+		return value;
 	}
 
+    @Deprecated
 	public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-		this.priceWithoutTax = priceWithoutTax;
+		this.value = priceWithoutTax;
 	}
 
 	public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
@@ -136,6 +146,14 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public boolean match(Set<AttributeValue> attributeValues) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(attributeValues));
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal price) {
+        this.value = price;
     }
 
     @Override
