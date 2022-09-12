@@ -1262,6 +1262,21 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        switch (attribute.getAttributeType()){
+            case NUMERIC:
+            case INTEGER:
+                if(quoteAttributeDTO.getStringValue() != null && quoteAttributeDTO.getDoubleValue() == null){
+                    quoteAttribute.setDoubleValue(Double.valueOf(quoteAttributeDTO.getStringValue()));
+                }
+                break;
+            case BOOLEAN:
+                if(quoteAttributeDTO.getStringValue() != null){
+                    quoteAttribute.setBooleanValue(Boolean.valueOf(quoteAttributeDTO.getStringValue()));
+                }
+                break;
+            default:
+                quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+        }
         if(quoteOffer!=null){
         	quoteAttribute.setQuoteOffer(quoteOffer);
         }
