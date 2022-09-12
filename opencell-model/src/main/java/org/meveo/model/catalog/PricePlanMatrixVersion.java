@@ -34,6 +34,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
@@ -115,6 +116,13 @@ public class PricePlanMatrixVersion extends AuditableEntity {
      */
     @Column(name = "priority")
     private int priority = 0;
+    /**
+     * The price
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "price_version_type")
+    @NotNull
+    private PriceVersionTypeEnum priceVersionType = PriceVersionTypeEnum.FIXED;
 
     public PricePlanMatrixVersion() {
     }
@@ -287,6 +295,14 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     public void setPriceEL(String priceEL) {
         this.priceEL = priceEL;
+    }
+
+    public PriceVersionTypeEnum getPriceVersionType() {
+        return priceVersionType;
+    }
+
+    public void setPriceVersionType(PriceVersionTypeEnum priceVersionType) {
+        this.priceVersionType = priceVersionType;
     }
 
     @Override

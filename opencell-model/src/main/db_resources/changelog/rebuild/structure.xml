@@ -9442,6 +9442,10 @@
             <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
+            <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
+                <constraints nullable="false"/>
+            </column>
+
         </createTable>
         <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
@@ -10715,7 +10719,7 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
 			<column name="price_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
-            <column name="price_without_tax" type="numeric(23, 12)" />
+            <column name="value" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -18553,6 +18557,7 @@
     <changeSet id="#INTRD-9383-20220905" author="Abdelkader.Bouazza" />
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
+    <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
