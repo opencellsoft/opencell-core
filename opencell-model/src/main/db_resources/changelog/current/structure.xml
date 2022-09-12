@@ -14304,7 +14304,7 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedColumnNames="id" />
         <sql>update crm_address_book ab set customer_id=(select customer.id from crm_customer customer where customer.address_book_id = ab.id)</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-9598-20220909-contact-category" author="a.rouaguebe">
         <createTable tableName="com_contact_category">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -14336,5 +14336,13 @@ order by date_trunc('month', i.invoice_date) DESC
                                  referencedTableName="com_contact_category"
                                  referencedColumnNames="id" />
     </changeSet>
-	
+    <changeSet id="#INTRD-9684-20220909" author="khalidHORRI">
+        <addColumn tableName="cpq_price_plan_version">
+            <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <renameColumn tableName="cpq_price_plan_matrix_line" oldColumnName="price_without_tax" newColumnName="value"/>
+    </changeSet>
+
 </databaseChangeLog>

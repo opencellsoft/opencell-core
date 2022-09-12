@@ -9443,6 +9443,10 @@
             <column name="price_el" type="varchar(255)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
+            <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
+                <constraints nullable="false"/>
+            </column>
+
         </createTable>
         <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
@@ -10716,7 +10720,7 @@
             <column name="priority" type="int4" defaultValueNumeric="0"/>
 			<column name="price_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
-            <column name="price_without_tax" type="numeric(23, 12)" />
+            <column name="value" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -17327,7 +17331,7 @@
 								 baseTableName="billing_wallet_operation" 
 								 referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-9598-20220909-contact-category" author="a.rouaguebe">
         <createTable tableName="com_contact_category">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -18585,7 +18589,8 @@
     <changeSet id="#INTRD-9583-20220906-br-generateao" author="a.rouaguebe" />
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
 	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
-	
+    <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
