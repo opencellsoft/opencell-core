@@ -4703,6 +4703,7 @@
             <column name="reference" type="varchar(80)" />
             <column name="comment" type="varchar(2000)" />
             <column name="entreprise" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="contact_category_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-233">
@@ -17349,9 +17350,7 @@
             <column name="cf_values" type="${type.json}" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_com_contact_category_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_category" />
-        <addColumn tableName="com_contact">
-            <column name="contact_category_id" type="bigint"/>
-        </addColumn>
+
         <addForeignKeyConstraint constraintName="contact_ contact_category_id_fk"
                                  baseColumnNames="contact_category_id"
                                  baseTableName="com_contact"
