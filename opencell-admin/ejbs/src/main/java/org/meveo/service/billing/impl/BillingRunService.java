@@ -58,6 +58,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
@@ -1444,13 +1445,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                             .collect(joining(",")) + ") AND il.status = 'OPEN'");
         } else {
             Map<String, String> filters = billingRun.getFilters();
-            if(filters.containsKey("SQL")) {
-                queryBuilder = new QueryBuilder(filters.get("SQL"));
+            String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+            if (!StringUtils.isBlank(filterValue)) {
+                queryBuilder = new QueryBuilder(filterValue);
             } else {
                 PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
                 queryBuilder = ratedTransactionService.getQuery(configuration);
             }
-            filter.setPollingQuery(buildPollingQuery(queryBuilder) + " AND a.status = 'OPEN' AND a.billingRun IS null");
+            filter.setPollingQuery(buildPollingQuery(queryBuilder));
         }
         return filter;
     }

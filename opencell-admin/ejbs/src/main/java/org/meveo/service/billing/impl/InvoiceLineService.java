@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -871,8 +872,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
-        if (filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+        if (!StringUtils.isBlank(filterValue)) {
+            queryBuilder = new QueryBuilder(filterValue);
         } else {
             FilterConverter converter = new FilterConverter(RatedTransaction.class);
             PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));

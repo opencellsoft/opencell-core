@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
@@ -419,6 +420,36 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         
         return gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+    
+    /**
+     *  Get the hostedCheckout status
+     * @param id the hostedCheckout ID
+     * @param customerAccountCode
+     * @param sellerCode
+     * @return
+     * @throws BusinessException
+     */
+    public HostedCheckoutStatusResponseDto getHostedCheckoutStatus(String id, String customerAccountCode, String sellerCode) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with code:" + customerAccountCode);
+        }
+
+        Seller seller = null;
+        if (!StringUtils.isBlank(sellerCode)) {
+            seller = sellerService.findByCode(sellerCode);
+            if (seller == null) {
+                throw new BusinessException("Can't found Seller with code:" + sellerCode);
+            }
+        }
+
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount, seller);
+        if(gatewayPaymentInterface == null) {
+            throw new BusinessException("Can't found the gateway to use");
+        }
+        return gatewayPaymentInterface.getHostedCheckoutStatus(id);
     }
 
     /**

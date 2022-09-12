@@ -56,7 +56,8 @@ public class OfferContextDTO extends BaseEntityDto {
     @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
 	
-	
+    @Schema(description = "Context config")
+	private OfferContextConfigDTO config = new OfferContextConfigDTO();
 	
     /**
      * The selected products in the quote
@@ -114,6 +115,12 @@ public class OfferContextDTO extends BaseEntityDto {
 	}
 	public void setSelectedOfferAttributes(LinkedHashMap<String, Object> selectedOfferAttributes) {
 		this.selectedOfferAttributes = selectedOfferAttributes;
+	}
+	public OfferContextConfigDTO getConfig() {
+		return config;
+	}
+	public void setConfig(OfferContextConfigDTO config) {
+		this.config = config;
 	}
  
 

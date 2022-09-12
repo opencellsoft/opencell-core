@@ -529,6 +529,8 @@ public class InvoiceApi extends BaseApi {
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
         if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
+            log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                    invoice.getPaymentStatus() + " - newPaymentStatus : " + UNPAID + "]");
             invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), UNPAID);
             invoice.setPaymentStatusDate(today);
             invoiceService.update(invoice);

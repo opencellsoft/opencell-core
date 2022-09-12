@@ -18,11 +18,9 @@
 
 package org.meveo.service.script.payment;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.script.Script;
 
 /**
@@ -162,6 +160,11 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	/** The Constant RESULT_HOSTED_CO_URL for  hostedCheckout url result. */
 	public static final String RESULT_HOSTED_CO_URL = "RESULT_HOSTED_CO_URL";
 	
+	/** The Constant RESULT_HOSTED_CO_ID for  hostedCheckout id. */
+    public static final String RESULT_HOSTED_CO_ID = "RESULT_HOSTED_CO_ID";
+	
+	
+	
 	 /** The Constant CONTEXT_ACCOUNT_HOLDER_NAME. */
     public static final String CONTEXT_ACCOUNT_HOLDER_NAME = "CONTEXT_ACCOUNT_HOLDER_NAME";
     
@@ -179,6 +182,10 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 
 	/** The Constant PAYMENT_GATEWAY. */
     public static final String PAYMENT_GATEWAY = "PAYMENT_GATEWAY";
+
+    public static final String RESULT_HOSTED_CO_STATUS = "RESULT_HOSTED_CO_STATUS";
+
+    public static final String CONTEXT_HOSTED_CO_ID = "CONTEXT_HOSTED_CO_ID";
 
 
     @Override
@@ -246,6 +253,10 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void getHostedCheckoutStatus(Map<String, Object> methodContext) throws BusinessException {
+    }
 
 
 }
