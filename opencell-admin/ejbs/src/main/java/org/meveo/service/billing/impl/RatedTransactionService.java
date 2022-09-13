@@ -1778,6 +1778,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                         if (billingAccountByCode != null) {
                                             rt.setOriginBillingAccount(rt.getBillingAccount());
                                             rt.setBillingAccount(billingAccountByCode);
+                                            rt.setStatus(RatedTransactionStatusEnum.PROCESSED);
+                                            rt.setRejectReason(null);
                                             update(rt);
                                             billingAccountAfter = billingAccountByCode;
                                             isApply = true;
