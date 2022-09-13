@@ -1760,8 +1760,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                         billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id=" + 
                                         rt.getId() + "]: Error in criteriaEL evaluation");
                                     update(rt);
-                                } 
-                                
+                                }
                                 if(eCriteriaEL != null && eCriteriaEL) {                            
                                     String eInvoicedBACodeEL = null;
                                     try {
@@ -1783,6 +1782,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                             billingAccountAfter = billingAccountByCode;
                                             isApply = true;
                                         }
+                                        else {
+                                            rt.setStatus(RatedTransactionStatusEnum.REJECTED);
+                                            rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
+                                                    billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] unknown billing account [code=" + eInvoicedBACodeEL + "] for RT [id=" + 
+                                                    rt.getId() + "]: Error in criteriaEL evaluation");
+                                            update(rt);
+                                        }
                                     }
                                 }
                             }                        
@@ -1798,6 +1804,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (StringUtils.isBlank(expression)) {
             return null;
         }
+        expression = expression.replace("\\", "");
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("rt", rt);
         Boolean code = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
@@ -1811,6 +1818,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (StringUtils.isBlank(expression)) {
             return null;
         }
+        expression = expression.replace("\\", "");
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("rt", rt);
         String code = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
