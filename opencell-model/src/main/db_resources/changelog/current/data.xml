@@ -8127,4 +8127,981 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</insert>
 	</changeSet>
 
+	<changeSet id="#OUTRD-49_20220913" author="HamzaBiadi">
+		<insert tableName="crm_custom_field_tmpl">
+			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="user"/>
+			<column name="description" value="User"/>
+			<column name="field_type" value="STRING"/>
+			<column name="value_required" value="0"/>
+			<column name="creator" value="opencell.admin"/>
+			<column name="versionable" value="0"/>
+			<column name="storage_type" value="SINGLE"/>
+			<column name="trigger_end_period_event" value="0"/>
+			<column name="applies_to" value="JobInstance_FlatFileProcessingJob"/>
+			<column name="allow_edit" value="1"/>
+			<column name="max_value" value="50"/>
+			<column name="hide_on_new" value="0"/>
+			<column name="inh_as_def_value" value="0"/>
+			<column name="gui_position" value="tab:Configuration:1;fieldGroup:Execution configuration:0;field:3"/>
+			<column name="cf_protectable" value="0"/>
+		</insert>
+		<!-- CUSTOMER -->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="massImportCustomerJob" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/customer/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/customer/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/customer/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/customer/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\" />\r\n            <property name=\"comments\" value=\"END\" />\r\n            <property name=\"multilineEnabled\" value=\"true\" />\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n            <field name=\"OC_ACTION\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_ DESCRIPTION\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_REGISTRATION\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_TVANUMBER\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_SELLER\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_CATEGORY\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_IS_COMPANY\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_TITLE\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_FIRST_NAME\" ignore=\"true\"/>\r\n            <field name=\"OC_CU_LAST_NAME\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_CODE\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_ DESCRIPTION\"/>\r\n            <field name=\"OC_CU_REGISTRATION\"/>\r\n            <field name=\"OC_CU_TVANUMBER\" />\r\n            <field name=\"OC_CUSTOMER_SELLER\" />\r\n            <field name=\"OC_CU_CATEGORY\" />\r\n            <field name=\"OC_CU_IS_COMPANY\" />\r\n            <field name=\"OC_CU_TITLE\" />\r\n            <field name=\"OC_CU_FIRST_NAME\" />\r\n            <field name=\"OC_CU_LAST_NAME\" />\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.CustomerImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<!-- CUSTOMER_ACCOUNT -->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="massImportCustomerAccountJob" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/customerAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/customerAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/customerAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/customerAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\" />\r\n            <property name=\"comments\" value=\"END\" />\r\n            <property name=\"multilineEnabled\" value=\"true\" />\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n            <field name=\"OC_ACTION\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CURRENCY\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_PAYTERM\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CREDCAT\" ignore=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_LANG\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMER_CODE\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CURRENCY\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_PAYTERM\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CREDCAT\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_LANG\" required=\"true\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.CustomerAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<!--	PAYMENT_METHOD	-->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="massImportPaymentMethodJob" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/paymentMethod/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/paymentMethod/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/paymentMethod/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/paymentMethod/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n            <field name=\"OC_ACTION\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_TYPE\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_PREFERRED\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_ALIAS\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_CA\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_cardType\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_monthExpiration\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_yearExpiration\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_tokenId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_cardNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issueNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_userId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_email\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_referenceDocumentCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_branchCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_accountNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_key\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_iban\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bic\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_accountOwner\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankName\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issuerNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issuerName\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_ics\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_mandateIdentification\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_mandateDate\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_PMT_TYPE\" required=\"true\"/>\r\n            <field name=\"OC_PMT_PREFERRED\"/>\r\n            <field name=\"OC_PMT_ALIAS\"/>\r\n            <field name=\"OC_PMT_CA\"/>\r\n            <field name=\"OC_PMT_cardType\"/>\r\n            <field name=\"OC_PMT_monthExpiration\"/>\r\n            <field name=\"OC_PMT_yearExpiration\"/>\r\n            <field name=\"OC_PMT_tokenId\"/>\r\n            <field name=\"OC_PMT_cardNumber\"/>\r\n            <field name=\"OC_PMT_issueNumber\"/>\r\n            <field name=\"OC_PMT_userId\"/>\r\n            <field name=\"OC_PMT_email\"/>\r\n            <field name=\"OC_PMT_referenceDocumentCode\"/>\r\n            <field name=\"OC_PMT_bankCode\" />\r\n            <field name=\"OC_PMT_branchCode\" />\r\n            <field name=\"OC_PMT_accountNumber\" />\r\n            <field name=\"OC_PMT_key\" />\r\n            <field name=\"OC_PMT_iban\" />\r\n            <field name=\"OC_PMT_bic\" />\r\n            <field name=\"OC_PMT_accountOwner\"/>\r\n            <field name=\"OC_PMT_bankName\"/>\r\n            <field name=\"OC_PMT_bankId\"/>\r\n            <field name=\"OC_PMT_issuerNumber\"/>\r\n            <field name=\"OC_PMT_issuerName\"/>\r\n            <field name=\"OC_PMT_ics\"/>\r\n            <field name=\"OC_PMT_mandateIdentification\"/>\r\n            <field name=\"OC_PMT_mandateDate\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.PaymentMethodImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<!-- BILLING_ACCOUNT -->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="massImportBillingAccountJob" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/billingAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/billingAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/billingAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/billingAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\" />\r\n            <field name=\"OC_ACTION\" ignore=\"true\" />\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_DESCRIPTION\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_BC\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_COUNTRY\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_LANGUAGE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CURRENCY\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_TAXCAT\" ignore=\"true\" />\r\n            <field name=\"OC_BA_DATE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_REGISTRATION\" ignore=\"true\" />\r\n            <field name=\"OC_BA_TVANUMBER\" ignore=\"true\" />\r\n            <field name=\"OC_BA_TITLE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_FNAME\" ignore=\"true\" />\r\n            <field name=\"OC_BA_LNAME\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ORGANIZATION\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILL\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILLEMAIL\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILLEMAILS\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ADDRESS\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ZIPCODE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_CITY\" ignore=\"true\" />\r\n            <field name=\"OC_BA_STATE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_COUNTRY\" ignore=\"true\" />\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" />\r\n            <field name=\"OC_BILLINGACCOUNT_DESCRIPTION\" />\r\n            <field name=\"OC_BILLINGACCOUNT_BC\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_COUNTRY\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_LANGUAGE\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_CURRENCY\" />\r\n            <field name=\"OC_BILLINGACCOUNT_TAXCAT\" />\r\n            <field name=\"OC_BA_DATE\" />\r\n            <field name=\"OC_BA_REGISTRATION\" />\r\n            <field name=\"OC_BA_TVANUMBER\" />\r\n            <field name=\"OC_BA_TITLE\" />\r\n            <field name=\"OC_BA_FNAME\" />\r\n            <field name=\"OC_BA_LNAME\" required=\"true\"/>\r\n            <field name=\"OC_BA_ORGANIZATION\" />\r\n            <field name=\"OC_BA_EBILL\" />\r\n            <field name=\"OC_BA_EBILLEMAIL\" />\r\n            <field name=\"OC_BA_EBILLEMAILS\" />\r\n            <field name=\"OC_BA_ADDRESS\" />\r\n            <field name=\"OC_BA_ZIPCODE\" />\r\n            <field name=\"OC_BA_CITY\" />\r\n            <field name=\"OC_BA_STATE\" />\r\n            <field name=\"OC_BA_COUNTRY\" />\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.BillingAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<!-- USER_ACCOUNT -->
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="job_category" value="MEDIATION" />
+			<column name="job_template" value="FlatFileProcessingJob" />
+			<column name="code" value="massImportUserAccountJob" />
+			<column name="creator" value="opencell.admin" />
+			<column name="job_speed" value="NORMAL" />
+			<column name="single_node" valueNumeric="1" />
+			<column name="verbose_report" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="uuid" value="ProcessCustomerPaymentsFileJob" />
+			<column name="cf_values">
+				<![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/userAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/userAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/userAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/userAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\" />\r\n            <field name=\"OC_ACTION\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\" ignore=\"true\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_DATE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_REGISTRATION\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TVANUMBER\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_TITLE\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_FNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_LNAME\" ignore=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\"/>\r\n          \t<field name=\"OC_PARENT_UA_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_CODE\"/>\r\n            <field name=\"OC_USERACCOUNT_ DESCRIPTION\"/>\r\n            <field name=\"OC_UA_DATE\"/>\r\n            <field name=\"OC_UA_REGISTRATION\"/>\r\n            <field name=\"OC_UA_TVANUMBER\"/>\r\n            <field name=\"OC_UA_TITLE\"/>\r\n            <field name=\"OC_UA_FNAME\"/>\r\n            <field name=\"OC_UA_LNAME\" required=\"true\"/>\r\n            <field name=\"OC_UA_ORGANIZATION\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.UserAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+			</column>
+		</insert>
+		<!-- SCRIPTS -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CustomerImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.CustomerApi;
+import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class CustomerImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "CUSTOMER";
+    private static final String ENTITY_NAME = "Customer";
+
+    public enum CustomerActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final CustomerCategoryService customerCategoryService = (CustomerCategoryService) getServiceInterface(
+            "CustomerCategoryService");
+    private final CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+    private final CustomerApi customerApi = (CustomerApi) getServiceInterface(CustomerApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(CustomerActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                CustomerActionEnum action = CustomerActionEnum.valueOf(ocAction);
+
+                CustomerDto customerDto = validateAndGetCustomer(action, recordMap);
+
+                if (CustomerActionEnum.DELETE.equals(action)) {
+                    customerApi.remove(customerDto.getCode());
+                } else {
+                    setCustomerValues(recordMap, customerDto);
+                    if (CustomerActionEnum.CREATE.equals(action)) {
+                        Customer customer = customerApi.create(customerDto);
+
+                        this.setCFValues(recordMap, customer, ENTITY_NAME);
+                    } else if (CustomerActionEnum.UPDATE.equals(action)) {
+                        customerApi.update(customerDto);
+                    }
+
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CustomerDto validateAndGetCustomer(CustomerActionEnum action, Map<String, Object> recordMap) {
+        CustomerDto customerDto;
+
+        String customerCode = (String) recordMap.get("OC_CUSTOMER_CODE");
+        if (customerCode.isEmpty()) {
+            throw new ValidationException("customer_code is required");
+        }
+        Customer customer = customerService.findByCode(customerCode);
+
+        // For update and delete : check if there is a record
+        if (!CustomerActionEnum.CREATE.equals(action)) {
+            if (customer == null) {
+                throw new ValidationException("no customer found for customer_code: '" + customerCode + "'");
+            }
+            customerDto = customerApi.find(customerCode);
+            // Create action : check if there is no record
+        } else {
+            customerDto = new CustomerDto();
+            String ocCustomerCategory = (String) recordMap.get("OC_CU_CATEGORY");
+            CustomerCategory customerCategory = customerCategoryService.findByCode(ocCustomerCategory);
+            if (customerCategory == null) {
+                throw new ValidationException("no customer category found for code: '" + ocCustomerCategory + "'");
+            }
+        }
+        return customerDto;
+    }
+
+    private void setCustomerValues(Map<String, Object> recordMap, CustomerDto customerDto) {
+        customerDto.setCode((String) recordMap.get("OC_CUSTOMER_CODE"));
+        customerDto.setDescription((String) recordMap.get("OC_CUSTOMER_DESCRIPTION"));
+        customerDto.setRegistrationNo((String) recordMap.get("OC_CU_REGISTRATION"));
+        customerDto.setVatNo((String) recordMap.get("OC_CU_TVANUMBER"));
+        customerDto.setSeller((String) recordMap.get("OC_CUSTOMER_SELLER"));
+        customerDto.setCustomerCategory((String) recordMap.get("OC_CU_CATEGORY"));
+        customerDto.setIsCompany(Objects.equals(recordMap.get("OC_CU_IS_COMPANY"), "X"));
+        NameDto nameDto = new NameDto();
+        nameDto.setTitle((String) recordMap.get("OC_CU_TITLE"));
+        nameDto.setFirstName((String) recordMap.get("OC_CU_FIRST_NAME"));
+        nameDto.setLastName((String) recordMap.get("OC_CU_LAST_NAME"));
+        customerDto.setName(nameDto);
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CustomerAccountImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.CustomerAccountApi;
+import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class CustomerAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "CUSTOMER_ACCOUNT";
+    private static final String ENTITY_NAME = "CustomerAccount";
+
+    public enum CustomerAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+    private final CustomerAccountApi customerAccountApi = (CustomerAccountApi) getServiceInterface(CustomerAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(CustomerAccountActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                CustomerAccountActionEnum action = CustomerAccountActionEnum.valueOf(ocAction);
+
+                CustomerAccountDto customerAccountDto = validateAndGetCustomerAccount(action, recordMap);
+
+                if (CustomerAccountActionEnum.DELETE.equals(action)) {
+                    customerAccountApi.remove(customerAccountDto.getCode());
+                } else {
+                    setCustomerAccountValues(recordMap, customerAccountDto);
+                    if (CustomerAccountActionEnum.CREATE.equals(action)) {
+                        CustomerAccount customerAccount = customerAccountApi.create(customerAccountDto);
+
+                        this.setCFValues(recordMap, customerAccount, ENTITY_NAME);
+                    } else if (CustomerAccountActionEnum.UPDATE.equals(action)) {
+                        customerAccountApi.update(customerAccountDto);
+                    }
+
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private CustomerAccountDto validateAndGetCustomerAccount(CustomerAccountActionEnum action, Map<String, Object> recordMap) throws Exception {
+        CustomerAccountDto customerAccountDto;
+
+        String customerAccountCode = (String) recordMap.get("OC_CUSTOMERACCOUNT_CODE");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        String customerCode = (String) recordMap.get("OC_CUSTOMER_CODE");
+        if (customerCode.isEmpty()) {
+            throw new ValidationException("customer_code is required");
+        }
+        Customer customer = customerService.findByCode(customerCode);
+
+        // For update and delete : check if there is a record
+        if (!CustomerAccountActionEnum.CREATE.equals(action)) {
+            if (customer == null) {
+                throw new ValidationException("no customer found for customer_code: '" + customerCode + "'");
+            }
+            customerAccountDto = customerAccountApi.find(customerAccountCode, false);
+            // Create action : check if there is no record
+        } else {
+            customerAccountDto = new CustomerAccountDto();
+        }
+        return customerAccountDto;
+    }
+
+    private void setCustomerAccountValues(Map<String, Object> recordMap, CustomerAccountDto customerAccountDto) {
+        customerAccountDto.setCustomer((String) recordMap.get("OC_CUSTOMER_CODE"));
+        customerAccountDto.setCode((String) recordMap.get("OC_CUSTOMERACCOUNT_CODE"));
+        customerAccountDto.setCurrency((String) recordMap.get("OC_CUSTOMERACCOUNT_CURRENCY"));
+        customerAccountDto.setCreditCategory((String) recordMap.get("OC_CUSTOMERACCOUNT_CREDCAT"));
+        customerAccountDto.setLanguage((String) recordMap.get("OC_CUSTOMERACCOUNT_LANG"));
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.PaymentMethodImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.account.BankCoordinatesDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.payments.impl.PaymentMethodService;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class PaymentMethodImportScript extends GenericMassImportScript {
+
+    private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "PAYMENT_METHOD";
+    private static final String ENTITY_NAME = "PaymentMethod";
+
+    public enum PaymentMethodActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final PaymentMethodService paymentMethodService = (PaymentMethodService) getServiceInterface("PaymentMethodService");
+    private final PaymentMethodApi paymentMethodApi = (PaymentMethodApi) getServiceInterface(PaymentMethodApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(PaymentMethodActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                PaymentMethodActionEnum action = PaymentMethodActionEnum.valueOf(ocAction);
+
+                PaymentMethodDto paymentMethodDto = validateAndGetPaymentMethod(recordMap);
+
+
+                if (action == PaymentMethodActionEnum.CREATE &&
+                        PaymentMethodEnum.valueOf((String) recordMap.get("OC_PMT_TYPE")) != PaymentMethodEnum.CARD) {
+                    setPaymentMethodValues(recordMap, paymentMethodDto);
+                    Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
+                    PaymentMethod paymentMethod = paymentMethodService.findById(paymentMethodId);
+                    this.setCFValues(recordMap, paymentMethod, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private PaymentMethodDto validateAndGetPaymentMethod(Map<String, Object> recordMap) {
+        PaymentMethodDto paymentMethodDto = new PaymentMethodDto();
+
+        String customerAccountCode = (String) recordMap.get("OC_PMT_CA");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        return paymentMethodDto;
+    }
+
+    private void setPaymentMethodValues(Map<String, Object> recordMap, PaymentMethodDto paymentMethodDto) throws ParseException {
+        PaymentMethodEnum ocPaymentMethodType = PaymentMethodEnum.valueOf((String) recordMap.get("OC_PMT_TYPE"));
+        paymentMethodDto.setPaymentMethodType(ocPaymentMethodType);
+        paymentMethodDto.setPreferred(Objects.equals(recordMap.get("OC_PMT_PREFERRED"), "X"));
+        paymentMethodDto.setAlias((String) recordMap.get("OC_PMT_ALIAS"));
+        paymentMethodDto.setCustomerAccountCode((String) recordMap.get("OC_PMT_CA"));
+        if (!((String) recordMap.get("OC_PMT_cardType")).isEmpty()) {
+            paymentMethodDto.setCardType(CreditCardTypeEnum.valueOf((String) recordMap.get("OC_PMT_cardType")));
+        }
+        if (!((String) recordMap.get("OC_PMT_monthExpiration")).isEmpty()) {
+            paymentMethodDto.setMonthExpiration(Integer.parseInt((String) recordMap.get("OC_PMT_monthExpiration")));
+        }
+        if (!((String) recordMap.get("OC_PMT_yearExpiration")).isEmpty()) {
+            paymentMethodDto.setYearExpiration(Integer.parseInt((String) recordMap.get("OC_PMT_yearExpiration")));
+        }
+        paymentMethodDto.setTokenId((String) recordMap.get("OC_PMT_tokenId"));
+        paymentMethodDto.setCardNumber((String) recordMap.get("OC_PMT_cardNumber"));
+        paymentMethodDto.setIssueNumber((String) recordMap.get("OC_PMT_issueNumber"));
+        paymentMethodDto.setUserId((String) recordMap.get("OC_PMT_userId"));
+        paymentMethodDto.setEmail((String) recordMap.get("OC_PMT_email"));
+        if (!((String) recordMap.get("OC_PMT_referenceDocumentCode")).isEmpty()) {
+            paymentMethodDto.setReferenceDocumentCode((String) recordMap.get("OC_PMT_referenceDocumentCode"));
+        }
+
+        if (ocPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
+            bankCoordinatesDto.setBankCode((String) recordMap.get("OC_PMT_bankCode"));
+            bankCoordinatesDto.setBranchCode((String) recordMap.get("OC_PMT_branchCode"));
+            bankCoordinatesDto.setAccountNumber((String) recordMap.get("OC_PMT_accountNumber"));
+            bankCoordinatesDto.setKey((String) recordMap.get("OC_PMT_key"));
+            bankCoordinatesDto.setIban((String) recordMap.get("OC_PMT_iban"));
+            bankCoordinatesDto.setBic((String) recordMap.get("OC_PMT_bic"));
+            bankCoordinatesDto.setAccountOwner((String) recordMap.get("OC_PMT_accountOwner"));
+            bankCoordinatesDto.setBankName((String) recordMap.get("OC_PMT_bankName"));
+            bankCoordinatesDto.setBankId((String) recordMap.get("OC_PMT_bankId"));
+            bankCoordinatesDto.setIssuerNumber((String) recordMap.get("OC_PMT_issuerNumber"));
+            bankCoordinatesDto.setIssuerName((String) recordMap.get("OC_PMT_issuerName"));
+            bankCoordinatesDto.setIcs((String) recordMap.get("OC_PMT_ics"));
+            paymentMethodDto.setBankCoordinates(bankCoordinatesDto);
+        }
+
+        paymentMethodDto.setMandateIdentification((String) recordMap.get("OC_PMT_mandateIdentification"));
+
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+        String ocPaymentMethodMandateDate = (String) recordMap.get("OC_PMT_mandateDate");
+        Date mandateDate = StringUtils.isEmpty(ocPaymentMethodMandateDate) ? null : dateFormat.parse(ocPaymentMethodMandateDate);
+        paymentMethodDto.setMandateDate(mandateDate);
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.BillingAccountImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.BillingAccountApi;
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.service.script.GenericMassImportScript;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+
+public class BillingAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "BILLING_ACCOUNT";
+    private static final String ENTITY_NAME = "BillingAccount";
+
+    public enum BillingAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final BillingAccountApi billingAccountApi = (BillingAccountApi) getServiceInterface(BillingAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String ocEntity = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(ocEntity)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + ocEntity);
+                }
+                // VALIDATE ACTION
+                String ocAction = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(BillingAccountActionEnum.values()).noneMatch(e -> e.toString().equals(ocAction))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + ocAction);
+                }
+
+                BillingAccountActionEnum action = BillingAccountActionEnum.valueOf(ocAction);
+
+                BillingAccountDto billingAccountDto = validateAndGetBillingAccount(recordMap);
+
+                if (BillingAccountActionEnum.CREATE.equals(action)) {
+                    setBillingAccountValues(recordMap, billingAccountDto);
+                    BillingAccount billingAccount = billingAccountApi.create(billingAccountDto);
+                    this.setCFValues(recordMap, billingAccount, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private BillingAccountDto validateAndGetBillingAccount(Map<String, Object> recordMap) {
+        BillingAccountDto billingAccountDto;
+
+        String customerAccountCode = (String) recordMap.get("OC_CUSTOMERACCOUNT_CODE");
+        if (customerAccountCode.isEmpty()) {
+            throw new ValidationException("customer_account_code is required");
+        }
+
+        String billingAccountCode = (String) recordMap.get("OC_BILLINGACCOUNT_CODE");
+        if (billingAccountCode.isEmpty()) {
+            throw new ValidationException("billing_account_code is required");
+        }
+
+        billingAccountDto = new BillingAccountDto();
+
+        return billingAccountDto;
+    }
+
+    private void setBillingAccountValues(Map<String, Object> recordMap, BillingAccountDto billingAccountDto) {
+        billingAccountDto.setCustomerAccount((String) recordMap.get("OC_CUSTOMERACCOUNT_CODE"));
+        billingAccountDto.setCode((String) recordMap.get("OC_BILLINGACCOUNT_CODE"));
+        billingAccountDto.setDescription((String) recordMap.get("OC_BILLINGACCOUNT_DESCRIPTION"));
+        billingAccountDto.setBillingCycle((String) recordMap.get("OC_BILLINGACCOUNT_BC"));
+        billingAccountDto.setCountry((String) recordMap.get("OC_BILLINGACCOUNT_COUNTRY"));
+        billingAccountDto.setLanguage((String) recordMap.get("OC_BILLINGACCOUNT_LANGUAGE"));
+        billingAccountDto.setTradingCurrency((String) recordMap.get("OC_BILLINGACCOUNT_CURRENCY"));
+        billingAccountDto.setTaxCategoryCode((String) recordMap.get("OC_BILLINGACCOUNT_TAXCAT"));
+        billingAccountDto.setRegistrationNo((String) recordMap.get("OC_BA_REGISTRATION"));
+        billingAccountDto.setVatNo((String) recordMap.get("OC_BA_TVANUMBER"));
+
+        NameDto name = new NameDto();
+        name.setTitle((String) recordMap.get("OC_BA_TITLE"));
+        name.setFirstName((String) recordMap.get("OC_BA_FNAME"));
+        name.setLastName((String) recordMap.get("OC_BA_LNAME"));
+        billingAccountDto.setName(name);
+
+        billingAccountDto.setIsCompany(Objects.equals(recordMap.get("OC_BA_ORGANIZATION"), "X"));
+        billingAccountDto.setElectronicBilling(Objects.equals(recordMap.get("OC_BA_EBILL"), "X"));
+        billingAccountDto.setEmail((String) recordMap.get("OC_BA_EBILLEMAIL"));
+        billingAccountDto.setCcedEmails((String) recordMap.get("OC_BA_EBILLEMAILS"));
+
+        AddressDto addressDto = new AddressDto();
+        addressDto.setAddress1((String) recordMap.get("OC_BA_ADDRESS"));
+        addressDto.setZipCode((String) recordMap.get("OC_BA_ZIPCODE"));
+        addressDto.setCity((String) recordMap.get("OC_BA_CITY"));
+        addressDto.setState((String) recordMap.get("OC_BA_STATE"));
+        addressDto.setCountry((String) recordMap.get("OC_BA_COUNTRY"));
+        billingAccountDto.setAddress(addressDto);
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.UserAccountImportScript" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.account.UserAccountApi;
+import org.meveo.api.dto.account.NameDto;
+import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.model.billing.UserAccount;
+
+import java.text.ParseException;
+import java.util.Map;
+import java.util.stream.Stream;
+
+
+public class UserAccountImportScript extends GenericMassImportScript {
+
+    private static final String RECORD_VARIABLE_NAME = "record";
+    private static final String ENTITY = "USER_ACCOUNT";
+    private static final String ENTITY_NAME = "UserAccount";
+
+    public enum UserAccountActionEnum {
+        CREATE, UPDATE, DELETE
+    }
+
+    private final UserAccountApi userAccountApi = (UserAccountApi) getServiceInterface(UserAccountApi.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> recordMap = (Map<String, Object>) context.get(RECORD_VARIABLE_NAME);
+            if (recordMap != null && !recordMap.isEmpty()) {
+                // VALIDATE ENTITY
+                String OC_ENTITY = (String) recordMap.get("OC_ENTITY");
+                if (!ENTITY.equals(OC_ENTITY)) {
+                    throw new ValidationException("value of OC_ENTITY is not correct: " + OC_ENTITY);
+                }
+                // VALIDATE ACTION
+                String OC_ACTION = (String) recordMap.get("OC_ACTION");
+                if (Stream.of(UserAccountActionEnum.values()).noneMatch(e -> e.toString().equals(OC_ACTION))) {
+                    throw new ValidationException("value of OC_ACTION is not correct: " + OC_ACTION);
+                }
+
+                UserAccountActionEnum action = UserAccountActionEnum.valueOf(OC_ACTION);
+
+                UserAccountDto userAccountDto = validateAndGetCustomer(action, recordMap);
+
+                if (UserAccountActionEnum.CREATE.equals(action)) {
+                    setAccessValues(recordMap, userAccountDto);
+                    UserAccount userAccount = userAccountApi.create(userAccountDto);
+                    this.setCFValues(recordMap, userAccount, ENTITY_NAME);
+                }
+            }
+        } catch (Exception exception) {
+            throw new BusinessException(exception);
+        }
+    }
+
+    private UserAccountDto validateAndGetCustomer(UserAccountActionEnum action, Map<String, Object> recordMap) throws Exception {
+        UserAccountDto userAccountDto = null;
+
+        String billingAccountCode = (String) recordMap.get("OC_BILLINGACCOUNT_CODE");
+        if (billingAccountCode.isEmpty()) {
+            throw new ValidationException("billing_account_code is required");
+        }
+
+        String userAccountCode = (String) recordMap.get("OC_USERACCOUNT_CODE");
+        if (userAccountCode.isEmpty()) {
+            throw new ValidationException("user_account_code is required");
+        }
+
+        userAccountDto = new UserAccountDto();
+
+        return userAccountDto;
+    }
+
+    private void setAccessValues(Map<String, Object> recordMap, UserAccountDto userAccountDto) throws ParseException {
+        userAccountDto.setBillingAccount((String) recordMap.get("OC_BILLINGACCOUNT_CODE"));
+        userAccountDto.setCode((String) recordMap.get("OC_USERACCOUNT_CODE"));
+      	String ocParentUACode = (String) recordMap.get("OC_PARENT_UA_CODE");
+        if(!ocParentUACode.isEmpty()) {
+            userAccountDto.setParentUserAccountCode(ocParentUACode);
+        }
+        userAccountDto.setDescription((String) recordMap.get("OC_USERACCOUNT_ DESCRIPTION"));
+        userAccountDto.setRegistrationNo((String) recordMap.get("OC_UA_REGISTRATION"));
+        userAccountDto.setVatNo((String) recordMap.get("OC_UA_TVANUMBER"));
+
+        NameDto name = new NameDto();
+        name.setTitle((String) recordMap.get("OC_UA_TITLE"));
+        name.setFirstName((String) recordMap.get("OC_UA_FNAME"));
+        name.setLastName((String) recordMap.get("OC_UA_LNAME"));
+        userAccountDto.setName(name);
+
+        userAccountDto.setIsCompany((String) recordMap.get("OC_UA_ORGANIZATION") == "X");
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<!-- Job notification script -->
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="code" value="org.meveo.service.script.CustomerJobNotification" />
+			<column name="script">
+				<![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class CustomerJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = "noreply@itnewvision.oc-sb.eu";
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportCustomerJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportCustomerAccountJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportPaymentMethodJob";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "massImportBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "massImportUserAccountJob";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    params.put("job", jobExecutionResult.getJobInstance().getCode());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+}
+
+				]]>
+			</column>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="opencell.admin" />
+			<column name="version" valueNumeric="0" />
+			<column name="src_type" value="JAVA" />
+		</insert>
+		<!-- Email templates -->
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="MASS_IMPORT_ISSUES_EMAIL" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your import had a few issues : #{job}" />
+			<column name="htmlcontent">
+				<![CDATA[
+				Your import was not a 100% success and some records were not created. Please review the rejection file.
+                ]]>
+			</column>
+		</insert>
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="MASS_IMPORT_FAILURE_EMAIL" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your import has failed : #{job}" />
+			<column name="htmlcontent">
+				<![CDATA[
+				<font face="Arial, Verdana">Import process has failed. Please check the rejection file for more details. If this persists, please contact&nbsp;</font>your integrator or our support team.
+                ]]>
+			</column>
+		</insert>
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="MASS_IMPORT_SUCCESS_EMAIL" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="Your import was a success : #{job}" />
+			<column name="htmlcontent">
+				<![CDATA[
+				<font face="Arial, Verdana">Your import that started&nbsp;<b>#{date}</b>&nbsp;at&nbsp;<b>#{time}&nbsp;</b>has been&nbsp;</font>processed successfully.
+                ]]>
+			</column>
+		</insert>
+		<!-- Job notification -->
+		<insert tableName="adm_notification">
+			<column name="id" valueSequenceNext="adm_notification_seq" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="OC_CUSTOMER_JOB_NOTIFICATION" />
+			<column name="class_name_filter" value="org.meveo.model.jobs.JobExecutionResultImpl" />
+			<column name="event_type_filter" value="PROCESSED" />
+			<column name="version" value="0" />
+			<column name="creator" value="opencell.admin" />
+			<column name="uuid" value="e60e376e-dbb7-424c-a37d-350280d6e033" />
+			<column name="script_instance_id"
+					valueComputed="(SELECT id from meveo_script_instance where code = 'org.meveo.service.script.CustomerJobNotification')"/>
+		</insert>
+		<insert tableName="adm_notif_job">
+			<column name="id"
+					valueComputed="(SELECT id from adm_notification where code = 'OC_CUSTOMER_JOB_NOTIFICATION')" />
+			<column name="job_instance_id"
+					valueComputed="(SELECT id from meveo_job_instance where code = 'massImportCustomerJob')"/>
+		</insert>
+		<insert tableName="adm_notification_params">
+			<column name="notification_id"
+					valueComputed="(SELECT id from adm_notification where code = 'OC_CUSTOMER_JOB_NOTIFICATION')" />
+			<column name="params" value="customer"/>
+			<column name="params_key" value="category"/>
+		</insert>
+	</changeSet>
 </databaseChangeLog>
