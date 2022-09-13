@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -52,6 +51,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -193,6 +193,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private WalletOperationService walletOperationService;
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     /**
      * @param level level enum
@@ -654,10 +656,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                         if (contractItem.getPricePlan() != null) {
                             PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
-                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
+                            PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
-                                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                try {
+                                    final WalletOperation tmpWalletOperation = bareWalletOperation;
+                                    PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
+                                    unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                }catch(NoPricePlanException e) {
+                                    log.warn("Price not found for contract : " + contract.getCode(), e);
+                                } catch (Exception e) {
+                                    log.warn("Error on contract code " + contract.getCode(), e);
+                                }
                             }
 
                         } else {

@@ -175,6 +175,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter name - parameter's value contains filter parameters
      */
     public static final String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+    
+    /**
+     * Entity list search if any of input parameters match the given values (example: "anyMatch customer.id billingAccount.customerAccount.customer.id customerAccount.customer.id": "19 19 19")
+     */
+    public static final String ANY_MATCH = "anyMatch";
 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.";
     public static final String CF_VALUES_FIELD = "cfValues";
@@ -1049,7 +1054,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), config.getJoinType());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
