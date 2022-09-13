@@ -1784,9 +1784,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                         }
                                         else {
                                             rt.setStatus(RatedTransactionStatusEnum.REJECTED);
-                                            rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + 
-                                                    billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] unknown billing account [code=" + eInvoicedBACodeEL + "] for RT [id=" + 
-                                                    rt.getId() + "]: Error in criteriaEL evaluation");
+                                            rt.setRejectReason("Billing redirection rule [id=" + billingRule.getId() + ", priority= " + 
+                                                    billingRule.getPriority() + ", invoicedBillingAccountCodeEL=" + billingRule.getInvoicedBACodeEL() 
+                                                    + "] redirects to unknown billing account [code=" + eInvoicedBACodeEL + "] for RT [id=" + 
+                                                    rt.getId() + "]");
                                             update(rt);
                                         }
                                     }
