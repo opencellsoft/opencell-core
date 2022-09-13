@@ -205,6 +205,8 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customerService.create(customer);
+        customer.getAddressbook().setCustomer(customer);
+        addressBookService.update(customer.getAddressbook());
 
         return customer;
     }
