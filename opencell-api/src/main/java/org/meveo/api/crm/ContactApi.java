@@ -19,7 +19,12 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -58,7 +63,6 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -326,14 +330,16 @@ public class ContactApi extends BaseApi {
             }
         }
 
-        if(StringUtils.isNotBlank(postData.getContactCategoryCode())) {
-        	ContactCategory contactCategory = contactCategoryService.findByCode(postData.getContactCategoryCode());
-        	if(contactCategory == null) {
-        		throw new EntityDoesNotExistsException(ContactCategory.class, postData.getContactCategoryCode());
-        	}
-        	contact.setContactCategory(contactCategory);
-        } else if("".equals(postData.getContactCategoryCode())) {
-        	contact.setContactCategory(null);
+        if(postData.getContactCategoryCode() != null) {
+        	if(StringUtils.isBlank(postData.getContactCategoryCode())) {
+            	contact.setContactCategory(null);
+            } else {
+            	ContactCategory contactCategory = contactCategoryService.findByCode(postData.getContactCategoryCode());
+            	if(contactCategory == null) {
+            		throw new EntityDoesNotExistsException(ContactCategory.class, postData.getContactCategoryCode());
+            	}
+            	contact.setContactCategory(contactCategory);
+            }
         }
     }
 
