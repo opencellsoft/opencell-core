@@ -102,6 +102,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean fullMatch = false;
         boolean withWriteOff = false;
         boolean withRefund = false;
+        boolean isToTriggerCollectionPlanLevelsJob = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
 
         // For PaymentPlan, new AO OOC PPL_CREATION shall match all debit one, and recreate new AOS DEBIT OCC PPL_INSTALLMENT recording to the number of installment of Plan
@@ -178,7 +179,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
+                        if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
+                            isToTriggerCollectionPlanLevelsJob = true;
+                        }
+
                     } else if (!fullMatch) {
                         log.info("matching - [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PPAID + "]");
@@ -252,7 +256,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PAID + "]");
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PAID);
-                        invoiceService.triggersCollectionPlanLevelsJob(invoice);
+                        if (InvoicePaymentStatusEnum.PAID == invoice.getPaymentStatus()) {
+                            isToTriggerCollectionPlanLevelsJob = true;
+                        }
                     } else if(!fullMatch) {
                         log.info("matching- [Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
                                 invoice.getPaymentStatus() + " - newPaymentStatus : " + InvoicePaymentStatusEnum.PPAID + "]");
@@ -274,6 +280,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
                 matchingCode.getMatchingAmounts().add(matchingAmount);
             }
+        }
+
+        if (isToTriggerCollectionPlanLevelsJob) {
+            invoiceService.triggersCollectionPlanLevelsJob();
         }
 
         matchingCode.setMatchingAmountDebit(amount);
