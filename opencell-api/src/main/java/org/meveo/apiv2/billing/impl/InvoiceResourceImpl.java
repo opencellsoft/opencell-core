@@ -163,11 +163,25 @@ public class InvoiceResourceImpl implements InvoiceResource {
 								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
 								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
 										.forEach(matchingAmountAo -> {
-											if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
-													!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
-											 		!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
-												result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+											switch (accountOperation.getTransactionCategory()) {
+												// For payment history, the rule is : when we hava an AO DEBIT we should have AO payment CREDIT and vice versa
+												case DEBIT:
+													if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.CREDIT &&
+															!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+															!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+														result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+													}
+													break;
+												case CREDIT:
+													if (matchingAmountAo.getAccountOperation().getTransactionCategory() == OperationCategoryEnum.DEBIT &&
+															!PPL_CREATION.equals(matchingAmountAo.getAccountOperation().getCode()) &&
+															!matchingAmountAo.getAccountOperation().getId().equals(accountOperation.getId())) {
+														result.add(toResponse(matchingAmountAo.getAccountOperation(), matchingAmountAo, invoice));
+													}
+													break;
+												default:
 											}
+
 										});
 							});
 
