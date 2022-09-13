@@ -90,14 +90,14 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         for(Entry<String, List<CustomFieldValue>> listCfs: cfValues.entrySet()) {
             for(CustomFieldValue cf: listCfs.getValue()) {
                 if (cf.getStringValue() != null && cf.getStringValue().startsWith(ENCRYPTION_CHECK_STRING)) {
-                    cf.setStringValue(decrypt(cf.getStringValue()));
+                    cf.setStringValue(ENCRYPT_CF ? decrypt(cf.getStringValue()) : cf.getStringValue());
                 } else if (cf.getListValue() != null) {
                     List<Object> listValues = new ArrayList<>();
                     for(Object object: cf.getListValue()) {
                         if(object instanceof String) {
                             String valueString = (String) object;
                             if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
-                                listValues.add(decrypt(valueString));
+                                listValues.add(ENCRYPT_CF ? decrypt(valueString) : valueString);
                             } else {
                                 listValues.add(valueString);
                             }
@@ -112,7 +112,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
                         if(object.getValue() instanceof String) {
                             String valueString = (String) object.getValue();
                             if(valueString.startsWith(ENCRYPTION_CHECK_STRING)) {
-                                mapValues.put(object.getKey(), decrypt(valueString));
+                                mapValues.put(object.getKey(), ENCRYPT_CF ? decrypt(valueString) : valueString);
                             } else {
                                 mapValues.put(object.getKey(), valueString);
                             }
