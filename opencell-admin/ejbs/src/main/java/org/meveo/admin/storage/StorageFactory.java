@@ -68,11 +68,9 @@ public class StorageFactory {
 
     private static final String NFS = "FileSystem";
     private static final String S3 = "S3";
-    
-    private static Logger logger = LoggerFactory.getLogger(StorageFactory.class);
 
     /** Logger. */
-    protected static Logger log = LoggerFactory.getLogger(StorageFactory.class);
+    protected static Logger logger = LoggerFactory.getLogger(StorageFactory.class);
 
     public void init() {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
@@ -108,7 +106,7 @@ public class StorageFactory {
             boolean validParameters = false;
 
             try {
-                log.info("check configuration parameters of S3 bucket");
+                logger.info("check configuration parameters of S3 bucket");
 
                 client.headBucket(HeadBucketRequest.builder()
                         .bucket(bucketName)
@@ -117,19 +115,19 @@ public class StorageFactory {
                 validParameters = true;
             }
             catch (NoSuchBucketException e) {
-                log.error("NoSuchBucketException exception message : {}", e.getMessage());
+                logger.error("NoSuchBucketException exception message : {}", e.getMessage());
             }
             catch (S3Exception e) {
-                log.error("S3Exception exception message : {}", e.getMessage());
-                log.error("Failed to connect to S3 repository. Check all your S3 configuration parameters : region {}, " +
+                logger.error("S3Exception exception message : {}", e.getMessage());
+                logger.error("Failed to connect to S3 repository. Check all your S3 configuration parameters : region {}, " +
                         " endpointUrl {}, accessKeyId, and secretAccessKey", region, endpointUrl);
             }
 
             if (validParameters) {
-                log.info("S3 parameters are correctly configured");
+                logger.info("S3 parameters are correctly configured");
             }
             else {
-                log.info("S3 parameters are not correctly configured");
+                logger.info("S3 parameters are not correctly configured");
             }
 
             s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
