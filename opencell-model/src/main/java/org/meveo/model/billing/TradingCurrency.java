@@ -208,6 +208,7 @@ public class TradingCurrency extends EnableEntity {
         }
         Collections.sort(ratesList, (o1, o2) -> o2.getFromDate().compareTo(o1.getFromDate()));
 
-        return ratesList.stream().filter(rate -> rate.getFromDate().before(invoiceDate)).findFirst().orElse(null);
+        return ratesList.stream().filter(rate -> (rate.getFromDate().toInstant().isBefore(invoiceDate.toInstant())) ||
+                (rate.getFromDate().toInstant().equals(invoiceDate.toInstant()))).findFirst().orElse(null);
     }
 }
