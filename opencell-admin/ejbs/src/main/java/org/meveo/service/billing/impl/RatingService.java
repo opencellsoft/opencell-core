@@ -665,7 +665,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
-                                    unitPriceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                                    unitPriceWithoutTax = pricePlanMatrixLine.getValue();
                                     bareWalletOperation.setContract(contract);
                                     bareWalletOperation.setPriceplan(pricePlanMatrix);
                                     bareWalletOperation.setPricePlanMatrixVersion(ppmVersion);
@@ -708,7 +708,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                BigDecimal discountRate= pricePlanMatrixLine.getPriceWithoutTax();
+                                BigDecimal discountRate= pricePlanMatrixLine.getValue();
                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
                                     BigDecimal amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0)
@@ -841,7 +841,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
-                	priceWithoutTax = pricePlanMatrixLine.getPriceWithoutTax();
+                	priceWithoutTax = pricePlanMatrixLine.getValue();
                     String amountEL = ppmVersion.getPriceEL();
                     String amountELPricePlanMatrixLine = pricePlanMatrixLine.getPriceEL();
                     if (!StringUtils.isBlank(amountEL)) {

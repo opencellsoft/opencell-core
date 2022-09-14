@@ -1,10 +1,8 @@
 package org.meveo.api.catalog;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +24,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -161,6 +160,16 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         }
+
+        if (pricePlanMatrix.getChargeTemplate() != null && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
+            log.error("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+            throw new MeveoApiException("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+        }
+        Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix() != null && pricePlanMatrixVersionDto.getMatrix();
+        if (!isMatrix && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
+            log.error("The priceVersionType property should not be percentage, The isMatrix property is false");
+            throw new MeveoApiException("The priceVersionType property should not be percentage, The isMatrix property is false");
+        }
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         if(pricePlanMatrixVersion.getId() == null) {
             pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrix) + 1);
@@ -188,6 +197,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrixVersion.setPriority(pricePlanMatrixVersionDto.getPriority());
         pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
+        if(!StringUtils.isBlank(pricePlanMatrixVersionDto.getPriceVersionType())) {
+            pricePlanMatrixVersion.setPriceVersionType(pricePlanMatrixVersionDto.getPriceVersionType());
+        }
         return pricePlanMatrixVersion;
     }
 

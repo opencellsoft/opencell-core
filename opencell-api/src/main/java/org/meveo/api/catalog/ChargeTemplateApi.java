@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.xml.bind.ValidationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
@@ -205,6 +206,13 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
                     })
                     .collect(Collectors.toSet());
             chargeTemplate.getAttributes().addAll(linkedAttributes);
+        }
+        if(postData.getStatus() != null){
+            try {
+                chargeTemplate.setStatus(postData.getStatus());
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
         }
         // populate customFields
         try {
