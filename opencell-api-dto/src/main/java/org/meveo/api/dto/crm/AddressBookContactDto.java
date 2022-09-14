@@ -41,7 +41,7 @@ public class AddressBookContactDto implements IEntityDto {
     }
 
     public void setAddressBook(Map<String, Long> addressBook) {
-        addressBook = addressBook;
+        this.addressBook = addressBook;
     }
 
     public String getPosition() {
