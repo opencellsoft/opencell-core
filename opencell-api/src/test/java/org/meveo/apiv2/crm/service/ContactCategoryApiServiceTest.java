@@ -4,8 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.EntityManager;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -19,7 +17,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.intcrm.impl.ContactCategoryService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,9 +68,6 @@ public class ContactCategoryApiServiceTest {
 	@Test
 	public void testDeleteContactCategory() {
 		when(contactCategoryService.findByCode(anyString())).thenReturn(new ContactCategory());
-		
-		Mockito.mock(EntityManager.class);
-		when(contactCategoryService.getEntityManager()).thenReturn(Mockito.mock(EntityManager.class));
 		
 		contactCategoryApiService.delete("cc_code");
 	}
