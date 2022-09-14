@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -26,6 +28,7 @@ import org.meveo.api.dto.billing.CreateBillingRunDto;
 import org.meveo.api.dto.billing.InvalidateInvoiceDocumentsDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
@@ -33,10 +36,22 @@ import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.billing.WalletOperationRerate;
+import org.meveo.apiv2.generic.core.GenericRequestMapper;
+import org.meveo.apiv2.generic.services.GenericApiLoadService;
+import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -44,6 +59,9 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
     @Inject
     private InvoicingApi invoicingApi;
+
+    @Inject
+    private GenericApiLoadService loadService;
 
     @Override
     public ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto) {
@@ -284,5 +302,37 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.debug("canceledInvoices Response={}", result);
         return result;
 	}
+
+    @Override
+    public ActionStatus markWOToRerate(WalletOperationRerate reRateFilters) {
+        GenericRequestMapper mapper = new GenericRequestMapper(WalletOperation.class, PersistenceServiceHelper.getPersistenceService());
+        Map<String, Object> filters = mapper.evaluateFilters(Objects.requireNonNull(reRateFilters.getFilters()), WalletOperation.class);
+
+        // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
+        filters.put("inList status",
+                Arrays.asList(WalletOperationStatusEnum.F_TO_RERATE,
+                        WalletOperationStatusEnum.OPEN,
+                        WalletOperationStatusEnum.REJECTED,
+                        WalletOperationStatusEnum.TREATED));
+        filters.put("ratedTransaction.status", RatedTransactionStatusEnum.OPEN);
+
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
+        paginationConfiguration.setFilters(filters);
+        paginationConfiguration.setFetchFields(new ArrayList<>());
+        paginationConfiguration.getFetchFields().add("id");
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        List<Map<String, Object>> results = loadService.findAggregatedPaginatedRecords(WalletOperation.class, paginationConfiguration, null);
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            invoicingApi.markeWOToRerate(results);
+            result.setMessage(results.size() + " Wallet operations updated to status 'TO_RERATE'");
+        } else {
+            result.setMessage("No Wallet operations found to update");
+        }
+
+        return result;
+    }
 
 }

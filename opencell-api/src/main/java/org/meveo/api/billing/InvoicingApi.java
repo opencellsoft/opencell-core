@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -415,5 +416,9 @@ public class InvoicingApi extends BaseApi {
 		invoiceService.deleteInvoices(billingRunId);
 
 	}
+
+    public void markeWOToRerate(List<Map<String, Object>> results) {
+        invoiceService.markeWOToRerate(results);
+    }
 
 }
