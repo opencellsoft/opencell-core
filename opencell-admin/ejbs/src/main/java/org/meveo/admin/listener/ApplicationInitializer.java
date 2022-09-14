@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
@@ -109,6 +110,9 @@ public class ApplicationInitializer {
     @Inject
     private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
+    @Inject
+    private StorageFactory storageFactory;
+
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
@@ -178,6 +182,9 @@ public class ApplicationInitializer {
         } else {
             esPopulationService.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         }
+
+        // Initialize storage factory
+        storageFactory.init();
 
         // cfValueAcumulator.loadCfAccumulationRules();
 

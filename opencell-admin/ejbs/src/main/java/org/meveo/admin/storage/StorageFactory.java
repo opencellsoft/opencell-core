@@ -17,8 +17,11 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import javax.xml.bind.JAXBException;
@@ -68,7 +71,10 @@ public class StorageFactory {
     
     private static Logger logger = LoggerFactory.getLogger(StorageFactory.class);
 
-    static {
+    /** Logger. */
+    protected static Logger log = LoggerFactory.getLogger(StorageFactory.class);
+
+    public void init() {
         ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         storageType = tmpParamBean.getProperty("storage.type", NFS);
 
@@ -93,18 +99,41 @@ public class StorageFactory {
 
             S3Client client =
                     S3Client.builder().region(Region.of(region))
-                            .endpointOverride(URI.create(endpointUrl))
+                    .endpointOverride(URI.create(endpointUrl))
                             .credentialsProvider(
                                     StaticCredentialsProvider.create(
                                             AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                             .build();
 
+            boolean validParameters = false;
+
+            try {
+                log.info("check configuration parameters of S3 bucket");
+
+                client.headBucket(HeadBucketRequest.builder()
+                        .bucket(bucketName)
+                        .build());
+
+                validParameters = true;
+            }
+            catch (NoSuchBucketException e) {
+                log.error("NoSuchBucketException exception message : {}", e.getMessage());
+            }
+            catch (S3Exception e) {
+                log.error("S3Exception exception message : {}", e.getMessage());
+                log.error("Failed to connect to S3 repository. Check all your S3 configuration parameters : region {}, " +
+                        " endpointUrl {}, accessKeyId, and secretAccessKey", region, endpointUrl);
+            }
+
+            if (validParameters) {
+                log.info("S3 parameters are correctly configured");
+            }
+            else {
+                log.info("S3 parameters are not correctly configured");
+            }
+
             s3FileSystem = new S3FileSystem(new S3FileSystemProvider(), accessKeyId, client, endpointUrl);
         }
-    }
-
-    public static Path connectToS3Bucket(String bucketName) {
-        return s3FileSystem.getPath("/" + bucketName);
     }
 
     public static Path getObjectPath(String objectPath) {
