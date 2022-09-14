@@ -82,15 +82,7 @@ public class ContactCategoryApiService extends BaseApi {
 		if(searchContactCategory == null) {
 			throw new EntityDoesNotExistsException(ContactCategory.class, contactCategoryCode);
 		}
-		try {
-			contactCategoryService.remove(searchContactCategory);
-			contactCategoryService.getEntityManager().flush();
-		} catch (Exception e) {
-			if(e.getCause() instanceof ConstraintViolationException) {
-				throw new DeleteReferencedEntityException(ContactCategory.class, contactCategoryCode);
-			}
-			throw new BusinessException(e);
-		}
+		contactCategoryService.remove(searchContactCategory);
 	}
 
 }

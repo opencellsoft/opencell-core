@@ -4,8 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
 import javax.persistence.EntityManager;
 
 import org.junit.Test;
@@ -76,13 +74,6 @@ public class ContactCategoryApiServiceTest {
 		
 		Mockito.mock(EntityManager.class);
 		when(contactCategoryService.getEntityManager()).thenReturn(Mockito.mock(EntityManager.class));
-		
-		contactCategoryApiService.delete("cc_code");
-	}
-
-	@Test(expected = EntityDoesNotExistsException.class)
-	public void testDeleteContactCategoryDoesnotExists() {
-		when(contactCategoryService.findByCode(anyString())).thenReturn(null);
 		
 		contactCategoryApiService.delete("cc_code");
 	}
