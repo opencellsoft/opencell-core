@@ -31,12 +31,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
+import org.meveo.api.rest.admin.impl.FileUploadForm;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -333,5 +335,5 @@ public interface CurrencyRs extends IBaseRs {
                     @ApiResponse(responseCode = "412", description = "Missing parameters")
             })
     @Consumes(MULTIPART_FORM_DATA)
-    Response importExchangeRate(MultipartFormDataInput input);
+	ActionStatus importExchangeRate(@MultipartForm FileUploadForm form);
 }

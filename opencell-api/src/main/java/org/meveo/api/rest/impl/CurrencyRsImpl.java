@@ -18,18 +18,17 @@
 
 package org.meveo.api.rest.impl;
 
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.ImportExchangeRatesDto;
 import org.meveo.api.dto.billing.ExchangeRateDto;
 import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
+import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
@@ -50,11 +49,11 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     @Inject
     private CurrencyApi currencyApi;
 
-      @Inject
+    @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
-    @Override
+	@Override
     public TradingCurrenciesResponseDto list() {
         TradingCurrenciesResponseDto result = new TradingCurrenciesResponseDto();
         result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
@@ -206,11 +205,15 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     }
 
 	@Override
-	public Response importExchangeRate(MultipartFormDataInput input) {
-		// TODO Auto-generated method stub
-		return null;
+	public ActionStatus importExchangeRate(FileUploadForm exchangeRateForm) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.importExchangeRate(exchangeRateForm);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
 	}
 
-
-    
 }

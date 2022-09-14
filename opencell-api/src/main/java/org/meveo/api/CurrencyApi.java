@@ -22,7 +22,15 @@ import static java.math.BigDecimal.ONE;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.admin.impl.TradingCurrencyService.getCurrencySymbol;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -30,26 +38,38 @@ import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.admin.FilesApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrenciesDto;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.ImportFileTypeDto;
+import org.meveo.api.dto.ImportTypesEnum;
 import org.meveo.api.dto.billing.ExchangeRateDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.bi.FlatFile;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -83,6 +103,18 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private AuditLogService auditLogService;
 
+	@Inject
+	private ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private FilesApi filesApi;
+    
+    private final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
+
+    public String getProviderRootDir() {
+        return paramBeanFactory.getDefaultChrootDir();
+    }
+    
     public CurrenciesDto list() {
         CurrenciesDto result = new CurrenciesDto();
 
@@ -422,4 +454,69 @@ public class CurrencyApi extends BaseApi {
     public void removeExchangeRateById(Long id) {
         exchangeRateService.delete(id);
     }
+    
+    public void importExchangeRate(FileUploadForm exchangeRateForm) {
+        
+        if (StringUtils.isBlank(exchangeRateForm.getData())) {
+            throw new MissingParameterException("filename");
+        }
+
+        try {
+            String exchangeRateDir = getProviderRootDir() + File.separator + EXCHANGE_RATE_DIR;
+            Path path = Paths.get(exchangeRateDir);
+            Files.createDirectories(path);
+
+            if(!exchangeRateForm.getFilename().equals("csv") && !exchangeRateForm.getFilename().equals("xlsx")) {
+                throw new BadRequestException("Only file extensions .csv and .xlsx are allowed.");
+            }
+            
+            String exchangeRateFileDir = EXCHANGE_RATE_DIR + exchangeRateForm.getFilename();
+            FlatFile flatFile = filesApi.uploadFile(exchangeRateForm.getData(), exchangeRateFileDir, null);
+            
+            String pathName = exchangeRateDir + exchangeRateForm.getFilename();
+            if (!new File(pathName).exists()) {
+                throw new BusinessApiException("The file: '" + exchangeRateDir + exchangeRateForm.getFilename() + "' does not exist");
+            }
+
+            try (FileInputStream fs = new FileInputStream(pathName);
+                    InputStreamReader isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
+                    LineNumberReader lnr = new LineNumberReader(isr)) {
+
+                String header = lnr.readLine();
+                
+                if("Currency Code,Date,Exchange Rate".equals(header)) {
+                    String firstLine = lnr.readLine();
+                    String[] split = firstLine.split(",");
+
+                    if(split.length == 3) {
+                        String currencyCodeExchangerate = split[0];
+                        String dateExchangerate = split[1];
+                        String rateExchangerate = split[2];
+                        
+                        Currency currency = currencyService.findByCode(currencyCodeExchangerate);
+                        
+                        if(currency != null) {
+                        	TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCodeExchangerate);
+                        	if(tradingCurrency != null) {
+                        		ExchangeRate exchangeRate = exchangeRateService.findByFromDate(new Date(dateExchangerate), tradingCurrency.getId());
+                        	}
+                        	
+                        }else {
+                            throw new BadRequestException("Invalid currency code detected. Please use ISO code.");
+                        }
+                    }else {
+                        throw new BadRequestException("The row format is not valide.");
+                    }
+                
+                }
+                
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
