@@ -109,6 +109,7 @@ public class InvoiceLinesFactory {
             			invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
             			invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
             			invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
+            			invoiceLine.setSequence(discountRatedTransaction.getSequence());
             		}
         		}
         		

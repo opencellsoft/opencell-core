@@ -588,6 +588,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
     
+    /**
+  	 * 
+  	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
+  	 */
+  	@Column(name = "sequence")
+  	private Integer sequence;
+    
     public RatedTransaction() {
         super();
     }
@@ -1505,6 +1512,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	

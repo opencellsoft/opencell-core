@@ -4018,9 +4018,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
         InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
-            if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
-                continue;
-            }
+        	if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)
+        			|| Arrays.asList(DiscountPlanTypeEnum.OFFER, DiscountPlanTypeEnum.PRODUCT, DiscountPlanTypeEnum.QUOTE).contains(dpi.getDiscountPlan().getDiscountPlanType())) {
+        		continue;
+        	}
             if (dpi.getDiscountPlan().isActive()) {
                 List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
                 for (DiscountPlanItem discountPlanItem : discountPlanItems) {

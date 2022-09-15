@@ -156,7 +156,8 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 
 		}
 
-    	return (AttributeValue)attributeInstance;
+       	AttributeValue attributeValue=(AttributeValue)attributeInstance; 
+    	return attributeValue;
 
     	}
 }

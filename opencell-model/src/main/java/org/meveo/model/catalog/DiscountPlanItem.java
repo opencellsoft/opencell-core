@@ -74,7 +74,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @NamedQueries({
 		@NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT SUM(dpi.discountValue) FROM DiscountPlanItem dpi WHERE dpi.discountPlan.id = :discountPlanId AND dpi.discountPlanItemType='FIXED'")
+		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT SUM(dpi.discountValue) FROM DiscountPlanItem dpi WHERE dpi.discountPlan.id = :discountPlanId AND dpi.discountPlanItemType='FIXED'"),
+		@NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId")
 })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
@@ -193,6 +194,30 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "allow_to_negate")
 	@NotNull
 	private boolean allowToNegate = false;
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "apply_by_article")
+	private boolean applyByArticle=false;
+	
+	
+	
+	/**
+	 * 
+	 *defines the order in which discount plans are applied
+	 */
+	@Column(name = "sequence")
+	private Integer sequence;
+	
+	/**
+	 * determines if the following discounts ordered by sequence is applicable
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "last_discount")
+	private Boolean lastDiscount;
+	
+	 
+	@Transient
+	private Integer finalSequence;
 	
 	/**
 	 * Code
@@ -439,6 +464,38 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isApplyByArticle() {
+		return applyByArticle;
+	}
+
+	public void setApplyByArticle(boolean applyByArticle) {
+		this.applyByArticle = applyByArticle;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	public Boolean getLastDiscount() {
+		return lastDiscount;
+	}
+
+	public void setLastDiscount(Boolean lastDiscount) {
+		this.lastDiscount = lastDiscount;
+	}
+
+	public Integer getFinalSequence() {
+		return finalSequence;
+	}
+
+	public void setFinalSequence(Integer finalSequence) {
+		this.finalSequence = finalSequence;
 	}
 
 	

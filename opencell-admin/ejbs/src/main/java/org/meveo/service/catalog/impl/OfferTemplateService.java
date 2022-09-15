@@ -504,16 +504,5 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     	return offers;
     }
-    @SuppressWarnings("unchecked")
-    public List<Tag> getOfferTagsByType(List<String> tagTypeCodes) { 
-    	List<Tag> tags=new ArrayList<Tag>();
-    	try {
-    		tags = (List<Tag>)getEntityManager().createNamedQuery("OfferTemplate.findTagsByTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		log.error("getOfferTagsByType error ", e.getMessage());
-    	}
 
-    	return tags;
-    }
 }

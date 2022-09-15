@@ -21,9 +21,8 @@ package org.meveo.service.catalog.impl;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,13 +33,12 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -49,21 +47,18 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
-import org.meveo.model.catalog.DiscountPlanTypeEnum;
-import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -232,7 +227,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
             // If the discount and the aggregate are of opposite signs, then the absolute value of the discount must not be greater than the absolute value of the
             // considered invoice aggregate
-            if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
+            if (amountToApplyDiscountOn!=null && !((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
                     || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) > 0)) && (discountAmount.abs().compareTo(amountToApplyDiscountOn.abs()) > 0)) {
 
             	discountAmount=amountToApplyDiscountOn.negate();
@@ -250,40 +245,63 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     
     public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
-        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
+    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+    	
+    	if(discountPlan.getSequence()==null){
+    		discountPlanService.setDiscountPlanSequence(discountPlan);
+    		discountPlanService.update(discountPlan);
+    	} 
+        if(accountingArticle==null && walletOperation!=null) {
+        	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        }
+        ChargeTemplate chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
+        
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
-        log.debug("getApplicableDiscountPlanItems discountPlan code={},isDiscountApplicable={}",discountPlan.getCode(),isDiscountApplicable);
-
+        log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
+        
+        Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
+        boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.getApplicableOnOverriddenPrice());
+        
+        if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
+        	return Collections.emptyList();
+        }
         boolean isFixedDpItemIncluded=false;
         if (isDiscountApplicable) {
-        	  List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
-              Long lowPriority=null;
-              for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-            	  isFixedDpItemIncluded=false;
-            	  if(DiscountPlanItemTypeEnum.FIXED==discountPlanItem.getDiscountPlanItemType() && discountPlanItem.getTargetAccountingArticle()!=null 
-            			  && discountPlanItem.getTargetAccountingArticle().size()==1) {
-            		  //this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
-            		  isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
-            		  if(!isFixedDpItemIncluded) {
-            			  continue;
-            		  }
-            	  }
-            	  
-            	  if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
-            		  if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) 
-                    		  && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
-                      	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
-                      	applicableDiscountPlanItems.add(discountPlanItem);
-                      }
-            	  }
-                  
-              }
+        	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+        	Long lowPriority=null;
+        	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+        		isFixedDpItemIncluded=false;
+        		if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
+        			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
+        				continue;
+        		}
+        		if(discountPlanItem.isApplyByArticle() && discountPlanItem.getTargetAccountingArticle()!=null
+        				&& discountPlanItem.getTargetAccountingArticle().size()>0) {
+        			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
+        			isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
+        			if(!isFixedDpItemIncluded) {
+        				continue;
+        			}
+        		}
+
+        		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+        			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
+        					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+        				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
+
+        				if(discountPlanItem.getSequence()==null) {
+        					setDisountPlanItemSequence(discountPlanItem);
+        					super.update(discountPlanItem);
+        				}
+        				applicableDiscountPlanItems.add(discountPlanItem);
+
+        			}
+        		}   
+        	}
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
-    
         return applicableDiscountPlanItems;
-    }
-    
+     }
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
     	boolean isApplicable=false;
@@ -323,5 +341,16 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return (BigDecimal) getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP")
                 .setParameter("discountPlanId", discountPlanId)
                 .getSingleResult();
+    }
+    
+    public void setDisountPlanItemSequence(DiscountPlanItem dpi) {
+    	Integer sequence=null;
+    	if(dpi.getSequence()==null) {
+    		sequence= getEntityManager().createNamedQuery("DiscountPlanItem.getMaxSequence", Integer.class).setParameter("discountPlanId", dpi.getDiscountPlan().getId()).getSingleResult();
+    		if(sequence==null) 
+    			dpi.setSequence(1);
+    		else
+    			dpi.setSequence(sequence+1);
+    	}
     }
 }

@@ -19,31 +19,33 @@
 package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
@@ -55,10 +57,6 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
-import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -99,6 +97,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 		if (entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT) || entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
 			entity.setStatusDate(new Date());
+			setDiscountPlanSequence(entity);
 			super.create(entity);
 		} else {
 			log.error("Only status DRAFT and ACTIVE are allowed to create a discount plan: {}", entity.getCode());
@@ -114,38 +113,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			log.error("Invalid effectivity dates");
 			throw new BusinessException("Invalid effectivity dates");
 		}
+		setDiscountPlanSequence(entity);
 		return super.update(entity);
-	}
-
-
-    /**
-     * @param expression EL exprestion
-     * @param customerAccount customer account
-     * @param billingAccount billing account
-     * @param invoice invoice
-     * @param dpi the discount plan instance
-     * @return true/false
-     * @throws BusinessException business exception.
-     */
-	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,WalletOperation walletOperation,QuoteVersion quoteVersion, Invoice invoice,QuoteOffer offer,QuoteProduct product, DiscountPlan dp) throws BusinessException {
-	        Boolean result = true;
-
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, Boolean.class, quoteVersion,walletOperation,  invoice, offer, product);
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-
-        if (expression.indexOf("entity") >= 0) {
-            userMap.put("entity", entity);
-        }
-        try {
-            result = (Boolean) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
-        }
-        return result;
-    }
+	} 
 	 
 	 public boolean matchDiscountPlanExpression(String expression, IDiscountable entity,BaseEntity...entities) throws BusinessException {
 	        Boolean result = true;
@@ -178,44 +148,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				.setParameter("statuses", Arrays.asList(DiscountPlanStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE)).getResultList();
 		return ids;
 	}
-	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,WalletOperation wo,QuoteVersion quoteVersion,QuoteOffer quoteOffer, QuoteProduct quoteProduct,Date applicationDate,InvoiceLine invoiceLine)
-	{
-		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE)
-				|| discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
-			return false;
-		}
-		if(discountPlan.getDiscountPlanType() == null)
-			return false;
-		OfferTemplate offer=quoteOffer!=null?quoteOffer.getOfferTemplate():wo!=null?wo.getOfferTemplate():null;
-		Product product=quoteProduct!=null?quoteProduct.getProductVersion().getProduct():(wo!=null && wo.getServiceInstance().getProductVersion()!=null?wo.getServiceInstance().getProductVersion().getProduct():null);
-		switch (discountPlan.getDiscountPlanType()) {
-			case OFFER:
-				if (offer != null && !offer.getAllowedDiscountPlans().contains(discountPlan)) {
-					return false;
-				}
-				break;
-			case PRODUCT:
-				if (product != null && !product.getDiscountList().contains(discountPlan)) {
-					return false;
-				}
-				break;
-			case INVOICE_LINE:
-				if (invoiceLine != null && invoiceLine.getDiscountPlan() == null) {
-					return false;
-				}
-				break;
-			default:
-				break;
-		}	
-		applicationDate=applicationDate!=null?applicationDate:new Date();
-		if (discountPlan.isActive() && discountPlan.isEffective(applicationDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,wo,quoteVersion,null, quoteOffer, quoteProduct, discountPlan)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	 
 	
 	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,Date applicationDate,BaseEntity... entities) {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
@@ -256,84 +189,125 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	
     }
     
-    public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
-    										BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
-    										ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
+    
+	public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
+    		BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
+    		ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
     	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
-    	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
-			 WalletOperation discountWalletOperation = null;
-			 AccountingArticle discountAccountingArticle = null;
-			 BigDecimal taxPercent = null;
-			 BigDecimal walletOperationDiscountAmount = null;
-			 BigDecimal[] amounts = null;
-
-			 List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
-			 
-			 if(discountPlanTypeEnum != null) {
-				 final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
-				 discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
-			 }
-			 
-			 log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size());
-				
-			 for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
-					 
-					 discountWalletOperation = new WalletOperation();
-					 discountAccountingArticle = discountPlanItem.getAccountingArticle();
-					
-	                if(discountAccountingArticle == null) {
-	                	throw new EntityDoesNotExistsException("discount plan item "+discountPlanItem.getCode()+" has no accounting article  ");
-	                }
-	
-	            	TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, false, false);
-	                    taxPercent = taxInfo.tax.getPercent();
-	                
-	                if(DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItem.getDiscountPlanItemType())) {
-	                	 unitAmountWithoutTax = discountPlanItem.getDiscountValue();
-	                 }
-	                walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,null, Collections.emptyList());
-	                
-	                amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-	                
-	                discountWalletOperation.setAccountingArticle(discountAccountingArticle);
-	                discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
-	                discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
-	                discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
-	                discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
-	                discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
-	                discountWalletOperation.setTaxPercent(taxPercent);
-	                discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
-	                discountWalletOperation.setUnitAmountWithTax(amounts[1]);
-	                discountWalletOperation.setUnitAmountTax(amounts[2]);
-	                discountWalletOperation.setQuantity(quantity);
-	                discountWalletOperation.setTax(taxInfo.tax);
-	                discountWalletOperation.setCreated(new Date());
-	                discountWalletOperation.setCode(discountCode);
-	                discountWalletOperation.setSeller(seller);
-	                discountWalletOperation.setBillingAccount(billingAccount);
-	                discountWalletOperation.setDiscountPlan(discountPlanItem.getDiscountPlan());
-	                discountWalletOperation.setWallet(walletInstance); // TODO: check scenario where walletInstance is null, because it will throw exception on TR job
-	                discountWalletOperation.setOfferTemplate(offerTemplate);
-	                discountWalletOperation.setServiceInstance(serviceInstance);
-	                discountWalletOperation.setOperationDate(operationDate);
-	                discountWalletOperation.setSubscription(subscription);
-	                discountWalletOperation.setDescription(discountDescription);
-	                discountWalletOperation.setChargeInstance(chargeInstance);
-	                discountWalletOperation.setInputQuantity(quantity);
-	                discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
-	                if(!isVirtual) {
-	                	if(walletOperation != null && walletOperation.getId() != null)
-	                		discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
-	                	walletOperationService.create(discountWalletOperation);
-	                }else if(walletOperation != null) {
-	                	discountWalletOperation.setUuid(walletOperation.getUuid());
-	                }
-	                //TODO: must have wallet operation for : link discountWallet to the current wallet, and
-	                discountWalletOperations.add(discountWalletOperation);
-			}
-    	}
     	
+    	discountPlanItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
+    	
+    	if(discountPlanItems != null && !discountPlanItems.isEmpty()) {
+    		WalletOperation discountWalletOperation = null;
+    		AccountingArticle discountAccountingArticle = null;
+    		BigDecimal taxPercent = null;
+    		BigDecimal walletOperationDiscountAmount = null;
+    		BigDecimal[] amounts = null;
+    		BigDecimal discountValue=null;
+    		BigDecimal discountedAmount=unitAmountWithoutTax;
+    		Product product=null;
+    		List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
+
+    		if(discountPlanTypeEnum != null) {
+    			final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
+    			discountPlanItemsByType = discountPlanItems.stream().filter(dpi -> discountPlanTypeEnumList.contains(dpi.getDiscountPlan().getDiscountPlanType())).collect(Collectors.toList());
+    		}
+    		if(serviceInstance!=null) {
+    			if(serviceInstance.getProductVersion()!=null)
+    				product=serviceInstance.getProductVersion().getProduct();
+    		}
+    		log.debug("calculateDiscountplanItems discountPlanTypeEnum={},discountPlanItems.size={},discountPlanItemsByType.size={},walletOperation code={}",discountPlanTypeEnum,discountPlanItems.size(), discountPlanItemsByType.size(),walletOperation!=null?walletOperation.getCode():null);
+
+    		for (DiscountPlanItem discountPlanItem : discountPlanItemsByType) {
+
+    			discountWalletOperation = new WalletOperation();
+    			discountAccountingArticle = discountPlanItem.getAccountingArticle();
+                DiscountPlan discountPlan = discountPlanItem.getDiscountPlan();
+    			if(discountAccountingArticle == null) {
+    				throw new EntityDoesNotExistsException("discount plan item "+discountPlanItem.getCode()+" has no accounting article  ");
+    			}
+
+    			TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, false, false);
+    			taxPercent = taxInfo.tax.getPercent();
+    			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && discountPlan.getApplicableOnDiscountedPrice()==null))
+    					&& walletOperation!=null 
+    					&& walletOperation.getDiscountedAmount()!=null 
+    					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
+    				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
+    				discountedAmount=unitAmountWithoutTax;
+    			}else if(walletOperation!=null){
+    				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
+    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
+    			}
+    			 
+    			walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
+    			discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
+    			amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);            	
+    			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
+    			
+    		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
+    			
+    			discountWalletOperation.setAccountingArticle(discountAccountingArticle);
+    			discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
+    			discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
+    			discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
+    			discountWalletOperation.setAmountWithTax(quantity.multiply(amounts[1]));
+    			discountWalletOperation.setAmountTax(quantity.multiply(amounts[2]));
+    			discountWalletOperation.setTaxPercent(taxPercent);
+    			discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
+    			discountWalletOperation.setUnitAmountWithTax(amounts[1]);
+    			discountWalletOperation.setUnitAmountTax(amounts[2]);
+    			discountWalletOperation.setQuantity(quantity);
+    			discountWalletOperation.setTax(taxInfo.tax);
+    			discountWalletOperation.setCreated(new Date());
+    			discountWalletOperation.setCode(discountCode);
+    			discountWalletOperation.setSeller(seller);
+    			discountWalletOperation.setBillingAccount(billingAccount);
+    			discountWalletOperation.setDiscountPlan(discountPlanItem.getDiscountPlan());
+    			discountWalletOperation.setWallet(walletInstance); // TODO: check scenario where walletInstance is null, because it will throw exception on TR job
+    			discountWalletOperation.setOfferTemplate(offerTemplate);
+    			discountWalletOperation.setServiceInstance(serviceInstance);
+    			discountWalletOperation.setOperationDate(operationDate);
+    			discountWalletOperation.setDescription(discountDescription);
+    			discountWalletOperation.setChargeInstance(chargeInstance);
+    			discountWalletOperation.setInputQuantity(quantity);
+    			discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+    			discountWalletOperation.setDiscountPlanItem(discountPlanItem);
+    			discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
+    			discountWalletOperation.setDiscountValue(discountValue);
+    			discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
+    			discountWalletOperation.setDiscountedAmount(discountedAmount);
+    			
+    			if(!isVirtual) {
+    				discountWalletOperation.setSubscription(subscription);
+    				if(walletOperation != null && walletOperation.getId() != null) {
+    					discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
+    					walletOperation.setDiscountedAmount(discountedAmount);
+    					walletOperationService.create(discountWalletOperation);
+    				}
+    			}else if(walletOperation != null) {
+    				walletOperation.setDiscountedAmount(discountedAmount);
+    				discountWalletOperation.setUuid(walletOperation.getUuid());
+    			}
+    			log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
+    			//TODO: must have wallet operation for : link discountWallet to the current wallet, and
+    			discountWalletOperations.add(discountWalletOperation);
+    			if(BooleanUtils.isTrue(discountPlanItem.getLastDiscount())){
+    				break;
+    			}
+    		}
+    	}
+
     	return discountWalletOperations;
+    }
+    
+    public void setDiscountPlanSequence(DiscountPlan discountPlan)
+    {
+    	if(discountPlan.getSequence()==null) {
+    		BigInteger sequence =(BigInteger) getEntityManager().createNativeQuery(EntityManagerProvider.isDBOracle()?"SELECT discount_plan_sequence_seq.nextval FROM dual" : "select nextval('discount_plan_sequence_seq')" ).getSingleResult();
+            discountPlan.setSequence(sequence.intValue());
+    	}
+        
     }
 	   
 }
