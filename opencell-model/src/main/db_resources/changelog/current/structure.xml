@@ -14344,5 +14344,12 @@ order by date_trunc('month', i.invoice_date) DESC
         </addColumn>
         <renameColumn tableName="cpq_price_plan_matrix_line" oldColumnName="price_without_tax" newColumnName="value"/>
     </changeSet>
-
+    <changeSet id="#INTRD-9786-20220915" author="HichamHANINE">
+        <addColumn tableName="crm_provider">
+            <column name="rgaa_message" type="varchar(500)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
