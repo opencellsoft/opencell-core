@@ -1,5 +1,7 @@
 package org.meveo.apiv2.crm.service;
 
+import java.util.UUID;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.crm.ContactCategoryDto;
 import org.meveo.apiv2.crm.mapper.ContactCategoryMapper;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.contact.ContactCategory;
 import org.meveo.service.intcrm.impl.ContactCategoryService;
 
@@ -28,12 +31,16 @@ public class ContactCategoryApiService extends BaseApi {
 	@TransactionAttribute
 	public ContactCategory create(ContactCategoryDto postData) {
 		log.info("Delete ContactCategory code={} - description={}", postData.getCode(), postData.getDescription());
+		
 		ContactCategory searchContactCategory = contactCategoryService.findByCode(postData.getCode());
 		if(searchContactCategory != null) {
 			throw new EntityAlreadyExistsException(ContactCategory.class, postData.getCode());
 		}
 		
 		ContactCategory entity = mapper.toEntity(postData);
+		if(StringUtils.isBlank(entity.getCode())) {
+			entity.setCode(UUID.randomUUID().toString());
+		}
 
         try {
             populateCustomFields(postData.getCustomFields(), entity, true, true);
