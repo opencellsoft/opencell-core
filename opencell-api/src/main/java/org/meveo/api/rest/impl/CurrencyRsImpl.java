@@ -33,6 +33,8 @@ import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -209,7 +211,8 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyApi.importExchangeRate(exchangeRateForm);
+            List<String> message = currencyApi.importExchangeRate(exchangeRateForm);
+            result.setMessage(message.toString());
         } catch (Exception e) {
             processException(e, result);
         }
