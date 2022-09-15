@@ -128,9 +128,6 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	 */
 	public Long getCountAgedReceivables(String customerAccountCode) {
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        if (customerAccountCode != null && customerAccount == null) {
-			return 0L;
-		}
         return recordedInvoiceService.getCountAgedReceivables(customerAccount);
 	}
 
