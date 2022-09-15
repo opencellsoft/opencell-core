@@ -165,7 +165,7 @@ import org.meveo.model.tax.TaxClass;
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTable", query = "update {h-schema}billing_wallet_operation wo set status='TREATED', updated=now(), rated_transaction_id=pending.rated_transaction_id from {h-schema}billing_wallet_operation_pending pending where status='OPEN' and wo.id=pending.id"),
-        @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTableOracle", query = "update {h-schema}billing_wallet_operation wo set status='TREATED',updated=now(),rated_transaction_id = (select rated_transaction_id from {h-schema}billing_wallet_operation_pending pending where wo.id = pending.id) where status = 'OPEN' and wo.id in (select id from billing_wallet_operation_pending pending where wo.id = pending.id)"),
+        @NamedNativeQuery(name = "WalletOperation.massUpdateWithRTInfoFromPendingTableOracle", query = "UPDATE (SELECT wo.status, wo.updated, wo.id wo_id, wo.rated_transaction_id rt_id, pending.rated_transaction_id pending_rt_id FROM {h-schema}billing_wallet_operation wo, {h-schema}billing_wallet_operation_pending pending WHERE wo.status = 'OPEN' AND wo.id = pending.id) SET status = 'TREATED', updated = now (), rt_id = pending_rt_id"),
         @NamedNativeQuery(name = "WalletOperation.deletePendingTable", query = "delete from {h-schema}billing_wallet_operation_pending") })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
