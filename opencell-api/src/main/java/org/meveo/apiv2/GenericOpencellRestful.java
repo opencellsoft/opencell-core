@@ -47,6 +47,7 @@ import org.meveo.apiv2.catalog.resource.PricePlanResourceImpl;
 import org.meveo.apiv2.cpq.impl.CommercialOrderResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqContractResourceImpl;
 import org.meveo.apiv2.cpq.impl.CpqQuoteResourceImpl;
+import org.meveo.apiv2.crm.impl.ContactCategoryResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
@@ -97,6 +98,7 @@ import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.communication.contact.ContactCategory;
 import org.slf4j.Logger;
 
 @ApplicationPath("/api/rest/v2")
@@ -151,7 +153,8 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderSettingResourceImpl.class, GlobalSettingsResourceImpl.class, Apiv2SwaggerGeneration.class,
                 OpenOrderTemplateResourceImpl.class, AccountingResourceImpl.class, PaymentPlanResourceImpl.class, MediationSettingResourceImpl.class,
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
-                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class)
+                SearchPriceLineByAttributeResourceImpl.class, InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
+                ContactCategoryResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
