@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
@@ -30,6 +32,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
     @Schema(description = "The price without tax")
     @PositiveOrZero
 	@Deprecated
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private BigDecimal priceWithoutTax;
 
 	@Schema(description = "The value of price without tax or a discount")
