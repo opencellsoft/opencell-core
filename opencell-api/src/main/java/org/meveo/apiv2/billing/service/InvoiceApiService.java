@@ -287,6 +287,10 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         Invoice updateInvoice = invoiceService.update(invoice, input, invoiceResource);
         invoiceService.calculateInvoice(updateInvoice);
         invoiceService.updateBillingRunStatistics(updateInvoice);
+
+		if (updateInvoice.getInvoiceDate() != null) {
+			invoiceService.refreshConvertedAmounts(updateInvoice, updateInvoice.getTradingCurrency().getExchangeRate(invoice.getInvoiceDate()).getExchangeRate(), new Date());
+		}
         return updateInvoice;
     }
 
