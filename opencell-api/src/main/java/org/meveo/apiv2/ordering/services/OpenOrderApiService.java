@@ -17,7 +17,11 @@ import org.meveo.service.order.ThresholdService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -119,7 +123,14 @@ public class OpenOrderApiService extends PersistenceService<OpenOrder>{
         openOrder.setStatus(OpenOrderStatusEnum.CANCELED);
         openOrder.setCancelReason(openOrderDto.getCancelReason());
         openOrder = openOrderService.update(openOrder);
-        auditLogService.trackOperation("CANCEL", new Date(), openOrder, openOrder.getCode());
+        
+        Date operationDate = new Date();
+        String operationType = "CANCEL";
+
+        StringBuilder message = new StringBuilder(auditLogService.getDefaultMessage(operationType, operationDate, openOrder, openOrder.getCode(), Collections.emptyList()));
+        message.append(" - Reason : ").append(openOrder.getCancelReason());
+        
+		auditLogService.trackOperation(operationType, operationDate, openOrder, openOrder.getCode(), message.toString());
         return openOrderMapper.toResource(openOrder);
     }
 }
