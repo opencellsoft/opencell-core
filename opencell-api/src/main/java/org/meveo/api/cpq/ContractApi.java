@@ -358,7 +358,9 @@ public class ContractApi extends BaseApi{
     	}
     	if(!Strings.isEmpty(contractItemDto.getPricePlanCode())) {
 			item.setPricePlan(pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode()));
-    	}
+    	} else {
+			item.setPricePlan(null);
+		}
 
 		
     	if(!Strings.isEmpty(contractItemDto.getProductCode()))
