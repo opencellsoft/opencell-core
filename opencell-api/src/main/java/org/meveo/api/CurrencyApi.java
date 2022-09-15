@@ -64,7 +64,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Currency;
@@ -105,13 +104,10 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private AuditLogService auditLogService;
 
-	@Inject
-	private ParamBeanFactory paramBeanFactory;
-
     @Inject
     private FilesApi filesApi;
     
-    private final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
+    private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
 
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
