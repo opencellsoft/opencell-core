@@ -13167,8 +13167,6 @@ order by date_trunc('month', i.invoice_date) DESC
 		<column name="last_discount" type="${type.boolean}"/> 
 		</addColumn>
 	 </changeSet>
-		
-      </changeSet>
     
 </databaseChangeLog>
     
