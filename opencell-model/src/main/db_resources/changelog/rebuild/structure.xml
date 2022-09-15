@@ -9387,7 +9387,7 @@
             <column name="price_plan_id" type="bigint" />
             <column name="charge_template_id" type="bigint" />
             <column name="service_template_id" type="bigint" />
-            <column name="rate" type="int4" />
+            <column name="rate" type="${type.float}" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" unique="true"/>
@@ -18590,6 +18590,7 @@
 	<changeSet id="#INTRD-9581_20200907" author="TarikFA." />
 	<changeSet id="INTRD-9535-20220908" author="Abdelkader.bouazza" />
     <changeSet id="#INTRD-9684-20220909" author="khalidHORRI"/>
+    <changeSet id="#INTRD-9804-20220915" author="khalidHORRI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
