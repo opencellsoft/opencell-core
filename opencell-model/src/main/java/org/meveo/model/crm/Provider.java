@@ -425,7 +425,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
  	@Column(name = "activate_cascading_discounts ")
  	private boolean activateCascadingDiscounts=true;
     
-
+    /**
+     * RGAA regulation
+     */
+    @Column(name = "rgaa_message", length = 500)
+    @Size(max = 500)
+    protected String rgaaMessage;
+    
     public String getCode() {
         return code;
     }
@@ -890,5 +896,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 		this.activateCascadingDiscounts = activateCascadingDiscounts;
 	}
     
-    
+	public String getRgaaMessage() {
+        return rgaaMessage;
+    }
+
+    public void setRgaaMessage(String rgaaMessage) {
+        this.rgaaMessage = rgaaMessage;
+    }
 }
