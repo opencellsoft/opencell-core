@@ -121,6 +121,14 @@ public interface PaymentScriptInterface extends ScriptInterface {
      */
     void getHostedCheckoutUrl(Map<String, Object> methodContext) throws BusinessException;
     
+    /**
+     * get HostedCheckoutStatus.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void getHostedCheckoutStatus(Map<String, Object> methodContext) throws BusinessException;
+    
     void createInvoice(Map<String, Object> methodContext) throws BusinessException;
     /**
      * Declare a sepa direct debit on the psp and return the token for the future uses.

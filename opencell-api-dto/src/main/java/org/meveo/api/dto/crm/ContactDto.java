@@ -136,6 +136,8 @@ public class ContactDto extends BusinessEntityDto {
 
     private Set<String> tags = new HashSet<String>();
 
+    private String contactCategoryCode;
+
     public ContactDto() {
 
     }
@@ -540,7 +542,15 @@ public class ContactDto extends BusinessEntityDto {
         return AddressBookContacts;
     }
 
-    public void setAddressBookContacts(Set<AddressBookContactDto> addressBookContacts) {
+    public String getContactCategoryCode() {
+		return contactCategoryCode;
+	}
+
+	public void setContactCategoryCode(String contactCategoryCode) {
+		this.contactCategoryCode = contactCategoryCode;
+	}
+
+	public void setAddressBookContacts(Set<AddressBookContactDto> addressBookContacts) {
         AddressBookContacts = addressBookContacts;
     }
 }

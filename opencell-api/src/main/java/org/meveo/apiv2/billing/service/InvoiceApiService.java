@@ -351,20 +351,26 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		customFieldEntity =
 				invoiceBaseApi.populateCustomFieldsForGenericApi(invoice.getCustomFields(), customFieldEntity, false);
 		
-		BillingAccount billingAccountAfter = null;
+		List<BillingAccount> billingAccountsAfter = null;
         if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-            billingAccountAfter = ratedTransactionService.applyInvoicingRules(RTs);
+            billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
         }
         
-        if (billingAccountAfter != null) {
-            entity = billingAccountAfter;
+        List<Invoice> invoices = new ArrayList<Invoice>();
+        if (billingAccountsAfter == null || billingAccountsAfter.isEmpty()) {
+            invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
+                isDraft, customFieldEntity.getCfValues(), true);
         }
-		
-		List<Invoice> invoices = invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
-				isDraft, customFieldEntity.getCfValues(), true);
+        else {
+            for (BillingAccount billingAccountAfter : billingAccountsAfter) {
+                entity = billingAccountAfter;
+                invoices.addAll(invoiceService.generateInvoice(entity, invoice, ratedTransactionFilter,
+                    isDraft, customFieldEntity.getCfValues(), true));
+            }            
+        }
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 		}

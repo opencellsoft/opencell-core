@@ -6513,12 +6513,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     	}
     }
 
-    public void triggersCollectionPlanLevelsJob(Invoice invoice){
-        if(InvoicePaymentStatusEnum.PAID.equals(invoice.getPaymentStatus())){
-            JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob_Job");
-            if(triggerCollectionPlanLevelsJob_job != null){
-                jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
-            }
+    public void triggersCollectionPlanLevelsJob() {
+        JobInstance triggerCollectionPlanLevelsJob_job = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob_Job");
+        if (triggerCollectionPlanLevelsJob_job != null) {
+            jobExecutionService.executeJob(triggerCollectionPlanLevelsJob_job, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
         }
     }
 

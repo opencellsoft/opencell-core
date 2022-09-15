@@ -51,6 +51,10 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
         Result result = new Result(hostedCheckoutUrl, ca, returnUrl);
         this.result = result;
     }
+    public PaymentHostedCheckoutResponseDto(String hostedCheckoutUrl, String ca, String returnUrl,String id) {
+        Result result = new Result(hostedCheckoutUrl, ca, returnUrl,id);
+        this.result = result;
+    }
 
     public PaymentHostedCheckoutResponseDto(String hostedCheckoutUrl, String hostedCheckoutVersion, String ca, String returnUrl, String data, String seal) {
         this.result = new Result(hostedCheckoutUrl, hostedCheckoutVersion, ca, returnUrl, data, seal);
@@ -65,6 +69,7 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
     }
 
     public static class Result {
+        String id;
         String hostedCheckoutUrl;
         String hostedCheckoutVersion;
         String ca;
@@ -78,6 +83,12 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
             this.returnUrl = returnUrl;
         }
 
+        public Result(String hostedCheckoutUrl, String ca, String returnUrl,String id) {
+            this.hostedCheckoutUrl = hostedCheckoutUrl;
+            this.ca = ca;
+            this.returnUrl = returnUrl;
+            this.id = id;
+        }
         Result(String hostedCheckoutUrl, String hostedCheckoutVersion, String ca, String returnUrl, String data, String seal) {
             this.hostedCheckoutUrl = hostedCheckoutUrl;
             this.hostedCheckoutVersion = hostedCheckoutVersion;
@@ -86,6 +97,26 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
             this.data = data;
             this.seal = seal;
         }
+
+
+
+        /**
+         * @return the id
+         */
+        public String getId() {
+            return id;
+        }
+
+
+
+        /**
+         * @param id the id to set
+         */
+        public void setId(String id) {
+            this.id = id;
+        }
+
+
 
         public String getHostedCheckoutUrl() {
             return hostedCheckoutUrl;
