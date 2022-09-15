@@ -34,7 +34,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
                                        Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
                                        String sellerDescription, String sellerCode,
                                        String invoiceNumber,
-                                       Integer stepInDays, Integer numberOfPeriods, Request request) {
+                                       Integer stepInDays, Integer numberOfPeriods, String functionalCurrency, String tradingCurrency, Request request) {
     	if (startDate == null) {
     		startDate = new Date();
 		}

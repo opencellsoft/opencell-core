@@ -523,8 +523,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 .append(" as ao");
         QueryBuilder qb = new QueryBuilder(query.toString());
         qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
-        ofNullable(customerAccount).ifPresent(ca -> qb.addSql("ao.customerAccount.code = '" + ca.getCode() +"'"));
-        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("ao.customerAccount.description = '" + caDescription +"'"));
+        ofNullable(customerAccount).ifPresent(ca -> qb.addSql("ao.customerAccount.code like '%" + ca.getCode() +"%'"));
+        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("ao.customerAccount.description like '%" + caDescription +"%'"));
         ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
         ofNullable(seller).ifPresent(sel -> qb.addSql("ao.seller.code = '" + sel.getCode() +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
