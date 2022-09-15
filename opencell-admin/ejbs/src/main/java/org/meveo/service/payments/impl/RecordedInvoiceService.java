@@ -475,8 +475,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgedReceivables(CustomerAccount customerAccount, Seller seller, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
-                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription) {
+    public List<Object[]> getAgedReceivables(String customerAccountCode, Seller seller, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
+                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency) {
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
@@ -523,11 +523,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 .append(" as ao");
         QueryBuilder qb = new QueryBuilder(query.toString());
         qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
-        ofNullable(customerAccount).ifPresent(ca -> qb.addSql("ao.customerAccount.code like '%" + ca.getCode() +"%'"));
-        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("ao.customerAccount.description like '%" + caDescription +"%'"));
+        ofNullable(customerAccountCode).ifPresent(ca -> qb.addSql("UPPER(ao.customerAccount.code) like '%" + customerAccountCode.toUpperCase() +"%'"));
+        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
         ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
         ofNullable(seller).ifPresent(sel -> qb.addSql("ao.seller.code = '" + sel.getCode() +"'"));
         ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
+        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
 
         if (startDueDate != null && endDueDate != null) {
             qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)

@@ -74,7 +74,6 @@ public class StandardReportApiServiceTest {
         Seller seller = new Seller();
         seller.setCode("SELLER_CODE");
 
-        when(customerAccountService.findByCode("CA_CODE")).thenReturn(customerAccount);
         when(sellerService.findByCode("SELLER_CODE")).thenReturn(seller);
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
 
@@ -107,9 +106,9 @@ public class StandardReportApiServiceTest {
                 "CA_DESCRIPTION", "SELLER_DESCRIPTION", "SELLER_CODE", new Date(), "EUR"};
         result.add(agedReceivable);
     	
-    	when(recordedInvoiceService.getAgedReceivables(any(CustomerAccount.class), any(Seller.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
+    	when(recordedInvoiceService.getAgedReceivables(any(String.class), any(Seller.class), any(), isNull(), isNull(), any(PaginationConfiguration.class), isNull(), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(result);
     	
-    	List<Object[]> testResult = standardReportApiService.list(0L, 50L, null, null, "CA_CODE", startDate, null, null, null, null, "SELLER_CODE", null, null, null);
+    	List<Object[]> testResult = standardReportApiService.list(0L, 50L, null, null, "CA_CODE", startDate, null, null, null, null, "SELLER_CODE", null, null, null, null);
     	
     	assertEquals(1, testResult.size());
     	Object[] anElement = testResult.get(0);
@@ -125,29 +124,21 @@ public class StandardReportApiServiceTest {
         when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(null);
 
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,
-                null, null,null,"INV_10000", 10, 2);
+                null, null,null,"INV_10000", 10, 2, null);
         expectedException.expectMessage("Invoice number : INV_10000 does not exits");
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowExceptionIfCustomerAccountNotFound() {
-        when(customerAccountService.findByCode("CA_CODE")).thenReturn(null);
-
-        standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,
-                null, null,null,"INV_10000", 10, 2);
     }
 
     @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionIfStepInDaysIsMissing() {
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,
-                null, null,null,"INV_10000", null, 2);
+                null, null,null,"INV_10000", null, 2, null);
         expectedException.expectMessage("StepInDays parameter is mandatory when numberOfPeriods is provided");
     }
 
     @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionIfNumberOfPeriodsIsMissing() {
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,
-                null, null,null,"INV_10000", null, 2);
+                null, null,null,"INV_10000", null, 2, null);
         expectedException.expectMessage("numberOfPeriods parameter is mandatory when stepInDays is provided");
     }
 }

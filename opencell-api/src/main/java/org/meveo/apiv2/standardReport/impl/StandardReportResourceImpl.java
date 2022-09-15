@@ -34,13 +34,13 @@ public class StandardReportResourceImpl implements StandardReportResource {
                                        Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
                                        String sellerDescription, String sellerCode,
                                        String invoiceNumber,
-                                       Integer stepInDays, Integer numberOfPeriods, String functionalCurrency, String tradingCurrency, Request request) {
+                                       Integer stepInDays, Integer numberOfPeriods, String tradingCurrency, Request request) {
     	if (startDate == null) {
     		startDate = new Date();
 		}
     	List<Object[]> agedBalanceList =
                 standardReportApiService.list(offset, limit, sort, orderBy, customerAccountCode, startDate,
-                        startDueDate, endDueDate, customerAccountDescription, sellerDescription, sellerCode, invoiceNumber, stepInDays, numberOfPeriods);
+                        startDueDate, endDueDate, customerAccountDescription, sellerDescription, sellerCode, invoiceNumber, stepInDays, numberOfPeriods, tradingCurrency);
         agedReceivableMapper.setAppProvider(appProvider);
     	List<AgedReceivableDto> agedReceivablesList = (stepInDays == null && numberOfPeriods == null)
                 ? agedReceivableMapper.toEntityList(agedBalanceList) : agedReceivableMapper.buildDynamicResponse(agedBalanceList, numberOfPeriods);

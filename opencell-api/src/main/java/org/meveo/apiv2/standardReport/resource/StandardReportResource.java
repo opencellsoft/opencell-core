@@ -57,7 +57,6 @@ public interface StandardReportResource {
                                 @QueryParam("invoiceNumber") String invoiceNumber,
                                 @QueryParam("stepInDays") Integer stepInDays,
                                 @QueryParam("numberOfPeriods") Integer numberOfPeriods,
-                                @QueryParam("funcCurrency") String functionalCurrency,
                                 @QueryParam("tradingCurrency") String tradingCurrency,
                                 @Context Request request);
 }
