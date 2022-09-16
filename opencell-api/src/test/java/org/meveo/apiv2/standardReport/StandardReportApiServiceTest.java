@@ -22,7 +22,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;

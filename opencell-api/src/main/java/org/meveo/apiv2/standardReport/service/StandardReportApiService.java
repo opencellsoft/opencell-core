@@ -12,27 +12,20 @@ import javax.ws.rs.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-	private static final String DOESNOT_EXIST_ERROR_MESSAGE = " doesn't exist";
 
 	@Inject
     private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
     private CustomerAccountService customerAccountService;
-
-	@Inject
-	private SellerService sellerService;
 
     @Inject
 	private InvoiceService invoiceService;
